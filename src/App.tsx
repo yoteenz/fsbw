@@ -13,6 +13,15 @@ import StylingPage from './pages/build-a-wig/styling/page';
 import AddOnsPage from './pages/build-a-wig/addons/page';
 import { lazy, Suspense } from 'react';
 import LoadingScreen from './components/base/LoadingScreen';
+// Admin pages
+import AdminDashboard from './pages/admin/dashboard/page';
+import AdminBrand from './pages/admin/brand/page';
+import AdminClients from './pages/admin/clients/page';
+import AdminClientsAccount from './pages/admin/clients/account/page';
+import AdminMeetings from './pages/admin/meetings/page';
+import AdminPending from './pages/admin/pending/page';
+import AdminRevenue from './pages/admin/revenue/page';
+import AdminReviews from './pages/admin/reviews/page';
 
 // Use lazy loading for noir page like canonical backup
 const NoirUnitPage = lazy(() => import('./pages/build-a-wig/units/noir/page'));
@@ -81,6 +90,15 @@ function App() {
             <NoirUnitPage />
           </Suspense>
         } />
+        {/* Admin routes */}
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/brand" element={<AdminBrand />} />
+        <Route path="/admin/clients" element={<AdminClients />} />
+        <Route path="/admin/clients/account" element={<AdminClientsAccount />} />
+        <Route path="/admin/meetings" element={<AdminMeetings />} />
+        <Route path="/admin/pending" element={<AdminPending />} />
+        <Route path="/admin/revenue" element={<AdminRevenue />} />
+        <Route path="/admin/reviews" element={<AdminReviews />} />
       </Routes>
     </ErrorBoundary>
   );
