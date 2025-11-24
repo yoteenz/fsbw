@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import { Component, ErrorInfo, ReactNode } from 'react';
+import LobbyPage from './pages/lobby/page';
 import BuildAWigPage from './pages/build-a-wig/page';
 import LengthPage from './pages/build-a-wig/length/page';
 import ColorPage from './pages/build-a-wig/color/page';
@@ -61,7 +62,7 @@ function App() {
   return (
     <ErrorBoundary>
       <Routes>
-        <Route path="/" element={<BuildAWigPage />} />
+        <Route path="/" element={<LobbyPage />} />
         <Route path="/build-a-wig" element={<BuildAWigPage />} />
         <Route path="/build-a-wig/length" element={<LengthPage />} />
         <Route path="/build-a-wig/color" element={<ColorPage />} />
