@@ -14,10 +14,8 @@ interface DensityOption {
 }
 
 function NoirSelection() {
-  // Force immediate render test
-  try {
-    console.log('NoirSelection component rendering');
-    const navigate = useNavigate();
+  console.log('NoirSelection component rendering');
+  const navigate = useNavigate();
   const [selectedDensity, setSelectedDensity] = useState(() => {
     return localStorage.getItem('selectedDensity') || '200%';
   });
