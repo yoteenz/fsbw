@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo, useCallback, CSSProperties } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import LoadingScreen from '../../components/base/LoadingScreen';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 
@@ -17,27 +17,32 @@ interface WigCustomization {
 
 export default function BuildAWigPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedView, setSelectedView] = useState(1);
   const [showLoading, setShowLoading] = useState(true);
+  
+  // Track the current route to detect navigation changes
+  const [routeKey, setRouteKey] = useState(location.pathname);
+  
+  // ALWAYS use default values for build-a-wig/noir page - never check editingCartItem
+  // Editing is handled separately by the noir/edit page, not this page
   const [customization, setCustomization] = useState<WigCustomization>(() => {
-    // Check if we're editing an existing cart item
-    const editingCartItem = localStorage.getItem('editingCartItem');
-    if (editingCartItem) {
-      const item = JSON.parse(editingCartItem);
-      return {
-        capSize: item.capSize || 'M',
-        length: item.length || '24"',
-        density: item.density || '200%',
-        lace: item.lace || '13X6',
-        texture: item.texture || 'SILKY',
-        color: item.color || 'OFF BLACK',
-        hairline: item.hairline || 'NATURAL',
-        styling: item.styling || 'NONE',
-        addOns: item.addOns || [],
-      };
-    }
-    // Default values
-    return {
+    // Clear localStorage synchronously BEFORE setting initial state
+    // This ensures defaults are always shown
+    localStorage.removeItem('selectedCapSize');
+    localStorage.removeItem('selectedLength');
+    localStorage.removeItem('selectedDensity');
+    localStorage.removeItem('selectedColor');
+    localStorage.removeItem('selectedTexture');
+    localStorage.removeItem('selectedLace');
+    localStorage.removeItem('selectedHairline');
+    localStorage.removeItem('selectedPartSelection');
+    localStorage.removeItem('selectedStyling');
+    localStorage.removeItem('selectedAddOns');
+    localStorage.removeItem('selectedHairStyling');
+    
+    // Set defaults in localStorage so sub-pages can read them
+    const defaults = {
       capSize: 'M',
       length: '24"',
       density: '200%',
@@ -48,196 +53,170 @@ export default function BuildAWigPage() {
       styling: 'NONE',
       addOns: [],
     };
+    
+    localStorage.setItem('selectedCapSize', defaults.capSize);
+    localStorage.setItem('selectedLength', defaults.length);
+    localStorage.setItem('selectedDensity', defaults.density);
+    localStorage.setItem('selectedColor', defaults.color);
+    localStorage.setItem('selectedTexture', defaults.texture);
+    localStorage.setItem('selectedLace', defaults.lace);
+    localStorage.setItem('selectedHairline', defaults.hairline);
+    localStorage.setItem('selectedStyling', defaults.styling);
+    localStorage.setItem('selectedAddOns', JSON.stringify(defaults.addOns));
+    
+    // ALWAYS return defaults - never load from localStorage
+    return defaults;
   });
 
-  const [basePrice] = useState(860);
-  const [totalPrice, setTotalPrice] = useState(860);
+  const [basePrice] = useState(740);
+  const [totalPrice, setTotalPrice] = useState(740);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [isEditingMode, setIsEditingMode] = useState(() => {
-    return !!localStorage.getItem('editingCartItem');
-  });
-  const [originalItem, setOriginalItem] = useState<any>(null);
-  const [_hasChanges, setHasChanges] = useState(false);
 
-  // Load editing item data into localStorage when in editing mode
+  // REMOVED: isEditingMode, originalItem, hasChanges - editing is handled by noir/edit page, not this page
+
+  // CRITICAL: Reset to defaults when route changes to main page
+  // This MUST run FIRST and synchronously before any other useEffects
   useEffect(() => {
-    if (isEditingMode) {
-      const editingCartItem = localStorage.getItem('editingCartItem');
-      console.log('Editing cart item:', editingCartItem);
-      if (editingCartItem) {
-        const item = JSON.parse(editingCartItem);
-        console.log('Parsed item:', item);
-        
-        // Store the original item for comparison
-        setOriginalItem(item);
-        
-        // Set all the localStorage values that the option pages use
-        localStorage.setItem('selectedCapSize', item.capSize || 'M');
-        localStorage.setItem('selectedLength', item.length || '24"');
-        localStorage.setItem('selectedDensity', item.density || '200%');
-        localStorage.setItem('selectedColor', item.color || 'OFF BLACK');
-        localStorage.setItem('selectedTexture', item.texture || 'SILKY');
-        localStorage.setItem('selectedLace', item.lace || '13X6');
-        localStorage.setItem('selectedHairline', item.hairline || 'NATURAL');
-        localStorage.setItem('selectedPartSelection', item.partSelection || 'MIDDLE');
-        localStorage.setItem('selectedStyling', item.styling || 'NONE');
-        localStorage.setItem('selectedAddOns', JSON.stringify(item.addOns || []));
-        
-        console.log('Set localStorage values:', {
-          capSize: item.capSize,
-          length: item.length,
-          density: item.density,
-          color: item.color,
-          texture: item.texture,
-          lace: item.lace,
-          hairline: item.hairline,
-          partSelection: item.partSelection,
-          styling: item.styling,
-          addOns: item.addOns
-        });
-        
-        // Trigger a refresh to update the UI
-        setRefreshTrigger(prev => prev + 1);
-        
-        // Manually trigger storage change to sync customization state
-        setTimeout(() => {
-          window.dispatchEvent(new CustomEvent('customStorageChange'));
-        }, 100);
-      }
+    // Check if we're on the build-a-wig page (not a sub-page)
+    const isMainPage = location.pathname === '/build-a-wig' || location.pathname === '/';
+    
+    // Update route key to track navigation
+    if (location.pathname !== routeKey) {
+      setRouteKey(location.pathname);
     }
-  }, [isEditingMode]);
-
-  // Sync customization state with localStorage when in editing mode
-  useEffect(() => {
-    if (isEditingMode) {
+    
+    if (isMainPage) {
+      console.log('=== ROUTE CHANGE: Clearing localStorage and FORCING defaults ===');
+      
+      // CRITICAL: Only clear if NOT editing - editing state should persist
       const editingCartItem = localStorage.getItem('editingCartItem');
-      console.log('Syncing customization state, editingCartItem:', editingCartItem);
-      if (editingCartItem) {
-        const item = JSON.parse(editingCartItem);
-        const newCustomization = {
-          capSize: item.capSize || 'M',
-          length: item.length || '24"',
-          density: item.density || '200%',
-          lace: item.lace || '13X6',
-          texture: item.texture || 'SILKY',
-          color: item.color || 'OFF BLACK',
-          hairline: item.hairline || 'NATURAL',
-          styling: item.styling || 'NONE',
-          addOns: item.addOns || [],
+      const isEditing = !!editingCartItem && window.location.pathname.includes('/edit');
+      
+      if (!isEditing) {
+        // Clear all localStorage values IMMEDIATELY
+      localStorage.removeItem('selectedCapSize');
+      localStorage.removeItem('selectedLength');
+      localStorage.removeItem('selectedDensity');
+      localStorage.removeItem('selectedColor');
+      localStorage.removeItem('selectedTexture');
+      localStorage.removeItem('selectedLace');
+      localStorage.removeItem('selectedHairline');
+      localStorage.removeItem('selectedPartSelection');
+      localStorage.removeItem('selectedStyling');
+      localStorage.removeItem('selectedAddOns');
+        localStorage.removeItem('selectedHairStyling');
+        
+        // Set defaults in localStorage so sub-pages can read them
+        const defaults = {
+          capSize: 'M',
+          length: '24"',
+          density: '200%',
+          lace: '13X6',
+          texture: 'SILKY',
+          color: 'OFF BLACK',
+          hairline: 'NATURAL',
+          styling: 'NONE',
+          addOns: [],
         };
-        console.log('Setting customization to:', newCustomization);
-        setCustomization(newCustomization);
+        
+        localStorage.setItem('selectedCapSize', defaults.capSize);
+        localStorage.setItem('selectedLength', defaults.length);
+        localStorage.setItem('selectedDensity', defaults.density);
+        localStorage.setItem('selectedColor', defaults.color);
+        localStorage.setItem('selectedTexture', defaults.texture);
+        localStorage.setItem('selectedLace', defaults.lace);
+        localStorage.setItem('selectedHairline', defaults.hairline);
+        localStorage.setItem('selectedStyling', defaults.styling);
+        localStorage.setItem('selectedAddOns', JSON.stringify(defaults.addOns));
+        
+        // CRITICAL: Force defaults IMMEDIATELY - use direct set, not functional update
+        setCustomization(defaults);
+        
+        console.log('=== DEFAULTS FORCED:', {
+          length: '24"',
+          density: '200%',
+          pathname: location.pathname,
+          timestamp: new Date().toISOString()
+        });
       }
     }
-  }, [isEditingMode, refreshTrigger]);
-
-  // Force sync customization state from localStorage when in edit mode
+  }, [location.pathname, routeKey]); // Run when route changes
+  
+  // Also force defaults on mount if not editing - runs AFTER route change effect
   useEffect(() => {
-    if (isEditingMode) {
-      const syncFromLocalStorage = () => {
-        const savedCapSize = localStorage.getItem('selectedCapSize');
-        const savedLength = localStorage.getItem('selectedLength');
-        const savedDensity = localStorage.getItem('selectedDensity');
-        const savedLace = localStorage.getItem('selectedLace');
-        const savedTexture = localStorage.getItem('selectedTexture');
-        const savedColor = localStorage.getItem('selectedColor');
-        const savedHairline = localStorage.getItem('selectedHairline');
-        const savedStyling = localStorage.getItem('selectedStyling');
-        const savedAddOns = localStorage.getItem('selectedAddOns');
-
-        console.log('Edit mode sync - localStorage values:', {
-          capSize: savedCapSize,
-          length: savedLength,
-          density: savedDensity,
-          lace: savedLace,
-          texture: savedTexture,
-          color: savedColor,
-          hairline: savedHairline,
-          styling: savedStyling,
-          addOns: savedAddOns
-        });
-
-        setCustomization(prev => {
-          const newCustomization = {
-            ...prev,
-            capSize: savedCapSize || prev.capSize,
-            length: savedLength || prev.length,
-            density: savedDensity || prev.density,
-            lace: savedLace || prev.lace,
-            texture: savedTexture || prev.texture,
-            color: savedColor || prev.color,
-            hairline: savedHairline || prev.hairline,
-            styling: savedStyling || prev.styling,
-            addOns: savedAddOns ? JSON.parse(savedAddOns) : prev.addOns,
-          };
-          
-          console.log('Edit mode sync - updating customization from', prev, 'to', newCustomization);
-          return newCustomization;
-        });
-      };
-
-      // Sync immediately
-      syncFromLocalStorage();
-
-      // Listen for custom events
-      const handleCustomChange = () => {
-        console.log('Main page - Custom change event received, syncing...');
-        syncFromLocalStorage();
-      };
-
-      window.addEventListener('customStorageChange', handleCustomChange);
+    // Check if we're on the main page
+    const isMainPage = location.pathname === '/build-a-wig' || location.pathname === '/';
+    
+    if (isMainPage) {
+      // Clear localStorage FIRST
+      localStorage.removeItem('selectedCapSize');
+      localStorage.removeItem('selectedLength');
+      localStorage.removeItem('selectedDensity');
+      localStorage.removeItem('selectedColor');
+      localStorage.removeItem('selectedTexture');
+      localStorage.removeItem('selectedLace');
+      localStorage.removeItem('selectedHairline');
+      localStorage.removeItem('selectedPartSelection');
+      localStorage.removeItem('selectedStyling');
+      localStorage.removeItem('selectedAddOns');
+      localStorage.removeItem('selectedHairStyling');
       
-      // Also add a periodic sync as backup
-      const intervalId = setInterval(() => {
-        if (isEditingMode) {
-          console.log('Periodic sync running...');
-          syncFromLocalStorage();
-        }
-      }, 500); // Reduced to 500ms for more responsive updates
-      
-      return () => {
-        window.removeEventListener('customStorageChange', handleCustomChange);
-        clearInterval(intervalId);
+      // Set defaults in localStorage
+      const defaults = {
+        capSize: 'M',
+        length: '24"',
+        density: '200%',
+        lace: '13X6',
+        texture: 'SILKY',
+        color: 'OFF BLACK',
+        hairline: 'NATURAL',
+        styling: 'NONE',
+        addOns: [],
       };
+      
+      localStorage.setItem('selectedCapSize', defaults.capSize);
+      localStorage.setItem('selectedLength', defaults.length);
+      localStorage.setItem('selectedDensity', defaults.density);
+      localStorage.setItem('selectedColor', defaults.color);
+      localStorage.setItem('selectedTexture', defaults.texture);
+      localStorage.setItem('selectedLace', defaults.lace);
+      localStorage.setItem('selectedHairline', defaults.hairline);
+      localStorage.setItem('selectedStyling', defaults.styling);
+      localStorage.setItem('selectedAddOns', JSON.stringify(defaults.addOns));
+      
+      // Force defaults IMMEDIATELY
+      setCustomization(defaults);
+      
+      console.log('=== MOUNT: Forced defaults ===');
     }
-  }, [isEditingMode]);
+  }, []); // Run on mount only
 
-  // Detect changes when in editing mode
+  // REMOVED: Continuously enforce defaults - this was clearing localStorage and preventing sub-pages from showing correct selections
+  // The customize page doesn't have this logic - it trusts localStorage and loads from it
+  // Sub-pages should always show what's in localStorage, which matches the main page
+
+  // CRITICAL: Sync customization state to localStorage whenever it changes
+  // This ensures sub-pages see the current selections from the main page
   useEffect(() => {
-    if (isEditingMode && originalItem) {
-      const currentPartSelection = localStorage.getItem('selectedPartSelection') || 'MIDDLE';
-      
-      const hasChanges = 
-        customization.capSize !== originalItem.capSize ||
-        customization.length !== originalItem.length ||
-        customization.density !== originalItem.density ||
-        customization.color !== originalItem.color ||
-        customization.texture !== originalItem.texture ||
-        customization.lace !== originalItem.lace ||
-        customization.hairline !== originalItem.hairline ||
-        customization.styling !== originalItem.styling ||
-        currentPartSelection !== originalItem.partSelection ||
-        JSON.stringify(customization.addOns) !== JSON.stringify(originalItem.addOns);
-      
-      console.log('Main page - Change detection:', {
-        hasChanges,
-        customization: {
-          capSize: customization.capSize,
-          color: customization.color,
-          styling: customization.styling
-        },
-        originalItem: {
-          capSize: originalItem.capSize,
-          color: originalItem.color,
-          styling: originalItem.styling
-        },
-        currentPartSelection,
-        originalPartSelection: originalItem.partSelection
-      });
-      
-      setHasChanges(hasChanges);
-    }
-  }, [customization, originalItem, isEditingMode, refreshTrigger]);
+    // Save current customization to localStorage so sub-pages can read it
+    localStorage.setItem('selectedCapSize', customization.capSize);
+    localStorage.setItem('selectedLength', customization.length);
+    localStorage.setItem('selectedDensity', customization.density);
+    localStorage.setItem('selectedColor', customization.color);
+    localStorage.setItem('selectedTexture', customization.texture);
+    localStorage.setItem('selectedLace', customization.lace);
+    localStorage.setItem('selectedHairline', customization.hairline);
+    localStorage.setItem('selectedStyling', customization.styling);
+    localStorage.setItem('selectedAddOns', JSON.stringify(customization.addOns));
+    
+    console.log('Main page - Synced customization to localStorage:', {
+      length: customization.length,
+      density: customization.density,
+      color: customization.color
+    });
+  }, [customization]);
+
+  // REMOVED: Change detection logic - editing is handled by noir/edit page, not this page
   const [processingTimeText, setProcessingTimeText] = useState('EXPECT 6 - 8 WEEKS OF PROCESSING TIME FOR THIS UNIT.');
   
   // Add to bag button states: 'idle', 'adding', 'added'
@@ -333,7 +312,7 @@ export default function BuildAWigPage() {
   const [isSignedIn, setIsSignedIn] = useState(false);
 
   // Currency exchange rates (same as CartDropdown)
-  const currencyRates = useMemo(() => ({
+  const currencyRates = React.useMemo(() => ({
     USD: { symbol: '&#36;', rate: 1.0, name: 'US Dollar' },
     EUR: { symbol: '&euro;', rate: 0.85, name: 'Euro' },
     GBP: { symbol: '&pound;', rate: 0.73, name: 'British Pound' },
@@ -350,54 +329,31 @@ export default function BuildAWigPage() {
     return `${customization.capSize}-${customization.length}-${customization.density}-${customization.color}-${customization.texture}-${customization.lace}-${customization.hairline}-${customization.styling}-${JSON.stringify(customization.addOns || [])}`;
   };
 
-  // forceResetButtonState function - kept for potential future use
-  /*
   const forceResetButtonState = () => {
     console.log('Main - RESET BUTTON CLICKED!');
     console.log('Main - Before reset:', {
       addToBagState,
-      isEditingMode,
-      hasChanges,
       cartCount
     });
     console.log('Main - Stack trace:', new Error().stack);
     
-    // Visual debug for mobile
-    document.title = 'RESET CALLED - ' + new Date().toLocaleTimeString();
-    
-    // Add visible debug indicator
-    const debugDiv = document.createElement('div');
-    debugDiv.style.cssText = 'position:fixed;top:50px;left:10px;background:red;color:white;padding:10px;z-index:9999;font-size:12px;';
-    debugDiv.textContent = 'RESET CALLED: ' + new Date().toLocaleTimeString();
-    document.body.appendChild(debugDiv);
-    
-    // Remove after 3 seconds
-    setTimeout(() => {
-      if (debugDiv.parentNode) {
-        debugDiv.parentNode.removeChild(debugDiv);
-      }
-    }, 3000);
     
     setAddToBagState('idle');
-    setIsEditingMode(false);
-    setHasChanges(false);
-    setOriginalItem(null);
+    // REMOVED: Editing state - editing handled by noir/edit page
     localStorage.removeItem('addToBagButtonState');
     localStorage.removeItem('lastAddedConfiguration');
-    localStorage.removeItem('editingCartItem');
-    localStorage.removeItem('editingCartItemId');
     
     console.log('Main - After reset - state should be updated');
   };
-  */
 
   // Helper functions to get correct icons based on selections
   const getCapSizeIcon = () => {
+    const selectedCapSize = customization.capSize || 'M';
     return '/assets/cap size-icon.svg'; // All cap sizes use the same icon
   };
 
   const getLengthIcon = () => {
-    const selectedLength = localStorage.getItem('selectedLength') || '24"';
+    const selectedLength = customization.length || '24"';
     if (['16"', '18"', '20"', '22"'].includes(selectedLength)) {
       return '/assets/back length-icon.svg';
     } else if (['24"', '26"', '28"', '30"'].includes(selectedLength)) {
@@ -408,7 +364,7 @@ export default function BuildAWigPage() {
   };
 
   const getLengthThumbnailSize = () => {
-    const selectedLength = localStorage.getItem('selectedLength') || '24"';
+    const selectedLength = customization.length || '24"';
     // First row (16", 18", 20", 22") uses 72px, others use 42px (reduced by 5px)
     if (['16"', '18"', '20"', '22"'].includes(selectedLength)) {
       return '72px';
@@ -418,7 +374,7 @@ export default function BuildAWigPage() {
   };
 
   const getLengthThumbnailTopPosition = () => {
-    const selectedLength = localStorage.getItem('selectedLength') || '24"';
+    const selectedLength = customization.length || '24"';
     // First row (16", 18", 20", 22") uses 50%, others use calc(58% - 1px)
     if (['16"', '18"', '20"', '22"'].includes(selectedLength)) {
       return '50%';
@@ -439,15 +395,12 @@ export default function BuildAWigPage() {
     return '/assets/Texture-icon.svg'; // All textures use the same icon
   };
 
-  // getColorIcon function - kept for potential future use
-  /*
   const getColorIcon = () => {
     return '/assets/none-icon.svg'; // Color uses a custom color circle, not an icon
   };
-  */
 
   const getHairlineIcon = () => {
-    const selectedHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
+    const selectedHairline = customization.hairline || 'NATURAL';
     
     // Handle comma-separated values (multiple selections)
     const hairlineArray = selectedHairline.split(',');
@@ -475,7 +428,7 @@ export default function BuildAWigPage() {
   };
 
   const getHairlineDisplayText = () => {
-    const selectedHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
+    const selectedHairline = customization.hairline || 'NATURAL';
     
     // Handle comma-separated values (multiple selections)
     const hairlineArray = selectedHairline.split(',');
@@ -499,10 +452,10 @@ export default function BuildAWigPage() {
   };
 
   const getStylingIcon = () => {
-    const selectedHairStyling = localStorage.getItem('selectedHairStyling');
+    const selectedHairStyling = customization.styling || 'NONE';
     
     // If hair styling is selected, show the first one's icon
-    if (selectedHairStyling) {
+    if (selectedHairStyling && selectedHairStyling !== 'NONE') {
       const hairStylingIconMap: { [key: string]: string } = {
         'BANGS': '/assets/Bangs-icon.svg',
         'CRIMPS': '/assets/Crimps-icon.svg',
@@ -530,10 +483,10 @@ export default function BuildAWigPage() {
   };
 
   const getStylingIconSize = () => {
-    const selectedHairStyling = localStorage.getItem('selectedHairStyling');
+    const selectedHairStyling = customization.styling || 'NONE';
     
     // If no hair styling is selected, return smaller size for none icon
-    if (!selectedHairStyling) {
+    if (!selectedHairStyling || selectedHairStyling === 'NONE') {
       return '35px'; // Reduced by 45px from default 80px
     }
     
@@ -542,10 +495,10 @@ export default function BuildAWigPage() {
   };
 
   const getStylingIconTopPosition = () => {
-    const selectedHairStyling = localStorage.getItem('selectedHairStyling');
+    const selectedHairStyling = customization.styling || 'NONE';
     
     // If no hair styling is selected, return original position for none icon
-    if (!selectedHairStyling) {
+    if (!selectedHairStyling || selectedHairStyling === 'NONE') {
       return '55%'; // Original position for none icon
     }
     
@@ -554,10 +507,10 @@ export default function BuildAWigPage() {
   };
 
   const getStylingDisplayText = () => {
-    const selectedHairStyling = localStorage.getItem('selectedHairStyling');
+    const selectedHairStyling = customization.styling || 'NONE';
     
     // If hair styling is selected, show the first one + count
-    if (selectedHairStyling) {
+    if (selectedHairStyling && selectedHairStyling !== 'NONE') {
       const stylingArray = selectedHairStyling.split(',');
       const correctOrder = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
       
@@ -583,10 +536,8 @@ export default function BuildAWigPage() {
   };
 
   const getAddOnsIcon = () => {
-    const selectedAddOns = localStorage.getItem('selectedAddOns');
-    if (selectedAddOns && JSON.parse(selectedAddOns).length > 0) {
-      const addOns = JSON.parse(selectedAddOns);
-      
+    const selectedAddOns = customization.addOns || [];
+    if (selectedAddOns && selectedAddOns.length > 0) {
       // Addon icon mapping based on the addon sub page
       const addOnIconMap: { [key: string]: string } = {
         'BLEACH': '/assets/Bleach-icon.svg',
@@ -595,18 +546,18 @@ export default function BuildAWigPage() {
       };
       
       // Show the first selected addon icon
-      const firstAddOn = addOns[0];
-      return addOnIconMap[firstAddOn] || '/assets/none-icon.svg';
+      const firstAddOn = selectedAddOns[0];
+      return firstAddOn ? (addOnIconMap[firstAddOn] || '/assets/none-icon.svg') : '/assets/none-icon.svg';
     } else {
       return '/assets/none-icon.svg';
     }
   };
 
   const getAddOnsIconSize = () => {
-    const selectedAddOns = localStorage.getItem('selectedAddOns');
+    const selectedAddOns = customization.addOns || [];
     
     // If no add-ons are selected, return smaller size for none icon
-    if (!selectedAddOns || JSON.parse(selectedAddOns).length === 0) {
+    if (!selectedAddOns || selectedAddOns.length === 0) {
       return '35px'; // Reduced by 45px from default 80px
     }
     
@@ -615,16 +566,15 @@ export default function BuildAWigPage() {
   };
 
   const getAddOnsThumbnailTopPosition = () => {
-    const selectedAddOns = localStorage.getItem('selectedAddOns');
+    const selectedAddOns = customization.addOns || [];
     
     // If no add-ons are selected, return original position for none icon
-    if (!selectedAddOns || JSON.parse(selectedAddOns).length === 0) {
+    if (!selectedAddOns || selectedAddOns.length === 0) {
       return '55%'; // Original position for none icon
     }
     
-    const addOns = JSON.parse(selectedAddOns);
-    const hasBleach = addOns.includes('BLEACH');
-    const hasOnlyBleach = addOns.length === 1 && hasBleach;
+    const hasBleach = selectedAddOns.includes('BLEACH');
+    const hasOnlyBleach = selectedAddOns.length === 1 && hasBleach;
     
     // Only move up if ONLY bleach is selected (not in combination with other add-ons)
     if (hasOnlyBleach) {
@@ -636,11 +586,10 @@ export default function BuildAWigPage() {
   };
 
   const getAddOnsDisplayText = () => {
-    const selectedAddOns = localStorage.getItem('selectedAddOns');
-    if (selectedAddOns && JSON.parse(selectedAddOns).length > 0) {
-      const addOns = JSON.parse(selectedAddOns);
-      const firstAddOn = addOns[0];
-      const additionalCount = addOns.length - 1;
+    const selectedAddOns = customization.addOns || [];
+    if (selectedAddOns && selectedAddOns.length > 0) {
+      const firstAddOn = selectedAddOns[0];
+      const additionalCount = selectedAddOns.length - 1;
       
       if (additionalCount > 0) {
         return `${firstAddOn} +${additionalCount}`;
@@ -653,7 +602,7 @@ export default function BuildAWigPage() {
   };
 
   const getSelectedColorCode = () => {
-    const selectedColor = localStorage.getItem('selectedColor') || 'OFF BLACK';
+    const selectedColor = customization.color || 'OFF BLACK';
     
     // Color mapping based on the color sub page
     const colorMap: { [key: string]: string } = {
@@ -678,9 +627,10 @@ export default function BuildAWigPage() {
     return colorMap[selectedColor] || '#2A2424'; // Default to OFF BLACK if not found
   };
 
-  // Get wig views based on selected hairline from localStorage
+  // Get wig views based on selected hairline from customization state
   const getWigViews = () => {
-    const selectedHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
+    // Use the hairline from customization state instead of localStorage
+    const selectedHairline = customization.hairline || 'NATURAL';
     const hasPeak = selectedHairline.includes('PEAK');
     const hasLagos = selectedHairline.includes('LAGOS');
     
@@ -715,107 +665,47 @@ export default function BuildAWigPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Load saved selections from localStorage
-  useEffect(() => {
-    const savedCapSize = localStorage.getItem('selectedCapSize');
-    const savedLength = localStorage.getItem('selectedLength');
-    const savedDensity = localStorage.getItem('selectedDensity');
-    const savedLace = localStorage.getItem('selectedLace');
-    const savedTexture = localStorage.getItem('selectedTexture');
-    const savedColor = localStorage.getItem('selectedColor');
-    const savedHairline = localStorage.getItem('selectedHairline');
-    const savedStyling = localStorage.getItem('selectedStyling');
-    const savedAddOns = localStorage.getItem('selectedAddOns');
+  // REMOVED: Load saved selections - this page never loads from localStorage
+  // Editing is handled by noir/edit page, not this page
+  // This page ALWAYS shows defaults
 
-    if (savedCapSize || savedLength || savedDensity || savedLace || savedTexture || savedColor || savedHairline || savedStyling || savedAddOns) {
-      setCustomization(prev => ({
-        ...prev,
-        capSize: savedCapSize || prev.capSize,
-        length: savedLength || prev.length,
-        density: savedDensity || prev.density,
-        lace: savedLace || prev.lace,
-        texture: savedTexture || prev.texture,
-        color: savedColor || prev.color,
-        hairline: savedHairline || prev.hairline,
-        styling: savedStyling || prev.styling,
-        addOns: savedAddOns ? JSON.parse(savedAddOns) : prev.addOns,
-      }));
+  // REMOVED: Storage change listener - this page never syncs from localStorage
+  // Editing is handled by noir/edit page, not this page
+
+  // Initialize default price values only if they don't exist
+  // This preserves existing selections while ensuring defaults are available
+  useEffect(() => {
+    // Only set default prices if they don't already exist in localStorage
+    // This preserves existing selections while ensuring defaults are available
+    if (!localStorage.getItem('selectedCapSizePrice')) {
+      localStorage.setItem('selectedCapSizePrice', '0');
+    }
+    if (!localStorage.getItem('selectedColorPrice')) {
+      localStorage.setItem('selectedColorPrice', '0');
+    }
+    if (!localStorage.getItem('selectedLengthPrice')) {
+      localStorage.setItem('selectedLengthPrice', '0');
+    }
+    if (!localStorage.getItem('selectedDensityPrice')) {
+      localStorage.setItem('selectedDensityPrice', '0');
+    }
+    if (!localStorage.getItem('selectedLacePrice')) {
+      localStorage.setItem('selectedLacePrice', '0');
+    }
+    if (!localStorage.getItem('selectedTexturePrice')) {
+      localStorage.setItem('selectedTexturePrice', '0');
+    }
+    if (!localStorage.getItem('selectedHairlinePrice')) {
+      localStorage.setItem('selectedHairlinePrice', '0');
+    }
+    if (!localStorage.getItem('selectedStylingPrice')) {
+      localStorage.setItem('selectedStylingPrice', '0');
+    }
+    if (!localStorage.getItem('selectedAddOnsPrice')) {
+      localStorage.setItem('selectedAddOnsPrice', '0');
     }
   }, []);
 
-  // Listen for storage changes to update in real-time (debounced for performance)
-  useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout>;
-    
-    const handleStorageChange = () => {
-      // Skip if in edit mode - let edit mode handle its own sync
-      if (isEditingMode) {
-        console.log('Skipping general storage change - edit mode is handling sync');
-        return;
-      }
-      
-      // Debounce storage changes to prevent excessive re-renders
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        const savedCapSize = localStorage.getItem('selectedCapSize');
-        const savedLength = localStorage.getItem('selectedLength');
-        const savedDensity = localStorage.getItem('selectedDensity');
-        const savedLace = localStorage.getItem('selectedLace');
-        const savedTexture = localStorage.getItem('selectedTexture');
-        const savedColor = localStorage.getItem('selectedColor');
-        const savedHairline = localStorage.getItem('selectedHairline');
-        const savedStyling = localStorage.getItem('selectedStyling');
-        const savedPartSelection = localStorage.getItem('selectedPartSelection');
-        const savedAddOns = localStorage.getItem('selectedAddOns');
-
-        setCustomization(prev => ({
-          ...prev,
-          capSize: savedCapSize || prev.capSize,
-          length: savedLength || prev.length,
-          density: savedDensity || prev.density,
-          lace: savedLace || prev.lace,
-          texture: savedTexture || prev.texture,
-          color: savedColor || prev.color,
-          hairline: savedHairline || prev.hairline,
-          styling: savedStyling || prev.styling,
-          addOns: savedAddOns ? JSON.parse(savedAddOns) : prev.addOns,
-        }));
-        
-        console.log('Storage change detected, updating customization:', {
-          capSize: savedCapSize,
-          length: savedLength,
-          density: savedDensity,
-          lace: savedLace,
-          texture: savedTexture,
-          color: savedColor,
-          hairline: savedHairline,
-          styling: savedStyling,
-          partSelection: savedPartSelection,
-          addOns: savedAddOns
-        });
-        
-        // Trigger a refresh to update icons
-        setRefreshTrigger(prev => prev + 1);
-      }, 200); // Increased debounce to 200ms for better performance
-    };
-
-    // Listen for both storage events and custom events
-    const handleCustomStorageChange = () => {
-      console.log('Custom storage change event received');
-      handleStorageChange();
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('customStorageChange', handleCustomStorageChange);
-    
-    return () => {
-      clearTimeout(timeoutId);
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('customStorageChange', handleCustomStorageChange);
-    };
-  }, [isEditingMode]); // Added isEditingMode dependency
-
-  // Memoize price calculation to prevent unnecessary recalculations
   useEffect(() => {
     const calculatePrice = () => {
       let total = basePrice;
@@ -869,7 +759,7 @@ export default function BuildAWigPage() {
   }, [currencyRates]);
 
   // Format price with currency
-  const formatPrice = useCallback((price: number) => {
+  const formatPrice = React.useCallback((price: number) => {
     const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
     const convertedPrice = price * currency.rate;
     return {
@@ -882,6 +772,25 @@ export default function BuildAWigPage() {
 
   const handleOptionSelect = (category: string, optionId: string) => {
     console.log(`Selected ${category}: ${optionId}`);
+    
+    // CRITICAL: Save current customization to localStorage BEFORE navigating
+    // This ensures sub-pages see the correct current selections
+    localStorage.setItem('selectedCapSize', customization.capSize);
+    localStorage.setItem('selectedLength', customization.length);
+    localStorage.setItem('selectedDensity', customization.density);
+    localStorage.setItem('selectedColor', customization.color);
+    localStorage.setItem('selectedTexture', customization.texture);
+    localStorage.setItem('selectedLace', customization.lace);
+    localStorage.setItem('selectedHairline', customization.hairline);
+    localStorage.setItem('selectedStyling', customization.styling);
+    localStorage.setItem('selectedAddOns', JSON.stringify(customization.addOns));
+    
+    console.log('Main page - Saved to localStorage before navigation:', {
+      length: customization.length,
+      density: customization.density,
+      category
+    });
+    
     if (category === 'capSize') {
       navigate('/build-a-wig/cap-size');
       return;
@@ -971,9 +880,12 @@ export default function BuildAWigPage() {
     // Simulate adding to bag process
     await new Promise(resolve => setTimeout(resolve, 1500));
     
-    if (isEditingMode) {
-      // Update existing cart item
+    // Check localStorage directly, not state
+    const editingCartItem = localStorage.getItem('editingCartItem');
       const editingCartItemId = localStorage.getItem('editingCartItemId');
+    
+    if (editingCartItem && editingCartItemId) {
+      // Update existing cart item
       const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
       
       const updatedCartItems = existingCartItems.map((item: any) => {
@@ -998,12 +910,7 @@ export default function BuildAWigPage() {
       
       localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
       
-      // Clear editing mode
-      localStorage.removeItem('editingCartItem');
-      localStorage.removeItem('editingCartItemId');
-      setIsEditingMode(false);
-      setHasChanges(false);
-      setOriginalItem(null);
+      // Clear editing mode - REMOVED: no editing state on this page
       
       // Dispatch custom event to notify other components
       window.dispatchEvent(new CustomEvent('cartUpdated'));
@@ -1037,17 +944,19 @@ export default function BuildAWigPage() {
       setCartCount(newCartCount);
       localStorage.setItem('cartCount', newCartCount.toString());
       
-      // Save button state and the specific item ID that was added
-      setAddToBagState('added');
-      localStorage.setItem('addToBagButtonState', 'added');
-      localStorage.setItem('lastAddedItemId', cartItem.id); // Track the specific item ID
-      
-      // Small delay to ensure cart item is fully saved before any cart update events
-      setTimeout(() => {
-        // Dispatch both events after a small delay
-        window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCartCount }));
-        window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: JSON.parse(localStorage.getItem('cartItems') || '[]'), count: newCartCount } }));
-      }, 100);
+      // Track the specific item ID
+      localStorage.setItem('lastAddedItemId', cartItem.id);
+    
+      // Save button state
+    setAddToBagState('added');
+    localStorage.setItem('addToBagButtonState', 'added');
+    
+    // Small delay to ensure cart item is fully saved before any cart update events
+    setTimeout(() => {
+      // Dispatch both events after a small delay
+      window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCartCount }));
+      window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: JSON.parse(localStorage.getItem('cartItems') || '[]'), count: newCartCount } }));
+    }, 100);
     }
     
   };
@@ -1287,7 +1196,7 @@ export default function BuildAWigPage() {
                       top: 'calc(50% - 10.601px + 18px)',
                       '--hero-width': '282px',
                       '--hero-height': '387px'
-                    } as CSSProperties & { '--hero-width'?: string; '--hero-height'?: string }}
+                    } as React.CSSProperties}
                   />
                 </div>
               </div>
@@ -1326,7 +1235,7 @@ export default function BuildAWigPage() {
                           style={{ 
                           '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
                           ...(index === 0 && { left: 'calc(50% - 6px)' })
-                        } as CSSProperties & { '--hero-width'?: string; '--hero-height'?: string }}
+                        } as React.CSSProperties}
                         />
                       </div>
                     </div>
