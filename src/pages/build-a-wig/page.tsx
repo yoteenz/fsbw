@@ -76,7 +76,7 @@ export default function BuildAWigPage() {
 
   // Load selections from localStorage when returning from sub-pages
   useEffect(() => {
-    const isMainPage = location.pathname === '/build-a-wig' || location.pathname === '/';
+    const isMainPage = location.pathname === '/build-a-wig' || location.pathname === '/build-a-wig/noir' || location.pathname === '/';
     
     if (isMainPage) {
       // Load selections from localStorage (sub-pages save here)
@@ -90,18 +90,23 @@ export default function BuildAWigPage() {
       const savedStyling = localStorage.getItem('selectedStyling');
       const savedAddOns = localStorage.getItem('selectedAddOns');
       
+      console.log('Main page - Route change, loading from localStorage:', {
+        savedHairline,
+        pathname: location.pathname
+      });
+      
       // Only update if we have saved values (coming back from sub-page)
       if (savedCapSize || savedLength || savedDensity || savedLace || savedTexture || savedColor || savedHairline || savedStyling || savedAddOns) {
         setCustomization(prev => ({
           ...prev,
-          capSize: savedCapSize || prev.capSize,
-          length: savedLength || prev.length,
-          density: savedDensity || prev.density,
-          lace: savedLace || prev.lace,
-          texture: savedTexture || prev.texture,
-          color: savedColor || prev.color,
-          hairline: savedHairline || prev.hairline,
-          styling: savedStyling || prev.styling,
+          capSize: savedCapSize !== null ? savedCapSize : prev.capSize,
+          length: savedLength !== null ? savedLength : prev.length,
+          density: savedDensity !== null ? savedDensity : prev.density,
+          lace: savedLace !== null ? savedLace : prev.lace,
+          texture: savedTexture !== null ? savedTexture : prev.texture,
+          color: savedColor !== null ? savedColor : prev.color,
+          hairline: savedHairline !== null ? savedHairline : prev.hairline,
+          styling: savedStyling !== null ? savedStyling : prev.styling,
           addOns: savedAddOns ? JSON.parse(savedAddOns) : prev.addOns,
         }));
       }
@@ -111,7 +116,7 @@ export default function BuildAWigPage() {
   // Listen for storage changes (when sub-pages update localStorage)
   useEffect(() => {
     const handleStorageChange = () => {
-      const isMainPage = location.pathname === '/build-a-wig' || location.pathname === '/';
+      const isMainPage = location.pathname === '/build-a-wig' || location.pathname === '/build-a-wig/noir' || location.pathname === '/';
       
       if (isMainPage) {
         const savedCapSize = localStorage.getItem('selectedCapSize');
@@ -124,22 +129,28 @@ export default function BuildAWigPage() {
         const savedStyling = localStorage.getItem('selectedStyling');
         const savedAddOns = localStorage.getItem('selectedAddOns');
         
+        console.log('Main page - Storage change detected:', {
+          savedHairline,
+          pathname: location.pathname
+        });
+        
         setCustomization(prev => ({
           ...prev,
-          capSize: savedCapSize || prev.capSize,
-          length: savedLength || prev.length,
-          density: savedDensity || prev.density,
-          lace: savedLace || prev.lace,
-          texture: savedTexture || prev.texture,
-          color: savedColor || prev.color,
-          hairline: savedHairline || prev.hairline,
-          styling: savedStyling || prev.styling,
+          capSize: savedCapSize !== null ? savedCapSize : prev.capSize,
+          length: savedLength !== null ? savedLength : prev.length,
+          density: savedDensity !== null ? savedDensity : prev.density,
+          lace: savedLace !== null ? savedLace : prev.lace,
+          texture: savedTexture !== null ? savedTexture : prev.texture,
+          color: savedColor !== null ? savedColor : prev.color,
+          hairline: savedHairline !== null ? savedHairline : prev.hairline,
+          styling: savedStyling !== null ? savedStyling : prev.styling,
           addOns: savedAddOns ? JSON.parse(savedAddOns) : prev.addOns,
         }));
       }
     };
     
     const handleCustomStorageChange = () => {
+      console.log('Main page - customStorageChange event received');
       handleStorageChange();
     };
     
@@ -157,6 +168,25 @@ export default function BuildAWigPage() {
   // Sub-pages should always show what's in localStorage, which matches the main page
 
   // CRITICAL: Sync customization state to localStorage whenever it changes
+  // This ensures sub-pages see the current selections from the main page
+  useEffect(() => {
+    // Save current customization to localStorage so sub-pages can read it
+    localStorage.setItem('selectedCapSize', customization.capSize);
+    localStorage.setItem('selectedLength', customization.length);
+    localStorage.setItem('selectedDensity', customization.density);
+    localStorage.setItem('selectedColor', customization.color);
+    localStorage.setItem('selectedTexture', customization.texture);
+    localStorage.setItem('selectedLace', customization.lace);
+    localStorage.setItem('selectedHairline', customization.hairline);
+    localStorage.setItem('selectedStyling', customization.styling);
+    localStorage.setItem('selectedAddOns', JSON.stringify(customization.addOns));
+    
+    console.log('Main page - Synced customization to localStorage:', {
+      length: customization.length,
+      density: customization.density,
+      color: customization.color
+    });
+  }, [customization]);
   // This ensures sub-pages see the current selections from the main page
   useEffect(() => {
     // Save current customization to localStorage so sub-pages can read it

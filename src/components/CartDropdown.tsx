@@ -12,6 +12,7 @@ interface CartDropdownProps {
 export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdownProps) {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   
   console.log('CartDropdown render - isOpen:', isOpen, 'cartCount:', cartCount);
   
@@ -69,34 +70,50 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   // Calculate actual price based on localStorage values
   const calculateActualPrice = () => {
     try {
-      // Base price for NOIR (this should match the actual product price)
-      let basePrice = 740; // NOIR base price - CORRECTED from 860 to 740
+      // Check if we're in edit mode
+      const isEditMode = localStorage.getItem('editingCartItem') !== null;
+      const prefix = isEditMode ? 'editSelected' : 'selected';
       
-      // Add cap size price
-      const capSizePrice = parseInt(localStorage.getItem('selectedCapSizePrice') || '0');
+      // Get cap size to determine base price
+      const capSize = localStorage.getItem(`${prefix}CapSize`) || 'M';
       
-      // Add length price
-      const lengthPrice = parseInt(localStorage.getItem('selectedLengthPrice') || '0');
+      // Calculate base price based on cap size
+      let basePrice = 740; // Default for standard caps (XS, S, M, L)
+      if (capSize === 'XXS/XS/S' || capSize === 'S/M/L') {
+        basePrice = 780; // Flexible cap options cost $40 extra
+      }
       
-      // Add density price (if applicable)
-      const densityPrice = parseInt(localStorage.getItem('selectedDensityPrice') || '0');
+      // Get additional prices
+      const capSizePrice = parseInt(localStorage.getItem(`${prefix}CapSizePrice`) || '0');
+      const lengthPrice = parseInt(localStorage.getItem(`${prefix}LengthPrice`) || '0');
+      const densityPrice = parseInt(localStorage.getItem(`${prefix}DensityPrice`) || '0');
+      const colorPrice = parseInt(localStorage.getItem(`${prefix}ColorPrice`) || '0');
+      const texturePrice = parseInt(localStorage.getItem(`${prefix}TexturePrice`) || '0');
+      const lacePrice = parseInt(localStorage.getItem(`${prefix}LacePrice`) || '0');
+      const hairlinePrice = parseInt(localStorage.getItem(`${prefix}HairlinePrice`) || '0');
+      const stylingPrice = parseInt(localStorage.getItem(`${prefix}StylingPrice`) || '0');
+      const addOnsPrice = parseInt(localStorage.getItem(`${prefix}AddOnsPrice`) || '0');
       
-      // Add color price (if applicable)
-      const colorPrice = parseInt(localStorage.getItem('selectedColorPrice') || '0');
+      const total = basePrice + capSizePrice + lengthPrice + densityPrice + colorPrice + texturePrice + lacePrice + hairlinePrice + stylingPrice + addOnsPrice;
       
-      // Add texture price (if applicable)
-      const texturePrice = parseInt(localStorage.getItem('selectedTexturePrice') || '0');
+      console.log('CartDropdown - Price calculation:', {
+        isEditMode,
+        prefix,
+        capSize,
+        basePrice,
+        capSizePrice,
+        lengthPrice,
+        densityPrice,
+        colorPrice,
+        texturePrice,
+        lacePrice,
+        hairlinePrice,
+        stylingPrice,
+        addOnsPrice,
+        total
+      });
       
-      // Add lace price (if applicable)
-      const lacePrice = parseInt(localStorage.getItem('selectedLacePrice') || '0');
-      
-      // Add styling price (if applicable)
-      const stylingPrice = parseInt(localStorage.getItem('selectedStylingPrice') || '0');
-      
-      // Add add-ons price (if applicable)
-      const addOnsPrice = parseInt(localStorage.getItem('selectedAddOnsPrice') || '0');
-      
-      return basePrice + capSizePrice + lengthPrice + densityPrice + colorPrice + texturePrice + lacePrice + stylingPrice + addOnsPrice;
+      return total;
     } catch (error) {
       console.error('Error calculating price:', error);
       return 0;
@@ -107,9 +124,72 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   useEffect(() => {
     const loadCartItems = () => {
       try {
-    const storedItems = localStorage.getItem('cartItems');
-    if (storedItems) {
-      setCartItems(JSON.parse(storedItems));
+        const storedItems = localStorage.getItem('cartItems');
+        console.log('CartDropdown - Loading cart items from localStorage:', storedItems);
+        if (storedItems) {
+          const items = JSON.parse(storedItems);
+          console.log('CartDropdown - Parsed cart items:', items);
+          
+          // Recalculate prices for all cart items to ensure accuracy
+          const recalculatedItems = items.map((item: any) => {
+            if (item.name === 'NOIR') {
+              // Calculate correct price based on ALL customization options
+              let basePrice = 740; // Default for standard caps (XS, S, M, L)
+              if (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L') {
+                basePrice = 780; // Flexible cap options cost $40 extra
+              }
+              
+              // Calculate color price from color name
+              let colorPrice = 0;
+              if (item.color && item.color !== 'OFF BLACK') {
+                colorPrice = getColorPrice(item.color);
+                
+                // Add extra $40 for lengths over 30" (excluding OFF BLACK)
+                if (item.length && ['30"', '32"', '34"', '36"', '40"'].includes(item.length)) {
+                  colorPrice += 40;
+                }
+              }
+              
+              // CRITICAL: Use the SAVED PRICES from localStorage instead of recalculating
+              // This ensures cart prices match the customize page prices exactly
+              const lengthPrice = parseFloat(localStorage.getItem('customizeSelectedLengthPrice') || '0');
+              const densityPrice = parseFloat(localStorage.getItem('customizeSelectedDensityPrice') || '0');
+              const lacePrice = parseFloat(localStorage.getItem('customizeSelectedLacePrice') || '0');
+              const texturePrice = parseFloat(localStorage.getItem('customizeSelectedTexturePrice') || '0');
+              const hairlinePrice = parseFloat(localStorage.getItem('customizeSelectedHairlinePrice') || '0');
+              const stylingPrice = parseFloat(localStorage.getItem('customizeSelectedStylingPrice') || '0');
+              const addOnsPrice = parseFloat(localStorage.getItem('customizeSelectedAddOnsPrice') || '0');
+              
+              const calculatedPrice = basePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
+              
+              console.log('CartDropdown - Recalculated price for item:', {
+                itemId: item.id,
+                capSize: item.capSize,
+                color: item.color,
+                lace: item.lace,
+                addOns: item.addOns,
+                storedPrice: item.price,
+                calculatedPrice,
+                breakdown: {
+                  basePrice,
+                  colorPrice,
+                  lengthPrice,
+                  densityPrice,
+                  lacePrice,
+                  texturePrice,
+                  hairlinePrice,
+                  stylingPrice,
+                  addOnsPrice
+                }
+              });
+              
+              return { ...item, price: calculatedPrice };
+            }
+            return item;
+          });
+          
+          console.log('CartDropdown - Loading cart items with recalculated prices:', recalculatedItems);
+          setCartItems(recalculatedItems);
         } else {
           // Generate mock cart items based on cart count
           const actualPrice = calculateActualPrice();
@@ -142,13 +222,16 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     loadCartItems();
     
     // Listen for cart updates
-    const handleCartUpdate = () => {
+    const handleCartUpdate = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      console.log('CartDropdown - Received cartUpdated event:', customEvent.detail);
       loadCartItems();
+      setRefreshTrigger(prev => prev + 1); // Force re-render
     };
     
     window.addEventListener('cartUpdated', handleCartUpdate);
     return () => window.removeEventListener('cartUpdated', handleCartUpdate);
-  }, [cartCount]); // Reload when cart count changes
+  }, [cartCount, refreshTrigger]); // Reload when cart count changes or refresh triggered
 
   // Load selected currency from localStorage
   useEffect(() => {
@@ -175,6 +258,189 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     window.addEventListener('storage', handleCurrencyChange);
     return () => window.removeEventListener('storage', handleCurrencyChange);
   }, [currencyRates]);
+
+  // Helper function to get cap size price based on cap size name
+  const getCapSizePrice = (_capSize: string) => {
+    // All cap sizes (including flexible) have their extra cost included in base price
+    // So capSizePrice should always be 0
+    return 0;
+  };
+
+  // Helper function to get color price based on color name
+  const getColorPrice = (color: string) => {
+    const colorPrices: { [key: string]: number } = {
+      'JET BLACK': 100,  // Fixed: JET BLACK should be $100, not $0
+      'OFF BLACK': 0,    // Only OFF BLACK is free
+      'ESPRESSO': 100,
+      'CHESTNUT': 100,
+      'HONEY': 100,
+      'AUBURN': 100,
+      'COPPER': 100,
+      'GINGER': 100,
+      'SANGRIA': 100,
+      'CHERRY': 100,
+      'RASPBERRY': 100,
+      'PLUM': 100,
+      'COBALT': 100,
+      'TEAL': 100,
+      'SLIME': 100,
+      'CITRINE': 100
+    };
+    return colorPrices[color] || 0;
+  };
+
+  // Helper function to get length price based on length
+  const getLengthPrice = (length: string) => {
+    if (!length) return 0;
+    const lengthNum = parseInt(length.replace('"', ''));
+    if (lengthNum >= 30) return 40;
+    return 0;
+  };
+
+  // Helper function to get density price based on density
+  const getDensityPrice = (density: string) => {
+    const densityPrices: { [key: string]: number } = {
+      '130%': -60,
+      '150%': -40,
+      '180%': -20,
+      '200%': 0,
+      '250%': 80,
+      '300%': 160,
+      '350%': 240,
+      '400%': 320
+    };
+    return densityPrices[density] || 0;
+  };
+
+  // Helper function to get lace price based on lace type
+  const getLacePrice = (lace: string) => {
+    const lacePrices: { [key: string]: number } = {
+      '13X6': 0,    // Default, no additional cost
+      '13X4': -20,  // Less than default, discount
+      '13X5': 0,
+      '13X7': 0,
+      '13X8': 0,
+      '13X9': 0,
+      '13X10': 0,
+      '13X11': 0,
+      '13X12': 0,
+      '13X13': 0,
+      '13X14': 0,
+      '13X15': 0,
+      '13X16': 0,
+      '13X17': 0,
+      '13X18': 0,
+      '13X19': 0,
+      '13X20': 0,
+      '13X21': 0,
+      '13X22': 0,
+      '13X23': 0,
+      '13X24': 0,
+      '13X25': 0,
+      '13X26': 0,
+      '13X27': 0,
+      '13X28': 0,
+      '13X29': 0,
+      '13X30': 0,
+      '13X31': 0,
+      '13X32': 0,
+      '13X33': 0,
+      '13X34': 0,
+      '13X35': 0,
+      '13X36': 0,
+      '13X37': 0,
+      '13X38': 0,
+      '13X39': 0,
+      '13X40': 0,
+      '2X6': -40,   // Less than default, discount
+      '4X4': -40,   // Less than default, discount
+      '5X5': -20,   // Less than default, discount
+      '6X6': 60,    // Additional cost for 6X6 lace
+      '7X7': 100,   // Additional cost for 7X7 lace
+      '9X6': 80     // Additional cost for 9X6 lace
+    };
+    return lacePrices[lace] || 0;
+  };
+
+  // Helper function to get texture price based on texture
+  const getTexturePrice = (texture: string) => {
+    const texturePrices: { [key: string]: number } = {
+      'SILKY': 0,
+      'KINKY': 0,
+      'YAKI': 0
+    };
+    return texturePrices[texture] || 0;
+  };
+
+  // Helper function to get hairline price based on hairline
+  const getHairlinePrice = (hairline: string) => {
+    if (!hairline) return 0;
+    const hairlineArray = hairline.split(',');
+    let total = 0;
+    
+    hairlineArray.forEach(h => {
+      const hairlinePrices: { [key: string]: number } = {
+        'NATURAL': 0,
+        'PEAK': 40,
+        'LAGOS': 40,
+        'BABY HAIR': 40
+      };
+      total += hairlinePrices[h.trim()] || 0;
+    });
+    
+    // Apply $20 discount to Lagos when combined with Peak
+    if (hairlineArray.includes('LAGOS') && hairlineArray.includes('PEAK')) {
+      total -= 20;
+    }
+    
+    return total;
+  };
+
+  // Helper function to get styling price based on styling
+  const getStylingPrice = (styling: string) => {
+    if (!styling || styling === 'NONE') return 0;
+    
+    const stylingPrices: { [key: string]: number } = {
+      'BANGS': 40,
+      'CRIMPS': 140,
+      'FLAT IRON': 100,
+      'LAYERS': 180
+    };
+    
+    // Handle multiple styling selections
+    if (styling.includes(',')) {
+      const stylingArray = styling.split(',');
+      const hasBangs = stylingArray.includes('BANGS');
+      const otherStyling = stylingArray.find(s => s !== 'BANGS');
+      
+      if (hasBangs && otherStyling) {
+        return (stylingPrices[otherStyling.trim()] || 0) + 20; // $20 for bangs when combined
+      } else if (hasBangs) {
+        return 40; // Bangs only
+      } else if (otherStyling) {
+        return stylingPrices[otherStyling.trim()] || 0;
+      } else {
+        return 0;
+      }
+    }
+    
+    return stylingPrices[styling] || 0;
+  };
+
+  // Helper function to get add-ons price based on add-ons array
+  const getAddOnsPrice = (addOns: string[]) => {
+    if (!addOns || addOns.length === 0) return 0;
+    
+    const addOnPrices: { [key: string]: number } = {
+      'BLEACH': 40,
+      'PLUCK': 40,
+      'BLUNT CUT': 20
+    };
+    
+    return addOns.reduce((total, addOn) => {
+      return total + (addOnPrices[addOn] || 0);
+    }, 0);
+  };
 
   // Format price with currency
   const formatPrice = useCallback((price: number) => {
