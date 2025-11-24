@@ -1379,27 +1379,31 @@ function NoirSelection() {
 
   return (
     <>
-      {/* DEBUG: Bright red background to see if component renders */}
+      {/* DEBUG: Bright red banner at top to see if component renders */}
       <div style={{ 
         position: 'fixed', 
         top: 0, 
         left: 0, 
         right: 0, 
-        bottom: 0, 
+        height: '120px',
         backgroundColor: 'red', 
-        zIndex: 9999,
+        zIndex: 99999,
         padding: '20px',
         color: 'white',
-        fontSize: '24px',
-        fontWeight: 'bold'
+        fontSize: '32px',
+        fontWeight: 'bold',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+        border: '5px solid yellow',
+        boxShadow: '0 0 20px black'
       }}>
-        DEBUG: NoirSelection Component Rendered!
+        🔴 DEBUG: NoirSelection Component IS RENDERING! 🔴
         <br />
-        showLoading: {String(showLoading)}
-        <br />
-        currentImages exists: {String(!!currentImages)}
-        <br />
-        current3DImages exists: {String(!!current3DImages)}
+        <span style={{ fontSize: '18px' }}>
+          showLoading: {String(showLoading)} | Images: {String(!!currentImages)} | 3D: {String(!!current3DImages)}
+        </span>
       </div>
       
       {showLoading && <LoadingScreen />}
@@ -1407,7 +1411,8 @@ function NoirSelection() {
       
       <div className="min-h-screen" style={{
         position: 'relative',
-        backgroundColor: 'yellow' // DEBUG: Yellow background
+        backgroundColor: 'yellow', // DEBUG: Yellow background
+        marginTop: '120px' // Space for debug banner
       }}>
         {/* Fixed Background Layer */}
         <div 
