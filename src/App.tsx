@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode, lazy, Suspense } from 'react';
 import BuildAWigPage from './pages/build-a-wig/page';
 import LengthPage from './pages/build-a-wig/length/page';
 import ColorPage from './pages/build-a-wig/color/page';
@@ -10,7 +10,10 @@ import HairlinePage from './pages/build-a-wig/hairline/page';
 import CapSizePage from './pages/build-a-wig/cap-size/page';
 import StylingPage from './pages/build-a-wig/styling/page';
 import AddOnsPage from './pages/build-a-wig/addons/page';
-import NoirUnitPage from './pages/units/noir/page';
+import LoadingScreen from './components/base/LoadingScreen';
+
+// Use lazy loading for noir page like canonical backup
+const NoirUnitPage = lazy(() => import('./pages/units/noir/page'));
 
 // Error Boundary to catch component errors
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null }> {
@@ -56,20 +59,22 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
 function App() {
   return (
     <ErrorBoundary>
-      <Routes>
-        <Route path="/" element={<BuildAWigPage />} />
-        <Route path="/build-a-wig" element={<BuildAWigPage />} />
-        <Route path="/build-a-wig/length" element={<LengthPage />} />
-        <Route path="/build-a-wig/color" element={<ColorPage />} />
-        <Route path="/build-a-wig/density" element={<DensityPage />} />
-        <Route path="/build-a-wig/lace" element={<LacePage />} />
-        <Route path="/build-a-wig/texture" element={<TexturePage />} />
-        <Route path="/build-a-wig/hairline" element={<HairlinePage />} />
-        <Route path="/build-a-wig/cap-size" element={<CapSizePage />} />
-        <Route path="/build-a-wig/styling" element={<StylingPage />} />
-        <Route path="/build-a-wig/addons" element={<AddOnsPage />} />
-        <Route path="/units/noir" element={<NoirUnitPage />} />
-      </Routes>
+      <Suspense fallback={<LoadingScreen />}>
+        <Routes>
+          <Route path="/" element={<BuildAWigPage />} />
+          <Route path="/build-a-wig" element={<BuildAWigPage />} />
+          <Route path="/build-a-wig/length" element={<LengthPage />} />
+          <Route path="/build-a-wig/color" element={<ColorPage />} />
+          <Route path="/build-a-wig/density" element={<DensityPage />} />
+          <Route path="/build-a-wig/lace" element={<LacePage />} />
+          <Route path="/build-a-wig/texture" element={<TexturePage />} />
+          <Route path="/build-a-wig/hairline" element={<HairlinePage />} />
+          <Route path="/build-a-wig/cap-size" element={<CapSizePage />} />
+          <Route path="/build-a-wig/styling" element={<StylingPage />} />
+          <Route path="/build-a-wig/addons" element={<AddOnsPage />} />
+          <Route path="/units/noir" element={<NoirUnitPage />} />
+        </Routes>
+      </Suspense>
     </ErrorBoundary>
   );
 }
