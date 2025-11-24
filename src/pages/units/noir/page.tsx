@@ -1416,7 +1416,7 @@ function NoirSelection() {
                   localStorage.setItem('selectedCapSize', selectedFlexibleCap);
                   localStorage.setItem('selectedCapSizePrice', '60'); // Flexible cap has $60 additional price
                 }
-                window.REACT_APP_NAVIGATE('/build-a-wig');
+                navigate('/build-a-wig');
               }}
             >
               STRAIGHT &gt;
