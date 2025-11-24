@@ -98,6 +98,17 @@ export default function BuildAWigPage() {
 
   const [basePrice] = useState(740);
   const [totalPrice, setTotalPrice] = useState(740);
+  const [priceBreakdown, setPriceBreakdown] = useState({
+    capSizePrice: 0,
+    colorPrice: 0,
+    lengthPrice: 0,
+    densityPrice: 0,
+    lacePrice: 0,
+    texturePrice: 0,
+    hairlinePrice: 0,
+    stylingPrice: 0,
+    addOnsPrice: 0
+  });
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   
@@ -1008,8 +1019,8 @@ export default function BuildAWigPage() {
       const stylingPrice = parseFloat(localStorage.getItem('selectedStylingPrice') || '0');
       const addOnsPrice = parseFloat(localStorage.getItem('selectedAddOnsPrice') || '0');
       
-      // Debug logging to identify which price is wrong
-      console.log('Price calculation:', {
+      // Store individual prices for debug display
+      (window as any).priceDebug = {
         basePrice,
         capSizePrice,
         colorPrice,
@@ -1021,12 +1032,25 @@ export default function BuildAWigPage() {
         stylingPrice,
         addOnsPrice,
         total: basePrice + capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice
-      });
+      };
       
       // Add all the actual prices
       total += capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
       
       setTotalPrice(total);
+      
+      // Store breakdown for debug display
+      setPriceBreakdown({
+        capSizePrice,
+        colorPrice,
+        lengthPrice,
+        densityPrice,
+        lacePrice,
+        texturePrice,
+        hairlinePrice,
+        stylingPrice,
+        addOnsPrice
+      });
     };
 
     // Calculate price immediately and on changes
@@ -2100,6 +2124,32 @@ export default function BuildAWigPage() {
                   style={{ fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif', fontWeight: '500' }}
                   dangerouslySetInnerHTML={formatPrice(totalPrice)}
               />
+              
+              {/* DEBUG PRICE BREAKDOWN - MOBILE ONLY */}
+              <div style={{
+                marginTop: '10px',
+                padding: '10px',
+                backgroundColor: '#f0f0f0',
+                borderRadius: '5px',
+                fontSize: '10px',
+                textAlign: 'left',
+                fontFamily: 'monospace'
+              }}>
+                <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>PRICE DEBUG:</div>
+                <div>Base: ${basePrice}</div>
+                <div>Cap: ${priceBreakdown.capSizePrice}</div>
+                <div>Color: ${priceBreakdown.colorPrice}</div>
+                <div>Length: ${priceBreakdown.lengthPrice}</div>
+                <div>Density: ${priceBreakdown.densityPrice}</div>
+                <div>Lace: ${priceBreakdown.lacePrice}</div>
+                <div>Texture: ${priceBreakdown.texturePrice}</div>
+                <div>Hairline: ${priceBreakdown.hairlinePrice}</div>
+                <div>Styling: ${priceBreakdown.stylingPrice}</div>
+                <div>AddOns: ${priceBreakdown.addOnsPrice}</div>
+                <div style={{ fontWeight: 'bold', marginTop: '5px', borderTop: '1px solid #ccc', paddingTop: '5px' }}>
+                  TOTAL: ${totalPrice}
+                </div>
+              </div>
             </div>
           </div>
         </div>
