@@ -151,14 +151,15 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
               }
               
               // CRITICAL: Use the SAVED PRICES from localStorage instead of recalculating
-              // This ensures cart prices match the customize page prices exactly
-              const lengthPrice = parseFloat(localStorage.getItem('customizeSelectedLengthPrice') || '0');
-              const densityPrice = parseFloat(localStorage.getItem('customizeSelectedDensityPrice') || '0');
-              const lacePrice = parseFloat(localStorage.getItem('customizeSelectedLacePrice') || '0');
-              const texturePrice = parseFloat(localStorage.getItem('customizeSelectedTexturePrice') || '0');
-              const hairlinePrice = parseFloat(localStorage.getItem('customizeSelectedHairlinePrice') || '0');
-              const stylingPrice = parseFloat(localStorage.getItem('customizeSelectedStylingPrice') || '0');
-              const addOnsPrice = parseFloat(localStorage.getItem('customizeSelectedAddOnsPrice') || '0');
+              // This ensures cart prices match the build-a-wig page prices exactly
+              // Use 'selected*' keys for build-a-wig page, 'customizeSelected*' for customize page
+              const lengthPrice = parseFloat(localStorage.getItem('selectedLengthPrice') || localStorage.getItem('customizeSelectedLengthPrice') || '0');
+              const densityPrice = parseFloat(localStorage.getItem('selectedDensityPrice') || localStorage.getItem('customizeSelectedDensityPrice') || '0');
+              const lacePrice = parseFloat(localStorage.getItem('selectedLacePrice') || localStorage.getItem('customizeSelectedLacePrice') || '0');
+              const texturePrice = parseFloat(localStorage.getItem('selectedTexturePrice') || localStorage.getItem('customizeSelectedTexturePrice') || '0');
+              const hairlinePrice = parseFloat(localStorage.getItem('selectedHairlinePrice') || localStorage.getItem('customizeSelectedHairlinePrice') || '0');
+              const stylingPrice = parseFloat(localStorage.getItem('selectedStylingPrice') || localStorage.getItem('customizeSelectedStylingPrice') || '0');
+              const addOnsPrice = parseFloat(localStorage.getItem('selectedAddOnsPrice') || localStorage.getItem('customizeSelectedAddOnsPrice') || '0');
               
               const calculatedPrice = basePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
               
@@ -204,10 +205,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
               capSize: localStorage.getItem('selectedCapSize') || 'M',
               length: localStorage.getItem('selectedLength') || '24"',
               density: localStorage.getItem('selectedDensity') || '200%',
-              color: localStorage.getItem('selectedColor') || 'Silky Off Black',
-              texture: localStorage.getItem('selectedTexture') || 'Straight',
-              lace: localStorage.getItem('selectedLace') || 'Natural Hairline',
-              styling: localStorage.getItem('selectedStyling') || 'None',
+              color: localStorage.getItem('selectedColor') || 'OFF BLACK',
+              texture: localStorage.getItem('selectedTexture') || 'SILKY',
+              lace: localStorage.getItem('selectedLace') || '13X6',
+              styling: localStorage.getItem('selectedStyling') || 'NONE',
               addOns: []
             });
           }
@@ -260,7 +261,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   }, [currencyRates]);
 
   // Helper function to get cap size price based on cap size name
-  const getCapSizePrice = (_capSize: string) => {
+  // Note: These helper functions are kept for potential future edit functionality
+  const _getCapSizePrice = (_capSize: string) => {
     // All cap sizes (including flexible) have their extra cost included in base price
     // So capSizePrice should always be 0
     return 0;
@@ -290,7 +292,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   };
 
   // Helper function to get length price based on length
-  const getLengthPrice = (length: string) => {
+  const _getLengthPrice = (length: string) => {
     if (!length) return 0;
     const lengthNum = parseInt(length.replace('"', ''));
     if (lengthNum >= 30) return 40;
@@ -298,7 +300,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   };
 
   // Helper function to get density price based on density
-  const getDensityPrice = (density: string) => {
+  const _getDensityPrice = (density: string) => {
     const densityPrices: { [key: string]: number } = {
       '130%': -60,
       '150%': -40,
@@ -313,7 +315,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   };
 
   // Helper function to get lace price based on lace type
-  const getLacePrice = (lace: string) => {
+  const _getLacePrice = (lace: string) => {
     const lacePrices: { [key: string]: number } = {
       '13X6': 0,    // Default, no additional cost
       '13X4': -20,  // Less than default, discount
@@ -363,7 +365,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   };
 
   // Helper function to get texture price based on texture
-  const getTexturePrice = (texture: string) => {
+  const _getTexturePrice = (texture: string) => {
     const texturePrices: { [key: string]: number } = {
       'SILKY': 0,
       'KINKY': 0,
@@ -373,7 +375,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   };
 
   // Helper function to get hairline price based on hairline
-  const getHairlinePrice = (hairline: string) => {
+  const _getHairlinePrice = (hairline: string) => {
     if (!hairline) return 0;
     const hairlineArray = hairline.split(',');
     let total = 0;
@@ -397,7 +399,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   };
 
   // Helper function to get styling price based on styling
-  const getStylingPrice = (styling: string) => {
+  const _getStylingPrice = (styling: string) => {
     if (!styling || styling === 'NONE') return 0;
     
     const stylingPrices: { [key: string]: number } = {
@@ -428,7 +430,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   };
 
   // Helper function to get add-ons price based on add-ons array
-  const getAddOnsPrice = (addOns: string[]) => {
+  const _getAddOnsPrice = (addOns: string[]) => {
     if (!addOns || addOns.length === 0) return 0;
     
     const addOnPrices: { [key: string]: number } = {
@@ -694,7 +696,14 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           if (item.texture && item.texture !== 'SILKY') items.push({ type: 'texture', value: item.texture, fullName: item.texture });
                           if (item.color && item.color !== 'OFF BLACK') items.push({ type: 'color', value: item.color, fullName: item.color });
                           if (item.hairline && item.hairline !== 'NATURAL') items.push({ type: 'hairline', value: item.hairline, fullName: `${item.hairline} hairline` });
-                          if (item.styling && item.styling !== 'NONE' && item.partSelection) items.push({ type: 'styling', value: item.styling, partSelection: item.partSelection, fullName: item.styling });
+                          
+                          // Only show styling if it's a valid styling option (BANGS, CRIMPS, etc.), not a part selection (MIDDLE, LEFT, RIGHT)
+                          const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
+                          const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
+                          if (item.styling && item.styling !== 'NONE' && hairStylingOptions.includes(item.styling) && item.partSelection) {
+                            items.push({ type: 'styling', value: item.styling, partSelection: item.partSelection, fullName: item.styling });
+                          }
+                          
                           if (item.addOns && item.addOns.length > 0) items.push({ type: 'addOns', value: item.addOns, fullName: item.addOns });
                           
                           // Use full names if only 1 customizable item (excluding density and lace)
@@ -748,9 +757,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                                 text += (text ? ' ' : '') + partAbbrev;
                             
                             // Use non-breaking spaces within styling section and connect to part selection
-                                const stylingText = Array.isArray(itemData.value) ? itemData.value.join(' ') : String(itemData.value);
-                                const styledText = stylingText.replace(/ /g, '\u00A0');
-                                text += '\u00A0' + styledText + (isLast ? '' : ',');
+                            if (typeof itemData.value === 'string') {
+                              const stylingText = itemData.value.replace(/ /g, '\u00A0');
+                              text += '\u00A0' + stylingText + (isLast ? '' : ',');
+                            }
                               }
                             } else if (itemData.type === 'addOns') {
                               if (useFullNames) {

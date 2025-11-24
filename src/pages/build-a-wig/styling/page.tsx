@@ -365,9 +365,14 @@ export default function StylingSelectionPage() {
     // Save part selection (always has a value, defaults to MIDDLE)
     localStorage.setItem('selectedPartSelection', selectedPartSelection);
     
-    // Save combined styling for main page display (use first styling or part selection)
-    const combinedStyling = selectedHairStyling.length > 0 ? selectedHairStyling[0] : selectedPartSelection;
-    localStorage.setItem('selectedStyling', combinedStyling || 'MIDDLE');
+    // Save styling - only save actual styling selections, not part selection when no styling is selected
+    if (selectedHairStyling.length > 0) {
+      // When styling is selected, save the first styling option
+      localStorage.setItem('selectedStyling', selectedHairStyling[0]);
+    } else {
+      // When no styling is selected, save 'NONE'
+      localStorage.setItem('selectedStyling', 'NONE');
+    }
     
     localStorage.setItem('selectedStylingPrice', getTotalStylingPrice().toString());
     
