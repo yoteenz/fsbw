@@ -113,13 +113,14 @@ const priorityMessages = [
   }
 ];
 
-const systemNotifications = [
-  { id: 27, text: "SYSTEM MAINTENANCE - SECURITY UPDATE REQUIRED", urgent: false },
-  { id: 28, text: "SERVER ERROR - DATABASE CONNECTION LOST", urgent: false },
-  { id: 29, text: "SECURITY ALERT - UNUSUAL LOGIN ACTIVITY", urgent: false },
-  { id: 30, text: "SYSTEM UPDATE - NEW FEATURES AVAILABLE", urgent: false },
-  { id: 31, text: "BACKUP REMINDER - WEEKLY DATA BACKUP DUE", urgent: false }
-];
+// System notifications - kept for future use
+// const systemNotifications = [
+//   { id: 27, text: "SYSTEM MAINTENANCE - SECURITY UPDATE REQUIRED", urgent: false },
+//   { id: 28, text: "SERVER ERROR - DATABASE CONNECTION LOST", urgent: false },
+//   { id: 29, text: "SECURITY ALERT - UNUSUAL LOGIN ACTIVITY", urgent: false },
+//   { id: 30, text: "SYSTEM UPDATE - NEW FEATURES AVAILABLE", urgent: false },
+//   { id: 31, text: "BACKUP REMINDER - WEEKLY DATA BACKUP DUE", urgent: false }
+// ];
 
 interface AdminHeaderProps {
   /** Text displayed after the "ADMIN >" label */
@@ -146,9 +147,9 @@ export default function AdminHeader({
   const [isSearchPressed, setIsSearchPressed] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isMessagesPressed, setIsMessagesPressed] = useState(false);
-  const [isNotificationsPressed, setIsNotificationsPressed] = useState(false);
-  const [hasNotifications, setHasNotifications] = useState(true);
+  const [_isMessagesPressed, _setIsMessagesPressed] = useState(false);
+  const [_isNotificationsPressed, _setIsNotificationsPressed] = useState(false);
+  const [_hasNotifications, _setHasNotifications] = useState(true);
   const [showNotificationsDropdown, setShowNotificationsDropdown] = useState(false);
   const [showMessagesDropdown, setShowMessagesDropdown] = useState(false);
   const [readNotifications, setReadNotifications] = useState<number[]>([]);

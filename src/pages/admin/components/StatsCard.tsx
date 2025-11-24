@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface StatsItem {
@@ -253,12 +253,12 @@ export default function StatsCard({ data, onCardClick }: StatsCardProps) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1">
                     <span className="text-[8px] font-futura" style={{ fontWeight: "515", color: "#909090" }}>
-                      {item.highlight}
+                      {(item as any).highlight}
                     </span>
                   </div>
                   <div className="flex items-center">
                     <span className="text-[8px] font-futura" style={ { fontWeight: "515", color: "#909090" }}>
-                      {item.activity}
+                      {(item as any).activity}
                     </span>
                   </div>
                 </div>

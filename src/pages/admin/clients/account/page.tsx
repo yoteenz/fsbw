@@ -59,9 +59,6 @@ export default function AdminClientsAccount() {
     }
   ];
 
-  const handleEditClient = () => {
-    alert('Edit client functionality');
-  };
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>

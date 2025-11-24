@@ -45,10 +45,6 @@ export default function AdminMeetings() {
     }
   ];
 
-  const handleNewMeeting = () => {
-    alert('Schedule new meeting functionality');
-  };
-
   const handleEditMeeting = (meetingId: number) => {
     alert(`Edit meeting ${meetingId}`);
   };

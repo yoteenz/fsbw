@@ -102,226 +102,226 @@ export default function RecentActivity({ onViewModeChange }: RecentActivityProps
     }
   ];
 
-  // Operational notifications (only show in grid view)
-  const operationalNotifications = [
-    {
-      id: 6,
-      type: 'shipping_delay',
-      title: 'SHIPPING DELAY - 12 ORDERS AFFECTED',
-      category: 'OPERATIONAL',
-      date: '2/5',
-      dateSort: new Date(2025, 1, 5),
-      urgency: 'medium',
-      viewed: false,
-      customer: {
-        name: 'MULTIPLE CUSTOMERS',
-        location: 'VARIOUS LOCATIONS',
-        tier: 'VARIOUS',
-      },
-      action: 'UPDATE CUSTOMERS BY EOD',
-    },
-    {
-      id: 7,
-      type: 'refund_request',
-      title: 'REFUND REQUEST - CUSTOMER ID #789',
-      category: 'OPERATIONAL',
-      date: '2/5',
-      dateSort: new Date(2025, 1, 5),
-      urgency: 'medium',
-      viewed: false,
-      customer: {
-        name: 'EMILY RODRIGUEZ',
-        location: 'AUSTIN, TX USA',
-        tier: 'STANDARD',
-        reason: 'PRODUCT RETURN WITHIN WARRANTY',
-      },
-      action: 'PROCESS WITHIN 3 DAYS',
-    },
-    {
-      id: 8,
-      type: 'equipment_failure',
-      title: 'EQUIPMENT FAILURE - PRINTER OFFLINE',
-      category: 'OPERATIONAL',
-      date: '2/6',
-      dateSort: new Date(2025, 1, 6),
-      urgency: 'low',
-      viewed: false,
-      customer: {
-        name: 'OFFICE MANAGER',
-        location: 'MAIN OFFICE',
-        tier: 'INTERNAL',
-      },
-      action: 'SCHEDULE REPAIR',
-    }
-  ];
+  // Operational notifications (only show in grid view) - kept for future use
+  // const operationalNotifications = [
+  //   {
+  //     id: 6,
+  //     type: 'shipping_delay',
+  //     title: 'SHIPPING DELAY - 12 ORDERS AFFECTED',
+  //     category: 'OPERATIONAL',
+  //     date: '2/5',
+  //     dateSort: new Date(2025, 1, 5),
+  //     urgency: 'medium',
+  //     viewed: false,
+  //     customer: {
+  //       name: 'MULTIPLE CUSTOMERS',
+  //       location: 'VARIOUS LOCATIONS',
+  //       tier: 'VARIOUS',
+  //     },
+  //     action: 'UPDATE CUSTOMERS BY EOD',
+  //   },
+  //   {
+  //     id: 7,
+  //     type: 'refund_request',
+  //     title: 'REFUND REQUEST - CUSTOMER ID #789',
+  //     category: 'OPERATIONAL',
+  //     date: '2/5',
+  //     dateSort: new Date(2025, 1, 5),
+  //     urgency: 'medium',
+  //     viewed: false,
+  //     customer: {
+  //       name: 'EMILY RODRIGUEZ',
+  //       location: 'AUSTIN, TX USA',
+  //       tier: 'STANDARD',
+  //       reason: 'PRODUCT RETURN WITHIN WARRANTY',
+  //     },
+  //     action: 'PROCESS WITHIN 3 DAYS',
+  //   },
+  //   {
+  //     id: 8,
+  //     type: 'equipment_failure',
+  //     title: 'EQUIPMENT FAILURE - PRINTER OFFLINE',
+  //     category: 'OPERATIONAL',
+  //     date: '2/6',
+  //     dateSort: new Date(2025, 1, 6),
+  //     urgency: 'low',
+  //     viewed: false,
+  //     customer: {
+  //       name: 'OFFICE MANAGER',
+  //       location: 'MAIN OFFICE',
+  //       tier: 'INTERNAL',
+  //     },
+  //     action: 'SCHEDULE REPAIR',
+  //   }
+  // ];
 
-  // System notifications (only show in grid view under "SYSTEM" group)
-  const systemNotifications = [
-    {
-      id: 20,
-      type: 'system_maintenance',
-      title: 'SYSTEM MAINTENANCE - SECURITY UPDATE REQUIRED',
-      category: 'SYSTEM',
-      date: '2/6',
-      dateSort: new Date(2025, 1, 6),
-      urgency: 'medium',
-      viewed: false,
-      customer: {
-        name: 'SYSTEM ADMINISTRATOR',
-        location: 'SERVER ROOM',
-        tier: 'ADMIN',
-      },
-      action: 'SCHEDULE WITHIN 24 HOURS',
-    },
-    {
-      id: 21,
-      type: 'server_error',
-      title: 'SERVER ERROR - DATABASE CONNECTION LOST',
-      category: 'SYSTEM',
-      date: '2/6',
-      dateSort: new Date(2025, 1, 6),
-      urgency: 'medium',
-      viewed: false,
-      customer: {
-        name: 'TECHNICAL TEAM',
-        location: 'IT DEPARTMENT',
-        tier: 'INTERNAL',
-      },
-      action: 'RESTORE CONNECTION',
-    },
-    {
-      id: 22,
-      type: 'security_alert',
-      title: 'SECURITY ALERT - UNUSUAL LOGIN ACTIVITY',
-      category: 'SYSTEM',
-      date: '2/5',
-      dateSort: new Date(2025, 1, 5),
-      urgency: 'medium',
-      viewed: false,
-      customer: {
-        name: 'SECURITY TEAM',
-        location: 'MONITORING CENTER',
-        tier: 'SECURITY',
-      },
-      action: 'MONITOR AND INVESTIGATE',
-    },
-    {
-      id: 23,
-      type: 'system_update',
-      title: 'SYSTEM UPDATE - NEW FEATURES AVAILABLE',
-      category: 'SYSTEM',
-      date: '2/5',
-      dateSort: new Date(2025, 1, 5),
-      urgency: 'medium',
-      viewed: false,
-      customer: {
-        name: 'DEVELOPMENT TEAM',
-        location: 'DEV ENVIRONMENT',
-        tier: 'INTERNAL',
-      },
-      action: 'DEPLOY NEXT WEEKEND',
-    },
-    {
-      id: 24,
-      type: 'backup_reminder',
-      title: 'BACKUP REMINDER - WEEKLY DATA BACKUP DUE',
-      category: 'SYSTEM',
-      date: '2/6',
-      dateSort: new Date(2025, 1, 6),
-      urgency: 'medium',
-      viewed: false,
-      customer: {
-        name: 'IT DEPARTMENT',
-        location: 'DATA CENTER',
-        tier: 'INTERNAL',
-      },
-      action: 'COMPLETE BY FRIDAY',
-    }
-  ];
+  // System notifications (only show in grid view under "SYSTEM" group) - kept for future use
+  // const systemNotifications = [
+  //   {
+  //     id: 20,
+  //     type: 'system_maintenance',
+  //     title: 'SYSTEM MAINTENANCE - SECURITY UPDATE REQUIRED',
+  //     category: 'SYSTEM',
+  //     date: '2/6',
+  //     dateSort: new Date(2025, 1, 6),
+  //     urgency: 'medium',
+  //     viewed: false,
+  //     customer: {
+  //       name: 'SYSTEM ADMINISTRATOR',
+  //       location: 'SERVER ROOM',
+  //       tier: 'ADMIN',
+  //     },
+  //     action: 'SCHEDULE WITHIN 24 HOURS',
+  //   },
+  //   {
+  //     id: 21,
+  //     type: 'server_error',
+  //     title: 'SERVER ERROR - DATABASE CONNECTION LOST',
+  //     category: 'SYSTEM',
+  //     date: '2/6',
+  //     dateSort: new Date(2025, 1, 6),
+  //     urgency: 'medium',
+  //     viewed: false,
+  //     customer: {
+  //       name: 'TECHNICAL TEAM',
+  //       location: 'IT DEPARTMENT',
+  //       tier: 'INTERNAL',
+  //     },
+  //     action: 'RESTORE CONNECTION',
+  //   },
+  //   {
+  //     id: 22,
+  //     type: 'security_alert',
+  //     title: 'SECURITY ALERT - UNUSUAL LOGIN ACTIVITY',
+  //     category: 'SYSTEM',
+  //     date: '2/5',
+  //     dateSort: new Date(2025, 1, 5),
+  //     urgency: 'medium',
+  //     viewed: false,
+  //     customer: {
+  //       name: 'SECURITY TEAM',
+  //       location: 'MONITORING CENTER',
+  //       tier: 'SECURITY',
+  //     },
+  //     action: 'MONITOR AND INVESTIGATE',
+  //   },
+  //   {
+  //     id: 23,
+  //     type: 'system_update',
+  //     title: 'SYSTEM UPDATE - NEW FEATURES AVAILABLE',
+  //     category: 'SYSTEM',
+  //     date: '2/5',
+  //     dateSort: new Date(2025, 1, 5),
+  //     urgency: 'medium',
+  //     viewed: false,
+  //     customer: {
+  //       name: 'DEVELOPMENT TEAM',
+  //       location: 'DEV ENVIRONMENT',
+  //       tier: 'INTERNAL',
+  //     },
+  //     action: 'DEPLOY NEXT WEEKEND',
+  //   },
+  //   {
+  //     id: 24,
+  //     type: 'backup_reminder',
+  //     title: 'BACKUP REMINDER - WEEKLY DATA BACKUP DUE',
+  //     category: 'SYSTEM',
+  //     date: '2/6',
+  //     dateSort: new Date(2025, 1, 6),
+  //     urgency: 'medium',
+  //     viewed: false,
+  //     customer: {
+  //       name: 'IT DEPARTMENT',
+  //       location: 'DATA CENTER',
+  //       tier: 'INTERNAL',
+  //     },
+  //     action: 'COMPLETE BY FRIDAY',
+  //   }
+  // ];
 
-  // Brand notifications (only show in grid view under "BRAND" group)
-  const brandNotifications = [
-    {
-      id: 30,
-      type: 'revenue_threshold',
-      title: 'REVENUE THRESHOLD - MONTHLY TARGET EXCEEDED',
-      category: 'BRAND',
-      date: '2/6',
-      dateSort: new Date(2025, 1, 6),
-      urgency: 'medium',
-      viewed: false,
-      customer: {
-        name: 'FINANCE DEPARTMENT',
-        location: 'CORPORATE',
-        tier: 'MANAGEMENT',
-      },
-      action: 'CELEBRATE SUCCESS!',
-    },
-    {
-      id: 31,
-      type: 'client_retention',
-      title: 'CLIENT RETENTION - 94% ACHIEVEMENT UNLOCKED',
-      category: 'BRAND',
-      date: '2/5',
-      dateSort: new Date(2025, 1, 5),
-      urgency: 'medium',
-      viewed: false,
-      customer: {
-        name: 'ACCOUNT MANAGEMENT',
-        location: 'CLIENT SERVICES',
-        tier: 'MANAGEMENT',
-      },
-      action: 'SHARE MILESTONE WITH TEAM',
-    },
-    {
-      id: 32,
-      type: 'growth_milestone',
-      title: 'GROWTH MILESTONE - 15% INCREASE THIS QUARTER',
-      category: 'BRAND',
-      date: '2/5',
-      dateSort: new Date(2025, 1, 5),
-      urgency: 'medium',
-      viewed: false,
-      customer: {
-        name: 'BUSINESS DEVELOPMENT',
-        location: 'STRATEGY OFFICE',
-        tier: 'EXECUTIVE',
-      },
-      action: 'PLAN EXPANSION STRATEGY',
-    },
-    {
-      id: 33,
-      type: 'performance_metrics',
-      title: 'PERFORMANCE METRICS - TARGETS EXCEEDED',
-      category: 'BRAND',
-      date: '2/4',
-      dateSort: new Date(2025, 1, 4),
-      urgency: 'medium',
-      viewed: false,
-      customer: {
-        name: 'MANAGEMENT TEAM',
-        location: 'EXECUTIVE SUITE',
-        tier: 'EXECUTIVE',
-      },
-      action: 'REVIEW AND SET NEW GOALS',
-    },
-    {
-      id: 34,
-      type: 'brand_recognition',
-      title: 'BRAND RECOGNITION - NEW MARKET PENETRATION',
-      category: 'BRAND',
-      date: '2/4',
-      dateSort: new Date(2025, 1, 4),
-      urgency: 'medium',
-      viewed: false,
-      customer: {
-        name: 'MARKETING DIRECTOR',
-        location: 'MARKETING DEPT',
-        tier: 'MANAGEMENT',
-      },
-      action: 'DEVELOP TARGETED CAMPAIGNS',
-    }
-  ];
+  // Brand notifications (only show in grid view under "BRAND" group) - kept for future use
+  // const brandNotifications = [
+  //   {
+  //     id: 30,
+  //     type: 'revenue_threshold',
+  //     title: 'REVENUE THRESHOLD - MONTHLY TARGET EXCEEDED',
+  //     category: 'BRAND',
+  //     date: '2/6',
+  //     dateSort: new Date(2025, 1, 6),
+  //     urgency: 'medium',
+  //     viewed: false,
+  //     customer: {
+  //       name: 'FINANCE DEPARTMENT',
+  //       location: 'CORPORATE',
+  //       tier: 'MANAGEMENT',
+  //     },
+  //     action: 'CELEBRATE SUCCESS!',
+  //   },
+  //   {
+  //     id: 31,
+  //     type: 'client_retention',
+  //     title: 'CLIENT RETENTION - 94% ACHIEVEMENT UNLOCKED',
+  //     category: 'BRAND',
+  //     date: '2/5',
+  //     dateSort: new Date(2025, 1, 5),
+  //     urgency: 'medium',
+  //     viewed: false,
+  //     customer: {
+  //       name: 'ACCOUNT MANAGEMENT',
+  //       location: 'CLIENT SERVICES',
+  //       tier: 'MANAGEMENT',
+  //     },
+  //     action: 'SHARE MILESTONE WITH TEAM',
+  //   },
+  //   {
+  //     id: 32,
+  //     type: 'growth_milestone',
+  //     title: 'GROWTH MILESTONE - 15% INCREASE THIS QUARTER',
+  //     category: 'BRAND',
+  //     date: '2/5',
+  //     dateSort: new Date(2025, 1, 5),
+  //     urgency: 'medium',
+  //     viewed: false,
+  //     customer: {
+  //       name: 'BUSINESS DEVELOPMENT',
+  //       location: 'STRATEGY OFFICE',
+  //       tier: 'EXECUTIVE',
+  //     },
+  //     action: 'PLAN EXPANSION STRATEGY',
+  //   },
+  //   {
+  //     id: 33,
+  //     type: 'performance_metrics',
+  //     title: 'PERFORMANCE METRICS - TARGETS EXCEEDED',
+  //     category: 'BRAND',
+  //     date: '2/4',
+  //     dateSort: new Date(2025, 1, 4),
+  //     urgency: 'medium',
+  //     viewed: false,
+  //     customer: {
+  //       name: 'MANAGEMENT TEAM',
+  //       location: 'EXECUTIVE SUITE',
+  //       tier: 'EXECUTIVE',
+  //     },
+  //     action: 'REVIEW AND SET NEW GOALS',
+  //   },
+  //   {
+  //     id: 34,
+  //     type: 'brand_recognition',
+  //     title: 'BRAND RECOGNITION - NEW MARKET PENETRATION',
+  //     category: 'BRAND',
+  //     date: '2/4',
+  //     dateSort: new Date(2025, 1, 4),
+  //     urgency: 'medium',
+  //     viewed: false,
+  //     customer: {
+  //       name: 'MARKETING DIRECTOR',
+  //       location: 'MARKETING DEPT',
+  //       tier: 'MANAGEMENT',
+  //     },
+  //     action: 'DEVELOP TARGETED CAMPAIGNS',
+  //   }
+  // ];
 
   // Enhanced grouping for grid view
   const groupedNotifications = [
@@ -461,7 +461,7 @@ export default function RecentActivity({ onViewModeChange }: RecentActivityProps
     }
   ];
 
-  const groupDates = {
+  const groupDates: Record<string, string> = {
     ALERTS: '2/6',
     SALES: '2/6',
     BOOKINGS: '2/6',
@@ -989,12 +989,12 @@ export default function RecentActivity({ onViewModeChange }: RecentActivityProps
                       </span>
                     </div>
 
-                    {notification.amount && (
+                    {(notification as any).amount && (
                       <span
                         className="text-sm font-bold font-futura flex-shrink-0 ml-4 tracking-wider"
                         style={{ color: '#EB1C24', opacity: 1, fontSize: '14px', fontWeight: '500' }}
                       >
-                        {notification.amount}
+                        {(notification as any).amount}
                       </span>
                     )}
                   </div>

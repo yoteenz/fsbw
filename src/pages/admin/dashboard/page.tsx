@@ -63,7 +63,6 @@ const mockAPI = {
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const [currentDate] = useState(new Date().toLocaleDateString());
   const [notificationViewMode, setNotificationViewMode] = useState('list');
   const [dashboardData, setDashboardData] = useState<{
     stats: DashboardStats;
@@ -165,12 +164,7 @@ export default function AdminDashboard() {
 
   if (!dashboardData) return null;
 
-  const { stats, clients, bookings, revenue, notifications } = dashboardData;
-
-  // Get upcoming bookings within 24 hours
-  const upcomingBookings = bookings
-    .filter(booking => booking.status === 'Scheduled' && isWithin24Hours(booking.appointment_date))
-    .slice(0, 5);
+  const { stats, clients, revenue } = dashboardData;
 
   // Get recent completed bookings for meeting display with diverse appointment types
   const diverseBookings = [
