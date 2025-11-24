@@ -672,38 +672,18 @@ export default function BuildAWigPage() {
   // REMOVED: Storage change listener - this page never syncs from localStorage
   // Editing is handled by noir/edit page, not this page
 
-  // Initialize default price values only if they don't exist
-  // This preserves existing selections while ensuring defaults are available
+  // Initialize default price values - always reset to 0 to ensure clean state
   useEffect(() => {
-    // Only set default prices if they don't already exist in localStorage
-    // This preserves existing selections while ensuring defaults are available
-    if (!localStorage.getItem('selectedCapSizePrice')) {
-      localStorage.setItem('selectedCapSizePrice', '0');
-    }
-    if (!localStorage.getItem('selectedColorPrice')) {
-      localStorage.setItem('selectedColorPrice', '0');
-    }
-    if (!localStorage.getItem('selectedLengthPrice')) {
-      localStorage.setItem('selectedLengthPrice', '0');
-    }
-    if (!localStorage.getItem('selectedDensityPrice')) {
-      localStorage.setItem('selectedDensityPrice', '0');
-    }
-    if (!localStorage.getItem('selectedLacePrice')) {
-      localStorage.setItem('selectedLacePrice', '0');
-    }
-    if (!localStorage.getItem('selectedTexturePrice')) {
-      localStorage.setItem('selectedTexturePrice', '0');
-    }
-    if (!localStorage.getItem('selectedHairlinePrice')) {
-      localStorage.setItem('selectedHairlinePrice', '0');
-    }
-    if (!localStorage.getItem('selectedStylingPrice')) {
-      localStorage.setItem('selectedStylingPrice', '0');
-    }
-    if (!localStorage.getItem('selectedAddOnsPrice')) {
-      localStorage.setItem('selectedAddOnsPrice', '0');
-    }
+    // Always reset all prices to 0 to ensure base price is correct
+    localStorage.setItem('selectedCapSizePrice', '0');
+    localStorage.setItem('selectedColorPrice', '0');
+    localStorage.setItem('selectedLengthPrice', '0');
+    localStorage.setItem('selectedDensityPrice', '0');
+    localStorage.setItem('selectedLacePrice', '0');
+    localStorage.setItem('selectedTexturePrice', '0');
+    localStorage.setItem('selectedHairlinePrice', '0');
+    localStorage.setItem('selectedStylingPrice', '0');
+    localStorage.setItem('selectedAddOnsPrice', '0');
   }, []);
 
   useEffect(() => {
