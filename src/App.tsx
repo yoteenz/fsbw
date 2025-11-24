@@ -9,6 +9,7 @@ import HairlinePage from './pages/build-a-wig/hairline/page';
 import CapSizePage from './pages/build-a-wig/cap-size/page';
 import StylingPage from './pages/build-a-wig/styling/page';
 import AddOnsPage from './pages/build-a-wig/addons/page';
+import NoirUnitPage from './pages/units/noir/page';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
       <Route path="/build-a-wig/cap-size" element={<CapSizePage />} />
       <Route path="/build-a-wig/styling" element={<StylingPage />} />
       <Route path="/build-a-wig/addons" element={<AddOnsPage />} />
+      <Route path="/units/noir" element={<NoirUnitPage />} />
     </Routes>
   );
 }
