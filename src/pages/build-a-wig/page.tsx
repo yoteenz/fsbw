@@ -18,11 +18,6 @@ interface WigCustomization {
 export default function BuildAWigPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [debugInfo, setDebugInfo] = useState<string[]>([]);
-  
-  const addDebugLog = (message: string) => {
-    setDebugInfo(prev => [...prev.slice(-4), `${new Date().toLocaleTimeString()}: ${message}`]);
-  };
   const [selectedView, setSelectedView] = useState(1);
   const [showLoading, setShowLoading] = useState(true);
   
@@ -1447,29 +1442,6 @@ export default function BuildAWigPage() {
               </button>
             </div>
             
-            {/* DEBUG PANEL - Visible on screen */}
-            {debugInfo.length > 0 && (
-              <div style={{
-                position: 'fixed',
-                top: '10px',
-                right: '10px',
-                background: 'rgba(0,0,0,0.8)',
-                color: 'white',
-                padding: '10px',
-                borderRadius: '5px',
-                fontSize: '12px',
-                zIndex: 99999,
-                maxWidth: '300px',
-                maxHeight: '200px',
-                overflow: 'auto'
-              }}>
-                <div style={{fontWeight: 'bold', marginBottom: '5px'}}>Debug Log:</div>
-                {debugInfo.map((log, i) => (
-                  <div key={i} style={{marginBottom: '3px'}}>{log}</div>
-                ))}
-              </div>
-            )}
-            
             <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
               <span 
                 style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
@@ -1479,15 +1451,7 @@ export default function BuildAWigPage() {
               </span>{' '}
               <span
                 style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', cursor: 'pointer' }}
-                onClick={() => {
-                  addDebugLog('Clicked NOIR link');
-                  try {
-                    navigate('/units/noir');
-                    addDebugLog('Navigation called');
-                  } catch (error) {
-                    addDebugLog(`Error: ${error}`);
-                  }
-                }}
+                onClick={() => navigate('/units/noir')}
               >
                 NOIR
               </span>
