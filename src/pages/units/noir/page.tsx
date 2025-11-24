@@ -425,26 +425,35 @@ function NoirSelection() {
 
   // Get current mannequin images based on selected view
   const getCurrentImages = () => {
-    if (selectedMannequinView === 0) {
-      // Default state: natural front in hero
+    try {
+      if (selectedMannequinView === 0) {
+        // Default state: natural front in hero
+        return {
+          hero: mannequinImages[0] || '/assets/natural front.png', // natural front
+          top: mannequinImages[1] || '/assets/natural left.png', // natural left
+          bottom: mannequinImages[2] || '/assets/natural right.png' // natural right
+        };
+      } else if (selectedMannequinView === 1) {
+        // Top thumbnail clicked: natural left in hero, natural front in top
+        return {
+          hero: mannequinImages[1] || '/assets/natural left.png', // natural left
+          top: mannequinImages[0] || '/assets/natural front.png', // natural front
+          bottom: mannequinImages[2] || '/assets/natural right.png' // natural right (stays in bottom)
+        };
+      } else {
+        // Bottom thumbnail clicked: natural right in hero, natural front in bottom
+        return {
+          hero: mannequinImages[2] || '/assets/natural right.png', // natural right
+          top: mannequinImages[1] || '/assets/natural left.png', // natural left (stays in top)
+          bottom: mannequinImages[0] || '/assets/natural front.png' // natural front
+        };
+      }
+    } catch (error) {
+      console.error('Error in getCurrentImages:', error);
       return {
-        hero: mannequinImages[0], // natural front
-        top: mannequinImages[1], // natural left
-        bottom: mannequinImages[2] // natural right
-      };
-    } else if (selectedMannequinView === 1) {
-      // Top thumbnail clicked: natural left in hero, natural front in top
-      return {
-        hero: mannequinImages[1], // natural left
-        top: mannequinImages[0], // natural front
-        bottom: mannequinImages[2] // natural right (stays in bottom)
-      };
-    } else {
-      // Bottom thumbnail clicked: natural right in hero, natural front in bottom
-      return {
-        hero: mannequinImages[2], // natural right
-        top: mannequinImages[1], // natural left (stays in top)
-        bottom: mannequinImages[0] // natural front
+        hero: '/assets/natural front.png',
+        top: '/assets/natural left.png',
+        bottom: '/assets/natural right.png'
       };
     }
   };
@@ -453,26 +462,35 @@ function NoirSelection() {
 
   // Get current 3D view images based on selected view
   const get3DViewImages = () => {
-    if (selectedMannequinView === 0) {
-      // Default state: noir front in hero
+    try {
+      if (selectedMannequinView === 0) {
+        // Default state: noir front in hero
+        return {
+          hero: 'noir front.png',
+          top: 'noir right.png',
+          bottom: 'noir left.png'
+        };
+      } else if (selectedMannequinView === 1) {
+        // Top thumbnail clicked: noir right in hero, noir front in top
+        return {
+          hero: 'noir right.png',
+          top: 'noir front.png',
+          bottom: 'noir left.png'
+        };
+      } else {
+        // Bottom thumbnail clicked: noir left in hero, noir front in bottom
+        return {
+          hero: 'noir left.png',
+          top: 'noir right.png',
+          bottom: 'noir front.png'
+        };
+      }
+    } catch (error) {
+      console.error('Error in get3DViewImages:', error);
       return {
         hero: 'noir front.png',
         top: 'noir right.png',
         bottom: 'noir left.png'
-      };
-    } else if (selectedMannequinView === 1) {
-      // Top thumbnail clicked: noir right in hero, noir front in top
-      return {
-        hero: 'noir right.png',
-        top: 'noir front.png',
-        bottom: 'noir left.png'
-      };
-    } else {
-      // Bottom thumbnail clicked: noir left in hero, noir front in bottom
-      return {
-        hero: 'noir left.png',
-        top: 'noir right.png',
-        bottom: 'noir front.png'
       };
     }
   };
