@@ -448,6 +448,31 @@ export default function BuildAWigPage() {
         
         // Trigger price recalculation
         setRefreshTrigger(prev => prev + 1);
+        
+        // Force change detection to run after state update
+        // Use setTimeout to ensure state has updated before checking for changes
+        setTimeout(() => {
+          if (originalItem) {
+            const hasChangesDetected = 
+              updatedCustomization.capSize !== originalItem.capSize ||
+              updatedCustomization.length !== originalItem.length ||
+              updatedCustomization.density !== originalItem.density ||
+              updatedCustomization.lace !== originalItem.lace ||
+              updatedCustomization.texture !== originalItem.texture ||
+              updatedCustomization.color !== originalItem.color ||
+              updatedCustomization.hairline !== originalItem.hairline ||
+              updatedCustomization.styling !== originalItem.styling ||
+              JSON.stringify(updatedCustomization.addOns) !== JSON.stringify(originalItem.addOns);
+            
+            console.log('BuildAWigPage - Edit mode: Change detection after returning from sub-page:', {
+              hasChangesDetected,
+              updatedColor: updatedCustomization.color,
+              originalColor: originalItem.color
+            });
+            
+            setHasChanges(hasChangesDetected);
+          }
+        }, 50);
         }
         
         // Clear the flag
