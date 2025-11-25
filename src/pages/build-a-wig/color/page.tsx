@@ -293,13 +293,24 @@ function ColorSelection() {
       price: getSelectedPrice()
     });
     
+    // Check if we're in edit mode - if so, navigate back to edit page
+    const editingCartItem = localStorage.getItem('editingCartItem');
+    const isEditMode = editingCartItem !== null;
+    
+    // Set flag to indicate we're returning from a sub-page
+    sessionStorage.setItem('comingFromSubPage', 'true');
+    
     // Dispatch custom event to notify main page of changes
     console.log('Color page - dispatching customStorageChange event');
     window.dispatchEvent(new CustomEvent('customStorageChange'));
     
     // Add a small delay to ensure the event is processed
     setTimeout(() => {
-      navigate('/build-a-wig');
+      if (isEditMode) {
+        navigate('/build-a-wig/edit');
+      } else {
+        navigate('/build-a-wig');
+      }
     }, 100);
   };
 

@@ -314,10 +314,21 @@ function LengthSelection() {
     localStorage.setItem('selectedLength', selectedLength);
     localStorage.setItem('selectedLengthPrice', getSelectedPrice().toString());
     
+    // Check if we're in edit mode - if so, navigate back to edit page
+    const editingCartItem = localStorage.getItem('editingCartItem');
+    const isEditMode = editingCartItem !== null;
+    
+    // Set flag to indicate we're returning from a sub-page
+    sessionStorage.setItem('comingFromSubPage', 'true');
+    
     // Dispatch custom event to notify main page of changes
     window.dispatchEvent(new CustomEvent('customStorageChange'));
     
-    navigate('/build-a-wig');
+    if (isEditMode) {
+      navigate('/build-a-wig/edit');
+    } else {
+      navigate('/build-a-wig');
+    }
   };
 
   const getSelectedPrice = () => {
