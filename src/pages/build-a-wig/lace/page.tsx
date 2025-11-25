@@ -207,7 +207,25 @@ function LaceSelection() {
       localStorage.setItem('selectedLacePrice', getSelectedPrice().toString());
       
       // Get the source route from sessionStorage (set by main page when navigating to sub-page)
-      const sourceRoute = sessionStorage.getItem('sourceRoute') || '/build-a-wig';
+      // Also check if we're in edit or customize mode as fallback
+      let sourceRoute = sessionStorage.getItem('sourceRoute');
+      
+      // Fallback: check localStorage for edit mode or customize mode
+      if (!sourceRoute) {
+        const editingCartItem = localStorage.getItem('editingCartItem');
+        const selectedCapSize = localStorage.getItem('selectedCapSize');
+        
+        if (editingCartItem) {
+          sourceRoute = '/build-a-wig/edit';
+          console.log('Lace page - No sourceRoute found, detected edit mode from localStorage');
+        } else if (selectedCapSize) {
+          sourceRoute = '/build-a-wig/noir/customize';
+          console.log('Lace page - No sourceRoute found, detected customize mode from localStorage');
+        } else {
+          sourceRoute = '/build-a-wig';
+          console.log('Lace page - No sourceRoute found, defaulting to main page');
+        }
+      }
       
       console.log('Lace page - Navigating back to source route:', sourceRoute);
       
