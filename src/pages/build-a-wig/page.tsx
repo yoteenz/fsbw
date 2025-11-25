@@ -183,8 +183,9 @@ export default function BuildAWigPage() {
     const isEditPage = location.pathname === '/build-a-wig/edit';
     const isCustomizePage = location.pathname === '/build-a-wig/noir/customize';
     
-    // Update route key to track navigation
-    if (location.pathname !== routeKey) {
+    // Update route key to track navigation (but allow routeKey to be updated by other effects)
+    // Only reset if routeKey doesn't match pathname AND routeKey doesn't contain a reload marker
+    if (location.pathname !== routeKey && !routeKey.includes('_reload') && !routeKey.includes('_')) {
       setRouteKey(location.pathname);
     }
     
