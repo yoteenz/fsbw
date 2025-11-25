@@ -977,75 +977,19 @@ function NoirSelection() {
         localStorage.setItem('selectedCapSizePrice', '0');
       }
       
-      // Calculate full price including all customizations
+      // For units/noir page, ALWAYS use DEFAULT selections and prices
+      // Use the same logic as getTotalPrice() to ensure consistency
       const calculateFullPrice = () => {
-        // Get cap size to determine base price
-        const capSize = localStorage.getItem('selectedCapSize') || 'M';
+        const capSize = selectedCustomCap || selectedFlexibleCap || 'M';
         
-        // Calculate base price based on cap size
+        // Calculate base price based on cap size ONLY
         let basePrice = 740; // Default for standard caps (XS, S, M, L)
         if (capSize === 'XXS/XS/S' || capSize === 'S/M/L') {
-          basePrice = 780; // Flexible cap options cost $40 extra
+          basePrice = 780; // Flexible cap options base price is $780
         }
         
-        // Add color price - use stored price or calculate from color name
-        let colorPrice = parseInt(localStorage.getItem('selectedColorPrice') || '0');
-        
-        // If no stored price, calculate it from the color name
-        if (colorPrice === 0) {
-          const selectedColor = localStorage.getItem('selectedColor') || 'OFF BLACK';
-          const colorPrices: { [key: string]: number } = {
-            'JET BLACK': 100,
-            'OFF BLACK': 0,
-            'ESPRESSO': 100,
-            'CHESTNUT': 100,
-            'HONEY': 100,
-            'AUBURN': 100,
-            'COPPER': 100,
-            'GINGER': 100,
-            'SANGRIA': 100,
-            'CHERRY': 100,
-            'RASPBERRY': 100,
-            'PLUM': 100,
-            'COBALT': 100,
-            'TEAL': 100,
-            'SLIME': 100,
-            'CITRINE': 100
-          };
-          colorPrice = colorPrices[selectedColor] || 0;
-          
-          // Add extra $40 for lengths over 30" (excluding OFF BLACK)
-          if (selectedColor !== 'OFF BLACK') {
-            const selectedLength = localStorage.getItem('selectedLength') || '24"';
-            const longLengths = ['30"', '32"', '34"', '36"', '40"'];
-            if (longLengths.includes(selectedLength)) {
-              colorPrice += 40;
-            }
-          }
-        }
-        
-        // Add length price
-        const lengthPrice = parseInt(localStorage.getItem('selectedLengthPrice') || '0');
-        
-        // Add density price
-        const densityPrice = parseInt(localStorage.getItem('selectedDensityPrice') || '0');
-        
-        // Add lace price
-        const lacePrice = parseInt(localStorage.getItem('selectedLacePrice') || '0');
-        
-        // Add texture price
-        const texturePrice = parseInt(localStorage.getItem('selectedTexturePrice') || '0');
-        
-        // Add hairline price
-        const hairlinePrice = parseInt(localStorage.getItem('selectedHairlinePrice') || '0');
-        
-        // Add styling price
-        const stylingPrice = parseInt(localStorage.getItem('selectedStylingPrice') || '0');
-        
-        // Add add-ons price
-        const addOnsPrice = parseInt(localStorage.getItem('selectedAddOnsPrice') || '0');
-        
-        return basePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
+        // All other prices are 0 for default selections on units/noir page
+        return basePrice;
       };
       
       // Create cart item with actual product details and full calculated price
