@@ -14,15 +14,31 @@ const LobbyPage: React.FC = () => {
     }
   }, []);
 
+  const handleNext = useCallback(() => {
+    // This will be handled by parent component
+    window.dispatchEvent(new CustomEvent('lobby-navigate-next'));
+  }, []);
+
   return (
-    <div className="h-screen bg-red-900 relative" style={{ width: '100vw', flexShrink: 0 }}>
+    <div className="bg-red-900 relative" style={{ minHeight: '100vh', width: '100vw', flexShrink: 0, backgroundColor: 'white' }}>
       {/* Background Image */}
       <div 
         className="absolute inset-0 bg-contain bg-center bg-no-repeat"
         style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: '100%',
+          height: '100%',
           backgroundImage: 'url(/assets/landing-background.png)',
           backgroundSize: '100% 100%',
-          backgroundPosition: 'center center'
+          backgroundPosition: 'center center',
+          backgroundColor: 'white',
+          willChange: 'auto',
+          backfaceVisibility: 'hidden',
+          contain: 'layout style paint'
         }}
       />
       
@@ -183,6 +199,90 @@ const LobbyPage: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      {/* Right Arrow Button - Part of page design, scrolls with content */}
+      <div style={{
+        position: 'absolute',
+        right: '20px',
+        top: '50%',
+        transform: 'translate(22px, -50%)',
+        zIndex: 999999,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '1px',
+        pointerEvents: 'auto'
+      }}>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleNext();
+          }}
+          disabled={false}
+          aria-label="Next page"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '10px 10px 0px 10px',
+            transition: 'all 0.3s ease',
+            opacity: 0.7,
+            pointerEvents: 'auto',
+            WebkitTapHighlightColor: 'transparent',
+            touchAction: 'manipulation'
+          }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = '0.9';
+              e.currentTarget.style.transform = 'scale(1.1)';
+            }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.opacity = '0.7';
+            e.currentTarget.style.transform = 'scale(1)';
+          }}
+        >
+          <svg 
+            width="32" 
+            height="24" 
+            viewBox="0 0 32 24" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))' }}
+          >
+            <path 
+              d="M14 18L20 12L14 6" 
+              stroke="white" 
+              strokeWidth="3.5" 
+              strokeOpacity="0.9"
+              strokeLinecap="square" 
+              strokeLinejoin="miter"
+            />
+            <path 
+              d="M6 18L12 12L6 6" 
+              stroke="white" 
+              strokeWidth="2.5" 
+              strokeOpacity="0.9"
+              strokeLinecap="square" 
+              strokeLinejoin="miter"
+            />
+          </svg>
+        </button>
+        <div style={{
+          fontFamily: 'Bohemy, serif',
+          fontSize: '16px',
+          color: 'white',
+          opacity: 0.7,
+          letterSpacing: '1px',
+          textAlign: 'center',
+          width: '100%',
+          transform: 'translateX(-2px)'
+        }}>
+          lobby
+        </div>
+      </div>
     </div>
   );
 };
@@ -190,21 +290,32 @@ const LobbyPage: React.FC = () => {
 // Lounge Component
 const LoungePage: React.FC = () => {
   console.log('LoungePage component is rendering');
+  
+  const handlePrevious = useCallback(() => {
+    // This will be handled by parent component
+    window.dispatchEvent(new CustomEvent('lobby-navigate-previous'));
+  }, []);
+  
   return (
-    <div className="bg-white relative" style={{ minHeight: '105vh', width: '100vw', height: '100vh', overflow: 'visible', display: 'block', margin: 0, padding: 0, flexShrink: 0 }}>
+    <div className="bg-white relative" style={{ minHeight: '105vh', width: '100vw', overflow: 'visible', display: 'block', margin: 0, padding: 0, flexShrink: 0, backgroundColor: 'white' }}>
       {/* Background Image - Using landing2-background */}
       <div 
         style={{ 
           position: 'absolute', 
           top: 0, 
           left: 0, 
+          right: 0,
+          bottom: 0,
           width: '100%',
           height: '100%',
-          minHeight: '105vh',
           backgroundImage: 'url(/assets/landing2-background.png)',
           backgroundSize: '100% auto',
           backgroundPosition: 'center top',
-          backgroundRepeat: 'no-repeat'
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: 'white',
+          willChange: 'auto',
+          backfaceVisibility: 'hidden',
+          contain: 'layout style paint'
         }}
       />
       
@@ -294,7 +405,7 @@ const LoungePage: React.FC = () => {
         position: 'absolute', 
         top: '50%', 
         left: '50%', 
-        transform: 'translate(calc(-50% + 25px), calc(-50% + 310px))', 
+        transform: 'translate(calc(-50% + 25px), calc(-50% + 290px))', 
         zIndex: 10, 
         width: 'fit-content'
       }}>
@@ -304,6 +415,90 @@ const LoungePage: React.FC = () => {
             alt="Salon Chairs" 
             style={{ width: 'auto', height: '160px', cursor: 'pointer', margin: 0, padding: 0, display: 'block' }}
           />
+        </div>
+      </div>
+      
+      {/* Left Arrow Button - Part of page design, scrolls with content */}
+      <div style={{
+        position: 'absolute',
+        left: '20px',
+        top: '50%',
+        transform: 'translate(-22px, -50%)',
+        zIndex: 999999,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '1px',
+        pointerEvents: 'auto'
+      }}>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handlePrevious();
+          }}
+          disabled={false}
+          aria-label="Previous page"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '10px 10px 0px 10px',
+            transition: 'all 0.3s ease',
+            opacity: 0.7,
+            pointerEvents: 'auto',
+            WebkitTapHighlightColor: 'transparent',
+            touchAction: 'manipulation'
+          }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = '0.9';
+              e.currentTarget.style.transform = 'scale(1.1)';
+            }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.opacity = '0.7';
+            e.currentTarget.style.transform = 'scale(1)';
+          }}
+        >
+          <svg 
+            width="32" 
+            height="24" 
+            viewBox="0 0 32 24" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))' }}
+          >
+            <path 
+              d="M18 18L12 12L18 6" 
+              stroke="white" 
+              strokeWidth="3.5" 
+              strokeOpacity="0.9"
+              strokeLinecap="square" 
+              strokeLinejoin="miter"
+            />
+            <path 
+              d="M26 18L20 12L26 6" 
+              stroke="white" 
+              strokeWidth="2.5" 
+              strokeOpacity="0.9"
+              strokeLinecap="square" 
+              strokeLinejoin="miter"
+            />
+          </svg>
+        </button>
+        <div style={{
+          fontFamily: 'Bohemy, serif',
+          fontSize: '16px',
+          color: 'white',
+          opacity: 0.7,
+          letterSpacing: '1px',
+          textAlign: 'center',
+          width: '100%',
+          transform: 'translateX(4px)'
+        }}>
+          lounge
         </div>
       </div>
     </div>
@@ -348,159 +543,59 @@ const LobbyApp: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [handlePrevious, handleNext]);
 
+  // Listen for navigation events from page components
+  useEffect(() => {
+    const handleNext = () => {
+      if (currentPage < pages.length - 1 && !isTransitioning) {
+        setIsTransitioning(true);
+        setCurrentPage(currentPage + 1);
+        setTimeout(() => setIsTransitioning(false), 600);
+      }
+    };
+    
+    const handlePrevious = () => {
+      if (currentPage > 0 && !isTransitioning) {
+        setIsTransitioning(true);
+        setCurrentPage(currentPage - 1);
+        setTimeout(() => setIsTransitioning(false), 600);
+      }
+    };
+
+    window.addEventListener('lobby-navigate-next', handleNext);
+    window.addEventListener('lobby-navigate-previous', handlePrevious);
+    
+    return () => {
+      window.removeEventListener('lobby-navigate-next', handleNext);
+      window.removeEventListener('lobby-navigate-previous', handlePrevious);
+    };
+  }, [currentPage, isTransitioning, pages.length]);
+
   return (
     <div style={{ 
       width: '100vw', 
-      height: '100vh', 
-      overflow: 'hidden', 
+      height: '100vh',
+      overflowX: 'hidden',
+      overflowY: 'auto',
       position: 'relative',
-      backgroundColor: '#000'
+      backgroundColor: 'transparent',
+      WebkitOverflowScrolling: 'touch',
+      scrollBehavior: 'auto'
     }}>
       {/* Slide Container */}
       <div 
         style={{
           display: 'flex',
           width: `${pages.length * 100}vw`,
-          height: '100vh',
+          height: 'auto',
+          minHeight: '100vh',
           transform: `translateX(-${currentPage * 100}vw)`,
-          transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-          willChange: 'transform'
+          transition: isTransitioning ? 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+          willChange: isTransitioning ? 'transform' : 'auto',
+          alignItems: 'flex-start'
         }}
       >
         {pages}
       </div>
-
-      {/* Left Arrow Button - Show on lounge page */}
-      {currentPage === 1 && (
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handlePrevious();
-          }}
-          disabled={isTransitioning}
-          aria-label="Previous page"
-          style={{
-            position: 'fixed',
-            left: '20px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            zIndex: 999999,
-            background: 'transparent',
-            border: 'none',
-            cursor: isTransitioning ? 'not-allowed' : 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '10px',
-            transition: 'all 0.3s ease',
-            opacity: isTransitioning ? 0.5 : 1,
-            pointerEvents: 'auto',
-            WebkitTapHighlightColor: 'transparent',
-            touchAction: 'manipulation'
-          }}
-          onMouseEnter={(e) => {
-            if (!isTransitioning) {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.opacity = '1';
-            e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
-          }}
-        >
-          <svg 
-            width="32" 
-            height="24" 
-            viewBox="0 0 32 24" 
-            fill="none" 
-            xmlns="http://www.w3.org/2000/svg"
-            style={{ filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))' }}
-          >
-            <path 
-              d="M18 18L12 12L18 6" 
-              stroke="white" 
-              strokeWidth="3.5" 
-              strokeLinecap="square" 
-              strokeLinejoin="miter"
-            />
-            <path 
-              d="M26 18L20 12L26 6" 
-              stroke="white" 
-              strokeWidth="2.5" 
-              strokeLinecap="square" 
-              strokeLinejoin="miter"
-            />
-          </svg>
-        </button>
-      )}
-
-      {/* Right Arrow Button - Always show on lobby page */}
-      {currentPage === 0 && (
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleNext();
-          }}
-          disabled={isTransitioning}
-          aria-label="Next page"
-          style={{
-            position: 'fixed',
-            right: '20px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            zIndex: 999999,
-            background: 'transparent',
-            border: 'none',
-            cursor: isTransitioning ? 'not-allowed' : 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '10px',
-            transition: 'all 0.3s ease',
-            opacity: isTransitioning ? 0.5 : 1,
-            pointerEvents: 'auto',
-            WebkitTapHighlightColor: 'transparent',
-            touchAction: 'manipulation'
-          }}
-          onMouseEnter={(e) => {
-            if (!isTransitioning) {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.opacity = '1';
-            e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
-          }}
-        >
-          <svg 
-            width="32" 
-            height="24" 
-            viewBox="0 0 32 24" 
-            fill="none" 
-            xmlns="http://www.w3.org/2000/svg"
-            style={{ filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))' }}
-          >
-            <path 
-              d="M14 18L20 12L14 6" 
-              stroke="white" 
-              strokeWidth="3.5" 
-              strokeLinecap="square" 
-              strokeLinejoin="miter"
-            />
-            <path 
-              d="M6 18L12 12L6 6" 
-              stroke="white" 
-              strokeWidth="2.5" 
-              strokeLinecap="square" 
-              strokeLinejoin="miter"
-            />
-          </svg>
-        </button>
-      )}
     </div>
   );
 };
