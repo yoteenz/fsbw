@@ -2083,6 +2083,7 @@ function NoirSelection() {
             </p>
 
             {/* PRICE */}
+            {/* CRITICAL: Always use getTotalPrice() directly to ensure fresh calculation, never use cached values */}
             <p
               className="text-center text-black mb-1"
               style={{ 
@@ -2091,7 +2092,7 @@ function NoirSelection() {
                 fontWeight: '500',
                 transform: 'translateY(-16px)'
               }}
-              dangerouslySetInnerHTML={formatPrice(totalPrice)}
+              dangerouslySetInnerHTML={formatPrice(getTotalPrice())}
             />
 
             {/* TAX DISCLAIMER */}
