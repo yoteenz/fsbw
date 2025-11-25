@@ -1317,11 +1317,17 @@ function NoirSelection() {
   }, [selectedCustomCap, selectedFlexibleCap]);
 
   // Use useMemo to recalculate price when cap selection changes
+  // CRITICAL: Include getTotalPrice in dependencies since it's a useCallback
   const totalPrice = React.useMemo(() => {
     const price = getTotalPrice();
-    console.log('Units/Noir - totalPrice useMemo:', price);
+    console.log('Units/Noir - totalPrice useMemo calculated:', {
+      price,
+      selectedCustomCap,
+      selectedFlexibleCap,
+      note: 'Price should be 740 or 780 only'
+    });
     return price;
-  }, [selectedCustomCap, selectedFlexibleCap]);
+  }, [getTotalPrice, selectedCustomCap, selectedFlexibleCap]);
 
   useEffect(() => {
     // Hide loading screen after 2 seconds
@@ -1335,9 +1341,8 @@ function NoirSelection() {
   // CRITICAL: Clear any stale localStorage price values on page load
   // The units/noir page price should ALWAYS be $740 or $780, independent of cart items or other pages
   useEffect(() => {
-    // Clear all price-related localStorage values to ensure they don't affect the displayed price
-    // The getTotalPrice() function doesn't read from localStorage, but we clear these
-    // to prevent any other code from accidentally using stale values
+    // Clear all price-related localStorage values IMMEDIATELY on mount
+    // This ensures no stale values can affect the price calculation
     localStorage.removeItem('selectedColorPrice');
     localStorage.removeItem('selectedLengthPrice');
     localStorage.removeItem('selectedDensityPrice');
@@ -1348,8 +1353,21 @@ function NoirSelection() {
     localStorage.removeItem('selectedAddOnsPrice');
     localStorage.removeItem('selectedCapSizePrice');
     
-    console.log('Units/Noir - Cleared all localStorage price values to ensure base price display');
-  }, []); // Run once on mount
+    // Verify the calculated price is correct
+    const calculatedPrice = getTotalPrice();
+    const expectedPrices = [740, 780];
+    if (!expectedPrices.includes(calculatedPrice)) {
+      console.error('Units/Noir - ERROR: Price is incorrect!', {
+        calculatedPrice,
+        expectedPrices,
+        selectedCustomCap,
+        selectedFlexibleCap,
+        warning: 'Price should be 740 or 780 only'
+      });
+    } else {
+      console.log('Units/Noir - Price verified correct:', calculatedPrice);
+    }
+  }, [getTotalPrice, selectedCustomCap, selectedFlexibleCap]); // Re-run if cap selection changes
 
   // Initialize density price correctly when component loads or density changes
   // NOTE: For units/noir page, we don't need to update localStorage prices
