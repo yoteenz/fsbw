@@ -25,6 +25,9 @@ export default function BuildAWigPage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [routeKey, setRouteKey] = useState(location.pathname);
   
+  // Track current editing item ID to detect when switching between products
+  const currentEditingItemIdRef = useRef<string | null>(null);
+  
   const [customization, setCustomization] = useState<WigCustomization>(() => {
     // Use location.pathname from React Router
     // Check if we're in edit mode or customize mode
@@ -285,7 +288,7 @@ export default function BuildAWigPage() {
           
           // Update current editing item ID
           if (editingCartItemId) {
-            setCurrentEditingItemId(editingCartItemId);
+            currentEditingItemIdRef.current = editingCartItemId;
           }
           
           // Set button to 'added' (IN THE BAG) since item is already in cart
@@ -361,7 +364,7 @@ export default function BuildAWigPage() {
         isLoadingFromStorage.current = false;
       }, 100);
     }
-  }, [location.pathname, routeKey, currentEditingItemId]); // Run when route changes or editing item changes
+  }, [location.pathname, routeKey]); // Run when route changes
   
   // Listen for storage changes (when sub-pages update localStorage)
   useEffect(() => {
@@ -477,7 +480,6 @@ export default function BuildAWigPage() {
   // Edit mode state: track original item and detect changes
   const [originalItem, setOriginalItem] = useState<WigCustomization | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
-  const [currentEditingItemId, setCurrentEditingItemId] = useState<string | null>(null);
   
   // Cart count state
   const [cartCount, setCartCount] = useState(() => {
