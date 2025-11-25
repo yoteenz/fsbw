@@ -1317,15 +1317,11 @@ function NoirSelection() {
   }, []);
 
   // Initialize density price correctly when component loads or density changes
+  // NOTE: For units/noir page, we don't need to update localStorage prices
+  // since getTotalPrice() always returns base price ($740 or $780) regardless of localStorage
   useEffect(() => {
-    // Ensure density price matches the selected density
-    const expectedPrice = getSelectedPrice();
-    const currentDensityPrice = localStorage.getItem('selectedDensityPrice');
-    
-    // If density price doesn't match current density selection, update it
-    if (!currentDensityPrice || parseInt(currentDensityPrice) !== expectedPrice) {
-      localStorage.setItem('selectedDensityPrice', expectedPrice.toString());
-    }
+    // This useEffect is kept for compatibility but doesn't affect the displayed price
+    // The displayed price comes from getTotalPrice() which ignores localStorage
   }, [selectedDensity]);
 
   // Listen for changes in selected length and density to update note text
