@@ -100,26 +100,27 @@ function NoirSelection() {
 
   // Generate configuration string for change detection (without quantity)
   const generateConfigurationStringForChangeDetection = () => {
-    const selectedCapSize = localStorage.getItem('selectedCapSize') || 'M';
-    const selectedLength = localStorage.getItem('selectedLength') || '24"';
-    const selectedDensity = localStorage.getItem('selectedDensity') || '200%';
-    const selectedLace = localStorage.getItem('selectedLace') || '13X6';
-    const selectedTexture = localStorage.getItem('selectedTexture') || 'SILKY';
-    const selectedColor = localStorage.getItem('selectedColor') || 'OFF BLACK';
-    const selectedHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
-    const selectedStyling = localStorage.getItem('selectedStyling') || 'NONE';
-    const selectedAddOns = localStorage.getItem('selectedAddOns') || '';
+    // For units/noir page, ALWAYS use DEFAULT selections (not localStorage)
+    // This ensures we only match items in cart that have the exact default configuration
+    const DEFAULT_LENGTH = '24"';
+    const DEFAULT_DENSITY = '200%';
+    const DEFAULT_LACE = '13X6';
+    const DEFAULT_TEXTURE = 'SILKY';
+    const DEFAULT_COLOR = 'OFF BLACK';
+    const DEFAULT_HAIRLINE = 'NATURAL';
+    const DEFAULT_STYLING = 'NONE';
+    const DEFAULT_ADDONS = '';
     
     // Include current component state for cap size only (not quantity)
-    const currentCapSize = selectedCustomCap || selectedFlexibleCap || selectedCapSize;
+    const currentCapSize = selectedCustomCap || selectedFlexibleCap || 'M';
     
     // Normalize values to ensure consistent formatting - remove ALL spaces
     const normalizedCapSize = currentCapSize.replace(/\s+/g, '');
-    const normalizedLength = selectedLength.replace(/\s+/g, '');
-    const normalizedDensity = selectedDensity.replace(/\s+/g, '');
-    const normalizedLace = selectedLace.replace(/\s+/g, '');
-    const normalizedTexture = selectedTexture.replace(/\s+/g, '');
-    const normalizedColor = selectedColor.replace(/\s+/g, '');
+    const normalizedLength = DEFAULT_LENGTH.replace(/\s+/g, '');
+    const normalizedDensity = DEFAULT_DENSITY.replace(/\s+/g, '');
+    const normalizedLace = DEFAULT_LACE.replace(/\s+/g, '');
+    const normalizedTexture = DEFAULT_TEXTURE.replace(/\s+/g, '');
+    const normalizedColor = DEFAULT_COLOR.replace(/\s+/g, '');
     const normalizedHairline = selectedHairline.replace(/\s+/g, '');
     const normalizedStyling = selectedStyling.replace(/\s+/g, '');
     // Handle empty addOns consistently - convert "[]" to empty string
@@ -1336,72 +1337,26 @@ function NoirSelection() {
   };
 
   const getTotalPrice = () => {
-    // Get cap size to determine base price
-    const capSize = selectedCustomCap || selectedFlexibleCap || localStorage.getItem('selectedCapSize') || 'M';
+    // For units/noir page, ALWAYS use DEFAULT selections and prices
+    // This ensures the price is always $740 or $780, regardless of cart items
+    const capSize = selectedCustomCap || selectedFlexibleCap || 'M';
     
-    // Calculate base price based on cap size
+    // Calculate base price based on cap size ONLY
     let basePrice = 740; // Default for standard caps (XS, S, M, L)
     if (capSize === 'XXS/XS/S' || capSize === 'S/M/L') {
       basePrice = 780; // Flexible cap options base price is $780
     }
     
-    // Add color price - use stored price or calculate from color name
-    let colorPrice = parseInt(localStorage.getItem('selectedColorPrice') || '0');
-    
-    // If no stored price, calculate it from the color name
-    if (colorPrice === 0) {
-      const selectedColor = localStorage.getItem('selectedColor') || 'OFF BLACK';
-      const colorPrices: { [key: string]: number } = {
-        'JET BLACK': 100,
-        'OFF BLACK': 0,
-        'ESPRESSO': 100,
-        'CHESTNUT': 100,
-        'HONEY': 100,
-        'AUBURN': 100,
-        'COPPER': 100,
-        'GINGER': 100,
-        'SANGRIA': 100,
-        'CHERRY': 100,
-        'RASPBERRY': 100,
-        'PLUM': 100,
-        'COBALT': 100,
-        'TEAL': 100,
-        'SLIME': 100,
-        'CITRINE': 100
-      };
-      colorPrice = colorPrices[selectedColor] || 0;
-      
-      // Add extra $40 for lengths over 30" (excluding OFF BLACK)
-      if (selectedColor !== 'OFF BLACK') {
-        const selectedLength = localStorage.getItem('selectedLength') || '24"';
-        const longLengths = ['30"', '32"', '34"', '36"', '40"'];
-        if (longLengths.includes(selectedLength)) {
-          colorPrice += 40;
-        }
-      }
-    }
-    
-    // Add length price
-    const lengthPrice = parseInt(localStorage.getItem('selectedLengthPrice') || '0');
-    
-    // Add density price - use localStorage value if it exists, otherwise calculate from current selection
-    const storedDensityPrice = localStorage.getItem('selectedDensityPrice');
-    const densityPrice = storedDensityPrice !== null ? parseInt(storedDensityPrice) : getSelectedPrice();
-    
-    // Add lace price
-    const lacePrice = parseInt(localStorage.getItem('selectedLacePrice') || '0');
-    
-    // Add texture price
-    const texturePrice = parseInt(localStorage.getItem('selectedTexturePrice') || '0');
-    
-    // Add hairline price
-    const hairlinePrice = parseInt(localStorage.getItem('selectedHairlinePrice') || '0');
-    
-    // Add styling price
-    const stylingPrice = parseInt(localStorage.getItem('selectedStylingPrice') || '0');
-    
-    // Add add-ons price
-    const addOnsPrice = parseInt(localStorage.getItem('selectedAddOnsPrice') || '0');
+    // All other prices are 0 for default selections on units/noir page
+    // Default selections: 24", 200%, 13X6, SILKY, OFF BLACK, NATURAL, NONE, []
+    const colorPrice = 0; // OFF BLACK is default
+    const lengthPrice = 0; // 24" is default
+    const densityPrice = 0; // 200% is default
+    const lacePrice = 0; // 13X6 is default
+    const texturePrice = 0; // SILKY is default
+    const hairlinePrice = 0; // NATURAL is default
+    const stylingPrice = 0; // NONE is default
+    const addOnsPrice = 0; // No add-ons by default
     
     return basePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
   };
