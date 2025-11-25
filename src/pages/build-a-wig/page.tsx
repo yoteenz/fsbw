@@ -1474,7 +1474,7 @@ export default function BuildAWigPage() {
       localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
       
       // Update originalItem to reflect saved changes
-      setOriginalItem({
+      const updatedOriginalItem = {
         capSize: customization.capSize,
         length: customization.length,
         density: customization.density,
@@ -1484,8 +1484,12 @@ export default function BuildAWigPage() {
         hairline: customization.hairline,
         styling: validStyling,
         addOns: customization.addOns,
-      });
+      };
+      setOriginalItem(updatedOriginalItem);
       setHasChanges(false); // Reset changes flag after saving
+      
+      // Set button to 'added' state to show "IN THE BAG"
+      setAddToBagState('added');
       
       // Dispatch custom event to notify other components
       window.dispatchEvent(new CustomEvent('cartUpdated'));
@@ -2339,8 +2343,11 @@ export default function BuildAWigPage() {
             {(() => {
               const isEditPage = location.pathname === '/build-a-wig/edit';
               
-              // Edit mode: show "IN THE BAG" by default, "SAVE CHANGES" when changes detected
+              // Edit mode: show "SAVE CHANGES" > "SAVING..." > "IN THE BAG"
               if (isEditPage) {
+                if (addToBagState === 'adding') {
+                  return 'SAVING...';
+                }
                 if (hasChanges) {
                   return 'SAVE CHANGES';
                 } else {
