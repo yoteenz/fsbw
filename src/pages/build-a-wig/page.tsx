@@ -684,6 +684,38 @@ export default function BuildAWigPage() {
     };
   }, [location.pathname]);
 
+  // Listen for editingCartItemChanged event to reload when switching items while on edit page
+  useEffect(() => {
+    const handleEditingCartItemChanged = (event: CustomEvent) => {
+      const isEditPage = location.pathname === '/build-a-wig/edit';
+      
+      if (isEditPage) {
+        const newItemId = event.detail?.itemId;
+        
+        // Check if this is a different item
+        if (newItemId && newItemId !== currentEditingItemIdRef.current) {
+          console.log('BuildAWigPage - Different item selected for editing, reloading:', {
+            currentItemId: currentEditingItemIdRef.current,
+            newItemId: newItemId
+          });
+          
+          // Force reload by triggering the route change effect
+          // Clear the comingFromSubPage flag so it loads from editingCartItem, not localStorage
+          sessionStorage.removeItem('comingFromSubPage');
+          
+          // Trigger a route key change to force useEffect to run
+          setRouteKey(prev => prev + '_reload_' + Date.now());
+        }
+      }
+    };
+
+    window.addEventListener('editingCartItemChanged', handleEditingCartItemChanged as EventListener);
+    
+    return () => {
+      window.removeEventListener('editingCartItemChanged', handleEditingCartItemChanged as EventListener);
+    };
+  }, [location.pathname]);
+
   // REMOVED: Continuously enforce defaults - this was clearing localStorage and preventing sub-pages from showing correct selections
   // The customize page doesn't have this logic - it trusts localStorage and loads from it
   // Sub-pages should always show what's in localStorage, which matches the main page
