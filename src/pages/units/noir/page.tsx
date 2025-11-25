@@ -1281,7 +1281,7 @@ function NoirSelection() {
 
   const getTotalPrice = () => {
     // For units/noir page, ALWAYS use DEFAULT selections and prices
-    // This ensures the price is always $740 or $780, regardless of cart items
+    // This ensures the price is always $740 or $780, regardless of cart items or localStorage
     const capSize = selectedCustomCap || selectedFlexibleCap || 'M';
     
     // Calculate base price based on cap size ONLY
@@ -1301,11 +1301,25 @@ function NoirSelection() {
     const stylingPrice = 0; // NONE is default
     const addOnsPrice = 0; // No add-ons by default
     
-    return basePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
+    const calculatedPrice = basePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
+    
+    console.log('Units/Noir - getTotalPrice calculated:', {
+      capSize,
+      basePrice,
+      calculatedPrice,
+      selectedCustomCap,
+      selectedFlexibleCap
+    });
+    
+    return calculatedPrice;
   };
 
   // Use useMemo to recalculate price when cap selection changes
-  const totalPrice = React.useMemo(() => getTotalPrice(), [selectedCustomCap, selectedFlexibleCap]);
+  const totalPrice = React.useMemo(() => {
+    const price = getTotalPrice();
+    console.log('Units/Noir - totalPrice useMemo:', price);
+    return price;
+  }, [selectedCustomCap, selectedFlexibleCap]);
 
   useEffect(() => {
     // Hide loading screen after 2 seconds
