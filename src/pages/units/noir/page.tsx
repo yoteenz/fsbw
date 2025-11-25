@@ -121,10 +121,9 @@ function NoirSelection() {
     const normalizedLace = DEFAULT_LACE.replace(/\s+/g, '');
     const normalizedTexture = DEFAULT_TEXTURE.replace(/\s+/g, '');
     const normalizedColor = DEFAULT_COLOR.replace(/\s+/g, '');
-    const normalizedHairline = selectedHairline.replace(/\s+/g, '');
-    const normalizedStyling = selectedStyling.replace(/\s+/g, '');
-    // Handle empty addOns consistently - convert "[]" to empty string
-    const normalizedAddOns = selectedAddOns.replace(/\s+/g, '').replace(/^\[\]$/, '');
+    const normalizedHairline = DEFAULT_HAIRLINE.replace(/\s+/g, '');
+    const normalizedStyling = DEFAULT_STYLING.replace(/\s+/g, '');
+    const normalizedAddOns = DEFAULT_ADDONS.replace(/\s+/g, '');
     
     return `${normalizedCapSize}-${normalizedLength}-${normalizedDensity}-${normalizedLace}-${normalizedTexture}-${normalizedColor}-${normalizedHairline}-${normalizedStyling}-${normalizedAddOns}`;
   };
