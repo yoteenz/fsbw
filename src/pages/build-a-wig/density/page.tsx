@@ -192,6 +192,9 @@ function DensitySelection() {
     localStorage.setItem('selectedDensity', selectedDensity);
     localStorage.setItem('selectedDensityPrice', getSelectedPrice().toString());
     
+    // Set flag to indicate we're returning from a sub-page
+    sessionStorage.setItem('comingFromSubPage', 'true');
+    
     // Dispatch custom event to notify main page of changes
     window.dispatchEvent(new CustomEvent('customStorageChange'));
     
