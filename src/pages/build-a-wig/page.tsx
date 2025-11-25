@@ -166,6 +166,86 @@ export default function BuildAWigPage() {
     return 740;
   }, [customization.capSize]);
   
+  // Helper function to calculate prices from selections
+  const calculatePricesFromSelections = useCallback((selections: WigCustomization) => {
+    const prices: { [key: string]: number } = {
+      capSizePrice: 0, // Cap size price is always 0 (included in base price)
+      colorPrice: 0,
+      lengthPrice: 0,
+      densityPrice: 0,
+      lacePrice: 0,
+      texturePrice: 0,
+      hairlinePrice: 0,
+      stylingPrice: 0,
+      addOnsPrice: 0
+    };
+    
+    // Calculate color price
+    if (selections.color && selections.color !== 'OFF BLACK') {
+      prices.colorPrice = 100;
+      
+      // Add extra $40 for lengths over 30" (excluding OFF BLACK)
+      if (selections.length && ['30"', '32"', '34"', '36"', '40"'].includes(selections.length)) {
+        prices.colorPrice += 40;
+      }
+    }
+    
+    // Calculate density price
+    const densityPrices: { [key: string]: number } = {
+      '150%': 0,
+      '200%': 0,
+      '250%': 50,
+      '300%': 100
+    };
+    prices.densityPrice = densityPrices[selections.density] || 0;
+    
+    // Calculate lace price
+    const lacePrices: { [key: string]: number } = {
+      '13X6': 0,
+      '13X4': 0,
+      '13X5': 0,
+      '2X6': 0,
+      '4X4': 0,
+      '5X5': 0,
+      '6X6': 0,
+      '7X7': 0,
+      'FULL LACE': 240
+    };
+    prices.lacePrice = lacePrices[selections.lace] || 0;
+    
+    // Calculate texture price (all are 0)
+    prices.texturePrice = 0;
+    
+    // Calculate hairline price
+    const hairlinePrices: { [key: string]: number } = {
+      'NATURAL': 0,
+      'PREMIUM': 20
+    };
+    prices.hairlinePrice = hairlinePrices[selections.hairline] || 0;
+    
+    // Calculate styling price
+    const stylingPrices: { [key: string]: number } = {
+      'NONE': 0,
+      'BANGS': 40,
+      'CRIMPS': 60,
+      'FLAT IRON': 60,
+      'LAYERS': 60
+    };
+    prices.stylingPrice = stylingPrices[selections.styling] || 0;
+    
+    // Calculate add-ons price
+    const addOnPrices: { [key: string]: number } = {
+      'BLEACH': 40,
+      'PLUCK': 40,
+      'BLUNT CUT': 20
+    };
+    prices.addOnsPrice = (selections.addOns || []).reduce((total: number, addOn: string) => {
+      return total + (addOnPrices[addOn] || 0);
+    }, 0);
+    
+    return prices;
+  }, []);
+  
   const [totalPrice, setTotalPrice] = useState(740);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -356,6 +436,32 @@ export default function BuildAWigPage() {
           localStorage.setItem('selectedHairline', item.hairline || 'NATURAL');
           localStorage.setItem('selectedStyling', validStyling);
           localStorage.setItem('selectedAddOns', JSON.stringify(item.addOns || []));
+          
+          // Calculate and set prices based on the cart item's selections
+          const calculatedPrices = calculatePricesFromSelections(editCustomization);
+          localStorage.setItem('selectedCapSizePrice', calculatedPrices.capSizePrice.toString());
+          localStorage.setItem('selectedColorPrice', calculatedPrices.colorPrice.toString());
+          localStorage.setItem('selectedLengthPrice', calculatedPrices.lengthPrice.toString());
+          localStorage.setItem('selectedDensityPrice', calculatedPrices.densityPrice.toString());
+          localStorage.setItem('selectedLacePrice', calculatedPrices.lacePrice.toString());
+          localStorage.setItem('selectedTexturePrice', calculatedPrices.texturePrice.toString());
+          localStorage.setItem('selectedHairlinePrice', calculatedPrices.hairlinePrice.toString());
+          localStorage.setItem('selectedStylingPrice', calculatedPrices.stylingPrice.toString());
+          localStorage.setItem('selectedAddOnsPrice', calculatedPrices.addOnsPrice.toString());
+          
+          // Set initial total price from cart item
+          const currentBasePrice = (editCustomization.capSize === 'XXS/XS/S' || editCustomization.capSize === 'S/M/L') ? 780 : 740;
+          const initialTotalPrice = currentBasePrice + 
+            calculatedPrices.capSizePrice + 
+            calculatedPrices.colorPrice + 
+            calculatedPrices.lengthPrice + 
+            calculatedPrices.densityPrice + 
+            calculatedPrices.lacePrice + 
+            calculatedPrices.texturePrice + 
+            calculatedPrices.hairlinePrice + 
+            calculatedPrices.stylingPrice + 
+            calculatedPrices.addOnsPrice;
+          setTotalPrice(initialTotalPrice);
           
           // Trigger price recalculation
           setRefreshTrigger(prev => prev + 1);
