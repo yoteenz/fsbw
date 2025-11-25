@@ -293,9 +293,8 @@ function ColorSelection() {
       price: getSelectedPrice()
     });
     
-    // Check if we're in edit mode - if so, navigate back to edit page
-    const editingCartItem = localStorage.getItem('editingCartItem');
-    const isEditMode = editingCartItem !== null;
+    // Get the source route from sessionStorage (set by main page when navigating to sub-page)
+    const sourceRoute = sessionStorage.getItem('sourceRoute') || '/build-a-wig';
     
     // Set flag to indicate we're returning from a sub-page
     sessionStorage.setItem('comingFromSubPage', 'true');
@@ -306,11 +305,7 @@ function ColorSelection() {
     
     // Add a small delay to ensure the event is processed
     setTimeout(() => {
-      if (isEditMode) {
-        navigate('/build-a-wig/edit');
-      } else {
-        navigate('/build-a-wig');
-      }
+      navigate(sourceRoute);
     }, 100);
   };
 

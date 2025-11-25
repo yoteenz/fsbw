@@ -1403,7 +1403,9 @@ export default function BuildAWigPage() {
       category
     });
     
-    // Set flag to indicate we're navigating to a sub-page
+    // Store the source route so sub-pages know where to navigate back to
+    const sourceRoute = location.pathname; // Will be '/build-a-wig', '/build-a-wig/edit', or '/build-a-wig/noir/customize'
+    sessionStorage.setItem('sourceRoute', sourceRoute);
     sessionStorage.setItem('comingFromSubPage', 'true');
     
     if (category === 'capSize') {

@@ -376,9 +376,8 @@ export default function StylingSelectionPage() {
     
     localStorage.setItem('selectedStylingPrice', getTotalStylingPrice().toString());
     
-    // Check if we're in edit mode - if so, navigate back to edit page
-    const editingCartItem = localStorage.getItem('editingCartItem');
-    const isEditMode = editingCartItem !== null;
+    // Get the source route from sessionStorage (set by main page when navigating to sub-page)
+    const sourceRoute = sessionStorage.getItem('sourceRoute') || '/build-a-wig';
     
     // Set flag to indicate we're returning from a sub-page
     sessionStorage.setItem('comingFromSubPage', 'true');
@@ -386,11 +385,7 @@ export default function StylingSelectionPage() {
     // Dispatch custom event to notify main page of changes
     window.dispatchEvent(new CustomEvent('customStorageChange'));
     
-    if (isEditMode) {
-      navigate('/build-a-wig/edit');
-    } else {
-      navigate('/build-a-wig');
-    }
+    navigate(sourceRoute);
   };
 
   return (
