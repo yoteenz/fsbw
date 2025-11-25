@@ -1283,6 +1283,19 @@ function NoirSelection() {
     // For units/noir page, ALWAYS use DEFAULT selections and prices
     // This ensures the price is always $740 or $780, regardless of cart items or localStorage
     // CRITICAL: Do NOT read from localStorage - this page's price is completely independent
+    
+    // Force clear any localStorage price values that might interfere
+    // This is a safety measure to ensure no stale values affect the calculation
+    localStorage.removeItem('selectedColorPrice');
+    localStorage.removeItem('selectedLengthPrice');
+    localStorage.removeItem('selectedDensityPrice');
+    localStorage.removeItem('selectedLacePrice');
+    localStorage.removeItem('selectedTexturePrice');
+    localStorage.removeItem('selectedHairlinePrice');
+    localStorage.removeItem('selectedStylingPrice');
+    localStorage.removeItem('selectedAddOnsPrice');
+    localStorage.removeItem('selectedCapSizePrice');
+    
     const capSize = selectedCustomCap || selectedFlexibleCap || 'M';
     
     // Calculate base price based on cap size ONLY
@@ -1303,6 +1316,20 @@ function NoirSelection() {
     const addOnsPrice = 0; // No add-ons by default - NEVER read from localStorage
     
     const calculatedPrice = basePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
+    
+    // Verify price is correct (should only be 740 or 780)
+    if (calculatedPrice !== 740 && calculatedPrice !== 780) {
+      console.error('Units/Noir - CRITICAL ERROR: Price calculation is incorrect!', {
+        calculatedPrice,
+        basePrice,
+        capSize,
+        selectedCustomCap,
+        selectedFlexibleCap,
+        error: 'Price must be 740 or 780 only!'
+      });
+      // Force correct price based on cap size
+      return capSize === 'XXS/XS/S' || capSize === 'S/M/L' ? 780 : 740;
+    }
     
     console.log('Units/Noir - getTotalPrice calculated (isolated from localStorage):', {
       capSize,
