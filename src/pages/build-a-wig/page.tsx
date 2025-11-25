@@ -258,9 +258,6 @@ export default function BuildAWigPage() {
       const editingCartItem = localStorage.getItem('editingCartItem');
       const editingCartItemId = localStorage.getItem('editingCartItemId');
       
-      // Check if this is a different item than what we're currently editing
-      const isDifferentItem = editingCartItemId && editingCartItemId !== currentEditingItemIdRef.current;
-      
       if (editingCartItem) {
         try {
           const item = JSON.parse(editingCartItem);
