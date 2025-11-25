@@ -15,192 +15,173 @@ const LobbyPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-red-900 relative" style={{ height: '100vh', overflow: 'visible', display: 'flex', flexDirection: 'column', width: '100vw', flexShrink: 0 }}>
+    <div className="h-screen bg-red-900 relative" style={{ width: '100vw', flexShrink: 0 }}>
       {/* Background Image */}
       <div 
-        style={{ 
-          position: 'absolute', 
-          top: '0', 
-          right: '0', 
-          bottom: '0', 
-          left: '0', 
+        className="absolute inset-0 bg-contain bg-center bg-no-repeat"
+        style={{
           backgroundImage: 'url(/assets/landing-background.png)',
           backgroundSize: '100% 100%',
-          backgroundPosition: 'center center',
-          backgroundRepeat: 'no-repeat'
+          backgroundPosition: 'center center'
         }}
       />
       
       {/* Chat Icon - Upper Left */}
-      <div className="absolute top-6 left-6 z-20">
+      <div className="absolute z-20" style={{ top: '54px', left: '20px' }}>
         <img 
           src="/assets/chat-icon.svg" 
           alt="Chat" 
-          style={{ width: '32px', height: '32px', cursor: 'pointer' }}
+          className="cursor-pointer hover:opacity-80 transition-opacity"
+          style={{ width: '22px', height: '22px' }}
         />
       </div>
       
       {/* Menu Icon - Upper Right */}
-      <div className="absolute top-6 right-6 z-20">
+      <div className="absolute right-6 z-20" style={{ top: '59px' }}>
         <img 
           src="/assets/landing-menu-icon.svg" 
           alt="Menu" 
-          style={{ width: '32px', height: '32px', cursor: 'pointer' }}
+          className="cursor-pointer hover:opacity-80 transition-opacity"
+          style={{ width: '16px', height: '16px' }}
         />
       </div>
       
       {/* Main Content Container */}
-      <div style={{ 
-        position: 'relative', 
-        zIndex: '10', 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        minHeight: '100vh',
-        padding: '0 16px'
-      }}>
-        
-        {/* Neon Logo - Center */}
-        <div style={{ marginBottom: '32px', padding: '0px' }}>
-          <img 
-            src="/assets/neon-logo.png" 
-            alt="Frontal Slayer" 
-            style={{ width: 'auto', height: '60px', maxHeight: '60px', margin: '0', padding: '0' }}
-          />
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen" style={{ overflow: 'visible' }}>
+        {/* Placeholder for logo to maintain flex flow */}
+        <div style={{ height: '288px', width: '1px', opacity: 0, flexShrink: 0 }}>
+          {/* Invisible spacer to maintain layout */}
         </div>
         
-        {/* Navigation Links */}
+        {/* Neon Logo - Center - Absolute positioned to escape container */}
         <div style={{ 
-          margin: '0', 
-          padding: '0', 
-          marginBottom: '64px', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          gap: '0px'
+          position: 'absolute', 
+          top: '50%', 
+          left: '50%', 
+          transform: 'translate(-50%, calc(-50% - 240px))', 
+          zIndex: 20,
+          width: 'fit-content'
+        }}>
+          <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content' }}>
+            <img 
+              src="/assets/neon-logo.png" 
+              alt="Frontal Slayer" 
+              onClick={() => navigate('/build-a-wig')}
+              style={{ width: 'auto', height: '268px', maxWidth: 'none', display: 'block', cursor: 'pointer' }}
+            />
+          </div>
+        </div>
+        
+        {/* Navigation Links Container */}
+        <div className="flex flex-row justify-center items-center" style={{ 
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(calc(-50% + 51px), calc(-50% - 138px))',
+          zIndex: 20,
+          margin: 0,
+          padding: 0
         }}>
           <img 
             src="/assets/neon-products.png" 
             alt="Products" 
             onClick={() => navigate('/build-a-wig')}
-            style={{ width: 'auto', height: '44px', cursor: 'pointer', margin: '0', padding: '0', display: 'block', transform: 'translateX(0px)' }}
+            className="w-auto cursor-pointer hover:opacity-80 transition-opacity"
+            style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(4px)', height: '41px' }}
           />
           <img 
             src="/assets/neon-tools.png" 
             alt="Tools" 
-            style={{ width: 'auto', height: '44px', cursor: 'pointer', margin: '0', padding: '0', display: 'block', transform: 'translateX(-50px)' }}
+            className="w-auto cursor-pointer hover:opacity-80 transition-opacity"
+            style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(-50px)', height: '41px' }}
           />
           <img 
             src="/assets/neon-booking.png" 
             alt="Booking" 
-            style={{ width: 'auto', height: '44px', cursor: 'pointer', margin: '0', padding: '0', display: 'block', transform: 'translateX(-100px)' }}
+            className="w-auto cursor-pointer hover:opacity-80 transition-opacity"
+            style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(-104px)', height: '41px' }}
           />
         </div>
         
         {/* Product Display Shelves */}
-        <div style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          gap: '32px', 
-          marginBottom: '64px',
-          alignItems: 'center'
+        <div className="flex flex-col" style={{ 
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, calc(-50% + 2px))',
+          zIndex: 20,
+          gap: '16px'
         }}>
           {/* HD LACE Shelf */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div className="flex flex-col items-center">
             <img 
               src="/assets/hd-group.png" 
               alt="HD Lace Collection" 
-              style={{ 
-                width: 'auto', 
-                height: '64px',
-                display: 'block'
-              }}
+              className="w-auto md:h-20 lg:h-24"
+              style={{ height: '64px' }}
             />
           </div>
           
           {/* TRANSPARENT LACE Shelf */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div className="flex flex-col items-center">
             <img 
               src="/assets/transparent-group.png" 
               alt="Transparent Lace Collection" 
-              style={{ 
-                width: 'auto', 
-                height: '64px',
-                display: 'block'
-              }}
+              className="w-auto md:h-20 lg:h-24"
+              style={{ height: '64px' }}
             />
           </div>
           
           {/* CUSTOM UNITS Shelf */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div className="flex flex-col items-center">
             <img 
               src="/assets/custom-group.png" 
               alt="Custom Units Collection" 
-              style={{ 
-                width: 'auto', 
-                height: '64px',
-                display: 'block'
-              }}
+              className="w-auto md:h-20 lg:h-24"
+              style={{ height: '64px' }}
             />
           </div>
         </div>
         
         {/* Bottom Display Case and Accessories */}
-        <div style={{ 
-          position: 'relative', 
-          width: '60%', 
-          maxWidth: '768px',
-          marginTop: '-50px'
+        <div className="relative w-3/5" style={{ 
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(calc(-50% + 4px), calc(-50% + 255px))',
+          zIndex: 20,
+          maxWidth: '753px'
         }}>
           {/* Acrylic Case */}
-          <div style={{ position: 'relative' }}>
+          <div className="relative">
             <img 
               src="/assets/CASE.png" 
               alt="Display Case" 
-              style={{ 
-                width: '100%', 
-                height: 'auto',
-                display: 'block'
-              }}
+              className="h-auto"
+              style={{ display: 'block', width: '230px', maxWidth: '230px' }}
             />
             
             {/* Register - Left side of case */}
-            <div style={{ 
-              position: 'absolute', 
-              top: '16px', 
-              left: '32px'
-            }}>
-              <img 
-                src="/assets/REGISTER.png" 
-                alt="Register" 
-                style={{ 
-                  width: '40px', 
-                  height: '32px',
-                  display: 'block'
-                }}
-              />
+            <div className="absolute left-8" style={{ top: '-39px' }}>
+            <img 
+              src="/assets/REGISTER.png" 
+              alt="Register" 
+              className="md:w-10 md:h-8"
+              style={{ width: '52px', height: '44px' }}
+            />
             </div>
             
             {/* Phone - Right side of case */}
-            <div style={{ 
-              position: 'absolute', 
-              top: '16px', 
-              right: '32px'
-            }}>
+            <div className="absolute right-8" style={{ top: '-31px' }}>
               <img 
                 src="/assets/PHONE.png" 
                 alt="Phone" 
-                style={{ 
-                  width: '40px', 
-                  height: '32px',
-                  display: 'block'
-                }}
+                className="md:w-10 md:h-8"
+                style={{ width: '32px', height: '34px' }}
               />
             </div>
           </div>
         </div>
-        
       </div>
     </div>
   );
@@ -208,8 +189,9 @@ const LobbyPage: React.FC = () => {
 
 // Lounge Component
 const LoungePage: React.FC = () => {
+  console.log('LoungePage component is rendering');
   return (
-    <div className="bg-white relative" style={{ minHeight: '105vh', width: '100vw', overflow: 'visible', display: 'block', margin: 0, padding: 0 }}>
+    <div className="bg-white relative" style={{ minHeight: '105vh', width: '100vw', height: '100vh', overflow: 'visible', display: 'block', margin: 0, padding: 0, flexShrink: 0 }}>
       {/* Background Image - Using landing2-background */}
       <div 
         style={{ 
@@ -264,30 +246,30 @@ const LoungePage: React.FC = () => {
       </div>
       
       {/* TV Screen - Independent container with absolute positioning */}
-      <div style={{ 
-        position: 'absolute', 
-        top: '50%', 
-        left: '50%', 
-        transform: 'translate(calc(-50% + 58px), calc(-50% + 50px))', 
-        zIndex: 10, 
-        width: 'fit-content'
-      }}>
-        <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content' }}>
-          <img 
-            src="/assets/tv-screen.png" 
-            alt="TV Screen" 
-            style={{ 
-              width: 'auto', 
-              height: '146px', 
-              cursor: 'pointer', 
-              margin: 0, 
-              padding: 0, 
-              display: 'block',
-              maxWidth: 'none'
-            }}
-          />
-        </div>
-      </div>
+       <div style={{ 
+         position: 'absolute', 
+         top: '50%', 
+         left: '50%', 
+         transform: 'translate(calc(-50% + 58px), calc(-50% + 50px))', 
+         zIndex: 10, 
+         width: 'fit-content'
+       }}>
+         <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content' }}>
+           <img 
+             src="/assets/tv-screen.png" 
+             alt="TV Screen" 
+             style={{ 
+               width: 'auto', 
+               height: '146px', 
+               cursor: 'pointer', 
+               margin: 0, 
+               padding: 0, 
+               display: 'block',
+               maxWidth: 'none'
+             }}
+           />
+         </div>
+       </div>
       
       {/* Play Button - Independent container with absolute positioning */}
       <div style={{ 
@@ -524,4 +506,3 @@ const LobbyApp: React.FC = () => {
 };
 
 export default LobbyApp;
-
