@@ -90,28 +90,28 @@ export default function BuildAWigPage() {
     if (!hasSavedValues) {
       // Clear localStorage synchronously BEFORE setting initial state
       // This ensures defaults are always shown on first visit
-      localStorage.removeItem('selectedCapSize');
-      localStorage.removeItem('selectedLength');
-      localStorage.removeItem('selectedDensity');
-      localStorage.removeItem('selectedColor');
-      localStorage.removeItem('selectedTexture');
-      localStorage.removeItem('selectedLace');
-      localStorage.removeItem('selectedHairline');
-      localStorage.removeItem('selectedPartSelection');
-      localStorage.removeItem('selectedStyling');
-      localStorage.removeItem('selectedAddOns');
-      localStorage.removeItem('selectedHairStyling');
-      
-      // CRITICAL: Remove ALL price items FIRST to clear any stale values
-      localStorage.removeItem('selectedCapSizePrice');
-      localStorage.removeItem('selectedColorPrice');
-      localStorage.removeItem('selectedLengthPrice');
-      localStorage.removeItem('selectedDensityPrice');
-      localStorage.removeItem('selectedLacePrice');
-      localStorage.removeItem('selectedTexturePrice');
-      localStorage.removeItem('selectedHairlinePrice');
-      localStorage.removeItem('selectedStylingPrice');
-      localStorage.removeItem('selectedAddOnsPrice');
+    localStorage.removeItem('selectedCapSize');
+    localStorage.removeItem('selectedLength');
+    localStorage.removeItem('selectedDensity');
+    localStorage.removeItem('selectedColor');
+    localStorage.removeItem('selectedTexture');
+    localStorage.removeItem('selectedLace');
+    localStorage.removeItem('selectedHairline');
+    localStorage.removeItem('selectedPartSelection');
+    localStorage.removeItem('selectedStyling');
+    localStorage.removeItem('selectedAddOns');
+    localStorage.removeItem('selectedHairStyling');
+    
+    // CRITICAL: Remove ALL price items FIRST to clear any stale values
+    localStorage.removeItem('selectedCapSizePrice');
+    localStorage.removeItem('selectedColorPrice');
+    localStorage.removeItem('selectedLengthPrice');
+    localStorage.removeItem('selectedDensityPrice');
+    localStorage.removeItem('selectedLacePrice');
+    localStorage.removeItem('selectedTexturePrice');
+    localStorage.removeItem('selectedHairlinePrice');
+    localStorage.removeItem('selectedStylingPrice');
+    localStorage.removeItem('selectedAddOnsPrice');
     }
     
     // Set defaults in localStorage so sub-pages can read them
@@ -129,26 +129,26 @@ export default function BuildAWigPage() {
     
     // Only set defaults if we cleared localStorage (first visit)
     if (!hasSavedValues) {
-      localStorage.setItem('selectedCapSize', defaults.capSize);
-      localStorage.setItem('selectedLength', defaults.length);
-      localStorage.setItem('selectedDensity', defaults.density);
-      localStorage.setItem('selectedColor', defaults.color);
-      localStorage.setItem('selectedTexture', defaults.texture);
-      localStorage.setItem('selectedLace', defaults.lace);
-      localStorage.setItem('selectedHairline', defaults.hairline);
-      localStorage.setItem('selectedStyling', defaults.styling);
-      localStorage.setItem('selectedAddOns', JSON.stringify(defaults.addOns));
-      
-      // Set all default prices to 0 synchronously AFTER removing old values
-      localStorage.setItem('selectedCapSizePrice', '0');
-      localStorage.setItem('selectedColorPrice', '0');
-      localStorage.setItem('selectedLengthPrice', '0');
-      localStorage.setItem('selectedDensityPrice', '0');
-      localStorage.setItem('selectedLacePrice', '0');
-      localStorage.setItem('selectedTexturePrice', '0');
-      localStorage.setItem('selectedHairlinePrice', '0');
-      localStorage.setItem('selectedStylingPrice', '0');
-      localStorage.setItem('selectedAddOnsPrice', '0');
+    localStorage.setItem('selectedCapSize', defaults.capSize);
+    localStorage.setItem('selectedLength', defaults.length);
+    localStorage.setItem('selectedDensity', defaults.density);
+    localStorage.setItem('selectedColor', defaults.color);
+    localStorage.setItem('selectedTexture', defaults.texture);
+    localStorage.setItem('selectedLace', defaults.lace);
+    localStorage.setItem('selectedHairline', defaults.hairline);
+    localStorage.setItem('selectedStyling', defaults.styling);
+    localStorage.setItem('selectedAddOns', JSON.stringify(defaults.addOns));
+    
+    // Set all default prices to 0 synchronously AFTER removing old values
+    localStorage.setItem('selectedCapSizePrice', '0');
+    localStorage.setItem('selectedColorPrice', '0');
+    localStorage.setItem('selectedLengthPrice', '0');
+    localStorage.setItem('selectedDensityPrice', '0');
+    localStorage.setItem('selectedLacePrice', '0');
+    localStorage.setItem('selectedTexturePrice', '0');
+    localStorage.setItem('selectedHairlinePrice', '0');
+    localStorage.setItem('selectedStylingPrice', '0');
+    localStorage.setItem('selectedAddOnsPrice', '0');
     }
     
     // Return defaults for normal mode
@@ -270,9 +270,9 @@ export default function BuildAWigPage() {
     }
     
     if (isCustomizePage) {
-      // Set flag to prevent sync effect from overwriting
-      isLoadingFromStorage.current = true;
-      
+        // Set flag to prevent sync effect from overwriting
+        isLoadingFromStorage.current = true;
+        
       // Load cap size from localStorage (set by customize button) with defaults for other selections
       const savedCapSize = localStorage.getItem('selectedCapSize');
       
@@ -359,13 +359,13 @@ export default function BuildAWigPage() {
         const savedAddOns = localStorage.getItem('selectedAddOns');
         
         if (savedCapSize || savedLength || savedDensity || savedLace || savedTexture || savedColor || savedHairline || savedStyling || savedAddOns) {
-          // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
+      // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
           let validStyling = savedStyling !== null ? savedStyling : 'NONE';
-          const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
-          if (partSelectionOptions.includes(validStyling)) {
-            validStyling = 'NONE'; // If styling is a part selection, set to NONE
-          }
-          
+      const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
+      if (partSelectionOptions.includes(validStyling)) {
+        validStyling = 'NONE'; // If styling is a part selection, set to NONE
+      }
+      
           const updatedCustomization = {
             capSize: savedCapSize || 'M',
             length: savedLength || '24"',
@@ -374,15 +374,27 @@ export default function BuildAWigPage() {
             texture: savedTexture || 'SILKY',
             color: savedColor || 'OFF BLACK',
             hairline: savedHairline || 'NATURAL',
-            styling: validStyling,
-            addOns: savedAddOns ? JSON.parse(savedAddOns) : [],
+        styling: validStyling,
+        addOns: savedAddOns ? JSON.parse(savedAddOns) : [],
           };
           
           // Update customization state (originalItem stays the same for change detection)
           setCustomization(updatedCustomization);
           
-          // Trigger price recalculation
-          setRefreshTrigger(prev => prev + 1);
+          // Calculate and set prices based on updated selections
+          const calculatedPrices = calculatePricesFromSelections(updatedCustomization);
+          localStorage.setItem('selectedCapSizePrice', calculatedPrices.capSizePrice.toString());
+          localStorage.setItem('selectedColorPrice', calculatedPrices.colorPrice.toString());
+          localStorage.setItem('selectedLengthPrice', calculatedPrices.lengthPrice.toString());
+          localStorage.setItem('selectedDensityPrice', calculatedPrices.densityPrice.toString());
+          localStorage.setItem('selectedLacePrice', calculatedPrices.lacePrice.toString());
+          localStorage.setItem('selectedTexturePrice', calculatedPrices.texturePrice.toString());
+          localStorage.setItem('selectedHairlinePrice', calculatedPrices.hairlinePrice.toString());
+          localStorage.setItem('selectedStylingPrice', calculatedPrices.stylingPrice.toString());
+          localStorage.setItem('selectedAddOnsPrice', calculatedPrices.addOnsPrice.toString());
+        
+        // Trigger price recalculation
+        setRefreshTrigger(prev => prev + 1);
         }
         
         // Clear the flag
@@ -469,11 +481,11 @@ export default function BuildAWigPage() {
           console.error('BuildAWigPage - Error parsing editingCartItem:', error);
         }
       }
-      
-      // Clear flag after a short delay to allow state update to complete
-      setTimeout(() => {
-        isLoadingFromStorage.current = false;
-      }, 100);
+        
+        // Clear flag after a short delay to allow state update to complete
+        setTimeout(() => {
+          isLoadingFromStorage.current = false;
+        }, 100);
     } else if (isMainPage) {
       // Set flag to prevent sync effect from overwriting
       isLoadingFromStorage.current = true;
@@ -631,15 +643,15 @@ export default function BuildAWigPage() {
         const savedStyling = localStorage.getItem('selectedStyling');
         const savedAddOns = localStorage.getItem('selectedAddOns');
         
-        // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
+          // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
         let validStyling = savedStyling !== null ? savedStyling : 'NONE';
-        const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
-        if (partSelectionOptions.includes(validStyling)) {
-          validStyling = 'NONE'; // If styling is a part selection, set to NONE
-          // Also update localStorage to fix the incorrect value
-          localStorage.setItem('selectedStyling', 'NONE');
-        }
-        
+          const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
+          if (partSelectionOptions.includes(validStyling)) {
+            validStyling = 'NONE'; // If styling is a part selection, set to NONE
+            // Also update localStorage to fix the incorrect value
+            localStorage.setItem('selectedStyling', 'NONE');
+          }
+          
         setCustomization(prev => ({
           ...prev,
           capSize: savedCapSize || prev.capSize,
@@ -649,7 +661,7 @@ export default function BuildAWigPage() {
           texture: savedTexture || prev.texture,
           color: savedColor || prev.color,
           hairline: savedHairline || prev.hairline,
-          styling: validStyling,
+            styling: validStyling,
           addOns: savedAddOns ? JSON.parse(savedAddOns) : prev.addOns,
         }));
         
@@ -2462,10 +2474,10 @@ export default function BuildAWigPage() {
                   return 'SAVE CHANGES';
                 } else {
                   return (
-                    <span className="flex items-center justify-center gap-1">
-                      <img src="/assets/check.svg" alt="Check" width="9" height="9" />
-                      <span style={{ color: '#909090' }}>IN THE BAG</span>
-                    </span>
+              <span className="flex items-center justify-center gap-1">
+                <img src="/assets/check.svg" alt="Check" width="9" height="9" />
+                <span style={{ color: '#909090' }}>IN THE BAG</span>
+              </span>
                   );
                 }
               }
