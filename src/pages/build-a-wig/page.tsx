@@ -1221,6 +1221,18 @@ export default function BuildAWigPage() {
 
   // Initialize button state from localStorage on page load
   useEffect(() => {
+    const isEditPage = location.pathname === '/build-a-wig/edit';
+    
+    // In edit mode, button should always start as 'added' (IN THE BAG)
+    if (isEditPage) {
+      const editingCartItem = localStorage.getItem('editingCartItem');
+      if (editingCartItem) {
+        setAddToBagState('added');
+        return; // Don't check normal button state in edit mode
+      }
+    }
+    
+    // Normal mode: check localStorage for button state
     const savedButtonState = localStorage.getItem('addToBagButtonState');
     const lastAddedItemId = localStorage.getItem('lastAddedItemId');
     const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
@@ -1236,7 +1248,7 @@ export default function BuildAWigPage() {
         localStorage.removeItem('lastAddedItemId');
       }
     }
-  }, []);
+  }, [location.pathname]);
 
   const handleAddToBag = async () => {
     const isEditPage = location.pathname === '/build-a-wig/edit';
