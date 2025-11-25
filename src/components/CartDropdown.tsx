@@ -643,7 +643,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           });
                           
                           onClose(); // Close the dropdown first
-                          navigate('/build-a-wig'); // Navigate to build-a-wig main page
+                          navigate('/build-a-wig/edit'); // Navigate to build-a-wig edit page
                         }}
                       >
                         EDIT IN BUILD-A-WIG
