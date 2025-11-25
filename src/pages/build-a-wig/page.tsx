@@ -265,7 +265,7 @@ export default function BuildAWigPage() {
             validStyling = 'NONE'; // If styling is a part selection, set to NONE
           }
           
-          setCustomization({
+          const editCustomization = {
             capSize: item.capSize || 'M',
             length: item.length || '24"',
             density: item.density || '200%',
@@ -275,7 +275,16 @@ export default function BuildAWigPage() {
             hairline: item.hairline || 'NATURAL',
             styling: validStyling,
             addOns: item.addOns || [],
-          });
+          };
+          
+          // Store original item for change detection
+          setOriginalItem(editCustomization);
+          setHasChanges(false);
+          
+          // Set button to 'added' (IN THE BAG) since item is already in cart
+          setAddToBagState('added');
+          
+          setCustomization(editCustomization);
           
           // Also update localStorage so sub-pages can read the edit values
           localStorage.setItem('selectedCapSize', item.capSize || 'M');
@@ -447,6 +456,10 @@ export default function BuildAWigPage() {
   // Add to bag button states: 'idle', 'adding', 'added'
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
   const [currentConfiguration, setCurrentConfiguration] = useState<string>('');
+  
+  // Edit mode state: track original item and detect changes
+  const [originalItem, setOriginalItem] = useState<WigCustomization | null>(null);
+  const [hasChanges, setHasChanges] = useState(false);
   
   // Cart count state
   const [cartCount, setCartCount] = useState(() => {
@@ -1157,7 +1170,7 @@ export default function BuildAWigPage() {
   };
 
 
-  // Check if configuration has changed
+  // Check if configuration has changed (for normal mode)
   useEffect(() => {
     const newConfig = generateConfigurationString();
     if (currentConfiguration && newConfig !== currentConfiguration) {
@@ -1171,6 +1184,40 @@ export default function BuildAWigPage() {
     }
     setCurrentConfiguration(newConfig);
   }, [refreshTrigger]); // Removed selectedView dependency to reduce re-renders
+
+  // Detect changes in edit mode by comparing with original item
+  useEffect(() => {
+    const isEditPage = location.pathname === '/build-a-wig/edit';
+    
+    if (isEditPage && originalItem) {
+      // Compare current customization with original item
+      const hasChangesDetected = 
+        customization.capSize !== originalItem.capSize ||
+        customization.length !== originalItem.length ||
+        customization.density !== originalItem.density ||
+        customization.lace !== originalItem.lace ||
+        customization.texture !== originalItem.texture ||
+        customization.color !== originalItem.color ||
+        customization.hairline !== originalItem.hairline ||
+        customization.styling !== originalItem.styling ||
+        JSON.stringify(customization.addOns) !== JSON.stringify(originalItem.addOns);
+      
+      setHasChanges(hasChangesDetected);
+      
+      // Keep button in 'added' state (for IN THE BAG text) - changes will show SAVE CHANGES
+      if (hasChangesDetected) {
+        // Button stays in 'added' state but hasChanges flag will change text to "SAVE CHANGES"
+        setAddToBagState('added');
+      } else {
+        // No changes, show "IN THE BAG"
+        setAddToBagState('added');
+      }
+    } else if (!isEditPage) {
+      // Clear edit mode state when not on edit page
+      setOriginalItem(null);
+      setHasChanges(false);
+    }
+  }, [customization, originalItem, location.pathname]);
 
   // Initialize button state from localStorage on page load
   useEffect(() => {
@@ -1192,7 +1239,20 @@ export default function BuildAWigPage() {
   }, []);
 
   const handleAddToBag = async () => {
-    if (addToBagState === 'adding' || addToBagState === 'added') return;
+    const isEditPage = location.pathname === '/build-a-wig/edit';
+    
+    // In edit mode: only allow if changes have been made
+    if (isEditPage && !hasChanges) {
+      return; // Button should be disabled, but this is a safety check
+    }
+    
+    // Prevent double-clicks
+    if (addToBagState === 'adding') return;
+    
+    // In normal mode, prevent if already added
+    if (!isEditPage && addToBagState === 'added') {
+      return;
+    }
     
     setAddToBagState('adding');
     
@@ -1236,7 +1296,19 @@ export default function BuildAWigPage() {
       
       localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
       
-      // Clear editing mode - REMOVED: no editing state on this page
+      // Update originalItem to reflect saved changes
+      setOriginalItem({
+        capSize: customization.capSize,
+        length: customization.length,
+        density: customization.density,
+        lace: customization.lace,
+        texture: customization.texture,
+        color: customization.color,
+        hairline: customization.hairline,
+        styling: validStyling,
+        addOns: customization.addOns,
+      });
+      setHasChanges(false); // Reset changes flag after saving
       
       // Dispatch custom event to notify other components
       window.dispatchEvent(new CustomEvent('cartUpdated'));
@@ -2077,7 +2149,7 @@ export default function BuildAWigPage() {
         <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
               <button
                 onClick={handleAddToBag}
-            disabled={addToBagState === 'adding'}
+            disabled={addToBagState === 'adding' || (location.pathname === '/build-a-wig/edit' && !hasChanges)}
             className={`border border-black font-futura w-full md:max-w-sm lg:max-w-md text-center py-2 md:py-3 lg:py-4 text-[12px] md:text-sm lg:text-base font-semibold ${
               addToBagState === 'adding' ? 'bg-gray-100 cursor-not-allowed' : 'bg-white cursor-pointer hover:bg-gray-50'
             }`}
@@ -2087,14 +2159,36 @@ export default function BuildAWigPage() {
               fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' 
             }}
           >
-            {addToBagState === 'idle' && 'ADD TO BAG'}
-            {addToBagState === 'adding' && 'ADDING...'}
-            {addToBagState === 'added' && (
-              <span className="flex items-center justify-center gap-1">
-                <img src="/assets/check.svg" alt="Check" width="9" height="9" />
-                <span style={{ color: '#909090' }}>IN THE BAG</span>
-              </span>
-            )}
+            {(() => {
+              const isEditPage = location.pathname === '/build-a-wig/edit';
+              
+              // Edit mode: show "IN THE BAG" by default, "SAVE CHANGES" when changes detected
+              if (isEditPage) {
+                if (hasChanges) {
+                  return 'SAVE CHANGES';
+                } else {
+                  return (
+                    <span className="flex items-center justify-center gap-1">
+                      <img src="/assets/check.svg" alt="Check" width="9" height="9" />
+                      <span style={{ color: '#909090' }}>IN THE BAG</span>
+                    </span>
+                  );
+                }
+              }
+              
+              // Normal mode: standard button states
+              if (addToBagState === 'idle') return 'ADD TO BAG';
+              if (addToBagState === 'adding') return 'ADDING...';
+              if (addToBagState === 'added') {
+                return (
+                  <span className="flex items-center justify-center gap-1">
+                    <img src="/assets/check.svg" alt="Check" width="9" height="9" />
+                    <span style={{ color: '#909090' }}>IN THE BAG</span>
+                  </span>
+                );
+              }
+              return 'ADD TO BAG';
+            })()}
               </button>
               
               
