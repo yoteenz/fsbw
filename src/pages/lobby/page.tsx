@@ -331,10 +331,11 @@ const LoungePage: React.FC = () => {
 // Main Lobby App Component with Slide Transition
 const LobbyApp: React.FC = () => {
   console.log('🎯 LOBBY PAGE LOADING - This should show when visiting root path');
-  const [currentPage, setCurrentPage] = useState<number>(0); // 0 = Lobby, 1 = Lounge
+  const [currentPage, setCurrentPage] = useState<number>(1); // 0 = Lounge, 1 = Lobby (reversed order)
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
 
-  const pages = [<LobbyPage key="lobby" />, <LoungePage key="lounge" />];
+  // Reverse order so lounge slides in from left when transitioning from lobby
+  const pages = [<LoungePage key="lounge" />, <LobbyPage key="lobby" />];
 
   const handlePrevious = useCallback(() => {
     if (currentPage > 0 && !isTransitioning) {
@@ -388,7 +389,7 @@ const LobbyApp: React.FC = () => {
         {pages}
       </div>
 
-      {/* Left Arrow Button - Show on lounge page */}
+      {/* Left Arrow Button - Show on lobby page (to go to lounge) */}
       {currentPage === 1 && (
         <button
           onClick={(e) => {
@@ -397,7 +398,7 @@ const LobbyApp: React.FC = () => {
             handlePrevious();
           }}
           disabled={isTransitioning}
-          aria-label="Previous page"
+          aria-label="Next page"
           style={{
             position: 'fixed',
             left: '20px',
@@ -440,21 +441,21 @@ const LobbyApp: React.FC = () => {
               d="M18 18L12 12L18 6" 
               stroke="white" 
               strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
+              strokeLinecap="square" 
+              strokeLinejoin="miter"
             />
             <path 
               d="M26 18L20 12L26 6" 
               stroke="white" 
               strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
+              strokeLinecap="square" 
+              strokeLinejoin="miter"
             />
           </svg>
         </button>
       )}
 
-      {/* Right Arrow Button - Always show on lobby page */}
+      {/* Right Arrow Button - Show on lounge page (to go back to lobby) */}
       {currentPage === 0 && (
         <button
           onClick={(e) => {
@@ -463,7 +464,7 @@ const LobbyApp: React.FC = () => {
             handleNext();
           }}
           disabled={isTransitioning}
-          aria-label="Next page"
+          aria-label="Previous page"
           style={{
             position: 'fixed',
             right: '20px',
@@ -506,15 +507,15 @@ const LobbyApp: React.FC = () => {
               d="M14 18L20 12L14 6" 
               stroke="white" 
               strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
+              strokeLinecap="square" 
+              strokeLinejoin="miter"
             />
             <path 
               d="M6 18L12 12L6 6" 
               stroke="white" 
               strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
+              strokeLinecap="square" 
+              strokeLinejoin="miter"
             />
           </svg>
         </button>
