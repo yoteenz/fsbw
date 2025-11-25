@@ -204,7 +204,7 @@ const LobbyPage: React.FC = () => {
         position: 'absolute',
         right: '20px',
         top: 'calc(50vh - 5px)',
-        transform: 'translate(22px, -50%)',
+        transform: 'translate(19px, -50%)',
         zIndex: 999999,
         display: 'flex',
         flexDirection: 'column',
