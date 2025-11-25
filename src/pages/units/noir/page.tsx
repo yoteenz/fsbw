@@ -1360,7 +1360,8 @@ function NoirSelection() {
     return basePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
   };
 
-  const totalPrice = getTotalPrice();
+  // Use useMemo to recalculate price when cap selection changes
+  const totalPrice = React.useMemo(() => getTotalPrice(), [selectedCustomCap, selectedFlexibleCap]);
 
   useEffect(() => {
     // Hide loading screen after 2 seconds
