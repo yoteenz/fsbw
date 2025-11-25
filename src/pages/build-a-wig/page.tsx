@@ -1367,14 +1367,18 @@ export default function BuildAWigPage() {
         customization.styling !== originalItem.styling ||
         JSON.stringify(customization.addOns) !== JSON.stringify(originalItem.addOns);
       
+      console.log('BuildAWigPage - Change detection:', {
+        hasChangesDetected,
+        customization: customization.color,
+        originalItem: originalItem.color,
+        buttonState: addToBagState
+      });
+      
       setHasChanges(hasChangesDetected);
       
       // Keep button in 'added' state (for IN THE BAG text) - changes will show SAVE CHANGES
-      if (hasChangesDetected) {
-        // Button stays in 'added' state but hasChanges flag will change text to "SAVE CHANGES"
-        setAddToBagState('added');
-      } else {
-        // No changes, show "IN THE BAG"
+      // Don't change button state here - let it stay as 'added' and use hasChanges for text
+      if (!addToBagState || addToBagState === 'idle') {
         setAddToBagState('added');
       }
     } else if (!isEditPage) {
@@ -1382,7 +1386,7 @@ export default function BuildAWigPage() {
       setOriginalItem(null);
       setHasChanges(false);
     }
-  }, [customization, originalItem, location.pathname]);
+  }, [customization, originalItem, location.pathname, addToBagState]);
 
   // Initialize button state from localStorage on page load
   useEffect(() => {
