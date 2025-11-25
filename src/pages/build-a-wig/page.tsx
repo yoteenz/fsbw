@@ -270,13 +270,66 @@ export default function BuildAWigPage() {
     }
     
     if (isCustomizePage) {
-        // Set flag to prevent sync effect from overwriting
-        isLoadingFromStorage.current = true;
-        
-      // Load cap size from localStorage (set by customize button) with defaults for other selections
+      // Set flag to prevent sync effect from overwriting
+      isLoadingFromStorage.current = true;
+      
+      const comingFromSubPage = sessionStorage.getItem('comingFromSubPage') === 'true';
       const savedCapSize = localStorage.getItem('selectedCapSize');
       
-      if (savedCapSize) {
+      // If coming from sub-page, load updated values from localStorage
+      if (comingFromSubPage && savedCapSize) {
+        console.log('BuildAWigPage - Customize mode: Returning from sub-page, loading updated values from localStorage');
+        
+        // Load updated values from localStorage (set by sub-pages)
+        const savedLength = localStorage.getItem('selectedLength');
+        const savedDensity = localStorage.getItem('selectedDensity');
+        const savedLace = localStorage.getItem('selectedLace');
+        const savedTexture = localStorage.getItem('selectedTexture');
+        const savedColor = localStorage.getItem('selectedColor');
+        const savedHairline = localStorage.getItem('selectedHairline');
+        const savedStyling = localStorage.getItem('selectedStyling');
+        const savedAddOns = localStorage.getItem('selectedAddOns');
+        
+        // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
+        let validStyling = savedStyling !== null ? savedStyling : 'NONE';
+        const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
+        if (partSelectionOptions.includes(validStyling)) {
+          validStyling = 'NONE'; // If styling is a part selection, set to NONE
+        }
+        
+        const updatedCustomization = {
+          capSize: savedCapSize,
+          length: savedLength || '24"',
+          density: savedDensity || '200%',
+          lace: savedLace || '13X6',
+          texture: savedTexture || 'SILKY',
+          color: savedColor || 'OFF BLACK',
+          hairline: savedHairline || 'NATURAL',
+          styling: validStyling,
+          addOns: savedAddOns ? JSON.parse(savedAddOns) : [],
+        };
+        
+        setCustomization(updatedCustomization);
+        
+        // Calculate and set prices based on updated selections
+        const calculatedPrices = calculatePricesFromSelections(updatedCustomization);
+        localStorage.setItem('selectedCapSizePrice', calculatedPrices.capSizePrice.toString());
+        localStorage.setItem('selectedColorPrice', calculatedPrices.colorPrice.toString());
+        localStorage.setItem('selectedLengthPrice', calculatedPrices.lengthPrice.toString());
+        localStorage.setItem('selectedDensityPrice', calculatedPrices.densityPrice.toString());
+        localStorage.setItem('selectedLacePrice', calculatedPrices.lacePrice.toString());
+        localStorage.setItem('selectedTexturePrice', calculatedPrices.texturePrice.toString());
+        localStorage.setItem('selectedHairlinePrice', calculatedPrices.hairlinePrice.toString());
+        localStorage.setItem('selectedStylingPrice', calculatedPrices.stylingPrice.toString());
+        localStorage.setItem('selectedAddOnsPrice', calculatedPrices.addOnsPrice.toString());
+        
+        // Clear the flag
+        sessionStorage.removeItem('comingFromSubPage');
+        
+        // Trigger price recalculation
+        setRefreshTrigger(prev => prev + 1);
+      } else if (savedCapSize) {
+        // First load: Load cap size with defaults for other selections
         console.log('BuildAWigPage - Customize mode: Loading cap size with defaults:', savedCapSize);
         
         // Load cap size with defaults for other selections
