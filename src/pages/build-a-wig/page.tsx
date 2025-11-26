@@ -39,7 +39,6 @@ export default function BuildAWigPage() {
     if (isCustomizeMode) {
       const savedCapSize = localStorage.getItem('selectedCapSize');
       if (savedCapSize) {
-        console.log('BuildAWigPage - Initialize customize mode with cap size:', savedCapSize);
         return {
           capSize: savedCapSize,
           length: '24"',
@@ -60,7 +59,6 @@ export default function BuildAWigPage() {
       if (editingCartItem) {
         try {
           const item = JSON.parse(editingCartItem);
-          console.log('BuildAWigPage - Loading edit mode selections:', item);
           
           // Return the cart item's selections
           return {
@@ -75,7 +73,6 @@ export default function BuildAWigPage() {
             addOns: item.addOns || [],
           };
         } catch (error) {
-          console.error('BuildAWigPage - Error parsing editingCartItem:', error);
         }
       }
     }
@@ -333,7 +330,6 @@ export default function BuildAWigPage() {
     
     if (isCustomizePage) {
       // DEBUGGING: Log that we're in customize mode
-      console.log('[CUSTOMIZE MODE DETECTED]', {
         pathname: location.pathname,
         comingFromSubPage: sessionStorage.getItem('comingFromSubPage') === 'true',
         timestamp: new Date().toISOString()
@@ -351,7 +347,6 @@ export default function BuildAWigPage() {
       
       // If coming from sub-page, load updated values from localStorage
       if (comingFromSubPage) {
-        console.log('BuildAWigPage - Customize mode: Returning from sub-page, loading updated values from localStorage');
         
         // Load updated values from localStorage (set by sub-pages)
         // Prioritize customizeSelected* keys, fall back to selected* keys
@@ -387,7 +382,6 @@ export default function BuildAWigPage() {
         const savedStyling = savedStylingCustomize || savedStylingSelected || customization.styling || 'NONE';
         const savedAddOns = savedAddOnsCustomize || savedAddOnsSelected || JSON.stringify(customization.addOns) || '[]';
         
-        console.log('BuildAWigPage - Customize mode: Loaded values from localStorage:', {
           savedCapSize: savedCapSizeFinal,
           savedLength,
           savedDensity,
@@ -440,7 +434,6 @@ export default function BuildAWigPage() {
           addOns: savedAddOns ? JSON.parse(savedAddOns) : [],
         };
         
-        console.log('BuildAWigPage - Customize mode: Setting customization state with updated values:', updatedCustomization);
         
         // CRITICAL: Also save to customizeSelected* keys immediately to ensure they're available
         localStorage.setItem('customizeSelectedCapSize', updatedCustomization.capSize);
@@ -468,7 +461,6 @@ export default function BuildAWigPage() {
         const savedAddOnsPrice = localStorage.getItem('customizeSelectedAddOnsPrice') || localStorage.getItem('selectedAddOnsPrice') || '0';
         
         // DEBUGGING: Log prices being loaded in customize mode
-        console.log('[CUSTOMIZE MODE - PRICE LOADING]', {
           source: 'Returning from sub-page',
           loadedPrices: {
             capSizePrice: savedCapSizePrice,
@@ -553,11 +545,9 @@ export default function BuildAWigPage() {
         // Use a longer delay to ensure React state updates have propagated and sync effect won't overwrite
         setTimeout(() => {
           isLoadingFromStorage.current = false;
-          console.log('BuildAWigPage - Customize mode: Cleared loading flag, sync effect can now run');
         }, 300);
       } else if (savedCapSize) {
         // First load: Load cap size with defaults for other selections
-        console.log('BuildAWigPage - Customize mode: Loading cap size with defaults:', savedCapSize);
         
         // Load existing selections from customizeSelected* keys if they exist, otherwise use defaults
         const existingLength = localStorage.getItem('customizeSelectedLength') || localStorage.getItem('selectedLength') || '24"';
@@ -588,7 +578,6 @@ export default function BuildAWigPage() {
           addOns: existingAddOns ? JSON.parse(existingAddOns) : [],
         };
         
-        console.log('BuildAWigPage - Customize mode: Setting initial customization:', initialCustomization);
         
         setCustomization(initialCustomization);
         
@@ -643,7 +632,6 @@ export default function BuildAWigPage() {
         };
         
         // DEBUGGING: Log prices being calculated and saved in customize mode (first load)
-        console.log('[CUSTOMIZE MODE - PRICE CALCULATION]', {
           source: 'First load',
           customization: initialCustomization,
           existingPrices: {
@@ -690,7 +678,6 @@ export default function BuildAWigPage() {
       // If coming from sub-page, load updated values from localStorage
       // CRITICAL: Check if we're in edit mode AND either the item ID matches OR we don't have a current item ID yet
       if (comingFromSubPage && editingCartItemId && (editingCartItemId === currentEditingItemIdRef.current || !currentEditingItemIdRef.current)) {
-        console.log('BuildAWigPage - Edit mode: Returning from sub-page, loading updated values from localStorage', {
           editingCartItemId,
           currentEditingItemIdRef: currentEditingItemIdRef.current,
           comingFromSubPage
@@ -722,7 +709,6 @@ export default function BuildAWigPage() {
         const savedStyling = savedStylingEdit || localStorage.getItem('selectedStyling');
         const savedAddOns = savedAddOnsEdit || localStorage.getItem('selectedAddOns');
         
-        console.log('BuildAWigPage - Edit mode: Loaded values from localStorage:', {
           savedCapSize,
           savedLength,
           savedDensity,
@@ -765,7 +751,6 @@ export default function BuildAWigPage() {
         addOns: savedAddOns ? JSON.parse(savedAddOns) : [],
           };
           
-          console.log('BuildAWigPage - Edit mode: Setting customization state with updated values:', updatedCustomization);
         
         // CRITICAL: Read prices from localStorage (saved by sub-pages) to preserve exact prices BEFORE updating state
         // Prioritize editSelected* prices, fall back to selected* prices
@@ -780,7 +765,6 @@ export default function BuildAWigPage() {
         const savedAddOnsPrice = localStorage.getItem('editSelectedAddOnsPrice') || localStorage.getItem('selectedAddOnsPrice');
         
         // DEBUGGING: Log prices being loaded in edit mode
-        console.log('[EDIT MODE - PRICE LOADING]', {
           source: 'Returning from sub-page',
           loadedPrices: {
             capSizePrice: savedCapSizePrice,
@@ -859,7 +843,6 @@ export default function BuildAWigPage() {
         savePricesToLocalStorage(pricesToSave);
         
         // DEBUGGING: Log prices being saved in edit mode
-        console.log('[EDIT MODE - PRICE SAVING]', {
           source: 'Returning from sub-page',
           pricesToSave,
           savedTo: {
@@ -902,7 +885,6 @@ export default function BuildAWigPage() {
         // Note: originalItem and hasChanges are defined later in the component
         // CRITICAL: originalItem should be set from initial load, but if it's not, we need to ensure it's set
         if (!originalItem) {
-          console.warn('BuildAWigPage - Edit mode: originalItem is null when returning from sub-page, this should not happen');
           // Try to get originalItem from the editingCartItem
           const editingCartItem = localStorage.getItem('editingCartItem');
           if (editingCartItem) {
@@ -925,9 +907,7 @@ export default function BuildAWigPage() {
                 addOns: item.addOns || [],
               };
               setOriginalItem(restoredOriginalItem);
-              console.log('BuildAWigPage - Edit mode: Restored originalItem from editingCartItem');
             } catch (e) {
-              console.error('BuildAWigPage - Edit mode: Failed to parse editingCartItem', e);
             }
           }
         }
@@ -974,7 +954,6 @@ export default function BuildAWigPage() {
             updatedCustomization.styling !== currentOriginalItem.styling ||
             JSON.stringify(updatedCustomization.addOns) !== JSON.stringify(currentOriginalItem.addOns);
           
-          console.log('BuildAWigPage - Edit mode: Change detection after returning from sub-page:', {
             hasChangesDetected,
             updatedColor: updatedCustomization.color,
             originalColor: currentOriginalItem.color,
@@ -986,7 +965,6 @@ export default function BuildAWigPage() {
           // Set hasChanges immediately - the useEffect will also run but this ensures it's set
           setHasChanges(hasChangesDetected);
         } else {
-          console.warn('BuildAWigPage - Edit mode: Cannot detect changes - originalItem is not available');
           // If we can't compare, assume there are changes if we're returning from sub-page
           setHasChanges(true);
         }
@@ -998,13 +976,11 @@ export default function BuildAWigPage() {
           isLoadingFromStorage.current = false;
           // Clear the flag AFTER loading flag is cleared, so sync effect has had time to skip
           sessionStorage.removeItem('comingFromSubPage');
-          console.log('BuildAWigPage - Edit mode: Cleared loading flag and comingFromSubPage flag, sync effect can now run');
         }, 300);
       } else if (editingCartItem && (isDifferentItem || !currentEditingItemIdRef.current)) {
         // First load or different item: load from editingCartItem
         try {
           const item = JSON.parse(editingCartItem);
-          console.log('BuildAWigPage - Edit mode: Loading selections from cart item:', item);
           
           // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
           let validStyling = item.styling || 'NONE';
@@ -1082,7 +1058,6 @@ export default function BuildAWigPage() {
           // Trigger price recalculation
           setRefreshTrigger(prev => prev + 1);
         } catch (error) {
-          console.error('BuildAWigPage - Error parsing editingCartItem:', error);
         }
       }
         
@@ -1193,7 +1168,6 @@ export default function BuildAWigPage() {
         }, 100);
       } else {
         // Coming from sub-page: load from localStorage
-        console.log('BuildAWigPage - Main mode: Returning from sub-page, loading updated values from localStorage');
         
         // Set flag to prevent sync effect from overwriting
         isLoadingFromStorage.current = true;
@@ -1208,7 +1182,6 @@ export default function BuildAWigPage() {
         const savedStyling = localStorage.getItem('selectedStyling');
         const savedAddOns = localStorage.getItem('selectedAddOns');
 
-        console.log('BuildAWigPage - Main mode: Loaded values from localStorage:', {
           savedCapSize,
           savedLength,
           savedDensity,
@@ -1251,7 +1224,6 @@ export default function BuildAWigPage() {
           addOns: savedAddOnsFinal ? JSON.parse(savedAddOnsFinal) : [],
         };
         
-        console.log('BuildAWigPage - Main mode: Setting customization state with updated values:', updatedCustomization);
         
         // CRITICAL: Immediately save loaded values back to localStorage to ensure they're available
         localStorage.setItem('selectedCapSize', updatedCustomization.capSize);
@@ -1277,7 +1249,6 @@ export default function BuildAWigPage() {
         const savedAddOnsPrice = localStorage.getItem('selectedAddOnsPrice');
         
         // DEBUGGING: Log prices being loaded in main mode
-        console.log('[MAIN MODE - PRICE LOADING]', {
           source: 'Returning from sub-page',
           loadedPrices: {
             capSizePrice: savedCapSizePrice,
@@ -1335,7 +1306,6 @@ export default function BuildAWigPage() {
         savePricesToLocalStorage(pricesToSave);
         
         // DEBUGGING: Log prices being saved in main mode
-        console.log('[MAIN MODE - PRICE SAVING]', {
           source: 'Returning from sub-page',
           pricesToSave,
           savedTo: {
@@ -1357,7 +1327,6 @@ export default function BuildAWigPage() {
           isLoadingFromStorage.current = false;
           // Clear the flag AFTER loading flag is cleared, so sync effect has had time to skip
           sessionStorage.removeItem('comingFromSubPage');
-          console.log('BuildAWigPage - Main mode: Cleared loading flag and comingFromSubPage flag, sync effect can now run');
         }, 300);
       }
     }
@@ -1445,7 +1414,6 @@ export default function BuildAWigPage() {
         
         // Check if this is a different item
         if (newItemId && newItemId !== currentEditingItemIdRef.current) {
-          console.log('BuildAWigPage - Different item selected for editing, reloading:', {
             currentItemId: currentEditingItemIdRef.current,
             newItemId: newItemId
           });
@@ -1476,7 +1444,6 @@ export default function BuildAWigPage() {
   useEffect(() => {
     // Skip syncing if we're currently loading from localStorage (to avoid circular updates)
     if (isLoadingFromStorage.current) {
-      console.log('Main page - Skipping sync (loading from storage)');
       return;
     }
     
@@ -1488,7 +1455,6 @@ export default function BuildAWigPage() {
     // For all modes, skip syncing if we just came from a sub-page (let the route change effect handle it)
     const comingFromSubPage = sessionStorage.getItem('comingFromSubPage') === 'true';
     if (comingFromSubPage) {
-      console.log(`${isMainPage ? 'Main' : isEditMode ? 'Edit' : 'Customize'} page - Skipping sync (just returned from sub-page, route change effect will handle it)`);
       return;
     }
     
@@ -1541,7 +1507,6 @@ export default function BuildAWigPage() {
       // If prices don't exist yet, they'll be calculated when loading from sub-pages.
     }
     
-    console.log('Main page - Synced customization to localStorage:', {
       length: customization.length,
       density: customization.density,
       color: customization.color,
@@ -1679,12 +1644,6 @@ export default function BuildAWigPage() {
 
   // @ts-expect-error - Function kept for potential future use
   const _forceResetButtonState = () => {
-    console.log('Main - RESET BUTTON CLICKED!');
-    console.log('Main - Before reset:', {
-      addToBagState,
-      cartCount
-    });
-    console.log('Main - Stack trace:', new Error().stack);
     
     
     setAddToBagState('idle');
@@ -1692,7 +1651,6 @@ export default function BuildAWigPage() {
     localStorage.removeItem('addToBagButtonState');
     localStorage.removeItem('lastAddedConfiguration');
     
-    console.log('Main - After reset - state should be updated');
   };
 
   // Helper functions to get correct icons based on selections
@@ -2035,14 +1993,12 @@ export default function BuildAWigPage() {
   useEffect(() => {
     // Skip if we're currently loading from localStorage (to avoid overwriting prices saved by sub-pages)
     if (isLoadingFromStorage.current) {
-      console.log('Price reset effect - Skipping (loading from storage)');
       return;
     }
     
     // Skip if we just came from a sub-page (prices were already saved by route change effect)
     const comingFromSubPage = sessionStorage.getItem('comingFromSubPage') === 'true';
     if (comingFromSubPage) {
-      console.log('Price reset effect - Skipping (just returned from sub-page)');
       return;
     }
     
@@ -2154,7 +2110,6 @@ export default function BuildAWigPage() {
       const isMainMode = location.pathname === '/build-a-wig';
       
       // DEBUGGING: Log when price calculation runs
-      console.log('[PRICE CALCULATION TRIGGERED]', {
         pathname: location.pathname,
         isEditMode,
         isCustomizeMode,
@@ -2199,7 +2154,6 @@ export default function BuildAWigPage() {
       const addOnsPrice = getPrice('AddOns');
       
       // DEBUGGING: Log all prices being factored in
-      console.log(`[PRICE CALCULATION - ${isEditMode ? 'EDIT' : isCustomizeMode ? 'CUSTOMIZE' : 'MAIN'} MODE]`, {
         mode: isEditMode ? 'EDIT' : isCustomizeMode ? 'CUSTOMIZE' : 'MAIN',
         prefix,
         basePrice,
@@ -2321,7 +2275,6 @@ export default function BuildAWigPage() {
   }, [currencyRates, selectedCurrency]);
 
   const handleOptionSelect = (category: string, optionId: string) => {
-    console.log(`Selected ${category}: ${optionId}`);
     
     // CRITICAL: Save current customization to localStorage BEFORE navigating
     // This ensures sub-pages see the correct current selections
@@ -2340,7 +2293,6 @@ export default function BuildAWigPage() {
     
     localStorage.setItem('selectedAddOns', JSON.stringify(customization.addOns));
     
-    console.log('Main page - Saved to localStorage before navigation:', {
       length: customization.length,
       density: customization.density,
       category
@@ -2352,7 +2304,6 @@ export default function BuildAWigPage() {
     const baseRoute = isEditMode ? '/build-a-wig/edit' : isCustomizeMode ? '/build-a-wig/noir/customize' : '/build-a-wig';
     
     // Store the source route so sub-pages know where to navigate back to
-    console.log('BuildAWigPage - Setting sourceRoute before navigating to sub-page:', baseRoute, 'category:', category);
     sessionStorage.setItem('sourceRoute', baseRoute);
     // Don't set comingFromSubPage here - that should only be set when RETURNING from sub-page
     
@@ -2424,7 +2375,6 @@ export default function BuildAWigPage() {
     
     // Skip change detection if we're currently loading from localStorage (to avoid overwriting hasChanges set by route change effect)
     if (isLoadingFromStorage.current) {
-      console.log('BuildAWigPage - Change detection: Skipping (loading from storage)');
       return;
     }
     
@@ -2441,7 +2391,6 @@ export default function BuildAWigPage() {
         customization.styling !== originalItem.styling ||
         JSON.stringify(customization.addOns) !== JSON.stringify(originalItem.addOns);
       
-      console.log('BuildAWigPage - Change detection:', {
         hasChangesDetected,
         customization: customization.color,
         originalItem: originalItem.color,
@@ -2905,14 +2854,7 @@ export default function BuildAWigPage() {
                       color: '#EB1C24',
                     }}
                     onClick={() => {
-                      console.log('🔵 CLICKED NOIR TEXT - Navigating to /units/noir');
-                      console.log('🔵 navigate function:', typeof navigate);
-                      try {
-                        navigate('/units/noir');
-                        console.log('🔵 Navigation called successfully');
-                      } catch (error) {
-                        console.error('🔵 Navigation error:', error);
-                      }
+                      navigate('/units/noir');
                     }}
                   >
                     NOIR

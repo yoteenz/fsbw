@@ -99,32 +99,94 @@ function NoirSelection() {
 
   // Generate configuration string for change detection (without quantity)
   const generateConfigurationStringForChangeDetection = () => {
-    const selectedCapSize = localStorage.getItem('selectedCapSize') || 'M';
-    const selectedLength = localStorage.getItem('selectedLength') || '24"';
-    const selectedDensity = localStorage.getItem('selectedDensity') || '200%';
-    const selectedLace = localStorage.getItem('selectedLace') || '13X6';
-    const selectedTexture = localStorage.getItem('selectedTexture') || 'SILKY';
-    const selectedColor = localStorage.getItem('selectedColor') || 'OFF BLACK';
-    const selectedHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
-    const selectedStyling = localStorage.getItem('selectedStyling') || 'NONE';
-    const selectedAddOns = localStorage.getItem('selectedAddOns') || '';
+    // For units/noir page, ALWAYS use DEFAULT selections (not localStorage)
+    // This ensures we only match items in cart that have the exact default configuration
+    const DEFAULT_LENGTH = '24"';
+    const DEFAULT_DENSITY = '200%';
+    const DEFAULT_LACE = '13X6';
+    const DEFAULT_TEXTURE = 'SILKY';
+    const DEFAULT_COLOR = 'OFF BLACK';
+    const DEFAULT_HAIRLINE = 'NATURAL';
+    const DEFAULT_STYLING = 'NONE';
+    const DEFAULT_ADDONS = '';
     
     // Include current component state for cap size only (not quantity)
-    const currentCapSize = selectedCustomCap || selectedFlexibleCap || selectedCapSize;
+    const currentCapSize = selectedCustomCap || selectedFlexibleCap || 'M';
     
     // Normalize values to ensure consistent formatting - remove ALL spaces
     const normalizedCapSize = currentCapSize.replace(/\s+/g, '');
-    const normalizedLength = selectedLength.replace(/\s+/g, '');
-    const normalizedDensity = selectedDensity.replace(/\s+/g, '');
-    const normalizedLace = selectedLace.replace(/\s+/g, '');
-    const normalizedTexture = selectedTexture.replace(/\s+/g, '');
-    const normalizedColor = selectedColor.replace(/\s+/g, '');
-    const normalizedHairline = selectedHairline.replace(/\s+/g, '');
-    const normalizedStyling = selectedStyling.replace(/\s+/g, '');
-    // Handle empty addOns consistently - convert "[]" to empty string
-    const normalizedAddOns = selectedAddOns.replace(/\s+/g, '').replace(/^\[\]$/, '');
+    const normalizedLength = DEFAULT_LENGTH.replace(/\s+/g, '');
+    const normalizedDensity = DEFAULT_DENSITY.replace(/\s+/g, '');
+    const normalizedLace = DEFAULT_LACE.replace(/\s+/g, '');
+    const normalizedTexture = DEFAULT_TEXTURE.replace(/\s+/g, '');
+    const normalizedColor = DEFAULT_COLOR.replace(/\s+/g, '');
+    const normalizedHairline = DEFAULT_HAIRLINE.replace(/\s+/g, '');
+    const normalizedStyling = DEFAULT_STYLING.replace(/\s+/g, '');
+    const normalizedAddOns = DEFAULT_ADDONS.replace(/\s+/g, '');
     
     return `${normalizedCapSize}-${normalizedLength}-${normalizedDensity}-${normalizedLace}-${normalizedTexture}-${normalizedColor}-${normalizedHairline}-${normalizedStyling}-${normalizedAddOns}`;
+  };
+
+  // Helper function to check if a cart item matches the CURRENTLY SELECTED cap size AND all default specs
+  // Must match: current cap size selection (selectedCustomCap or selectedFlexibleCap) + all default specs
+  const matchesDefaultConfiguration = (item: any): boolean => {
+    // Get the CURRENTLY SELECTED cap size on the page (what the user has selected)
+    // CRITICAL: Use actual selection, don't default to 'M' - if neither is set, return false
+    const currentCapSize = selectedCustomCap || selectedFlexibleCap;
+    
+    // If no cap size is explicitly selected, cannot match
+    if (!currentCapSize) {
+      return false;
+    }
+    
+    // Default configuration values that must match
+    const DEFAULT_LENGTH = '24"';
+    const DEFAULT_DENSITY = '200%';
+    const DEFAULT_LACE = '13X6';
+    const DEFAULT_TEXTURE = 'SILKY';
+    const DEFAULT_COLOR = 'OFF BLACK';
+    const DEFAULT_HAIRLINE = 'NATURAL';
+    const DEFAULT_STYLING = 'NONE';
+    const DEFAULT_ADDONS = '';
+    
+    // Ensure item has ALL required properties
+    if (!item.capSize || !item.length || !item.density || !item.lace || !item.texture || !item.color || !item.hairline || !item.styling) {
+      return false;
+    }
+    
+    // Normalize values for comparison (remove all spaces and convert to string)
+    const normalize = (value: any): string => {
+      return (value || '').toString().replace(/\s+/g, '').toUpperCase();
+    };
+    
+    // Handle addOns - convert array to comma-separated string or empty string
+    const itemAddOns = item.addOns && Array.isArray(item.addOns) && item.addOns.length > 0 
+      ? item.addOns.join(',').replace(/\s+/g, '').toUpperCase()
+      : '';
+    
+    // CRITICAL: Cap size MUST match the currently selected cap size EXACTLY
+    // Normalize both for comparison (remove spaces, convert to uppercase)
+    const itemCapSizeNormalized = normalize(item.capSize);
+    const currentCapSizeNormalized = normalize(currentCapSize);
+    const capSizeMatch = itemCapSizeNormalized === currentCapSizeNormalized;
+    
+    // If cap size doesn't match, return false immediately
+    if (!capSizeMatch) {
+      return false;
+    }
+    
+    // Also check that ALL OTHER default specs match exactly
+    const lengthMatch = normalize(item.length) === normalize(DEFAULT_LENGTH);
+    const densityMatch = normalize(item.density) === normalize(DEFAULT_DENSITY);
+    const laceMatch = normalize(item.lace) === normalize(DEFAULT_LACE);
+    const textureMatch = normalize(item.texture) === normalize(DEFAULT_TEXTURE);
+    const colorMatch = normalize(item.color) === normalize(DEFAULT_COLOR);
+    const hairlineMatch = normalize(item.hairline) === normalize(DEFAULT_HAIRLINE);
+    const stylingMatch = normalize(item.styling) === normalize(DEFAULT_STYLING);
+    const addOnsMatch = itemAddOns === normalize(DEFAULT_ADDONS);
+    
+    // Return true only if all fields match
+    return lengthMatch && densityMatch && laceMatch && textureMatch && colorMatch && hairlineMatch && stylingMatch && addOnsMatch;
   };
 
 
@@ -315,29 +377,64 @@ function NoirSelection() {
           return;
         }
         
-        // Only check for reset if button is currently 'added'
-      if (currentButtonState === 'added') {
-          // If cart is completely empty, reset button state
-          if (newCartCount === 0) {
-            setAddToBagState('idle');
-            localStorage.removeItem('addToBagButtonState');
-          localStorage.removeItem('lastAddedItemId');
-            return;
-          }
-          
-        // Check if the specific item that was added is still in cart
-        const lastAddedItemId = localStorage.getItem('lastAddedItemId');
-          const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-          
-        // Check if the specific item ID exists in cart items
-        const itemStillInCart = cartItems.some((item: any) => item.id === lastAddedItemId);
+        // CRITICAL: Read current state values directly from localStorage or use a ref
+        // Don't use closure values which may be stale
+        // Get current cap size selection - read from state by accessing it through a function
+        // Actually, we need to use the current state values, so we'll read them fresh each time
         
-        // Only reset if the specific item is not in cart
-        if (!itemStillInCart) {
-            setAddToBagState('idle');
-            localStorage.removeItem('addToBagButtonState');
+        // ALWAYS validate cart state - don't trust localStorage alone
+        // If cart is completely empty, reset button state
+        if (newCartCount === 0) {
+          setAddToBagState('idle');
+          localStorage.removeItem('addToBagButtonState');
           localStorage.removeItem('lastAddedItemId');
+          return;
+        }
+        
+        // ALWAYS re-validate that a cart item with default configuration exists
+        // This ensures we only show "IN THE BAG" for items with ALL default specs
+        const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+        
+        // CRITICAL: Use a function that reads current state, not closure values
+        // We'll pass the current values to matchesDefaultConfiguration
+        // But first, let's get the current cap size - we need to read it fresh
+        // Since we can't access state directly in the closure, we'll use a workaround:
+        // Read from the DOM or use a ref, OR better: pass current values to the matching function
+        
+        // For now, let's use the state values but add a note that they might be stale
+        // The real fix is to ensure matchesDefaultConfiguration reads current state
+        const currentCapSize = selectedCustomCap || selectedFlexibleCap;
+        if (!currentCapSize) {
+          setAddToBagState('idle');
+          localStorage.removeItem('addToBagButtonState');
+          localStorage.removeItem('lastAddedItemId');
+          return;
+        }
+        let matchingItem: any = null;
+        let matchFound = false;
+        
+        // Check each item for matches
+        for (const item of cartItems) {
+          const matches = matchesDefaultConfiguration(item);
+          if (matches) {
+            matchingItem = item;
+            matchFound = true;
+            break; // Stop at first match
           }
+        }
+        
+        // Update state based on actual cart contents, not localStorage
+        // CRITICAL: Always reset state first, then set to 'added' only if match found
+        if (matchFound && matchingItem) {
+          // Item with default configuration exists - set to 'added'
+          setAddToBagState('added');
+          localStorage.setItem('addToBagButtonState', 'added');
+          localStorage.setItem('lastAddedItemId', matchingItem.id);
+        } else {
+          // No matching item - FORCE reset to 'idle'
+          setAddToBagState('idle');
+          localStorage.removeItem('addToBagButtonState');
+          localStorage.removeItem('lastAddedItemId');
         }
     };
 
@@ -365,14 +462,19 @@ function NoirSelection() {
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('focus', handleStorageChange);
     
-    // Simple polling that only runs when button is in 'added' state
+    // CRITICAL: Validate cart state immediately on mount to clear any stale localStorage
+    // This ensures button state is correct even if localStorage was set incorrectly
+    handleCartUpdate();
+    
+    // Simple polling - validate periodically but less frequently to avoid overriding correct state
+    // Only check if state might be wrong (not immediately after setting to 'added')
     const interval = setInterval(() => {
-      // Check current button state from localStorage to avoid stale closure
-      const currentButtonState = localStorage.getItem('addToBagButtonState');
-      if (currentButtonState === 'added') {
+      // Only validate if we're not currently in 'adding' state
+      const currentState = localStorage.getItem('addToBagButtonState');
+      if (currentState !== 'adding') {
         handleCartUpdate();
       }
-    }, 1000); // Check every 1 second, only when needed
+    }, 2000); // Check every 2 seconds (reduced frequency)
     
     return () => {
       clearInterval(interval);
@@ -381,7 +483,7 @@ function NoirSelection() {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('focus', handleStorageChange);
     };
-  }, []);
+  }, [selectedCustomCap, selectedFlexibleCap]); // CRITICAL: Recreate handleCartUpdate when cap size changes to avoid stale closures
 
   // Load selected currency from localStorage
   useEffect(() => {
@@ -616,54 +718,87 @@ function NoirSelection() {
   };
 
 
-  // Check if configuration has changed
+  // Check if configuration has changed (especially cap size changes)
   useEffect(() => {
     const newConfig = generateConfigurationStringForChangeDetection();
     if (currentConfiguration && newConfig !== currentConfiguration) {
-      // Check if the new configuration is already in the cart
-      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      const matchingItem = cartItems.find((item: any) => {
-        // Normalize cart item values to ensure consistent formatting - remove ALL spaces
-        // Handle empty addOns consistently - convert empty array to empty string
-        const itemAddOns = item.addOns && item.addOns.length > 0 ? item.addOns.join(',') : '';
-        const normalizedItemConfig = `${(item.capSize || '').toString().replace(/\s+/g, '')}-${(item.length || '24"').toString().replace(/\s+/g, '')}-${(item.density || '').toString().replace(/\s+/g, '')}-${(item.lace || '').toString().replace(/\s+/g, '')}-${(item.texture || '').toString().replace(/\s+/g, '')}-${(item.color || '').toString().replace(/\s+/g, '')}-${(item.hairline || '').toString().replace(/\s+/g, '')}-${(item.styling || '').toString().replace(/\s+/g, '')}-${itemAddOns.replace(/\s+/g, '')}`;
-        return normalizedItemConfig === newConfig;
-      });
       
-      if (matchingItem) {
+      // CRITICAL: Always reset to idle FIRST when config changes
+      // This prevents stale "IN THE BAG" state from persisting
+      setAddToBagState('idle');
+      localStorage.removeItem('addToBagButtonState');
+      localStorage.removeItem('lastAddedItemId');
+      
+      // Then check if the new configuration is already in the cart
+      // Only match items with ALL default selection options (M, 24", 200%, 13X6, etc.)
+      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      
+      if (cartItems.length === 0) {
+        setCurrentConfiguration(newConfig);
+        return;
+      }
+      
+      let matchingItem: any = null;
+      let matchFound = false;
+      
+      for (const item of cartItems) {
+        const matches = matchesDefaultConfiguration(item);
+        if (matches) {
+          matchingItem = item;
+          matchFound = true;
+          break;
+        }
+      }
+      
+      if (matchFound && matchingItem) {
         // If the new configuration is in cart, set button to 'added'
         setAddToBagState('added');
         localStorage.setItem('addToBagButtonState', 'added');
         localStorage.setItem('lastAddedItemId', matchingItem.id);
       } else {
-        // If not in cart, reset to idle
-        setAddToBagState('idle');
-        localStorage.removeItem('addToBagButtonState');
-        localStorage.removeItem('lastAddedItemId');
+        // If not in cart, stay idle (already reset above)
       }
     }
     setCurrentConfiguration(newConfig);
   }, [selectedCustomCap, selectedFlexibleCap, refreshTrigger]);
 
   // Initialize button state from localStorage on page load
+  // CRITICAL: Always start with 'idle' and validate, don't trust localStorage
   useEffect(() => {
+    // ALWAYS start with idle state, then validate
+    setAddToBagState('idle');
+    localStorage.removeItem('addToBagButtonState');
+    localStorage.removeItem('lastAddedItemId');
+    
+    // Now validate cart
     const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-    const currentConfig = generateConfigurationStringForChangeDetection();
+    
+    if (cartItems.length === 0) {
+      return;
+    }
     
     // Always check if current configuration matches any cart item
-    const matchingItem = cartItems.find((item: any) => {
-      // Normalize cart item values to ensure consistent formatting - remove ALL spaces
-      // Handle empty addOns consistently - convert empty array to empty string
-      const itemAddOns = item.addOns && item.addOns.length > 0 ? item.addOns.join(',') : '';
-      const normalizedItemConfig = `${(item.capSize || '').toString().replace(/\s+/g, '')}-${(item.length || '24"').toString().replace(/\s+/g, '')}-${(item.density || '').toString().replace(/\s+/g, '')}-${(item.lace || '').toString().replace(/\s+/g, '')}-${(item.texture || '').toString().replace(/\s+/g, '')}-${(item.color || '').toString().replace(/\s+/g, '')}-${(item.hairline || '').toString().replace(/\s+/g, '')}-${(item.styling || '').toString().replace(/\s+/g, '')}-${itemAddOns.replace(/\s+/g, '')}`;
-      return normalizedItemConfig === currentConfig;
-    });
+    // Only match items with ALL default selection options (M, 24", 200%, 13X6, etc.)
+    let matchingItem: any = null;
+    let matchFound = false;
     
-    if (matchingItem) {
+    for (const item of cartItems) {
+      const matches = matchesDefaultConfiguration(item);
+      if (matches) {
+        matchingItem = item;
+        matchFound = true;
+        break;
+      }
+    }
+    
+    if (matchFound && matchingItem) {
       setAddToBagState('added');
       localStorage.setItem('addToBagButtonState', 'added');
       localStorage.setItem('lastAddedItemId', matchingItem.id);
     } else {
+      const cartSummary = cartItems.map((item: any) => 
+        `${item.capSize}-${item.length}-${item.color}`
+      ).join(', ');
       setAddToBagState('idle');
       localStorage.removeItem('addToBagButtonState');
       localStorage.removeItem('lastAddedItemId');
@@ -673,16 +808,29 @@ function NoirSelection() {
   // Check button state when page gains focus (user returns from other pages)
   useEffect(() => {
     const handleFocus = () => {
-      const currentConfig = generateConfigurationStringForChangeDetection();
       const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
       
-      const matchingItem = cartItems.find((item: any) => {
-        const itemAddOns = item.addOns && item.addOns.length > 0 ? item.addOns.join(',') : '';
-        const normalizedItemConfig = `${(item.capSize || '').toString().replace(/\s+/g, '')}-${(item.length || '24"').toString().replace(/\s+/g, '')}-${(item.density || '').toString().replace(/\s+/g, '')}-${(item.lace || '').toString().replace(/\s+/g, '')}-${(item.texture || '').toString().replace(/\s+/g, '')}-${(item.color || '').toString().replace(/\s+/g, '')}-${(item.hairline || '').toString().replace(/\s+/g, '')}-${(item.styling || '').toString().replace(/\s+/g, '')}-${itemAddOns.replace(/\s+/g, '')}`;
-        return normalizedItemConfig === currentConfig;
-      });
+      if (cartItems.length === 0) {
+        setAddToBagState('idle');
+        localStorage.removeItem('addToBagButtonState');
+        localStorage.removeItem('lastAddedItemId');
+        return;
+      }
       
-      if (matchingItem) {
+      // Only match items with ALL default selection options (M, 24", 200%, 13X6, etc.)
+      let matchingItem: any = null;
+      let matchFound = false;
+      
+      for (const item of cartItems) {
+        const matches = matchesDefaultConfiguration(item);
+        if (matches) {
+          matchingItem = item;
+          matchFound = true;
+          break;
+        }
+      }
+      
+      if (matchFound && matchingItem) {
         setAddToBagState('added');
         localStorage.setItem('addToBagButtonState', 'added');
         localStorage.setItem('lastAddedItemId', matchingItem.id);
@@ -696,6 +844,8 @@ function NoirSelection() {
     window.addEventListener('focus', handleFocus);
     return () => window.removeEventListener('focus', handleFocus);
   }, []);
+
+  // Debug: Monitor button state changes
 
   const handleChartClick = () => {
     setShowChartModal(true);
@@ -1077,14 +1227,24 @@ function NoirSelection() {
       localStorage.setItem('cartCount', newCount.toString());
       setCartCount(newCount);
       
-      // Save button state and the specific item ID that was added
-      setAddToBagState('added');
-      localStorage.setItem('addToBagButtonState', 'added');
-      localStorage.setItem('lastAddedItemId', cartItem.id); // Track the specific item ID
+      // Validate that the item we just added matches the default configuration
+      // Only set to 'added' if it actually matches defaults
+      const matchesDefaults = matchesDefaultConfiguration(cartItem);
       
-      // Dispatch cart count update event
+      if (matchesDefaults) {
+        setAddToBagState('added');
+        localStorage.setItem('addToBagButtonState', 'added');
+        localStorage.setItem('lastAddedItemId', cartItem.id);
+      } else {
+        setAddToBagState('idle');
+        localStorage.removeItem('addToBagButtonState');
+        localStorage.removeItem('lastAddedItemId');
+      }
+      
+      // Dispatch cart count update event (this will trigger handleCartUpdate to validate)
       setTimeout(() => {
         window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+        window.dispatchEvent(new CustomEvent('cartUpdated'));
       }, 100);
       
     } catch (error) {

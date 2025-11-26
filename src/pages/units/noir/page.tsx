@@ -77,6 +77,25 @@ function NoirSelection() {
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
   const [currentConfiguration, setCurrentConfiguration] = useState<string>('');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [debugLogs, setDebugLogs] = useState<string[]>([]);
+  const [showDebugPanel, setShowDebugPanel] = useState(true);
+
+  // Helper function to add debug logs (both console and visible)
+  const addDebugLog = (message: string) => {
+    const timestamp = new Date().toLocaleTimeString();
+    const logMessage = `[${timestamp}] ${message}`;
+    console.log(logMessage);
+    setDebugLogs(prev => {
+      const newLogs = [...prev, logMessage];
+      // Keep only last 20 logs to avoid memory issues
+      return newLogs.slice(-20);
+    });
+  };
+
+  // Add initial log when component mounts
+  useEffect(() => {
+    addDebugLog('🚀 NOIR page loaded - Debug panel active!');
+  }, []);
 
 
   // @ts-expect-error - Function kept for potential future use
@@ -133,6 +152,7 @@ function NoirSelection() {
   const matchesDefaultConfiguration = (item: any): boolean => {
     // Ensure item has ALL required properties
     if (!item.capSize || !item.length || !item.density || !item.lace || !item.texture || !item.color || !item.hairline || !item.styling) {
+      addDebugLog(`❌ Missing properties: ${!item.capSize ? 'capSize ' : ''}${!item.length ? 'length ' : ''}${!item.color ? 'color ' : ''}`);
       return false;
     }
     
@@ -167,6 +187,20 @@ function NoirSelection() {
     const hairlineMatch = normalize(item.hairline) === normalize(DEFAULT_HAIRLINE);
     const stylingMatch = normalize(item.styling) === normalize(DEFAULT_STYLING);
     const addOnsMatch = itemAddOns === normalize(DEFAULT_ADDONS);
+    
+    // Debug logging for mismatches
+    if (!capSizeMatch || !lengthMatch || !densityMatch || !laceMatch || !textureMatch || !colorMatch || !hairlineMatch || !stylingMatch || !addOnsMatch) {
+      const mismatches = [];
+      if (!capSizeMatch) mismatches.push(`capSize:${normalize(item.capSize)}≠${normalize(currentCapSize)}`);
+      if (!lengthMatch) mismatches.push(`length:${normalize(item.length)}≠${normalize(DEFAULT_LENGTH)}`);
+      if (!densityMatch) mismatches.push(`density:${normalize(item.density)}≠${normalize(DEFAULT_DENSITY)}`);
+      if (!laceMatch) mismatches.push(`lace:${normalize(item.lace)}≠${normalize(DEFAULT_LACE)}`);
+      if (!textureMatch) mismatches.push(`texture:${normalize(item.texture)}≠${normalize(DEFAULT_TEXTURE)}`);
+      if (!colorMatch) mismatches.push(`color:${normalize(item.color)}≠${normalize(DEFAULT_COLOR)}`);
+      if (!hairlineMatch) mismatches.push(`hairline:${normalize(item.hairline)}≠${normalize(DEFAULT_HAIRLINE)}`);
+      if (!stylingMatch) mismatches.push(`styling:${normalize(item.styling)}≠${normalize(DEFAULT_STYLING)}`);
+      addDebugLog(`❌ Mismatch: ${mismatches.join(', ')}`);
+    }
     
     // ALL fields must match exactly
     return capSizeMatch && lengthMatch && densityMatch && laceMatch && textureMatch && colorMatch && hairlineMatch && stylingMatch && addOnsMatch;
@@ -373,19 +407,30 @@ function NoirSelection() {
         // This ensures we only show "IN THE BAG" for items with ALL default specs
         const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
         
+        addDebugLog(`🔍 Validating ${cartItems.length} cart items. Cap: ${selectedCustomCap || selectedFlexibleCap || 'M'}`);
+        
         const matchingItem = cartItems.find((item: any) => {
           // Use explicit field-by-field comparison to ensure exact match
-          return matchesDefaultConfiguration(item);
+          const matches = matchesDefaultConfiguration(item);
+          if (matches) {
+            addDebugLog(`✅ Found matching item: ${item.capSize} ${item.length} ${item.color}`);
+          }
+          return matches;
         });
         
         // Update state based on actual cart contents, not localStorage
         if (matchingItem) {
           // Item with default configuration exists - set to 'added'
+          addDebugLog(`✅ Setting state to ADDED - matching item found`);
           setAddToBagState('added');
           localStorage.setItem('addToBagButtonState', 'added');
           localStorage.setItem('lastAddedItemId', matchingItem.id);
         } else {
           // No matching item - reset to 'idle'
+          const cartSummary = cartItems.map((item: any) => 
+            `${item.capSize}-${item.length}-${item.color}`
+          ).join(', ');
+          addDebugLog(`❌ Setting state to IDLE - no match. Cart: ${cartSummary || 'empty'}`);
           setAddToBagState('idle');
           localStorage.removeItem('addToBagButtonState');
           localStorage.removeItem('lastAddedItemId');
@@ -697,7 +742,9 @@ function NoirSelection() {
 
   // Initialize button state from localStorage on page load
   useEffect(() => {
+    addDebugLog('🚀 Starting initial validation');
     const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+    addDebugLog(`🚀 Cart has ${cartItems.length} items. Cap: ${selectedCustomCap || selectedFlexibleCap || 'M'}`);
     
     // Always check if current configuration matches any cart item
     // Only match items with ALL default selection options (M, 24", 200%, 13X6, etc.)
@@ -707,10 +754,15 @@ function NoirSelection() {
     });
     
     if (matchingItem) {
+      addDebugLog(`✅ Initial: Setting ADDED - found match`);
       setAddToBagState('added');
       localStorage.setItem('addToBagButtonState', 'added');
       localStorage.setItem('lastAddedItemId', matchingItem.id);
     } else {
+      const cartSummary = cartItems.map((item: any) => 
+        `${item.capSize}-${item.length}-${item.color}`
+      ).join(', ');
+      addDebugLog(`❌ Initial: Setting IDLE - no match. Cart: ${cartSummary || 'empty'}`);
       setAddToBagState('idle');
       localStorage.removeItem('addToBagButtonState');
       localStorage.removeItem('lastAddedItemId');
@@ -720,6 +772,7 @@ function NoirSelection() {
   // Check button state when page gains focus (user returns from other pages)
   useEffect(() => {
     const handleFocus = () => {
+      addDebugLog('👁️ Page focus - validating');
       const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
       
       // Only match items with ALL default selection options (M, 24", 200%, 13X6, etc.)
@@ -729,10 +782,12 @@ function NoirSelection() {
       });
       
       if (matchingItem) {
+        addDebugLog('✅ Focus: Setting ADDED');
         setAddToBagState('added');
         localStorage.setItem('addToBagButtonState', 'added');
         localStorage.setItem('lastAddedItemId', matchingItem.id);
       } else {
+        addDebugLog('❌ Focus: Setting IDLE');
         setAddToBagState('idle');
         localStorage.removeItem('addToBagButtonState');
         localStorage.removeItem('lastAddedItemId');
@@ -742,6 +797,11 @@ function NoirSelection() {
     window.addEventListener('focus', handleFocus);
     return () => window.removeEventListener('focus', handleFocus);
   }, []);
+
+  // Debug: Monitor button state changes
+  useEffect(() => {
+    addDebugLog(`🔄 State changed to: ${addToBagState}`);
+  }, [addToBagState]);
 
   const handleChartClick = () => {
     setShowChartModal(true);
@@ -1454,6 +1514,75 @@ function NoirSelection() {
     <>
       {showLoading && <LoadingScreen />}
       
+      {/* DEBUG PANEL - Mobile Friendly - Placed at top level */}
+      {/* Always show a test element first */}
+      <div style={{
+        position: 'fixed',
+        top: '10px',
+        left: '10px',
+        right: '10px',
+        backgroundColor: '#EB1C24',
+        color: 'white',
+        padding: '15px',
+        fontSize: '14px',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        zIndex: 999999,
+        borderRadius: '5px',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
+      }}>
+        🐛 DEBUG PANEL ACTIVE - Scroll down to see logs
+      </div>
+      
+      {showDebugPanel && (
+        <div style={{
+          position: 'fixed',
+          bottom: '10px',
+          left: '10px',
+          right: '10px',
+          maxHeight: '250px',
+          overflowY: 'auto',
+          backgroundColor: 'rgba(0, 0, 0, 0.95)',
+          color: '#fff',
+          padding: '15px',
+          fontSize: '12px',
+          fontFamily: 'monospace',
+          zIndex: 999999,
+          borderRadius: '5px',
+          border: '3px solid #EB1C24',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', alignItems: 'center' }}>
+            <strong style={{ color: '#EB1C24', fontSize: '14px' }}>🐛 DEBUG LOGS - UNITS/NOIR PAGE</strong>
+            <button
+              onClick={() => setShowDebugPanel(false)}
+              style={{
+                background: '#EB1C24',
+                color: 'white',
+                border: 'none',
+                padding: '6px 12px',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontSize: '11px',
+                fontWeight: 'bold'
+              }}
+            >
+              Hide
+            </button>
+          </div>
+          <div style={{ maxHeight: '200px', overflowY: 'auto', overflowX: 'hidden', backgroundColor: 'rgba(255,255,255,0.1)', padding: '8px', borderRadius: '3px' }}>
+            {debugLogs.length === 0 ? (
+              <div style={{ color: '#999', fontSize: '11px' }}>No logs yet... Waiting for validation...</div>
+            ) : (
+              debugLogs.map((log, index) => (
+                <div key={index} style={{ marginBottom: '5px', wordBreak: 'break-word', fontSize: '11px', lineHeight: '1.5', color: log.includes('❌') ? '#ff6b6b' : log.includes('✅') ? '#51cf66' : '#fff' }}>
+                  {log}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
       
       <div className="min-h-screen" style={{
         position: 'relative'
