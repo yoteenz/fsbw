@@ -622,12 +622,9 @@ function NoirSelection() {
     const newConfig = generateConfigurationStringForChangeDetection();
     if (currentConfiguration && newConfig !== currentConfiguration) {
       // Check if the new configuration is already in the cart
-      // ONLY check NOIR items with ALL default selection options
+      // Only match items with ALL default selection options (M, 24", 200%, 13X6, etc.)
       const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
       const matchingItem = cartItems.find((item: any) => {
-        // Only match NOIR items
-        if (item.name !== 'NOIR') return false;
-        
         // Ensure item has ALL required properties for default selection options
         if (!item.capSize || !item.length || !item.density || !item.lace || !item.texture || !item.color || !item.hairline || !item.styling) {
           return false;
@@ -661,11 +658,8 @@ function NoirSelection() {
     const currentConfig = generateConfigurationStringForChangeDetection();
     
     // Always check if current configuration matches any cart item
-    // ONLY check NOIR items with ALL default selection options
+    // Only match items with ALL default selection options (M, 24", 200%, 13X6, etc.)
     const matchingItem = cartItems.find((item: any) => {
-      // Only match NOIR items
-      if (item.name !== 'NOIR') return false;
-      
       // Ensure item has ALL required properties for default selection options
       if (!item.capSize || !item.length || !item.density || !item.lace || !item.texture || !item.color || !item.hairline || !item.styling) {
         return false;
@@ -695,11 +689,8 @@ function NoirSelection() {
       const currentConfig = generateConfigurationStringForChangeDetection();
       const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
       
-      // ONLY check NOIR items with ALL default selection options
+      // Only match items with ALL default selection options (M, 24", 200%, 13X6, etc.)
       const matchingItem = cartItems.find((item: any) => {
-        // Only match NOIR items
-        if (item.name !== 'NOIR') return false;
-        
         // Ensure item has ALL required properties for default selection options
         if (!item.capSize || !item.length || !item.density || !item.lace || !item.texture || !item.color || !item.hairline || !item.styling) {
           return false;
