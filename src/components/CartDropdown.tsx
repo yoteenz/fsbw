@@ -683,9 +683,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           const customizableItems = items.filter(item => item.type !== 'density' && item.type !== 'lace');
                           const useFullNames = customizableItems.length === 1;
                           
-                          // Check if density/lace are alone (no other items)
-                          const hasOtherItems = items.some(item => item.type !== 'density' && item.type !== 'lace');
-                          
                           // Build text with proper comma placement
                           items.forEach((itemData, index) => {
                             const isLast = index === items.length - 1;
@@ -695,10 +692,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               const displayValue = `${itemData.value} DENSITY`;
                               text += (text ? ' ' : '') + displayValue.toUpperCase() + (isLast ? '' : ',');
                             } else if (itemData.type === 'lace') {
-                              // Lace: full name if alone, abbreviated if with other items
-                              const displayValue = hasOtherItems ? itemData.value : itemData.fullName;
-                              const displayText = typeof displayValue === 'string' ? displayValue : String(displayValue);
-                              text += (text ? ' ' : '') + displayText.toUpperCase();
+                              // Lace: show value followed by "LACE" in all caps, add comma if there are more items after it
+                              const displayValue = `${itemData.value} LACE`;
+                              text += (text ? ' ' : '') + displayValue.toUpperCase() + (isLast ? '' : ',');
                             } else if (itemData.type === 'texture' || itemData.type === 'color') {
                               // Texture and color get commas unless they're last
                               const displayValue = useFullNames ? itemData.fullName : itemData.value;
