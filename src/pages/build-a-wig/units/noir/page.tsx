@@ -842,8 +842,6 @@ function NoirSelection() {
     return () => window.removeEventListener('focus', handleFocus);
   }, []);
 
-  // Debug: Monitor button state changes
-
   const handleChartClick = () => {
     setShowChartModal(true);
   };

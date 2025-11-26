@@ -154,7 +154,6 @@ export default function BuildAWigPage() {
   });
 
   // Calculate base price - always use base price of 740 (cap size price is added separately)
-  // This allows capSizePrice to be tracked separately in debugging
   const basePrice = useMemo(() => {
     return 740; // Base price is always 740, flexible caps add $40 via capSizePrice
   }, []);
@@ -292,14 +291,6 @@ export default function BuildAWigPage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   
-  // Visual debugging state for mobile
-  const [debugInfo, setDebugInfo] = useState<{
-    mode: string;
-    prefix: string;
-    prices: { [key: string]: number };
-    localStorageValues: { [key: string]: string };
-    total: number;
-  } | null>(null);
   
   // Ref to track if we're currently loading from localStorage (to prevent sync effect from overwriting)
   const isLoadingFromStorage = useRef(false);
@@ -705,7 +696,6 @@ export default function BuildAWigPage() {
           // This will trigger wigViews to update via useMemo dependency AND trigger calculatePrice via useEffect dependency
           setCustomization(updatedCustomization);
         
-        // Trigger price recalculation to update debug panel
         setRefreshTrigger(prev => prev + 1);
         
         // Force change detection to run after state update
@@ -1092,7 +1082,6 @@ export default function BuildAWigPage() {
         // AND trigger calculatePrice via useEffect dependency
         setCustomization(updatedCustomization);
         
-        // Trigger price recalculation to update debug panel
         setRefreshTrigger(prev => prev + 1);
         
         // Clear loading flag after a short delay to allow state updates to propagate
@@ -1872,7 +1861,6 @@ export default function BuildAWigPage() {
       const isEditMode = location.pathname === '/build-a-wig/edit' && localStorage.getItem('editingCartItem') !== null;
       const isCustomizeMode = location.pathname === '/build-a-wig/noir/customize';
       
-      // DEBUGGING: Log when price calculation runs
       // Determine the correct prefix based on mode
       let prefix = 'selected';
       if (isEditMode) {
@@ -1912,36 +1900,6 @@ export default function BuildAWigPage() {
       total += capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
       
       setTotalPrice(total);
-      
-      // Update visual debug info for mobile
-      setDebugInfo({
-        mode: isEditMode ? 'EDIT' : isCustomizeMode ? 'CUSTOMIZE' : 'MAIN',
-        prefix,
-        prices: {
-          capSizePrice,
-          colorPrice,
-          lengthPrice,
-          densityPrice,
-          lacePrice,
-          texturePrice,
-          hairlinePrice,
-          stylingPrice,
-          addOnsPrice
-        },
-        localStorageValues: {
-          capSizePrice: `calculated: $${capSizePrice} (from cap: ${currentCapSize})`,
-          capSizePriceStored: localStorage.getItem(`${prefix}CapSizePrice`) || localStorage.getItem('selectedCapSizePrice') || 'not found',
-          colorPrice: localStorage.getItem(`${prefix}ColorPrice`) || localStorage.getItem('selectedColorPrice') || 'not found',
-          lengthPrice: localStorage.getItem(`${prefix}LengthPrice`) || localStorage.getItem('selectedLengthPrice') || 'not found',
-          densityPrice: localStorage.getItem(`${prefix}DensityPrice`) || localStorage.getItem('selectedDensityPrice') || 'not found',
-          lacePrice: localStorage.getItem(`${prefix}LacePrice`) || localStorage.getItem('selectedLacePrice') || 'not found',
-          texturePrice: localStorage.getItem(`${prefix}TexturePrice`) || localStorage.getItem('selectedTexturePrice') || 'not found',
-          hairlinePrice: localStorage.getItem(`${prefix}HairlinePrice`) || localStorage.getItem('selectedHairlinePrice') || 'not found',
-          stylingPrice: localStorage.getItem(`${prefix}StylingPrice`) || localStorage.getItem('selectedStylingPrice') || 'not found',
-          addOnsPrice: localStorage.getItem(`${prefix}AddOnsPrice`) || localStorage.getItem('selectedAddOnsPrice') || 'not found'
-        },
-        total
-      });
     };
 
     // Calculate price immediately and on changes
@@ -2409,63 +2367,6 @@ export default function BuildAWigPage() {
   return (
     <>
       {showLoading && <LoadingScreen />}
-      {/* Visual Debug Panel for Mobile */}
-      {debugInfo && (
-        <div style={{
-          position: 'fixed',
-          top: '10px',
-          right: '10px',
-          background: 'rgba(0, 0, 0, 0.9)',
-          color: 'white',
-          padding: '10px',
-          borderRadius: '8px',
-          fontSize: '10px',
-          maxWidth: '90vw',
-          maxHeight: '80vh',
-          overflow: 'auto',
-          zIndex: 9999,
-          fontFamily: 'monospace'
-        }}>
-          <div style={{ marginBottom: '8px', fontWeight: 'bold', fontSize: '12px' }}>
-            DEBUG: {debugInfo.mode} MODE
-          </div>
-          <div style={{ marginBottom: '4px' }}>Prefix: {debugInfo.prefix}</div>
-          <div style={{ marginBottom: '8px', borderTop: '1px solid #555', paddingTop: '8px' }}>
-            <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>Prices Used:</div>
-            {Object.entries(debugInfo.prices).map(([key, value]) => (
-              <div key={key} style={{ marginLeft: '10px', color: value > 0 ? '#4ade80' : '#999' }}>
-                {key}: ${value}
-              </div>
-            ))}
-          </div>
-          <div style={{ marginBottom: '8px', borderTop: '1px solid #555', paddingTop: '8px' }}>
-            <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>localStorage Values:</div>
-            {Object.entries(debugInfo.localStorageValues).map(([key, value]) => (
-              <div key={key} style={{ marginLeft: '10px', fontSize: '9px', color: value !== 'not found' && parseFloat(value || '0') > 0 ? '#4ade80' : '#999' }}>
-                {key}: {value}
-              </div>
-            ))}
-          </div>
-          <div style={{ borderTop: '1px solid #555', paddingTop: '8px', fontWeight: 'bold', fontSize: '14px', color: '#4ade80' }}>
-            Total: ${debugInfo.total}
-          </div>
-          <button 
-            onClick={() => setDebugInfo(null)}
-            style={{
-              marginTop: '8px',
-              padding: '4px 8px',
-              background: '#ef4444',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '10px'
-            }}
-          >
-            Close
-          </button>
-        </div>
-      )}
       <div className="min-h-screen" style={{
         position: 'relative'
       }}>
