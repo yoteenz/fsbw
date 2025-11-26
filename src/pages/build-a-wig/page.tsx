@@ -329,12 +329,6 @@ export default function BuildAWigPage() {
     }
     
     if (isCustomizePage) {
-      // DEBUGGING: Log that we're in customize mode
-        pathname: location.pathname,
-        comingFromSubPage: sessionStorage.getItem('comingFromSubPage') === 'true',
-        timestamp: new Date().toISOString()
-      });
-      
       // Set flag to prevent sync effect from overwriting
       isLoadingFromStorage.current = true;
       
@@ -382,39 +376,6 @@ export default function BuildAWigPage() {
         const savedStyling = savedStylingCustomize || savedStylingSelected || customization.styling || 'NONE';
         const savedAddOns = savedAddOnsCustomize || savedAddOnsSelected || JSON.stringify(customization.addOns) || '[]';
         
-          savedCapSize: savedCapSizeFinal,
-          savedLength,
-          savedDensity,
-          savedLace,
-          savedTexture,
-          savedColor,
-          savedHairline,
-          savedStyling,
-          savedAddOns,
-          fromCustomizeSelected: {
-            capSize: !!savedCapSizeCustomize,
-            length: !!savedLengthCustomize,
-            density: !!savedDensityCustomize,
-            lace: !!savedLaceCustomize,
-            texture: !!savedTextureCustomize,
-            color: !!savedColorCustomize,
-            hairline: !!savedHairlineCustomize,
-            styling: !!savedStylingCustomize,
-            addOns: !!savedAddOnsCustomize
-          },
-          fromSelected: {
-            length: !!savedLengthSelected,
-            density: !!savedDensitySelected,
-            lace: !!savedLaceSelected,
-            texture: !!savedTextureSelected,
-            color: !!savedColorSelected,
-            hairline: !!savedHairlineSelected,
-            styling: !!savedStylingSelected,
-            addOns: !!savedAddOnsSelected
-          },
-          currentCustomization: customization
-        });
-        
         // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
         let validStyling = savedStyling !== null && savedStyling !== 'NONE' ? savedStyling : 'NONE';
         const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
@@ -459,43 +420,6 @@ export default function BuildAWigPage() {
         const savedHairlinePrice = localStorage.getItem('customizeSelectedHairlinePrice') || localStorage.getItem('selectedHairlinePrice') || '0';
         const savedStylingPrice = localStorage.getItem('customizeSelectedStylingPrice') || localStorage.getItem('selectedStylingPrice') || '0';
         const savedAddOnsPrice = localStorage.getItem('customizeSelectedAddOnsPrice') || localStorage.getItem('selectedAddOnsPrice') || '0';
-        
-        // DEBUGGING: Log prices being loaded in customize mode
-          source: 'Returning from sub-page',
-          loadedPrices: {
-            capSizePrice: savedCapSizePrice,
-            colorPrice: savedColorPrice,
-            lengthPrice: savedLengthPrice,
-            densityPrice: savedDensityPrice,
-            lacePrice: savedLacePrice,
-            texturePrice: savedTexturePrice,
-            hairlinePrice: savedHairlinePrice,
-            stylingPrice: savedStylingPrice,
-            addOnsPrice: savedAddOnsPrice
-          },
-          customizeSelectedPrices: {
-            capSizePrice: localStorage.getItem('customizeSelectedCapSizePrice'),
-            colorPrice: localStorage.getItem('customizeSelectedColorPrice'),
-            lengthPrice: localStorage.getItem('customizeSelectedLengthPrice'),
-            densityPrice: localStorage.getItem('customizeSelectedDensityPrice'),
-            lacePrice: localStorage.getItem('customizeSelectedLacePrice'),
-            texturePrice: localStorage.getItem('customizeSelectedTexturePrice'),
-            hairlinePrice: localStorage.getItem('customizeSelectedHairlinePrice'),
-            stylingPrice: localStorage.getItem('customizeSelectedStylingPrice'),
-            addOnsPrice: localStorage.getItem('customizeSelectedAddOnsPrice')
-          },
-          selectedPrices: {
-            capSizePrice: localStorage.getItem('selectedCapSizePrice'),
-            colorPrice: localStorage.getItem('selectedColorPrice'),
-            lengthPrice: localStorage.getItem('selectedLengthPrice'),
-            densityPrice: localStorage.getItem('selectedDensityPrice'),
-            lacePrice: localStorage.getItem('selectedLacePrice'),
-            texturePrice: localStorage.getItem('selectedTexturePrice'),
-            hairlinePrice: localStorage.getItem('selectedHairlinePrice'),
-            stylingPrice: localStorage.getItem('selectedStylingPrice'),
-            addOnsPrice: localStorage.getItem('selectedAddOnsPrice')
-          }
-        });
         
         // Save prices to localStorage with correct prefixes
         localStorage.setItem('selectedCapSizePrice', savedCapSizePrice);
@@ -631,28 +555,6 @@ export default function BuildAWigPage() {
           addOnsPrice: existingAddOnsPrice ? parseFloat(existingAddOnsPrice) : calculatedPrices.addOnsPrice,
         };
         
-        // DEBUGGING: Log prices being calculated and saved in customize mode (first load)
-          source: 'First load',
-          customization: initialCustomization,
-          existingPrices: {
-            capSizePrice: 'always recalculated',
-            colorPrice: existingColorPrice,
-            lengthPrice: existingLengthPrice,
-            densityPrice: existingDensityPrice,
-            lacePrice: existingLacePrice,
-            texturePrice: existingTexturePrice,
-            hairlinePrice: existingHairlinePrice,
-            stylingPrice: existingStylingPrice,
-            addOnsPrice: existingAddOnsPrice
-          },
-          calculatedPrices,
-          pricesToSave,
-          savingTo: {
-            customizeSelected: true,
-            selected: true
-          }
-        });
-        
         savePricesToLocalStorage(pricesToSave);
         
         // Trigger price recalculation
@@ -678,10 +580,6 @@ export default function BuildAWigPage() {
       // If coming from sub-page, load updated values from localStorage
       // CRITICAL: Check if we're in edit mode AND either the item ID matches OR we don't have a current item ID yet
       if (comingFromSubPage && editingCartItemId && (editingCartItemId === currentEditingItemIdRef.current || !currentEditingItemIdRef.current)) {
-          editingCartItemId,
-          currentEditingItemIdRef: currentEditingItemIdRef.current,
-          comingFromSubPage
-        });
         
         // Set flag to prevent sync effect from overwriting
         isLoadingFromStorage.current = true;
@@ -709,31 +607,9 @@ export default function BuildAWigPage() {
         const savedStyling = savedStylingEdit || localStorage.getItem('selectedStyling');
         const savedAddOns = savedAddOnsEdit || localStorage.getItem('selectedAddOns');
         
-          savedCapSize,
-          savedLength,
-          savedDensity,
-          savedLace,
-          savedTexture,
-          savedColor,
-          savedHairline,
-          savedStyling,
-          savedAddOns,
-          fromEditSelected: {
-            capSize: !!savedCapSizeEdit,
-            length: !!savedLengthEdit,
-            density: !!savedDensityEdit,
-            lace: !!savedLaceEdit,
-            texture: !!savedTextureEdit,
-            color: !!savedColorEdit,
-            hairline: !!savedHairlineEdit,
-            styling: !!savedStylingEdit,
-            addOns: !!savedAddOnsEdit
-          }
-        });
-        
         // Always load from localStorage when coming from sub-page
-      // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
-          let validStyling = savedStyling !== null ? savedStyling : 'NONE';
+        // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
+        let validStyling = savedStyling !== null ? savedStyling : 'NONE';
       const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
       if (partSelectionOptions.includes(validStyling)) {
         validStyling = 'NONE'; // If styling is a part selection, set to NONE
@@ -754,7 +630,6 @@ export default function BuildAWigPage() {
         
         // CRITICAL: Read prices from localStorage (saved by sub-pages) to preserve exact prices BEFORE updating state
         // Prioritize editSelected* prices, fall back to selected* prices
-        const savedCapSizePrice = localStorage.getItem('editSelectedCapSizePrice') || localStorage.getItem('selectedCapSizePrice');
         const savedColorPrice = localStorage.getItem('editSelectedColorPrice') || localStorage.getItem('selectedColorPrice');
         const savedLengthPrice = localStorage.getItem('editSelectedLengthPrice') || localStorage.getItem('selectedLengthPrice');
         const savedDensityPrice = localStorage.getItem('editSelectedDensityPrice') || localStorage.getItem('selectedDensityPrice');
@@ -763,43 +638,6 @@ export default function BuildAWigPage() {
         const savedHairlinePrice = localStorage.getItem('editSelectedHairlinePrice') || localStorage.getItem('selectedHairlinePrice');
         const savedStylingPrice = localStorage.getItem('editSelectedStylingPrice') || localStorage.getItem('selectedStylingPrice');
         const savedAddOnsPrice = localStorage.getItem('editSelectedAddOnsPrice') || localStorage.getItem('selectedAddOnsPrice');
-        
-        // DEBUGGING: Log prices being loaded in edit mode
-          source: 'Returning from sub-page',
-          loadedPrices: {
-            capSizePrice: savedCapSizePrice,
-            colorPrice: savedColorPrice,
-            lengthPrice: savedLengthPrice,
-            densityPrice: savedDensityPrice,
-            lacePrice: savedLacePrice,
-            texturePrice: savedTexturePrice,
-            hairlinePrice: savedHairlinePrice,
-            stylingPrice: savedStylingPrice,
-            addOnsPrice: savedAddOnsPrice
-          },
-          editSelectedPrices: {
-            capSizePrice: localStorage.getItem('editSelectedCapSizePrice'),
-            colorPrice: localStorage.getItem('editSelectedColorPrice'),
-            lengthPrice: localStorage.getItem('editSelectedLengthPrice'),
-            densityPrice: localStorage.getItem('editSelectedDensityPrice'),
-            lacePrice: localStorage.getItem('editSelectedLacePrice'),
-            texturePrice: localStorage.getItem('editSelectedTexturePrice'),
-            hairlinePrice: localStorage.getItem('editSelectedHairlinePrice'),
-            stylingPrice: localStorage.getItem('editSelectedStylingPrice'),
-            addOnsPrice: localStorage.getItem('editSelectedAddOnsPrice')
-          },
-          selectedPrices: {
-            capSizePrice: localStorage.getItem('selectedCapSizePrice'),
-            colorPrice: localStorage.getItem('selectedColorPrice'),
-            lengthPrice: localStorage.getItem('selectedLengthPrice'),
-            densityPrice: localStorage.getItem('selectedDensityPrice'),
-            lacePrice: localStorage.getItem('selectedLacePrice'),
-            texturePrice: localStorage.getItem('selectedTexturePrice'),
-            hairlinePrice: localStorage.getItem('selectedHairlinePrice'),
-            stylingPrice: localStorage.getItem('selectedStylingPrice'),
-            addOnsPrice: localStorage.getItem('selectedAddOnsPrice')
-          }
-        });
         
         // Recalculate prices as fallback if any prices are missing, but prioritize saved prices
         const calculatedPrices = calculatePricesFromSelections(updatedCustomization);
@@ -841,15 +679,6 @@ export default function BuildAWigPage() {
         
         // Also call savePricesToLocalStorage for consistency
         savePricesToLocalStorage(pricesToSave);
-        
-        // DEBUGGING: Log prices being saved in edit mode
-          source: 'Returning from sub-page',
-          pricesToSave,
-          savedTo: {
-            selected: true,
-            editSelected: true
-          }
-        });
         
         // CRITICAL: Also save to both selected* and editSelected* keys immediately to ensure they're available
         localStorage.setItem('selectedCapSize', updatedCustomization.capSize);
@@ -953,14 +782,6 @@ export default function BuildAWigPage() {
             updatedCustomization.hairline !== currentOriginalItem.hairline ||
             updatedCustomization.styling !== currentOriginalItem.styling ||
             JSON.stringify(updatedCustomization.addOns) !== JSON.stringify(currentOriginalItem.addOns);
-          
-            hasChangesDetected,
-            updatedColor: updatedCustomization.color,
-            originalColor: currentOriginalItem.color,
-            updatedLength: updatedCustomization.length,
-            originalLength: currentOriginalItem.length,
-            originalItemExists: !!originalItem
-          });
           
           // Set hasChanges immediately - the useEffect will also run but this ensures it's set
           setHasChanges(hasChangesDetected);
@@ -1181,18 +1002,7 @@ export default function BuildAWigPage() {
         const savedHairline = localStorage.getItem('selectedHairline');
         const savedStyling = localStorage.getItem('selectedStyling');
         const savedAddOns = localStorage.getItem('selectedAddOns');
-
-          savedCapSize,
-          savedLength,
-          savedDensity,
-          savedLace,
-          savedTexture,
-          savedColor,
-          savedHairline,
-          savedStyling,
-          savedAddOns
-        });
-
+        
         // Always load from localStorage when coming from sub-page
         // Use current customization state as fallback to preserve existing selections (like customize mode)
         const savedCapSizeFinal = savedCapSize || customization.capSize || 'M';
@@ -1238,7 +1048,6 @@ export default function BuildAWigPage() {
         
         // CRITICAL: Read prices from localStorage (saved by sub-pages) to preserve exact prices
         // Read directly from localStorage - don't default to '0' as that would overwrite existing prices
-        const savedCapSizePrice = localStorage.getItem('selectedCapSizePrice');
         const savedColorPrice = localStorage.getItem('selectedColorPrice');
         const savedLengthPrice = localStorage.getItem('selectedLengthPrice');
         const savedDensityPrice = localStorage.getItem('selectedDensityPrice');
@@ -1247,32 +1056,6 @@ export default function BuildAWigPage() {
         const savedHairlinePrice = localStorage.getItem('selectedHairlinePrice');
         const savedStylingPrice = localStorage.getItem('selectedStylingPrice');
         const savedAddOnsPrice = localStorage.getItem('selectedAddOnsPrice');
-        
-        // DEBUGGING: Log prices being loaded in main mode
-          source: 'Returning from sub-page',
-          loadedPrices: {
-            capSizePrice: savedCapSizePrice,
-            colorPrice: savedColorPrice,
-            lengthPrice: savedLengthPrice,
-            densityPrice: savedDensityPrice,
-            lacePrice: savedLacePrice,
-            texturePrice: savedTexturePrice,
-            hairlinePrice: savedHairlinePrice,
-            stylingPrice: savedStylingPrice,
-            addOnsPrice: savedAddOnsPrice
-          },
-          selectedPrices: {
-            capSizePrice: localStorage.getItem('selectedCapSizePrice'),
-            colorPrice: localStorage.getItem('selectedColorPrice'),
-            lengthPrice: localStorage.getItem('selectedLengthPrice'),
-            densityPrice: localStorage.getItem('selectedDensityPrice'),
-            lacePrice: localStorage.getItem('selectedLacePrice'),
-            texturePrice: localStorage.getItem('selectedTexturePrice'),
-            hairlinePrice: localStorage.getItem('selectedHairlinePrice'),
-            stylingPrice: localStorage.getItem('selectedStylingPrice'),
-            addOnsPrice: localStorage.getItem('selectedAddOnsPrice')
-          }
-        });
         
         // Recalculate prices as fallback if any prices are missing, but prioritize saved prices
         const calculatedPrices = calculatePricesFromSelections(updatedCustomization);
@@ -1304,14 +1087,6 @@ export default function BuildAWigPage() {
         
         // Also call savePricesToLocalStorage for consistency
         savePricesToLocalStorage(pricesToSave);
-        
-        // DEBUGGING: Log prices being saved in main mode
-          source: 'Returning from sub-page',
-          pricesToSave,
-          savedTo: {
-            selected: true
-          }
-        });
         
         // Update customization state - this will trigger wigViews to update via useMemo dependency
         // AND trigger calculatePrice via useEffect dependency
@@ -1414,9 +1189,6 @@ export default function BuildAWigPage() {
         
         // Check if this is a different item
         if (newItemId && newItemId !== currentEditingItemIdRef.current) {
-            currentItemId: currentEditingItemIdRef.current,
-            newItemId: newItemId
-          });
           
           // Force reload by triggering the route change effect
           // Clear the comingFromSubPage flag so it loads from editingCartItem, not localStorage
@@ -1450,7 +1222,6 @@ export default function BuildAWigPage() {
     // Check if we're in edit mode or customize mode
     const isEditMode = location.pathname === '/build-a-wig/edit' && localStorage.getItem('editingCartItem') !== null;
     const isCustomizeMode = location.pathname === '/build-a-wig/noir/customize';
-    const isMainPage = location.pathname === '/build-a-wig';
     
     // For all modes, skip syncing if we just came from a sub-page (let the route change effect handle it)
     const comingFromSubPage = sessionStorage.getItem('comingFromSubPage') === 'true';
@@ -1506,13 +1277,6 @@ export default function BuildAWigPage() {
       // Only sync selections, not prices. Prices are set by sub-pages when user confirms selection.
       // If prices don't exist yet, they'll be calculated when loading from sub-pages.
     }
-    
-      length: customization.length,
-      density: customization.density,
-      color: customization.color,
-      isEditMode,
-      isCustomizeMode
-    });
   }, [customization, location.pathname, calculatePricesFromSelections, savePricesToLocalStorage]);
 
   // REMOVED: Change detection logic - editing is handled by noir/edit page, not this page
@@ -2107,17 +1871,8 @@ export default function BuildAWigPage() {
       // Check which mode we're in
       const isEditMode = location.pathname === '/build-a-wig/edit' && localStorage.getItem('editingCartItem') !== null;
       const isCustomizeMode = location.pathname === '/build-a-wig/noir/customize';
-      const isMainMode = location.pathname === '/build-a-wig';
       
       // DEBUGGING: Log when price calculation runs
-        pathname: location.pathname,
-        isEditMode,
-        isCustomizeMode,
-        isMainMode,
-        basePrice,
-        timestamp: new Date().toISOString()
-      });
-      
       // Determine the correct prefix based on mode
       let prefix = 'selected';
       if (isEditMode) {
@@ -2152,36 +1907,6 @@ export default function BuildAWigPage() {
       const hairlinePrice = getPrice('Hairline');
       const stylingPrice = getPrice('Styling');
       const addOnsPrice = getPrice('AddOns');
-      
-      // DEBUGGING: Log all prices being factored in
-        mode: isEditMode ? 'EDIT' : isCustomizeMode ? 'CUSTOMIZE' : 'MAIN',
-        prefix,
-        basePrice,
-        prices: {
-          capSizePrice,
-          colorPrice,
-          lengthPrice,
-          densityPrice,
-          lacePrice,
-          texturePrice,
-          hairlinePrice,
-          stylingPrice,
-          addOnsPrice
-        },
-        localStorageValues: {
-          capSizePrice: localStorage.getItem(`${prefix}CapSizePrice`) || localStorage.getItem('selectedCapSizePrice') || 'not found',
-          colorPrice: localStorage.getItem(`${prefix}ColorPrice`) || localStorage.getItem('selectedColorPrice') || 'not found',
-          lengthPrice: localStorage.getItem(`${prefix}LengthPrice`) || localStorage.getItem('selectedLengthPrice') || 'not found',
-          densityPrice: localStorage.getItem(`${prefix}DensityPrice`) || localStorage.getItem('selectedDensityPrice') || 'not found',
-          lacePrice: localStorage.getItem(`${prefix}LacePrice`) || localStorage.getItem('selectedLacePrice') || 'not found',
-          texturePrice: localStorage.getItem(`${prefix}TexturePrice`) || localStorage.getItem('selectedTexturePrice') || 'not found',
-          hairlinePrice: localStorage.getItem(`${prefix}HairlinePrice`) || localStorage.getItem('selectedHairlinePrice') || 'not found',
-          stylingPrice: localStorage.getItem(`${prefix}StylingPrice`) || localStorage.getItem('selectedStylingPrice') || 'not found',
-          addOnsPrice: localStorage.getItem(`${prefix}AddOnsPrice`) || localStorage.getItem('selectedAddOnsPrice') || 'not found'
-        },
-        totalBefore: total,
-        totalAfter: total + capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice
-      });
       
       // Add all the actual prices
       total += capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
@@ -2234,7 +1959,7 @@ export default function BuildAWigPage() {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('customStorageChange', handleStorageChange);
     };
-  }, [customization, basePrice, refreshTrigger, location.pathname]);
+  }, [customization, basePrice, refreshTrigger, location]);
 
   // Load selected currency from localStorage
   useEffect(() => {
@@ -2292,11 +2017,6 @@ export default function BuildAWigPage() {
     localStorage.setItem('selectedStyling', validStyling);
     
     localStorage.setItem('selectedAddOns', JSON.stringify(customization.addOns));
-    
-      length: customization.length,
-      density: customization.density,
-      category
-    });
     
     // Determine the base route based on current mode
     const isEditMode = location.pathname === '/build-a-wig/edit';
@@ -2390,12 +2110,6 @@ export default function BuildAWigPage() {
         customization.hairline !== originalItem.hairline ||
         customization.styling !== originalItem.styling ||
         JSON.stringify(customization.addOns) !== JSON.stringify(originalItem.addOns);
-      
-        hasChangesDetected,
-        customization: customization.color,
-        originalItem: originalItem.color,
-        buttonState: addToBagState
-      });
       
       setHasChanges(hasChangesDetected);
       

@@ -796,9 +796,6 @@ function NoirSelection() {
       localStorage.setItem('addToBagButtonState', 'added');
       localStorage.setItem('lastAddedItemId', matchingItem.id);
     } else {
-      const cartSummary = cartItems.map((item: any) => 
-        `${item.capSize}-${item.length}-${item.color}`
-      ).join(', ');
       setAddToBagState('idle');
       localStorage.removeItem('addToBagButtonState');
       localStorage.removeItem('lastAddedItemId');
