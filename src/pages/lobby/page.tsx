@@ -280,7 +280,7 @@ const LobbyPage: React.FC = () => {
           transform: 'translateX(-2px)',
           textTransform: 'uppercase'
         }}>
-          lobby
+          lounge
         </div>
       </div>
     </div>
@@ -495,10 +495,10 @@ const LoungePage: React.FC = () => {
           letterSpacing: '1px',
           textAlign: 'center',
           width: '100%',
-          transform: 'translateX(4px)',
+          transform: 'translateX(3px)',
           textTransform: 'uppercase'
         }}>
-          lounge
+          lobby
         </div>
       </div>
     </div>
