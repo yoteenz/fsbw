@@ -372,7 +372,6 @@ function NoirSelection() {
           
           // Re-validate that a cart item with default configuration still exists
           // This ensures we only show "IN THE BAG" for items with ALL default specs
-          const currentConfig = generateConfigurationStringForChangeDetection();
           const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
           
           const matchingItem = cartItems.find((item: any) => {
@@ -697,7 +696,6 @@ function NoirSelection() {
   // Initialize button state from localStorage on page load
   useEffect(() => {
     const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-    const currentConfig = generateConfigurationStringForChangeDetection();
     
     // Always check if current configuration matches any cart item
     // Only match items with ALL default selection options (M, 24", 200%, 13X6, etc.)
@@ -720,7 +718,6 @@ function NoirSelection() {
   // Check button state when page gains focus (user returns from other pages)
   useEffect(() => {
     const handleFocus = () => {
-      const currentConfig = generateConfigurationStringForChangeDetection();
       const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
       
       // Only match items with ALL default selection options (M, 24", 200%, 13X6, etc.)
