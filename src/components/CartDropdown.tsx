@@ -690,19 +690,34 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           items.forEach((itemData, index) => {
                             const isLast = index === items.length - 1;
                             
-                            if (itemData.type === 'density' || itemData.type === 'lace') {
-                              // Density and lace: full name if alone, abbreviated if with other items
+                            if (itemData.type === 'density') {
+                              // Density: show percentage value followed by "DENSITY" in all caps, add comma if there are more items after it
+                              const displayValue = `${itemData.value} DENSITY`;
+                              text += (text ? ' ' : '') + displayValue.toUpperCase() + (isLast ? '' : ',');
+                            } else if (itemData.type === 'lace') {
+                              // Lace: full name if alone, abbreviated if with other items
                               const displayValue = hasOtherItems ? itemData.value : itemData.fullName;
-                              text += (text ? ' ' : '') + displayValue;
+                              const displayText = typeof displayValue === 'string' ? displayValue : String(displayValue);
+                              text += (text ? ' ' : '') + displayText.toUpperCase();
                             } else if (itemData.type === 'texture' || itemData.type === 'color') {
                               // Texture and color get commas unless they're last
                               const displayValue = useFullNames ? itemData.fullName : itemData.value;
-                              text += (text ? ' ' : '') + displayValue + (isLast ? '' : ',');
+                              const displayText = typeof displayValue === 'string' ? displayValue : String(displayValue);
+                              text += (text ? ' ' : '') + displayText.toUpperCase() + (isLast ? '' : ',');
                             } else if (itemData.type === 'hairline') {
-                              const displayValue = useFullNames ? itemData.fullName : itemData.value;
-                              text += (text ? ' ' : '') + displayValue;
+                              // Special handling for lagos + peak combo
+                              let displayValue;
+                              const hairlineValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
+                              const hairlineUpper = hairlineValue.toUpperCase();
+                              if (hairlineUpper.includes('LAGOS') && hairlineUpper.includes('PEAK')) {
+                                displayValue = 'LAGOS + PEAK';
+                              } else {
+                                const tempValue = useFullNames ? itemData.fullName : hairlineValue;
+                                displayValue = typeof tempValue === 'string' ? tempValue : String(tempValue);
+                              }
+                              text += (text ? ' ' : '') + displayValue.toUpperCase();
                               // Add line break after lagos to prevent text from getting too close to close button
-                              if (itemData.value.includes('LAGOS')) {
+                              if (hairlineValue.includes('LAGOS')) {
                                 text += '<br/>';
                               } else {
                                 text += (isLast ? '' : ',');
@@ -711,7 +726,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               if (useFullNames) {
                                 // For single item, show full styling name
                                 const displayValue = itemData.fullName;
-                                text += (text ? ' ' : '') + displayValue;
+                                const displayText = typeof displayValue === 'string' ? displayValue : String(displayValue);
+                                text += (text ? ' ' : '') + displayText.toUpperCase();
                               } else {
                                 // For multiple items, show abbreviated with part selection
                             let partAbbrev = '';
@@ -731,7 +747,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             
                             // Use non-breaking spaces within styling section and connect to part selection
                             if (typeof itemData.value === 'string') {
-                              const stylingText = itemData.value.replace(/ /g, '\u00A0');
+                              const stylingText = itemData.value.toUpperCase().replace(/ /g, '\u00A0');
                               text += '\u00A0' + stylingText + (isLast ? '' : ',');
                             }
                               }
@@ -739,19 +755,19 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               if (useFullNames) {
                                 // For single item, show full add-on names
                                 const addOnText = Array.isArray(itemData.value) ? itemData.value.join(', ') : String(itemData.value);
-                                text += (text ? ' ' : '') + addOnText;
+                                text += (text ? ' ' : '') + addOnText.toUpperCase();
                               } else {
                                 // For multiple items, show abbreviated add-ons
                                 if (Array.isArray(itemData.value)) {
                                   itemData.value.forEach((addOn: string, addOnIndex: number) => {
                                     // Use non-breaking spaces within add-on section
-                                    const addOnText = addOn.replace(/ /g, '\u00A0');
+                                    const addOnText = addOn.toUpperCase().replace(/ /g, '\u00A0');
                                     const isLastAddOn = addOnIndex === itemData.value.length - 1;
                                     text += (text ? ' ' : '') + addOnText + (isLastAddOn ? '' : ',');
                                   });
                                 } else {
                                   // Handle single string case
-                                  const addOnText = String(itemData.value).replace(/ /g, '\u00A0');
+                                  const addOnText = String(itemData.value).toUpperCase().replace(/ /g, '\u00A0');
                                   text += (text ? ' ' : '') + addOnText;
                                 }
                               }
