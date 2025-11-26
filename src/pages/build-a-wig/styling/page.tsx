@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
@@ -365,16 +365,10 @@ export default function StylingSelectionPage() {
     // Save part selection (always has a value, defaults to MIDDLE)
     localStorage.setItem('selectedPartSelection', selectedPartSelection);
     
-    // Save styling - only save actual styling selections, not part selection when no styling is selected
-    if (selectedHairStyling.length > 0) {
-      // When styling is selected, save the first styling option
-      localStorage.setItem('selectedStyling', selectedHairStyling[0]);
-    } else {
-      // When no styling is selected, save 'NONE'
-      localStorage.setItem('selectedStyling', 'NONE');
-    }
+    const price = getTotalStylingPrice().toString();
     
-    localStorage.setItem('selectedStylingPrice', getTotalStylingPrice().toString());
+    // Check if we're in edit mode or customize mode
+    const isEditMode = localStorage.getItem('editingCartItem') !== null;
     
     // Get the source route from sessionStorage (set by main page when navigating to sub-page)
     // Also check if we're in edit or customize mode as fallback
@@ -397,7 +391,38 @@ export default function StylingSelectionPage() {
       }
     }
     
-    console.log('Styling page - Navigating back to source route:', sourceRoute);
+    const isCustomizeMode = !isEditMode && sourceRoute === '/build-a-wig/noir/customize';
+    
+    // Save styling - only save actual styling selections, not part selection when no styling is selected
+    const stylingValue = selectedHairStyling.length > 0 ? selectedHairStyling[0] : 'NONE';
+    
+    // Always save with 'selected' prefix
+    localStorage.setItem('selectedStyling', stylingValue);
+    localStorage.setItem('selectedStylingPrice', price);
+    
+    // Also save with 'editSelected' prefix in edit mode
+    if (isEditMode) {
+      localStorage.setItem('editSelectedStyling', stylingValue);
+      localStorage.setItem('editSelectedStylingPrice', price);
+    }
+    
+    // Also save with 'customizeSelected' prefix in customize mode
+    if (isCustomizeMode) {
+      localStorage.setItem('customizeSelectedStyling', stylingValue);
+      localStorage.setItem('customizeSelectedStylingPrice', price);
+    }
+    
+    // Determine the correct route to navigate back to based on current pathname
+    let returnRoute = '/build-a-wig'; // Default
+    if (location.pathname.startsWith('/build-a-wig/edit/')) {
+      returnRoute = '/build-a-wig/edit';
+    } else if (location.pathname.startsWith('/build-a-wig/noir/customize/')) {
+      returnRoute = '/build-a-wig/noir/customize';
+    } else if (sourceRoute) {
+      returnRoute = sourceRoute;
+    }
+    
+    console.log('Styling page - Navigating back to route:', returnRoute);
     
     // Set flag to indicate we're returning from a sub-page
     sessionStorage.setItem('comingFromSubPage', 'true');
@@ -405,7 +430,7 @@ export default function StylingSelectionPage() {
     // Dispatch custom event to notify main page of changes
     window.dispatchEvent(new CustomEvent('customStorageChange'));
     
-    navigate(sourceRoute);
+    navigate(returnRoute);
   };
 
   return (

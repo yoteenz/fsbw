@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
@@ -16,6 +16,7 @@ interface DensityOption {
 
 function DensitySelection() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedDensity, setSelectedDensity] = useState(() => {
     // Always start with default - useEffect will load from localStorage
     // This matches the customize pages pattern
@@ -189,8 +190,10 @@ function DensitySelection() {
   };
 
   const handleConfirmSelection = () => {
-    localStorage.setItem('selectedDensity', selectedDensity);
-    localStorage.setItem('selectedDensityPrice', getSelectedPrice().toString());
+    const price = getSelectedPrice().toString();
+    
+    // Check if we're in edit mode or customize mode
+    const isEditMode = localStorage.getItem('editingCartItem') !== null;
     
     // Get the source route from sessionStorage (set by main page when navigating to sub-page)
     // Also check if we're in edit or customize mode as fallback
@@ -213,7 +216,35 @@ function DensitySelection() {
       }
     }
     
-    console.log('Density page - Navigating back to source route:', sourceRoute);
+    const isCustomizeMode = !isEditMode && sourceRoute === '/build-a-wig/noir/customize';
+    
+    // Always save with 'selected' prefix
+    localStorage.setItem('selectedDensity', selectedDensity);
+    localStorage.setItem('selectedDensityPrice', price);
+    
+    // Also save with 'editSelected' prefix in edit mode
+    if (isEditMode) {
+      localStorage.setItem('editSelectedDensity', selectedDensity);
+      localStorage.setItem('editSelectedDensityPrice', price);
+    }
+    
+    // Also save with 'customizeSelected' prefix in customize mode
+    if (isCustomizeMode) {
+      localStorage.setItem('customizeSelectedDensity', selectedDensity);
+      localStorage.setItem('customizeSelectedDensityPrice', price);
+    }
+    
+    // Determine the correct route to navigate back to based on current pathname
+    let returnRoute = '/build-a-wig'; // Default
+    if (location.pathname.startsWith('/build-a-wig/edit/')) {
+      returnRoute = '/build-a-wig/edit';
+    } else if (location.pathname.startsWith('/build-a-wig/noir/customize/')) {
+      returnRoute = '/build-a-wig/noir/customize';
+    } else if (sourceRoute) {
+      returnRoute = sourceRoute;
+    }
+    
+    console.log('Density page - Navigating back to route:', returnRoute);
     
     // Set flag to indicate we're returning from a sub-page
     sessionStorage.setItem('comingFromSubPage', 'true');
@@ -221,7 +252,7 @@ function DensitySelection() {
     // Dispatch custom event to notify main page of changes
     window.dispatchEvent(new CustomEvent('customStorageChange'));
     
-    navigate(sourceRoute);
+    navigate(returnRoute);
   };
 
   const getSelectedPrice = () => {

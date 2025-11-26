@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
@@ -15,6 +15,7 @@ interface LaceOption {
 
 function LaceSelection() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedLace, setSelectedLace] = useState(() => {
     return localStorage.getItem('selectedLace') || '13X6';
   });
@@ -203,8 +204,10 @@ function LaceSelection() {
 
   const handleConfirmSelection = () => {
     try {
-      localStorage.setItem('selectedLace', selectedLace);
-      localStorage.setItem('selectedLacePrice', getSelectedPrice().toString());
+      const price = getSelectedPrice().toString();
+      
+      // Check if we're in edit mode or customize mode
+      const isEditMode = localStorage.getItem('editingCartItem') !== null;
       
       // Get the source route from sessionStorage (set by main page when navigating to sub-page)
       // Also check if we're in edit or customize mode as fallback
@@ -227,7 +230,35 @@ function LaceSelection() {
         }
       }
       
-      console.log('Lace page - Navigating back to source route:', sourceRoute);
+      const isCustomizeMode = !isEditMode && sourceRoute === '/build-a-wig/noir/customize';
+      
+      // Always save with 'selected' prefix
+      localStorage.setItem('selectedLace', selectedLace);
+      localStorage.setItem('selectedLacePrice', price);
+      
+      // Also save with 'editSelected' prefix in edit mode
+      if (isEditMode) {
+        localStorage.setItem('editSelectedLace', selectedLace);
+        localStorage.setItem('editSelectedLacePrice', price);
+      }
+      
+      // Also save with 'customizeSelected' prefix in customize mode
+      if (isCustomizeMode) {
+        localStorage.setItem('customizeSelectedLace', selectedLace);
+        localStorage.setItem('customizeSelectedLacePrice', price);
+      }
+      
+      // Determine the correct route to navigate back to based on current pathname
+      let returnRoute = '/build-a-wig'; // Default
+      if (location.pathname.startsWith('/build-a-wig/edit/')) {
+        returnRoute = '/build-a-wig/edit';
+      } else if (location.pathname.startsWith('/build-a-wig/noir/customize/')) {
+        returnRoute = '/build-a-wig/noir/customize';
+      } else if (sourceRoute) {
+        returnRoute = sourceRoute;
+      }
+      
+      console.log('Lace page - Navigating back to route:', returnRoute);
       
       // Set flag to indicate we're returning from a sub-page
       sessionStorage.setItem('comingFromSubPage', 'true');
@@ -235,7 +266,7 @@ function LaceSelection() {
       // Dispatch custom event to notify main page of changes
       window.dispatchEvent(new CustomEvent('customStorageChange'));
       
-      navigate(sourceRoute);
+      navigate(returnRoute);
     } catch (e) {
       console.error('Unable to save selected lace to localStorage', e);
     }

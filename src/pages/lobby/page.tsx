@@ -83,7 +83,7 @@ const LobbyPage: React.FC = () => {
               src="/assets/neon-logo.png" 
               alt="Frontal Slayer" 
               onClick={() => navigate('/build-a-wig')}
-              style={{ width: 'auto', height: '268px', maxWidth: 'none', display: 'block', cursor: 'pointer' }}
+              style={{ width: 'auto', height: '263px', maxWidth: 'none', display: 'block', cursor: 'pointer' }}
             />
           </div>
         </div>

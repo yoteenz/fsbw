@@ -136,8 +136,31 @@ function App() {
           </Suspense>
         } />
         {/* Build-a-wig routes - specific routes must come before general /build-a-wig route */}
+        {/* Edit mode routes */}
+        <Route path="/build-a-wig/edit/color" element={<ColorPage />} />
+        <Route path="/build-a-wig/edit/length" element={<LengthPage />} />
+        <Route path="/build-a-wig/edit/density" element={<DensityPage />} />
+        <Route path="/build-a-wig/edit/lace" element={<LacePage />} />
+        <Route path="/build-a-wig/edit/texture" element={<TexturePage />} />
+        <Route path="/build-a-wig/edit/hairline" element={<HairlinePage />} />
+        <Route path="/build-a-wig/edit/cap" element={<CapSizePage />} />
+        <Route path="/build-a-wig/edit/styling" element={<StylingPage />} />
+        <Route path="/build-a-wig/edit/addons" element={<AddOnsPage />} />
         <Route path="/build-a-wig/edit" element={<BuildAWigPage />} />
+        
+        {/* Customize mode routes */}
+        <Route path="/build-a-wig/noir/customize/color" element={<ColorPage />} />
+        <Route path="/build-a-wig/noir/customize/length" element={<LengthPage />} />
+        <Route path="/build-a-wig/noir/customize/density" element={<DensityPage />} />
+        <Route path="/build-a-wig/noir/customize/lace" element={<LacePage />} />
+        <Route path="/build-a-wig/noir/customize/texture" element={<TexturePage />} />
+        <Route path="/build-a-wig/noir/customize/hairline" element={<HairlinePage />} />
+        <Route path="/build-a-wig/noir/customize/cap" element={<CapSizePage />} />
+        <Route path="/build-a-wig/noir/customize/styling" element={<StylingPage />} />
+        <Route path="/build-a-wig/noir/customize/addons" element={<AddOnsPage />} />
         <Route path="/build-a-wig/noir/customize" element={<BuildAWigPage />} />
+        
+        {/* Main build-a-wig routes */}
         <Route path="/build-a-wig/length" element={<LengthPage />} />
         <Route path="/build-a-wig" element={<BuildAWigPageWrapper />} />
         <Route path="/build-a-wig/color" element={<ColorPage />} />
@@ -145,7 +168,7 @@ function App() {
         <Route path="/build-a-wig/lace" element={<LacePage />} />
         <Route path="/build-a-wig/texture" element={<TexturePage />} />
         <Route path="/build-a-wig/hairline" element={<HairlinePage />} />
-        <Route path="/build-a-wig/cap-size" element={<CapSizePage />} />
+        <Route path="/build-a-wig/cap" element={<CapSizePage />} />
         <Route path="/build-a-wig/styling" element={<StylingPage />} />
         <Route path="/build-a-wig/addons" element={<AddOnsPage />} />
         <Route path="/units/noir" element={

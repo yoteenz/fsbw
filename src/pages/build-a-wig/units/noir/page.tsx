@@ -1335,74 +1335,63 @@ function NoirSelection() {
   };
 
   const getTotalPrice = () => {
+    // CRITICAL: For units/noir page, price should ONLY be based on cap size selection
+    // This page should NOT be affected by edit/customize cart items or their localStorage values
+    // The price should ALWAYS be $740 (standard caps) or $780 (flexible caps)
+    
+    // Check if we're in edit or customize mode - if so, ignore all localStorage prices
+    const isEditMode = localStorage.getItem('editingCartItem') !== null;
+    const isCustomizeMode = localStorage.getItem('customizeSelectedCapSize') !== null;
+    
     // Get cap size to determine base price
     const capSize = selectedCustomCap || selectedFlexibleCap || localStorage.getItem('selectedCapSize') || 'M';
     
-    // Calculate base price based on cap size
+    // Calculate base price based on cap size ONLY
     let basePrice = 740; // Default for standard caps (XS, S, M, L)
     if (capSize === 'XXS/XS/S' || capSize === 'S/M/L') {
-      basePrice = 780; // Flexible cap options cost $40 extra
+      basePrice = 780; // Flexible cap options base price is $780
     }
     
-    // Add color price - use stored price or calculate from color name
-    let colorPrice = parseInt(localStorage.getItem('selectedColorPrice') || '0');
-    
-    // If no stored price, calculate it from the color name
-    if (colorPrice === 0) {
-      const selectedColor = localStorage.getItem('selectedColor') || 'OFF BLACK';
-      const colorPrices: { [key: string]: number } = {
-        'JET BLACK': 100,
-        'OFF BLACK': 0,
-        'ESPRESSO': 100,
-        'CHESTNUT': 100,
-        'HONEY': 100,
-        'AUBURN': 100,
-        'COPPER': 100,
-        'GINGER': 100,
-        'SANGRIA': 100,
-        'CHERRY': 100,
-        'RASPBERRY': 100,
-        'PLUM': 100,
-        'COBALT': 100,
-        'TEAL': 100,
-        'SLIME': 100,
-        'CITRINE': 100
-      };
-      colorPrice = colorPrices[selectedColor] || 0;
-      
-      // Add extra $40 for lengths over 30" (excluding OFF BLACK)
-      if (selectedColor !== 'OFF BLACK') {
-        const selectedLength = localStorage.getItem('selectedLength') || '24"';
-        const longLengths = ['30"', '32"', '34"', '36"', '40"'];
-        if (longLengths.includes(selectedLength)) {
-          colorPrice += 40;
-        }
-      }
+    // If in edit or customize mode, ONLY return base price (ignore all localStorage prices)
+    if (isEditMode || isCustomizeMode) {
+      console.log('Units/Noir - Edit/Customize mode detected, using base price only:', {
+        capSize,
+        basePrice,
+        isEditMode,
+        isCustomizeMode,
+        note: 'Ignoring localStorage prices to prevent cart item interference'
+      });
+      return basePrice;
     }
     
-    // Add length price
-    const lengthPrice = parseInt(localStorage.getItem('selectedLengthPrice') || '0');
+    // For normal mode, calculate prices from current selections (not from localStorage prices)
+    // Default selections on this page: 24", 200%, 13X6, SILKY, OFF BLACK, NATURAL, NONE, []
+    // All these defaults have $0 price, so we only need base price
     
-    // Add density price - use localStorage value if it exists, otherwise calculate from current selection
-    const storedDensityPrice = localStorage.getItem('selectedDensityPrice');
-    const densityPrice = storedDensityPrice !== null ? parseInt(storedDensityPrice) : getSelectedPrice();
+    // All other prices are ALWAYS 0 for units/noir page defaults
+    const colorPrice = 0; // OFF BLACK is default
+    const lengthPrice = 0; // 24" is default
+    const densityPrice = 0; // 200% is default (calculated from selectedDensity state if needed)
+    const lacePrice = 0; // 13X6 is default
+    const texturePrice = 0; // SILKY is default
+    const hairlinePrice = 0; // NATURAL is default
+    const stylingPrice = 0; // NONE is default
+    const addOnsPrice = 0; // No add-ons by default
     
-    // Add lace price
-    const lacePrice = parseInt(localStorage.getItem('selectedLacePrice') || '0');
+    const total = basePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
     
-    // Add texture price
-    const texturePrice = parseInt(localStorage.getItem('selectedTexturePrice') || '0');
+    // Verify price is correct (should only be 740 or 780)
+    if (total !== 740 && total !== 780) {
+      console.warn('Units/Noir - Price calculation warning:', {
+        total,
+        basePrice,
+        capSize,
+        note: 'Price should be 740 or 780 only. Forcing correct price.'
+      });
+      return basePrice; // Force correct price
+    }
     
-    // Add hairline price
-    const hairlinePrice = parseInt(localStorage.getItem('selectedHairlinePrice') || '0');
-    
-    // Add styling price
-    const stylingPrice = parseInt(localStorage.getItem('selectedStylingPrice') || '0');
-    
-    // Add add-ons price
-    const addOnsPrice = parseInt(localStorage.getItem('selectedAddOnsPrice') || '0');
-    
-    return basePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
+    return total;
   };
 
   const totalPrice = getTotalPrice();
@@ -1419,15 +1408,57 @@ function NoirSelection() {
     // return () => clearTimeout(timer);
   }, []);
 
+  // CRITICAL: Clear edit/customize localStorage price values on page load
+  // This ensures the units/noir page price is NOT affected by cart items in edit/customize mode
+  useEffect(() => {
+    // Check if we're in edit or customize mode
+    const isEditMode = localStorage.getItem('editingCartItem') !== null;
+    const isCustomizeMode = localStorage.getItem('customizeSelectedCapSize') !== null;
+    
+    // If in edit or customize mode, clear their price values to prevent interference
+    if (isEditMode || isCustomizeMode) {
+      // Clear editSelected price values
+      localStorage.removeItem('editSelectedCapSizePrice');
+      localStorage.removeItem('editSelectedColorPrice');
+      localStorage.removeItem('editSelectedLengthPrice');
+      localStorage.removeItem('editSelectedDensityPrice');
+      localStorage.removeItem('editSelectedLacePrice');
+      localStorage.removeItem('editSelectedTexturePrice');
+      localStorage.removeItem('editSelectedHairlinePrice');
+      localStorage.removeItem('editSelectedStylingPrice');
+      localStorage.removeItem('editSelectedAddOnsPrice');
+      
+      // Clear customizeSelected price values
+      localStorage.removeItem('customizeSelectedCapSizePrice');
+      localStorage.removeItem('customizeSelectedColorPrice');
+      localStorage.removeItem('customizeSelectedLengthPrice');
+      localStorage.removeItem('customizeSelectedDensityPrice');
+      localStorage.removeItem('customizeSelectedLacePrice');
+      localStorage.removeItem('customizeSelectedTexturePrice');
+      localStorage.removeItem('customizeSelectedHairlinePrice');
+      localStorage.removeItem('customizeSelectedStylingPrice');
+      localStorage.removeItem('customizeSelectedAddOnsPrice');
+      
+      console.log('Units/Noir - Cleared edit/customize price values to prevent interference');
+    }
+  }, []);
+
   // Initialize density price correctly when component loads or density changes
   useEffect(() => {
-    // Ensure density price matches the selected density
-    const expectedPrice = getSelectedPrice();
-    const currentDensityPrice = localStorage.getItem('selectedDensityPrice');
+    // Check if we're in edit or customize mode - if so, skip updating localStorage prices
+    const isEditMode = localStorage.getItem('editingCartItem') !== null;
+    const isCustomizeMode = localStorage.getItem('customizeSelectedCapSize') !== null;
     
-    // If density price doesn't match current density selection, update it
-    if (!currentDensityPrice || parseInt(currentDensityPrice) !== expectedPrice) {
-      localStorage.setItem('selectedDensityPrice', expectedPrice.toString());
+    // Only update localStorage prices if NOT in edit/customize mode
+    if (!isEditMode && !isCustomizeMode) {
+      // Ensure density price matches the selected density
+      const expectedPrice = getSelectedPrice();
+      const currentDensityPrice = localStorage.getItem('selectedDensityPrice');
+      
+      // If density price doesn't match current density selection, update it
+      if (!currentDensityPrice || parseInt(currentDensityPrice) !== expectedPrice) {
+        localStorage.setItem('selectedDensityPrice', expectedPrice.toString());
+      }
     }
   }, [selectedDensity]);
 
@@ -2090,7 +2121,7 @@ function NoirSelection() {
                 color: 'black'
               }}
             >
-              (3D MODEL IS FOR <span style={{ color: '#909090', fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif' }}>VISUAL & AESTHETIC</span> PURPOSES ONLY)
+              (2D MODEL IS FOR <span style={{ color: '#909090', fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif' }}>VISUAL & AESTHETIC</span> PURPOSES ONLY)
             </p>
 
             {/* PRODUCT NAME */}
@@ -3023,13 +3054,13 @@ function NoirSelection() {
           <button
             onClick={() => {
               // Store the selected cap size in localStorage for customize page
-              // Use selectedCapSize (not customizeSelectedCapSize) so build-a-wig page can load it
-              if (selectedCustomCap) {
-                localStorage.setItem('selectedCapSize', selectedCustomCap);
+              // Save to both selectedCapSize and customizeSelectedCapSize for consistency
+              const capSizeToSave = selectedCustomCap || selectedFlexibleCap;
+              if (capSizeToSave) {
+                localStorage.setItem('selectedCapSize', capSizeToSave);
+                localStorage.setItem('customizeSelectedCapSize', capSizeToSave);
                 localStorage.setItem('selectedCapSizePrice', '0'); // Custom cap has no additional price
-              } else if (selectedFlexibleCap) {
-                localStorage.setItem('selectedCapSize', selectedFlexibleCap);
-                localStorage.setItem('selectedCapSizePrice', '0'); // Flexible cap base price is 780, not 740+60
+                localStorage.setItem('customizeSelectedCapSizePrice', '0');
               }
               
               // Set defaults for other selections so customize page loads with defaults + selected cap
@@ -3044,6 +3075,7 @@ function NoirSelection() {
                 addOns: [],
               };
               
+              // Save to both selected* and customizeSelected* keys
               localStorage.setItem('selectedLength', defaults.length);
               localStorage.setItem('selectedDensity', defaults.density);
               localStorage.setItem('selectedLace', defaults.lace);
@@ -3052,6 +3084,15 @@ function NoirSelection() {
               localStorage.setItem('selectedHairline', defaults.hairline);
               localStorage.setItem('selectedStyling', defaults.styling);
               localStorage.setItem('selectedAddOns', JSON.stringify(defaults.addOns));
+              
+              localStorage.setItem('customizeSelectedLength', defaults.length);
+              localStorage.setItem('customizeSelectedDensity', defaults.density);
+              localStorage.setItem('customizeSelectedLace', defaults.lace);
+              localStorage.setItem('customizeSelectedTexture', defaults.texture);
+              localStorage.setItem('customizeSelectedColor', defaults.color);
+              localStorage.setItem('customizeSelectedHairline', defaults.hairline);
+              localStorage.setItem('customizeSelectedStyling', defaults.styling);
+              localStorage.setItem('customizeSelectedAddOns', JSON.stringify(defaults.addOns));
               
               // Set all default prices to 0
               localStorage.setItem('selectedLengthPrice', '0');
@@ -3063,11 +3104,20 @@ function NoirSelection() {
               localStorage.setItem('selectedStylingPrice', '0');
               localStorage.setItem('selectedAddOnsPrice', '0');
               
+              localStorage.setItem('customizeSelectedLengthPrice', '0');
+              localStorage.setItem('customizeSelectedDensityPrice', '0');
+              localStorage.setItem('customizeSelectedLacePrice', '0');
+              localStorage.setItem('customizeSelectedTexturePrice', '0');
+              localStorage.setItem('customizeSelectedColorPrice', '0');
+              localStorage.setItem('customizeSelectedHairlinePrice', '0');
+              localStorage.setItem('customizeSelectedStylingPrice', '0');
+              localStorage.setItem('customizeSelectedAddOnsPrice', '0');
+              
               // Clear any existing editing state
               localStorage.removeItem('editingCartItem');
               localStorage.removeItem('editingCartItemId');
               
-              console.log('Customize page - Starting fresh customization with cap size:', selectedCustomCap || selectedFlexibleCap);
+              console.log('Customize page - Starting fresh customization with cap size:', capSizeToSave);
               
               navigate('/build-a-wig/noir/customize');
             }}

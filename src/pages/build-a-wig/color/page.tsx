@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
@@ -16,6 +16,7 @@ interface ColorOption {
 
 function ColorSelection() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedColor, setSelectedColor] = useState(() => {
     return localStorage.getItem('selectedColor') || 'OFF BLACK';
   });
@@ -285,37 +286,56 @@ function ColorSelection() {
 
   const handleConfirmSelection = () => {
     console.log('Color page - confirming selection:', selectedColor);
-    localStorage.setItem('selectedColor', selectedColor);
-    localStorage.setItem('selectedColorPrice', getSelectedPrice().toString());
+    const price = getSelectedPrice().toString();
     
-    console.log('Color page - saved to localStorage:', {
-      selectedColor,
-      price: getSelectedPrice()
-    });
-    
-    // Get the source route from sessionStorage (set by main page when navigating to sub-page)
-    // Also check if we're in edit or customize mode as fallback
+    // Check if we're in edit mode or customize mode
+    const isEditMode = localStorage.getItem('editingCartItem') !== null;
     let sourceRoute = sessionStorage.getItem('sourceRoute');
-    
-    // Fallback: check localStorage for edit mode or customize mode
     if (!sourceRoute) {
       const editingCartItem = localStorage.getItem('editingCartItem');
       const selectedCapSize = localStorage.getItem('selectedCapSize');
-      
       if (editingCartItem) {
         sourceRoute = '/build-a-wig/edit';
-        console.log('Color page - No sourceRoute found, detected edit mode from localStorage');
       } else if (selectedCapSize) {
-        // Check if we came from customize page by checking if capSize was set by customize button
         sourceRoute = '/build-a-wig/noir/customize';
-        console.log('Color page - No sourceRoute found, detected customize mode from localStorage');
-      } else {
-        sourceRoute = '/build-a-wig';
-        console.log('Color page - No sourceRoute found, defaulting to main page');
       }
     }
+    const isCustomizeMode = !isEditMode && sourceRoute === '/build-a-wig/noir/customize';
     
-    console.log('Color page - Navigating back to source route:', sourceRoute);
+    // Always save with 'selected' prefix
+    localStorage.setItem('selectedColor', selectedColor);
+    localStorage.setItem('selectedColorPrice', price);
+    
+    // Also save with 'editSelected' prefix in edit mode
+    if (isEditMode) {
+      localStorage.setItem('editSelectedColor', selectedColor);
+      localStorage.setItem('editSelectedColorPrice', price);
+    }
+    
+    // Also save with 'customizeSelected' prefix in customize mode
+    if (isCustomizeMode) {
+      localStorage.setItem('customizeSelectedColor', selectedColor);
+      localStorage.setItem('customizeSelectedColorPrice', price);
+    }
+    
+    console.log('Color page - saved to localStorage:', {
+      selectedColor,
+      price: getSelectedPrice(),
+      isEditMode,
+      isCustomizeMode
+    });
+    
+    // Determine the correct route to navigate back to based on current pathname
+    let returnRoute = '/build-a-wig'; // Default
+    if (location.pathname.startsWith('/build-a-wig/edit/')) {
+      returnRoute = '/build-a-wig/edit';
+    } else if (location.pathname.startsWith('/build-a-wig/noir/customize/')) {
+      returnRoute = '/build-a-wig/noir/customize';
+    } else if (sourceRoute) {
+      returnRoute = sourceRoute;
+    }
+    
+    console.log('Color page - Navigating back to route:', returnRoute);
     
     // Set flag to indicate we're returning from a sub-page
     sessionStorage.setItem('comingFromSubPage', 'true');
@@ -326,7 +346,7 @@ function ColorSelection() {
     
     // Add a small delay to ensure the event is processed
     setTimeout(() => {
-      navigate(sourceRoute);
+      navigate(returnRoute);
     }, 100);
   };
 

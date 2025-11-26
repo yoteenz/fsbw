@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
@@ -181,13 +181,10 @@ function CapSizeSelection() {
 
   const handleConfirmSelection = () => {
     console.log('Cap-size page - confirming selection:', selectedCapSize);
-    localStorage.setItem('selectedCapSize', selectedCapSize);
-    localStorage.setItem('selectedCapSizePrice', getSelectedPrice().toString());
+    const price = getSelectedPrice().toString();
     
-    console.log('Cap-size page - saved to localStorage:', {
-      selectedCapSize,
-      price: getSelectedPrice()
-    });
+    // Check if we're in edit mode or customize mode
+    const isEditMode = localStorage.getItem('editingCartItem') !== null;
     
     // Get the source route from sessionStorage (set by main page when navigating to sub-page)
     // Also check if we're in edit or customize mode as fallback
@@ -210,7 +207,42 @@ function CapSizeSelection() {
       }
     }
     
-    console.log('Cap-size page - Navigating back to source route:', sourceRoute);
+    const isCustomizeMode = !isEditMode && sourceRoute === '/build-a-wig/noir/customize';
+    
+    // Always save with 'selected' prefix
+    localStorage.setItem('selectedCapSize', selectedCapSize);
+    localStorage.setItem('selectedCapSizePrice', price);
+    
+    // Also save with 'editSelected' prefix in edit mode
+    if (isEditMode) {
+      localStorage.setItem('editSelectedCapSize', selectedCapSize);
+      localStorage.setItem('editSelectedCapSizePrice', price);
+    }
+    
+    // Also save with 'customizeSelected' prefix in customize mode
+    if (isCustomizeMode) {
+      localStorage.setItem('customizeSelectedCapSize', selectedCapSize);
+      localStorage.setItem('customizeSelectedCapSizePrice', price);
+    }
+    
+    console.log('Cap-size page - saved to localStorage:', {
+      selectedCapSize,
+      price: getSelectedPrice(),
+      isEditMode,
+      isCustomizeMode
+    });
+    
+    // Determine the correct route to navigate back to based on current pathname
+    let returnRoute = '/build-a-wig'; // Default
+    if (location.pathname.startsWith('/build-a-wig/edit/')) {
+      returnRoute = '/build-a-wig/edit';
+    } else if (location.pathname.startsWith('/build-a-wig/noir/customize/')) {
+      returnRoute = '/build-a-wig/noir/customize';
+    } else if (sourceRoute) {
+      returnRoute = sourceRoute;
+    }
+    
+    console.log('Cap-size page - Navigating back to route:', returnRoute);
     
     // Set flag to indicate we're returning from a sub-page
     sessionStorage.setItem('comingFromSubPage', 'true');
@@ -221,7 +253,7 @@ function CapSizeSelection() {
     
     // Add a small delay to ensure the event is processed
     setTimeout(() => {
-      navigate(sourceRoute);
+      navigate(returnRoute);
     }, 100);
   };
 
