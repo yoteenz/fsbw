@@ -1181,9 +1181,6 @@ export default function BuildAWigPage() {
         localStorage.setItem('selectedStyling', validStyling);
         localStorage.setItem('selectedAddOns', JSON.stringify(updatedCustomization.addOns));
         
-        // Update customization state - this will trigger wigViews to update via useMemo dependency
-        setCustomization(updatedCustomization);
-        
         // CRITICAL: Read prices from localStorage (saved by sub-pages) to preserve exact prices
         // Read directly from localStorage - don't default to '0' as that would overwrite existing prices
         const savedCapSizePrice = localStorage.getItem('selectedCapSizePrice');
@@ -1239,20 +1236,45 @@ export default function BuildAWigPage() {
           addOnsPrice: savedAddOnsPrice ? parseFloat(savedAddOnsPrice) : calculatedPrices.addOnsPrice,
         };
         
-        // Save prices to localStorage to ensure they're preserved
+        // CRITICAL: Explicitly save prices to localStorage BEFORE updating state (like customize mode does)
+        // This ensures prices are available for calculatePrice to read when it runs after state update
+        localStorage.setItem('selectedCapSizePrice', pricesToSave.capSizePrice.toString());
+        localStorage.setItem('selectedColorPrice', pricesToSave.colorPrice.toString());
+        localStorage.setItem('selectedLengthPrice', pricesToSave.lengthPrice.toString());
+        localStorage.setItem('selectedDensityPrice', pricesToSave.densityPrice.toString());
+        localStorage.setItem('selectedLacePrice', pricesToSave.lacePrice.toString());
+        localStorage.setItem('selectedTexturePrice', pricesToSave.texturePrice.toString());
+        localStorage.setItem('selectedHairlinePrice', pricesToSave.hairlinePrice.toString());
+        localStorage.setItem('selectedStylingPrice', pricesToSave.stylingPrice.toString());
+        localStorage.setItem('selectedAddOnsPrice', pricesToSave.addOnsPrice.toString());
+        
+        // Also call savePricesToLocalStorage for consistency
         savePricesToLocalStorage(pricesToSave);
         
-        // Trigger price recalculation
-        setRefreshTrigger(prev => prev + 1);
+        // DEBUGGING: Log prices being saved in main mode
+        console.log('[MAIN MODE - PRICE SAVING]', {
+          source: 'Returning from sub-page',
+          pricesToSave,
+          savedTo: {
+            selected: true
+          }
+        });
         
-        // Clear the flag
-        sessionStorage.removeItem('comingFromSubPage');
+        // Update customization state - this will trigger wigViews to update via useMemo dependency
+        // AND trigger calculatePrice via useEffect dependency
+        setCustomization(updatedCustomization);
+        
+        // Trigger price recalculation to update debug panel
+        setRefreshTrigger(prev => prev + 1);
         
         // Clear loading flag after a short delay to allow state updates to propagate
         // Use a longer delay to ensure React state updates have propagated and sync effect won't overwrite
+        // CRITICAL: Keep comingFromSubPage flag until AFTER loading flag is cleared, so sync effect can skip
         setTimeout(() => {
           isLoadingFromStorage.current = false;
-          console.log('BuildAWigPage - Main mode: Cleared loading flag, sync effect can now run');
+          // Clear the flag AFTER loading flag is cleared, so sync effect has had time to skip
+          sessionStorage.removeItem('comingFromSubPage');
+          console.log('BuildAWigPage - Main mode: Cleared loading flag and comingFromSubPage flag, sync effect can now run');
         }, 300);
       }
     }
@@ -1925,7 +1947,21 @@ export default function BuildAWigPage() {
   // Editing is handled by noir/edit page, not this page
 
   // Initialize default price values and reset them if defaults are selected
+  // CRITICAL: Skip this effect when loading from storage or returning from sub-pages to avoid overwriting saved prices
   useEffect(() => {
+    // Skip if we're currently loading from localStorage (to avoid overwriting prices saved by sub-pages)
+    if (isLoadingFromStorage.current) {
+      console.log('Price reset effect - Skipping (loading from storage)');
+      return;
+    }
+    
+    // Skip if we just came from a sub-page (prices were already saved by route change effect)
+    const comingFromSubPage = sessionStorage.getItem('comingFromSubPage') === 'true';
+    if (comingFromSubPage) {
+      console.log('Price reset effect - Skipping (just returned from sub-page)');
+      return;
+    }
+    
     // Check if current selections match defaults
     const defaults = {
       capSize: 'M',
@@ -1973,15 +2009,15 @@ export default function BuildAWigPage() {
       localStorage.removeItem('selectedStylingPrice');
       localStorage.removeItem('selectedAddOnsPrice');
       
-    localStorage.setItem('selectedCapSizePrice', '0');
-    localStorage.setItem('selectedColorPrice', '0');
-    localStorage.setItem('selectedLengthPrice', '0');
-    localStorage.setItem('selectedDensityPrice', '0');
-    localStorage.setItem('selectedLacePrice', '0');
-    localStorage.setItem('selectedTexturePrice', '0');
-    localStorage.setItem('selectedHairlinePrice', '0');
-    localStorage.setItem('selectedStylingPrice', '0');
-    localStorage.setItem('selectedAddOnsPrice', '0');
+      localStorage.setItem('selectedCapSizePrice', '0');
+      localStorage.setItem('selectedColorPrice', '0');
+      localStorage.setItem('selectedLengthPrice', '0');
+      localStorage.setItem('selectedDensityPrice', '0');
+      localStorage.setItem('selectedLacePrice', '0');
+      localStorage.setItem('selectedTexturePrice', '0');
+      localStorage.setItem('selectedHairlinePrice', '0');
+      localStorage.setItem('selectedStylingPrice', '0');
+      localStorage.setItem('selectedAddOnsPrice', '0');
     } else {
       // If prices don't exist, initialize them to 0
       // But first remove them to ensure clean state
@@ -2023,7 +2059,7 @@ export default function BuildAWigPage() {
       }
     }
   }, [customization]);
-
+  
   useEffect(() => {
     const calculatePrice = () => {
       let total = basePrice;
