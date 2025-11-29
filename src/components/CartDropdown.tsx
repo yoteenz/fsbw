@@ -664,68 +664,140 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
         }}
       >
         {/* Header */}
-          <div className="px-3 py-2 border-b border-gray-100 flex items-center justify-between" style={{ marginTop: '6px', paddingBottom: '9px' }}>
-            <h3 
-              className="font-bold text-black uppercase" 
-              style={{ 
-                fontSize: '10px',
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
-              }}
-            >
-              SHOPPING BAG
-            </h3>
-            <div className="flex items-center space-x-2">
-              <span
+          <div className="px-3 py-2 border-b border-gray-100" style={{ marginTop: '6px', paddingBottom: '9px' }}>
+            <div className="flex items-center justify-between" style={{ flexWrap: 'wrap', gap: '8px' }}>
+              <h3 
+                className="font-bold text-black uppercase" 
                 style={{ 
-                  color: '#EB1C24', 
                   fontSize: '10px',
                   fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
                 }}
               >
-                CURRENCY &gt; {selectedCurrency}
-              </span>
-              <button
-                onClick={() => setShowDebugPanel(!showDebugPanel)}
-                style={{ 
-                  fontSize: '8px',
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                  cursor: 'pointer',
-                  padding: '2px 4px',
-                  border: '1px solid #EB1C24',
-                  background: showDebugPanel ? '#EB1C24' : 'transparent',
-                  color: showDebugPanel ? 'white' : '#EB1C24'
-                }}
-              >
-                DEBUG
-              </button>
+                SHOPPING BAG
+              </h3>
+              <div className="flex items-center" style={{ gap: '6px', flexWrap: 'wrap' }}>
+                <span
+                  style={{ 
+                    color: '#EB1C24', 
+                    fontSize: '10px',
+                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
+                  }}
+                >
+                  CURRENCY &gt; {selectedCurrency}
+                </span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    setShowDebugPanel(!showDebugPanel);
+                  }}
+                  onTouchEnd={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    setShowDebugPanel(!showDebugPanel);
+                  }}
+                  style={{ 
+                    fontSize: '9px',
+                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    cursor: 'pointer',
+                    padding: '5px 10px',
+                    minHeight: '26px',
+                    minWidth: '60px',
+                    border: '1.3px solid #EB1C24',
+                    background: showDebugPanel ? '#EB1C24' : '#fff',
+                    color: showDebugPanel ? 'white' : '#EB1C24',
+                    WebkitTapHighlightColor: 'rgba(235, 28, 36, 0.2)',
+                    touchAction: 'manipulation',
+                    userSelect: 'none',
+                    WebkitUserSelect: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  {showDebugPanel ? 'HIDE DEBUG' : 'DEBUG'}
+                </button>
+              </div>
             </div>
         </div>
 
         {/* Debug Panel */}
         {showDebugPanel && (
           <div 
-            className="px-3 py-2 border-b border-gray-200 bg-yellow-50"
-            style={{ maxHeight: '400px', overflowY: 'auto', fontSize: '8px', fontFamily: 'monospace' }}
+            className="px-3 py-2 border-b border-gray-200"
+            style={{ 
+              maxHeight: '50vh',
+              overflowY: 'auto',
+              overflowX: 'hidden',
+              fontSize: '7px',
+              fontFamily: 'monospace',
+              background: '#fff9e6',
+              WebkitOverflowScrolling: 'touch',
+              touchAction: 'pan-y'
+            }}
           >
-            <div className="font-bold mb-2" style={{ fontSize: '9px' }}>DEBUG INFO</div>
-            <pre style={{ fontSize: '7px', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+            <div 
+              className="font-bold mb-2" 
+              style={{ 
+                fontSize: '10px',
+                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                color: '#000',
+                textTransform: 'uppercase',
+                position: 'sticky',
+                top: 0,
+                background: '#fff9e6',
+                paddingBottom: '4px',
+                zIndex: 1
+              }}
+            >
+              DEBUG INFO
+            </div>
+            <div 
+              style={{ 
+                fontSize: '7px',
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+                overflowWrap: 'break-word',
+                lineHeight: '1.4',
+                color: '#000'
+              }}
+            >
               {JSON.stringify(getDebugInfo(), null, 2)}
-            </pre>
+            </div>
             <button
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 const debugInfo = getDebugInfo();
                 console.log('CartDropdown Debug Info:', debugInfo);
-                navigator.clipboard.writeText(JSON.stringify(debugInfo, null, 2));
-                alert('Debug info copied to clipboard and console!');
+                try {
+                  navigator.clipboard.writeText(JSON.stringify(debugInfo, null, 2));
+                  alert('Debug info copied to clipboard and console!');
+                } catch (err) {
+                  console.error('Failed to copy to clipboard:', err);
+                  alert('Debug info logged to console (clipboard not available)');
+                }
+              }}
+              onTouchStart={(e) => {
+                e.stopPropagation();
               }}
               style={{
-                marginTop: '8px',
-                padding: '4px 8px',
-                fontSize: '8px',
+                marginTop: '12px',
+                marginBottom: '8px',
+                padding: '6px 12px',
+                fontSize: '9px',
+                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                 background: '#EB1C24',
                 color: 'white',
-                border: 'none',
-                cursor: 'pointer'
+                border: '1.3px solid #EB1C24',
+                cursor: 'pointer',
+                minHeight: '28px',
+                minWidth: '120px',
+                WebkitTapHighlightColor: 'transparent',
+                touchAction: 'manipulation',
+                userSelect: 'none',
+                textTransform: 'uppercase'
               }}
             >
               COPY TO CLIPBOARD
