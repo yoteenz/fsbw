@@ -670,9 +670,6 @@ export default function BuildAWigPage() {
         isLoadingFromStorage.current = false;
       }, 100);
     } else if (isEditPage) {
-      // Set flag to prevent sync effect from overwriting
-      isLoadingFromStorage.current = true;
-      
       // Load from editingCartItem for edit mode
       const editingCartItem = localStorage.getItem('editingCartItem');
       const editingCartItemId = localStorage.getItem('editingCartItemId');
@@ -684,8 +681,9 @@ export default function BuildAWigPage() {
       // If coming from sub-page, load updated values from localStorage
       // CRITICAL: Match customize mode logic - just check comingFromSubPage flag, no other conditions
       if (comingFromSubPage) {
+        console.log('[EDIT MODE ROUTE CHANGE] Coming from sub-page, loading from localStorage');
         
-        // Set flag to prevent sync effect from overwriting
+        // Set flag to prevent sync effect from overwriting (match customize mode - set AFTER checking comingFromSubPage)
         isLoadingFromStorage.current = true;
         
         // Load updated values from localStorage (set by sub-pages)
@@ -700,6 +698,18 @@ export default function BuildAWigPage() {
         const savedStylingEdit = localStorage.getItem('editSelectedStyling');
         const savedAddOnsEdit = localStorage.getItem('editSelectedAddOns');
         
+        console.log('[EDIT MODE ROUTE CHANGE] Loaded from localStorage:', {
+          capSize: savedCapSizeEdit,
+          length: savedLengthEdit,
+          density: savedDensityEdit,
+          lace: savedLaceEdit,
+          texture: savedTextureEdit,
+          color: savedColorEdit,
+          hairline: savedHairlineEdit,
+          styling: savedStylingEdit,
+          addOns: savedAddOnsEdit
+        });
+        
         // Also check selected* keys as fallback
         const savedCapSizeSelected = localStorage.getItem('selectedCapSize');
         const savedLengthSelected = localStorage.getItem('selectedLength');
@@ -712,16 +722,17 @@ export default function BuildAWigPage() {
         const savedAddOnsSelected = localStorage.getItem('selectedAddOns');
         
         // Fall back to selected* keys if editSelected* keys don't exist
-        // Use current customization state as fallback to preserve existing selections (like customize mode)
-        const savedCapSizeFinal = savedCapSizeEdit || savedCapSizeSelected || customization.capSize || 'M';
-        const savedLength = savedLengthEdit || savedLengthSelected || customization.length || '24"';
-        const savedDensity = savedDensityEdit || savedDensitySelected || customization.density || '200%';
-        const savedLace = savedLaceEdit || savedLaceSelected || customization.lace || '13X6';
-        const savedTexture = savedTextureEdit || savedTextureSelected || customization.texture || 'SILKY';
-        const savedColor = savedColorEdit || savedColorSelected || customization.color || 'OFF BLACK';
-        const savedHairline = savedHairlineEdit || savedHairlineSelected || customization.hairline || 'NATURAL';
-        const savedStyling = savedStylingEdit || savedStylingSelected || customization.styling || 'NONE';
-        const savedAddOns = savedAddOnsEdit || savedAddOnsSelected || JSON.stringify(customization.addOns) || '[]';
+        // CRITICAL: Match customize mode - prioritize editSelected* keys, then selected* keys, then defaults (NOT current state)
+        // This ensures we always use the saved values from sub-pages, not stale state
+        const savedCapSizeFinal = savedCapSizeEdit || savedCapSizeSelected || 'M';
+        const savedLength = savedLengthEdit || savedLengthSelected || '24"';
+        const savedDensity = savedDensityEdit || savedDensitySelected || '200%';
+        const savedLace = savedLaceEdit || savedLaceSelected || '13X6';
+        const savedTexture = savedTextureEdit || savedTextureSelected || 'SILKY';
+        const savedColor = savedColorEdit || savedColorSelected || 'OFF BLACK';
+        const savedHairline = savedHairlineEdit || savedHairlineSelected || 'NATURAL';
+        const savedStyling = savedStylingEdit || savedStylingSelected || 'NONE';
+        const savedAddOns = savedAddOnsEdit || savedAddOnsSelected || '[]';
         
         // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
         let validStyling = savedStyling !== null && savedStyling !== 'NONE' ? savedStyling : 'NONE';
@@ -819,6 +830,7 @@ export default function BuildAWigPage() {
         
         // Update customization state (originalItem stays the same for change detection)
         // This will trigger wigViews to update via useMemo dependency AND trigger calculatePrice via useEffect dependency
+        console.log('[EDIT MODE ROUTE CHANGE] Updating customization state:', updatedCustomization);
         setCustomization(updatedCustomization);
         
         // Clear the flag immediately (like customize mode)
@@ -1371,6 +1383,7 @@ export default function BuildAWigPage() {
   useEffect(() => {
     // Skip syncing if we're currently loading from localStorage (to avoid circular updates)
     if (isLoadingFromStorage.current) {
+      console.log('[SYNC TO STORAGE] Skipping sync - isLoadingFromStorage is true');
       return;
     }
     
@@ -1378,11 +1391,15 @@ export default function BuildAWigPage() {
     const isEditMode = location.pathname === '/build-a-wig/edit' && localStorage.getItem('editingCartItem') !== null;
     const isCustomizeMode = location.pathname === '/build-a-wig/noir/customize';
     
-    // For all modes, skip syncing if we just came from a sub-page (let the route change effect handle it)
+    // CRITICAL: For all modes, skip syncing if we just came from a sub-page (let the route change effect handle it)
+    // Check this BEFORE any other logic to prevent race conditions
     const comingFromSubPage = sessionStorage.getItem('comingFromSubPage') === 'true';
     if (comingFromSubPage) {
+      console.log('[SYNC TO STORAGE] Skipping sync - comingFromSubPage is true, route change effect will handle it');
       return;
     }
+    
+    console.log('[SYNC TO STORAGE] Running sync to localStorage', { isEditMode, isCustomizeMode });
     
     // CRITICAL: In edit mode, DO NOT sync editSelected* keys back to localStorage
     // Sub-pages set these values, and we should NOT overwrite them
@@ -1445,11 +1462,26 @@ export default function BuildAWigPage() {
   useEffect(() => {
     const isEditPage = location.pathname === '/build-a-wig/edit';
     
-    if (!isEditPage || isLoadingFromStorage.current) {
+    if (!isEditPage) {
       return;
     }
     
     const handleSyncFromStorage = () => {
+      // CRITICAL: Skip if we're currently loading from localStorage (route change effect is handling it)
+      if (isLoadingFromStorage.current) {
+        console.log('[SYNC EFFECT] Skipping sync - isLoadingFromStorage is true');
+        return;
+      }
+      
+      // CRITICAL: Skip if we just came from a sub-page (route change effect handles it)
+      const comingFromSubPage = sessionStorage.getItem('comingFromSubPage') === 'true';
+      if (comingFromSubPage) {
+        console.log('[SYNC EFFECT] Skipping sync - comingFromSubPage is true, route change effect will handle it');
+        return;
+      }
+      
+      console.log('[SYNC EFFECT] Running sync from localStorage');
+      
       // Small delay to ensure localStorage is fully updated
       setTimeout(() => {
         if (isLoadingFromStorage.current) {
@@ -2343,8 +2375,14 @@ export default function BuildAWigPage() {
       setTotalPrice(total);
       
       // CRITICAL: In edit mode, ensure prices are saved to localStorage after calculation
-      // This prevents stale values from accumulating after many edits
+      // BUT: Skip if we just came from a sub-page (prices were already saved by sub-page and route change effect)
       if (isEditMode) {
+        const comingFromSubPage = sessionStorage.getItem('comingFromSubPage') === 'true';
+        if (comingFromSubPage) {
+          console.log('[EDIT MODE CALCULATE PRICE] Skipping price save - comingFromSubPage is true, prices already saved by sub-page');
+          return; // Exit early to avoid overwriting prices saved by sub-pages
+        }
+        
         const pricesToSave = {
           capSizePrice,
           colorPrice,
