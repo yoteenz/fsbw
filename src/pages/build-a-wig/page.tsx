@@ -1287,6 +1287,12 @@ export default function BuildAWigPage() {
         return;
       }
       
+      // Skip if coming from sub-page - route change effect will handle it
+      const comingFromSubPage = sessionStorage.getItem('comingFromSubPage') === 'true';
+      if (comingFromSubPage) {
+        return; // Don't handle storage changes when coming from sub-page - let route change effect handle it
+      }
+      
       // Skip for main mode - main mode handles loading in the route change effect
       const isMainPage = location.pathname === '/build-a-wig';
       if (isMainPage) {
@@ -1298,22 +1304,54 @@ export default function BuildAWigPage() {
       const isCustomizeMode = location.pathname === '/build-a-wig/noir/customize';
       
       if (isEditMode || isCustomizeMode) {
-        const savedCapSize = localStorage.getItem('selectedCapSize');
-        const savedLength = localStorage.getItem('selectedLength');
-        const savedDensity = localStorage.getItem('selectedDensity');
-        const savedLace = localStorage.getItem('selectedLace');
-        const savedTexture = localStorage.getItem('selectedTexture');
-        const savedColor = localStorage.getItem('selectedColor');
-        const savedHairline = localStorage.getItem('selectedHairline');
-        const savedStyling = localStorage.getItem('selectedStyling');
-        const savedAddOns = localStorage.getItem('selectedAddOns');
+        // CRITICAL: In edit mode, read from editSelected* keys (set by sub-pages)
+        // In customize mode, read from customizeSelected* keys (set by sub-pages)
+        // Fall back to selected* keys if the mode-specific keys don't exist
+        let savedCapSize: string | null = null;
+        let savedLength: string | null = null;
+        let savedDensity: string | null = null;
+        let savedLace: string | null = null;
+        let savedTexture: string | null = null;
+        let savedColor: string | null = null;
+        let savedHairline: string | null = null;
+        let savedStyling: string | null = null;
+        let savedAddOns: string | null = null;
+        
+        if (isEditMode) {
+          // Edit mode: prioritize editSelected* keys, fall back to selected* keys
+          savedCapSize = localStorage.getItem('editSelectedCapSize') || localStorage.getItem('selectedCapSize');
+          savedLength = localStorage.getItem('editSelectedLength') || localStorage.getItem('selectedLength');
+          savedDensity = localStorage.getItem('editSelectedDensity') || localStorage.getItem('selectedDensity');
+          savedLace = localStorage.getItem('editSelectedLace') || localStorage.getItem('selectedLace');
+          savedTexture = localStorage.getItem('editSelectedTexture') || localStorage.getItem('selectedTexture');
+          savedColor = localStorage.getItem('editSelectedColor') || localStorage.getItem('selectedColor');
+          savedHairline = localStorage.getItem('editSelectedHairline') || localStorage.getItem('selectedHairline');
+          savedStyling = localStorage.getItem('editSelectedStyling') || localStorage.getItem('selectedStyling');
+          savedAddOns = localStorage.getItem('editSelectedAddOns') || localStorage.getItem('selectedAddOns');
+        } else if (isCustomizeMode) {
+          // Customize mode: prioritize customizeSelected* keys, fall back to selected* keys
+          savedCapSize = localStorage.getItem('customizeSelectedCapSize') || localStorage.getItem('selectedCapSize');
+          savedLength = localStorage.getItem('customizeSelectedLength') || localStorage.getItem('selectedLength');
+          savedDensity = localStorage.getItem('customizeSelectedDensity') || localStorage.getItem('selectedDensity');
+          savedLace = localStorage.getItem('customizeSelectedLace') || localStorage.getItem('selectedLace');
+          savedTexture = localStorage.getItem('customizeSelectedTexture') || localStorage.getItem('selectedTexture');
+          savedColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor');
+          savedHairline = localStorage.getItem('customizeSelectedHairline') || localStorage.getItem('selectedHairline');
+          savedStyling = localStorage.getItem('customizeSelectedStyling') || localStorage.getItem('selectedStyling');
+          savedAddOns = localStorage.getItem('customizeSelectedAddOns') || localStorage.getItem('selectedAddOns');
+        }
         
         // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
-        let validStyling = savedStyling !== null ? savedStyling : 'NONE';
+        let validStyling: string = savedStyling !== null ? savedStyling : 'NONE';
         const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
         if (partSelectionOptions.includes(validStyling)) {
           validStyling = 'NONE'; // If styling is a part selection, set to NONE
           // Also update localStorage to fix the incorrect value
+          if (isEditMode) {
+            localStorage.setItem('editSelectedStyling', 'NONE');
+          } else if (isCustomizeMode) {
+            localStorage.setItem('customizeSelectedStyling', 'NONE');
+          }
           localStorage.setItem('selectedStyling', 'NONE');
         }
         
