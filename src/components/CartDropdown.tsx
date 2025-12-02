@@ -1007,10 +1007,16 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           const useFullNames = customizableItems.length === 1;
                           
                           // Helper function to format price with red color
+                          // CRITICAL: This function must not be optimized away in production builds
                           const formatPriceDisplay = (price: number): string => {
-                            if (price === 0) return '';
+                            // Explicitly check for zero to prevent optimization issues
+                            if (price === 0 || price === null || price === undefined || isNaN(price)) {
+                              return '';
+                            }
                             const sign = price > 0 ? '+' : '';
-                            return ` (<span style="color: #EB1C24;">${sign}$${Math.abs(price)}</span>)`;
+                            const priceStr = Math.abs(price).toString();
+                            // Explicitly construct the HTML string to prevent minification issues
+                            return ' (<span style="color: #EB1C24;">' + sign + '$' + priceStr + '</span>)';
                           };
                           
                           // Build text with each item on its own line and prices in red
