@@ -660,10 +660,15 @@ export default function BuildAWigPage() {
         
         // Recalculate prices as fallback if any prices are missing, but prioritize saved prices
         const calculatedPrices = calculatePricesFromSelections(updatedCustomization);
-        // CRITICAL: Always use calculated capSizePrice (it depends on current cap size selection)
+        // CRITICAL: Preserve cap size price from localStorage if it exists (may have been set from cart item or sub-pages)
+        // Only recalculate if localStorage doesn't have a value
+        const savedCapSizePriceForCustomize = localStorage.getItem('customizeSelectedCapSizePrice') || localStorage.getItem('selectedCapSizePrice');
+        const capSizePriceToUseForCustomize = (savedCapSizePriceForCustomize && savedCapSizePriceForCustomize !== '' && !isNaN(parseFloat(savedCapSizePriceForCustomize))) 
+          ? parseFloat(savedCapSizePriceForCustomize) 
+          : calculatedPrices.capSizePrice;
         // For other prices, use saved prices if they exist, otherwise use calculated prices
         const pricesToSave = {
-          capSizePrice: calculatedPrices.capSizePrice, // Always recalculate based on current cap size
+          capSizePrice: capSizePriceToUseForCustomize, // Preserve from localStorage if exists, otherwise use calculated
           colorPrice: (savedColorPrice && savedColorPrice !== '' && !isNaN(parseFloat(savedColorPrice))) ? parseFloat(savedColorPrice) : calculatedPrices.colorPrice,
           lengthPrice: (savedLengthPrice && savedLengthPrice !== '' && !isNaN(parseFloat(savedLengthPrice))) ? parseFloat(savedLengthPrice) : calculatedPrices.lengthPrice,
           densityPrice: (savedDensityPrice && savedDensityPrice !== '' && !isNaN(parseFloat(savedDensityPrice))) ? parseFloat(savedDensityPrice) : calculatedPrices.densityPrice,
@@ -1366,8 +1371,13 @@ export default function BuildAWigPage() {
           // Set initial total price from cart item
           // CRITICAL: Base price is ALWAYS 740 for NOIR - flexible cap adds $40 via capSizePrice
           const currentBasePrice = 740;
+          // CRITICAL: Use preserved cap size price if it exists, otherwise use calculated
+          const existingCapSizePriceForTotal = localStorage.getItem('editSelectedCapSizePrice') || localStorage.getItem('selectedCapSizePrice');
+          const preservedCapSizePrice = existingCapSizePriceForTotal && existingCapSizePriceForTotal !== '' && !isNaN(parseFloat(existingCapSizePriceForTotal))
+            ? parseFloat(existingCapSizePriceForTotal)
+            : calculatedPrices.capSizePrice;
           const initialTotalPrice = currentBasePrice + 
-            calculatedPrices.capSizePrice + 
+            preservedCapSizePrice + 
             calculatedPrices.colorPrice + 
             calculatedPrices.lengthPrice + 
             calculatedPrices.densityPrice + 
@@ -1550,6 +1560,7 @@ export default function BuildAWigPage() {
         
         // CRITICAL: Read prices from localStorage (saved by sub-pages) to preserve exact prices
         // Read directly from localStorage - don't default to '0' as that would overwrite existing prices
+        const savedCapSizePrice = localStorage.getItem('selectedCapSizePrice');
         const savedColorPrice = localStorage.getItem('selectedColorPrice');
         const savedLengthPrice = localStorage.getItem('selectedLengthPrice');
         const savedDensityPrice = localStorage.getItem('selectedDensityPrice');
@@ -1561,10 +1572,14 @@ export default function BuildAWigPage() {
         
         // Recalculate prices as fallback if any prices are missing, but prioritize saved prices
         const calculatedPrices = calculatePricesFromSelections(updatedCustomization);
-        // CRITICAL: Always use calculated capSizePrice (it depends on current cap size selection)
+        // CRITICAL: Preserve cap size price from localStorage if it exists (may have been set from cart item or sub-pages)
+        // Only recalculate if localStorage doesn't have a value
+        const capSizePriceToUse = (savedCapSizePrice && savedCapSizePrice !== '' && !isNaN(parseFloat(savedCapSizePrice))) 
+          ? parseFloat(savedCapSizePrice) 
+          : calculatedPrices.capSizePrice;
         // For other prices, use saved prices if they exist, otherwise use calculated prices
         const pricesToSave = {
-          capSizePrice: calculatedPrices.capSizePrice, // Always recalculate based on current cap size
+          capSizePrice: capSizePriceToUse, // Preserve from localStorage if exists, otherwise use calculated
           colorPrice: (savedColorPrice && savedColorPrice !== '' && !isNaN(parseFloat(savedColorPrice))) ? parseFloat(savedColorPrice) : calculatedPrices.colorPrice,
           lengthPrice: (savedLengthPrice && savedLengthPrice !== '' && !isNaN(parseFloat(savedLengthPrice))) ? parseFloat(savedLengthPrice) : calculatedPrices.lengthPrice,
           densityPrice: (savedDensityPrice && savedDensityPrice !== '' && !isNaN(parseFloat(savedDensityPrice))) ? parseFloat(savedDensityPrice) : calculatedPrices.densityPrice,
@@ -2446,6 +2461,12 @@ export default function BuildAWigPage() {
       return;
     }
     
+    // CRITICAL: Skip in edit mode - prices are managed by route change effect and sub-pages
+    const isEditMode = location.pathname === '/build-a-wig/edit' && localStorage.getItem('editingCartItem') !== null;
+    if (isEditMode) {
+      return; // Don't overwrite prices in edit mode
+    }
+    
     // Skip if we just came from a sub-page (prices were already saved by route change effect)
     const comingFromSubPage = sessionStorage.getItem('comingFromSubPage') === 'true';
     if (comingFromSubPage) {
@@ -2509,12 +2530,28 @@ export default function BuildAWigPage() {
       localStorage.setItem('selectedStylingPrice', '0');
       localStorage.setItem('selectedAddOnsPrice', '0');
     } else {
-      // If prices don't exist, initialize them to 0
-      // But first remove them to ensure clean state
-      if (!localStorage.getItem('selectedCapSizePrice')) {
-        localStorage.removeItem('selectedCapSizePrice');
-        localStorage.setItem('selectedCapSizePrice', '0');
+      // CRITICAL: Only initialize prices to 0 if they don't exist AND cap size is NOT a flexible cap
+      // Flexible caps (XXS/XS/S, S/M/L) should preserve their $40 price
+      const currentCapSize = savedCapSize || defaults.capSize;
+      const isFlexibleCap = currentCapSize === 'XXS/XS/S' || currentCapSize === 'S/M/L';
+      
+      // CRITICAL: Check both selectedCapSizePrice and editSelectedCapSizePrice (for edit mode)
+      // Only initialize if NEITHER exists
+      const selectedCapSizePrice = localStorage.getItem('selectedCapSizePrice');
+      const editSelectedCapSizePrice = localStorage.getItem('editSelectedCapSizePrice');
+      
+      if (!selectedCapSizePrice && !editSelectedCapSizePrice) {
+        // Neither exists - initialize based on cap size
+        localStorage.setItem('selectedCapSizePrice', isFlexibleCap ? '40' : '0');
+        // Also set editSelectedCapSizePrice if in edit mode (though we already skipped edit mode above)
+      } else if (selectedCapSizePrice && isFlexibleCap && selectedCapSizePrice === '0') {
+        // Price exists but is wrong (0 instead of 40 for flexible cap) - fix it
+        localStorage.setItem('selectedCapSizePrice', '40');
+      } else if (editSelectedCapSizePrice && isFlexibleCap && editSelectedCapSizePrice === '0') {
+        // Edit price exists but is wrong (0 instead of 40 for flexible cap) - fix it
+        localStorage.setItem('editSelectedCapSizePrice', '40');
       }
+      
       if (!localStorage.getItem('selectedColorPrice')) {
         localStorage.removeItem('selectedColorPrice');
         localStorage.setItem('selectedColorPrice', '0');
