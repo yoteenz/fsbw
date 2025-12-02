@@ -297,7 +297,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   };
 
   // Helper function to get color price based on color name and length
-  // @ts-expect-error - Function kept for potential future use
   const _getColorPrice = (color: string, length?: string) => {
     const colorPrices: { [key: string]: number } = {
       'JET BLACK': 100,  // Fixed: JET BLACK should be $100, not $0
@@ -338,7 +337,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   };
 
   // Helper function to get density price based on density
-  // @ts-expect-error - Function kept for potential future use
   const _getDensityPrice = (density: string) => {
     const densityPrices: { [key: string]: number } = {
       '130%': -60,
@@ -354,7 +352,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   };
 
   // Helper function to get lace price based on lace type
-  // @ts-expect-error - Function kept for potential future use
   const _getLacePrice = (lace: string) => {
     const lacePrices: { [key: string]: number } = {
       '13X6': 0,    // Default, no additional cost
@@ -405,7 +402,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   };
 
   // Helper function to get texture price based on texture
-  // @ts-expect-error - Function kept for potential future use
   const _getTexturePrice = (texture: string) => {
     const texturePrices: { [key: string]: number } = {
       'SILKY': 0,
@@ -416,7 +412,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   };
 
   // Helper function to get hairline price based on hairline
-  // @ts-expect-error - Function kept for potential future use
   const _getHairlinePrice = (hairline: string) => {
     if (!hairline) return 0;
     const hairlineArray = hairline.split(',');
@@ -441,7 +436,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   };
 
   // Helper function to get styling price based on styling
-  // @ts-expect-error - Function kept for potential future use
   const _getStylingPrice = (styling: string) => {
     if (!styling || styling === 'NONE') return 0;
     
@@ -473,7 +467,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   };
 
   // Helper function to get add-ons price based on add-ons array
-  // @ts-expect-error - Function kept for potential future use
   const _getAddOnsPrice = (addOns: string[]) => {
     if (!addOns || addOns.length === 0) return 0;
     
