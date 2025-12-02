@@ -1255,9 +1255,24 @@ export default function BuildAWigPage() {
           localStorage.setItem('editSelectedAddOns', JSON.stringify(item.addOns || []));
           addDebugLog('ROUTE_CHANGE', 'Overwriting editSelected* keys from editingCartItem', editCustomization);
           
-          // Calculate and set prices based on the cart item's selections
+          // CRITICAL: Calculate prices based on the cart item's selections
+          // This ensures prices match the cart item's actual selections (including lace discount for add-ons)
           const calculatedPrices = calculatePricesFromSelections(editCustomization);
-          savePricesToLocalStorage(calculatedPrices);
+          
+          // CRITICAL: Only save calculated prices if localStorage prices don't exist or are 0
+          // This preserves prices saved by sub-pages (like addons page) that include discounts
+          const existingAddOnsPrice = localStorage.getItem('editSelectedAddOnsPrice') || localStorage.getItem('selectedAddOnsPrice');
+          if (!existingAddOnsPrice || existingAddOnsPrice === '0') {
+            // No price saved yet, use calculated price
+            savePricesToLocalStorage(calculatedPrices);
+          } else {
+            // Price exists from sub-page, preserve it but update other prices
+            const pricesToSave = {
+              ...calculatedPrices,
+              addOnsPrice: parseFloat(existingAddOnsPrice) // Preserve add-ons price from sub-page
+            };
+            savePricesToLocalStorage(pricesToSave);
+          }
           
           // Set initial total price from cart item
           // CRITICAL: Base price is ALWAYS 740 for NOIR - flexible cap adds $40 via capSizePrice
