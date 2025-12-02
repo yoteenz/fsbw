@@ -334,10 +334,29 @@ function NoirSelection() {
           // CRITICAL: Base price is ALWAYS 740 for NOIR - flexible cap adds $40 via capSizePrice
           const basePrice = 740;
           
-          // Calculate cap size price (flexible caps = $40, regular = $0)
+          // CRITICAL: Preserve capSizePrice from cart item if it exists, otherwise calculate
+          // This prevents losing flexible cap price after multiple edits
           let capSizePrice = 0;
-          if (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L') {
+          const isFlexibleCap = item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L';
+          
+          if (item.capSizePrice !== undefined && item.capSizePrice !== null && !isNaN(item.capSizePrice)) {
+            // Use existing capSizePrice from cart item
+            capSizePrice = item.capSizePrice;
+            
+            // CRITICAL: If cart item has flexible cap size but capSizePrice is 0, fix it
+            if (isFlexibleCap && capSizePrice === 0) {
+              capSizePrice = 40;
+              console.log('[FLEX_CAP_DEBUG] units/noir updateExistingCartItems - FIXED: Flexible cap had price 0, setting to 40');
+            } else {
+              console.log('[FLEX_CAP_DEBUG] units/noir updateExistingCartItems - Preserved capSizePrice from cart item:', capSizePrice);
+            }
+          } else if (isFlexibleCap) {
+            // Calculate based on cap size if price not stored - flexible caps are always $40
             capSizePrice = 40; // Flexible cap options cost $40 extra
+            console.log('[FLEX_CAP_DEBUG] units/noir updateExistingCartItems - Calculated capSizePrice:', capSizePrice, 'for flexible capSize:', item.capSize);
+          } else {
+            // Regular cap - price is 0
+            capSizePrice = 0;
           }
           
           // Calculate color price from color name
@@ -380,9 +399,66 @@ function NoirSelection() {
           
           const newPrice = basePrice + capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
           
-          if (item.price !== newPrice) {
+          console.log('[FLEX_CAP_DEBUG] units/noir updateExistingCartItems - Price comparison:', {
+            itemId: item.id,
+            itemCapSize: item.capSize,
+            itemCapSizePrice: item.capSizePrice,
+            calculatedCapSizePrice: capSizePrice,
+            storedPrice: item.price,
+            calculatedPrice: newPrice,
+            priceDifference: item.price - newPrice,
+            willUpdate: item.price !== newPrice,
+            timestamp: new Date().toISOString()
+          });
+          
+          // CRITICAL: Don't overwrite price if cart item already has correct capSizePrice stored
+          // Only update if capSizePrice is missing from cart item OR if price is significantly wrong
+          const priceDifference = Math.abs(item.price - newPrice);
+          const hasCapSizePrice = item.capSizePrice !== undefined && item.capSizePrice !== null && !isNaN(item.capSizePrice);
+          
+          // CRITICAL: If cart item has capSizePrice = 40 (flexible cap), NEVER recalculate or overwrite the price
+          // The cart stores the actual price - we should trust it, not recalculate
+          if (hasCapSizePrice && item.capSizePrice === 40) {
+            // Cart item has flexible cap price stored - preserve it completely, don't recalculate
+            console.log('[FLEX_CAP_DEBUG] units/noir updateExistingCartItems - PRESERVING flexible cap item, using stored price (no recalculation):', {
+              itemId: item.id,
+              storedPrice: item.price,
+              calculatedPrice: newPrice,
+              itemCapSizePrice: item.capSizePrice,
+              itemCapSize: item.capSize,
+              reason: 'flexible_cap_price_preserved_trust_stored_price'
+            });
+            // Return item as-is without any changes - trust the stored price
+            return item;
+          }
+          
+          // If cart item has capSizePrice stored and it matches what we calculated, DON'T update price
+          // This prevents overwriting correct prices when navigating to the page
+          if (hasCapSizePrice && item.capSizePrice === capSizePrice && priceDifference <= 1) {
+            // Price is correct and capSizePrice matches - don't update anything
+            console.log('[FLEX_CAP_DEBUG] units/noir updateExistingCartItems - Skipping update, price and capSizePrice are correct');
+            return item;
+          }
+          
+          // Only update if price is significantly different OR capSizePrice is missing
+          if (priceDifference > 1 || !hasCapSizePrice) {
             updated = true;
-            return { ...item, price: newPrice };
+            console.log('[FLEX_CAP_DEBUG] units/noir updateExistingCartItems - Updating cart item:', {
+              reason: priceDifference > 1 ? 'price_different' : 'missing_capSizePrice',
+              oldPrice: item.price,
+              newPrice: newPrice,
+              oldCapSizePrice: item.capSizePrice,
+              newCapSizePrice: capSizePrice
+            });
+            // CRITICAL: Store capSizePrice in cart item so it's preserved for future visits
+            return { ...item, price: newPrice, capSizePrice: capSizePrice };
+          }
+          
+          // If price matches but capSizePrice is missing, just add it without changing price
+          if (!hasCapSizePrice && priceDifference <= 1) {
+            updated = true;
+            console.log('[FLEX_CAP_DEBUG] units/noir updateExistingCartItems - Adding capSizePrice to cart item without changing price');
+            return { ...item, capSizePrice: capSizePrice };
           }
         }
         return item;
@@ -392,7 +468,18 @@ function NoirSelection() {
         localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
         // Dispatch event to update cart display
         window.dispatchEvent(new CustomEvent('cartUpdated'));
+        console.log('[FLEX_CAP_DEBUG] units/noir updateExistingCartItems - Updated cart items:', {
+          updatedCount: updatedCartItems.filter((item: any) => item.name === 'NOIR').length,
+          items: updatedCartItems.filter((item: any) => item.name === 'NOIR').map((item: any) => ({
+            id: item.id,
+            capSize: item.capSize,
+            capSizePrice: item.capSizePrice,
+            price: item.price
+          }))
+        });
         console.log('Updated existing NOIR cart items with correct pricing including all customizations');
+      } else {
+        console.log('[FLEX_CAP_DEBUG] units/noir updateExistingCartItems - No updates needed, all prices are correct');
       }
       
       // REMOVED: Old code that was incorrectly resetting flexible cap prices to '0'
@@ -1129,126 +1216,96 @@ function NoirSelection() {
       // Simulate adding to bag process
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Set default product settings
-      localStorage.setItem('selectedLength', '24"');
-      localStorage.setItem('selectedLengthPrice', '0');
-      localStorage.setItem('selectedDensity', '200%');
-      localStorage.setItem('selectedDensityPrice', '0');
-      localStorage.setItem('selectedLace', '13X6');
-      localStorage.setItem('selectedLacePrice', '0');
-      localStorage.setItem('selectedTexture', 'SILKY');
-      localStorage.setItem('selectedTexturePrice', '0');
-      localStorage.setItem('selectedColor', 'OFF BLACK');
-      localStorage.setItem('selectedColorPrice', '0');
-      localStorage.setItem('selectedHairline', 'NATURAL');
-      localStorage.setItem('selectedHairlinePrice', '0');
-      localStorage.setItem('selectedStyling', 'NONE');
-      localStorage.setItem('selectedStylingPrice', '0');
-      localStorage.setItem('selectedAddOns', '[]');
-      localStorage.setItem('selectedAddOnsPrice', '0');
+      // CRITICAL: Clear any edit/customize mode selections to prevent stale values
+      // This ensures we only use defaults when adding from the noir page
+      localStorage.removeItem('editingCartItem');
+      localStorage.removeItem('editingCartItemId');
+      localStorage.removeItem('comingFromSubPage');
+      
+      // Set default product settings (ALWAYS use defaults, never stale values)
+      const defaultLength = '24"';
+      const defaultLengthPrice = 0;
+      const defaultDensity = '200%';
+      const defaultDensityPrice = 0;
+      const defaultLace = '13X6';
+      const defaultLacePrice = 0;
+      const defaultTexture = 'SILKY';
+      const defaultTexturePrice = 0;
+      const defaultColor = 'OFF BLACK';
+      const defaultColorPrice = 0;
+      const defaultHairline = 'NATURAL';
+      const defaultHairlinePrice = 0;
+      const defaultStyling = 'NONE';
+      const defaultStylingPrice = 0;
+      const defaultAddOns: string[] = [];
+      const defaultAddOnsPrice = 0;
+      
+      // Save defaults to localStorage
+      localStorage.setItem('selectedLength', defaultLength);
+      localStorage.setItem('selectedLengthPrice', defaultLengthPrice.toString());
+      localStorage.setItem('selectedDensity', defaultDensity);
+      localStorage.setItem('selectedDensityPrice', defaultDensityPrice.toString());
+      localStorage.setItem('selectedLace', defaultLace);
+      localStorage.setItem('selectedLacePrice', defaultLacePrice.toString());
+      localStorage.setItem('selectedTexture', defaultTexture);
+      localStorage.setItem('selectedTexturePrice', defaultTexturePrice.toString());
+      localStorage.setItem('selectedColor', defaultColor);
+      localStorage.setItem('selectedColorPrice', defaultColorPrice.toString());
+      localStorage.setItem('selectedHairline', defaultHairline);
+      localStorage.setItem('selectedHairlinePrice', defaultHairlinePrice.toString());
+      localStorage.setItem('selectedStyling', defaultStyling);
+      localStorage.setItem('selectedStylingPrice', defaultStylingPrice.toString());
+      localStorage.setItem('selectedAddOns', JSON.stringify(defaultAddOns));
+      localStorage.setItem('selectedAddOnsPrice', defaultAddOnsPrice.toString());
       
       // Use the currently selected cap size
+      let capSize: string;
+      let capSizePrice: number;
       if (selectedCustomCap) {
-        localStorage.setItem('selectedCapSize', selectedCustomCap);
-        localStorage.setItem('selectedCapSizePrice', '0'); // Custom cap has no additional price
+        capSize = selectedCustomCap;
+        capSizePrice = 0; // Custom cap has no additional price
       } else if (selectedFlexibleCap) {
-        localStorage.setItem('selectedCapSize', selectedFlexibleCap);
-        localStorage.setItem('selectedCapSizePrice', '60'); // Flexible cap has $60 additional price
+        capSize = selectedFlexibleCap;
+        capSizePrice = 40; // CRITICAL: Flexible cap has $40 additional price
       } else {
         // Default to M if no cap size is selected
-        localStorage.setItem('selectedCapSize', 'M');
-        localStorage.setItem('selectedCapSizePrice', '0');
+        capSize = 'M';
+        capSizePrice = 0;
       }
       
-      // Calculate full price including all customizations
-      const calculateFullPrice = () => {
-        // Get cap size to determine base price
-        const capSize = localStorage.getItem('selectedCapSize') || 'M';
-        
-        // Calculate base price based on cap size
-        let basePrice = 740; // Default for standard caps (XS, S, M, L)
-        if (capSize === 'XXS/XS/S' || capSize === 'S/M/L') {
-          basePrice = 780; // Flexible cap options cost $40 extra
-        }
-        
-        // Add color price - use stored price or calculate from color name
-        let colorPrice = parseInt(localStorage.getItem('selectedColorPrice') || '0');
-        
-        // If no stored price, calculate it from the color name
-        if (colorPrice === 0) {
-          const selectedColor = localStorage.getItem('selectedColor') || 'OFF BLACK';
-          const colorPrices: { [key: string]: number } = {
-            'JET BLACK': 100,
-            'OFF BLACK': 0,
-            'ESPRESSO': 100,
-            'CHESTNUT': 100,
-            'HONEY': 100,
-            'AUBURN': 100,
-            'COPPER': 100,
-            'GINGER': 100,
-            'SANGRIA': 100,
-            'CHERRY': 100,
-            'RASPBERRY': 100,
-            'PLUM': 100,
-            'COBALT': 100,
-            'TEAL': 100,
-            'SLIME': 100,
-            'CITRINE': 100
-          };
-          colorPrice = colorPrices[selectedColor] || 0;
-          
-          // Add extra $40 for lengths over 30" (excluding OFF BLACK)
-          if (selectedColor !== 'OFF BLACK') {
-            const selectedLength = localStorage.getItem('selectedLength') || '24"';
-            const longLengths = ['30"', '32"', '34"', '36"', '40"'];
-            if (longLengths.includes(selectedLength)) {
-              colorPrice += 40;
-            }
-          }
-        }
-        
-        // Add length price
-        const lengthPrice = parseInt(localStorage.getItem('selectedLengthPrice') || '0');
-        
-        // Add density price
-        const densityPrice = parseInt(localStorage.getItem('selectedDensityPrice') || '0');
-        
-        // Add lace price
-        const lacePrice = parseInt(localStorage.getItem('selectedLacePrice') || '0');
-        
-        // Add texture price
-        const texturePrice = parseInt(localStorage.getItem('selectedTexturePrice') || '0');
-        
-        // Add hairline price
-        const hairlinePrice = parseInt(localStorage.getItem('selectedHairlinePrice') || '0');
-        
-        // Add styling price
-        const stylingPrice = parseInt(localStorage.getItem('selectedStylingPrice') || '0');
-        
-        // Add add-ons price
-        const addOnsPrice = parseInt(localStorage.getItem('selectedAddOnsPrice') || '0');
-        
-        return basePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
-      };
+      // Save cap size to localStorage
+      localStorage.setItem('selectedCapSize', capSize);
+      localStorage.setItem('selectedCapSizePrice', capSizePrice.toString());
       
-      // Create cart item with actual product details and full calculated price
+      // Calculate full price using ONLY defaults (never read from localStorage)
+      const basePrice = 740;
+      const totalPrice = basePrice + capSizePrice + defaultColorPrice + defaultLengthPrice + defaultDensityPrice + defaultLacePrice + defaultTexturePrice + defaultHairlinePrice + defaultStylingPrice + defaultAddOnsPrice;
+      
+      // Create cart item with DEFAULT selections only (never read from localStorage)
       const cartItem = {
         id: `noir-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         name: 'NOIR',
-        price: calculateFullPrice(), // Use full calculated price
+        price: totalPrice, // Use calculated price with defaults only
         quantity: quantity,
         image: '/assets/NOIR/noir-thumb.png',
-        capSize: localStorage.getItem('selectedCapSize') || 'M',
-        length: localStorage.getItem('selectedLength') || '24"',
-        density: localStorage.getItem('selectedDensity') || '200%',
-        color: localStorage.getItem('selectedColor') || 'OFF BLACK',
-        texture: localStorage.getItem('selectedTexture') || 'SILKY',
-        lace: localStorage.getItem('selectedLace') || '13X6',
-        hairline: localStorage.getItem('selectedHairline') || 'NATURAL',
-        styling: localStorage.getItem('selectedStyling') || 'NONE',
-        partSelection: localStorage.getItem('selectedPartSelection') || 'MIDDLE',
-        addOns: JSON.parse(localStorage.getItem('selectedAddOns') || '[]')
+        capSize: capSize,
+        capSizePrice: capSizePrice, // CRITICAL: Store capSizePrice in cart item
+        length: defaultLength,
+        density: defaultDensity,
+        color: defaultColor,
+        texture: defaultTexture,
+        lace: defaultLace,
+        hairline: defaultHairline,
+        styling: defaultStyling,
+        partSelection: 'MIDDLE',
+        addOns: defaultAddOns
       };
+      
+      console.log('[FLEX_CAP_DEBUG] units/noir handleAddToBag - Created cart item with capSizePrice:', {
+        capSize,
+        capSizePrice,
+        fullPrice: cartItem.price
+      });
 
       // Get existing cart items and add new item
       const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');

@@ -351,10 +351,29 @@ function NoirSelection() {
           // CRITICAL: Base price is ALWAYS 740 for NOIR - flexible cap adds $40 via capSizePrice
           const basePrice = 740;
           
-          // Calculate cap size price (flexible caps = $40, regular = $0)
+          // CRITICAL: Preserve capSizePrice from cart item if it exists, otherwise calculate
+          // This prevents losing flexible cap price after multiple edits
           let capSizePrice = 0;
-          if (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L') {
+          const isFlexibleCap = item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L';
+          
+          if (item.capSizePrice !== undefined && item.capSizePrice !== null && !isNaN(item.capSizePrice)) {
+            // Use existing capSizePrice from cart item
+            capSizePrice = item.capSizePrice;
+            
+            // CRITICAL: If cart item has flexible cap size but capSizePrice is 0, fix it
+            if (isFlexibleCap && capSizePrice === 0) {
+              capSizePrice = 40;
+              console.log('[FLEX_CAP_DEBUG] units/noir updateExistingCartItems - FIXED: Flexible cap had price 0, setting to 40');
+            } else {
+              console.log('[FLEX_CAP_DEBUG] units/noir updateExistingCartItems - Preserved capSizePrice from cart item:', capSizePrice);
+            }
+          } else if (isFlexibleCap) {
+            // Calculate based on cap size if price not stored - flexible caps are always $40
             capSizePrice = 40; // Flexible cap options cost $40 extra
+            console.log('[FLEX_CAP_DEBUG] units/noir updateExistingCartItems - Calculated capSizePrice:', capSizePrice, 'for flexible capSize:', item.capSize);
+          } else {
+            // Regular cap - price is 0
+            capSizePrice = 0;
           }
           
           // Calculate color price from color name
@@ -397,9 +416,66 @@ function NoirSelection() {
           
           const newPrice = basePrice + capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
           
-          if (item.price !== newPrice) {
+          console.log('[FLEX_CAP_DEBUG] units/noir updateExistingCartItems - Price comparison:', {
+            itemId: item.id,
+            itemCapSize: item.capSize,
+            itemCapSizePrice: item.capSizePrice,
+            calculatedCapSizePrice: capSizePrice,
+            storedPrice: item.price,
+            calculatedPrice: newPrice,
+            priceDifference: item.price - newPrice,
+            willUpdate: item.price !== newPrice,
+            timestamp: new Date().toISOString()
+          });
+          
+          // CRITICAL: Don't overwrite price if cart item already has correct capSizePrice stored
+          // Only update if capSizePrice is missing from cart item OR if price is significantly wrong
+          const priceDifference = Math.abs(item.price - newPrice);
+          const hasCapSizePrice = item.capSizePrice !== undefined && item.capSizePrice !== null && !isNaN(item.capSizePrice);
+          
+          // CRITICAL: If cart item has capSizePrice = 40 (flexible cap), NEVER recalculate or overwrite the price
+          // The cart stores the actual price - we should trust it, not recalculate
+          if (hasCapSizePrice && item.capSizePrice === 40) {
+            // Cart item has flexible cap price stored - preserve it completely, don't recalculate
+            console.log('[FLEX_CAP_DEBUG] units/noir updateExistingCartItems - PRESERVING flexible cap item, using stored price (no recalculation):', {
+              itemId: item.id,
+              storedPrice: item.price,
+              calculatedPrice: newPrice,
+              itemCapSizePrice: item.capSizePrice,
+              itemCapSize: item.capSize,
+              reason: 'flexible_cap_price_preserved_trust_stored_price'
+            });
+            // Return item as-is without any changes - trust the stored price
+            return item;
+          }
+          
+          // If cart item has capSizePrice stored and it matches what we calculated, DON'T update price
+          // This prevents overwriting correct prices when navigating to the page
+          if (hasCapSizePrice && item.capSizePrice === capSizePrice && priceDifference <= 1) {
+            // Price is correct and capSizePrice matches - don't update anything
+            console.log('[FLEX_CAP_DEBUG] units/noir updateExistingCartItems - Skipping update, price and capSizePrice are correct');
+            return item;
+          }
+          
+          // Only update if price is significantly different OR capSizePrice is missing
+          if (priceDifference > 1 || !hasCapSizePrice) {
             updated = true;
-            return { ...item, price: newPrice };
+            console.log('[FLEX_CAP_DEBUG] units/noir updateExistingCartItems - Updating cart item:', {
+              reason: priceDifference > 1 ? 'price_different' : 'missing_capSizePrice',
+              oldPrice: item.price,
+              newPrice: newPrice,
+              oldCapSizePrice: item.capSizePrice,
+              newCapSizePrice: capSizePrice
+            });
+            // CRITICAL: Store capSizePrice in cart item so it's preserved for future visits
+            return { ...item, price: newPrice, capSizePrice: capSizePrice };
+          }
+          
+          // If price matches but capSizePrice is missing, just add it without changing price
+          if (!hasCapSizePrice && priceDifference <= 1) {
+            updated = true;
+            console.log('[FLEX_CAP_DEBUG] units/noir updateExistingCartItems - Adding capSizePrice to cart item without changing price');
+            return { ...item, capSizePrice: capSizePrice };
           }
         }
         return item;

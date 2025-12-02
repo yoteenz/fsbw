@@ -3522,12 +3522,27 @@ export default function BuildAWigPage() {
         validStyling = 'NONE'; // If styling is a part selection, set to NONE
       }
       
+      // CRITICAL: Preserve capSizePrice from localStorage before updating cart item
+      // This ensures flexible cap price is preserved even if capSize selection gets reset
+      const preservedCapSizePrice = localStorage.getItem('editSelectedCapSizePrice') || localStorage.getItem('selectedCapSizePrice') || '0';
+      const capSizePriceValue = parseInt(preservedCapSizePrice);
+      
+      console.log('[FLEX_CAP_DEBUG] handleAddToBag Save - Preserving capSizePrice:', {
+        preservedCapSizePrice,
+        capSizePriceValue,
+        customizationCapSize: customization.capSize,
+        isFlexible: customization.capSize === 'XXS/XS/S' || customization.capSize === 'S/M/L',
+        timestamp: new Date().toISOString()
+      });
+      
       const updatedCartItems = existingCartItems.map((item: any) => {
         if (item.id === editingCartItemId) {
           const updatedItem = {
             ...item,
             price: finalPrice, // Use recalculated price, not state
             capSize: customization.capSize,
+            // CRITICAL: Store capSizePrice in cart item for future reference
+            capSizePrice: capSizePriceValue,
             length: customization.length,
             density: customization.density,
             color: customization.color,
@@ -3541,6 +3556,7 @@ export default function BuildAWigPage() {
           
           // DEBUGGING: Log updated item
           console.log('[EDIT MODE SAVE] Updated cart item:', updatedItem);
+          console.log('[FLEX_CAP_DEBUG] handleAddToBag Save - Cart item capSizePrice:', updatedItem.capSizePrice);
           
           return updatedItem;
         }
@@ -3560,6 +3576,8 @@ export default function BuildAWigPage() {
         ...JSON.parse(editingCartItem),
         price: finalPrice,
         capSize: customization.capSize,
+        // CRITICAL: Include capSizePrice in editingCartItem
+        capSizePrice: capSizePriceValue,
         length: customization.length,
         density: customization.density,
         color: customization.color,
@@ -3570,6 +3588,8 @@ export default function BuildAWigPage() {
         partSelection: localStorage.getItem('selectedPartSelection') || 'MIDDLE',
         addOns: customization.addOns
       };
+      
+      console.log('[FLEX_CAP_DEBUG] handleAddToBag Save - Updated editingCartItem capSizePrice:', capSizePriceValue);
       localStorage.setItem('editingCartItem', JSON.stringify(updatedEditingCartItem));
       
       // CRITICAL: Also update editSelected* keys to match saved state

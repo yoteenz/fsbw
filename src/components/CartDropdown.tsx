@@ -82,13 +82,20 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
       const basePrice = 740;
       
       // Get additional prices
-      // CRITICAL: Calculate capSizePrice based on cap size (flexible caps = $40, regular = $0)
-      let capSizePrice = 0;
-      if (capSize === 'XXS/XS/S' || capSize === 'S/M/L') {
-        capSizePrice = 40; // Flexible cap options cost $40 extra
+      // CRITICAL: Read capSizePrice from localStorage FIRST, then calculate only if missing
+      // This preserves the price even if capSize selection gets reset temporarily
+      let capSizePrice = parseInt(localStorage.getItem(`${prefix}CapSizePrice`) || '0');
+      
+      // If localStorage has 0 or missing, calculate based on cap size
+      if (capSizePrice === 0 || isNaN(capSizePrice)) {
+        if (capSize === 'XXS/XS/S' || capSize === 'S/M/L') {
+          capSizePrice = 40; // Flexible cap options cost $40 extra
+          console.log('[FLEX_CAP_DEBUG] CartDropdown calculateActualPrice - Calculated 40 for flexible cap:', capSize);
+        } else {
+          capSizePrice = 0;
+        }
       } else {
-        // Also check localStorage in case it was set by sub-pages
-        capSizePrice = parseInt(localStorage.getItem(`${prefix}CapSizePrice`) || '0');
+        console.log('[FLEX_CAP_DEBUG] CartDropdown calculateActualPrice - Using price from localStorage:', capSizePrice, 'for capSize:', capSize);
       }
       const lengthPrice = parseInt(localStorage.getItem(`${prefix}LengthPrice`) || '0');
       const densityPrice = parseInt(localStorage.getItem(`${prefix}DensityPrice`) || '0');
@@ -200,13 +207,17 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
           console.log('[CART DROPDOWN] No stored items, generating mock items with calculated price:', actualPrice);
           const mockItems: CartItem[] = [];
           for (let i = 0; i < cartCount; i++) {
+            const mockCapSize = localStorage.getItem('selectedCapSize') || 'M';
+            const mockCapSizePrice = (mockCapSize === 'XXS/XS/S' || mockCapSize === 'S/M/L') ? 40 : 0;
+            
             mockItems.push({
               id: `item-${i + 1}`,
               name: 'NOIR',
               price: actualPrice,
               quantity: 1,
               image: '/assets/NOIR/noir-thumb.png',
-              capSize: localStorage.getItem('selectedCapSize') || 'M',
+              capSize: mockCapSize,
+              capSizePrice: mockCapSizePrice,
               length: localStorage.getItem('selectedLength') || '24"',
               density: localStorage.getItem('selectedDensity') || '200%',
               color: localStorage.getItem('selectedColor') || 'OFF BLACK',
@@ -216,6 +227,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
               addOns: []
             });
           }
+          
+          console.log('[FLEX_CAP_DEBUG] CartDropdown Mock Items - Generated with capSizePrice:', mockItems.map(i => ({ capSize: i.capSize, capSizePrice: (i as any).capSizePrice })));
           setCartItems(mockItems);
         }
       } catch (error) {
@@ -871,8 +884,19 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           const styling = item.styling || 'NONE';
                           const addOns = item.addOns || [];
                           
+                          // CRITICAL: Calculate capSizePrice based on capSize from cart item
+                          const capSizePrice = (capSize === 'XXS/XS/S' || capSize === 'S/M/L') ? '40' : '0';
+                          
+                          console.log('[FLEX_CAP_DEBUG] CartDropdown Edit Button - Setting capSizePrice:', {
+                            capSize,
+                            capSizePrice,
+                            isFlexible: capSize === 'XXS/XS/S' || capSize === 'S/M/L',
+                            timestamp: new Date().toISOString()
+                          });
+                          
                           // Store with selected* prefix (for sub-pages)
                           localStorage.setItem('selectedCapSize', capSize);
+                          localStorage.setItem('selectedCapSizePrice', capSizePrice);
                           localStorage.setItem('selectedLength', length);
                           localStorage.setItem('selectedDensity', density);
                           localStorage.setItem('selectedColor', color);
@@ -885,6 +909,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           
                           // CRITICAL: Also store with editSelected* prefix (for edit mode sub-pages)
                           localStorage.setItem('editSelectedCapSize', capSize);
+                          localStorage.setItem('editSelectedCapSizePrice', capSizePrice);
                           localStorage.setItem('editSelectedLength', length);
                           localStorage.setItem('editSelectedDensity', density);
                           localStorage.setItem('editSelectedColor', color);
