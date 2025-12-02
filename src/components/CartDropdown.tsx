@@ -1058,12 +1058,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               }
                             } else if (itemData.type === 'density') {
                               // Density: show percentage value followed by "DENSITY" in all caps with price
-                              // Add "-" prefix if price is negative (discount)
+                              // formatPriceDisplay already includes the sign in the price part
                               const densityValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
                               const price = _getDensityPrice(densityValue);
                               const priceDisplay = formatPriceDisplay(price);
-                              const prefix = price < 0 ? '-' : '';
-                              const displayValue = `${prefix}${densityValue} DENSITY${priceDisplay}`;
+                              const displayValue = `${densityValue} DENSITY${priceDisplay}`;
                               text += displayValue.toUpperCase();
                             } else if (itemData.type === 'lace') {
                               // Lace: show value followed by "LACE" in all caps with price

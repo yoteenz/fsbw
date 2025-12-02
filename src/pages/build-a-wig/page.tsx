@@ -94,11 +94,12 @@ export default function BuildAWigPage() {
           // CRITICAL: Also preserve editSelected* price keys if they don't already exist
           // This prevents overwriting prices saved by sub-pages when component re-mounts
           // Prices are set by sub-pages when user confirms selection, so preserve them
-          if (!localStorage.getItem('editSelectedCapSizePrice')) {
-            // Calculate price from item if available, otherwise set to 0
-            const capSizePrice = (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L') ? '40' : '0';
-            localStorage.setItem('editSelectedCapSizePrice', capSizePrice);
-          }
+          // CRITICAL: Always set cap size price from cart item to ensure flexible cap (+$40) is recognized
+          // Calculate price from item if available, otherwise set to 0
+          const capSizePrice = (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L') ? '40' : '0';
+          localStorage.setItem('editSelectedCapSizePrice', capSizePrice);
+          // Also save to selected* for consistency
+          localStorage.setItem('selectedCapSizePrice', capSizePrice);
           if (!localStorage.getItem('editSelectedColorPrice')) {
             localStorage.setItem('editSelectedColorPrice', '0'); // Default, will be updated by sub-pages
           }
@@ -663,14 +664,14 @@ export default function BuildAWigPage() {
         // For other prices, use saved prices if they exist, otherwise use calculated prices
         const pricesToSave = {
           capSizePrice: calculatedPrices.capSizePrice, // Always recalculate based on current cap size
-          colorPrice: savedColorPrice ? parseFloat(savedColorPrice) : calculatedPrices.colorPrice,
-          lengthPrice: savedLengthPrice ? parseFloat(savedLengthPrice) : calculatedPrices.lengthPrice,
-          densityPrice: savedDensityPrice ? parseFloat(savedDensityPrice) : calculatedPrices.densityPrice,
-          lacePrice: savedLacePrice ? parseFloat(savedLacePrice) : calculatedPrices.lacePrice,
-          texturePrice: savedTexturePrice ? parseFloat(savedTexturePrice) : calculatedPrices.texturePrice,
-          hairlinePrice: savedHairlinePrice ? parseFloat(savedHairlinePrice) : calculatedPrices.hairlinePrice,
-          stylingPrice: savedStylingPrice ? parseFloat(savedStylingPrice) : calculatedPrices.stylingPrice,
-          addOnsPrice: savedAddOnsPrice ? parseFloat(savedAddOnsPrice) : calculatedPrices.addOnsPrice,
+          colorPrice: (savedColorPrice && savedColorPrice !== '' && !isNaN(parseFloat(savedColorPrice))) ? parseFloat(savedColorPrice) : calculatedPrices.colorPrice,
+          lengthPrice: (savedLengthPrice && savedLengthPrice !== '' && !isNaN(parseFloat(savedLengthPrice))) ? parseFloat(savedLengthPrice) : calculatedPrices.lengthPrice,
+          densityPrice: (savedDensityPrice && savedDensityPrice !== '' && !isNaN(parseFloat(savedDensityPrice))) ? parseFloat(savedDensityPrice) : calculatedPrices.densityPrice,
+          lacePrice: (savedLacePrice && savedLacePrice !== '' && !isNaN(parseFloat(savedLacePrice))) ? parseFloat(savedLacePrice) : calculatedPrices.lacePrice,
+          texturePrice: (savedTexturePrice && savedTexturePrice !== '' && !isNaN(parseFloat(savedTexturePrice))) ? parseFloat(savedTexturePrice) : calculatedPrices.texturePrice,
+          hairlinePrice: (savedHairlinePrice && savedHairlinePrice !== '' && !isNaN(parseFloat(savedHairlinePrice))) ? parseFloat(savedHairlinePrice) : calculatedPrices.hairlinePrice,
+          stylingPrice: (savedStylingPrice && savedStylingPrice !== '' && !isNaN(parseFloat(savedStylingPrice))) ? parseFloat(savedStylingPrice) : calculatedPrices.stylingPrice,
+          addOnsPrice: (savedAddOnsPrice && savedAddOnsPrice !== '' && !isNaN(parseFloat(savedAddOnsPrice))) ? parseFloat(savedAddOnsPrice) : calculatedPrices.addOnsPrice,
         };
         savePricesToLocalStorage(pricesToSave);
         
@@ -763,14 +764,14 @@ export default function BuildAWigPage() {
         // CRITICAL: Always use calculated capSizePrice (it depends on current cap size selection)
         const pricesToSave = {
           capSizePrice: calculatedPrices.capSizePrice, // Always recalculate based on current cap size
-          colorPrice: existingColorPrice ? parseFloat(existingColorPrice) : calculatedPrices.colorPrice,
-          lengthPrice: existingLengthPrice ? parseFloat(existingLengthPrice) : calculatedPrices.lengthPrice,
-          densityPrice: existingDensityPrice ? parseFloat(existingDensityPrice) : calculatedPrices.densityPrice,
-          lacePrice: existingLacePrice ? parseFloat(existingLacePrice) : calculatedPrices.lacePrice,
-          texturePrice: existingTexturePrice ? parseFloat(existingTexturePrice) : calculatedPrices.texturePrice,
-          hairlinePrice: existingHairlinePrice ? parseFloat(existingHairlinePrice) : calculatedPrices.hairlinePrice,
-          stylingPrice: existingStylingPrice ? parseFloat(existingStylingPrice) : calculatedPrices.stylingPrice,
-          addOnsPrice: existingAddOnsPrice ? parseFloat(existingAddOnsPrice) : calculatedPrices.addOnsPrice,
+          colorPrice: (existingColorPrice && existingColorPrice !== '' && !isNaN(parseFloat(existingColorPrice))) ? parseFloat(existingColorPrice) : calculatedPrices.colorPrice,
+          lengthPrice: (existingLengthPrice && existingLengthPrice !== '' && !isNaN(parseFloat(existingLengthPrice))) ? parseFloat(existingLengthPrice) : calculatedPrices.lengthPrice,
+          densityPrice: (existingDensityPrice && existingDensityPrice !== '' && !isNaN(parseFloat(existingDensityPrice))) ? parseFloat(existingDensityPrice) : calculatedPrices.densityPrice,
+          lacePrice: (existingLacePrice && existingLacePrice !== '' && !isNaN(parseFloat(existingLacePrice))) ? parseFloat(existingLacePrice) : calculatedPrices.lacePrice,
+          texturePrice: (existingTexturePrice && existingTexturePrice !== '' && !isNaN(parseFloat(existingTexturePrice))) ? parseFloat(existingTexturePrice) : calculatedPrices.texturePrice,
+          hairlinePrice: (existingHairlinePrice && existingHairlinePrice !== '' && !isNaN(parseFloat(existingHairlinePrice))) ? parseFloat(existingHairlinePrice) : calculatedPrices.hairlinePrice,
+          stylingPrice: (existingStylingPrice && existingStylingPrice !== '' && !isNaN(parseFloat(existingStylingPrice))) ? parseFloat(existingStylingPrice) : calculatedPrices.stylingPrice,
+          addOnsPrice: (existingAddOnsPrice && existingAddOnsPrice !== '' && !isNaN(parseFloat(existingAddOnsPrice))) ? parseFloat(existingAddOnsPrice) : calculatedPrices.addOnsPrice,
         };
         
         savePricesToLocalStorage(pricesToSave);
@@ -902,14 +903,14 @@ export default function BuildAWigPage() {
         // For other prices, use saved prices if they exist, otherwise use calculated prices
         const pricesToSave = {
           capSizePrice: calculatedPrices.capSizePrice, // Always recalculate based on current cap size
-          colorPrice: savedColorPrice ? parseFloat(savedColorPrice) : calculatedPrices.colorPrice,
-          lengthPrice: savedLengthPrice ? parseFloat(savedLengthPrice) : calculatedPrices.lengthPrice,
-          densityPrice: savedDensityPrice ? parseFloat(savedDensityPrice) : calculatedPrices.densityPrice,
-          lacePrice: savedLacePrice ? parseFloat(savedLacePrice) : calculatedPrices.lacePrice,
-          texturePrice: savedTexturePrice ? parseFloat(savedTexturePrice) : calculatedPrices.texturePrice,
-          hairlinePrice: savedHairlinePrice ? parseFloat(savedHairlinePrice) : calculatedPrices.hairlinePrice,
-          stylingPrice: savedStylingPrice ? parseFloat(savedStylingPrice) : calculatedPrices.stylingPrice,
-          addOnsPrice: savedAddOnsPrice ? parseFloat(savedAddOnsPrice) : calculatedPrices.addOnsPrice,
+          colorPrice: (savedColorPrice && savedColorPrice !== '' && !isNaN(parseFloat(savedColorPrice))) ? parseFloat(savedColorPrice) : calculatedPrices.colorPrice,
+          lengthPrice: (savedLengthPrice && savedLengthPrice !== '' && !isNaN(parseFloat(savedLengthPrice))) ? parseFloat(savedLengthPrice) : calculatedPrices.lengthPrice,
+          densityPrice: (savedDensityPrice && savedDensityPrice !== '' && !isNaN(parseFloat(savedDensityPrice))) ? parseFloat(savedDensityPrice) : calculatedPrices.densityPrice,
+          lacePrice: (savedLacePrice && savedLacePrice !== '' && !isNaN(parseFloat(savedLacePrice))) ? parseFloat(savedLacePrice) : calculatedPrices.lacePrice,
+          texturePrice: (savedTexturePrice && savedTexturePrice !== '' && !isNaN(parseFloat(savedTexturePrice))) ? parseFloat(savedTexturePrice) : calculatedPrices.texturePrice,
+          hairlinePrice: (savedHairlinePrice && savedHairlinePrice !== '' && !isNaN(parseFloat(savedHairlinePrice))) ? parseFloat(savedHairlinePrice) : calculatedPrices.hairlinePrice,
+          stylingPrice: (savedStylingPrice && savedStylingPrice !== '' && !isNaN(parseFloat(savedStylingPrice))) ? parseFloat(savedStylingPrice) : calculatedPrices.stylingPrice,
+          addOnsPrice: (savedAddOnsPrice && savedAddOnsPrice !== '' && !isNaN(parseFloat(savedAddOnsPrice))) ? parseFloat(savedAddOnsPrice) : calculatedPrices.addOnsPrice,
         };
         
         // CRITICAL: Explicitly save prices to localStorage BEFORE updating state (like main/customize mode)
@@ -1296,9 +1297,10 @@ export default function BuildAWigPage() {
               const selectedValue = localStorage.getItem(selectedKey);
               
               // Prefer editSelected* key, then selected* key, then calculated value
-              if (editValue && !isNaN(parseFloat(editValue))) {
+              // CRITICAL: Check that value exists, is not empty, and is a valid number (including negative)
+              if (editValue !== null && editValue !== undefined && editValue !== '' && !isNaN(parseFloat(editValue))) {
                 return parseFloat(editValue);
-              } else if (selectedValue && !isNaN(parseFloat(selectedValue))) {
+              } else if (selectedValue !== null && selectedValue !== undefined && selectedValue !== '' && !isNaN(parseFloat(selectedValue))) {
                 return parseFloat(selectedValue);
               } else {
                 return calculatedValue;
@@ -1320,26 +1322,36 @@ export default function BuildAWigPage() {
             savePricesToLocalStorage(pricesToSave);
           } else {
             // Not coming from sub-page: use calculated prices (which now include correct negative values)
+            // CRITICAL: Preserve cap size price from localStorage if it exists (set from initial load or sub-pages)
+            // This ensures flexible cap price (+$40) is preserved correctly
+            const existingCapSizePrice = localStorage.getItem('editSelectedCapSizePrice') || localStorage.getItem('selectedCapSizePrice');
+            
             // CRITICAL: Handle add-on prices correctly
             // If cart item has no add-ons, always use calculated price (which will be 0)
             // If cart item has add-ons, preserve localStorage price if it exists (from sub-pages with discounts)
             const hasAddOns = item.addOns && Array.isArray(item.addOns) && item.addOns.length > 0;
             const existingAddOnsPrice = localStorage.getItem('editSelectedAddOnsPrice') || localStorage.getItem('selectedAddOnsPrice');
             
+            // Build prices to save, preserving cap size price and add-ons price if they exist
+            const pricesToSave = {
+              ...calculatedPrices
+            };
+            
+            // Preserve cap size price if it exists in localStorage (may have been set from initial load or sub-pages)
+            if (existingCapSizePrice && existingCapSizePrice !== '' && !isNaN(parseFloat(existingCapSizePrice))) {
+              pricesToSave.capSizePrice = parseFloat(existingCapSizePrice);
+            }
+            
             if (!hasAddOns) {
               // No add-ons in cart item - always use calculated price (0) to clear any stale localStorage values
-              savePricesToLocalStorage(calculatedPrices);
-            } else if (!existingAddOnsPrice || existingAddOnsPrice === '0') {
-              // Cart item has add-ons but no price saved yet, use calculated price
-              savePricesToLocalStorage(calculatedPrices);
-            } else {
-              // Cart item has add-ons and price exists from sub-page, preserve it but update other prices
-              const pricesToSave = {
-                ...calculatedPrices,
-                addOnsPrice: parseFloat(existingAddOnsPrice) // Preserve add-ons price from sub-page
-              };
-              savePricesToLocalStorage(pricesToSave);
+              pricesToSave.addOnsPrice = 0;
+            } else if (existingAddOnsPrice && existingAddOnsPrice !== '0' && !isNaN(parseFloat(existingAddOnsPrice))) {
+              // Cart item has add-ons and price exists from sub-page, preserve it
+              pricesToSave.addOnsPrice = parseFloat(existingAddOnsPrice);
             }
+            // Otherwise use calculated add-ons price (already set above)
+            
+            savePricesToLocalStorage(pricesToSave);
           }
           
           // Set initial total price from cart item
@@ -1544,14 +1556,14 @@ export default function BuildAWigPage() {
         // For other prices, use saved prices if they exist, otherwise use calculated prices
         const pricesToSave = {
           capSizePrice: calculatedPrices.capSizePrice, // Always recalculate based on current cap size
-          colorPrice: savedColorPrice ? parseFloat(savedColorPrice) : calculatedPrices.colorPrice,
-          lengthPrice: savedLengthPrice ? parseFloat(savedLengthPrice) : calculatedPrices.lengthPrice,
-          densityPrice: savedDensityPrice ? parseFloat(savedDensityPrice) : calculatedPrices.densityPrice,
-          lacePrice: savedLacePrice ? parseFloat(savedLacePrice) : calculatedPrices.lacePrice,
-          texturePrice: savedTexturePrice ? parseFloat(savedTexturePrice) : calculatedPrices.texturePrice,
-          hairlinePrice: savedHairlinePrice ? parseFloat(savedHairlinePrice) : calculatedPrices.hairlinePrice,
-          stylingPrice: savedStylingPrice ? parseFloat(savedStylingPrice) : calculatedPrices.stylingPrice,
-          addOnsPrice: savedAddOnsPrice ? parseFloat(savedAddOnsPrice) : calculatedPrices.addOnsPrice,
+          colorPrice: (savedColorPrice && savedColorPrice !== '' && !isNaN(parseFloat(savedColorPrice))) ? parseFloat(savedColorPrice) : calculatedPrices.colorPrice,
+          lengthPrice: (savedLengthPrice && savedLengthPrice !== '' && !isNaN(parseFloat(savedLengthPrice))) ? parseFloat(savedLengthPrice) : calculatedPrices.lengthPrice,
+          densityPrice: (savedDensityPrice && savedDensityPrice !== '' && !isNaN(parseFloat(savedDensityPrice))) ? parseFloat(savedDensityPrice) : calculatedPrices.densityPrice,
+          lacePrice: (savedLacePrice && savedLacePrice !== '' && !isNaN(parseFloat(savedLacePrice))) ? parseFloat(savedLacePrice) : calculatedPrices.lacePrice,
+          texturePrice: (savedTexturePrice && savedTexturePrice !== '' && !isNaN(parseFloat(savedTexturePrice))) ? parseFloat(savedTexturePrice) : calculatedPrices.texturePrice,
+          hairlinePrice: (savedHairlinePrice && savedHairlinePrice !== '' && !isNaN(parseFloat(savedHairlinePrice))) ? parseFloat(savedHairlinePrice) : calculatedPrices.hairlinePrice,
+          stylingPrice: (savedStylingPrice && savedStylingPrice !== '' && !isNaN(parseFloat(savedStylingPrice))) ? parseFloat(savedStylingPrice) : calculatedPrices.stylingPrice,
+          addOnsPrice: (savedAddOnsPrice && savedAddOnsPrice !== '' && !isNaN(parseFloat(savedAddOnsPrice))) ? parseFloat(savedAddOnsPrice) : calculatedPrices.addOnsPrice,
         };
         
         // CRITICAL: Explicitly save prices to localStorage BEFORE updating state (like customize mode does)
@@ -2655,11 +2667,16 @@ export default function BuildAWigPage() {
           });
         }
         
-        // Use localStorage value if it exists and is valid, otherwise use calculated value
-        if (primaryValue && !isNaN(parseFloat(primaryValue))) {
-          return parseFloat(primaryValue);
-        } else if (fallbackValue && !isNaN(parseFloat(fallbackValue))) {
-          return parseFloat(fallbackValue);
+        // Use localStorage value if it exists and is valid (including negative values), otherwise use calculated value
+        // CRITICAL: Check that value exists, is not empty, and is a valid number (including negative)
+        if (primaryValue !== null && primaryValue !== undefined && primaryValue !== '' && !isNaN(parseFloat(primaryValue))) {
+          const parsedValue = parseFloat(primaryValue);
+          // Return the parsed value (can be negative)
+          return parsedValue;
+        } else if (fallbackValue !== null && fallbackValue !== undefined && fallbackValue !== '' && !isNaN(parseFloat(fallbackValue))) {
+          const parsedValue = parseFloat(fallbackValue);
+          // Return the parsed value (can be negative)
+          return parsedValue;
         } else {
           // Fallback to calculated price to ensure accuracy
           return calculatedValue;
