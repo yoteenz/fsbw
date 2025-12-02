@@ -757,13 +757,17 @@ export default function BuildAWigPage() {
         const existingStylingPrice = localStorage.getItem('customizeSelectedStylingPrice') || localStorage.getItem('selectedStylingPrice');
         const existingAddOnsPrice = localStorage.getItem('customizeSelectedAddOnsPrice') || localStorage.getItem('selectedAddOnsPrice');
         
-        // Calculate prices - capSizePrice is always calculated based on current selection
+        // Calculate prices - capSizePrice should be preserved from localStorage if it exists
         const calculatedPrices = calculatePricesFromSelections(initialCustomization);
         
         // Use existing prices if they exist, otherwise use calculated prices
-        // CRITICAL: Always use calculated capSizePrice (it depends on current cap size selection)
+        // CRITICAL: Preserve cap size price from localStorage if it exists (may have been set from cart item or sub-pages)
+        const existingCapSizePrice = localStorage.getItem('customizeSelectedCapSizePrice') || localStorage.getItem('selectedCapSizePrice');
+        const capSizePriceToUse = (existingCapSizePrice && existingCapSizePrice !== '' && !isNaN(parseFloat(existingCapSizePrice))) 
+          ? parseFloat(existingCapSizePrice) 
+          : calculatedPrices.capSizePrice;
         const pricesToSave = {
-          capSizePrice: calculatedPrices.capSizePrice, // Always recalculate based on current cap size
+          capSizePrice: capSizePriceToUse, // Preserve from localStorage if exists, otherwise use calculated
           colorPrice: (existingColorPrice && existingColorPrice !== '' && !isNaN(parseFloat(existingColorPrice))) ? parseFloat(existingColorPrice) : calculatedPrices.colorPrice,
           lengthPrice: (existingLengthPrice && existingLengthPrice !== '' && !isNaN(parseFloat(existingLengthPrice))) ? parseFloat(existingLengthPrice) : calculatedPrices.lengthPrice,
           densityPrice: (existingDensityPrice && existingDensityPrice !== '' && !isNaN(parseFloat(existingDensityPrice))) ? parseFloat(existingDensityPrice) : calculatedPrices.densityPrice,
@@ -899,10 +903,15 @@ export default function BuildAWigPage() {
         
         // Recalculate prices as fallback if any prices are missing, but prioritize saved prices
         const calculatedPrices = calculatePricesFromSelections(updatedCustomization);
-        // CRITICAL: Always use calculated capSizePrice (it depends on current cap size selection)
+        // CRITICAL: Preserve cap size price from localStorage if it exists (may have been set from cart item or sub-pages)
+        // Only recalculate if localStorage doesn't have a value
+        const savedCapSizePrice = localStorage.getItem('editSelectedCapSizePrice') || localStorage.getItem('selectedCapSizePrice');
+        const capSizePriceToUse = (savedCapSizePrice && savedCapSizePrice !== '' && !isNaN(parseFloat(savedCapSizePrice))) 
+          ? parseFloat(savedCapSizePrice) 
+          : calculatedPrices.capSizePrice;
         // For other prices, use saved prices if they exist, otherwise use calculated prices
         const pricesToSave = {
-          capSizePrice: calculatedPrices.capSizePrice, // Always recalculate based on current cap size
+          capSizePrice: capSizePriceToUse, // Preserve from localStorage if exists, otherwise use calculated
           colorPrice: (savedColorPrice && savedColorPrice !== '' && !isNaN(parseFloat(savedColorPrice))) ? parseFloat(savedColorPrice) : calculatedPrices.colorPrice,
           lengthPrice: (savedLengthPrice && savedLengthPrice !== '' && !isNaN(parseFloat(savedLengthPrice))) ? parseFloat(savedLengthPrice) : calculatedPrices.lengthPrice,
           densityPrice: (savedDensityPrice && savedDensityPrice !== '' && !isNaN(parseFloat(savedDensityPrice))) ? parseFloat(savedDensityPrice) : calculatedPrices.densityPrice,

@@ -395,27 +395,8 @@ function NoirSelection() {
         console.log('Updated existing NOIR cart items with correct pricing including all customizations');
       }
       
-      // Also fix localStorage capSizePrice values for flexible caps
-      const selectedCapSize = localStorage.getItem('selectedCapSize');
-      const selectedCapSizePrice = localStorage.getItem('selectedCapSizePrice');
-      if ((selectedCapSize === 'XXS/XS/S' || selectedCapSize === 'S/M/L') && selectedCapSizePrice === '40') {
-        localStorage.setItem('selectedCapSizePrice', '0');
-        console.log('Fixed selectedCapSizePrice for flexible cap');
-      }
-      
-      const customizeSelectedCapSize = localStorage.getItem('customizeSelectedCapSize');
-      const customizeSelectedCapSizePrice = localStorage.getItem('customizeSelectedCapSizePrice');
-      if ((customizeSelectedCapSize === 'XXS/XS/S' || customizeSelectedCapSize === 'S/M/L') && customizeSelectedCapSizePrice === '40') {
-        localStorage.setItem('customizeSelectedCapSizePrice', '0');
-        console.log('Fixed customizeSelectedCapSizePrice for flexible cap');
-      }
-      
-      const editSelectedCapSize = localStorage.getItem('editSelectedCapSize');
-      const editSelectedCapSizePrice = localStorage.getItem('editSelectedCapSizePrice');
-      if ((editSelectedCapSize === 'XXS/XS/S' || editSelectedCapSize === 'S/M/L') && editSelectedCapSizePrice === '40') {
-        localStorage.setItem('editSelectedCapSizePrice', '0');
-        console.log('Fixed editSelectedCapSizePrice for flexible cap');
-      }
+      // REMOVED: Old code that was incorrectly resetting flexible cap prices to '0'
+      // Flexible caps (XXS/XS/S, S/M/L) correctly cost $40 extra, and this price should be preserved
     };
     
     updateExistingCartItems();
