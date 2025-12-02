@@ -432,7 +432,7 @@ function ColorSelection() {
       isEditMode,
       isCustomizeMode,
       editSelectedColor: localStorage.getItem('editSelectedColor'),
-      selectedColor: localStorage.getItem('selectedColor')
+      selectedColorFromStorage: localStorage.getItem('selectedColor')
     });
     
     // Determine the correct route to navigate back to based on current pathname
