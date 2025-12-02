@@ -54,6 +54,7 @@ function CapSizeSelection() {
   });
   
   // CRITICAL: Reload selection when navigating to this page
+  // NOTE: Removed selectedCapSize from dependencies to prevent overwriting user selections
   useEffect(() => {
     const pathname = location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
@@ -83,7 +84,7 @@ function CapSizeSelection() {
     if (storedCapSize && storedCapSize !== selectedCapSize) {
       setSelectedCapSize(storedCapSize);
     }
-  }, [location.pathname, selectedCapSize]); // Reload when route changes
+  }, [location.pathname]); // Only reload when route changes, not when selectedCapSize changes
   const [selectedView, setSelectedView] = useState(1); // Changed from 0 to 1 (middle image)
   const [showLoading, setShowLoading] = useState(true);
 
@@ -110,6 +111,7 @@ function CapSizeSelection() {
       
       // Update selected cap size from localStorage
       // CRITICAL: Check editSelected* keys first when in edit mode, then customizeSelected* for customize mode
+      // NOTE: Only update if the stored value is different to prevent overwriting user selections
       const pathname = window.location.pathname;
       const isOnEditRoute = pathname.includes('/edit');
       const isOnCustomizeRoute = pathname.includes('/noir/customize');
@@ -122,6 +124,9 @@ function CapSizeSelection() {
       } else {
         storedCapSize = localStorage.getItem('selectedCapSize');
       }
+      
+      // Only update if stored value exists and is different from current state
+      // This prevents overwriting when user is actively selecting
       if (storedCapSize && storedCapSize !== selectedCapSize) {
         setSelectedCapSize(storedCapSize);
       }
@@ -250,7 +255,41 @@ function CapSizeSelection() {
   ];
 
   const handleCapSizeSelect = (capSizeId: string) => {
+    console.log('Cap-size page - selecting cap size:', capSizeId);
     setSelectedCapSize(capSizeId);
+    
+    // CRITICAL: Immediately save to localStorage when selecting in edit/customize mode
+    // This prevents useEffect hooks from overwriting the selection
+    const pathname = window.location.pathname;
+    const isOnEditRoute = pathname.includes('/edit');
+    const isOnCustomizeRoute = pathname.includes('/noir/customize');
+    
+    // Calculate price for the selected cap size
+    // Use the same logic as getSelectedPrice() but with the capSizeId parameter
+    const allOptions = [...capSizeOptions, ...flexibleSizeOptions];
+    const selectedOption = allOptions.find(option => option.id === capSizeId);
+    const price = (selectedOption ? selectedOption.price : 0).toString();
+    
+    // Always save with 'selected' prefix
+    localStorage.setItem('selectedCapSize', capSizeId);
+    localStorage.setItem('selectedCapSizePrice', price);
+    
+    // Also save with 'editSelected' prefix in edit mode
+    if (isOnEditRoute) {
+      localStorage.setItem('editSelectedCapSize', capSizeId);
+      localStorage.setItem('editSelectedCapSizePrice', price);
+      console.log('Cap-size page - saved to editSelected* keys:', capSizeId, price);
+    }
+    
+    // Also save with 'customizeSelected' prefix in customize mode
+    if (isOnCustomizeRoute) {
+      localStorage.setItem('customizeSelectedCapSize', capSizeId);
+      localStorage.setItem('customizeSelectedCapSizePrice', price);
+      console.log('Cap-size page - saved to customizeSelected* keys:', capSizeId, price);
+    }
+    
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new CustomEvent('customStorageChange'));
   };
 
   const handleBack = () => {
