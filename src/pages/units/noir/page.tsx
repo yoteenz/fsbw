@@ -302,13 +302,27 @@ function NoirSelection() {
 
       const getAddOnsPriceFromItem = (item: any) => {
         const addOns = item.addOns || [];
-        const addOnPrices: { [key: string]: number } = {
-          'BLEACH': 40,
-          'PLUCK': 40,
+        // Base prices from addons page
+        const addOnBasePrices: { [key: string]: number } = {
+          'BLEACH': 80,
+          'PLUCK': 120,
           'BLUNT CUT': 20
         };
+        
+        // Lace sizes that get $20 discount for BLEACH and PLUCK
+        const discountedLaceSizes = ['2X6', '4X4', '5X5', '6X6', '7X7'];
+        const itemLace = item.lace || '13X6';
+        const hasLaceDiscount = discountedLaceSizes.includes(itemLace);
+        
         return addOns.reduce((total: number, addOn: string) => {
-          return total + (addOnPrices[addOn] || 0);
+          let price = addOnBasePrices[addOn] || 0;
+          
+          // Apply $20 discount for bleach and pluck when specific lace sizes are selected
+          if (hasLaceDiscount && (addOn === 'BLEACH' || addOn === 'PLUCK')) {
+            price -= 20;
+          }
+          
+          return total + price;
         }, 0);
       };
       const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');

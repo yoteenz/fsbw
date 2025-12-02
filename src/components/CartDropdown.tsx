@@ -425,8 +425,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
       const hairlinePrices: { [key: string]: number } = {
         'NATURAL': 0,
         'PEAK': 40,
-        'LAGOS': 40,
-        'BABY HAIR': 40
+        'LAGOS': 60
       };
       total += hairlinePrices[h.trim()] || 0;
     });
@@ -470,18 +469,30 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     return stylingPrices[styling] || 0;
   };
 
-  // Helper function to get add-ons price based on add-ons array
-  const _getAddOnsPrice = (addOns: string[]) => {
+  // Helper function to get add-ons price based on add-ons array and lace size
+  const _getAddOnsPrice = (addOns: string[], laceSize?: string) => {
     if (!addOns || addOns.length === 0) return 0;
     
-    const addOnPrices: { [key: string]: number } = {
-      'BLEACH': 40,
-      'PLUCK': 40,
+    // Base prices from addons page
+    const addOnBasePrices: { [key: string]: number } = {
+      'BLEACH': 80,
+      'PLUCK': 120,
       'BLUNT CUT': 20
     };
     
+    // Lace sizes that get $20 discount for BLEACH and PLUCK
+    const discountedLaceSizes = ['2X6', '4X4', '5X5', '6X6', '7X7'];
+    const hasLaceDiscount = laceSize && discountedLaceSizes.includes(laceSize);
+    
     return addOns.reduce((total, addOn) => {
-      return total + (addOnPrices[addOn] || 0);
+      let price = addOnBasePrices[addOn] || 0;
+      
+      // Apply $20 discount for bleach and pluck when specific lace sizes are selected
+      if (hasLaceDiscount && (addOn === 'BLEACH' || addOn === 'PLUCK')) {
+        price -= 20;
+      }
+      
+      return total + price;
     }, 0);
   };
 
@@ -1142,7 +1153,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               }
                             } else if (itemData.type === 'addOns') {
                               const addOnsArray = Array.isArray(itemData.value) ? itemData.value : [];
-                              const totalAddOnPrice = _getAddOnsPrice(addOnsArray);
+                              const itemLace = item.lace || '13X6';
+                              const totalAddOnPrice = _getAddOnsPrice(addOnsArray, itemLace);
                               const priceDisplay = formatPriceDisplay(totalAddOnPrice);
                               
                               if (useFullNames) {
@@ -1154,7 +1166,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                                 if (Array.isArray(itemData.value)) {
                                   itemData.value.forEach((addOn: string, addOnIndex: number) => {
                                     // Use non-breaking spaces within add-on section
-                                    const addOnPrice = _getAddOnsPrice([addOn]);
+                                    const addOnPrice = _getAddOnsPrice([addOn], itemLace);
                                     const addOnPriceDisplay = formatPriceDisplay(addOnPrice);
                                     const addOnText = addOn.toUpperCase().replace(/ /g, '\u00A0');
                                     if (addOnIndex > 0) {
