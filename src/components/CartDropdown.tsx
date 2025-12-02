@@ -882,12 +882,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               text += displayValue.toUpperCase();
                             } else if (itemData.type === 'lace') {
                               // Lace: show value followed by "LACE" in all caps with price
-                              // Add "-" prefix if price is negative (discount)
+                              // formatPriceDisplay already includes the sign in the price part
                               const laceValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
                               const price = _getLacePrice(laceValue);
                               const priceDisplay = formatPriceDisplay(price);
-                              const prefix = price < 0 ? '-' : '';
-                              const displayValue = `${prefix}${laceValue} LACE${priceDisplay}`;
+                              const displayValue = `${laceValue} LACE${priceDisplay}`;
                               text += displayValue.toUpperCase();
                             } else if (itemData.type === 'texture') {
                               // Texture: show value followed by "TEXTURE" in all caps with price
