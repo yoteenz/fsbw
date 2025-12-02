@@ -412,8 +412,12 @@ function ColorSelection() {
     
     // Also save with 'editSelected' prefix in edit mode
     if (isEditMode) {
+      console.log('[COLOR PAGE] Saving editSelectedColor:', selectedColor, 'Price:', price);
       localStorage.setItem('editSelectedColor', selectedColor);
       localStorage.setItem('editSelectedColorPrice', price);
+      // Verify it was saved
+      const verify = localStorage.getItem('editSelectedColor');
+      console.log('[COLOR PAGE] Verification - editSelectedColor in localStorage:', verify);
     }
     
     // Also save with 'customizeSelected' prefix in customize mode
@@ -426,7 +430,9 @@ function ColorSelection() {
       selectedColor,
       price: getSelectedPrice(),
       isEditMode,
-      isCustomizeMode
+      isCustomizeMode,
+      editSelectedColor: localStorage.getItem('editSelectedColor'),
+      selectedColor: localStorage.getItem('selectedColor')
     });
     
     // Determine the correct route to navigate back to based on current pathname

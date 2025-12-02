@@ -296,9 +296,13 @@ function NoirSelection() {
       const updatedCartItems = cartItems.map((item: any) => {
         if (item.name === 'NOIR') {
           // Calculate correct price based on ALL customization options
-          let basePrice = 740; // Default for standard caps (XS, S, M, L)
+          // CRITICAL: Base price is ALWAYS 740 for NOIR - flexible cap adds $40 via capSizePrice
+          const basePrice = 740;
+          
+          // Calculate cap size price (flexible caps = $40, regular = $0)
+          let capSizePrice = 0;
           if (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L') {
-            basePrice = 780; // Flexible cap options cost $40 extra
+            capSizePrice = 40; // Flexible cap options cost $40 extra
           }
           
           // Calculate color price from color name
@@ -339,7 +343,7 @@ function NoirSelection() {
           const stylingPrice = getStylingPriceFromItem(item);
           const addOnsPrice = getAddOnsPriceFromItem(item);
           
-          const newPrice = basePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
+          const newPrice = basePrice + capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
           
           if (item.price !== newPrice) {
             updated = true;
@@ -1584,24 +1588,14 @@ function NoirSelection() {
 
   // CRITICAL: Clear edit/customize localStorage price values on page load
   // This ensures the units/noir page price is NOT affected by cart items in edit/customize mode
+  // NOTE: We NO LONGER clear editSelected* price values when in edit mode because they need to persist
+  // when navigating back to the edit page. Only clear customizeSelected* prices.
   useEffect(() => {
-    // Check if we're in edit or customize mode
-    const isEditMode = localStorage.getItem('editingCartItem') !== null;
+    // Check if we're in customize mode
     const isCustomizeMode = localStorage.getItem('customizeSelectedCapSize') !== null;
     
-    // If in edit or customize mode, clear their price values to prevent interference
-    if (isEditMode || isCustomizeMode) {
-      // Clear editSelected price values
-      localStorage.removeItem('editSelectedCapSizePrice');
-      localStorage.removeItem('editSelectedColorPrice');
-      localStorage.removeItem('editSelectedLengthPrice');
-      localStorage.removeItem('editSelectedDensityPrice');
-      localStorage.removeItem('editSelectedLacePrice');
-      localStorage.removeItem('editSelectedTexturePrice');
-      localStorage.removeItem('editSelectedHairlinePrice');
-      localStorage.removeItem('editSelectedStylingPrice');
-      localStorage.removeItem('editSelectedAddOnsPrice');
-      
+    // Only clear customizeSelected price values (not editSelected - those need to persist)
+    if (isCustomizeMode) {
       // Clear customizeSelected price values
       localStorage.removeItem('customizeSelectedCapSizePrice');
       localStorage.removeItem('customizeSelectedColorPrice');
@@ -1613,7 +1607,7 @@ function NoirSelection() {
       localStorage.removeItem('customizeSelectedStylingPrice');
       localStorage.removeItem('customizeSelectedAddOnsPrice');
       
-      console.log('Units/Noir - Cleared edit/customize price values to prevent interference');
+      console.log('Units/Noir - Cleared customizeSelected price values to prevent interference');
     }
   }, []);
 

@@ -75,17 +75,21 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
       const isEditMode = localStorage.getItem('editingCartItem') !== null;
       const prefix = isEditMode ? 'editSelected' : 'selected';
       
-      // Get cap size to determine base price
+      // Get cap size to determine cap size price
       const capSize = localStorage.getItem(`${prefix}CapSize`) || 'M';
       
-      // Calculate base price based on cap size
-      let basePrice = 740; // Default for standard caps (XS, S, M, L)
-      if (capSize === 'XXS/XS/S' || capSize === 'S/M/L') {
-        basePrice = 780; // Flexible cap options cost $40 extra
-      }
+      // CRITICAL: Base price is ALWAYS 740 for NOIR - flexible cap adds $40 via capSizePrice
+      const basePrice = 740;
       
       // Get additional prices
-      const capSizePrice = parseInt(localStorage.getItem(`${prefix}CapSizePrice`) || '0');
+      // CRITICAL: Calculate capSizePrice based on cap size (flexible caps = $40, regular = $0)
+      let capSizePrice = 0;
+      if (capSize === 'XXS/XS/S' || capSize === 'S/M/L') {
+        capSizePrice = 40; // Flexible cap options cost $40 extra
+      } else {
+        // Also check localStorage in case it was set by sub-pages
+        capSizePrice = parseInt(localStorage.getItem(`${prefix}CapSizePrice`) || '0');
+      }
       const lengthPrice = parseInt(localStorage.getItem(`${prefix}LengthPrice`) || '0');
       const densityPrice = parseInt(localStorage.getItem(`${prefix}DensityPrice`) || '0');
       const colorPrice = parseInt(localStorage.getItem(`${prefix}ColorPrice`) || '0');
