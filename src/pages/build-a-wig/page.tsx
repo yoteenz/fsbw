@@ -297,17 +297,17 @@ export default function BuildAWigPage() {
     }
     
     // Calculate density price
-    // NOTE: Negative prices (130%, 150%, 180%) are discounts, but we store them as 0 in calculations
-    // The actual discount is handled at display/checkout level
+    // CRITICAL: Include negative prices for discounts (130%, 150%, 180%) to match sub-page prices
+    // These negative prices must be stored correctly so they persist when navigating away
     const densityPrices: { [key: string]: number } = {
-      '130%': 0, // -60 discount handled elsewhere
-      '150%': 0, // -40 discount handled elsewhere
-      '180%': 0, // -20 discount handled elsewhere
-      '200%': 0, // Default - included in base price
-      '250%': 80, // $80 more than default
+      '130%': -60, // $60 discount
+      '150%': -40, // $40 discount
+      '180%': -20, // $20 discount
+      '200%': 0,   // Default - included in base price
+      '250%': 80,  // $80 more than default
       '300%': 160, // $160 more than default
       '350%': 240, // $240 more than default
-      '400%': 320 // $320 more than default
+      '400%': 320  // $320 more than default
     };
     prices.densityPrice = densityPrices[selections.density] || 0;
     
@@ -1282,25 +1282,64 @@ export default function BuildAWigPage() {
           // This ensures prices match the cart item's actual selections (including lace discount for add-ons)
           const calculatedPrices = calculatePricesFromSelections(editCustomization);
           
-          // CRITICAL: Handle add-on prices correctly
-          // If cart item has no add-ons, always use calculated price (which will be 0)
-          // If cart item has add-ons, preserve localStorage price if it exists (from sub-pages with discounts)
-          const hasAddOns = item.addOns && Array.isArray(item.addOns) && item.addOns.length > 0;
-          const existingAddOnsPrice = localStorage.getItem('editSelectedAddOnsPrice') || localStorage.getItem('selectedAddOnsPrice');
+          // CRITICAL: Preserve prices from localStorage when coming from sub-pages
+          // This ensures negative prices (discounts) are preserved correctly
+          const comingFromSubPage = sessionStorage.getItem('comingFromSubPage') === 'true';
           
-          if (!hasAddOns) {
-            // No add-ons in cart item - always use calculated price (0) to clear any stale localStorage values
-            savePricesToLocalStorage(calculatedPrices);
-          } else if (!existingAddOnsPrice || existingAddOnsPrice === '0') {
-            // Cart item has add-ons but no price saved yet, use calculated price
-            savePricesToLocalStorage(calculatedPrices);
-          } else {
-            // Cart item has add-ons and price exists from sub-page, preserve it but update other prices
-            const pricesToSave = {
-              ...calculatedPrices,
-              addOnsPrice: parseFloat(existingAddOnsPrice) // Preserve add-ons price from sub-page
+          if (comingFromSubPage) {
+            // Coming from sub-page: preserve prices from localStorage (may include negative values)
+            // Only use calculated prices as fallback if localStorage doesn't have the price
+            const getPreservedPrice = (key: string, calculatedValue: number) => {
+              const editKey = `editSelected${key}Price`;
+              const selectedKey = `selected${key}Price`;
+              const editValue = localStorage.getItem(editKey);
+              const selectedValue = localStorage.getItem(selectedKey);
+              
+              // Prefer editSelected* key, then selected* key, then calculated value
+              if (editValue && !isNaN(parseFloat(editValue))) {
+                return parseFloat(editValue);
+              } else if (selectedValue && !isNaN(parseFloat(selectedValue))) {
+                return parseFloat(selectedValue);
+              } else {
+                return calculatedValue;
+              }
             };
+            
+            const pricesToSave = {
+              capSizePrice: getPreservedPrice('CapSize', calculatedPrices.capSizePrice),
+              colorPrice: getPreservedPrice('Color', calculatedPrices.colorPrice),
+              lengthPrice: getPreservedPrice('Length', calculatedPrices.lengthPrice),
+              densityPrice: getPreservedPrice('Density', calculatedPrices.densityPrice),
+              lacePrice: getPreservedPrice('Lace', calculatedPrices.lacePrice),
+              texturePrice: getPreservedPrice('Texture', calculatedPrices.texturePrice),
+              hairlinePrice: getPreservedPrice('Hairline', calculatedPrices.hairlinePrice),
+              stylingPrice: getPreservedPrice('Styling', calculatedPrices.stylingPrice),
+              addOnsPrice: getPreservedPrice('AddOns', calculatedPrices.addOnsPrice)
+            };
+            
             savePricesToLocalStorage(pricesToSave);
+          } else {
+            // Not coming from sub-page: use calculated prices (which now include correct negative values)
+            // CRITICAL: Handle add-on prices correctly
+            // If cart item has no add-ons, always use calculated price (which will be 0)
+            // If cart item has add-ons, preserve localStorage price if it exists (from sub-pages with discounts)
+            const hasAddOns = item.addOns && Array.isArray(item.addOns) && item.addOns.length > 0;
+            const existingAddOnsPrice = localStorage.getItem('editSelectedAddOnsPrice') || localStorage.getItem('selectedAddOnsPrice');
+            
+            if (!hasAddOns) {
+              // No add-ons in cart item - always use calculated price (0) to clear any stale localStorage values
+              savePricesToLocalStorage(calculatedPrices);
+            } else if (!existingAddOnsPrice || existingAddOnsPrice === '0') {
+              // Cart item has add-ons but no price saved yet, use calculated price
+              savePricesToLocalStorage(calculatedPrices);
+            } else {
+              // Cart item has add-ons and price exists from sub-page, preserve it but update other prices
+              const pricesToSave = {
+                ...calculatedPrices,
+                addOnsPrice: parseFloat(existingAddOnsPrice) // Preserve add-ons price from sub-page
+              };
+              savePricesToLocalStorage(pricesToSave);
+            }
           }
           
           // Set initial total price from cart item
