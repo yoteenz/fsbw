@@ -205,10 +205,14 @@ function NoirSelection() {
       const getDensityPriceFromItem = (item: any) => {
         const density = item.density || '200%';
         const densityPrices: { [key: string]: number } = {
-          '150%': 0,
+          '130%': -60,
+          '150%': -40,
+          '180%': -20,
           '200%': 0,
-          '250%': 50,
-          '300%': 100
+          '250%': 80,
+          '300%': 160,
+          '350%': 240,
+          '400%': 320
         };
         return densityPrices[density] || 0;
       };

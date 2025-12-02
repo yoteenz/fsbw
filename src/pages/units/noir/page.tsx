@@ -222,10 +222,14 @@ function NoirSelection() {
       const getDensityPriceFromItem = (item: any) => {
         const density = item.density || '200%';
         const densityPrices: { [key: string]: number } = {
-          '150%': 0,
+          '130%': -60,
+          '150%': -40,
+          '180%': -20,
           '200%': 0,
-          '250%': 50,
-          '300%': 100
+          '250%': 80,
+          '300%': 160,
+          '350%': 240,
+          '400%': 320
         };
         return densityPrices[density] || 0;
       };
@@ -313,9 +317,13 @@ function NoirSelection() {
       const updatedCartItems = cartItems.map((item: any) => {
         if (item.name === 'NOIR') {
           // Calculate correct price based on ALL customization options
-          let basePrice = 740; // Default for standard caps (XS, S, M, L)
+          // CRITICAL: Base price is ALWAYS 740 for NOIR - flexible cap adds $40 via capSizePrice
+          const basePrice = 740;
+          
+          // Calculate cap size price (flexible caps = $40, regular = $0)
+          let capSizePrice = 0;
           if (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L') {
-            basePrice = 780; // Flexible cap options cost $40 extra
+            capSizePrice = 40; // Flexible cap options cost $40 extra
           }
           
           // Calculate color price from color name
@@ -356,7 +364,7 @@ function NoirSelection() {
           const stylingPrice = getStylingPriceFromItem(item);
           const addOnsPrice = getAddOnsPriceFromItem(item);
           
-          const newPrice = basePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
+          const newPrice = basePrice + capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
           
           if (item.price !== newPrice) {
             updated = true;

@@ -534,10 +534,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
       editingCartItemId,
       currentPrefix: prefix,
       localStoragePrices: {
-        basePrice: (() => {
-          const capSize = localStorage.getItem(`${prefix}CapSize`) || 'M';
-          return (capSize === 'XXS/XS/S' || capSize === 'S/M/L') ? 780 : 740;
-        })(),
+        basePrice: 740, // CRITICAL: Base price is ALWAYS 740 for NOIR - flexible cap adds $40 via capSizePrice
         capSizePrice: parseInt(localStorage.getItem(`${prefix}CapSizePrice`) || '0'),
         lengthPrice: parseInt(localStorage.getItem(`${prefix}LengthPrice`) || '0'),
         densityPrice: parseInt(localStorage.getItem(`${prefix}DensityPrice`) || '0'),
@@ -1010,7 +1007,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             if (price === 0 || price === null || price === undefined || isNaN(price)) {
                               return '';
                             }
-                            const sign = price > 0 ? '+' : '';
+                            // Show negative sign for negative prices, positive sign for positive prices
+                            const sign = price > 0 ? '+' : '-';
                             const priceStr = Math.abs(price).toString();
                             // Explicitly construct the HTML string to prevent minification issues
                             return ' (<span style="color: #EB1C24;">' + sign + '$' + priceStr + '</span>)';
@@ -1065,10 +1063,12 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               }
                             } else if (itemData.type === 'density') {
                               // Density: show percentage value followed by "DENSITY" in all caps with price
+                              // Add "-" prefix if price is negative (discount)
                               const densityValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
                               const price = _getDensityPrice(densityValue);
                               const priceDisplay = formatPriceDisplay(price);
-                              const displayValue = `${densityValue} DENSITY${priceDisplay}`;
+                              const prefix = price < 0 ? '-' : '';
+                              const displayValue = `${prefix}${densityValue} DENSITY${priceDisplay}`;
                               text += displayValue.toUpperCase();
                             } else if (itemData.type === 'lace') {
                               // Lace: show value followed by "LACE" in all caps with price

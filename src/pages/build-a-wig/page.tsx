@@ -278,11 +278,17 @@ export default function BuildAWigPage() {
     }
     
     // Calculate density price
+    // NOTE: Negative prices (130%, 150%, 180%) are discounts, but we store them as 0 in calculations
+    // The actual discount is handled at display/checkout level
     const densityPrices: { [key: string]: number } = {
-      '150%': 0,
-      '200%': 0,
-      '250%': 50,
-      '300%': 100
+      '130%': 0, // -60 discount handled elsewhere
+      '150%': 0, // -40 discount handled elsewhere
+      '180%': 0, // -20 discount handled elsewhere
+      '200%': 0, // Default - included in base price
+      '250%': 80, // $80 more than default
+      '300%': 160, // $160 more than default
+      '350%': 240, // $240 more than default
+      '400%': 320 // $320 more than default
     };
     prices.densityPrice = densityPrices[selections.density] || 0;
     
@@ -3011,13 +3017,22 @@ export default function BuildAWigPage() {
       const basePrice = 740;
       
       // Get prices from localStorage with fallback to calculated prices
-      const getPrice = (key: string) => {
+      // CRITICAL: Use calculated prices as fallback to ensure density/other prices are correct
+      const getPrice = (key: string, calculatedValue: number) => {
         const editSelectedKey = `editSelected${key}Price`;
         const selectedKey = `selected${key}Price`;
         const editValue = localStorage.getItem(editSelectedKey);
         const selectedValue = localStorage.getItem(selectedKey);
-        const value = editValue || selectedValue || '0';
-        return parseFloat(value) || 0;
+        
+        // Use localStorage value if it exists and is valid, otherwise use calculated value
+        if (editValue && !isNaN(parseFloat(editValue))) {
+          return parseFloat(editValue);
+        } else if (selectedValue && !isNaN(parseFloat(selectedValue))) {
+          return parseFloat(selectedValue);
+        } else {
+          // Fallback to calculated price to ensure accuracy (especially for density)
+          return calculatedValue;
+        }
       };
       
       // CRITICAL: Always recalculate capSizePrice based on current cap size
@@ -3030,14 +3045,16 @@ export default function BuildAWigPage() {
       // Calculate prices from current selections as fallback
       const calculatedPrices = calculatePricesFromSelections(customization);
       
-      const colorPrice = getPrice('Color') || calculatedPrices.colorPrice;
-      const lengthPrice = getPrice('Length') || calculatedPrices.lengthPrice;
-      const densityPrice = getPrice('Density') || calculatedPrices.densityPrice;
-      const lacePrice = getPrice('Lace') || calculatedPrices.lacePrice;
-      const texturePrice = getPrice('Texture') || calculatedPrices.texturePrice;
-      const hairlinePrice = getPrice('Hairline') || calculatedPrices.hairlinePrice;
-      const stylingPrice = getPrice('Styling') || calculatedPrices.stylingPrice;
-      const addOnsPrice = getPrice('AddOns') || calculatedPrices.addOnsPrice;
+      // CRITICAL: Use calculated prices as fallback to ensure density/other prices are correct
+      // This ensures that if localStorage prices are missing or incorrect, we use the calculated values
+      const colorPrice = getPrice('Color', calculatedPrices.colorPrice);
+      const lengthPrice = getPrice('Length', calculatedPrices.lengthPrice);
+      const densityPrice = getPrice('Density', calculatedPrices.densityPrice);
+      const lacePrice = getPrice('Lace', calculatedPrices.lacePrice);
+      const texturePrice = getPrice('Texture', calculatedPrices.texturePrice);
+      const hairlinePrice = getPrice('Hairline', calculatedPrices.hairlinePrice);
+      const stylingPrice = getPrice('Styling', calculatedPrices.stylingPrice);
+      const addOnsPrice = getPrice('AddOns', calculatedPrices.addOnsPrice);
       
       // Calculate final price
       const finalPrice = basePrice + capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
@@ -3134,6 +3151,18 @@ export default function BuildAWigPage() {
       localStorage.setItem('editSelectedHairline', customization.hairline);
       localStorage.setItem('editSelectedStyling', validStyling);
       localStorage.setItem('editSelectedAddOns', JSON.stringify(customization.addOns));
+      
+      // CRITICAL: Also save prices to editSelected*Price keys to preserve them
+      // This ensures prices persist when navigating away and coming back
+      localStorage.setItem('editSelectedCapSizePrice', capSizePrice.toString());
+      localStorage.setItem('editSelectedColorPrice', colorPrice.toString());
+      localStorage.setItem('editSelectedLengthPrice', lengthPrice.toString());
+      localStorage.setItem('editSelectedDensityPrice', densityPrice.toString());
+      localStorage.setItem('editSelectedLacePrice', lacePrice.toString());
+      localStorage.setItem('editSelectedTexturePrice', texturePrice.toString());
+      localStorage.setItem('editSelectedHairlinePrice', hairlinePrice.toString());
+      localStorage.setItem('editSelectedStylingPrice', stylingPrice.toString());
+      localStorage.setItem('editSelectedAddOnsPrice', addOnsPrice.toString());
       
       // Also update selected* keys for consistency
       localStorage.setItem('selectedCapSize', customization.capSize);
