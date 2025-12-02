@@ -1259,14 +1259,20 @@ export default function BuildAWigPage() {
           // This ensures prices match the cart item's actual selections (including lace discount for add-ons)
           const calculatedPrices = calculatePricesFromSelections(editCustomization);
           
-          // CRITICAL: Only save calculated prices if localStorage prices don't exist or are 0
-          // This preserves prices saved by sub-pages (like addons page) that include discounts
+          // CRITICAL: Handle add-on prices correctly
+          // If cart item has no add-ons, always use calculated price (which will be 0)
+          // If cart item has add-ons, preserve localStorage price if it exists (from sub-pages with discounts)
+          const hasAddOns = item.addOns && Array.isArray(item.addOns) && item.addOns.length > 0;
           const existingAddOnsPrice = localStorage.getItem('editSelectedAddOnsPrice') || localStorage.getItem('selectedAddOnsPrice');
-          if (!existingAddOnsPrice || existingAddOnsPrice === '0') {
-            // No price saved yet, use calculated price
+          
+          if (!hasAddOns) {
+            // No add-ons in cart item - always use calculated price (0) to clear any stale localStorage values
+            savePricesToLocalStorage(calculatedPrices);
+          } else if (!existingAddOnsPrice || existingAddOnsPrice === '0') {
+            // Cart item has add-ons but no price saved yet, use calculated price
             savePricesToLocalStorage(calculatedPrices);
           } else {
-            // Price exists from sub-page, preserve it but update other prices
+            // Cart item has add-ons and price exists from sub-page, preserve it but update other prices
             const pricesToSave = {
               ...calculatedPrices,
               addOnsPrice: parseFloat(existingAddOnsPrice) // Preserve add-ons price from sub-page
