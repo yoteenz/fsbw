@@ -970,6 +970,98 @@ export default function BuildAWigPage() {
           }
         }, 300);
       } else if (editingCartItem && (isDifferentItem || !currentEditingItemIdRef.current)) {
+        // CRITICAL: Check if editSelected* keys exist - if they do, don't overwrite them with defaults
+        // This prevents overwriting selections made on sub-pages when the effect runs multiple times
+        const hasEditSelectedKeys = localStorage.getItem('editSelectedCapSize') || 
+                                    localStorage.getItem('editSelectedLength') || 
+                                    localStorage.getItem('editSelectedTexture') ||
+                                    localStorage.getItem('editSelectedColor');
+        
+        // Only skip loading from editingCartItem if:
+        // 1. We're NOT switching items (!isDifferentItem), AND
+        // 2. editSelected* keys exist, AND
+        // 3. We've already loaded before (currentEditingItemIdRef.current is set)
+        // This ensures we preserve sub-page selections but still load on first visit
+        if (!isDifferentItem && hasEditSelectedKeys && currentEditingItemIdRef.current) {
+          console.log('[EDIT MODE ROUTE CHANGE] Skipping initial load - editSelected* keys exist, preserving sub-page selections');
+          // Still need to set the ref and originalItem if not set yet
+          if (!currentEditingItemIdRef.current && editingCartItemId) {
+            currentEditingItemIdRef.current = editingCartItemId;
+          }
+          // Load from editSelected* keys instead of overwriting
+          const savedCapSizeEdit = localStorage.getItem('editSelectedCapSize');
+          const savedLengthEdit = localStorage.getItem('editSelectedLength');
+          const savedDensityEdit = localStorage.getItem('editSelectedDensity');
+          const savedLaceEdit = localStorage.getItem('editSelectedLace');
+          const savedTextureEdit = localStorage.getItem('editSelectedTexture');
+          const savedColorEdit = localStorage.getItem('editSelectedColor');
+          const savedHairlineEdit = localStorage.getItem('editSelectedHairline');
+          const savedStylingEdit = localStorage.getItem('editSelectedStyling');
+          const savedAddOnsEdit = localStorage.getItem('editSelectedAddOns');
+          
+          // Fall back to selected* keys if editSelected* don't exist
+          const savedCapSizeFinal = savedCapSizeEdit || localStorage.getItem('selectedCapSize') || 'M';
+          const savedLength = savedLengthEdit || localStorage.getItem('selectedLength') || '24"';
+          const savedDensity = savedDensityEdit || localStorage.getItem('selectedDensity') || '200%';
+          const savedLace = savedLaceEdit || localStorage.getItem('selectedLace') || '13X6';
+          const savedTexture = savedTextureEdit || localStorage.getItem('selectedTexture') || 'SILKY';
+          const savedColor = savedColorEdit || localStorage.getItem('selectedColor') || 'OFF BLACK';
+          const savedHairline = savedHairlineEdit || localStorage.getItem('selectedHairline') || 'NATURAL';
+          const savedStyling = savedStylingEdit || localStorage.getItem('selectedStyling') || 'NONE';
+          const savedAddOns = savedAddOnsEdit || localStorage.getItem('selectedAddOns') || '[]';
+          
+          // CRITICAL: Ensure styling is not a part selection
+          let validStyling = savedStyling !== null && savedStyling !== 'NONE' ? savedStyling : 'NONE';
+          const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
+          if (partSelectionOptions.includes(validStyling)) {
+            validStyling = 'NONE';
+          }
+          
+          const preservedCustomization = {
+            capSize: savedCapSizeFinal,
+            length: savedLength,
+            density: savedDensity,
+            lace: savedLace,
+            texture: savedTexture,
+            color: savedColor,
+            hairline: savedHairline,
+            styling: validStyling,
+            addOns: savedAddOns ? JSON.parse(savedAddOns) : [],
+          };
+          
+          // Set originalItem from editingCartItem for change detection
+          if (editingCartItem && !originalItem) {
+            try {
+              const item = JSON.parse(editingCartItem);
+              let originalStyling = item.styling || 'NONE';
+              if (partSelectionOptions.includes(originalStyling)) {
+                originalStyling = 'NONE';
+              }
+              setOriginalItem({
+                capSize: item.capSize || 'M',
+                length: item.length || '24"',
+                density: item.density || '200%',
+                lace: item.lace || '13X6',
+                texture: item.texture || 'SILKY',
+                color: item.color || 'OFF BLACK',
+                hairline: item.hairline || 'NATURAL',
+                styling: originalStyling,
+                addOns: item.addOns || [],
+              });
+            } catch (e) {
+              // Ignore parse errors
+            }
+          }
+          
+          setCustomization(preservedCustomization);
+          setAddToBagState('added');
+          
+          // Trigger price recalculation
+          setRefreshTrigger(prev => prev + 1);
+          
+          return; // Exit early to prevent overwriting editSelected* keys
+        }
+        
         // First load or different item: load from editingCartItem
         try {
           const item = JSON.parse(editingCartItem);
