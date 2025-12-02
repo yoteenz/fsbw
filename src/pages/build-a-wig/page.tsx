@@ -267,11 +267,30 @@ export default function BuildAWigPage() {
       addOnsPrice: 0
     };
     
+    // Calculate length price
+    // CRITICAL: Include ALL length options with correct prices from length page
+    const lengthPrices: { [key: string]: number } = {
+      '16"': -50,
+      '18"': -25,
+      '20"': -10,
+      '22"': -5,
+      '24"': 0,      // Default - included in base price
+      '26"': 50,
+      '28"': 100,
+      '30"': 150,
+      '32"': 200,
+      '34"': 250,
+      '36"': 300,
+      '40"': 400
+    };
+    prices.lengthPrice = lengthPrices[selections.length] || 0;
+    
     // Calculate color price
     if (selections.color && selections.color !== 'OFF BLACK') {
       prices.colorPrice = 100;
       
       // Add extra $40 for lengths over 30" (excluding OFF BLACK)
+      // This is in addition to the length price calculated above
       if (selections.length && ['30"', '32"', '34"', '36"', '40"'].includes(selections.length)) {
         prices.colorPrice += 40;
       }
@@ -293,16 +312,20 @@ export default function BuildAWigPage() {
     prices.densityPrice = densityPrices[selections.density] || 0;
     
     // Calculate lace price
+    // CRITICAL: Include ALL lace options with correct prices from lace page
     const lacePrices: { [key: string]: number } = {
-      '13X6': 0,
-      '13X4': 0,
+      '13X6': 0,      // Default - included in base price
+      '13X4': -20,    // Less than default, discount
       '13X5': 0,
-      '2X6': 0,
-      '4X4': 0,
-      '5X5': 0,
-      '6X6': 0,
-      '7X7': 0,
-      'FULL LACE': 240
+      '2X6': -40,     // Less than default, discount
+      '4X4': -40,     // Less than default, discount
+      '5X5': -20,     // Less than default, discount
+      '6X6': 60,      // Additional cost
+      '7X7': 100,     // Additional cost
+      '9X6': 80,      // Additional cost
+      '360': 160,     // Additional cost for 360 lace
+      'FULL': 240,    // Additional cost for full lace
+      'FULL LACE': 240 // Alias for FULL
     };
     prices.lacePrice = lacePrices[selections.lace] || 0;
     
@@ -529,17 +552,12 @@ export default function BuildAWigPage() {
       isLoadingFromStorage.current = true;
       
       const comingFromSubPage = sessionStorage.getItem('comingFromSubPage') === 'true';
-      // When NOT coming from sub-page (first load), prioritize selectedCapSize (set by customize button)
-      // When coming from sub-page, prioritize customizeSelectedCapSize (set by sub-pages)
-      const savedCapSize = comingFromSubPage 
-        ? (localStorage.getItem('customizeSelectedCapSize') || localStorage.getItem('selectedCapSize'))
-        : (localStorage.getItem('selectedCapSize') || localStorage.getItem('customizeSelectedCapSize'));
       
       // If coming from sub-page, load updated values from localStorage
       if (comingFromSubPage) {
         
         // Load updated values from localStorage (set by sub-pages)
-        // Prioritize customizeSelected* keys, fall back to selected* keys
+        // CRITICAL: Always prioritize customizeSelected* keys first (set by sub-pages), then selected* keys
         const savedCapSizeCustomize = localStorage.getItem('customizeSelectedCapSize');
         const savedLengthCustomize = localStorage.getItem('customizeSelectedLength');
         const savedDensityCustomize = localStorage.getItem('customizeSelectedDensity');
@@ -551,6 +569,7 @@ export default function BuildAWigPage() {
         const savedAddOnsCustomize = localStorage.getItem('customizeSelectedAddOns');
         
         // Also check selected* keys as fallback
+        const savedCapSizeSelected = localStorage.getItem('selectedCapSize');
         const savedLengthSelected = localStorage.getItem('selectedLength');
         const savedDensitySelected = localStorage.getItem('selectedDensity');
         const savedLaceSelected = localStorage.getItem('selectedLace');
@@ -560,9 +579,9 @@ export default function BuildAWigPage() {
         const savedStylingSelected = localStorage.getItem('selectedStyling');
         const savedAddOnsSelected = localStorage.getItem('selectedAddOns');
         
-        // Fall back to selected* keys if customizeSelected* keys don't exist
-        // Use current customization state as fallback to preserve existing selections
-        const savedCapSizeFinal = savedCapSizeCustomize || savedCapSize || customization.capSize || 'M';
+        // CRITICAL: Prioritize customizeSelected* keys (set by sub-pages), then selected* keys, then current state
+        // This ensures we always use the NEW value from the sub-page, not stale values
+        const savedCapSizeFinal = savedCapSizeCustomize || savedCapSizeSelected || customization.capSize || 'M';
         const savedLength = savedLengthCustomize || savedLengthSelected || customization.length || '24"';
         const savedDensity = savedDensityCustomize || savedDensitySelected || customization.density || '200%';
         const savedLace = savedLaceCustomize || savedLaceSelected || customization.lace || '13X6';
@@ -666,28 +685,31 @@ export default function BuildAWigPage() {
         setTimeout(() => {
           isLoadingFromStorage.current = false;
         }, 300);
-      } else if (savedCapSize) {
+      } else {
         // First load: Load cap size with defaults for other selections
+        // When NOT coming from sub-page (first load), prioritize selectedCapSize (set by customize button)
+        const savedCapSize = localStorage.getItem('selectedCapSize') || localStorage.getItem('customizeSelectedCapSize');
         
-        // Load existing selections from customizeSelected* keys if they exist, otherwise use defaults
-        const existingLength = localStorage.getItem('customizeSelectedLength') || localStorage.getItem('selectedLength') || '24"';
-        const existingDensity = localStorage.getItem('customizeSelectedDensity') || localStorage.getItem('selectedDensity') || '200%';
-        const existingLace = localStorage.getItem('customizeSelectedLace') || localStorage.getItem('selectedLace') || '13X6';
-        const existingTexture = localStorage.getItem('customizeSelectedTexture') || localStorage.getItem('selectedTexture') || 'SILKY';
-        const existingColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor') || 'OFF BLACK';
-        const existingHairline = localStorage.getItem('customizeSelectedHairline') || localStorage.getItem('selectedHairline') || 'NATURAL';
-        const existingStyling = localStorage.getItem('customizeSelectedStyling') || localStorage.getItem('selectedStyling') || 'NONE';
-        const existingAddOns = localStorage.getItem('customizeSelectedAddOns') || localStorage.getItem('selectedAddOns') || '[]';
-        
-        // Ensure styling is valid
-        let validStyling = existingStyling !== null && existingStyling !== 'NONE' ? existingStyling : 'NONE';
-        const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
-        if (partSelectionOptions.includes(validStyling)) {
-          validStyling = 'NONE';
-        }
-        
-        const initialCustomization = {
-          capSize: savedCapSize,
+        if (savedCapSize) {
+          // Load existing selections from customizeSelected* keys if they exist, otherwise use defaults
+          const existingLength = localStorage.getItem('customizeSelectedLength') || localStorage.getItem('selectedLength') || '24"';
+          const existingDensity = localStorage.getItem('customizeSelectedDensity') || localStorage.getItem('selectedDensity') || '200%';
+          const existingLace = localStorage.getItem('customizeSelectedLace') || localStorage.getItem('selectedLace') || '13X6';
+          const existingTexture = localStorage.getItem('customizeSelectedTexture') || localStorage.getItem('selectedTexture') || 'SILKY';
+          const existingColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor') || 'OFF BLACK';
+          const existingHairline = localStorage.getItem('customizeSelectedHairline') || localStorage.getItem('selectedHairline') || 'NATURAL';
+          const existingStyling = localStorage.getItem('customizeSelectedStyling') || localStorage.getItem('selectedStyling') || 'NONE';
+          const existingAddOns = localStorage.getItem('customizeSelectedAddOns') || localStorage.getItem('selectedAddOns') || '[]';
+          
+          // Ensure styling is valid
+          let validStyling = existingStyling !== null && existingStyling !== 'NONE' ? existingStyling : 'NONE';
+          const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
+          if (partSelectionOptions.includes(validStyling)) {
+            validStyling = 'NONE';
+          }
+          
+          const initialCustomization = {
+            capSize: savedCapSize,
           length: existingLength,
           density: existingDensity,
           lace: existingLace,
@@ -755,6 +777,7 @@ export default function BuildAWigPage() {
         
         // Trigger price recalculation
         setRefreshTrigger(prev => prev + 1);
+        }
       }
       
       // Clear flag after a short delay to allow state update to complete
@@ -1722,11 +1745,36 @@ export default function BuildAWigPage() {
       return; // Exit early to prevent overwriting editSelected* keys
     }
     
+    // CRITICAL: In customize mode, DO NOT sync customizeSelected* keys back to localStorage
+    // Sub-pages set these values, and we should NOT overwrite them
+    // Only sync selected* keys for sub-pages to read, but don't overwrite customizeSelected* keys
+    if (isCustomizeMode) {
+      // Only sync selected* keys (for sub-pages), NOT customizeSelected* keys (set by sub-pages)
+      const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
+      const validStyling = partSelectionOptions.includes(customization.styling) ? 'NONE' : customization.styling;
+      
+      console.log('[SYNC TO STORAGE] Customize mode - syncing selected* keys (NOT customizeSelected*)', customization);
+      localStorage.setItem('selectedCapSize', customization.capSize);
+      localStorage.setItem('selectedLength', customization.length);
+      localStorage.setItem('selectedDensity', customization.density);
+      localStorage.setItem('selectedColor', customization.color);
+      localStorage.setItem('selectedTexture', customization.texture);
+      localStorage.setItem('selectedLace', customization.lace);
+      localStorage.setItem('selectedHairline', customization.hairline);
+      localStorage.setItem('selectedStyling', validStyling);
+      localStorage.setItem('selectedAddOns', JSON.stringify(customization.addOns));
+      
+      // DO NOT sync customizeSelected* keys here - they are set by sub-pages and route change effect
+      // DO NOT recalculate prices here - prices are set by sub-pages
+      return; // Exit early to prevent overwriting customizeSelected* keys
+    }
+    
     // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
     const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
     const validStyling = partSelectionOptions.includes(customization.styling) ? 'NONE' : customization.styling;
     
-    // Save current customization to localStorage so sub-pages can read it (main mode and customize mode)
+    // Save current customization to localStorage so sub-pages can read it (main mode only)
+    // NOTE: Edit mode and customize mode return early above, so this only runs for main mode
     localStorage.setItem('selectedCapSize', customization.capSize);
     localStorage.setItem('selectedLength', customization.length);
     localStorage.setItem('selectedDensity', customization.density);
@@ -1736,23 +1784,6 @@ export default function BuildAWigPage() {
     localStorage.setItem('selectedHairline', customization.hairline);
     localStorage.setItem('selectedStyling', validStyling);
     localStorage.setItem('selectedAddOns', JSON.stringify(customization.addOns));
-    
-    // Also save with 'customizeSelected' prefix in customize mode
-    if (isCustomizeMode) {
-      localStorage.setItem('customizeSelectedCapSize', customization.capSize);
-      localStorage.setItem('customizeSelectedLength', customization.length);
-      localStorage.setItem('customizeSelectedDensity', customization.density);
-      localStorage.setItem('customizeSelectedColor', customization.color);
-      localStorage.setItem('customizeSelectedTexture', customization.texture);
-      localStorage.setItem('customizeSelectedLace', customization.lace);
-      localStorage.setItem('customizeSelectedHairline', customization.hairline);
-      localStorage.setItem('customizeSelectedStyling', validStyling);
-      localStorage.setItem('customizeSelectedAddOns', JSON.stringify(customization.addOns));
-      
-      // CRITICAL: Do NOT recalculate prices here - preserve prices saved by sub-pages
-      // Only sync selections, not prices. Prices are set by sub-pages when user confirms selection.
-      // If prices don't exist yet, they'll be calculated when loading from sub-pages.
-    }
   }, [customization, location.pathname]);
   
   // CRITICAL: In edit mode, sync customization state FROM localStorage when customStorageChange events fire

@@ -196,10 +196,23 @@ function NoirSelection() {
       // Helper functions to calculate prices from cart item data
       const getLengthPriceFromItem = (item: any) => {
         const length = item.length || '24"';
-        if (length === '30"' || length === '32"' || length === '34"' || length === '36"' || length === '40"') {
-          return 0; // Length surcharge is included in color price for colored items
-        }
-        return 0;
+        // CRITICAL: Include ALL length options with correct prices from length page
+        // Length price is separate from color price surcharge
+        const lengthPrices: { [key: string]: number } = {
+          '16"': -50,
+          '18"': -25,
+          '20"': -10,
+          '22"': -5,
+          '24"': 0,      // Default - included in base price
+          '26"': 50,
+          '28"': 100,
+          '30"': 150,
+          '32"': 200,
+          '34"': 250,
+          '36"': 300,
+          '40"': 400
+        };
+        return lengthPrices[length] || 0;
       };
 
       const getDensityPriceFromItem = (item: any) => {
@@ -219,16 +232,20 @@ function NoirSelection() {
 
       const getLacePriceFromItem = (item: any) => {
         const lace = item.lace || '13X6';
+        // CRITICAL: Include ALL lace options with correct prices from lace page
         const lacePrices: { [key: string]: number } = {
-          '13X6': 0,
-          '13X4': 0,
+          '13X6': 0,      // Default - included in base price
+          '13X4': -20,    // Less than default, discount
           '13X5': 0,
-          '2X6': 0,
-          '4X4': 0,
-          '5X5': 0,
-          '6X6': 0,
-          '7X7': 0,
-          'FULL LACE': 240
+          '2X6': -40,     // Less than default, discount
+          '4X4': -40,     // Less than default, discount
+          '5X5': -20,     // Less than default, discount
+          '6X6': 60,      // Additional cost
+          '7X7': 100,     // Additional cost
+          '9X6': 80,      // Additional cost
+          '360': 160,     // Additional cost for 360 lace
+          'FULL': 240,    // Additional cost for full lace
+          'FULL LACE': 240 // Alias for FULL
         };
         return lacePrices[lace] || 0;
       };

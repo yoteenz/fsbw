@@ -333,11 +333,25 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
 
   // Helper function to get length price based on length
   // @ts-expect-error - Function kept for potential future use
+  // Helper function to get length price based on length
+  // CRITICAL: Include ALL length options with correct prices from length page
   const _getLengthPrice = (length: string) => {
     if (!length) return 0;
-    const lengthNum = parseInt(length.replace('"', ''));
-    if (lengthNum >= 30) return 40;
-    return 0;
+    const lengthPrices: { [key: string]: number } = {
+      '16"': -50,
+      '18"': -25,
+      '20"': -10,
+      '22"': -5,
+      '24"': 0,      // Default - included in base price
+      '26"': 50,
+      '28"': 100,
+      '30"': 150,
+      '32"': 200,
+      '34"': 250,
+      '36"': 300,
+      '40"': 400
+    };
+    return lengthPrices[length] || 0;
   };
 
   // Helper function to get density price based on density
@@ -356,51 +370,21 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   };
 
   // Helper function to get lace price based on lace type
+  // CRITICAL: Include ALL lace options with correct prices from lace page
   const _getLacePrice = (lace: string) => {
     const lacePrices: { [key: string]: number } = {
-      '13X6': 0,    // Default, no additional cost
-      '13X4': -20,  // Less than default, discount
+      '13X6': 0,      // Default - included in base price
+      '13X4': -20,    // Less than default, discount
       '13X5': 0,
-      '13X7': 0,
-      '13X8': 0,
-      '13X9': 0,
-      '13X10': 0,
-      '13X11': 0,
-      '13X12': 0,
-      '13X13': 0,
-      '13X14': 0,
-      '13X15': 0,
-      '13X16': 0,
-      '13X17': 0,
-      '13X18': 0,
-      '13X19': 0,
-      '13X20': 0,
-      '13X21': 0,
-      '13X22': 0,
-      '13X23': 0,
-      '13X24': 0,
-      '13X25': 0,
-      '13X26': 0,
-      '13X27': 0,
-      '13X28': 0,
-      '13X29': 0,
-      '13X30': 0,
-      '13X31': 0,
-      '13X32': 0,
-      '13X33': 0,
-      '13X34': 0,
-      '13X35': 0,
-      '13X36': 0,
-      '13X37': 0,
-      '13X38': 0,
-      '13X39': 0,
-      '13X40': 0,
-      '2X6': -40,   // Less than default, discount
-      '4X4': -40,   // Less than default, discount
-      '5X5': -20,   // Less than default, discount
-      '6X6': 60,    // Additional cost for 6X6 lace
-      '7X7': 100,   // Additional cost for 7X7 lace
-      '9X6': 80     // Additional cost for 9X6 lace
+      '2X6': -40,     // Less than default, discount
+      '4X4': -40,     // Less than default, discount
+      '5X5': -20,     // Less than default, discount
+      '6X6': 60,      // Additional cost
+      '7X7': 100,     // Additional cost
+      '9X6': 80,      // Additional cost
+      '360': 160,     // Additional cost for 360 lace
+      'FULL': 240,    // Additional cost for full lace
+      'FULL LACE': 240 // Alias for FULL
     };
     return lacePrices[lace] || 0;
   };
@@ -1083,10 +1067,12 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               text += displayValue.toUpperCase();
                             } else if (itemData.type === 'lace') {
                               // Lace: show value followed by "LACE" in all caps with price
+                              // Add "-" prefix if price is negative (discount)
                               const laceValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
                               const price = _getLacePrice(laceValue);
                               const priceDisplay = formatPriceDisplay(price);
-                              const displayValue = `${laceValue} LACE${priceDisplay}`;
+                              const prefix = price < 0 ? '-' : '';
+                              const displayValue = `${prefix}${laceValue} LACE${priceDisplay}`;
                               text += displayValue.toUpperCase();
                             } else if (itemData.type === 'texture') {
                               // Texture: show value followed by "TEXTURE" in all caps with price
