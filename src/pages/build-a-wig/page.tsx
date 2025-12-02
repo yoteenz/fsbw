@@ -2595,14 +2595,6 @@ export default function BuildAWigPage() {
         });
       }
       
-      // CRITICAL: Always recalculate capSizePrice based on current cap size selection
-      // Flexible caps (XXS/XS/S, S/M/L) cost $40, regular caps cost $0
-      let capSizePrice = 0;
-      const currentCapSize = currentCustomization.capSize || 'M';
-      if (currentCapSize === 'XXS/XS/S' || currentCapSize === 'S/M/L') {
-        capSizePrice = 40; // Flexible caps cost $40 more
-      }
-      
       // Get prices from localStorage with fallback to calculated prices
       // This ensures we use saved prices when available, but always have correct fallback
       const getPrice = (key: string, calculatedValue: number) => {
@@ -2634,6 +2626,10 @@ export default function BuildAWigPage() {
           return calculatedValue;
         }
       };
+      
+      // CRITICAL: Use getPrice helper for capSizePrice to read from localStorage when available
+      // This ensures the flexible cap price (+$40) persists when navigating away
+      const capSizePrice = getPrice('CapSize', calculatedPrices.capSizePrice);
       
       const colorPrice = getPrice('Color', calculatedPrices.colorPrice);
       const lengthPrice = getPrice('Length', calculatedPrices.lengthPrice);
