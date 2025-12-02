@@ -446,6 +446,23 @@ export default function BuildAWigPage() {
     const isEditMode = location.pathname === '/build-a-wig/edit' && localStorage.getItem('editingCartItem') !== null;
     const isCustomizeMode = location.pathname === '/build-a-wig/noir/customize';
     
+    // CRITICAL: Validate cap size price - if cap size is flexible but price is 0, don't save (preserve existing)
+    const currentCapSize = localStorage.getItem('editSelectedCapSize') || localStorage.getItem('selectedCapSize') || 'M';
+    const isFlexibleCap = currentCapSize === 'XXS/XS/S' || currentCapSize === 'S/M/L';
+    const existingCapSizePrice = localStorage.getItem('editSelectedCapSizePrice') || localStorage.getItem('selectedCapSizePrice');
+    
+    // If flexible cap but price being saved is 0, check if we should preserve existing price
+    if (isFlexibleCap && prices.capSizePrice === 0) {
+      if (existingCapSizePrice && existingCapSizePrice !== '0' && !isNaN(parseFloat(existingCapSizePrice))) {
+        console.log('[savePricesToLocalStorage] Preserving existing capSizePrice', existingCapSizePrice, 'instead of saving 0 for flexible cap');
+        prices.capSizePrice = parseFloat(existingCapSizePrice);
+      } else {
+        // No existing price or it's also 0, use calculated value (40)
+        console.log('[savePricesToLocalStorage] Setting capSizePrice to 40 for flexible cap (was 0)');
+        prices.capSizePrice = 40;
+      }
+    }
+    
     // Always save with 'selected' prefix for sub-pages
     localStorage.setItem('selectedCapSizePrice', prices.capSizePrice.toString());
     localStorage.setItem('selectedColorPrice', prices.colorPrice.toString());
@@ -1282,20 +1299,43 @@ export default function BuildAWigPage() {
           localStorage.setItem('selectedAddOns', JSON.stringify(item.addOns || []));
           
           // Also save with 'editSelected' prefix for CartDropdown
-          localStorage.setItem('editSelectedCapSize', item.capSize || 'M');
+          // CRITICAL: Preserve cap size selection from localStorage if it exists and differs from cart item
+          // This prevents losing flexible cap selections after multiple edits
+          const existingCapSize = localStorage.getItem('editSelectedCapSize') || localStorage.getItem('selectedCapSize');
+          const cartItemCapSize = item.capSize || 'M';
+          const isFlexibleCap = existingCapSize === 'XXS/XS/S' || existingCapSize === 'S/M/L';
+          
+          // If localStorage has a flexible cap selection, preserve it (user may have changed it)
+          // Only use cart item's cap size if localStorage doesn't have a selection
+          const capSizeToUse = (existingCapSize && isFlexibleCap) ? existingCapSize : cartItemCapSize;
+          
+          localStorage.setItem('editSelectedCapSize', capSizeToUse);
+          localStorage.setItem('selectedCapSize', capSizeToUse);
           localStorage.setItem('editSelectedLength', item.length || '24"');
+          localStorage.setItem('selectedLength', item.length || '24"');
           localStorage.setItem('editSelectedDensity', item.density || '200%');
+          localStorage.setItem('selectedDensity', item.density || '200%');
           localStorage.setItem('editSelectedColor', item.color || 'OFF BLACK');
+          localStorage.setItem('selectedColor', item.color || 'OFF BLACK');
           localStorage.setItem('editSelectedTexture', item.texture || 'SILKY');
+          localStorage.setItem('selectedTexture', item.texture || 'SILKY');
           localStorage.setItem('editSelectedLace', item.lace || '13X6');
+          localStorage.setItem('selectedLace', item.lace || '13X6');
           localStorage.setItem('editSelectedHairline', item.hairline || 'NATURAL');
+          localStorage.setItem('selectedHairline', item.hairline || 'NATURAL');
           localStorage.setItem('editSelectedStyling', validStyling);
+          localStorage.setItem('selectedStyling', validStyling);
           localStorage.setItem('editSelectedAddOns', JSON.stringify(item.addOns || []));
+          localStorage.setItem('selectedAddOns', JSON.stringify(item.addOns || []));
           addDebugLog('ROUTE_CHANGE', 'Overwriting editSelected* keys from editingCartItem', editCustomization);
           
-          // CRITICAL: Calculate prices based on the cart item's selections
-          // This ensures prices match the cart item's actual selections (including lace discount for add-ons)
-          const calculatedPrices = calculatePricesFromSelections(editCustomization);
+          // CRITICAL: Calculate prices based on the preserved cap size selection (not cart item's potentially stale cap size)
+          // Use the cap size we just preserved from localStorage, not the cart item's cap size
+          const editCustomizationWithPreservedCapSize = {
+            ...editCustomization,
+            capSize: capSizeToUse // Use preserved cap size, not cart item's cap size
+          };
+          const calculatedPrices = calculatePricesFromSelections(editCustomizationWithPreservedCapSize);
           
           // CRITICAL: Preserve prices from localStorage when coming from sub-pages
           // This ensures negative prices (discounts) are preserved correctly
@@ -1353,7 +1393,31 @@ export default function BuildAWigPage() {
             
             // Preserve cap size price if it exists in localStorage (may have been set from initial load or sub-pages)
             if (existingCapSizePrice && existingCapSizePrice !== '' && !isNaN(parseFloat(existingCapSizePrice))) {
-              pricesToSave.capSizePrice = parseFloat(existingCapSizePrice);
+              const preservedPrice = parseFloat(existingCapSizePrice);
+              pricesToSave.capSizePrice = preservedPrice;
+              
+              // CRITICAL: If price is 40 but cap size selection is not flexible, fix the cap size selection
+              // This prevents losing flexible cap selections after multiple edits
+              if (preservedPrice === 40 && capSizeToUse !== 'XXS/XS/S' && capSizeToUse !== 'S/M/L') {
+                // Price says flexible cap, but selection doesn't match - restore flexible cap selection
+                // Try to determine which flexible cap was selected (check if we have it in localStorage)
+                const storedFlexibleCap = localStorage.getItem('editSelectedCapSize') || localStorage.getItem('selectedCapSize');
+                if (storedFlexibleCap === 'XXS/XS/S' || storedFlexibleCap === 'S/M/L') {
+                  // Restore the flexible cap selection
+                  localStorage.setItem('editSelectedCapSize', storedFlexibleCap);
+                  localStorage.setItem('selectedCapSize', storedFlexibleCap);
+                  console.log('[ROUTE_CHANGE] Restored flexible cap selection:', storedFlexibleCap, 'because price is 40');
+                } else {
+                  // Can't determine which flexible cap, default to S/M/L (most common)
+                  localStorage.setItem('editSelectedCapSize', 'S/M/L');
+                  localStorage.setItem('selectedCapSize', 'S/M/L');
+                  console.log('[ROUTE_CHANGE] Restored flexible cap selection to S/M/L because price is 40');
+                }
+              }
+            } else if (capSizeToUse === 'XXS/XS/S' || capSizeToUse === 'S/M/L') {
+              // Cap size is flexible but price is missing or 0 - set price to 40
+              pricesToSave.capSizePrice = 40;
+              console.log('[ROUTE_CHANGE] Set capSizePrice to 40 for flexible cap:', capSizeToUse);
             }
             
             if (!hasAddOns) {
@@ -2713,6 +2777,35 @@ export default function BuildAWigPage() {
           });
         }
         
+        // CRITICAL: For cap size price, check if localStorage value is incorrect (0 for flexible cap)
+        // If so, use calculated value instead to prevent overwriting correct price
+        if (key === 'CapSize') {
+          const currentCapSize = currentCustomization.capSize || 'M';
+          const isFlexibleCap = currentCapSize === 'XXS/XS/S' || currentCapSize === 'S/M/L';
+          
+          // Use localStorage value if it exists and is valid
+          if (primaryValue !== null && primaryValue !== undefined && primaryValue !== '' && !isNaN(parseFloat(primaryValue))) {
+            const parsedValue = parseFloat(primaryValue);
+            // If flexible cap but price is 0, use calculated value instead (should be 40)
+            if (isFlexibleCap && parsedValue === 0 && calculatedValue === 40) {
+              console.log('[EDIT MODE] CapSize price fix: localStorage has 0 for flexible cap, using calculated 40');
+              return calculatedValue;
+            }
+            return parsedValue;
+          } else if (fallbackValue !== null && fallbackValue !== undefined && fallbackValue !== '' && !isNaN(parseFloat(fallbackValue))) {
+            const parsedValue = parseFloat(fallbackValue);
+            // If flexible cap but price is 0, use calculated value instead (should be 40)
+            if (isFlexibleCap && parsedValue === 0 && calculatedValue === 40) {
+              console.log('[EDIT MODE] CapSize price fix: localStorage has 0 for flexible cap, using calculated 40');
+              return calculatedValue;
+            }
+            return parsedValue;
+          } else {
+            // Fallback to calculated price
+            return calculatedValue;
+          }
+        }
+        
         // Use localStorage value if it exists and is valid (including negative values), otherwise use calculated value
         // CRITICAL: Check that value exists, is not empty, and is a valid number (including negative)
         if (primaryValue !== null && primaryValue !== undefined && primaryValue !== '' && !isNaN(parseFloat(primaryValue))) {
@@ -2816,8 +2909,14 @@ export default function BuildAWigPage() {
           return;
         }
         
+        // CRITICAL: If capSizePrice is 0 but cap size is flexible, use calculated price instead
+        // This prevents overwriting correct price (40) with incorrect value (0) from stale localStorage
+        const currentCapSize = currentCustomization.capSize || 'M';
+        const isFlexibleCap = currentCapSize === 'XXS/XS/S' || currentCapSize === 'S/M/L';
+        const finalCapSizePrice = (capSizePrice === 0 && isFlexibleCap) ? calculatedPrices.capSizePrice : capSizePrice;
+        
         const pricesToSave = {
-          capSizePrice,
+          capSizePrice: finalCapSizePrice,
           colorPrice,
           lengthPrice,
           densityPrice,
@@ -2830,6 +2929,9 @@ export default function BuildAWigPage() {
         
         // DEBUGGING: Log prices being saved
         console.log('[EDIT MODE] Saving prices to localStorage:', pricesToSave);
+        if (isFlexibleCap && capSizePrice === 0) {
+          console.log('[EDIT MODE] Fixed capSizePrice: was 0, using calculated', calculatedPrices.capSizePrice);
+        }
         
         savePricesToLocalStorage(pricesToSave);
       }
