@@ -13,9 +13,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [showDebugPanel, setShowDebugPanel] = useState(false);
-  
-  console.log('CartDropdown render - isOpen:', isOpen, 'cartCount:', cartCount);
   
   // Currency state
   const [selectedCurrency, setSelectedCurrency] = useState<string>('USD');
@@ -528,97 +525,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   };
 
   // Debug function to get all price-related localStorage data
-  const getDebugInfo = () => {
-    const isEditMode = localStorage.getItem('editingCartItem') !== null;
-    const editingCartItem = localStorage.getItem('editingCartItem');
-    const editingCartItemId = localStorage.getItem('editingCartItemId');
-    
-    const prefix = isEditMode ? 'editSelected' : 'selected';
-    
-    const debugInfo = {
-      timestamp: new Date().toISOString(),
-      isEditMode,
-      editingCartItem: editingCartItem ? JSON.parse(editingCartItem) : null,
-      editingCartItemId,
-      currentPrefix: prefix,
-      localStoragePrices: {
-        basePrice: 740, // CRITICAL: Base price is ALWAYS 740 for NOIR - flexible cap adds $40 via capSizePrice
-        capSizePrice: parseInt(localStorage.getItem(`${prefix}CapSizePrice`) || '0'),
-        lengthPrice: parseInt(localStorage.getItem(`${prefix}LengthPrice`) || '0'),
-        densityPrice: parseInt(localStorage.getItem(`${prefix}DensityPrice`) || '0'),
-        colorPrice: parseInt(localStorage.getItem(`${prefix}ColorPrice`) || '0'),
-        texturePrice: parseInt(localStorage.getItem(`${prefix}TexturePrice`) || '0'),
-        lacePrice: parseInt(localStorage.getItem(`${prefix}LacePrice`) || '0'),
-        hairlinePrice: parseInt(localStorage.getItem(`${prefix}HairlinePrice`) || '0'),
-        stylingPrice: parseInt(localStorage.getItem(`${prefix}StylingPrice`) || '0'),
-        addOnsPrice: parseInt(localStorage.getItem(`${prefix}AddOnsPrice`) || '0'),
-      },
-      calculatedPrice: calculateActualPrice(),
-      cartItems: cartItems.map(item => ({
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity,
-        capSize: item.capSize,
-        length: item.length,
-        density: item.density,
-        color: item.color,
-        texture: item.texture,
-        lace: item.lace,
-        hairline: item.hairline,
-        styling: item.styling,
-        addOns: item.addOns,
-      })),
-      localStorageSelections: {
-        selected: {
-          capSize: localStorage.getItem('selectedCapSize'),
-          length: localStorage.getItem('selectedLength'),
-          density: localStorage.getItem('selectedDensity'),
-          color: localStorage.getItem('selectedColor'),
-          texture: localStorage.getItem('selectedTexture'),
-          lace: localStorage.getItem('selectedLace'),
-          hairline: localStorage.getItem('selectedHairline'),
-          styling: localStorage.getItem('selectedStyling'),
-        },
-        editSelected: {
-          capSize: localStorage.getItem('editSelectedCapSize'),
-          length: localStorage.getItem('editSelectedLength'),
-          density: localStorage.getItem('editSelectedDensity'),
-          color: localStorage.getItem('editSelectedColor'),
-          texture: localStorage.getItem('editSelectedTexture'),
-          lace: localStorage.getItem('editSelectedLace'),
-          hairline: localStorage.getItem('editSelectedHairline'),
-          styling: localStorage.getItem('editSelectedStyling'),
-        },
-      },
-      localStoragePriceKeys: {
-        selected: {
-          capSizePrice: localStorage.getItem('selectedCapSizePrice'),
-          lengthPrice: localStorage.getItem('selectedLengthPrice'),
-          densityPrice: localStorage.getItem('selectedDensityPrice'),
-          colorPrice: localStorage.getItem('selectedColorPrice'),
-          texturePrice: localStorage.getItem('selectedTexturePrice'),
-          lacePrice: localStorage.getItem('selectedLacePrice'),
-          hairlinePrice: localStorage.getItem('selectedHairlinePrice'),
-          stylingPrice: localStorage.getItem('selectedStylingPrice'),
-          addOnsPrice: localStorage.getItem('selectedAddOnsPrice'),
-        },
-        editSelected: {
-          capSizePrice: localStorage.getItem('editSelectedCapSizePrice'),
-          lengthPrice: localStorage.getItem('editSelectedLengthPrice'),
-          densityPrice: localStorage.getItem('editSelectedDensityPrice'),
-          colorPrice: localStorage.getItem('editSelectedColorPrice'),
-          texturePrice: localStorage.getItem('editSelectedTexturePrice'),
-          lacePrice: localStorage.getItem('editSelectedLacePrice'),
-          hairlinePrice: localStorage.getItem('editSelectedHairlinePrice'),
-          stylingPrice: localStorage.getItem('editSelectedStylingPrice'),
-          addOnsPrice: localStorage.getItem('editSelectedAddOnsPrice'),
-        },
-      },
-    };
-    
-    return debugInfo;
-  };
 
 
   const handleCheckout = () => {
@@ -695,125 +601,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             >
               CURRENCY &gt; {selectedCurrency}
             </span>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    setShowDebugPanel(!showDebugPanel);
-                  }}
-                  onTouchEnd={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    setShowDebugPanel(!showDebugPanel);
-                  }}
-                  style={{ 
-                    fontSize: '9px',
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    cursor: 'pointer',
-                    padding: '5px 10px',
-                    minHeight: '26px',
-                    minWidth: '60px',
-                    border: '1.3px solid #EB1C24',
-                    background: showDebugPanel ? '#EB1C24' : '#fff',
-                    color: showDebugPanel ? 'white' : '#EB1C24',
-                    WebkitTapHighlightColor: 'rgba(235, 28, 36, 0.2)',
-                    touchAction: 'manipulation',
-                    userSelect: 'none',
-                    WebkitUserSelect: 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 'bold',
-                    textTransform: 'uppercase'
-                  }}
-                >
-                  {showDebugPanel ? 'HIDE DEBUG' : 'DEBUG'}
-                </button>
               </div>
             </div>
         </div>
 
-        {/* Debug Panel */}
-        {showDebugPanel && (
-          <div 
-            className="px-3 py-2 border-b border-gray-200"
-            style={{ 
-              maxHeight: '50vh',
-              overflowY: 'auto',
-              overflowX: 'hidden',
-              fontSize: '7px',
-              fontFamily: 'monospace',
-              background: '#fff9e6',
-              WebkitOverflowScrolling: 'touch',
-              touchAction: 'pan-y'
-            }}
-          >
-            <div 
-              className="font-bold mb-2" 
-              style={{ 
-                fontSize: '10px',
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                color: '#000',
-                textTransform: 'uppercase',
-                position: 'sticky',
-                top: 0,
-                background: '#fff9e6',
-                paddingBottom: '4px',
-                zIndex: 1
-              }}
-            >
-              DEBUG INFO
-            </div>
-            <div 
-              style={{ 
-                fontSize: '7px',
-                whiteSpace: 'pre-wrap',
-                wordBreak: 'break-word',
-                overflowWrap: 'break-word',
-                lineHeight: '1.4',
-                color: '#000'
-              }}
-            >
-              {JSON.stringify(getDebugInfo(), null, 2)}
-            </div>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                const debugInfo = getDebugInfo();
-                console.log('CartDropdown Debug Info:', debugInfo);
-                try {
-                  navigator.clipboard.writeText(JSON.stringify(debugInfo, null, 2));
-                  alert('Debug info copied to clipboard and console!');
-                } catch (err) {
-                  console.error('Failed to copy to clipboard:', err);
-                  alert('Debug info logged to console (clipboard not available)');
-                }
-              }}
-              onTouchStart={(e) => {
-                e.stopPropagation();
-              }}
-              style={{
-                marginTop: '12px',
-                marginBottom: '8px',
-                padding: '6px 12px',
-                fontSize: '9px',
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                background: '#EB1C24',
-                color: 'white',
-                border: '1.3px solid #EB1C24',
-                cursor: 'pointer',
-                minHeight: '28px',
-                minWidth: '120px',
-                WebkitTapHighlightColor: 'transparent',
-                touchAction: 'manipulation',
-                userSelect: 'none',
-                textTransform: 'uppercase'
-              }}
-            >
-              COPY TO CLIPBOARD
-            </button>
-          </div>
-        )}
 
         {/* Cart Items */}
           <div className="px-3 py-2">

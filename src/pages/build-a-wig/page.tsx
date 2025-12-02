@@ -532,37 +532,6 @@ export default function BuildAWigPage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   
-  // Mobile-friendly debug panel state for edit mode
-  const [editModeDebugInfo, setEditModeDebugInfo] = useState<{
-    mode: string;
-    prefix: string;
-    customization: WigCustomization;
-    calculatedPrices: { [key: string]: number };
-    prices: { [key: string]: number };
-    total: number;
-    timestamp: string;
-  } | null>(null);
-  
-  // Comprehensive debug panel state for troubleshooting thumbnail persistence
-  const [showThumbnailDebug, setShowThumbnailDebug] = useState(false);
-  const [debugLog, setDebugLog] = useState<Array<{
-    timestamp: string;
-    source: string;
-    action: string;
-    data: any;
-  }>>([]);
-  
-  // Function to add debug log entry
-  const addDebugLog = (source: string, action: string, data: any) => {
-    if (location.pathname === '/build-a-wig/edit') {
-      setDebugLog(prev => [...prev.slice(-49), {
-        timestamp: new Date().toLocaleTimeString(),
-        source,
-        action,
-        data: JSON.parse(JSON.stringify(data))
-      }]);
-    }
-  };
   
   
   // Ref to track if we're currently loading from localStorage (to prevent sync effect from overwriting)
@@ -851,11 +820,6 @@ export default function BuildAWigPage() {
       // CRITICAL: Match customize mode logic - just check comingFromSubPage flag, no other conditions
       if (comingFromSubPage) {
         console.log('[EDIT MODE ROUTE CHANGE] Coming from sub-page, loading from localStorage');
-        addDebugLog('ROUTE_CHANGE', 'Coming from sub-page', {
-          comingFromSubPage: true,
-          editingCartItemId,
-          currentEditingItemIdRef: currentEditingItemIdRef.current
-        });
         
         // Set flag to prevent sync effect from overwriting (match customize mode - set AFTER checking comingFromSubPage)
         isLoadingFromStorage.current = true;
@@ -873,17 +837,6 @@ export default function BuildAWigPage() {
         const savedAddOnsEdit = localStorage.getItem('editSelectedAddOns');
         
         console.log('[EDIT MODE ROUTE CHANGE] Loaded from localStorage:', {
-          capSize: savedCapSizeEdit,
-          length: savedLengthEdit,
-          density: savedDensityEdit,
-          lace: savedLaceEdit,
-          texture: savedTextureEdit,
-          color: savedColorEdit,
-          hairline: savedHairlineEdit,
-          styling: savedStylingEdit,
-          addOns: savedAddOnsEdit
-        });
-        addDebugLog('ROUTE_CHANGE', 'Loaded editSelected* from localStorage', {
           capSize: savedCapSizeEdit,
           length: savedLengthEdit,
           density: savedDensityEdit,
@@ -1021,7 +974,6 @@ export default function BuildAWigPage() {
         // Update customization state (originalItem stays the same for change detection)
         // This will trigger wigViews to update via useMemo dependency AND trigger calculatePrice via useEffect dependency
         console.log('[EDIT MODE ROUTE CHANGE] Updating customization state:', updatedCustomization);
-        addDebugLog('ROUTE_CHANGE', 'Setting customization state', updatedCustomization);
         setCustomization(updatedCustomization);
         
         // CRITICAL: Delay clearing the flag to give other effects time to check it
@@ -1185,14 +1137,6 @@ export default function BuildAWigPage() {
         // The key insight: if editSelected* keys exist, sub-pages have set them, so preserve them
         if (!isDifferentItem && hasEditSelectedKeys) {
           console.log('[EDIT MODE ROUTE CHANGE] Skipping initial load - editSelected* keys exist, preserving sub-page selections');
-          addDebugLog('ROUTE_CHANGE', 'Skipping initial load - preserving editSelected* keys', {
-            hasEditSelectedKeys: true,
-            editSelectedColor,
-            editSelectedTexture,
-            currentEditingItemIdRef: currentEditingItemIdRef.current,
-            isDifferentItem,
-            comingFromSubPage
-          });
           // Still need to set the ref and originalItem if not set yet
           if (!currentEditingItemIdRef.current && editingCartItemId) {
             currentEditingItemIdRef.current = editingCartItemId;
@@ -1262,7 +1206,6 @@ export default function BuildAWigPage() {
             }
           }
           
-          addDebugLog('ROUTE_CHANGE', 'Preserving customization from editSelected* keys', preservedCustomization);
           setCustomization(preservedCustomization);
           setAddToBagState('added');
           
@@ -1273,11 +1216,6 @@ export default function BuildAWigPage() {
         }
         
         // First load or different item: load from editingCartItem
-        addDebugLog('ROUTE_CHANGE', 'Loading from editingCartItem (initial load or different item)', {
-          isDifferentItem,
-          currentEditingItemIdRef: currentEditingItemIdRef.current,
-          hasEditSelectedKeys: false
-        });
         try {
           const item = JSON.parse(editingCartItem);
           
@@ -1374,8 +1312,6 @@ export default function BuildAWigPage() {
           localStorage.setItem('selectedStyling', validStyling);
           localStorage.setItem('editSelectedAddOns', JSON.stringify(item.addOns || []));
           localStorage.setItem('selectedAddOns', JSON.stringify(item.addOns || []));
-          addDebugLog('ROUTE_CHANGE', 'Overwriting editSelected* keys from editingCartItem', editCustomization);
-          
           // CRITICAL: Calculate prices based on the preserved cap size selection (not cart item's potentially stale cap size)
           // Use the cap size we just preserved from localStorage, not the cart item's cap size
           const editCustomizationWithPreservedCapSize = {
@@ -1951,7 +1887,6 @@ export default function BuildAWigPage() {
   // Track customization state changes for debugging
   useEffect(() => {
     if (location.pathname === '/build-a-wig/edit') {
-      addDebugLog('STATE_CHANGE', 'Customization state updated', customization);
     }
   }, [customization, location.pathname]);
 
@@ -1987,7 +1922,6 @@ export default function BuildAWigPage() {
       const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
       const validStyling = partSelectionOptions.includes(customization.styling) ? 'NONE' : customization.styling;
       
-      addDebugLog('SYNC_TO_STORAGE', 'Syncing selected* keys (NOT editSelected*)', customization);
       localStorage.setItem('selectedCapSize', customization.capSize);
       localStorage.setItem('selectedLength', customization.length);
       localStorage.setItem('selectedDensity', customization.density);
@@ -3008,26 +2942,6 @@ export default function BuildAWigPage() {
           total
         });
         
-        // Update mobile debug panel with current customization (from localStorage)
-        setEditModeDebugInfo({
-          mode: 'EDIT',
-          prefix,
-          customization: currentCustomization,
-          calculatedPrices,
-          prices: {
-            capSizePrice,
-            colorPrice,
-            lengthPrice,
-            densityPrice,
-            lacePrice,
-            texturePrice,
-            hairlinePrice,
-            stylingPrice,
-            addOnsPrice
-          },
-          total,
-          timestamp: new Date().toISOString()
-        });
         
         // CRITICAL: Trigger change detection after price calculation
         // This ensures hasChanges is updated when prices change
@@ -3831,335 +3745,24 @@ export default function BuildAWigPage() {
   };
 
   // Get current localStorage values for debug panel
-  const getDebugLocalStorageValues = () => {
-    return {
-      editSelected: {
-        capSize: localStorage.getItem('editSelectedCapSize'),
-        length: localStorage.getItem('editSelectedLength'),
-        density: localStorage.getItem('editSelectedDensity'),
-        lace: localStorage.getItem('editSelectedLace'),
-        texture: localStorage.getItem('editSelectedTexture'),
-        color: localStorage.getItem('editSelectedColor'),
-        hairline: localStorage.getItem('editSelectedHairline'),
-        styling: localStorage.getItem('editSelectedStyling'),
-        addOns: localStorage.getItem('editSelectedAddOns'),
-      },
-      selected: {
-        capSize: localStorage.getItem('selectedCapSize'),
-        length: localStorage.getItem('selectedLength'),
-        density: localStorage.getItem('selectedDensity'),
-        lace: localStorage.getItem('selectedLace'),
-        texture: localStorage.getItem('selectedTexture'),
-        color: localStorage.getItem('selectedColor'),
-        hairline: localStorage.getItem('selectedHairline'),
-        styling: localStorage.getItem('selectedStyling'),
-        addOns: localStorage.getItem('selectedAddOns'),
-      },
-      editingCartItem: (() => {
-        const item = localStorage.getItem('editingCartItem');
-        if (item) {
-          try {
-            return JSON.parse(item);
-          } catch (e) {
-            return null;
-          }
-        }
-        return null;
-      })(),
-    };
-  };
 
   return (
     <>
       {showLoading && <LoadingScreen />}
-      {/* Comprehensive Thumbnail Debug Panel */}
-      {showThumbnailDebug && location.pathname === '/build-a-wig/edit' && (
-        <div style={{
-          position: 'fixed',
-          top: '10px',
-          left: '10px',
-          right: '10px',
-          background: 'rgba(0, 0, 0, 0.98)',
-          color: 'white',
-          padding: '16px',
-          borderRadius: '8px',
-          fontSize: '10px',
-          maxHeight: '90vh',
-          overflow: 'auto',
-          zIndex: 10000,
-          fontFamily: 'monospace',
-          border: '3px solid #3b82f6',
-          boxShadow: '0 0 20px rgba(59, 130, 246, 0.5)'
-        }}>
-          <div style={{ marginBottom: '12px', fontWeight: 'bold', fontSize: '14px', color: '#3b82f6' }}>
-            🔍 THUMBNAIL DEBUG PANEL
-          </div>
-          
-          {/* Current State */}
-          <div style={{ marginBottom: '12px', borderTop: '1px solid #555', paddingTop: '8px' }}>
-            <div style={{ fontWeight: 'bold', marginBottom: '6px', color: '#60a5fa' }}>Current State:</div>
-            <div style={{ marginLeft: '10px', fontSize: '9px' }}>
-              <div>Cap: {customization.capSize} | Length: {customization.length} | Density: {customization.density}</div>
-              <div>Lace: {customization.lace} | Texture: {customization.texture} | Color: {customization.color}</div>
-              <div>Hairline: {customization.hairline} | Styling: {customization.styling} | AddOns: {JSON.stringify(customization.addOns)}</div>
-            </div>
-          </div>
-          
-          {/* Flags */}
-          <div style={{ marginBottom: '12px', borderTop: '1px solid #555', paddingTop: '8px' }}>
-            <div style={{ fontWeight: 'bold', marginBottom: '6px', color: '#60a5fa' }}>Flags:</div>
-            <div style={{ marginLeft: '10px', fontSize: '9px' }}>
-              <div>comingFromSubPage: {sessionStorage.getItem('comingFromSubPage') || 'false'}</div>
-              <div>isLoadingFromStorage: {isLoadingFromStorage.current ? 'true' : 'false'}</div>
-              <div>currentEditingItemIdRef: {currentEditingItemIdRef.current || 'null'}</div>
-              <div>editingCartItemId: {localStorage.getItem('editingCartItemId') || 'null'}</div>
-            </div>
-          </div>
-          
-          {/* localStorage Values */}
-          <div style={{ marginBottom: '12px', borderTop: '1px solid #555', paddingTop: '8px' }}>
-            <div style={{ fontWeight: 'bold', marginBottom: '6px', color: '#60a5fa' }}>editSelected* Keys:</div>
-            <div style={{ marginLeft: '10px', fontSize: '9px' }}>
-              {Object.entries(getDebugLocalStorageValues().editSelected).map(([key, value]) => (
-                <div key={key} style={{ color: value ? '#4ade80' : '#ef4444' }}>
-                  {key}: {value || 'NULL'}
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          <div style={{ marginBottom: '12px', borderTop: '1px solid #555', paddingTop: '8px' }}>
-            <div style={{ fontWeight: 'bold', marginBottom: '6px', color: '#60a5fa' }}>selected* Keys:</div>
-            <div style={{ marginLeft: '10px', fontSize: '9px' }}>
-              {Object.entries(getDebugLocalStorageValues().selected).map(([key, value]) => (
-                <div key={key} style={{ color: value ? '#4ade80' : '#ef4444' }}>
-                  {key}: {value || 'NULL'}
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* editingCartItem */}
-          {getDebugLocalStorageValues().editingCartItem && (
-            <div style={{ marginBottom: '12px', borderTop: '1px solid #555', paddingTop: '8px' }}>
-              <div style={{ fontWeight: 'bold', marginBottom: '6px', color: '#60a5fa' }}>editingCartItem:</div>
-              <div style={{ marginLeft: '10px', fontSize: '9px' }}>
-                <div>Cap: {getDebugLocalStorageValues().editingCartItem?.capSize} | Length: {getDebugLocalStorageValues().editingCartItem?.length}</div>
-                <div>Texture: {getDebugLocalStorageValues().editingCartItem?.texture} | Color: {getDebugLocalStorageValues().editingCartItem?.color}</div>
-                <div>Styling: {getDebugLocalStorageValues().editingCartItem?.styling}</div>
-              </div>
-            </div>
-          )}
-          
-          {/* Debug Log */}
-          <div style={{ marginBottom: '12px', borderTop: '1px solid #555', paddingTop: '8px' }}>
-            <div style={{ fontWeight: 'bold', marginBottom: '6px', color: '#60a5fa' }}>Debug Log (Last 50):</div>
-            <div style={{ marginLeft: '10px', fontSize: '8px', maxHeight: '200px', overflow: 'auto', background: 'rgba(255,255,255,0.05)', padding: '8px', borderRadius: '4px' }}>
-              {debugLog.slice().reverse().map((log, idx) => (
-                <div key={idx} style={{ marginBottom: '4px', borderLeft: '2px solid #3b82f6', paddingLeft: '6px' }}>
-                  <div style={{ color: '#60a5fa' }}>[{log.timestamp}] {log.source} - {log.action}</div>
-                  <div style={{ color: '#999', marginLeft: '10px', fontSize: '7px' }}>
-                    {JSON.stringify(log.data, null, 2).substring(0, 200)}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-            <button 
-              onClick={() => setShowThumbnailDebug(false)}
-              style={{
-                padding: '8px 16px',
-                background: '#ef4444',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '10px',
-                flex: 1
-              }}
-            >
-              Close
-            </button>
-            <button 
-              onClick={() => setDebugLog([])}
-              style={{
-                padding: '8px 16px',
-                background: '#6b7280',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '10px',
-                flex: 1
-              }}
-            >
-              Clear Log
-            </button>
-          </div>
-        </div>
-      )}
-      
-      {/* Toggle Debug Panel Button */}
-      {location.pathname === '/build-a-wig/edit' && (
-        <button
-          onClick={() => setShowThumbnailDebug(!showThumbnailDebug)}
-          style={{
-            position: 'fixed',
-            bottom: '20px',
-            right: '20px',
-            padding: '12px 20px',
-            background: showThumbnailDebug ? '#ef4444' : '#3b82f6',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '12px',
-            fontWeight: 'bold',
-            zIndex: 9999,
-            boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-          }}
-        >
-          {showThumbnailDebug ? '🔴 Hide Debug' : '🔵 Show Debug'}
-        </button>
-      )}
-      
-      {/* Mobile Debug Panel for Edit Mode */}
-      {editModeDebugInfo && location.pathname === '/build-a-wig/edit' && (
-        <div style={{
-          position: 'fixed',
-          top: '10px',
-          left: '10px',
-          right: '10px',
-          background: 'rgba(0, 0, 0, 0.95)',
-          color: 'white',
-          padding: '12px',
-          borderRadius: '8px',
-          fontSize: '11px',
-          maxHeight: '85vh',
-          overflowY: 'auto',
-          overflowX: 'hidden',
-          zIndex: 9999,
-          fontFamily: 'monospace',
-          border: '2px solid #ef4444',
-          WebkitOverflowScrolling: 'touch',
-          touchAction: 'pan-y',
-          boxSizing: 'border-box'
-        }}>
-          <div style={{ 
-            marginBottom: '10px', 
-            fontWeight: 'bold', 
-            fontSize: '13px', 
-            color: '#ef4444',
-            position: 'sticky',
-            top: 0,
-            background: 'rgba(0, 0, 0, 0.95)',
-            paddingBottom: '8px',
-            zIndex: 1
-          }}>
-            🐛 DEBUG: EDIT MODE PRICE CALCULATION
-          </div>
-          <div style={{ marginBottom: '8px', fontSize: '10px', color: '#999', wordBreak: 'break-word' }}>
-            Prefix: {editModeDebugInfo.prefix} | {new Date(editModeDebugInfo.timestamp).toLocaleTimeString()}
-          </div>
-          
-          {/* FLEX CAP DEBUG SECTION - Highlighted */}
-          <div style={{ 
-            marginBottom: '10px', 
-            borderTop: '2px solid #ef4444', 
-            borderBottom: '2px solid #ef4444',
-            padding: '10px',
-            background: 'rgba(239, 68, 68, 0.1)',
-            borderRadius: '4px'
-          }}>
-            <div style={{ fontWeight: 'bold', marginBottom: '6px', fontSize: '12px', color: '#ef4444' }}>
-              🔴 FLEX CAP DEBUG 🔴
-            </div>
-            <div style={{ marginBottom: '4px', fontSize: '10px', wordBreak: 'break-word' }}>
-              Cap Size: <span style={{ color: (editModeDebugInfo.customization.capSize === 'XXS/XS/S' || editModeDebugInfo.customization.capSize === 'S/M/L') ? '#4ade80' : '#ef4444', fontWeight: 'bold' }}>
-                {editModeDebugInfo.customization.capSize}
-              </span>
-              {(editModeDebugInfo.customization.capSize === 'XXS/XS/S' || editModeDebugInfo.customization.capSize === 'S/M/L') ? ' ✅ FLEXIBLE' : ' ❌ NOT FLEXIBLE'}
-            </div>
-            <div style={{ marginBottom: '4px', fontSize: '10px' }}>
-              Calculated Cap Price: <span style={{ color: editModeDebugInfo.calculatedPrices.capSizePrice === 40 ? '#4ade80' : '#ef4444', fontWeight: 'bold' }}>
-                ${editModeDebugInfo.calculatedPrices.capSizePrice}
-              </span>
-            </div>
-            <div style={{ marginBottom: '4px', fontSize: '10px' }}>
-              Used Cap Price: <span style={{ color: editModeDebugInfo.prices.capSizePrice === 40 ? '#4ade80' : '#ef4444', fontWeight: 'bold' }}>
-                ${editModeDebugInfo.prices.capSizePrice}
-              </span>
-            </div>
-            <div style={{ fontSize: '9px', color: '#999', marginTop: '6px' }}>
-              localStorage: editSelectedCapSizePrice = {localStorage.getItem('editSelectedCapSizePrice') || 'null'} | 
-              selectedCapSizePrice = {localStorage.getItem('selectedCapSizePrice') || 'null'}
-            </div>
-            <div style={{ fontSize: '9px', color: '#999' }}>
-              localStorage: editSelectedCapSize = {localStorage.getItem('editSelectedCapSize') || 'null'} | 
-              selectedCapSize = {localStorage.getItem('selectedCapSize') || 'null'}
-            </div>
-          </div>
-          
-          <div style={{ marginBottom: '10px', borderTop: '1px solid #555', paddingTop: '10px' }}>
-            <div style={{ fontWeight: 'bold', marginBottom: '6px', fontSize: '11px' }}>Customization:</div>
-            <div style={{ marginLeft: '10px', fontSize: '10px', lineHeight: '1.6', wordBreak: 'break-word' }}>
-              Cap: {editModeDebugInfo.customization.capSize}<br/>
-              Length: {editModeDebugInfo.customization.length}<br/>
-              Density: {editModeDebugInfo.customization.density}<br/>
-              Lace: {editModeDebugInfo.customization.lace}<br/>
-              Color: {editModeDebugInfo.customization.color}
-            </div>
-          </div>
-          
-          <div style={{ marginBottom: '10px', borderTop: '1px solid #555', paddingTop: '10px' }}>
-            <div style={{ fontWeight: 'bold', marginBottom: '6px', fontSize: '11px' }}>Calculated Prices:</div>
-            {Object.entries(editModeDebugInfo.calculatedPrices).map(([key, value]) => (
-              <div key={key} style={{ marginLeft: '10px', fontSize: '10px', color: value > 0 ? '#4ade80' : value < 0 ? '#ef4444' : '#999', marginBottom: '2px' }}>
-                {key}: ${value}
-              </div>
-            ))}
-          </div>
-          
-          <div style={{ marginBottom: '10px', borderTop: '1px solid #555', paddingTop: '10px' }}>
-            <div style={{ fontWeight: 'bold', marginBottom: '6px', fontSize: '11px' }}>Prices Used:</div>
-            {Object.entries(editModeDebugInfo.prices).map(([key, value]) => (
-              <div key={key} style={{ marginLeft: '10px', fontSize: '10px', color: value > 0 ? '#4ade80' : value < 0 ? '#ef4444' : '#999', marginBottom: '2px' }}>
-                {key}: ${value}
-              </div>
-            ))}
-          </div>
-          
-          <div style={{ borderTop: '1px solid #555', paddingTop: '10px', fontWeight: 'bold', fontSize: '16px', color: '#4ade80', marginBottom: '10px' }}>
-            Total: ${editModeDebugInfo.total}
-          </div>
-          
-          <button 
-            onClick={() => setEditModeDebugInfo(null)}
-            style={{
-              marginTop: '8px',
-              padding: '10px 16px',
-              background: '#ef4444',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '12px',
-              width: '100%',
-              fontWeight: 'bold',
-              touchAction: 'manipulation',
-              WebkitTapHighlightColor: 'transparent'
-            }}
-          >
-            Close Debug Panel
-          </button>
-        </div>
-      )}
       <div className="min-h-screen" style={{
         position: 'relative'
       }}>
         {/* Fixed Background Layer */}
+      <div
+          className="fixed inset-0 -z-10"
+        style={{
+          backgroundImage: `url('/assets/Marble Floor.jpg')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center calc(50% + 25px)',
+          backgroundRepeat: 'no-repeat',
+          backgroundAttachment: 'fixed'
+        }}
+        ></div>
       <div
           className="fixed inset-0 -z-10"
         style={{
@@ -4238,7 +3841,7 @@ export default function BuildAWigPage() {
           style={{ borderWidth: '1.3px' }}
         >
             {/* WIG PREVIEW */}
-            <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
+            <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(0px)' }}>
               <div className="leaf-stack hero-thumb">
                 <div className="leaf-bg" aria-hidden="true"></div>
                 <div
