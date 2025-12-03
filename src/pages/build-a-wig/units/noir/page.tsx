@@ -3483,8 +3483,8 @@ function NoirSelection() {
                     src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
                     alt="BLANCO"
                     style={{ 
-                        width: is3DView ? 'calc(100% - 20px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 20px)' : 'auto',
+                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
                       marginBottom: '10px',
                       marginLeft: '10px'
                     }}
@@ -3542,14 +3542,14 @@ function NoirSelection() {
                 <div style={{ 
                   padding: '10px 10px 4px 10px',
                   textAlign: 'center',
-                  transform: 'translateX(10px)'
+                  transform: 'translateX(13px)'
                 }}>
                   <img
                     src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/wave-thumb.png"}
                     alt="SOFT WAVE"
                     style={{ 
-                        width: is3DView ? 'calc(100% - 20px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 20px)' : 'auto',
+                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
                       marginBottom: '10px',
                       marginLeft: '10px'
                     }}
@@ -3607,16 +3607,16 @@ function NoirSelection() {
                 <div style={{ 
                   padding: '10px 10px 4px 10px',
                   textAlign: 'center',
-                  transform: 'translateX(0px)'
+                  transform: is3DView ? 'translateX(-9.3px)' : 'translateX(-8.3px)'
                 }}>
                   <img
                     src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
                     alt="NOIR"
                     style={{ 
-                        width: is3DView ? 'calc(100% - 20px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 20px)' : 'auto',
+                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
                       marginBottom: '10px',
-                      marginLeft: '10px'
+                      marginLeft: is3DView ? '10px' : '10px'
                     }}
                   />
                   <p style={{ 
@@ -3672,16 +3672,16 @@ function NoirSelection() {
                 <div style={{ 
                   padding: '10px 10px 4px 10px',
                   textAlign: 'center',
-                  transform: 'translateX(10px)'
+                  transform: is3DView ? 'translateX(1.7px)' : 'translateX(2.7px)'
                 }}>
                   <img
                     src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/curl-thumb.png"}
                     alt="SOFT CURL"
                     style={{ 
-                        width: is3DView ? 'calc(100% - 20px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 20px)' : 'auto',
+                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
                       marginBottom: '10px',
-                      marginLeft: '10px'
+                      marginLeft: is3DView ? '10px' : '10px'
                     }}
                   />
                   <p style={{ 
@@ -3874,8 +3874,8 @@ function NoirSelection() {
                     src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/wave-thumb.png"}
                     alt="SOFT WAVE"
                     style={{ 
-                        width: is3DView ? 'calc(100% - 20px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 20px)' : 'auto',
+                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
                       marginBottom: '10px',
                       marginLeft: '10px'
                     }}
@@ -3939,8 +3939,8 @@ function NoirSelection() {
                     src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/curl-thumb.png"}
                     alt="SOFT CURL"
                     style={{ 
-                        width: is3DView ? 'calc(100% - 20px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 20px)' : 'auto',
+                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
                       marginBottom: '10px',
                       marginLeft: '10px'
                     }}
@@ -4004,8 +4004,8 @@ function NoirSelection() {
                     src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
                     alt="NOIR"
                     style={{ 
-                        width: is3DView ? 'calc(100% - 20px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 20px)' : 'auto',
+                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
                       marginBottom: '10px',
                       marginLeft: '10px'
                     }}
@@ -4069,8 +4069,8 @@ function NoirSelection() {
                     src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
                     alt="BLANCO"
                     style={{ 
-                        width: is3DView ? 'calc(100% - 20px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 20px)' : 'auto',
+                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
                       marginBottom: '10px',
                       marginLeft: '10px'
                     }}
