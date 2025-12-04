@@ -1,9 +1,46 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { MouseEvent } from 'react';
 
 function WavyUnitsPage() {
   const navigate = useNavigate();
+
+  // Cart count state
+  const [cartCount, setCartCount] = useState(() => {
+    try {
+      return parseInt(localStorage.getItem('cartCount') || '0', 10);
+    } catch (e) {
+      return 0;
+    }
+  });
+
+  // Listen for cart count changes
+  useEffect(() => {
+    const handleCartCountUpdate = (event: CustomEvent) => {
+      setCartCount(event.detail);
+    };
+
+    const handleStorageChange = () => {
+      try {
+        const newCartCount = parseInt(localStorage.getItem('cartCount') || '0', 10);
+        setCartCount(newCartCount);
+      } catch (e) {
+        setCartCount(0);
+      }
+    };
+
+    window.addEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
+    window.addEventListener('cartUpdated', handleStorageChange);
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('focus', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
+      window.removeEventListener('cartUpdated', handleStorageChange);
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('focus', handleStorageChange);
+    };
+  }, []);
 
   const [products, setProducts] = useState([
     {
@@ -47,8 +84,10 @@ function WavyUnitsPage() {
   };
 
   const handleCardClick = (product: any) => {
-    if (product.name === 'NOIR') {
-      navigate('/units/noir');
+    if (product.name === 'SOFT WAVE') {
+      navigate('/wavy/soft-wave');
+    } else if (product.name === 'BEACH WAVE') {
+      navigate('/wavy/soft-wave'); // Using same page for now
     }
   };
 
@@ -115,14 +154,35 @@ function WavyUnitsPage() {
 
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
-              <div style={{ position: 'relative', width: '22px', height: '19px' }}>
+              <div style={{ position: 'relative', width: '22px', height: '19px', cursor: 'pointer' }}>
                 <img 
-                  src="/assets/inactive cart-icon.svg"
+                  src={cartCount > 0 ? "/assets/active-bag-icon.svg" : "/assets/inactive cart-icon.svg"}
                   alt="Cart"
                   width={22}
                   height={19}
                   style={{ width: '22px', height: '19px' }}
                 />
+                {cartCount > 0 && (
+                  <div 
+                    style={{
+                      position: 'absolute',
+                      top: '60%',
+                      left: '70%',
+                      transform: 'translate(calc(-50% + 1px), calc(-50% + 3.5px))',
+                      fontSize: '10px',
+                      fontFamily: '"Covered By Your Grace", cursive',
+                      color: 'white',
+                      lineHeight: '1',
+                      width: '12px',
+                      height: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    {cartCount > 99 ? '99+' : cartCount}
+                  </div>
+                )}
               </div>
               <img
                 alt="Menu"
@@ -175,7 +235,7 @@ function WavyUnitsPage() {
                       backgroundRepeat: 'no-repeat',
                       transform: isStaggered ? 'translateY(20px)' : 'translateY(0px)',
                       transition: 'transform 0.3s ease',
-                      cursor: product.name === 'NOIR' ? 'pointer' : 'default'
+                      cursor: (product.name === 'SOFT WAVE' || product.name === 'BEACH WAVE') ? 'pointer' : 'default'
                     }}
                     onClick={() => handleCardClick(product)}
                   >

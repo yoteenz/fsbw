@@ -447,7 +447,7 @@ export default function AddOnsSelectionPage() {
               </span>{' '}
               <span
                 style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', cursor: 'pointer' }}
-                onClick={() => navigate('/units/noir')}
+                onClick={() => navigate('/straight/noir')}
               >
                 NOIR
               </span>
@@ -492,7 +492,7 @@ export default function AddOnsSelectionPage() {
                     style={{
                       color: '#EB1C24',
                     }}
-                    onClick={() => navigate('/units/noir')}
+                    onClick={() => navigate('/straight/noir')}
                   >
                     NOIR
                   </p>

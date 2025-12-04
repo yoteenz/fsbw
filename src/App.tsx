@@ -24,6 +24,9 @@ const AdminPending = lazy(() => import('./pages/admin/pending/page'));
 const AdminRevenue = lazy(() => import('./pages/admin/revenue/page'));
 const AdminReviews = lazy(() => import('./pages/admin/reviews/page'));
 const NoirUnitPage = lazy(() => import('./pages/build-a-wig/units/noir/page'));
+const BlancoUnitPage = lazy(() => import('./pages/straight/blanco/page'));
+const SoftCurlUnitPage = lazy(() => import('./pages/curly/soft-curl/page'));
+const SoftWaveUnitPage = lazy(() => import('./pages/wavy/soft-wave/page'));
 const WishlistPage = lazy(() => import('./pages/wishlist/page'));
 const StraightUnitsPage = lazy(() => import('./pages/units/straight/page'));
 const WavyUnitsPage = lazy(() => import('./pages/units/wavy/page'));
@@ -175,9 +178,24 @@ function App() {
         <Route path="/build-a-wig/cap" element={<CapSizePage />} />
         <Route path="/build-a-wig/styling" element={<StylingPage />} />
         <Route path="/build-a-wig/addons" element={<AddOnsPage />} />
-        <Route path="/units/noir" element={
+        <Route path="/straight/noir" element={
           <Suspense fallback={<LoadingScreen />}>
             <NoirUnitPage />
+          </Suspense>
+        } />
+        <Route path="/straight/blanco" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <BlancoUnitPage />
+          </Suspense>
+        } />
+        <Route path="/curly/soft-curl" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <SoftCurlUnitPage />
+          </Suspense>
+        } />
+        <Route path="/wavy/soft-wave" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <SoftWaveUnitPage />
           </Suspense>
         } />
         <Route path="/units/straight" element={

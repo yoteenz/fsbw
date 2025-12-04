@@ -4,15 +4,40 @@ import { useNavigate } from 'react-router-dom';
 function WishlistSelection() {
   const navigate = useNavigate();
   const [wishlistItems, setWishlistItems] = useState<any[]>([]);
-  const [cartCount, setCartCount] = useState(0);
-
-  useEffect(() => {
+  const [cartCount, setCartCount] = useState(() => {
     try {
-      const count = parseInt(localStorage.getItem('cartCount') || '0', 10);
-      setCartCount(count);
+      return parseInt(localStorage.getItem('cartCount') || '0', 10);
     } catch (e) {
-      setCartCount(0);
+      return 0;
     }
+  });
+
+  // Listen for cart count changes
+  useEffect(() => {
+    const handleCartCountUpdate = (event: CustomEvent) => {
+      setCartCount(event.detail);
+    };
+
+    const handleStorageChange = () => {
+      try {
+        const newCartCount = parseInt(localStorage.getItem('cartCount') || '0', 10);
+        setCartCount(newCartCount);
+      } catch (e) {
+        setCartCount(0);
+      }
+    };
+
+    window.addEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
+    window.addEventListener('cartUpdated', handleStorageChange);
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('focus', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
+      window.removeEventListener('cartUpdated', handleStorageChange);
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('focus', handleStorageChange);
+    };
   }, []);
 
   useEffect(() => {

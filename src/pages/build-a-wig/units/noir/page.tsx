@@ -3474,11 +3474,15 @@ function NoirSelection() {
                     }}
                   >
                 {/* Product 1 - BLANCO */}
-                <div style={{ 
-                  padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
-                  textAlign: 'center',
-                  transform: is3DView ? 'translateX(1px)' : 'translateX(-2.5px)'
-                }}>
+                <div 
+                  onClick={() => navigate('/straight/blanco')}
+                  style={{ 
+                    padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
+                    textAlign: 'center',
+                    transform: is3DView ? 'translateX(1px)' : 'translateX(-2.5px)',
+                    cursor: 'pointer'
+                  }}
+                >
                   <img
                     src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
                     alt="BLANCO"
@@ -3542,11 +3546,15 @@ function NoirSelection() {
                 </div>
                 
                 {/* Product 2 - SOFT WAVE */}
-                <div style={{ 
-                  padding: '10px 10px 4px 10px',
-                  textAlign: 'center',
-                  transform: 'translateX(13px)'
-                }}>
+                <div 
+                  onClick={() => navigate('/wavy/soft-wave')}
+                  style={{ 
+                    padding: '10px 10px 4px 10px',
+                    textAlign: 'center',
+                    transform: 'translateX(13px)',
+                    cursor: 'pointer'
+                  }}
+                >
                   <img
                     src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/wave-thumb.png"}
                     alt="SOFT WAVE"
@@ -3678,11 +3686,15 @@ function NoirSelection() {
                 </div>
                 
                 {/* Product 4 - SOFT CURL */}
-                <div style={{ 
-                  padding: '10px 10px 4px 10px',
-                  textAlign: 'center',
-                  transform: is3DView ? 'translateX(2.9px)' : 'translateX(7.7px)'
-                }}>
+                <div 
+                  onClick={() => navigate('/curly/soft-curl')}
+                  style={{ 
+                    padding: '10px 10px 4px 10px',
+                    textAlign: 'center',
+                    transform: is3DView ? 'translateX(2.9px)' : 'translateX(7.7px)',
+                    cursor: 'pointer'
+                  }}
+                >
                   <img
                     src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/curl-thumb.png"}
                     alt="SOFT CURL"
@@ -3877,11 +3889,15 @@ function NoirSelection() {
                     }}
                   >
                 {/* Product 1 - BEACH WAVE */}
-                <div style={{ 
-                  padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
-                  textAlign: 'center',
-                  transform: is3DView ? 'translateX(1px)' : 'translateX(-2.5px)'
-                }}>
+                <div 
+                  onClick={() => navigate('/wavy/soft-wave')}
+                  style={{ 
+                    padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
+                    textAlign: 'center',
+                    transform: is3DView ? 'translateX(1px)' : 'translateX(-2.5px)',
+                    cursor: 'pointer'
+                  }}
+                >
                   <img
                     src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/wave-thumb.png"}
                     alt="SOFT WAVE"
@@ -3945,11 +3961,15 @@ function NoirSelection() {
                 </div>
                 
                 {/* Product 2 - SOFT CURL */}
-                <div style={{ 
-                  padding: '10px 10px 4px 10px',
-                  textAlign: 'center',
-                  transform: 'translateX(13px)'
-                }}>
+                <div 
+                  onClick={() => navigate('/curly/soft-curl')}
+                  style={{ 
+                    padding: '10px 10px 4px 10px',
+                    textAlign: 'center',
+                    transform: 'translateX(13px)',
+                    cursor: 'pointer'
+                  }}
+                >
                   <img
                     src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/curl-thumb.png"}
                     alt="SOFT CURL"
@@ -4013,11 +4033,15 @@ function NoirSelection() {
                 </div>
                 
                 {/* Product 3 - NOIR */}
-                <div style={{ 
-                  padding: '10px 10px 4px 10px',
-                  textAlign: 'center',
-                  transform: is3DView ? 'translateX(-9.3px)' : 'translateX(-8.3px)'
-                }}>
+                <div 
+                  onClick={() => navigate('/straight/noir')}
+                  style={{ 
+                    padding: '10px 10px 4px 10px',
+                    textAlign: 'center',
+                    transform: is3DView ? 'translateX(-9.3px)' : 'translateX(-8.3px)',
+                    cursor: 'pointer'
+                  }}
+                >
                   <img
                     src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
                     alt="NOIR"
@@ -4081,11 +4105,15 @@ function NoirSelection() {
                 </div>
                 
                 {/* Product 4 - BLANCO */}
-                <div style={{ 
-                  padding: '10px 10px 4px 10px',
-                  textAlign: 'center',
-                  transform: is3DView ? 'translateX(2.9px)' : 'translateX(7.7px)'
-                }}>
+                <div 
+                  onClick={() => navigate('/straight/blanco')}
+                  style={{ 
+                    padding: '10px 10px 4px 10px',
+                    textAlign: 'center',
+                    transform: is3DView ? 'translateX(2.9px)' : 'translateX(7.7px)',
+                    cursor: 'pointer'
+                  }}
+                >
                   <img
                     src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
                     alt="BLANCO"

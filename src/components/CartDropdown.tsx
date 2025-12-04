@@ -633,7 +633,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         style={{ width: '88px', height: '88px' }}
                         onClick={() => {
                           onClose(); // Close the dropdown first
-                          navigate('/units/noir'); // Navigate to NOIR unit page
+                          navigate('/straight/noir'); // Navigate to NOIR unit page
                         }}
                       >
                         <img
