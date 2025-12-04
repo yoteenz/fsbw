@@ -1757,7 +1757,7 @@ function NoirSelection() {
                   localStorage.setItem('selectedCapSize', selectedFlexibleCap);
                   localStorage.setItem('selectedCapSizePrice', '60'); // Flexible cap has $60 additional price
                 }
-                navigate('/build-a-wig');
+                navigate('/units/straight');
               }}
             >
               STRAIGHT &gt;
@@ -2012,7 +2012,15 @@ function NoirSelection() {
                         {item.isExpandable && mobileMenuExpandedItems.includes(item.label) && item.subItems && (
                           <div className="ml-4 mt-2 space-y-2">
                             {item.subItems.map((subItem, subIndex) => (
-                              <div key={subIndex} className="flex items-center">
+                              <div 
+                                key={subIndex} 
+                                className="flex items-center cursor-pointer"
+                                onClick={() => {
+                                  if (subItem === 'STRAIGHT') {
+                                    navigate('/units/straight');
+                                  }
+                                }}
+                              >
                                 <span style={{ 
                                   fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                                   fontSize: '14px',

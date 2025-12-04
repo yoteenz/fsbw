@@ -25,6 +25,7 @@ const AdminRevenue = lazy(() => import('./pages/admin/revenue/page'));
 const AdminReviews = lazy(() => import('./pages/admin/reviews/page'));
 const NoirUnitPage = lazy(() => import('./pages/build-a-wig/units/noir/page'));
 const WishlistPage = lazy(() => import('./pages/wishlist/page'));
+const StraightUnitsPage = lazy(() => import('./pages/units/straight/page'));
 
 // Error Boundary to catch component errors
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null }> {
@@ -175,6 +176,11 @@ function App() {
         <Route path="/units/noir" element={
           <Suspense fallback={<LoadingScreen />}>
             <NoirUnitPage />
+          </Suspense>
+        } />
+        <Route path="/units/straight" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <StraightUnitsPage />
           </Suspense>
         } />
         <Route path="/wishlist" element={
