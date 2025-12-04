@@ -189,7 +189,7 @@ function StraightUnitsPage() {
                     <div 
                       style={{ 
                         position: 'absolute', 
-                        top: '12px',
+                        top: '8px',
                         ...(index % 2 === 0 ? { left: '12px' } : { right: '12px' }),
                         cursor: 'pointer',
                         zIndex: 10,
@@ -203,7 +203,7 @@ function StraightUnitsPage() {
                     >
                       {product.inCart ? (
                         <img
-                          src="/assets/added-cart.svg"
+                          src="/assets/card-added.svg"
                           alt="In cart"
                           width={20}
                           height={23}
@@ -211,7 +211,7 @@ function StraightUnitsPage() {
                         />
                       ) : (
                         <img
-                          src="/assets/add-cart.svg"
+                          src="/assets/card-add.svg"
                           alt="Add to cart"
                           width={20}
                           height={23}
