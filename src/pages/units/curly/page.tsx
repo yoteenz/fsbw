@@ -2,26 +2,26 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { MouseEvent } from 'react';
 
-function StraightUnitsPage() {
+function CurlyUnitsPage() {
   const navigate = useNavigate();
 
   const [products, setProducts] = useState([
     {
-      id: 'noir-straight',
-      name: 'NOIR',
-      price: 740,
-      image: '/assets/NOIR/noir-thumb.png',
+      id: 'soft-curl-curly',
+      name: 'SOFT CURL',
+      price: 780,
+      image: '/assets/NOIR/curl-thumb.png',
       length: '24"',
-      hairOrigin: 'CAMBODIAN',
+      hairOrigin: 'VIETNAMESE',
       inCart: false
     },
     {
-      id: 'blanco-straight',
-      name: 'BLANCO',
-      price: 820,
-      image: '/assets/NOIR/blanco-thumb.png',
+      id: 'ocean-curl-curly',
+      name: 'OCEAN CURL',
+      price: 780,
+      image: '/assets/NOIR/curl-thumb.png',
       length: '24"',
-      hairOrigin: 'RUSSIAN',
+      hairOrigin: 'VIETNAMESE',
       inCart: false
     }
   ]);
@@ -109,7 +109,7 @@ function StraightUnitsPage() {
               <span
                 style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}
               >
-                STRAIGHT
+                CURLY
               </span>
             </p>
 
@@ -299,4 +299,5 @@ function StraightUnitsPage() {
   );
 }
 
-export default StraightUnitsPage;
+export default CurlyUnitsPage;
+

@@ -2,26 +2,26 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { MouseEvent } from 'react';
 
-function StraightUnitsPage() {
+function WavyUnitsPage() {
   const navigate = useNavigate();
 
   const [products, setProducts] = useState([
     {
-      id: 'noir-straight',
-      name: 'NOIR',
-      price: 740,
-      image: '/assets/NOIR/noir-thumb.png',
+      id: 'soft-wave-wavy',
+      name: 'SOFT WAVE',
+      price: 760,
+      image: '/assets/NOIR/wave-thumb.png',
       length: '24"',
-      hairOrigin: 'CAMBODIAN',
+      hairOrigin: 'INDONESIAN',
       inCart: false
     },
     {
-      id: 'blanco-straight',
-      name: 'BLANCO',
-      price: 820,
-      image: '/assets/NOIR/blanco-thumb.png',
+      id: 'beach-wave-wavy',
+      name: 'BEACH WAVE',
+      price: 760,
+      image: '/assets/NOIR/wave-thumb.png',
       length: '24"',
-      hairOrigin: 'RUSSIAN',
+      hairOrigin: 'INDONESIAN',
       inCart: false
     }
   ]);
@@ -109,7 +109,7 @@ function StraightUnitsPage() {
               <span
                 style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}
               >
-                STRAIGHT
+                WAVY
               </span>
             </p>
 
@@ -299,4 +299,5 @@ function StraightUnitsPage() {
   );
 }
 
-export default StraightUnitsPage;
+export default WavyUnitsPage;
+
