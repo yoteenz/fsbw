@@ -13,8 +13,8 @@ function SoftWaveSelection() {
     // Check localStorage for saved 3D view preference, default to false (2D view)
     if (typeof window !== 'undefined') {
       try {
-    const saved3DView = localStorage.getItem('noir-3d-view');
-    return saved3DView === 'true';
+        const saved3DView = localStorage.getItem('noir-3d-view');
+        return saved3DView === 'true';
       } catch (e) {
         return false;
       }
@@ -137,7 +137,7 @@ function SoftWaveSelection() {
       setSelectedMannequinView(2);
     } else if (selectedMannequinView === 1) {
       setSelectedMannequinView(2);
-      } else {
+    } else {
       setSelectedMannequinView(0);
     }
   };
@@ -260,7 +260,7 @@ function SoftWaveSelection() {
         name: 'SOFT WAVE',
         price: totalPrice,
         quantity: quantity,
-        image: '/assets/NOIR/wave-thumb.png',
+        image: '/assets/NOIR/noir-thumb.png',
         capSize: capSize,
         capSizePrice: capSizePrice,
         length: defaultLength,
@@ -277,13 +277,13 @@ function SoftWaveSelection() {
       const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
       const updatedCartItems = [...existingCartItems, cartItem];
       localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
-
+      
       const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
       const newCount = currentCount + quantity;
       localStorage.setItem('cartCount', newCount.toString());
       
-        window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
-        window.dispatchEvent(new CustomEvent('cartUpdated'));
+      window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+      window.dispatchEvent(new CustomEvent('cartUpdated'));
       
       setAddToBagState('added');
     } catch (error) {
@@ -297,61 +297,61 @@ function SoftWaveSelection() {
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
       {/* Marble Floor Background */}
-        <div 
-          className="fixed inset-0 -z-10"
-          style={{
-            backgroundImage: `url('/assets/Marble Floor.jpg')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center calc(50% + 25px)',
-            backgroundRepeat: 'no-repeat',
-            backgroundAttachment: 'fixed'
-          }}
+      <div 
+        className="fixed inset-0 -z-10"
+        style={{
+          backgroundImage: `url('/assets/Marble Floor.jpg')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center calc(50% + 25px)',
+          backgroundRepeat: 'no-repeat',
+          backgroundAttachment: 'fixed'
+        }}
       />
-        
-        {/* Scrollable Content */}
-        <div className="relative z-10">
-          <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible' }}>
+      
+      {/* Scrollable Content */}
+      <div className="relative z-10">
+        <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible' }}>
           {/* HEADER */}
           <div
             className="border-solid border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm relative"
             style={{ border: '1.3px solid black' }}
           >
             <div className="flex gap-5 absolute left-4">
-            <button 
-              onClick={handleBack} 
-              className="cursor-pointer"
-              style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
-            >
-              <img
-                alt="Back"
-                width="21"
-                height="15"
-                src="/assets/back-button.svg"
-              />
-            </button>
-            <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-              <img
-                alt="Search icon"
-                width="16"
-                height="15"
-                src="/assets/search-icon.svg"
-              />
-            </button>
-          </div>
-          <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
-            <span 
+              <button 
+                onClick={handleBack} 
+                className="cursor-pointer"
+                style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
+              >
+                <img
+                  alt="Back"
+                  width="21"
+                  height="15"
+                  src="/assets/back-button.svg"
+                />
+              </button>
+              <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                <img
+                  alt="Search icon"
+                  width="16"
+                  height="15"
+                  src="/assets/search-icon.svg"
+                />
+              </button>
+            </div>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
+              <span 
                 style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
                 onClick={() => navigate('/units/wavy')}
               >
                 WAVY &gt;
-            </span>{' '}
-            <span
-              style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}
-            >
+              </span>{' '}
+              <span
+                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}
+              >
                 SOFT WAVE
-            </span>
-          </p>
-          <div className="gap-5 flex absolute" style={{ right: '17px' }}>
+              </span>
+            </p>
+            <div className="gap-5 flex absolute" style={{ right: '17px' }}>
               <div style={{ position: 'relative', width: '22px', height: '19px' }}>
                 <img 
                   src="/assets/inactive cart-icon.svg"
@@ -360,14 +360,14 @@ function SoftWaveSelection() {
                   height={19}
                   style={{ width: '22px', height: '19px' }}
                 />
-            </div>
-            <img
-              alt="Menu"
-              width="17"
-              height="18"
-              className="cursor-pointer"
-              src="/assets/menu-icon.svg"
-            />
+              </div>
+              <img
+                alt="Menu"
+                width="17"
+                height="18"
+                className="cursor-pointer"
+                src="/assets/menu-icon.svg"
+              />
             </div>
           </div>
 
@@ -375,237 +375,231 @@ function SoftWaveSelection() {
           <div
             className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
             style={{ 
-            borderWidth: '1.3px', 
-            minWidth: '100%', 
-            maxWidth: 'none', 
-            overflow: 'visible',
-            backgroundColor: 'rgba(255, 255, 255, 0.6)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            willChange: 'backdrop-filter'
-          }}
-        >
-          {/* WIG PREVIEW */}
-          <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column', marginBottom: '24px', transform: 'translateY(20px)', overflow: 'visible', minWidth: '100%', maxWidth: 'none' }}>
-            {/* ADD TO WISHLIST & PHOTO COUNT */}
-            <div style={{ position: 'relative', width: '100%', marginBottom: '10px', transform: 'translateY(-31px)' }}>
-              {/* ADD TO WISHLIST - Top Left */}
-              <p 
-                style={{ 
-                  position: 'absolute', 
-                  left: '8px', 
-                  top: '2px', 
-                  color: '#909090', 
-                  fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
-                  fontSize: '10px',
-                  fontWeight: '600',
-                  margin: '0'
-                }}
-              >
-                + ADD TO WISHLIST
-              </p>
-              
-              {/* 2D VIEW/3D VIEW TOGGLE - Top Right */}
-              <div 
-                style={{ 
-                  position: 'absolute', 
-                  right: '8px', 
-                  top: '1px', 
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '2px',
-                  cursor: 'pointer'
-                }}
-                onClick={() => {
-                  const new3DView = !is3DView;
-                  setIs3DView(new3DView);
-                  localStorage.setItem('noir-3d-view', new3DView.toString());
-                }}
-              >
-                <span 
+              borderWidth: '1.3px', 
+              minWidth: '100%', 
+              maxWidth: 'none', 
+              overflow: 'visible',
+              backgroundColor: 'rgba(255, 255, 255, 0.6)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              willChange: 'backdrop-filter'
+            }}
+          >
+            {/* WIG PREVIEW */}
+            <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column', marginBottom: '24px', transform: 'translateY(20px)', overflow: 'visible', minWidth: '100%', maxWidth: 'none' }}>
+              {/* ADD TO WISHLIST & 2D/3D VIEW TOGGLE */}
+              <div style={{ position: 'relative', width: '100%', marginBottom: '10px', transform: 'translateY(-31px)' }}>
+                {/* ADD TO WISHLIST - Top Left */}
+                <p 
                   style={{ 
-                    color: is3DView ? '#000000' : '#EB1C24', 
-                    fontFamily: is3DView ? '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '11px',
-                    fontWeight: is3DView ? '400' : '500',
+                    position: 'absolute', 
+                    left: '8px', 
+                    top: '2px', 
+                    color: '#909090', 
+                    fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
+                    fontSize: '10px',
+                    fontWeight: '600',
                     margin: '0'
                   }}
                 >
-                  2D VIEW
-                </span>
-                <span 
+                  + ADD TO WISHLIST
+                </p>
+                
+                {/* 2D VIEW/3D VIEW TOGGLE - Top Right */}
+                <div 
                   style={{ 
-                    color: '#000000', 
-                    fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '11px',
-                    fontWeight: '400',
-                    margin: '0'
-                  }}
-                >
-                  /
-                </span>
-                <span 
-                  style={{ 
-                    color: is3DView ? '#EB1C24' : '#000000', 
-                    fontFamily: is3DView ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '11px',
-                    fontWeight: is3DView ? '500' : '400',
-                    margin: '0'
-                  }}
-                >
-                  3D VIEW
-                </span>
-              </div>
-            </div>
-            
-            {/* MANNEQUIN LAYOUT - Hero on left, Top + Bottom stacked on right */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: is3DView ? '10px' : '5px', marginBottom: '16px', overflow: 'visible', margin: '0 auto', transform: 'translateY(-19px)' }}>
-              {/* Hero Mannequin - Left Side with leaf-brick background */}
-              <div style={{ position: 'relative', overflow: 'visible', flexShrink: '0' }}>
-                <div
-                  style={{
-                    position: 'relative',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
+                    position: 'absolute', 
+                    right: '8px', 
+                    top: '1px', 
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '200px',
-                    height: '290px',
-                    backgroundImage: `url('/assets/NOIR/${is3DView ? current3DImages.hero : 'leaf-brick.png'}')`,
-                    backgroundRepeat: 'no-repeat',
-                    overflow: 'visible'
+                    gap: '2px',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => {
+                    const new3DView = !is3DView;
+                    setIs3DView(new3DView);
+                    if (typeof window !== 'undefined') {
+                      try {
+                        localStorage.setItem('noir-3d-view', new3DView.toString());
+                      } catch (e) {
+                        console.error('Error saving 3D view:', e);
+                      }
+                    }
                   }}
                 >
-                  <img
-                    src={currentImages.hero}
-                    alt=""
+                  <span 
                     style={{ 
-                      position: 'absolute',
-                      left: '50%',
-                      top: 'calc(50% - 10.601px + 12px)',
-                      transform: 'translateX(-50%) translateY(-50%)',
-                      zIndex: '10',
-                      width: '230px',
-                      height: 'auto',
-                      maxHeight: '610px',
-                      minWidth: '230px',
-                      minHeight: 'auto',
-                      display: is3DView ? 'none' : 'block'
+                      color: is3DView ? '#000000' : '#EB1C24', 
+                      fontFamily: is3DView ? '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontSize: '11px',
+                      fontWeight: is3DView ? '400' : '500',
+                      margin: '0'
                     }}
-                  />
+                  >
+                    2D VIEW
+                  </span>
+                  <span 
+                    style={{ 
+                      color: '#000000', 
+                      fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                      fontSize: '11px',
+                      fontWeight: '400',
+                      margin: '0'
+                    }}
+                  >
+                    /
+                  </span>
+                  <span 
+                    style={{ 
+                      color: is3DView ? '#EB1C24' : '#000000', 
+                      fontFamily: is3DView ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                      fontSize: '11px',
+                      fontWeight: is3DView ? '500' : '400',
+                      margin: '0'
+                    }}
+                  >
+                    3D VIEW
+                  </span>
                 </div>
               </div>
               
-              {/* Top and Bottom Mannequins - Right Side */}
-              <div className="flex flex-col" style={{ height: '290px', justifyContent: 'space-between', gap: '10px' }}>
-                {/* Top Mannequin */}
-                <div className="flex-shrink-0 relative">
+              {/* MANNEQUIN LAYOUT - Hero on left, Top + Bottom stacked on right */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: is3DView ? '10px' : '5px', marginBottom: '16px', overflow: 'visible', margin: '0 auto', transform: 'translateY(-19px)' }}>
+                {/* Hero Mannequin - Left Side */}
+                <div style={{ position: 'relative', overflow: 'visible', flexShrink: '0' }}>
                   <div
-                    className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
                     style={{
-                      width: '100px',
-                      height: '140px',
-                      backgroundImage: `url('/assets/NOIR/${is3DView ? current3DImages.top : 'leaf-brick.png'}')`,
+                      position: 'relative',
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
-                      backgroundRepeat: 'no-repeat'
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '200px',
+                      height: '290px',
+                      backgroundImage: `url('/assets/NOIR/${is3DView ? current3DImages.hero : 'leaf-brick.png'}')`,
+                      backgroundRepeat: 'no-repeat',
+                      overflow: 'visible'
                     }}
-                    onClick={handleTopThumbnailClick}
                   >
                     <img
-                      src={currentImages.top}
+                      src={currentImages.hero}
                       alt=""
-                      className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
                       style={{ 
-                        top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px)',
-                        width: '112px',
-                        height: '137px',
-                        maxWidth: 'none',
-                        maxHeight: 'none',
-                        minWidth: '112px',
-                        minHeight: '137px',
+                        position: 'absolute',
+                        left: '50%',
+                        top: 'calc(50% - 10.601px + 12px)',
+                        transform: 'translateX(-50%) translateY(-50%)',
+                        zIndex: '10',
+                        width: '230px',
+                        height: 'auto',
+                        maxHeight: '610px',
+                        minWidth: '230px',
+                        minHeight: 'auto',
                         display: is3DView ? 'none' : 'block'
                       }}
                     />
                   </div>
                 </div>
                 
-                {/* Bottom Mannequin */}
-                <div className="flex-shrink-0 relative">
-                  <div
-                    className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
-                    style={{
-                      width: '100px',
-                      height: '140px',
-                      backgroundImage: `url('/assets/NOIR/${is3DView ? current3DImages.bottom : 'leaf-brick.png'}')`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      backgroundRepeat: 'no-repeat'
-                    }}
-                    onClick={handleBottomThumbnailClick}
-                  >
-                    <img
-                      src={currentImages.bottom}
-                      alt=""
-                      className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
-                      style={{ 
-                        top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px)',
-                        width: '112px',
-                        height: '137px',
-                        maxWidth: 'none',
-                        maxHeight: 'none',
-                        minWidth: '112px',
-                        minHeight: '137px',
-                        display: is3DView ? 'none' : 'block'
+                {/* Top and Bottom Mannequins - Right Side */}
+                <div className="flex flex-col" style={{ height: '290px', justifyContent: 'space-between', gap: '10px' }}>
+                  {/* Top Mannequin */}
+                  <div className="flex-shrink-0 relative">
+                    <div
+                      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
+                      style={{
+                        width: '100px',
+                        height: '140px',
+                        backgroundImage: `url('/assets/NOIR/${is3DView ? current3DImages.top : 'leaf-brick.png'}')`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat'
                       }}
-                    />
+                      onClick={handleTopThumbnailClick}
+                    >
+                      <img
+                        src={currentImages.top}
+                        alt=""
+                        className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
+                        style={{ 
+                          top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px)',
+                          width: '112px',
+                          height: '137px',
+                          maxWidth: 'none',
+                          maxHeight: 'none',
+                          minWidth: '112px',
+                          minHeight: '137px',
+                          display: is3DView ? 'none' : 'block'
+                        }}
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Bottom Mannequin */}
+                  <div className="flex-shrink-0 relative">
+                    <div
+                      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
+                      style={{
+                        width: '100px',
+                        height: '140px',
+                        backgroundImage: `url('/assets/NOIR/${is3DView ? current3DImages.bottom : 'leaf-brick.png'}')`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat'
+                      }}
+                      onClick={handleBottomThumbnailClick}
+                    >
+                      <img
+                        src={currentImages.bottom}
+                        alt=""
+                        className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
+                        style={{ 
+                          top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px)',
+                          width: '112px',
+                          height: '137px',
+                          maxWidth: 'none',
+                          maxHeight: 'none',
+                          minWidth: '112px',
+                          minHeight: '137px',
+                          display: is3DView ? 'none' : 'block'
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* DISCLAIMER TEXT */}
-            <p
-              className="text-center uppercase mb-2"
-              style={{ 
-                fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
-                fontSize: '11px',
-                fontWeight: '400',
-                transform: 'translateY(-13px)',
-                color: 'black'
-              }}
-            >
-              (2D MODEL IS FOR <span style={{ color: '#909090', fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif' }}>VISUAL & AESTHETIC</span> PURPOSES ONLY)
-            </p>
+              {/* DISCLAIMER TEXT */}
+              <p
+                className="text-center uppercase mb-2"
+                style={{ 
+                  fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                  fontSize: '11px',
+                  fontWeight: '400',
+                  transform: 'translateY(-13px)',
+                  color: 'black'
+                }}
+              >
+                (2D MODEL IS FOR <span style={{ color: '#909090', fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif' }}>VISUAL & AESTHETIC</span> PURPOSES ONLY)
+              </p>
+            </div>
 
             {/* PRODUCT NAME */}
             <p
-              className="text-center text-black mb-2 noir-product-name"
+              className="text-center text-black mb-2"
               style={{ 
-                fontFamily: '"Covered By Your Grace", cursive !important',
-                fontSize: '50px !important',
-                fontWeight: '400 !important',
-                lineHeight: '1.2 !important',
-                margin: '0 !important',
-                padding: '0 !important',
-                display: 'block !important',
-                textAlign: 'center' as const,
-                height: 'auto !important',
-                maxHeight: 'none !important',
-                width: '100% !important',
-                minWidth: 'auto !important',
-                maxWidth: 'none !important',
-                overflow: 'visible !important',
-                whiteSpace: 'nowrap !important',
-                position: 'relative' as const,
-                zIndex: '999 !important',
-                transform: 'translateY(-8px) !important',
-                scale: '1 !important',
-                zoom: '1 !important'
+                fontFamily: '"Covered By Your Grace", cursive',
+                fontSize: '50px',
+                fontWeight: '400',
+                lineHeight: '1.2',
+                margin: '0',
+                padding: '0',
+                transform: 'translateY(-8px)'
               }}
             >
-                SOFT WAVE
+              SOFT WAVE
             </p>
 
             {/* PRODUCT SPECIFICATION */}
@@ -618,9 +612,8 @@ function SoftWaveSelection() {
                 transform: 'translateY(-8px)'
               }}
             >
-                24" RAW INDONESIAN
+              24" RAW INDONESIAN
             </p>
-            </div>
 
             {/* PRICE */}
             <p
@@ -650,7 +643,7 @@ function SoftWaveSelection() {
             {/* STAR RATINGS */}
             <div className="flex justify-center mb-4 gap-1" style={{ transform: 'translateY(-27px)' }}>
               {[...Array(5)].map((_, index) => (
-              <img
+                <img
                   key={index}
                   src="/assets/NOIR/star-symbol.png"
                   alt="Star Rating"
@@ -678,235 +671,235 @@ function SoftWaveSelection() {
               OR 4 PAYMENTS OF <span dangerouslySetInnerHTML={formatPrice(Math.ceil(totalPrice / 4))} /> WITH <span style={{ fontWeight: '600', color: '#EB1C24' }}>KLARNA</span>
             </p>
 
-          {/* CAP SIZE SELECTION HEADER */}
-          <div style={{ transform: 'translateY(-10px)' }}>
-            <p
-              className="text-center text-black uppercase mb-4"
-              style={{ 
-                fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
-                fontSize: '11px',
-                fontWeight: '500',
-                transform: 'translateY(0px)'
-              }}
-            >
-              SELECT CAP SIZE
-            </p>
+            {/* CAP SIZE SELECTION HEADER */}
+            <div style={{ transform: 'translateY(-10px)' }}>
+              <p
+                className="text-center text-black uppercase mb-4"
+                style={{ 
+                  fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
+                  fontSize: '11px',
+                  fontWeight: '500',
+                  transform: 'translateY(0px)'
+                }}
+              >
+                SELECT CAP SIZE
+              </p>
 
-          {/* CAP SIZE MEASUREMENTS */}
-          <div className="flex justify-center gap-4 mb-6" style={{ transform: 'translateY(-7px)' }}>
-            <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>XXS: 19"</span>
-            <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>XS: 20"</span>
-            <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>S: 21"</span>
-            <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>M: 22"</span>
-            <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>L: 23"</span>
-          </div>
+              {/* CAP SIZE MEASUREMENTS */}
+              <div className="flex justify-center gap-4 mb-6" style={{ transform: 'translateY(-7px)' }}>
+                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>XXS: 19"</span>
+                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>XS: 20"</span>
+                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>S: 21"</span>
+                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>M: 22"</span>
+                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>L: 23"</span>
+              </div>
 
-          {/* CUSTOM CAP SECTION */}
-          <div className="mb-6">
-            <p
-              className="text-center text-black mb-4"
-              style={{ 
-                fontFamily: '"Bohemy", cursive',
-                fontSize: '20px',
-                fontWeight: '400',
-                transform: 'translateY(-16px)'
-              }}
-            >
-              custom cap
-            </p>
-            <div className="flex justify-center gap-3" style={{ transform: 'translateY(-24px)' }}>
-              <button 
-                onClick={() => handleCustomCapSelect('XS')}
-                className={`border border-black px-6 py-1 ${selectedCustomCap === 'XS' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
-                style={{ 
-                  borderWidth: '1.3px',
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                  fontWeight: '500',
-                  minWidth: '60px',
-                  fontSize: '11px'
-                }}
-              >
-                XS
-              </button>
-              <button 
-                onClick={() => handleCustomCapSelect('S')}
-                className={`border border-black px-6 py-1 ${selectedCustomCap === 'S' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
-                style={{ 
-                  borderWidth: '1.3px',
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                  fontWeight: '500',
-                  minWidth: '60px',
-                  fontSize: '11px'
-                }}
-              >
-                S
-              </button>
-              <button 
-                onClick={() => handleCustomCapSelect('M')}
-                className={`border border-black px-6 py-1 ${selectedCustomCap === 'M' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
-                style={{ 
-                  borderWidth: '1.3px',
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                  fontWeight: '500',
-                  minWidth: '60px',
-                  fontSize: '11px'
-                }}
-              >
-                M
-              </button>
-              <button 
-                onClick={() => handleCustomCapSelect('L')}
-                className={`border border-black px-6 py-1 ${selectedCustomCap === 'L' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
-                style={{ 
-                  borderWidth: '1.3px',
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                  fontWeight: '500',
-                  minWidth: '60px',
-                  fontSize: '11px'
-                }}
-              >
-                L
-              </button>
-            </div>
-          </div>
+              {/* CUSTOM CAP SECTION */}
+              <div className="mb-6">
+                <p
+                  className="text-center text-black mb-4"
+                  style={{ 
+                    fontFamily: '"Bohemy", cursive',
+                    fontSize: '20px',
+                    fontWeight: '400',
+                    transform: 'translateY(-16px)'
+                  }}
+                >
+                  custom cap
+                </p>
+                <div className="flex justify-center gap-3" style={{ transform: 'translateY(-24px)' }}>
+                  <button 
+                    onClick={() => handleCustomCapSelect('XS')}
+                    className={`border border-black px-6 py-1 ${selectedCustomCap === 'XS' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
+                    style={{ 
+                      borderWidth: '1.3px',
+                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontWeight: '500',
+                      minWidth: '60px',
+                      fontSize: '11px'
+                    }}
+                  >
+                    XS
+                  </button>
+                  <button 
+                    onClick={() => handleCustomCapSelect('S')}
+                    className={`border border-black px-6 py-1 ${selectedCustomCap === 'S' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
+                    style={{ 
+                      borderWidth: '1.3px',
+                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontWeight: '500',
+                      minWidth: '60px',
+                      fontSize: '11px'
+                    }}
+                  >
+                    S
+                  </button>
+                  <button 
+                    onClick={() => handleCustomCapSelect('M')}
+                    className={`border border-black px-6 py-1 ${selectedCustomCap === 'M' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
+                    style={{ 
+                      borderWidth: '1.3px',
+                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontWeight: '500',
+                      minWidth: '60px',
+                      fontSize: '11px'
+                    }}
+                  >
+                    M
+                  </button>
+                  <button 
+                    onClick={() => handleCustomCapSelect('L')}
+                    className={`border border-black px-6 py-1 ${selectedCustomCap === 'L' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
+                    style={{ 
+                      borderWidth: '1.3px',
+                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontWeight: '500',
+                      minWidth: '60px',
+                      fontSize: '11px'
+                    }}
+                  >
+                    L
+                  </button>
+                </div>
+              </div>
 
-          {/* FLEXIBLE CAP SECTION */}
-          <div className="mb-6">
-            <p
-              className="text-center text-black mb-4"
-              style={{ 
-                fontFamily: '"Bohemy", cursive',
-                fontSize: '20px',
-                fontWeight: '400',
-                transform: 'translateY(-24px)'
-              }}
-            >
-              flexible cap
-            </p>
-            <div className="flex justify-center gap-3" style={{ transform: 'translateY(-32px)' }}>
-              <button 
-                onClick={() => handleFlexibleCapSelect('XXS/XS/S')}
-                style={{ 
-                  border: '1.3px solid black',
-                  paddingTop: '4px',
-                  paddingBottom: '4px',
-                  paddingLeft: '8px',
-                  paddingRight: '8px',
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                  fontWeight: '500',
+              {/* FLEXIBLE CAP SECTION */}
+              <div className="mb-6">
+                <p
+                  className="text-center text-black mb-4"
+                  style={{ 
+                    fontFamily: '"Bohemy", cursive',
+                    fontSize: '20px',
+                    fontWeight: '400',
+                    transform: 'translateY(-24px)'
+                  }}
+                >
+                  flexible cap
+                </p>
+                <div className="flex justify-center gap-3" style={{ transform: 'translateY(-32px)' }}>
+                  <button 
+                    onClick={() => handleFlexibleCapSelect('XXS/XS/S')}
+                    style={{ 
+                      border: '1.3px solid black',
+                      paddingTop: '4px',
+                      paddingBottom: '4px',
+                      paddingLeft: '8px',
+                      paddingRight: '8px',
+                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontWeight: '500',
                       width: '108px',
                       minWidth: '108px',
                       maxWidth: '108px',
-                  fontSize: '11px',
-                  boxSizing: 'border-box' as const,
+                      fontSize: '11px',
+                      boxSizing: 'border-box' as const,
                       backgroundColor: 'white',
-                  color: selectedFlexibleCap === 'XXS/XS/S' ? '#EB1C24' : 'black',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  textAlign: 'center'
-                }}
-              >
-                XXS/XS/S
-              </button>
-              <button 
-                onClick={() => handleFlexibleCapSelect('S/M/L')}
-                style={{ 
-                  border: '1.3px solid black',
-                  paddingTop: '4px',
-                  paddingBottom: '4px',
-                  paddingLeft: '8px',
-                  paddingRight: '8px',
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                  fontWeight: '500',
+                      color: selectedFlexibleCap === 'XXS/XS/S' ? '#EB1C24' : 'black',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textAlign: 'center'
+                    }}
+                  >
+                    XXS/XS/S
+                  </button>
+                  <button 
+                    onClick={() => handleFlexibleCapSelect('S/M/L')}
+                    style={{ 
+                      border: '1.3px solid black',
+                      paddingTop: '4px',
+                      paddingBottom: '4px',
+                      paddingLeft: '8px',
+                      paddingRight: '8px',
+                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontWeight: '500',
                       width: '108px',
                       minWidth: '108px',
                       maxWidth: '108px',
-                  fontSize: '11px',
-                  boxSizing: 'border-box' as const,
+                      fontSize: '11px',
+                      boxSizing: 'border-box' as const,
                       backgroundColor: 'white',
-                  color: selectedFlexibleCap === 'S/M/L' ? '#EB1C24' : 'black',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  textAlign: 'center'
-                }}
-              >
-                S/M/L
-              </button>
-            </div>
-          </div>
+                      color: selectedFlexibleCap === 'S/M/L' ? '#EB1C24' : 'black',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textAlign: 'center'
+                    }}
+                  >
+                    S/M/L
+                  </button>
+                </div>
+              </div>
 
-          {/* QUANTITY SELECTOR */}
-          <div className="flex justify-center mb-6" style={{ transform: 'translateY(-30px)' }}>
-            <button 
-              onClick={handleQuantityDecrease}
-              disabled={quantity <= 1}
+              {/* QUANTITY SELECTOR */}
+              <div className="flex justify-center mb-6" style={{ transform: 'translateY(-30px)' }}>
+                <button 
+                  onClick={handleQuantityDecrease}
+                  disabled={quantity <= 1}
                   className={`px-3 py-1 text-red-500 bg-white hover:bg-gray-50 flex items-center justify-center ${quantity <= 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-              style={{ 
+                  style={{ 
                     borderTop: '1.3px solid black',
                     borderLeft: '1.3px solid black', 
                     borderBottom: '1.3px solid black',
                     borderRight: 'none',
-                height: '27px',
-                minHeight: '27px',
-                maxHeight: '27px',
-                boxSizing: 'border-box',
+                    height: '27px',
+                    minHeight: '27px',
+                    maxHeight: '27px',
+                    boxSizing: 'border-box',
                     outline: 'none'
-              }}
-            >
-              <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '11px' }}>-</span>
-            </button>
-            <div 
+                  }}
+                >
+                  <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '11px' }}>-</span>
+                </button>
+                <div 
                   className="px-4 py-1 text-black bg-white flex items-center justify-center relative" 
-              style={{ 
+                  style={{ 
                     borderTop: '1.3px solid black',
                     borderBottom: '1.3px solid black',
                     borderLeft: 'none',
                     borderRight: 'none',
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
-                fontWeight: '500', 
-                fontSize: '12px', 
-                height: '27px',
-                minHeight: '27px',
-                maxHeight: '27px',
+                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                    fontWeight: '500', 
+                    fontSize: '12px', 
+                    height: '27px',
+                    minHeight: '27px',
+                    maxHeight: '27px',
                     boxSizing: 'border-box'
-              }}
-            >
-              <div className="absolute left-0 top-0 bottom-0 w-px bg-black"></div>
-              <div className="absolute right-0 top-0 bottom-0 w-px bg-black"></div>
-              {quantity}
-            </div>
-            <button 
-              onClick={handleQuantityIncrease}
-              disabled={quantity >= 10}
+                  }}
+                >
+                  <div className="absolute left-0 top-0 bottom-0 w-px bg-black"></div>
+                  <div className="absolute right-0 top-0 bottom-0 w-px bg-black"></div>
+                  {quantity}
+                </div>
+                <button 
+                  onClick={handleQuantityIncrease}
+                  disabled={quantity >= 10}
                   className={`px-3 py-1 text-red-500 bg-white hover:bg-gray-50 flex items-center justify-center ${quantity >= 10 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-              style={{ 
+                  style={{ 
                     borderTop: '1.3px solid black',
                     borderRight: '1.3px solid black',
                     borderBottom: '1.3px solid black',
                     borderLeft: 'none',
-                height: '27px',
-                minHeight: '27px',
-                maxHeight: '27px',
-                boxSizing: 'border-box',
+                    height: '27px',
+                    minHeight: '27px',
+                    maxHeight: '27px',
+                    boxSizing: 'border-box',
                     outline: 'none'
-              }}
-            >
-              <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '11px' }}>+</span>
-            </button>
-        </div>
+                  }}
+                >
+                  <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '11px' }}>+</span>
+                </button>
+              </div>
 
               {/* CAP SIZE CHART IMAGE */}
-          <div className="flex justify-center mt-4" style={{ transform: 'translateX(4px) translateY(-27px)' }}>
-            <img
-              src="/assets/NOIR/cap-size-chart.png"
-              alt="Cap Size Chart"
-              style={{ maxWidth: '194px', maxHeight: '154px', cursor: 'pointer' }}
-              onClick={handleChartClick}
-            />
+              <div className="flex justify-center mt-4" style={{ transform: 'translateX(4px) translateY(-27px)' }}>
+                <img
+                  src="/assets/NOIR/cap-size-chart.png"
+                  alt="Cap Size Chart"
+                  style={{ maxWidth: '194px', maxHeight: '154px', cursor: 'pointer' }}
+                  onClick={handleChartClick}
+                />
               </div>
 
               {/* CHART MODAL */}
@@ -971,272 +964,272 @@ function SoftWaveSelection() {
                   </div>
                 </div>
               )}
-          </div>
-
-          {/* PRODUCT SHOTS SECTION */}
-          <div className="mt-8 mb-6" style={{ transform: 'translateY(-34px)' }}>
-            {/* Product Images with Drag/Swipe Scroll */}
-            <div className="relative overflow-hidden" style={{ height: '300px' }}>
-              <div 
-                className="flex transition-transform duration-300 ease-out"
-                style={{ 
-                  width: '300%',
-                  transform: `translateX(${scrollPosition}px)`,
-                  gap: '11px'
-                }}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-              >
-                <img
-                  src="/assets/NOIR/noir front.png"
-                  alt="NOIR Front View"
-                  className="h-full object-cover"
-                  style={{ width: '18%' }}
-                  draggable={false}
-                />
-                <img
-                  src="/assets/NOIR/noir left.png"
-                  alt="NOIR Left View"
-                  className="h-full object-cover"
-                  style={{ width: '18%' }}
-                  draggable={false}
-                />
-                <img
-                  src="/assets/NOIR/noir right.png"
-                  alt="NOIR Right View"
-                  className="h-full object-cover"
-                  style={{ width: '18%' }}
-                  draggable={false}
-                />
-              </div>
-              
-              {/* Product Shots Text Overlay */}
-              <div 
-                className="absolute left-1/2 transform -translate-x-1/2"
-                style={{
-                  bottom: '14px',
-                  fontFamily: '"Bohemy", cursive',
-                  fontSize: '43px',
-                  color: 'white',
-                  textShadow: '1px 1px 0px black, -1px 1px 0px black, 1px -1px 0px black, -1px -1px 0px black, 1px 0px 0px black, -1px 0px 0px black, 0px 1px 0px black, 0px -1px 0px black',
-                  fontWeight: '400',
-                  textAlign: 'center',
-                  zIndex: 10,
-                  width: '200px',
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                product shots
-              </div>
             </div>
 
-            {/* Tabs Section */}
-            <div className="mt-6" style={{ transform: 'translateY(-35px)' }}>
-              {/* Tab Navigation */}
-              <div className="flex justify-center">
-                <button
-                  onClick={() => handleTabClick('DETAILS')}
-                  className={`px-2 py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+            {/* PRODUCT SHOTS SECTION */}
+            <div className="mt-8 mb-6" style={{ transform: 'translateY(-34px)' }}>
+              {/* Product Images with Drag/Swipe Scroll */}
+              <div className="relative overflow-hidden" style={{ height: '300px' }}>
+                <div 
+                  className="flex transition-transform duration-300 ease-out"
+                  style={{ 
+                    width: '300%',
+                    transform: `translateX(${scrollPosition}px)`,
+                    gap: '11px'
+                  }}
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseUp}
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
                 >
-                  DETAILS
-                </button>
-                <button
-                  onClick={() => handleTabClick('SHIPPING')}
-                  className={`px-2 py-1 text-xs font-medium ${activeTab === 'SHIPPING' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                  <img
+                    src="/assets/NOIR/noir front.png"
+                    alt="SOFT WAVE Front View"
+                    className="h-full object-cover"
+                    style={{ width: '18%' }}
+                    draggable={false}
+                  />
+                  <img
+                    src="/assets/NOIR/noir left.png"
+                    alt="SOFT WAVE Left View"
+                    className="h-full object-cover"
+                    style={{ width: '18%' }}
+                    draggable={false}
+                  />
+                  <img
+                    src="/assets/NOIR/noir right.png"
+                    alt="SOFT WAVE Right View"
+                    className="h-full object-cover"
+                    style={{ width: '18%' }}
+                    draggable={false}
+                  />
+                </div>
+                
+                {/* Product Shots Text Overlay */}
+                <div 
+                  className="absolute left-1/2 transform -translate-x-1/2"
+                  style={{
+                    bottom: '14px',
+                    fontFamily: '"Bohemy", cursive',
+                    fontSize: '43px',
+                    color: 'white',
+                    textShadow: '1px 1px 0px black, -1px 1px 0px black, 1px -1px 0px black, -1px -1px 0px black, 1px 0px 0px black, -1px 0px 0px black, 0px 1px 0px black, 0px -1px 0px black',
+                    fontWeight: '400',
+                    textAlign: 'center',
+                    zIndex: 10,
+                    width: '200px',
+                    whiteSpace: 'nowrap'
+                  }}
                 >
-                  SHIPPING
-                </button>
-                <button
-                  onClick={() => handleTabClick('POLICY')}
-                  className={`px-2 py-1 text-xs font-medium ${activeTab === 'POLICY' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
-                >
-                  POLICY
-                </button>
-                <button
-                  onClick={() => handleTabClick('CARE & STORAGE')}
-                  className={`px-2 py-1 text-xs font-medium ${activeTab === 'CARE & STORAGE' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
-                >
-                  CARE & STORAGE
-                </button>
-                <button
-                  onClick={() => handleTabClick('REVIEWS')}
-                  className={`px-2 py-1 text-xs font-medium ${activeTab === 'REVIEWS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
-                >
-                  REVIEWS
-                </button>
+                  product shots
+                </div>
               </div>
 
-              {/* Tab Content */}
-              <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px' }}>
-                {activeTab === 'DETAILS' && (
-                  <>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      13X6 ULTRA THIN HD FILM LACE, RAW CAMBODIAN STRAIGHT 250% DENSITY.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      HANDMADE UNIT MEASURING 24 INCHES IN LENGTH, OFF BLACK HAIR COLOR.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      100% RAW HUMAN HAIR EXTENSIONS USING SINGLE DONOR BUNDLES.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      STRETCHY, BREATHABLE CAP WITH REMOVABLE COMBS + ELASTIC BAND FOR A SNUG FIT.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      SINGLE STRAND KNOTS ARE LIGHTLY BLEACHED FOR A SEAMLESS, READY TO WEAR APPLICATION.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      UNIT COMES CO-WASHED IN ITS NATURAL STATE. CAN BE BLEACHED, DYED OR COLORED.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      USE 3D WIG GENERATOR TO CUSTOMIZE UNIT AS PICTURED, FOR MEMBERS ONLY.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
-                      PROPER VERIFICATION IS REQUIRED TO FINALIZE THE PURCHASE OF ALL UNITS.
-                    </p>
-                  </>
-                )}
-                
-                {activeTab === 'SHIPPING' && (
-                  <>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      STANDARD PROCESSING IS 6 TO 8 WEEKS AND UP TO 10 WEEKS FOR CUSTOMIZED UNITS.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      EXPRESS PROCESSING IS 4 TO 6 WEEKS WITH RUSH SHIPPING FOR AN ADDITIONAL $120 USD.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      CUSTOM COLOR, STYLING & ADD-ONS ARE NOT APPLICABLE FOR RUSH PROCESSING.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
-                      PROCESSING TIME DOES NOT INCLUDE WEEKENDS AND MAJOR US HOLIDAYS.
-                    </p>
-                  </>
-                )}
-                
-                {activeTab === 'POLICY' && (
-                  <>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      WE ARE UNABLE TO ACCEPT RETURNS OR REFUNDS AT THIS TIME. ALL SALES ARE FINAL.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      WHEN APPLICABLE, WE DO OFFER STORE CREDIT TO GO TOWARDS A FUTURE PURCHASE.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
-                      IF THERE IS AN ISSUE WITH YOUR ORDER, REACH OUT TO CONTACT@FRONTALSLAYER.COM
-                    </p>
-                  </>
-                )}
-                
-                {activeTab === 'CARE & STORAGE' && (
-                  <>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      WASH WITH MILD SHAMPOO, AVOID GETTING CONDITIONER DIRECTLY ON THE LACE.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      ROUTINELY BRUSH HAIR WITH A PADDLE BRUSH TO AVOID MATTING & SHEDDING.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
-                      CAREFULLY STORE UNIT INSIDE SATIN LINED DUST BAG TO MINIMIZE DAMAGE, FRIZZ + DEBRIS.
-                    </p>
-                  </>
-                )}
-                
-                {activeTab === 'REVIEWS' && (
-                  <div style={{ textAlign: 'center', padding: '20px 0 0px 0', transform: 'translateY(-12px)' }}>
-                    <div style={{ marginBottom: '40px' }}>
-                      <h3 style={{ 
-                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
-                        fontSize: '11px', 
-                        color: '#EB1C24', 
-                        fontWeight: '500',
-                        marginBottom: '15px',
-                        textTransform: 'uppercase'
-                      }}>
-                        LEAVE A REVIEW!
-                      </h3>
-                      
-                      <div className="flex justify-center mb-4 gap-1">
-                        {[...Array(5)].map((_, index) => (
-                          <img
-                            key={index}
-                            src="/assets/NOIR/filled-star.png"
-                            alt="Star Rating"
-                            className="w-auto h-auto cursor-pointer"
-                            style={{ 
-                              width: '14px', 
-                              height: '14px',
-                              filter: 'drop-shadow(0 0 0 1px black)',
-                              stroke: '1px black'
-                            }}
-                          />
-                        ))}
-                      </div>
-                      
-                      <div style={{ textAlign: 'center' }}>
-                        <p style={{ 
+              {/* Tabs Section */}
+              <div className="mt-6" style={{ transform: 'translateY(-35px)' }}>
+                {/* Tab Navigation */}
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => handleTabClick('DETAILS')}
+                    className={`px-2 py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
+                    style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                  >
+                    DETAILS
+                  </button>
+                  <button
+                    onClick={() => handleTabClick('SHIPPING')}
+                    className={`px-2 py-1 text-xs font-medium ${activeTab === 'SHIPPING' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
+                    style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                  >
+                    SHIPPING
+                  </button>
+                  <button
+                    onClick={() => handleTabClick('POLICY')}
+                    className={`px-2 py-1 text-xs font-medium ${activeTab === 'POLICY' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
+                    style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                  >
+                    POLICY
+                  </button>
+                  <button
+                    onClick={() => handleTabClick('CARE & STORAGE')}
+                    className={`px-2 py-1 text-xs font-medium ${activeTab === 'CARE & STORAGE' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
+                    style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                  >
+                    CARE & STORAGE
+                  </button>
+                  <button
+                    onClick={() => handleTabClick('REVIEWS')}
+                    className={`px-2 py-1 text-xs font-medium ${activeTab === 'REVIEWS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
+                    style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                  >
+                    REVIEWS
+                  </button>
+                </div>
+
+                {/* Tab Content */}
+                <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px' }}>
+                  {activeTab === 'DETAILS' && (
+                    <>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                        13X6 ULTRA THIN HD FILM LACE, RAW INDONESIAN WAVY 250% DENSITY.
+                      </p>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                        HANDMADE UNIT MEASURING 24 INCHES IN LENGTH, OFF BLACK HAIR COLOR.
+                      </p>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                        100% RAW HUMAN HAIR EXTENSIONS USING SINGLE DONOR BUNDLES.
+                      </p>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                        STRETCHY, BREATHABLE CAP WITH REMOVABLE COMBS + ELASTIC BAND FOR A SNUG FIT.
+                      </p>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                        SINGLE STRAND KNOTS ARE LIGHTLY BLEACHED FOR A SEAMLESS, READY TO WEAR APPLICATION.
+                      </p>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                        UNIT COMES CO-WASHED IN ITS NATURAL STATE. CAN BE BLEACHED, DYED OR COLORED.
+                      </p>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                        USE 3D WIG GENERATOR TO CUSTOMIZE UNIT AS PICTURED, FOR MEMBERS ONLY.
+                      </p>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
+                        PROPER VERIFICATION IS REQUIRED TO FINALIZE THE PURCHASE OF ALL UNITS.
+                      </p>
+                    </>
+                  )}
+                  
+                  {activeTab === 'SHIPPING' && (
+                    <>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                        STANDARD PROCESSING IS 6 TO 8 WEEKS AND UP TO 10 WEEKS FOR CUSTOMIZED UNITS.
+                      </p>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                        EXPRESS PROCESSING IS 4 TO 6 WEEKS WITH RUSH SHIPPING FOR AN ADDITIONAL $120 USD.
+                      </p>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                        CUSTOM COLOR, STYLING & ADD-ONS ARE NOT APPLICABLE FOR RUSH PROCESSING.
+                      </p>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
+                        PROCESSING TIME DOES NOT INCLUDE WEEKENDS AND MAJOR US HOLIDAYS.
+                      </p>
+                    </>
+                  )}
+                  
+                  {activeTab === 'POLICY' && (
+                    <>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                        WE ARE UNABLE TO ACCEPT RETURNS OR REFUNDS AT THIS TIME. ALL SALES ARE FINAL.
+                      </p>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                        WHEN APPLICABLE, WE DO OFFER STORE CREDIT TO GO TOWARDS A FUTURE PURCHASE.
+                      </p>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
+                        IF THERE IS AN ISSUE WITH YOUR ORDER, REACH OUT TO CONTACT@FRONTALSLAYER.COM
+                      </p>
+                    </>
+                  )}
+                  
+                  {activeTab === 'CARE & STORAGE' && (
+                    <>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                        WASH WITH MILD SHAMPOO, AVOID GETTING CONDITIONER DIRECTLY ON THE LACE.
+                      </p>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                        ROUTINELY BRUSH HAIR WITH A PADDLE BRUSH TO AVOID MATTING & SHEDDING.
+                      </p>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
+                        CAREFULLY STORE UNIT INSIDE SATIN LINED DUST BAG TO MINIMIZE DAMAGE, FRIZZ + DEBRIS.
+                      </p>
+                    </>
+                  )}
+                  
+                  {activeTab === 'REVIEWS' && (
+                    <div style={{ textAlign: 'center', padding: '20px 0 0px 0', transform: 'translateY(-12px)' }}>
+                      <div style={{ marginBottom: '40px' }}>
+                        <h3 style={{ 
                           fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
                           fontSize: '11px', 
-                          color: 'black',
-                          textTransform: 'uppercase',
-                          margin: '0'
+                          color: '#EB1C24', 
+                          fontWeight: '500',
+                          marginBottom: '15px',
+                          textTransform: 'uppercase'
                         }}>
-                          4.97 OUT OF 5 STARS
-                        </p>
-                        <p style={{ 
-                          fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', 
-                          fontSize: '9px', 
-                          color: '#909090',
-                          textTransform: 'uppercase',
-                          margin: '0',
-                          transform: 'translateY(3px)'
-                        }}>
-                          BASED ON 14 VERIFIED REVIEWS
-                        </p>
+                          LEAVE A REVIEW!
+                        </h3>
+                        
+                        <div className="flex justify-center mb-4 gap-1">
+                          {[...Array(5)].map((_, index) => (
+                            <img
+                              key={index}
+                              src="/assets/NOIR/filled-star.png"
+                              alt="Star Rating"
+                              className="w-auto h-auto cursor-pointer"
+                              style={{ 
+                                width: '14px', 
+                                height: '14px',
+                                filter: 'drop-shadow(0 0 0 1px black)',
+                                stroke: '1px black'
+                              }}
+                            />
+                          ))}
+                        </div>
+                        
+                        <div style={{ textAlign: 'center' }}>
+                          <p style={{ 
+                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                            fontSize: '11px', 
+                            color: 'black',
+                            textTransform: 'uppercase',
+                            margin: '0'
+                          }}>
+                            4.97 OUT OF 5 STARS
+                          </p>
+                          <p style={{ 
+                            fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', 
+                            fontSize: '9px', 
+                            color: '#909090',
+                            textTransform: 'uppercase',
+                            margin: '0',
+                            transform: 'translateY(3px)'
+                          }}>
+                            BASED ON 14 VERIFIED REVIEWS
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
-          </div>
           </div>
 
           {/* ADD TO BAG BUTTON */}
           <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
             <button
-            onClick={handleAddToBag}
-            disabled={addToBagState === 'adding'}
-            className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
-              addToBagState === 'adding' ? 'bg-white cursor-not-allowed' : 
-              addToBagState === 'added' ? 'bg-white cursor-pointer' : 'bg-white cursor-pointer hover:bg-gray-50'
-            }`}
-            style={{ 
-              borderWidth: '1.3px', 
-              color: '#EB1C24',
-              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-              backgroundColor: '#FFFFFF'
-            }}
-          >
-            {addToBagState === 'idle' && 'ADD TO BAG'}
-            {addToBagState === 'adding' && 'ADDING...'}
-            {addToBagState === 'added' && (
-              <span className="flex items-center justify-center gap-1">
-                <img src="/assets/check.svg" alt="Check" width="9" height="9" />
-                <span style={{ color: '#909090' }}>IN THE BAG</span>
-              </span>
-            )}
-          </button>
+              onClick={handleAddToBag}
+              disabled={addToBagState === 'adding'}
+              className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
+                addToBagState === 'adding' ? 'bg-white cursor-not-allowed' : 
+                addToBagState === 'added' ? 'bg-white cursor-pointer' : 'bg-white cursor-pointer hover:bg-gray-50'
+              }`}
+              style={{ 
+                borderWidth: '1.3px', 
+                color: '#EB1C24',
+                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                backgroundColor: '#FFFFFF'
+              }}
+            >
+              {addToBagState === 'idle' && 'ADD TO BAG'}
+              {addToBagState === 'adding' && 'ADDING...'}
+              {addToBagState === 'added' && (
+                <span className="flex items-center justify-center gap-1">
+                  <img src="/assets/check.svg" alt="Check" width="9" height="9" />
+                  <span style={{ color: '#909090' }}>IN THE BAG</span>
+                </span>
+              )}
+            </button>
           </div>
 
           {/* CUSTOMIZE IN BUILD-A-WIG BUTTON */}
@@ -1245,10 +1238,15 @@ function SoftWaveSelection() {
               onClick={() => {
                 const capSizeToSave = selectedCustomCap || selectedFlexibleCap;
                 if (capSizeToSave) {
-                  try {
-                    localStorage.setItem('blanco-cap-size', capSizeToSave);
-                  } catch (e) {
-                    console.error('Error saving cap size:', e);
+                  if (typeof window !== 'undefined') {
+                    try {
+                      localStorage.setItem('selectedCapSize', capSizeToSave);
+                      localStorage.setItem('customizeSelectedCapSize', capSizeToSave);
+                      localStorage.setItem('selectedCapSizePrice', '0');
+                      localStorage.setItem('customizeSelectedCapSizePrice', '0');
+                    } catch (e) {
+                      console.error('Error saving cap size:', e);
+                    }
                   }
                 }
                 navigate('/build-a-wig/soft-wave/customize');
@@ -1267,818 +1265,802 @@ function SoftWaveSelection() {
           {/* SIMILAR PRODUCTS SECTION */}
           <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
             <div style={{ 
-            border: '1.3px solid black', 
-            backgroundColor: 'rgba(255, 255, 255, 0.6)', 
-            backdropFilter: 'blur(10px)',
-            padding: '0px',
-            maxWidth: '100%',
-            margin: '0 auto'
-          }}>
-            <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-              <div style={{ 
-                width: '1px', 
-                height: '15px', 
-                backgroundColor: 'black',
-                margin: '0 auto 8px auto'
-              }}></div>
-              <h3 style={{ 
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                fontSize: '12px',
-                color: '#EB1C24',
-                textTransform: 'uppercase',
-                margin: '0',
-                fontWeight: '500'
-              }}>
-                SIMILAR PRODUCTS
-              </h3>
-            </div>
-            
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-              <button 
-                onClick={handleSimilarProductsLeftArrow}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  cursor: 'pointer',
-                  padding: '5px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                  minHeight: '50px',
-                  transform: `translateX(10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                }}>
-                <img
-                  src="/assets/NOIR/left-facing-arrow.svg"
-                  alt="Left Arrow"
-                    style={{ width: '14px', height: '14px' }}
-                />
-              </button>
-              
-              {/* Product Thumbnails Container with Static Vertical Line */}
-              <div style={{ flex: '1', position: 'relative' }}>
-                {/* Single Center Line with Masking */}
-                <div style={{
-                  position: 'absolute',
-                  left: '50%',
-                  top: '0',
-                  bottom: '0',
-                  width: '1px',
-                  backgroundColor: 'black',
-                  zIndex: 20,
-                  transform: 'translateX(-50%)'
-                }}></div>
-                
-                {/* Masking Overlay for Tunnel Effect */}
-                <div style={{
-                  position: 'absolute',
-                  left: '50%',
-                  top: '0',
-                  bottom: '0',
-                  width: '10px',
-                  backgroundColor: 'transparent',
-                  zIndex: 15,
-                  transform: 'translateX(-50%)',
-                  pointerEvents: 'none'
-                }}></div>
-                
-                {/* Scrolling Product Thumbnails Container */}
+              border: '1.3px solid black', 
+              backgroundColor: 'rgba(255, 255, 255, 0.6)', 
+              backdropFilter: 'blur(10px)',
+              padding: '0px',
+              maxWidth: '100%',
+              margin: '0 auto'
+            }}>
+              <div style={{ textAlign: 'center', marginBottom: '15px' }}>
                 <div style={{ 
-                  overflowX: 'hidden',
-                  width: '100%',
-                  position: 'relative',
-                  maxWidth: '100%'
+                  width: '1px', 
+                  height: '15px', 
+                  backgroundColor: 'black',
+                  margin: '0 auto 8px auto'
+                }}></div>
+                <h3 style={{ 
+                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                  fontSize: '12px',
+                  color: '#EB1C24',
+                  textTransform: 'uppercase',
+                  margin: '0',
+                  fontWeight: '500'
                 }}>
-                  <div 
-                    style={{ 
-                      display: 'flex', 
-                      gap: '0',
-                      transform: `translateX(${similarProductsScroll}px) translateY(-15px)`,
-                      transition: 'none',
-                      width: 'calc(200% - 20px)'
-                    }}
-                  >
-                {/* Product 1 - BLANCO */}
-                <div 
-                  onClick={() => navigate('/straight/blanco')}
-                  style={{ 
-                  padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
-                  textAlign: 'center',
-                    transform: is3DView ? 'translateX(1px)' : 'translateX(-2.5px)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <img
-                    src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
-                    alt="BLANCO"
-                    style={{ 
-                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                      marginBottom: '10px',
-                      marginLeft: '10px'
-                    }}
-                  />
-                  <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
-                    fontSize: '18px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '-10px 0 -3px 0',
-                    fontWeight: '500',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
-                  }}>
-                    BLANCO
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '10px',
-                    color: '#EB1C24',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
-                  }}>
-                    24" RAW RUSSIAN
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '12px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
-                  }}>
-                    $820 USD
-                  </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
-                    {[...Array(5)].map((_, index) => (
-                      <img
-                        key={index}
-                        src="/assets/NOIR/star-symbol.png"
-                        alt="Star Rating"
-                        style={{ 
-                          width: '10px', 
-                          height: '10px',
-                          filter: 'drop-shadow(0 0 0 1px black)',
-                          stroke: '1px black'
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Product 2 - SOFT WAVE */}
-                <div 
-                  onClick={() => navigate('/wavy/soft-wave')}
-                  style={{ 
-                  padding: '10px 10px 4px 10px',
-                  textAlign: 'center',
-                    transform: 'translateX(13px)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <img
-                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/wave-thumb.png"}
-                    alt="SOFT WAVE"
-                    style={{ 
-                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                      marginBottom: '10px',
-                      marginLeft: '10px'
-                    }}
-                  />
-                  <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
-                    fontSize: '18px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '-10px 0 -3px 0',
-                    fontWeight: '500',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
-                  }}>
-                    SOFT WAVE
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '10px',
-                    color: '#EB1C24',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
-                  }}>
-                    24" RAW INDONESIAN
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '12px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
-                  }}>
-                    $760 USD
-                  </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
-                    {[...Array(5)].map((_, index) => (
-                      <img
-                        key={index}
-                        src="/assets/NOIR/star-symbol.png"
-                        alt="Star Rating"
-                        style={{ 
-                          width: '10px', 
-                          height: '10px',
-                          filter: 'drop-shadow(0 0 0 1px black)',
-                          stroke: '1px black'
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Product 3 - NOIR */}
-                <div 
-                  onClick={() => navigate('/straight/noir')}
-                  style={{ 
-                  padding: '10px 10px 4px 10px',
-                  textAlign: 'center',
-                    transform: is3DView ? 'translateX(-9.3px)' : 'translateX(-8.3px)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <img
-                    src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
-                    alt="NOIR"
-                    style={{ 
-                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                      marginBottom: '10px',
-                      marginLeft: '10px'
-                    }}
-                  />
-                  <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
-                    fontSize: '18px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '-10px 0 -3px 0',
-                    fontWeight: '500',
-                    transform: !is3DView ? 'translateX(10.5px)' : undefined
-                  }}>
-                    NOIR
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '10px',
-                    color: '#EB1C24',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10.5px)' : undefined
-                  }}>
-                    24" RAW CAMBODIAN
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '12px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10.5px)' : undefined
-                  }}>
-                    $740 USD
-                  </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10.5px)' : undefined }}>
-                    {[...Array(5)].map((_, index) => (
-                      <img
-                        key={index}
-                        src="/assets/NOIR/star-symbol.png"
-                        alt="Star Rating"
-                        style={{ 
-                          width: '10px', 
-                          height: '10px',
-                          filter: 'drop-shadow(0 0 0 1px black)',
-                          stroke: '1px black'
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Product 4 - SOFT CURL */}
-                <div 
-                  onClick={() => navigate('/curly/soft-curl')}
-                  style={{ 
-                  padding: '10px 10px 4px 10px',
-                  textAlign: 'center',
-                    transform: is3DView ? 'translateX(2.9px)' : 'translateX(7.7px)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <img
-                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/curl-thumb.png"}
-                    alt="SOFT CURL"
-                    style={{ 
-                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                      marginBottom: '10px',
-                      marginLeft: '10px'
-                    }}
-                  />
-                  <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
-                    fontSize: '18px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '-10px 0 -3px 0',
-                    fontWeight: '500',
-                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
-                  }}>
-                    SOFT CURL
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '10px',
-                    color: '#EB1C24',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84',
-                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
-                  }}>
-                    24" RAW VIETNAMESE
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '12px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84',
-                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
-                  }}>
-                    $780 USD
-                  </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)' }}>
-                    {[...Array(5)].map((_, index) => (
-                      <img
-                        key={index}
-                        src="/assets/NOIR/star-symbol.png"
-                        alt="Star Rating"
-                        style={{ 
-                          width: '10px', 
-                          height: '10px',
-                          filter: 'drop-shadow(0 0 0 1px black)',
-                          stroke: '1px black'
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-                  </div>
-                </div>
+                  SIMILAR PRODUCTS
+                </h3>
               </div>
               
-              <button 
-                onClick={handleSimilarProductsRightArrow}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  cursor: 'pointer',
-                  padding: '5px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                  minHeight: '50px',
-                  transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                }}>
-                <img
-                  src="/assets/NOIR/right-facing-arrow.svg"
-                  alt="Right Arrow"
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                <button 
+                  onClick={handleSimilarProductsLeftArrow}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    padding: '5px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                    minHeight: '50px',
+                    transform: `translateX(10px) translateY(${is3DView ? '-26px' : '-10px'})`
+                  }}>
+                  <img
+                    src="/assets/NOIR/left-facing-arrow.svg"
+                    alt="Left Arrow"
                     style={{ width: '14px', height: '14px' }}
-                />
-              </button>
+                  />
+                </button>
+                
+                <div style={{ flex: '1', position: 'relative' }}>
+                  <div style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '0',
+                    bottom: '0',
+                    width: '1px',
+                    backgroundColor: 'black',
+                    zIndex: 20,
+                    transform: 'translateX(-50%)'
+                  }}></div>
+                  
+                  <div style={{ 
+                    overflowX: 'hidden',
+                    width: '100%',
+                    position: 'relative',
+                    maxWidth: '100%'
+                  }}>
+                    <div 
+                      style={{ 
+                        display: 'flex', 
+                        gap: '0',
+                        transform: `translateX(${similarProductsScroll}px) translateY(-15px)`,
+                        transition: 'none',
+                        width: 'calc(200% - 20px)'
+                      }}
+                    >
+                      {/* Product 1 - BLANCO */}
+                      <div 
+                        onClick={() => navigate('/straight/blanco')}
+                        style={{ 
+                          padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
+                          textAlign: 'center',
+                          transform: is3DView ? 'translateX(1px)' : 'translateX(-2.5px)',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <img
+                          src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
+                          alt="BLANCO"
+                          style={{ 
+                            width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                            height: is3DView ? 'calc(auto - 24px)' : 'auto',
+                            marginBottom: '10px',
+                            marginLeft: '10px'
+                          }}
+                        />
+                        <p style={{ 
+                          fontFamily: '"Covered By Your Grace", cursive',
+                          fontSize: '18px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '-10px 0 -3px 0',
+                          fontWeight: '500',
+                          transform: !is3DView ? 'translateX(10px)' : undefined
+                        }}>
+                          BLANCO
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '10px',
+                          color: '#EB1C24',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: !is3DView ? 'translateX(10px)' : undefined
+                        }}>
+                          24" RAW RUSSIAN
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '12px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: !is3DView ? 'translateX(10px)' : undefined
+                        }}>
+                          $820 USD
+                        </p>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
+                          {[...Array(5)].map((_, index) => (
+                            <img
+                              key={index}
+                              src="/assets/NOIR/star-symbol.png"
+                              alt="Star Rating"
+                              style={{ 
+                                width: '10px', 
+                                height: '10px',
+                                filter: 'drop-shadow(0 0 0 1px black)',
+                                stroke: '1px black'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Product 2 - SOFT WAVE */}
+                      <div 
+                        onClick={() => navigate('/wavy/soft-wave')}
+                        style={{ 
+                          padding: '10px 10px 4px 10px',
+                          textAlign: 'center',
+                          transform: 'translateX(13px)',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <img
+                          src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
+                          alt="SOFT WAVE"
+                          style={{ 
+                            width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                            height: is3DView ? 'calc(auto - 24px)' : 'auto',
+                            marginBottom: '10px',
+                            marginLeft: '10px'
+                          }}
+                        />
+                        <p style={{ 
+                          fontFamily: '"Covered By Your Grace", cursive',
+                          fontSize: '18px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '-10px 0 -3px 0',
+                          fontWeight: '500',
+                          transform: !is3DView ? 'translateX(10px)' : undefined
+                        }}>
+                          SOFT WAVE
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '10px',
+                          color: '#EB1C24',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: !is3DView ? 'translateX(10px)' : undefined
+                        }}>
+                          24" RAW INDONESIAN
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '12px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: !is3DView ? 'translateX(10px)' : undefined
+                        }}>
+                          $760 USD
+                        </p>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
+                          {[...Array(5)].map((_, index) => (
+                            <img
+                              key={index}
+                              src="/assets/NOIR/star-symbol.png"
+                              alt="Star Rating"
+                              style={{ 
+                                width: '10px', 
+                                height: '10px',
+                                filter: 'drop-shadow(0 0 0 1px black)',
+                                stroke: '1px black'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Product 3 - NOIR */}
+                      <div 
+                        onClick={() => navigate('/straight/noir')}
+                        style={{ 
+                          padding: '10px 10px 4px 10px',
+                          textAlign: 'center',
+                          transform: is3DView ? 'translateX(-9.3px)' : 'translateX(-8.3px)',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <img
+                          src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
+                          alt="NOIR"
+                          style={{ 
+                            width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                            height: is3DView ? 'calc(auto - 24px)' : 'auto',
+                            marginBottom: '10px',
+                            marginLeft: is3DView ? '10px' : '10px'
+                          }}
+                        />
+                        <p style={{ 
+                          fontFamily: '"Covered By Your Grace", cursive',
+                          fontSize: '18px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '-10px 0 -3px 0',
+                          fontWeight: '500',
+                          transform: !is3DView ? 'translateX(10.5px)' : undefined
+                        }}>
+                          NOIR
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '10px',
+                          color: '#EB1C24',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: !is3DView ? 'translateX(10.5px)' : undefined
+                        }}>
+                          24" RAW CAMBODIAN
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '12px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: !is3DView ? 'translateX(10.5px)' : undefined
+                        }}>
+                          $740 USD
+                        </p>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10.5px)' : undefined }}>
+                          {[...Array(5)].map((_, index) => (
+                            <img
+                              key={index}
+                              src="/assets/NOIR/star-symbol.png"
+                              alt="Star Rating"
+                              style={{ 
+                                width: '10px', 
+                                height: '10px',
+                                filter: 'drop-shadow(0 0 0 1px black)',
+                                stroke: '1px black'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Product 4 - SOFT CURL */}
+                      <div 
+                        onClick={() => navigate('/curly/soft-curl')}
+                        style={{ 
+                          padding: '10px 10px 4px 10px',
+                          textAlign: 'center',
+                          transform: is3DView ? 'translateX(2.9px)' : 'translateX(7.7px)',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <img
+                          src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/curl-thumb.png"}
+                          alt="SOFT CURL"
+                          style={{ 
+                            width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                            height: is3DView ? 'calc(auto - 24px)' : 'auto',
+                            marginBottom: '10px',
+                            marginLeft: is3DView ? '10px' : '10px'
+                          }}
+                        />
+                        <p style={{ 
+                          fontFamily: '"Covered By Your Grace", cursive',
+                          fontSize: '18px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '-10px 0 -3px 0',
+                          fontWeight: '500',
+                          transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
+                        }}>
+                          SOFT CURL
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '10px',
+                          color: '#EB1C24',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
+                        }}>
+                          24" RAW VIETNAMESE
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '12px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
+                        }}>
+                          $780 USD
+                        </p>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)' }}>
+                          {[...Array(5)].map((_, index) => (
+                            <img
+                              key={index}
+                              src="/assets/NOIR/star-symbol.png"
+                              alt="Star Rating"
+                              style={{ 
+                                width: '10px', 
+                                height: '10px',
+                                filter: 'drop-shadow(0 0 0 1px black)',
+                                stroke: '1px black'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <button 
+                  onClick={handleSimilarProductsRightArrow}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    padding: '5px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                    minHeight: '50px',
+                    transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
+                  }}>
+                  <img
+                    src="/assets/NOIR/right-facing-arrow.svg"
+                    alt="Right Arrow"
+                    style={{ width: '14px', height: '14px' }}
+                  />
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* RECENTLY VIEWED SECTION */}
-        <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
-          <div style={{ 
-            border: '1.3px solid black', 
-            backgroundColor: 'rgba(255, 255, 255, 0.6)', 
-            backdropFilter: 'blur(10px)',
-            padding: '0px',
-            maxWidth: '100%',
-            margin: '0 auto'
-          }}>
-            <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-              <div style={{ 
-                width: '1px', 
-                height: '15px', 
-                backgroundColor: 'black',
-                margin: '0 auto 8px auto'
-              }}></div>
-              <h3 style={{ 
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                fontSize: '12px',
-                color: '#EB1C24',
-                textTransform: 'uppercase',
-                margin: '0',
-                fontWeight: '500'
-              }}>
-                RECENTLY VIEWED
-              </h3>
-            </div>
-            
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-              <button 
-                onClick={handleRecentlyViewedLeftArrow}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  cursor: 'pointer',
-                  padding: '5px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                  minHeight: '50px',
-                  transform: `translateX(10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                }}>
-                <img
-                  src="/assets/NOIR/left-facing-arrow.svg"
-                  alt="Left Arrow"
-                    style={{ width: '14px', height: '14px' }}
-                />
-              </button>
-              
-              {/* Product Thumbnails Container with Static Vertical Line */}
-              {/* Product Thumbnails Container with Static Vertical Line */}
-              <div style={{ flex: '1', position: 'relative' }}>
-                {/* Single Center Line with Masking */}
-                <div style={{
-                  position: 'absolute',
-                  left: '50%',
-                  top: '0',
-                  bottom: '0',
-                  width: '1px',
-                  backgroundColor: 'black',
-                  zIndex: 20,
-                  transform: 'translateX(-50%)'
-                }}></div>
-                
-                {/* Masking Overlay for Tunnel Effect */}
-                <div style={{
-                  position: 'absolute',
-                  left: '50%',
-                  top: '0',
-                  bottom: '0',
-                  width: '10px',
-                  backgroundColor: 'transparent',
-                  zIndex: 15,
-                  transform: 'translateX(-50%)',
-                  pointerEvents: 'none'
-                }}></div>
-                
-                {/* Scrolling Product Thumbnails Container */}
+          {/* RECENTLY VIEWED SECTION */}
+          <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
+            <div style={{ 
+              border: '1.3px solid black', 
+              backgroundColor: 'rgba(255, 255, 255, 0.6)', 
+              backdropFilter: 'blur(10px)',
+              padding: '0px',
+              maxWidth: '100%',
+              margin: '0 auto'
+            }}>
+              <div style={{ textAlign: 'center', marginBottom: '15px' }}>
                 <div style={{ 
-                  overflowX: 'hidden',
-                  width: '100%',
-                  position: 'relative',
-                  maxWidth: '100%'
+                  width: '1px', 
+                  height: '15px', 
+                  backgroundColor: 'black',
+                  margin: '0 auto 8px auto'
+                }}></div>
+                <h3 style={{ 
+                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                  fontSize: '12px',
+                  color: '#EB1C24',
+                  textTransform: 'uppercase',
+                  margin: '0',
+                  fontWeight: '500'
                 }}>
-                  <div 
-                    style={{ 
-                      display: 'flex', 
-                      gap: '0',
-                      transform: `translateX(${recentlyViewedScroll}px) translateY(-15px)`,
-                      transition: 'none',
-                      width: 'calc(200% - 20px)'
-                    }}
-                  >
-                {/* Product 1 - BEACH WAVE */}
-                <div 
-                  onClick={() => navigate('/wavy/soft-wave')}
-                  style={{ 
-                  padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
-                  textAlign: 'center',
-                    transform: is3DView ? 'translateX(1px)' : 'translateX(-2.5px)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <img
-                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/wave-thumb.png"}
-                    alt="SOFT WAVE"
-                    style={{ 
-                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                      marginBottom: '10px',
-                      marginLeft: '10px'
-                    }}
-                  />
-                  <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
-                    fontSize: '18px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '-10px 0 -3px 0',
-                    fontWeight: '500',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
-                  }}>
-                    SOFT WAVE
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '10px',
-                    color: '#EB1C24',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
-                  }}>
-                    24" RAW INDONESIAN
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '12px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
-                  }}>
-                    $760 USD
-                  </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
-                    {[...Array(5)].map((_, index) => (
-                      <img
-                        key={index}
-                        src="/assets/NOIR/star-symbol.png"
-                        alt="Star Rating"
-                        style={{ 
-                          width: '10px', 
-                          height: '10px',
-                          filter: 'drop-shadow(0 0 0 1px black)',
-                          stroke: '1px black'
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Product 2 - SOFT CURL */}
-                <div 
-                  onClick={() => navigate('/curly/soft-curl')}
-                  style={{ 
-                  padding: '10px 10px 4px 10px',
-                  textAlign: 'center',
-                    transform: 'translateX(13px)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <img
-                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/curl-thumb.png"}
-                    alt="SOFT CURL"
-                    style={{ 
-                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                      marginBottom: '10px',
-                      marginLeft: '10px'
-                    }}
-                  />
-                  <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
-                    fontSize: '18px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '-10px 0 -3px 0',
-                    fontWeight: '500',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
-                  }}>
-                    SOFT CURL
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '10px',
-                    color: '#EB1C24',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
-                  }}>
-                    24" RAW VIETNAMESE
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '12px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
-                  }}>
-                    $780 USD
-                  </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
-                    {[...Array(5)].map((_, index) => (
-                      <img
-                        key={index}
-                        src="/assets/NOIR/star-symbol.png"
-                        alt="Star Rating"
-                        style={{ 
-                          width: '10px', 
-                          height: '10px',
-                          filter: 'drop-shadow(0 0 0 1px black)',
-                          stroke: '1px black'
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Product 3 - NOIR */}
-                <div 
-                  onClick={() => navigate('/straight/noir')}
-                  style={{ 
-                  padding: '10px 10px 4px 10px',
-                  textAlign: 'center',
-                    transform: is3DView ? 'translateX(-9.3px)' : 'translateX(-8.3px)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <img
-                    src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
-                    alt="NOIR"
-                    style={{ 
-                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                      marginBottom: '10px',
-                      marginLeft: '10px'
-                    }}
-                  />
-                  <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
-                    fontSize: '18px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '-10px 0 -3px 0',
-                    fontWeight: '500',
-                    transform: !is3DView ? 'translateX(10.5px)' : undefined
-                  }}>
-                    NOIR
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '10px',
-                    color: '#EB1C24',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10.5px)' : undefined
-                  }}>
-                    24" RAW CAMBODIAN
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '12px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10.5px)' : undefined
-                  }}>
-                    $740 USD
-                  </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10.5px)' : undefined }}>
-                    {[...Array(5)].map((_, index) => (
-                      <img
-                        key={index}
-                        src="/assets/NOIR/star-symbol.png"
-                        alt="Star Rating"
-                        style={{ 
-                          width: '10px', 
-                          height: '10px',
-                          filter: 'drop-shadow(0 0 0 1px black)',
-                          stroke: '1px black'
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Product 4 - BLANCO */}
-                <div 
-                  onClick={() => navigate('/straight/blanco')}
-                  style={{ 
-                  padding: '10px 10px 4px 10px',
-                  textAlign: 'center',
-                    transform: is3DView ? 'translateX(2.9px)' : 'translateX(7.7px)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <img
-                    src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
-                    alt="BLANCO"
-                    style={{ 
-                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                      marginBottom: '10px',
-                      marginLeft: '10px'
-                    }}
-                  />
-                  <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
-                    fontSize: '18px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '-10px 0 -3px 0',
-                    fontWeight: '500',
-                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
-                  }}>
-                    BLANCO
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '10px',
-                    color: '#EB1C24',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84',
-                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
-                  }}>
-                    24" RAW RUSSIAN
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '12px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84',
-                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
-                  }}>
-                    $820 USD
-                  </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)' }}>
-                    {[...Array(5)].map((_, index) => (
-                      <img
-                        key={index}
-                        src="/assets/NOIR/star-symbol.png"
-                        alt="Star Rating"
-                        style={{ 
-                          width: '10px', 
-                          height: '10px',
-                          filter: 'drop-shadow(0 0 0 1px black)',
-                          stroke: '1px black'
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-                  </div>
-                </div>
+                  RECENTLY VIEWED
+                </h3>
               </div>
               
-              <button 
-                onClick={handleRecentlyViewedRightArrow}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  cursor: 'pointer',
-                  padding: '5px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                  minHeight: '50px',
-                  transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                }}>
-                <img
-                  src="/assets/NOIR/right-facing-arrow.svg"
-                  alt="Right Arrow"
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                <button 
+                  onClick={handleRecentlyViewedLeftArrow}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    padding: '5px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                    minHeight: '50px',
+                    transform: `translateX(10px) translateY(${is3DView ? '-26px' : '-10px'})`
+                  }}>
+                  <img
+                    src="/assets/NOIR/left-facing-arrow.svg"
+                    alt="Left Arrow"
                     style={{ width: '14px', height: '14px' }}
-                />
-              </button>
+                  />
+                </button>
+                
+                {/* Product Thumbnails Container with Static Vertical Line */}
+                <div style={{ flex: '1', position: 'relative' }}>
+                  {/* Single Center Line with Masking */}
+                  <div style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '0',
+                    bottom: '0',
+                    width: '1px',
+                    backgroundColor: 'black',
+                    zIndex: 20,
+                    transform: 'translateX(-50%)'
+                  }}></div>
+                  
+                  {/* Masking Overlay for Tunnel Effect */}
+                  <div style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '0',
+                    bottom: '0',
+                    width: '10px',
+                    backgroundColor: 'transparent',
+                    zIndex: 15,
+                    transform: 'translateX(-50%)',
+                    pointerEvents: 'none'
+                  }}></div>
+                  
+                  {/* Scrolling Product Thumbnails Container */}
+                  <div style={{ 
+                    overflowX: 'hidden',
+                    width: '100%',
+                    position: 'relative',
+                    maxWidth: '100%'
+                  }}>
+                    <div 
+                      style={{ 
+                        display: 'flex', 
+                        gap: '0',
+                        transform: `translateX(${recentlyViewedScroll}px) translateY(-15px)`,
+                        transition: 'none',
+                        width: 'calc(200% - 20px)'
+                      }}
+                    >
+                      {/* Product 1 - SOFT WAVE */}
+                      <div 
+                        onClick={() => navigate('/wavy/soft-wave')}
+                        style={{ 
+                          padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
+                          textAlign: 'center',
+                          transform: is3DView ? 'translateX(1px)' : 'translateX(-2.5px)',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <img
+                          src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
+                          alt="SOFT WAVE"
+                          style={{ 
+                            width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                            height: is3DView ? 'calc(auto - 24px)' : 'auto',
+                            marginBottom: '10px',
+                            marginLeft: '10px'
+                          }}
+                        />
+                        <p style={{ 
+                          fontFamily: '"Covered By Your Grace", cursive',
+                          fontSize: '18px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '-10px 0 -3px 0',
+                          fontWeight: '500',
+                          transform: !is3DView ? 'translateX(10px)' : undefined
+                        }}>
+                          SOFT WAVE
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '10px',
+                          color: '#EB1C24',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: !is3DView ? 'translateX(10px)' : undefined
+                        }}>
+                          24" RAW INDONESIAN
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '12px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: !is3DView ? 'translateX(10px)' : undefined
+                        }}>
+                          $760 USD
+                        </p>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
+                          {[...Array(5)].map((_, index) => (
+                            <img
+                              key={index}
+                              src="/assets/NOIR/star-symbol.png"
+                              alt="Star Rating"
+                              style={{ 
+                                width: '10px', 
+                                height: '10px',
+                                filter: 'drop-shadow(0 0 0 1px black)',
+                                stroke: '1px black'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Product 2 - SOFT CURL */}
+                      <div 
+                        onClick={() => navigate('/curly/soft-curl')}
+                        style={{ 
+                          padding: '10px 10px 4px 10px',
+                          textAlign: 'center',
+                          transform: 'translateX(13px)',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <img
+                          src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/curl-thumb.png"}
+                          alt="SOFT CURL"
+                          style={{ 
+                            width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                            height: is3DView ? 'calc(auto - 24px)' : 'auto',
+                            marginBottom: '10px',
+                            marginLeft: '10px'
+                          }}
+                        />
+                        <p style={{ 
+                          fontFamily: '"Covered By Your Grace", cursive',
+                          fontSize: '18px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '-10px 0 -3px 0',
+                          fontWeight: '500',
+                          transform: !is3DView ? 'translateX(10px)' : undefined
+                        }}>
+                          SOFT CURL
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '10px',
+                          color: '#EB1C24',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: !is3DView ? 'translateX(10px)' : undefined
+                        }}>
+                          24" RAW VIETNAMESE
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '12px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: !is3DView ? 'translateX(10px)' : undefined
+                        }}>
+                          $780 USD
+                        </p>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
+                          {[...Array(5)].map((_, index) => (
+                            <img
+                              key={index}
+                              src="/assets/NOIR/star-symbol.png"
+                              alt="Star Rating"
+                              style={{ 
+                                width: '10px', 
+                                height: '10px',
+                                filter: 'drop-shadow(0 0 0 1px black)',
+                                stroke: '1px black'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Product 3 - NOIR */}
+                      <div 
+                        onClick={() => navigate('/straight/noir')}
+                        style={{ 
+                          padding: '10px 10px 4px 10px',
+                          textAlign: 'center',
+                          transform: is3DView ? 'translateX(-9.3px)' : 'translateX(-8.3px)',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <img
+                          src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
+                          alt="NOIR"
+                          style={{ 
+                            width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                            height: is3DView ? 'calc(auto - 24px)' : 'auto',
+                            marginBottom: '10px',
+                            marginLeft: '10px'
+                          }}
+                        />
+                        <p style={{ 
+                          fontFamily: '"Covered By Your Grace", cursive',
+                          fontSize: '18px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '-10px 0 -3px 0',
+                          fontWeight: '500',
+                          transform: !is3DView ? 'translateX(10.5px)' : undefined
+                        }}>
+                          NOIR
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '10px',
+                          color: '#EB1C24',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: !is3DView ? 'translateX(10.5px)' : undefined
+                        }}>
+                          24" RAW CAMBODIAN
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '12px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: !is3DView ? 'translateX(10.5px)' : undefined
+                        }}>
+                          $740 USD
+                        </p>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10.5px)' : undefined }}>
+                          {[...Array(5)].map((_, index) => (
+                            <img
+                              key={index}
+                              src="/assets/NOIR/star-symbol.png"
+                              alt="Star Rating"
+                              style={{ 
+                                width: '10px', 
+                                height: '10px',
+                                filter: 'drop-shadow(0 0 0 1px black)',
+                                stroke: '1px black'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Product 4 - BLANCO */}
+                      <div 
+                        onClick={() => navigate('/straight/blanco')}
+                        style={{ 
+                          padding: '10px 10px 4px 10px',
+                          textAlign: 'center',
+                          transform: is3DView ? 'translateX(2.9px)' : 'translateX(7.7px)',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <img
+                          src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
+                          alt="BLANCO"
+                          style={{ 
+                            width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                            height: is3DView ? 'calc(auto - 24px)' : 'auto',
+                            marginBottom: '10px',
+                            marginLeft: '10px'
+                          }}
+                        />
+                        <p style={{ 
+                          fontFamily: '"Covered By Your Grace", cursive',
+                          fontSize: '18px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '-10px 0 -3px 0',
+                          fontWeight: '500',
+                          transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
+                        }}>
+                          BLANCO
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '10px',
+                          color: '#EB1C24',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
+                        }}>
+                          24" RAW RUSSIAN
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '12px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
+                        }}>
+                          $820 USD
+                        </p>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)' }}>
+                          {[...Array(5)].map((_, index) => (
+                            <img
+                              key={index}
+                              src="/assets/NOIR/star-symbol.png"
+                              alt="Star Rating"
+                              style={{ 
+                                width: '10px', 
+                                height: '10px',
+                                filter: 'drop-shadow(0 0 0 1px black)',
+                                stroke: '1px black'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <button 
+                  onClick={handleRecentlyViewedRightArrow}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    padding: '5px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                    minHeight: '50px',
+                    transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
+                  }}>
+                  <img
+                    src="/assets/NOIR/right-facing-arrow.svg"
+                    alt="Right Arrow"
+                    style={{ width: '14px', height: '14px' }}
+                  />
+                </button>
+              </div>
             </div>
           </div>
         </div>
