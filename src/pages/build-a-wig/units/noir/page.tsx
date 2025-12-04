@@ -3700,7 +3700,7 @@ function NoirSelection() {
                     textTransform: 'uppercase',
                     margin: '-10px 0 -3px 0',
                     fontWeight: '500',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
+                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}>
                     SOFT CURL
                   </p>
@@ -3712,7 +3712,7 @@ function NoirSelection() {
                     margin: '0 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
+                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}>
                     24" RAW VIETNAMESE
                   </p>
@@ -3724,11 +3724,11 @@ function NoirSelection() {
                     margin: '0 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
+                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}>
                     $780 USD
                   </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)' }}>
                     {[...Array(5)].map((_, index) => (
                       <img
                         key={index}
