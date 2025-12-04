@@ -3475,9 +3475,9 @@ function NoirSelection() {
                   >
                 {/* Product 1 - BLANCO */}
                 <div style={{ 
-                  padding: '10px 10px 4px 10px',
+                  padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
                   textAlign: 'center',
-                  transform: 'translateX(1px)'
+                  transform: is3DView ? 'translateX(1px)' : 'translateX(-2.5px)'
                 }}>
                   <img
                     src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
@@ -3495,7 +3495,8 @@ function NoirSelection() {
                     color: 'black',
                     textTransform: 'uppercase',
                     margin: '-10px 0 -3px 0',
-                    fontWeight: '500'
+                    fontWeight: '500',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
                     BLANCO
                   </p>
@@ -3506,7 +3507,8 @@ function NoirSelection() {
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
-                    lineHeight: '0.84'
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
                     24" RAW RUSSIAN
                   </p>
@@ -3517,11 +3519,12 @@ function NoirSelection() {
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
-                    lineHeight: '0.84'
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
                     $820 USD
                   </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
                       <img
                         key={index}
@@ -3560,7 +3563,8 @@ function NoirSelection() {
                     color: 'black',
                     textTransform: 'uppercase',
                     margin: '-10px 0 -3px 0',
-                    fontWeight: '500'
+                    fontWeight: '500',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
                     SOFT WAVE
                   </p>
@@ -3571,7 +3575,8 @@ function NoirSelection() {
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
-                    lineHeight: '0.84'
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
                     24" RAW INDONESIAN
                   </p>
@@ -3582,11 +3587,12 @@ function NoirSelection() {
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
-                    lineHeight: '0.84'
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
                     $760 USD
                   </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
                       <img
                         key={index}
@@ -3625,7 +3631,8 @@ function NoirSelection() {
                     color: 'black',
                     textTransform: 'uppercase',
                     margin: '-10px 0 -3px 0',
-                    fontWeight: '500'
+                    fontWeight: '500',
+                    transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}>
                     NOIR
                   </p>
@@ -3636,7 +3643,8 @@ function NoirSelection() {
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
-                    lineHeight: '0.84'
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}>
                     24" RAW CAMBODIAN
                   </p>
@@ -3647,11 +3655,12 @@ function NoirSelection() {
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
-                    lineHeight: '0.84'
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}>
                     $740 USD
                   </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10.5px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
                       <img
                         key={index}
@@ -3672,7 +3681,7 @@ function NoirSelection() {
                 <div style={{ 
                   padding: '10px 10px 4px 10px',
                   textAlign: 'center',
-                  transform: is3DView ? 'translateX(2.4px)' : 'translateX(3.7px)'
+                  transform: is3DView ? 'translateX(2.9px)' : 'translateX(7.7px)'
                 }}>
                   <img
                     src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/curl-thumb.png"}
@@ -3690,7 +3699,8 @@ function NoirSelection() {
                     color: 'black',
                     textTransform: 'uppercase',
                     margin: '-10px 0 -3px 0',
-                    fontWeight: '500'
+                    fontWeight: '500',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
                     SOFT CURL
                   </p>
@@ -3701,7 +3711,8 @@ function NoirSelection() {
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
-                    lineHeight: '0.84'
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
                     24" RAW VIETNAMESE
                   </p>
@@ -3712,11 +3723,12 @@ function NoirSelection() {
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
-                    lineHeight: '0.84'
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
                     $780 USD
                   </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
                       <img
                         key={index}
@@ -3866,9 +3878,9 @@ function NoirSelection() {
                   >
                 {/* Product 1 - BEACH WAVE */}
                 <div style={{ 
-                  padding: '10px 10px 4px 10px',
+                  padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
                   textAlign: 'center',
-                  transform: 'translateX(1px)'
+                  transform: is3DView ? 'translateX(1px)' : 'translateX(-2.5px)'
                 }}>
                   <img
                     src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/wave-thumb.png"}
@@ -3886,7 +3898,8 @@ function NoirSelection() {
                     color: 'black',
                     textTransform: 'uppercase',
                     margin: '-10px 0 -3px 0',
-                    fontWeight: '500'
+                    fontWeight: '500',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
                     SOFT WAVE
                   </p>
@@ -3897,7 +3910,8 @@ function NoirSelection() {
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
-                    lineHeight: '0.84'
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
                     24" RAW INDONESIAN
                   </p>
@@ -3908,11 +3922,12 @@ function NoirSelection() {
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
-                    lineHeight: '0.84'
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
                     $760 USD
                   </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
                       <img
                         key={index}
@@ -3951,7 +3966,8 @@ function NoirSelection() {
                     color: 'black',
                     textTransform: 'uppercase',
                     margin: '-10px 0 -3px 0',
-                    fontWeight: '500'
+                    fontWeight: '500',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
                     SOFT CURL
                   </p>
@@ -3962,7 +3978,8 @@ function NoirSelection() {
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
-                    lineHeight: '0.84'
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
                     24" RAW VIETNAMESE
                   </p>
@@ -3973,11 +3990,12 @@ function NoirSelection() {
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
-                    lineHeight: '0.84'
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
                     $780 USD
                   </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
                       <img
                         key={index}
@@ -4016,7 +4034,8 @@ function NoirSelection() {
                     color: 'black',
                     textTransform: 'uppercase',
                     margin: '-10px 0 -3px 0',
-                    fontWeight: '500'
+                    fontWeight: '500',
+                    transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}>
                     NOIR
                   </p>
@@ -4027,7 +4046,8 @@ function NoirSelection() {
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
-                    lineHeight: '0.84'
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}>
                     24" RAW CAMBODIAN
                   </p>
@@ -4038,11 +4058,12 @@ function NoirSelection() {
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
-                    lineHeight: '0.84'
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}>
                     $740 USD
                   </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10.5px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
                       <img
                         key={index}
@@ -4063,7 +4084,7 @@ function NoirSelection() {
                 <div style={{ 
                   padding: '10px 10px 4px 10px',
                   textAlign: 'center',
-                  transform: is3DView ? 'translateX(2.4px)' : 'translateX(3.7px)'
+                  transform: is3DView ? 'translateX(2.9px)' : 'translateX(7.7px)'
                 }}>
                   <img
                     src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
@@ -4081,7 +4102,8 @@ function NoirSelection() {
                     color: 'black',
                     textTransform: 'uppercase',
                     margin: '-10px 0 -3px 0',
-                    fontWeight: '500'
+                    fontWeight: '500',
+                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}>
                     BLANCO
                   </p>
@@ -4092,7 +4114,8 @@ function NoirSelection() {
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
-                    lineHeight: '0.84'
+                    lineHeight: '0.84',
+                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}>
                     24" RAW RUSSIAN
                   </p>
@@ -4103,11 +4126,12 @@ function NoirSelection() {
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
-                    lineHeight: '0.84'
+                    lineHeight: '0.84',
+                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}>
                     $820 USD
                   </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)' }}>
                     {[...Array(5)].map((_, index) => (
                       <img
                         key={index}
