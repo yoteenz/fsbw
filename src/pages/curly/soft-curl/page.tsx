@@ -1244,6 +1244,38 @@ function SoftCurlSelection() {
             </button>
           </div>
 
+          {/* CUSTOMIZE IN BUILD-A-WIG BUTTON */}
+          <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
+            <button
+              onClick={() => {
+                const capSizeToSave = selectedCustomCap || selectedFlexibleCap;
+                if (capSizeToSave) {
+                  if (typeof window !== 'undefined') {
+                    try {
+                      localStorage.setItem('selectedCapSize', capSizeToSave);
+                      localStorage.setItem('customizeSelectedCapSize', capSizeToSave);
+                      const isFlexibleCap = capSizeToSave === 'XXS/XS/S' || capSizeToSave === 'S/M/L';
+                      const capSizePrice = isFlexibleCap ? '40' : '0';
+                      localStorage.setItem('selectedCapSizePrice', capSizePrice);
+                      localStorage.setItem('customizeSelectedCapSizePrice', capSizePrice);
+                    } catch (e) {
+                      console.error('Error saving cap size:', e);
+                    }
+                  }
+                }
+                navigate('/build-a-wig/soft-curl/customize');
+              }}
+              className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+              style={{ 
+                borderWidth: '1.3px', 
+                color: '#EB1C24',
+                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
+              }}
+            >
+              CUSTOMIZE IN BUILD-A-WIG
+            </button>
+          </div>
+
         {/* SIMILAR PRODUCTS SECTION */}
         <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
           <div style={{ 

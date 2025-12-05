@@ -143,19 +143,18 @@ function App() {
           </Suspense>
         } />
         {/* Build-a-wig routes - specific routes must come before general /build-a-wig route */}
-        {/* Edit mode routes */}
-        <Route path="/build-a-wig/edit/color" element={<ColorPage />} />
-        <Route path="/build-a-wig/edit/length" element={<LengthPage />} />
-        <Route path="/build-a-wig/edit/density" element={<DensityPage />} />
-        <Route path="/build-a-wig/edit/lace" element={<LacePage />} />
-        <Route path="/build-a-wig/edit/texture" element={<TexturePage />} />
-        <Route path="/build-a-wig/edit/hairline" element={<HairlinePage />} />
-        <Route path="/build-a-wig/edit/cap" element={<CapSizePage />} />
-        <Route path="/build-a-wig/edit/styling" element={<StylingPage />} />
-        <Route path="/build-a-wig/edit/addons" element={<AddOnsPage />} />
-        <Route path="/build-a-wig/edit" element={<BuildAWigPage />} />
         
-        {/* Customize mode routes */}
+        {/* Noir routes */}
+        <Route path="/build-a-wig/noir/edit/color" element={<ColorPage />} />
+        <Route path="/build-a-wig/noir/edit/length" element={<LengthPage />} />
+        <Route path="/build-a-wig/noir/edit/density" element={<DensityPage />} />
+        <Route path="/build-a-wig/noir/edit/lace" element={<LacePage />} />
+        <Route path="/build-a-wig/noir/edit/texture" element={<TexturePage />} />
+        <Route path="/build-a-wig/noir/edit/hairline" element={<HairlinePage />} />
+        <Route path="/build-a-wig/noir/edit/cap" element={<CapSizePage />} />
+        <Route path="/build-a-wig/noir/edit/styling" element={<StylingPage />} />
+        <Route path="/build-a-wig/noir/edit/addons" element={<AddOnsPage />} />
+        <Route path="/build-a-wig/noir/edit" element={<BuildAWigPage />} />
         <Route path="/build-a-wig/noir/customize/color" element={<ColorPage />} />
         <Route path="/build-a-wig/noir/customize/length" element={<LengthPage />} />
         <Route path="/build-a-wig/noir/customize/density" element={<DensityPage />} />
@@ -166,6 +165,88 @@ function App() {
         <Route path="/build-a-wig/noir/customize/styling" element={<StylingPage />} />
         <Route path="/build-a-wig/noir/customize/addons" element={<AddOnsPage />} />
         <Route path="/build-a-wig/noir/customize" element={<BuildAWigPage />} />
+        <Route path="/build-a-wig/noir" element={<BuildAWigPage />} />
+        
+        {/* Blanco routes */}
+        <Route path="/build-a-wig/blanco/edit/color" element={<ColorPage />} />
+        <Route path="/build-a-wig/blanco/edit/length" element={<LengthPage />} />
+        <Route path="/build-a-wig/blanco/edit/density" element={<DensityPage />} />
+        <Route path="/build-a-wig/blanco/edit/lace" element={<LacePage />} />
+        <Route path="/build-a-wig/blanco/edit/texture" element={<TexturePage />} />
+        <Route path="/build-a-wig/blanco/edit/hairline" element={<HairlinePage />} />
+        <Route path="/build-a-wig/blanco/edit/cap" element={<CapSizePage />} />
+        <Route path="/build-a-wig/blanco/edit/styling" element={<StylingPage />} />
+        <Route path="/build-a-wig/blanco/edit/addons" element={<AddOnsPage />} />
+        <Route path="/build-a-wig/blanco/edit" element={<BuildAWigPage />} />
+        <Route path="/build-a-wig/blanco/customize/color" element={<ColorPage />} />
+        <Route path="/build-a-wig/blanco/customize/length" element={<LengthPage />} />
+        <Route path="/build-a-wig/blanco/customize/density" element={<DensityPage />} />
+        <Route path="/build-a-wig/blanco/customize/lace" element={<LacePage />} />
+        <Route path="/build-a-wig/blanco/customize/texture" element={<TexturePage />} />
+        <Route path="/build-a-wig/blanco/customize/hairline" element={<HairlinePage />} />
+        <Route path="/build-a-wig/blanco/customize/cap" element={<CapSizePage />} />
+        <Route path="/build-a-wig/blanco/customize/styling" element={<StylingPage />} />
+        <Route path="/build-a-wig/blanco/customize/addons" element={<AddOnsPage />} />
+        <Route path="/build-a-wig/blanco/customize" element={<BuildAWigPage />} />
+        <Route path="/build-a-wig/blanco" element={<BuildAWigPage />} />
+        
+        {/* Soft Wave routes */}
+        <Route path="/build-a-wig/soft-wave/edit/color" element={<ColorPage />} />
+        <Route path="/build-a-wig/soft-wave/edit/length" element={<LengthPage />} />
+        <Route path="/build-a-wig/soft-wave/edit/density" element={<DensityPage />} />
+        <Route path="/build-a-wig/soft-wave/edit/lace" element={<LacePage />} />
+        <Route path="/build-a-wig/soft-wave/edit/texture" element={<TexturePage />} />
+        <Route path="/build-a-wig/soft-wave/edit/hairline" element={<HairlinePage />} />
+        <Route path="/build-a-wig/soft-wave/edit/cap" element={<CapSizePage />} />
+        <Route path="/build-a-wig/soft-wave/edit/styling" element={<StylingPage />} />
+        <Route path="/build-a-wig/soft-wave/edit/addons" element={<AddOnsPage />} />
+        <Route path="/build-a-wig/soft-wave/edit" element={<BuildAWigPage />} />
+        <Route path="/build-a-wig/soft-wave/customize/color" element={<ColorPage />} />
+        <Route path="/build-a-wig/soft-wave/customize/length" element={<LengthPage />} />
+        <Route path="/build-a-wig/soft-wave/customize/density" element={<DensityPage />} />
+        <Route path="/build-a-wig/soft-wave/customize/lace" element={<LacePage />} />
+        <Route path="/build-a-wig/soft-wave/customize/texture" element={<TexturePage />} />
+        <Route path="/build-a-wig/soft-wave/customize/hairline" element={<HairlinePage />} />
+        <Route path="/build-a-wig/soft-wave/customize/cap" element={<CapSizePage />} />
+        <Route path="/build-a-wig/soft-wave/customize/styling" element={<StylingPage />} />
+        <Route path="/build-a-wig/soft-wave/customize/addons" element={<AddOnsPage />} />
+        <Route path="/build-a-wig/soft-wave/customize" element={<BuildAWigPage />} />
+        <Route path="/build-a-wig/soft-wave" element={<BuildAWigPage />} />
+        
+        {/* Soft Curl routes */}
+        <Route path="/build-a-wig/soft-curl/edit/color" element={<ColorPage />} />
+        <Route path="/build-a-wig/soft-curl/edit/length" element={<LengthPage />} />
+        <Route path="/build-a-wig/soft-curl/edit/density" element={<DensityPage />} />
+        <Route path="/build-a-wig/soft-curl/edit/lace" element={<LacePage />} />
+        <Route path="/build-a-wig/soft-curl/edit/texture" element={<TexturePage />} />
+        <Route path="/build-a-wig/soft-curl/edit/hairline" element={<HairlinePage />} />
+        <Route path="/build-a-wig/soft-curl/edit/cap" element={<CapSizePage />} />
+        <Route path="/build-a-wig/soft-curl/edit/styling" element={<StylingPage />} />
+        <Route path="/build-a-wig/soft-curl/edit/addons" element={<AddOnsPage />} />
+        <Route path="/build-a-wig/soft-curl/edit" element={<BuildAWigPage />} />
+        <Route path="/build-a-wig/soft-curl/customize/color" element={<ColorPage />} />
+        <Route path="/build-a-wig/soft-curl/customize/length" element={<LengthPage />} />
+        <Route path="/build-a-wig/soft-curl/customize/density" element={<DensityPage />} />
+        <Route path="/build-a-wig/soft-curl/customize/lace" element={<LacePage />} />
+        <Route path="/build-a-wig/soft-curl/customize/texture" element={<TexturePage />} />
+        <Route path="/build-a-wig/soft-curl/customize/hairline" element={<HairlinePage />} />
+        <Route path="/build-a-wig/soft-curl/customize/cap" element={<CapSizePage />} />
+        <Route path="/build-a-wig/soft-curl/customize/styling" element={<StylingPage />} />
+        <Route path="/build-a-wig/soft-curl/customize/addons" element={<AddOnsPage />} />
+        <Route path="/build-a-wig/soft-curl/customize" element={<BuildAWigPage />} />
+        <Route path="/build-a-wig/soft-curl" element={<BuildAWigPage />} />
+        
+        {/* Legacy edit routes (for backward compatibility) */}
+        <Route path="/build-a-wig/edit/color" element={<ColorPage />} />
+        <Route path="/build-a-wig/edit/length" element={<LengthPage />} />
+        <Route path="/build-a-wig/edit/density" element={<DensityPage />} />
+        <Route path="/build-a-wig/edit/lace" element={<LacePage />} />
+        <Route path="/build-a-wig/edit/texture" element={<TexturePage />} />
+        <Route path="/build-a-wig/edit/hairline" element={<HairlinePage />} />
+        <Route path="/build-a-wig/edit/cap" element={<CapSizePage />} />
+        <Route path="/build-a-wig/edit/styling" element={<StylingPage />} />
+        <Route path="/build-a-wig/edit/addons" element={<AddOnsPage />} />
+        <Route path="/build-a-wig/edit" element={<BuildAWigPage />} />
         
         {/* Main build-a-wig routes */}
         <Route path="/build-a-wig/length" element={<LengthPage />} />

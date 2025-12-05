@@ -438,9 +438,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     
     const stylingPrices: { [key: string]: number } = {
       'BANGS': 40,
-      'CRIMPS': 140,
-      'FLAT IRON': 100,
-      'LAYERS': 180
+      'CRIMPS': 80,
+      'FLAT IRON': 80,
+      'LAYERS': 100
     };
     
     // Handle multiple styling selections
@@ -469,8 +469,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     
     // Base prices from addons page
     const addOnBasePrices: { [key: string]: number } = {
-      'BLEACH': 80,
-      'PLUCK': 120,
+      'BLEACH': 60,
+      'PLUCK': 80,
       'BLUNT CUT': 20
     };
     

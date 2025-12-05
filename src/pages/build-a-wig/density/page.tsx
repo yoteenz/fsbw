@@ -20,7 +20,9 @@ function DensitySelection() {
   const [selectedDensity, setSelectedDensity] = useState(() => {
     // Always start with default - useEffect will load from localStorage
     // This matches the customize pages pattern
-    return '200%';
+    // Check if we're in blanco customize mode
+    const isBlancoCustomizeMode = window.location.pathname.includes('/blanco/customize');
+    return isBlancoCustomizeMode ? '250%' : '200%';
   });
   const [selectedView, setSelectedView] = useState(1); // Changed from 0 to 1 (middle image)
   const [showLoading, setShowLoading] = useState(true);
@@ -60,6 +62,30 @@ function DensitySelection() {
 
   // Get wig views based on selected hairline from localStorage
   const getWigViews = () => {
+    const pathname = window.location.pathname;
+    // Check if we're in product-specific customize modes
+    if (pathname.includes('/blanco/customize')) {
+      return [
+        '/assets/2D BLANCO LEFT.png',
+        '/assets/2D BLANCO FRONT.png',
+        '/assets/2D BLANCO RIGHT.png'
+      ];
+    }
+    if (pathname.includes('/soft-wave/customize')) {
+      return [
+        '/assets/2D WAVY LEFT.png',
+        '/assets/2D WAVY FRONT.png',
+        '/assets/2D WAVY RIGHT.png'
+      ];
+    }
+    if (pathname.includes('/soft-curl/customize')) {
+      return [
+        '/assets/2D CURLY LEFT.png',
+        '/assets/2D CURLY FRONT.png',
+        '/assets/2D CURLY RIGHT.png'
+      ];
+    }
+    
     const selectedHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
     const hasPeak = selectedHairline.includes('PEAK');
     const hasLagos = selectedHairline.includes('LAGOS');
@@ -89,6 +115,10 @@ function DensitySelection() {
   const wigViews = getWigViews();
 
   // Density options with correct pricing structure
+  // Use location.pathname from React Router to ensure updates on route changes
+  const isBlancoCustomizeMode = location.pathname.includes('/blanco/customize');
+  const densityImage = isBlancoCustomizeMode ? '/assets/BLANCO-DENSITY.png' : '/assets/density.png';
+  
   const densityOptions: DensityOption[] = [
     {
       id: '130%',
@@ -96,7 +126,7 @@ function DensitySelection() {
       percentage: '130%',
       description: '130% EQUIVALENT TO 1 BUNDLE FOR LENGTHS OVER 16"',
       price: -60, // $60 cheaper than default
-      image: '/assets/density.png'
+      image: densityImage
     },
     {
       id: '150%',
@@ -104,7 +134,7 @@ function DensitySelection() {
       percentage: '150%',
       description: '150% EQUIVALENT TO 1-2 BUNDLES FOR LENGTHS OVER 16"',
       price: -40, // $40 cheaper than default
-      image: '/assets/density.png'
+      image: densityImage
     },
     {
       id: '180%',
@@ -112,7 +142,7 @@ function DensitySelection() {
       percentage: '180%',
       description: '180% EQUIVALENT TO 2 BUNDLES FOR LENGTHS OVER 18"',
       price: -20, // $20 cheaper than default
-      image: '/assets/density.png'
+      image: densityImage
     },
     {
       id: '200%',
@@ -120,7 +150,7 @@ function DensitySelection() {
       percentage: '200%',
       description: '200% EQUIVALENT TO 2-3 BUNDLES FOR LENGTHS OVER 22"',
       price: 0, // Default option - included in base price
-      image: '/assets/density.png'
+      image: densityImage
     },
     {
       id: '250%',
@@ -128,7 +158,7 @@ function DensitySelection() {
       percentage: '250%',
       description: '250% EQUIVALENT TO 3 BUNDLES FOR LENGTHS OVER 26"',
       price: 80, // $80 more than default
-      image: '/assets/density.png'
+      image: densityImage
     },
     {
       id: '300%',
@@ -136,7 +166,7 @@ function DensitySelection() {
       percentage: '300%',
       description: '300% EQUIVALENT TO 3-4 BUNDLES FOR LENGTHS OVER 30"',
       price: 160, // $160 more than default
-      image: '/assets/density.png'
+      image: densityImage
     },
     {
       id: '350%',
@@ -144,7 +174,7 @@ function DensitySelection() {
       percentage: '350%',
       description: '350% EQUIVALENT TO 4 BUNDLES FOR LENGTHS OVER 32"',
       price: 240, // $240 more than default
-      image: '/assets/density.png'
+      image: densityImage
     },
     {
       id: '400%',
@@ -152,7 +182,7 @@ function DensitySelection() {
       percentage: '400%',
       description: '400% EQUIVALENT TO 4-5 BUNDLES FOR LENGTHS OVER 40"',
       price: 320, // $320 more than default
-      image: '/assets/density.png'
+      image: densityImage
     }
   ];
 
@@ -161,7 +191,20 @@ function DensitySelection() {
   };
 
   const handleBack = () => {
-    navigate('/build-a-wig');
+    const pathname = location.pathname;
+    let returnRoute = '/build-a-wig'; // Default to noir
+    
+    if (pathname.includes('/blanco/')) {
+      returnRoute = '/build-a-wig/blanco';
+    } else if (pathname.includes('/soft-wave/')) {
+      returnRoute = '/build-a-wig/soft-wave';
+    } else if (pathname.includes('/soft-curl/')) {
+      returnRoute = '/build-a-wig/soft-curl';
+    } else if (pathname.includes('/noir/')) {
+      returnRoute = '/build-a-wig/noir';
+    }
+    
+    navigate(returnRoute);
   };
 
   // Mobile menu handlers
@@ -208,15 +251,27 @@ function DensitySelection() {
         sourceRoute = '/build-a-wig/edit';
         console.log('Density page - No sourceRoute found, detected edit mode from localStorage');
       } else if (selectedCapSize) {
-        sourceRoute = '/build-a-wig/noir/customize';
-        console.log('Density page - No sourceRoute found, detected customize mode from localStorage');
+        // Check if we're in product-specific customize mode
+        const pathname = window.location.pathname;
+        if (pathname.includes('/blanco/customize')) {
+          sourceRoute = '/build-a-wig/blanco/customize';
+        } else if (pathname.includes('/soft-wave/customize')) {
+          sourceRoute = '/build-a-wig/soft-wave/customize';
+        } else if (pathname.includes('/soft-curl/customize')) {
+          sourceRoute = '/build-a-wig/soft-curl/customize';
+        } else {
+          sourceRoute = '/build-a-wig/noir/customize';
+        }
+        console.log('Density page - No sourceRoute found, detected customize mode from localStorage:', sourceRoute);
       } else {
         sourceRoute = '/build-a-wig';
         console.log('Density page - No sourceRoute found, defaulting to main page');
       }
     }
     
-    const isCustomizeMode = !isEditMode && sourceRoute === '/build-a-wig/noir/customize';
+    const isBlancoCustomizeMode = window.location.pathname.includes('/blanco/customize');
+    const isNoirCustomizeMode = !isEditMode && sourceRoute === '/build-a-wig/noir/customize';
+    const isCustomizeMode = isNoirCustomizeMode || isBlancoCustomizeMode;
     
     // Always save with 'selected' prefix
     localStorage.setItem('selectedDensity', selectedDensity);
@@ -236,8 +291,22 @@ function DensitySelection() {
     
     // Determine the correct route to navigate back to based on current pathname
     let returnRoute = '/build-a-wig'; // Default
-    if (location.pathname.startsWith('/build-a-wig/edit/')) {
+    if (location.pathname.startsWith('/build-a-wig/noir/edit/')) {
+      returnRoute = '/build-a-wig/noir/edit';
+    } else if (location.pathname.startsWith('/build-a-wig/blanco/edit/')) {
+      returnRoute = '/build-a-wig/blanco/edit';
+    } else if (location.pathname.startsWith('/build-a-wig/soft-wave/edit/')) {
+      returnRoute = '/build-a-wig/soft-wave/edit';
+    } else if (location.pathname.startsWith('/build-a-wig/soft-curl/edit/')) {
+      returnRoute = '/build-a-wig/soft-curl/edit';
+    } else if (location.pathname.startsWith('/build-a-wig/edit/')) {
       returnRoute = '/build-a-wig/edit';
+    } else if (location.pathname.startsWith('/build-a-wig/blanco/customize/')) {
+      returnRoute = '/build-a-wig/blanco/customize';
+    } else if (location.pathname.startsWith('/build-a-wig/soft-wave/customize/')) {
+      returnRoute = '/build-a-wig/soft-wave/customize';
+    } else if (location.pathname.startsWith('/build-a-wig/soft-curl/customize/')) {
+      returnRoute = '/build-a-wig/soft-curl/customize';
     } else if (location.pathname.startsWith('/build-a-wig/noir/customize/')) {
       returnRoute = '/build-a-wig/noir/customize';
     } else if (sourceRoute) {
@@ -496,7 +565,11 @@ function DensitySelection() {
     const isOnEditRoute = window.location.pathname.includes('/edit');
     const editingCartItem = localStorage.getItem('editingCartItem');
     
-    const isOnCustomizeRoute = window.location.pathname.includes('/noir/customize');
+    const isOnBlancoCustomizeRoute = window.location.pathname.includes('/blanco/customize');
+    const isOnSoftWaveCustomizeRoute = window.location.pathname.includes('/soft-wave/customize');
+    const isOnSoftCurlCustomizeRoute = window.location.pathname.includes('/soft-curl/customize');
+    const isOnNoirCustomizeRoute = window.location.pathname.includes('/noir/customize');
+    const isOnCustomizeRoute = isOnNoirCustomizeRoute || isOnBlancoCustomizeRoute || isOnSoftWaveCustomizeRoute || isOnSoftCurlCustomizeRoute;
     
     // CRITICAL: Check editSelected* keys first when in edit mode
     if (isOnEditRoute) {
@@ -539,7 +612,17 @@ function DensitySelection() {
       }
     }
     
-    // Main mode - load from main page's selectedDensity
+    // CRITICAL: For blanco customize mode, always use blanco defaults (don't read noir's localStorage)
+    if (isOnBlancoCustomizeRoute) {
+      const isBlancoCustomizeMode = window.location.pathname.includes('/blanco/customize');
+      const defaultDensity = '250%'; // Blanco always defaults to 250%
+      console.log('Density page - Blanco customize mode, using default', defaultDensity);
+      setSelectedDensity(defaultDensity);
+      localStorage.setItem('selectedDensity', defaultDensity);
+      return; // Exit early - don't read from noir's localStorage
+    }
+    
+    // Main mode or noir customize mode - load from main page's selectedDensity
     const currentDensity = localStorage.getItem('selectedDensity');
     console.log('Density page - useEffect loading from localStorage:', currentDensity, 'isOnEditRoute:', isOnEditRoute);
     
@@ -549,8 +632,8 @@ function DensitySelection() {
       setSelectedDensity(currentDensity);
     } else {
       // If not in localStorage, use default and save it
-      console.log('Density page - No value in localStorage, using default 200%');
-      const defaultDensity = '200%';
+      const defaultDensity = '200%'; // Noir defaults to 200%
+      console.log('Density page - No value in localStorage, using default', defaultDensity);
       setSelectedDensity(defaultDensity);
       localStorage.setItem('selectedDensity', defaultDensity);
     }
@@ -559,7 +642,25 @@ function DensitySelection() {
     const handleCustomStorageChange = () => {
       const pathname = window.location.pathname;
       const isOnEditRoute = pathname.includes('/edit');
-      const isOnCustomizeRoute = pathname.includes('/noir/customize');
+      const isOnBlancoCustomizeRoute = pathname.includes('/blanco/customize');
+      const isOnSoftWaveCustomizeRoute = pathname.includes('/soft-wave/customize');
+      const isOnSoftCurlCustomizeRoute = pathname.includes('/soft-curl/customize');
+      const isOnNoirCustomizeRoute = pathname.includes('/noir/customize');
+      const isOnCustomizeRoute = isOnNoirCustomizeRoute || isOnBlancoCustomizeRoute || isOnSoftWaveCustomizeRoute || isOnSoftCurlCustomizeRoute;
+      
+      // CRITICAL: For blanco customize mode, don't read from noir's localStorage
+      if (isOnBlancoCustomizeRoute) {
+        const customizeSelectedDensity = localStorage.getItem('customizeSelectedDensity');
+        if (customizeSelectedDensity) {
+          console.log('Density page - Updated from customStorageChange (blanco):', customizeSelectedDensity);
+          setSelectedDensity(customizeSelectedDensity);
+        } else {
+          // Default to 250% for blanco
+          console.log('Density page - Updated from customStorageChange (blanco default): 250%');
+          setSelectedDensity('250%');
+        }
+        return; // Exit early - don't read from noir's localStorage
+      }
       
       let currentDensity: string | null = null;
       if (isOnEditRoute) {
@@ -662,18 +763,37 @@ function DensitySelection() {
               />
             </button>
           </div>
-          <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
-            <span 
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
+              <span 
                 style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
-              onClick={() => navigate('/build-a-wig')}
-            >
-              BUILD-A-WIG &gt;
-            </span>{' '}
+                onClick={() => {
+                  const pathname = location.pathname;
+                  if (pathname.includes('/noir/')) navigate('/build-a-wig/noir');
+                  else if (pathname.includes('/blanco/')) navigate('/build-a-wig/blanco');
+                  else if (pathname.includes('/soft-wave/')) navigate('/build-a-wig/soft-wave');
+                  else if (pathname.includes('/soft-curl/')) navigate('/build-a-wig/soft-curl');
+                  else navigate('/build-a-wig');
+                }}
+              >
+                BUILD-A-WIG &gt;
+              </span>{' '}
               <span
                 style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', cursor: 'pointer' }}
-                onClick={() => navigate('/straight/noir')}
+                onClick={() => {
+                  const pathname = location.pathname;
+                  if (pathname.includes('/blanco/customize')) navigate('/straight/blanco');
+                  else if (pathname.includes('/soft-wave/customize')) navigate('/wavy/soft-wave');
+                  else if (pathname.includes('/soft-curl/customize')) navigate('/curly/soft-curl');
+                  else navigate('/straight/noir');
+                }}
               >
-                NOIR
+                {(() => {
+                  const pathname = location.pathname;
+                  if (pathname.includes('/blanco/customize')) return 'BLANCO';
+                  if (pathname.includes('/soft-wave/customize')) return 'SOFT WAVE';
+                  if (pathname.includes('/soft-curl/customize')) return 'SOFT CURL';
+                  return 'NOIR';
+                })()}
               </span>
           </p>
           <div className="gap-5 flex absolute" style={{ right: '17px' }}>
@@ -693,8 +813,24 @@ function DensitySelection() {
 
         {/* MAIN BUILD AREA */}
         <div
-          className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
-          style={{ borderWidth: '1.3px' }}
+          className="border border-black flex flex-col pt-6 pb-4 mb-2 bg-white/60 backdrop-blur-sm"
+          style={{ 
+            borderWidth: '1.3px',
+            paddingLeft: (() => {
+              const pathname = window.location.pathname;
+              if (pathname.includes('/soft-wave') || pathname.includes('/soft-curl')) {
+                return '10px'; // Reduced padding for SOFT WAVE/CURL
+              }
+              return '20px'; // Default padding (px-5 = 1.25rem = 20px)
+            })(),
+            paddingRight: (() => {
+              const pathname = window.location.pathname;
+              if (pathname.includes('/soft-wave') || pathname.includes('/soft-curl')) {
+                return '10px'; // Reduced padding for SOFT WAVE/CURL
+              }
+              return '20px'; // Default padding (px-5 = 1.25rem = 20px)
+            })(),
+          }}
         >
           {/* WIG PREVIEW */}
           <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
@@ -715,10 +851,30 @@ function DensitySelection() {
                     className="absolute top-[-20px] left-1/2 transform -translate-x-1/2 text-5xl sm:text-6xl z-20 noir-text cursor-pointer"
                     style={{
                       color: '#EB1C24',
+                      whiteSpace: 'nowrap',
+                      fontSize: (() => {
+                        const pathname = window.location.pathname;
+                        if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-curl/customize')) {
+                          return 'calc(clamp(2rem, 4vw, 2.5rem) + 2px)'; // Increased by 2px for SOFT WAVE/CURL
+                        }
+                        return undefined; // Default size
+                      })(),
                     }}
-                    onClick={() => navigate('/straight/noir')}
+                    onClick={() => {
+                      const pathname = window.location.pathname;
+                      if (pathname.includes('/blanco/customize')) navigate('/straight/blanco');
+                      else if (pathname.includes('/soft-wave/customize')) navigate('/wavy/soft-wave');
+                      else if (pathname.includes('/soft-curl/customize')) navigate('/curly/soft-curl');
+                      else navigate('/straight/noir');
+                    }}
                   >
-                    NOIR
+                    {(() => {
+                      const pathname = window.location.pathname;
+                      if (pathname.includes('/blanco/customize')) return 'BLANCO';
+                      if (pathname.includes('/soft-wave/customize')) return 'SOFT WAVE';
+                      if (pathname.includes('/soft-curl/customize')) return 'SOFT CURL';
+                      return 'NOIR';
+                    })()}
                   </p>
                 <img
                   src={wigViews[selectedView]}

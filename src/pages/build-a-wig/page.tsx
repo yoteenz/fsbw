@@ -32,20 +32,32 @@ export default function BuildAWigPage() {
     // Use location.pathname from React Router
     // Check if we're in edit mode or customize mode
     const currentPath = location.pathname;
-    const isEditMode = currentPath === '/build-a-wig/edit';
-    const isCustomizeMode = currentPath === '/build-a-wig/noir/customize';
+    const isEditMode = currentPath === '/build-a-wig/edit' ||
+                       currentPath === '/build-a-wig/noir/edit' ||
+                       currentPath === '/build-a-wig/blanco/edit' ||
+                       currentPath === '/build-a-wig/soft-wave/edit' ||
+                       currentPath === '/build-a-wig/soft-curl/edit';
+    const isCustomizeMode = currentPath === '/build-a-wig/noir/customize' || 
+                            currentPath === '/build-a-wig/blanco/customize' ||
+                            currentPath === '/build-a-wig/soft-wave/customize' ||
+                            currentPath === '/build-a-wig/soft-curl/customize';
+    const isBlancoRoute = currentPath.startsWith('/build-a-wig/blanco');
+    const isProductMainRoute = currentPath === '/build-a-wig/blanco' ||
+                               currentPath === '/build-a-wig/soft-wave' ||
+                               currentPath === '/build-a-wig/soft-curl' ||
+                               currentPath === '/build-a-wig/noir';
     
-    // If in customize mode, load cap size with defaults
-    if (isCustomizeMode) {
+    // If in customize mode or product-specific main route, load cap size with defaults
+    if (isCustomizeMode || isProductMainRoute) {
       const savedCapSize = localStorage.getItem('selectedCapSize');
-      if (savedCapSize) {
+      if (savedCapSize || isCustomizeMode) {
         return {
-          capSize: savedCapSize,
+          capSize: savedCapSize || 'M',
           length: '24"',
-          density: '200%',
+          density: isBlancoRoute ? '250%' : '200%',
           lace: '13X6',
           texture: 'SILKY',
-          color: 'OFF BLACK',
+          color: isBlancoRoute ? 'PLATINUM' : 'OFF BLACK',
           hairline: 'NATURAL',
           styling: 'NONE',
           addOns: [],
@@ -214,13 +226,15 @@ export default function BuildAWigPage() {
     }
     
     // Set defaults in localStorage so sub-pages can read them
+    // CRITICAL: Check product-specific routes to set correct defaults
+    const isBlancoRouteForDefaults = currentPath.startsWith('/build-a-wig/blanco');
     const defaults = {
       capSize: 'M',
       length: '24"',
-      density: '200%',
+      density: isBlancoRouteForDefaults ? '250%' : '200%',
       lace: '13X6',
       texture: 'SILKY',
-      color: 'OFF BLACK',
+      color: isBlancoRouteForDefaults ? 'PLATINUM' : 'OFF BLACK',
       hairline: 'NATURAL',
       styling: 'NONE',
       addOns: [],
@@ -255,10 +269,16 @@ export default function BuildAWigPage() {
     return defaults;
   });
 
-  // Calculate base price - always use base price of 740 (cap size price is added separately)
+  // Calculate base price - use correct base price for each product (cap size price is added separately)
   const basePrice = useMemo(() => {
-    return 740; // Base price is always 740, flexible caps add $40 via capSizePrice
-  }, []);
+    const pathname = location.pathname;
+    // Check for product-specific routes (main, customize, edit)
+    if (pathname.startsWith('/build-a-wig/blanco')) return 820; // Blanco base price is 820
+    if (pathname.startsWith('/build-a-wig/soft-wave')) return 760; // Soft Wave base price is 760
+    if (pathname.startsWith('/build-a-wig/soft-curl')) return 780; // Soft Curl base price is 780
+    if (pathname.startsWith('/build-a-wig/noir')) return 740; // Noir base price is 740
+    return 740; // Default noir base price, flexible caps add $40 via capSizePrice
+  }, [location.pathname]);
   
   // Helper function to calculate prices from selections
   const calculatePricesFromSelections = useCallback((selections: WigCustomization) => {
@@ -299,13 +319,29 @@ export default function BuildAWigPage() {
     prices.lengthPrice = lengthPrices[selections.length] || 0;
     
     // Calculate color price
-    if (selections.color && selections.color !== 'OFF BLACK') {
-      prices.colorPrice = 100;
-      
-      // Add extra $40 for lengths over 30" (excluding OFF BLACK)
-      // This is in addition to the length price calculated above
-      if (selections.length && ['30"', '32"', '34"', '36"', '40"'].includes(selections.length)) {
-        prices.colorPrice += 40;
+    // PLATINUM is the default color for blanco (free), OFF BLACK is default for noir (free)
+    const isBlancoRoute = location.pathname.startsWith('/build-a-wig/blanco');
+    const defaultColor = isBlancoRoute ? 'PLATINUM' : 'OFF BLACK';
+    
+    if (selections.color && selections.color !== defaultColor) {
+      // For blanco colors: GOLDEN is -$20, ASH is $0 (same as PLATINUM)
+      if (isBlancoRoute) {
+        if (selections.color === 'GOLDEN') {
+          prices.colorPrice = -20; // -$20 discount
+        } else if (selections.color === 'ASH') {
+          prices.colorPrice = 0; // Same as platinum
+        } else {
+          prices.colorPrice = 100; // Other colors (shouldn't happen with blanco's 3 options)
+        }
+      } else {
+        // For noir and other products
+        prices.colorPrice = 100;
+        
+        // Add extra $40 for lengths over 30" (excluding default color)
+        // This is in addition to the length price calculated above
+        if (selections.length && ['30"', '32"', '34"', '36"', '40"'].includes(selections.length)) {
+          prices.colorPrice += 40;
+        }
       }
     }
     
@@ -395,9 +431,9 @@ export default function BuildAWigPage() {
       
     const stylingPrices: { [key: string]: number } = {
       'BANGS': 40,
-        'CRIMPS': 140,
-        'FLAT IRON': 100,
-        'LAYERS': 180
+        'CRIMPS': 80,
+        'FLAT IRON': 80,
+        'LAYERS': 100
       };
       
       if (hasBangs && otherStyling) {
@@ -430,8 +466,8 @@ export default function BuildAWigPage() {
     // Calculate add-ons price
     // Base prices from addons page
     const addOnBasePrices: { [key: string]: number } = {
-      'BLEACH': 80,
-      'PLUCK': 120,
+      'BLEACH': 60,
+      'PLUCK': 80,
       'BLUNT CUT': 20
     };
     
@@ -451,12 +487,15 @@ export default function BuildAWigPage() {
     }, 0);
     
     return prices;
-  }, []);
+  }, [location.pathname]);
   
   // Helper function to save prices with correct prefix (editSelected in edit mode, customizeSelected in customize mode, selected otherwise)
   const savePricesToLocalStorage = useCallback((prices: { [key: string]: number }) => {
     const isEditMode = location.pathname === '/build-a-wig/edit' && localStorage.getItem('editingCartItem') !== null;
-    const isCustomizeMode = location.pathname === '/build-a-wig/noir/customize';
+    const isCustomizeMode = location.pathname === '/build-a-wig/noir/customize' || 
+                            location.pathname === '/build-a-wig/blanco/customize' ||
+                            location.pathname === '/build-a-wig/soft-wave/customize' ||
+                            location.pathname === '/build-a-wig/soft-curl/customize';
     
     // CRITICAL: Validate cap size price - if cap size is flexible but price is 0, don't save (preserve existing)
     const currentCapSize = localStorage.getItem('editSelectedCapSize') || localStorage.getItem('selectedCapSize') || 'M';
@@ -543,9 +582,21 @@ export default function BuildAWigPage() {
   useEffect(() => {
     // Check if we're on the build-a-wig page, edit page, or customize page (not a sub-page)
     // NOTE: Removed check for '/' since root path now goes to lobby page
-    const isMainPage = location.pathname === '/build-a-wig';
-    const isEditPage = location.pathname === '/build-a-wig/edit';
-    const isCustomizePage = location.pathname === '/build-a-wig/noir/customize';
+    // CRITICAL: Include product-specific main routes (blanco, soft-wave, soft-curl, noir)
+    const isMainPage = location.pathname === '/build-a-wig' ||
+                       location.pathname === '/build-a-wig/noir' ||
+                       location.pathname === '/build-a-wig/blanco' ||
+                       location.pathname === '/build-a-wig/soft-wave' ||
+                       location.pathname === '/build-a-wig/soft-curl';
+    const isEditPage = location.pathname === '/build-a-wig/edit' ||
+                       location.pathname === '/build-a-wig/noir/edit' ||
+                       location.pathname === '/build-a-wig/blanco/edit' ||
+                       location.pathname === '/build-a-wig/soft-wave/edit' ||
+                       location.pathname === '/build-a-wig/soft-curl/edit';
+    const isCustomizePage = location.pathname.startsWith('/build-a-wig/noir/customize') || 
+                            location.pathname.startsWith('/build-a-wig/blanco/customize') ||
+                            location.pathname.startsWith('/build-a-wig/soft-wave/customize') ||
+                            location.pathname.startsWith('/build-a-wig/soft-curl/customize');
     
     // Check if coming from sub-page early to set loading flag immediately
     const comingFromSubPage = sessionStorage.getItem('comingFromSubPage') === 'true';
@@ -595,12 +646,15 @@ export default function BuildAWigPage() {
         
         // CRITICAL: Prioritize customizeSelected* keys (set by sub-pages), then selected* keys, then current state
         // This ensures we always use the NEW value from the sub-page, not stale values
+        const isBlancoCustomizeRoute = location.pathname.startsWith('/build-a-wig/blanco');
+        const defaultColor = isBlancoCustomizeRoute ? 'PLATINUM' : 'OFF BLACK';
+        
         const savedCapSizeFinal = savedCapSizeCustomize || savedCapSizeSelected || customization.capSize || 'M';
         const savedLength = savedLengthCustomize || savedLengthSelected || customization.length || '24"';
         const savedDensity = savedDensityCustomize || savedDensitySelected || customization.density || '200%';
         const savedLace = savedLaceCustomize || savedLaceSelected || customization.lace || '13X6';
         const savedTexture = savedTextureCustomize || savedTextureSelected || customization.texture || 'SILKY';
-        const savedColor = savedColorCustomize || savedColorSelected || customization.color || 'OFF BLACK';
+        const savedColor = savedColorCustomize || savedColorSelected || customization.color || defaultColor;
         const savedHairline = savedHairlineCustomize || savedHairlineSelected || customization.hairline || 'NATURAL';
         const savedStyling = savedStylingCustomize || savedStylingSelected || customization.styling || 'NONE';
         const savedAddOns = savedAddOnsCustomize || savedAddOnsSelected || JSON.stringify(customization.addOns) || '[]';
@@ -711,11 +765,14 @@ export default function BuildAWigPage() {
         
         if (savedCapSize) {
           // Load existing selections from customizeSelected* keys if they exist, otherwise use defaults
+          const isBlancoCustomizeRouteForDefaults = location.pathname.startsWith('/build-a-wig/blanco');
+          const defaultColorForFirstLoad = isBlancoCustomizeRouteForDefaults ? 'PLATINUM' : 'OFF BLACK';
+          
           const existingLength = localStorage.getItem('customizeSelectedLength') || localStorage.getItem('selectedLength') || '24"';
           const existingDensity = localStorage.getItem('customizeSelectedDensity') || localStorage.getItem('selectedDensity') || '200%';
           const existingLace = localStorage.getItem('customizeSelectedLace') || localStorage.getItem('selectedLace') || '13X6';
           const existingTexture = localStorage.getItem('customizeSelectedTexture') || localStorage.getItem('selectedTexture') || 'SILKY';
-          const existingColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor') || 'OFF BLACK';
+          const existingColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor') || defaultColorForFirstLoad;
           const existingHairline = localStorage.getItem('customizeSelectedHairline') || localStorage.getItem('selectedHairline') || 'NATURAL';
           const existingStyling = localStorage.getItem('customizeSelectedStyling') || localStorage.getItem('selectedStyling') || 'NONE';
           const existingAddOns = localStorage.getItem('customizeSelectedAddOns') || localStorage.getItem('selectedAddOns') || '[]';
@@ -1488,8 +1545,13 @@ export default function BuildAWigPage() {
           }
           
           // Set initial total price from cart item
-          // CRITICAL: Base price is ALWAYS 740 for NOIR - flexible cap adds $40 via capSizePrice
-          const currentBasePrice = 740;
+          // CRITICAL: Base price varies by product - flexible cap adds $40 via capSizePrice
+          const pathname = location.pathname;
+          let currentBasePrice = 740; // Default noir
+          if (pathname.startsWith('/build-a-wig/blanco')) currentBasePrice = 820;
+          else if (pathname.startsWith('/build-a-wig/soft-wave')) currentBasePrice = 760;
+          else if (pathname.startsWith('/build-a-wig/soft-curl')) currentBasePrice = 780;
+          else if (pathname.startsWith('/build-a-wig/noir')) currentBasePrice = 740;
           // CRITICAL: Use preserved cap size price if it exists, otherwise use calculated
           const existingCapSizePriceForTotal = localStorage.getItem('editSelectedCapSizePrice') || localStorage.getItem('selectedCapSizePrice');
           const preservedCapSizePrice = existingCapSizePriceForTotal && existingCapSizePriceForTotal !== '' && !isNaN(parseFloat(existingCapSizePriceForTotal))
@@ -1574,13 +1636,16 @@ export default function BuildAWigPage() {
         localStorage.removeItem('selectedAddOnsPrice');
         
         // Set defaults
+        // CRITICAL: Check product-specific routes to set correct defaults
+        const pathnameForDefaults = location.pathname;
+        const isBlancoRouteForDefaults = pathnameForDefaults.startsWith('/build-a-wig/blanco');
         const defaults = {
           capSize: 'M',
           length: '24"',
-          density: '200%',
+          density: isBlancoRouteForDefaults ? '250%' : '200%',
           lace: '13X6',
           texture: 'SILKY',
-          color: 'OFF BLACK',
+          color: isBlancoRouteForDefaults ? 'PLATINUM' : 'OFF BLACK',
           hairline: 'NATURAL',
           styling: 'NONE',
           addOns: [],
@@ -1635,16 +1700,40 @@ export default function BuildAWigPage() {
         const savedAddOns = localStorage.getItem('selectedAddOns');
 
         // Always load from localStorage when coming from sub-page
+        // CRITICAL: Check current route to use product-specific defaults
+        const pathnameForDefaults = location.pathname;
+        const isBlancoRouteForDefaults = pathnameForDefaults.startsWith('/build-a-wig/blanco');
+        const defaultDensity = isBlancoRouteForDefaults ? '250%' : '200%';
+        const defaultColor = isBlancoRouteForDefaults ? 'PLATINUM' : 'OFF BLACK';
+        
         // Use current customization state as fallback to preserve existing selections (like customize mode)
+        // But use product-specific defaults if no value exists
         const savedCapSizeFinal = savedCapSize || customization.capSize || 'M';
         const savedLengthFinal = savedLength || customization.length || '24"';
-        const savedDensityFinal = savedDensity || customization.density || '200%';
+        const savedDensityFinal = savedDensity || customization.density || defaultDensity;
         const savedLaceFinal = savedLace || customization.lace || '13X6';
         const savedTextureFinal = savedTexture || customization.texture || 'SILKY';
-        const savedColorFinal = savedColor || customization.color || 'OFF BLACK';
+        const savedColorFinal = savedColor || customization.color || defaultColor;
         const savedHairlineFinal = savedHairline || customization.hairline || 'NATURAL';
         const savedStylingFinal = savedStyling || customization.styling || 'NONE';
         const savedAddOnsFinal = savedAddOns || JSON.stringify(customization.addOns) || '[]';
+        
+        // CRITICAL: If we're on a blanco route but localStorage has noir defaults, override them BEFORE creating updatedCustomization
+        let correctedDensity = savedDensityFinal;
+        let correctedColor = savedColorFinal;
+        
+        if (isBlancoRouteForDefaults) {
+          // If density is noir's default (200%) and wasn't explicitly saved, replace with blanco's default (250%)
+          if (correctedDensity === '200%' && !savedDensity) {
+            correctedDensity = '250%';
+            localStorage.setItem('selectedDensity', '250%');
+          }
+          // If color is noir's default (OFF BLACK) and wasn't explicitly saved, replace with blanco's default (PLATINUM)
+          if (correctedColor === 'OFF BLACK' && !savedColor) {
+            correctedColor = 'PLATINUM';
+            localStorage.setItem('selectedColor', 'PLATINUM');
+          }
+        }
         
         // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
         let validStyling = savedStylingFinal !== null && savedStylingFinal !== 'NONE' ? savedStylingFinal : 'NONE';
@@ -1656,10 +1745,10 @@ export default function BuildAWigPage() {
         const updatedCustomization = {
           capSize: savedCapSizeFinal,
           length: savedLengthFinal,
-          density: savedDensityFinal,
+          density: correctedDensity,
           lace: savedLaceFinal,
           texture: savedTextureFinal,
-          color: savedColorFinal,
+          color: correctedColor,
           hairline: savedHairlineFinal,
           styling: validStyling,
           addOns: savedAddOnsFinal ? JSON.parse(savedAddOnsFinal) : [],
@@ -1766,7 +1855,10 @@ export default function BuildAWigPage() {
       
       // Only handle storage changes for edit and customize modes
       const isEditMode = location.pathname === '/build-a-wig/edit' && localStorage.getItem('editingCartItem') !== null;
-      const isCustomizeMode = location.pathname === '/build-a-wig/noir/customize';
+      const isCustomizeMode = location.pathname === '/build-a-wig/noir/customize' || 
+                              location.pathname === '/build-a-wig/blanco/customize' ||
+                              location.pathname === '/build-a-wig/soft-wave/customize' ||
+                              location.pathname === '/build-a-wig/soft-curl/customize';
       
       if (isEditMode || isCustomizeMode) {
         // CRITICAL: In edit mode, read from editSelected* keys (set by sub-pages)
@@ -1855,7 +1947,11 @@ export default function BuildAWigPage() {
   // Listen for editingCartItemChanged event to reload when switching items while on edit page
   useEffect(() => {
     const handleEditingCartItemChanged = (event: CustomEvent) => {
-      const isEditPage = location.pathname === '/build-a-wig/edit';
+      const isEditPage = location.pathname === '/build-a-wig/edit' ||
+                       location.pathname === '/build-a-wig/noir/edit' ||
+                       location.pathname === '/build-a-wig/blanco/edit' ||
+                       location.pathname === '/build-a-wig/soft-wave/edit' ||
+                       location.pathname === '/build-a-wig/soft-curl/edit';
       
       if (isEditPage) {
         const newItemId = event.detail?.itemId;
@@ -1886,7 +1982,12 @@ export default function BuildAWigPage() {
 
   // Track customization state changes for debugging
   useEffect(() => {
-    if (location.pathname === '/build-a-wig/edit') {
+    const isEditPage = location.pathname === '/build-a-wig/edit' ||
+                       location.pathname === '/build-a-wig/noir/edit' ||
+                       location.pathname === '/build-a-wig/blanco/edit' ||
+                       location.pathname === '/build-a-wig/soft-wave/edit' ||
+                       location.pathname === '/build-a-wig/soft-curl/edit';
+    if (isEditPage) {
     }
   }, [customization, location.pathname]);
 
@@ -1902,7 +2003,10 @@ export default function BuildAWigPage() {
     
     // Check if we're in edit mode or customize mode
     const isEditMode = location.pathname === '/build-a-wig/edit' && localStorage.getItem('editingCartItem') !== null;
-    const isCustomizeMode = location.pathname === '/build-a-wig/noir/customize';
+    const isCustomizeMode = location.pathname === '/build-a-wig/noir/customize' ||
+                            location.pathname === '/build-a-wig/blanco/customize' ||
+                            location.pathname === '/build-a-wig/soft-wave/customize' ||
+                            location.pathname === '/build-a-wig/soft-curl/customize';
     
     // CRITICAL: For all modes, skip syncing if we just came from a sub-page (let the route change effect handle it)
     // Check this BEFORE any other logic to prevent race conditions
@@ -1981,7 +2085,11 @@ export default function BuildAWigPage() {
   // CRITICAL: In edit mode, sync customization state FROM localStorage when customStorageChange events fire
   // This ensures thumbnails update when returning from sub-pages
   useEffect(() => {
-    const isEditPage = location.pathname === '/build-a-wig/edit';
+    const isEditPage = location.pathname === '/build-a-wig/edit' ||
+                       location.pathname === '/build-a-wig/noir/edit' ||
+                       location.pathname === '/build-a-wig/blanco/edit' ||
+                       location.pathname === '/build-a-wig/soft-wave/edit' ||
+                       location.pathname === '/build-a-wig/soft-curl/edit';
     
     if (!isEditPage) {
       return;
@@ -2103,7 +2211,11 @@ export default function BuildAWigPage() {
   // Add to bag button states: 'idle', 'adding', 'added'
   // Initialize button state based on route - edit mode should start as 'added'
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>(() => {
-    const isEditPage = location.pathname === '/build-a-wig/edit';
+    const isEditPage = location.pathname === '/build-a-wig/edit' ||
+                       location.pathname === '/build-a-wig/noir/edit' ||
+                       location.pathname === '/build-a-wig/blanco/edit' ||
+                       location.pathname === '/build-a-wig/soft-wave/edit' ||
+                       location.pathname === '/build-a-wig/soft-curl/edit';
     if (isEditPage) {
       const editingCartItem = localStorage.getItem('editingCartItem');
       if (editingCartItem) {
@@ -2274,10 +2386,21 @@ export default function BuildAWigPage() {
   };
 
   const getDensityIcon = () => {
+    // Check if we're in blanco route (main, customize, edit)
+    const isBlancoRoute = location.pathname.startsWith('/build-a-wig/blanco');
+    if (isBlancoRoute) {
+      return '/assets/BLANCO-DENSITY.png';
+    }
     return '/assets/density.png'; // All densities use the same icon
   };
 
   const getLaceIcon = () => {
+    // Check if we're in blanco route (main, customize, edit)
+    const isBlancoRoute = location.pathname.startsWith('/build-a-wig/blanco');
+    if (isBlancoRoute) {
+      return '/assets/BLANCO-LACE.png';
+    }
+    
     const selectedLace = customization.lace || '13X6';
     
     // Check for full lace options that use different icons
@@ -2290,7 +2413,12 @@ export default function BuildAWigPage() {
   };
 
   const getTextureIcon = () => {
-    return '/assets/Texture-icon.svg'; // All textures use the same icon
+    // Use blanco texture SVG for blanco customize mode
+    const pathname = location.pathname;
+    if (pathname.startsWith('/build-a-wig/blanco')) {
+      return '/assets/blanco texture.svg';
+    }
+    return '/assets/Texture-icon.svg'; // Default texture icon for other products
   };
 
   // @ts-expect-error - Function kept for potential future use
@@ -2299,6 +2427,12 @@ export default function BuildAWigPage() {
   };
 
   const getHairlineIcon = () => {
+    // Check if we're in blanco route (main, customize, edit)
+    const isBlancoRoute = location.pathname.startsWith('/build-a-wig/blanco');
+    if (isBlancoRoute) {
+      return '/assets/BLANCO-HAIRLINE.png';
+    }
+    
     const selectedHairline = customization.hairline || 'NATURAL';
     
     // Handle comma-separated values (multiple selections)
@@ -2501,10 +2635,17 @@ export default function BuildAWigPage() {
   };
 
   const getSelectedColorCode = () => {
-    const selectedColor = customization.color || 'OFF BLACK';
+    const pathname = location.pathname;
+    const isBlancoRoute = pathname.startsWith('/build-a-wig/blanco');
+    const selectedColor = customization.color || (isBlancoRoute ? 'PLATINUM' : 'OFF BLACK');
     
     // Color mapping based on the color sub page
     const colorMap: { [key: string]: string } = {
+      // Blanco colors
+      'GOLDEN': '#FBF08B',
+      'PLATINUM': '#F6F3D2',
+      'ASH': '#E5E3CB',
+      // Noir/other colors
       'JET BLACK': '#000000',
       'OFF BLACK': '#2A2424',
       'ESPRESSO': '#3B1301',
@@ -2523,12 +2664,44 @@ export default function BuildAWigPage() {
       'CITRINE': '#E2E91C'
     };
     
-    return colorMap[selectedColor] || '#2A2424'; // Default to OFF BLACK if not found
+    // Default to PLATINUM for blanco routes, OFF BLACK for others
+    return colorMap[selectedColor] || (isBlancoRoute ? '#F6F3D2' : '#2A2424');
   };
 
   // Get wig views based on selected hairline from customization state
-  // Use useMemo to recalculate when customization.hairline changes
+  // Use useMemo to recalculate when customization.hairline changes or route changes
   const wigViews = useMemo(() => {
+    const pathname = location.pathname;
+    
+    // Check if we're in product-specific routes (main, customize, edit)
+    if (pathname.startsWith('/build-a-wig/blanco')) {
+      return [
+        '/assets/2D BLANCO LEFT.png',
+        '/assets/2D BLANCO FRONT.png',
+        '/assets/2D BLANCO RIGHT.png'
+      ];
+    }
+    
+    if (pathname.startsWith('/build-a-wig/soft-wave')) {
+      return [
+        '/assets/2D WAVY LEFT.png',
+        '/assets/2D WAVY FRONT.png',
+        '/assets/2D WAVY RIGHT.png'
+      ];
+    }
+    
+    if (pathname.startsWith('/build-a-wig/soft-curl')) {
+      return [
+        '/assets/2D CURLY LEFT.png',
+        '/assets/2D CURLY FRONT.png',
+        '/assets/2D CURLY RIGHT.png'
+      ];
+    }
+    
+    if (pathname.startsWith('/build-a-wig/noir')) {
+      // Noir uses hairline-based views, handled below
+    }
+    
     // Use the hairline from customization state instead of localStorage
     const selectedHairline = customization.hairline || 'NATURAL';
     const hasPeak = selectedHairline.includes('PEAK');
@@ -2554,7 +2727,7 @@ export default function BuildAWigPage() {
         '/assets/natural right.png'
       ];
     }
-  }, [customization.hairline]);
+  }, [customization.hairline, location.pathname]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -2717,7 +2890,10 @@ export default function BuildAWigPage() {
       // Check which mode we're in
       const editingCartItem = localStorage.getItem('editingCartItem');
       const isEditMode = location.pathname === '/build-a-wig/edit' && editingCartItem !== null;
-      const isCustomizeMode = location.pathname === '/build-a-wig/noir/customize';
+      const isCustomizeMode = location.pathname.startsWith('/build-a-wig/noir/customize') || 
+                              location.pathname.startsWith('/build-a-wig/blanco/customize') ||
+                              location.pathname.startsWith('/build-a-wig/soft-wave/customize') ||
+                              location.pathname.startsWith('/build-a-wig/soft-curl/customize');
       
       // DEBUGGING: Always log when on edit route to verify detection
       console.log('[EDIT MODE DETECTION]', {
@@ -3105,9 +3281,39 @@ export default function BuildAWigPage() {
     localStorage.setItem('selectedAddOns', JSON.stringify(customization.addOns));
     
     // Determine the base route based on current mode
-    const isEditMode = location.pathname === '/build-a-wig/edit';
-    const isCustomizeMode = location.pathname === '/build-a-wig/noir/customize';
-    const baseRoute = isEditMode ? '/build-a-wig/edit' : isCustomizeMode ? '/build-a-wig/noir/customize' : '/build-a-wig';
+    const pathname = location.pathname;
+    const isEditMode = pathname === '/build-a-wig/edit' ||
+                       pathname.startsWith('/build-a-wig/noir/edit') ||
+                       pathname.startsWith('/build-a-wig/blanco/edit') ||
+                       pathname.startsWith('/build-a-wig/soft-wave/edit') ||
+                       pathname.startsWith('/build-a-wig/soft-curl/edit');
+    
+    // Determine base route based on current pathname
+    // CRITICAL: Check for customize/edit modes FIRST before checking product routes
+    let baseRoute = '/build-a-wig'; // Default
+    if (isEditMode) {
+      if (pathname.startsWith('/build-a-wig/blanco/edit')) baseRoute = '/build-a-wig/blanco/edit';
+      else if (pathname.startsWith('/build-a-wig/soft-wave/edit')) baseRoute = '/build-a-wig/soft-wave/edit';
+      else if (pathname.startsWith('/build-a-wig/soft-curl/edit')) baseRoute = '/build-a-wig/soft-curl/edit';
+      else if (pathname.startsWith('/build-a-wig/noir/edit')) baseRoute = '/build-a-wig/noir/edit';
+      else baseRoute = '/build-a-wig/edit';
+    } else if (pathname.startsWith('/build-a-wig/blanco/customize')) {
+      baseRoute = '/build-a-wig/blanco/customize';
+    } else if (pathname.startsWith('/build-a-wig/soft-wave/customize')) {
+      baseRoute = '/build-a-wig/soft-wave/customize';
+    } else if (pathname.startsWith('/build-a-wig/soft-curl/customize')) {
+      baseRoute = '/build-a-wig/soft-curl/customize';
+    } else if (pathname.startsWith('/build-a-wig/noir/customize')) {
+      baseRoute = '/build-a-wig/noir/customize';
+    } else if (pathname.startsWith('/build-a-wig/blanco')) {
+      baseRoute = '/build-a-wig/blanco';
+    } else if (pathname.startsWith('/build-a-wig/soft-wave')) {
+      baseRoute = '/build-a-wig/soft-wave';
+    } else if (pathname.startsWith('/build-a-wig/soft-curl')) {
+      baseRoute = '/build-a-wig/soft-curl';
+    } else if (pathname.startsWith('/build-a-wig/noir')) {
+      baseRoute = '/build-a-wig/noir';
+    }
     
     // Store the source route so sub-pages know where to navigate back to
     sessionStorage.setItem('sourceRoute', baseRoute);
@@ -3177,7 +3383,11 @@ export default function BuildAWigPage() {
 
   // Helper function to detect changes in edit mode
   const detectChanges = useCallback(() => {
-    const isEditPage = location.pathname === '/build-a-wig/edit';
+    const isEditPage = location.pathname === '/build-a-wig/edit' ||
+                       location.pathname === '/build-a-wig/noir/edit' ||
+                       location.pathname === '/build-a-wig/blanco/edit' ||
+                       location.pathname === '/build-a-wig/soft-wave/edit' ||
+                       location.pathname === '/build-a-wig/soft-curl/edit';
     
     // Skip change detection if we're currently loading from localStorage (to avoid overwriting hasChanges set by route change effect)
     if (isLoadingFromStorage.current) {
@@ -3274,7 +3484,11 @@ export default function BuildAWigPage() {
   
   // Also listen for customStorageChange events to trigger change detection immediately
   useEffect(() => {
-    const isEditPage = location.pathname === '/build-a-wig/edit';
+    const isEditPage = location.pathname === '/build-a-wig/edit' ||
+                       location.pathname === '/build-a-wig/noir/edit' ||
+                       location.pathname === '/build-a-wig/blanco/edit' ||
+                       location.pathname === '/build-a-wig/soft-wave/edit' ||
+                       location.pathname === '/build-a-wig/soft-curl/edit';
     
     if (!isEditPage) {
       return;
@@ -3301,7 +3515,11 @@ export default function BuildAWigPage() {
 
   // Initialize button state from localStorage on page load
   useEffect(() => {
-    const isEditPage = location.pathname === '/build-a-wig/edit';
+    const isEditPage = location.pathname === '/build-a-wig/edit' ||
+                       location.pathname === '/build-a-wig/noir/edit' ||
+                       location.pathname === '/build-a-wig/blanco/edit' ||
+                       location.pathname === '/build-a-wig/soft-wave/edit' ||
+                       location.pathname === '/build-a-wig/soft-curl/edit';
     
     // In edit mode, button should always start as 'added' (IN THE BAG)
     if (isEditPage) {
@@ -3331,7 +3549,11 @@ export default function BuildAWigPage() {
   }, [location.pathname]);
 
   const handleAddToBag = async () => {
-    const isEditPage = location.pathname === '/build-a-wig/edit';
+    const isEditPage = location.pathname === '/build-a-wig/edit' ||
+                       location.pathname === '/build-a-wig/noir/edit' ||
+                       location.pathname === '/build-a-wig/blanco/edit' ||
+                       location.pathname === '/build-a-wig/soft-wave/edit' ||
+                       location.pathname === '/build-a-wig/soft-curl/edit';
     
     // In edit mode: only allow if changes have been made
     if (isEditPage && !hasChanges) {
@@ -3359,8 +3581,13 @@ export default function BuildAWigPage() {
     if (isEditPage && editingCartItem && editingCartItemId) {
       // CRITICAL: Recalculate price RIGHT BEFORE saving to ensure it's always correct
       // Don't rely on totalPrice state which might be stale after many edits
-      // CRITICAL: Base price is ALWAYS 740 for NOIR - flexible cap adds $40 via capSizePrice
-      const basePrice = 740;
+      // CRITICAL: Base price varies by product - flexible cap adds $40 via capSizePrice
+      const pathname = location.pathname;
+      let basePrice = 740; // Default noir
+      if (pathname.startsWith('/build-a-wig/blanco')) basePrice = 820;
+      else if (pathname.startsWith('/build-a-wig/soft-wave')) basePrice = 760;
+      else if (pathname.startsWith('/build-a-wig/soft-curl')) basePrice = 780;
+      else if (pathname.startsWith('/build-a-wig/noir')) basePrice = 740;
       
       // Get prices from localStorage with fallback to calculated prices
       // CRITICAL: Use calculated prices as fallback to ensure density/other prices are correct
@@ -3809,15 +4036,38 @@ export default function BuildAWigPage() {
             <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
               <span 
                 style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
-                onClick={() => navigate('/build-a-wig')}
+                onClick={() => {
+                  const pathname = location.pathname;
+                  // Check for product-specific routes first (main, customize, edit)
+                  if (pathname.startsWith('/build-a-wig/blanco')) navigate('/build-a-wig/blanco');
+                  else if (pathname.startsWith('/build-a-wig/soft-wave')) navigate('/build-a-wig/soft-wave');
+                  else if (pathname.startsWith('/build-a-wig/soft-curl')) navigate('/build-a-wig/soft-curl');
+                  else if (pathname.startsWith('/build-a-wig/noir')) navigate('/build-a-wig/noir');
+                  else navigate('/build-a-wig');
+                }}
               >
                 BUILD-A-WIG &gt;
               </span>{' '}
               <span
                 style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', cursor: 'pointer' }}
-                onClick={() => navigate('/straight/noir')}
+                onClick={() => {
+                  const pathname = location.pathname;
+                  // Check for product-specific routes (main, customize, edit)
+                  if (pathname.startsWith('/build-a-wig/blanco')) navigate('/straight/blanco');
+                  else if (pathname.startsWith('/build-a-wig/soft-wave')) navigate('/wavy/soft-wave');
+                  else if (pathname.startsWith('/build-a-wig/soft-curl')) navigate('/curly/soft-curl');
+                  else if (pathname.startsWith('/build-a-wig/noir')) navigate('/straight/noir');
+                  else navigate('/straight/noir');
+                }}
               >
-                NOIR
+                {(() => {
+                  const pathname = location.pathname;
+                  if (pathname.startsWith('/build-a-wig/blanco')) return 'BLANCO';
+                  if (pathname.startsWith('/build-a-wig/soft-wave')) return 'SOFT WAVE';
+                  if (pathname.startsWith('/build-a-wig/soft-curl')) return 'SOFT CURL';
+                  if (pathname.startsWith('/build-a-wig/noir')) return 'NOIR';
+                  return 'NOIR';
+                })()}
               </span>
             </p>
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
@@ -3837,8 +4087,24 @@ export default function BuildAWigPage() {
 
         {/* BUILD AREA */}
         <div
-          className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
-          style={{ borderWidth: '1.3px' }}
+          className="border border-black flex flex-col pt-6 pb-4 mb-2 bg-white/60 backdrop-blur-sm"
+          style={{ 
+            borderWidth: '1.3px',
+            paddingLeft: (() => {
+              const pathname = location.pathname;
+              if (pathname.startsWith('/build-a-wig/soft-wave') || pathname.startsWith('/build-a-wig/soft-curl')) {
+                return '10px'; // Reduced padding for SOFT WAVE/CURL
+              }
+              return '20px'; // Default padding (px-5 = 1.25rem = 20px)
+            })(),
+            paddingRight: (() => {
+              const pathname = location.pathname;
+              if (pathname.startsWith('/build-a-wig/soft-wave') || pathname.startsWith('/build-a-wig/soft-curl')) {
+                return '10px'; // Reduced padding for SOFT WAVE/CURL
+              }
+              return '20px'; // Default padding (px-5 = 1.25rem = 20px)
+            })(),
+          }}
         >
             {/* WIG PREVIEW */}
             <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
@@ -3859,12 +4125,30 @@ export default function BuildAWigPage() {
                     className="absolute top-[-20px] left-1/2 transform -translate-x-1/2 text-5xl sm:text-6xl z-20 noir-text cursor-pointer"
                     style={{
                       color: '#EB1C24',
+                      whiteSpace: 'nowrap',
+                      fontSize: (() => {
+                        const pathname = location.pathname;
+                        if (pathname.startsWith('/build-a-wig/soft-wave') || pathname.startsWith('/build-a-wig/soft-curl')) {
+                          return 'calc(clamp(2rem, 4vw, 2.5rem) + 2px)'; // Increased by 2px for SOFT WAVE/CURL
+                        }
+                        return undefined; // Default size
+                      })(),
                     }}
                     onClick={() => {
-                        navigate('/straight/noir');
+                      const pathname = location.pathname;
+                      if (pathname === '/build-a-wig/blanco/customize') navigate('/straight/blanco');
+                      else if (pathname === '/build-a-wig/soft-wave/customize') navigate('/wavy/soft-wave');
+                      else if (pathname === '/build-a-wig/soft-curl/customize') navigate('/curly/soft-curl');
+                      else navigate('/straight/noir');
                     }}
                   >
-                    NOIR
+                    {(() => {
+                      const pathname = location.pathname;
+                      if (pathname === '/build-a-wig/blanco/customize') return 'BLANCO';
+                      if (pathname === '/build-a-wig/soft-wave/customize') return 'SOFT WAVE';
+                      if (pathname === '/build-a-wig/soft-curl/customize') return 'SOFT CURL';
+                      return 'NOIR';
+                    })()}
                   </p>
                   <img
                     key={`hero-${customization.hairline}-${customization.color}-${customization.texture}-${customization.length}-${selectedView}`}
@@ -4110,8 +4394,8 @@ export default function BuildAWigPage() {
                   <div
                     className="absolute left-1/2 transform -translate-x-1/2 z-[99999] flex items-center justify-center"
                     style={{
-                      width: '74px',
-                      height: '74px',
+                      width: location.pathname === '/build-a-wig/blanco/customize' ? '44px' : '74px',
+                      height: location.pathname === '/build-a-wig/blanco/customize' ? '44px' : '74px',
                       overflow: 'visible',
                       top: '52%',
                       transform: 'translateX(calc(-50% - 3px)) translateY(-50%)'
@@ -4191,7 +4475,12 @@ export default function BuildAWigPage() {
                     padding: '0',
                     overflow: 'visible'
                   }}
-                  onClick={() => handleOptionSelect('color', 'OFF BLACK')}
+                  onClick={() => {
+                    const pathname = location.pathname;
+                    const isBlancoRoute = pathname.startsWith('/build-a-wig/blanco');
+                    const defaultColor = isBlancoRoute ? 'PLATINUM' : 'OFF BLACK';
+                    handleOptionSelect('color', customization.color || defaultColor);
+                  }}
                 >
                   <p
                     className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
@@ -4270,8 +4559,8 @@ export default function BuildAWigPage() {
                   <div
                     className="absolute left-1/2 transform -translate-x-1/2 z-[99999] flex items-center justify-center"
                     style={{
-                      width: '75px',
-                      height: '75px',
+                      width: location.pathname === '/build-a-wig/blanco/customize' ? '45px' : '75px',
+                      height: location.pathname === '/build-a-wig/blanco/customize' ? '45px' : '75px',
                       overflow: 'visible',
                         top: '50%',
                       transform: 'translateX(-50%) translateY(-50%)'
@@ -4427,7 +4716,11 @@ export default function BuildAWigPage() {
             }}
           >
             {(() => {
-              const isEditPage = location.pathname === '/build-a-wig/edit';
+              const isEditPage = location.pathname === '/build-a-wig/edit' ||
+                       location.pathname === '/build-a-wig/noir/edit' ||
+                       location.pathname === '/build-a-wig/blanco/edit' ||
+                       location.pathname === '/build-a-wig/soft-wave/edit' ||
+                       location.pathname === '/build-a-wig/soft-curl/edit';
               
               // Edit mode: show "SAVE CHANGES" > "SAVING..." > "IN THE BAG"
               if (isEditPage) {

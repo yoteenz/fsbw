@@ -1247,8 +1247,10 @@ function SoftWaveSelection() {
                     try {
                       localStorage.setItem('selectedCapSize', capSizeToSave);
                       localStorage.setItem('customizeSelectedCapSize', capSizeToSave);
-                      localStorage.setItem('selectedCapSizePrice', '0');
-                      localStorage.setItem('customizeSelectedCapSizePrice', '0');
+                      const isFlexibleCap = capSizeToSave === 'XXS/XS/S' || capSizeToSave === 'S/M/L';
+                      const capSizePrice = isFlexibleCap ? '40' : '0';
+                      localStorage.setItem('selectedCapSizePrice', capSizePrice);
+                      localStorage.setItem('customizeSelectedCapSizePrice', capSizePrice);
                     } catch (e) {
                       console.error('Error saving cap size:', e);
                     }

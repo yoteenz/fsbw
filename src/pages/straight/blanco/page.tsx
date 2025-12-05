@@ -1232,8 +1232,10 @@ function BlancoSelection() {
                 if (capSizeToSave) {
                   localStorage.setItem('selectedCapSize', capSizeToSave);
                   localStorage.setItem('customizeSelectedCapSize', capSizeToSave);
-                  localStorage.setItem('selectedCapSizePrice', '0');
-                  localStorage.setItem('customizeSelectedCapSizePrice', '0');
+                  const isFlexibleCap = capSizeToSave === 'XXS/XS/S' || capSizeToSave === 'S/M/L';
+                  const capSizePrice = isFlexibleCap ? '40' : '0';
+                  localStorage.setItem('selectedCapSizePrice', capSizePrice);
+                  localStorage.setItem('customizeSelectedCapSizePrice', capSizePrice);
                 }
                 navigate('/build-a-wig/blanco/customize');
               }}

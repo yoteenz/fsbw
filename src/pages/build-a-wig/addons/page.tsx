@@ -1,12 +1,13 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
 
 export default function AddOnsSelectionPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedView, setSelectedView] = useState(1);
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>(() => {
     const pathname = window.location.pathname;
@@ -99,6 +100,30 @@ export default function AddOnsSelectionPage() {
 
   // Get wig views based on selected hairline from localStorage
   const getWigViews = () => {
+    const pathname = window.location.pathname;
+    // Check if we're in product-specific customize modes
+    if (pathname.includes('/blanco/customize')) {
+      return [
+        '/assets/2D BLANCO LEFT.png',
+        '/assets/2D BLANCO FRONT.png',
+        '/assets/2D BLANCO RIGHT.png'
+      ];
+    }
+    if (pathname.includes('/soft-wave/customize')) {
+      return [
+        '/assets/2D WAVY LEFT.png',
+        '/assets/2D WAVY FRONT.png',
+        '/assets/2D WAVY RIGHT.png'
+      ];
+    }
+    if (pathname.includes('/soft-curl/customize')) {
+      return [
+        '/assets/2D CURLY LEFT.png',
+        '/assets/2D CURLY FRONT.png',
+        '/assets/2D CURLY RIGHT.png'
+      ];
+    }
+    
     const selectedHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
     const hasPeak = selectedHairline.includes('PEAK');
     const hasLagos = selectedHairline.includes('LAGOS');
@@ -157,13 +182,13 @@ export default function AddOnsSelectionPage() {
       id: 'BLEACH',
       name: 'BLEACH',
       image: '/assets/Bleach-icon.svg',
-      price: 80
+      price: 60
     },
     {
       id: 'PLUCK',
       name: 'PLUCK',
       image: '/assets/Pluck-icon.svg',
-      price: 120
+      price: 80
     },
     {
       id: 'BLUNT CUT',
@@ -320,7 +345,20 @@ export default function AddOnsSelectionPage() {
   };
 
   const handleBack = () => {
-    navigate('/build-a-wig');
+    const pathname = location.pathname;
+    let returnRoute = '/build-a-wig'; // Default to noir
+    
+    if (pathname.includes('/blanco/')) {
+      returnRoute = '/build-a-wig/blanco';
+    } else if (pathname.includes('/soft-wave/')) {
+      returnRoute = '/build-a-wig/soft-wave';
+    } else if (pathname.includes('/soft-curl/')) {
+      returnRoute = '/build-a-wig/soft-curl';
+    } else if (pathname.includes('/noir/')) {
+      returnRoute = '/build-a-wig/noir';
+    }
+    
+    navigate(returnRoute);
   };
 
   const handleConfirmSelection = () => {
@@ -370,7 +408,15 @@ export default function AddOnsSelectionPage() {
     
     // Determine the correct route to navigate back to based on current pathname
     let returnRoute = '/build-a-wig'; // Default
-    if (location.pathname.startsWith('/build-a-wig/edit/')) {
+    if (location.pathname.startsWith('/build-a-wig/noir/edit/')) {
+      returnRoute = '/build-a-wig/noir/edit';
+    } else if (location.pathname.startsWith('/build-a-wig/blanco/edit/')) {
+      returnRoute = '/build-a-wig/blanco/edit';
+    } else if (location.pathname.startsWith('/build-a-wig/soft-wave/edit/')) {
+      returnRoute = '/build-a-wig/soft-wave/edit';
+    } else if (location.pathname.startsWith('/build-a-wig/soft-curl/edit/')) {
+      returnRoute = '/build-a-wig/soft-curl/edit';
+    } else if (location.pathname.startsWith('/build-a-wig/edit/')) {
       returnRoute = '/build-a-wig/edit';
     } else if (location.pathname.startsWith('/build-a-wig/noir/customize/')) {
       returnRoute = '/build-a-wig/noir/customize';
@@ -441,15 +487,34 @@ export default function AddOnsSelectionPage() {
             <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
               <span 
                 style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
-                onClick={() => navigate('/build-a-wig')}
+                onClick={() => {
+                  const pathname = window.location.pathname;
+                  if (pathname.includes('/noir/')) navigate('/build-a-wig/noir');
+                  else if (pathname.includes('/blanco/')) navigate('/build-a-wig/blanco');
+                  else if (pathname.includes('/soft-wave/')) navigate('/build-a-wig/soft-wave');
+                  else if (pathname.includes('/soft-curl/')) navigate('/build-a-wig/soft-curl');
+                  else navigate('/build-a-wig');
+                }}
               >
                 BUILD-A-WIG &gt;
               </span>{' '}
               <span
                 style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', cursor: 'pointer' }}
-                onClick={() => navigate('/straight/noir')}
+                onClick={() => {
+                  const pathname = window.location.pathname;
+                  if (pathname.includes('/blanco/customize')) navigate('/straight/blanco');
+                  else if (pathname.includes('/soft-wave/customize')) navigate('/wavy/soft-wave');
+                  else if (pathname.includes('/soft-curl/customize')) navigate('/curly/soft-curl');
+                  else navigate('/straight/noir');
+                }}
               >
-                NOIR
+                {(() => {
+                  const pathname = window.location.pathname;
+                  if (pathname.includes('/blanco/customize')) return 'BLANCO';
+                  if (pathname.includes('/soft-wave/customize')) return 'SOFT WAVE';
+                  if (pathname.includes('/soft-curl/customize')) return 'SOFT CURL';
+                  return 'NOIR';
+                })()}
               </span>
             </p>
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
@@ -469,8 +534,24 @@ export default function AddOnsSelectionPage() {
 
           {/* MAIN BUILD AREA */}
           <div
-            className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
-            style={{ borderWidth: '1.3px' }}
+            className="border border-black flex flex-col pt-6 pb-4 mb-2 bg-white/60 backdrop-blur-sm"
+            style={{ 
+              borderWidth: '1.3px',
+              paddingLeft: (() => {
+                const pathname = window.location.pathname;
+                if (pathname.includes('/soft-wave') || pathname.includes('/soft-curl')) {
+                  return '10px'; // Reduced padding for SOFT WAVE/CURL
+                }
+                return '20px'; // Default padding (px-5 = 1.25rem = 20px)
+              })(),
+              paddingRight: (() => {
+                const pathname = window.location.pathname;
+                if (pathname.includes('/soft-wave') || pathname.includes('/soft-curl')) {
+                  return '10px'; // Reduced padding for SOFT WAVE/CURL
+                }
+                return '20px'; // Default padding (px-5 = 1.25rem = 20px)
+              })(),
+            }}
           >
             {/* WIG PREVIEW */}
             <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
@@ -491,10 +572,30 @@ export default function AddOnsSelectionPage() {
                     className="absolute top-[-20px] left-1/2 transform -translate-x-1/2 text-5xl sm:text-6xl z-20 noir-text cursor-pointer"
                     style={{
                       color: '#EB1C24',
+                      whiteSpace: 'nowrap',
+                      fontSize: (() => {
+                        const pathname = window.location.pathname;
+                        if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-curl/customize')) {
+                          return 'calc(clamp(2rem, 4vw, 2.5rem) + 2px)'; // Increased by 2px for SOFT WAVE/CURL
+                        }
+                        return undefined; // Default size
+                      })(),
                     }}
-                    onClick={() => navigate('/straight/noir')}
+                    onClick={() => {
+                      const pathname = window.location.pathname;
+                      if (pathname.includes('/blanco/customize')) navigate('/straight/blanco');
+                      else if (pathname.includes('/soft-wave/customize')) navigate('/wavy/soft-wave');
+                      else if (pathname.includes('/soft-curl/customize')) navigate('/curly/soft-curl');
+                      else navigate('/straight/noir');
+                    }}
                   >
-                    NOIR
+                    {(() => {
+                      const pathname = window.location.pathname;
+                      if (pathname.includes('/blanco/customize')) return 'BLANCO';
+                      if (pathname.includes('/soft-wave/customize')) return 'SOFT WAVE';
+                      if (pathname.includes('/soft-curl/customize')) return 'SOFT CURL';
+                      return 'NOIR';
+                    })()}
                   </p>
                 <img
                   src={wigViews[selectedView]}
