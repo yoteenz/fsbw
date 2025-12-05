@@ -1139,7 +1139,7 @@ function SoftWaveSelection() {
                         WASH WITH MILD SHAMPOO, AVOID GETTING CONDITIONER DIRECTLY ON THE LACE.
                       </p>
                       <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        APPLY LIGHT OILS & SERUMS ONLY TO YOUR RAW HAIR EXTENSIONS.
+                        APPLY LIGHT OILS & SERUMS ONLY TO YOUR RAW HAIR EXTENSIONS WHEN STYLING.
                       </p>
                       <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         ROUTINELY BRUSH HAIR WITH A PADDLE BRUSH TO AVOID MATTING & SHEDDING.
