@@ -3841,7 +3841,7 @@ export default function BuildAWigPage() {
           style={{ borderWidth: '1.3px' }}
         >
             {/* WIG PREVIEW */}
-            <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(0px)' }}>
+            <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
               <div className="leaf-stack hero-thumb">
                 <div className="leaf-bg" aria-hidden="true"></div>
                 <div
