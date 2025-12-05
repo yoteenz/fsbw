@@ -52,35 +52,35 @@ function BlancoSelection() {
     setShowChartModal(false);
   };
 
-  // Mannequin images for blanco product (using noir images for now)
+  // Mannequin images for blanco product (2D view)
   const mannequinImages = [
-    '/assets/natural front.png',  // View 1 (default)
-    '/assets/natural left.png',  // View 2 (top thumbnail)
-    '/assets/natural right.png'  // View 3 (bottom thumbnail)
+    '/assets/2D BLANCO FRONT.png',  // View 1 (default)
+    '/assets/2D BLANCO LEFT.png',  // View 2 (top thumbnail)
+    '/assets/2D BLANCO RIGHT.png'  // View 3 (bottom thumbnail)
   ];
 
   // Get current mannequin images based on selected view
   const getCurrentImages = () => {
     if (selectedMannequinView === 0) {
-      // Default state: natural front in hero
+      // Default state: 2D BLANCO FRONT in hero
       return {
-        hero: mannequinImages[0], // natural front
-        top: mannequinImages[1], // natural left
-        bottom: mannequinImages[2] // natural right
+        hero: mannequinImages[0], // 2D BLANCO FRONT
+        top: mannequinImages[1], // 2D BLANCO LEFT
+        bottom: mannequinImages[2] // 2D BLANCO RIGHT
       };
     } else if (selectedMannequinView === 1) {
-      // Top thumbnail clicked: natural left in hero, natural front in top
+      // Top thumbnail clicked: 2D BLANCO LEFT in hero, 2D BLANCO FRONT in top
       return {
-        hero: mannequinImages[1], // natural left
-        top: mannequinImages[0], // natural front
-        bottom: mannequinImages[2] // natural right (stays in bottom)
+        hero: mannequinImages[1], // 2D BLANCO LEFT
+        top: mannequinImages[0], // 2D BLANCO FRONT
+        bottom: mannequinImages[2] // 2D BLANCO RIGHT (stays in bottom)
       };
     } else {
-      // Bottom thumbnail clicked: natural right in hero, natural front in bottom
+      // Bottom thumbnail clicked: 2D BLANCO RIGHT in hero, 2D BLANCO FRONT in bottom
       return {
-        hero: mannequinImages[2], // natural right
-        top: mannequinImages[1], // natural left (stays in top)
-        bottom: mannequinImages[0] // natural front
+        hero: mannequinImages[2], // 2D BLANCO RIGHT
+        top: mannequinImages[1], // 2D BLANCO LEFT (stays in top)
+        bottom: mannequinImages[0] // 2D BLANCO FRONT
       };
     }
   };
@@ -90,25 +90,25 @@ function BlancoSelection() {
   // Get current 3D view images based on selected view
   const get3DViewImages = () => {
     if (selectedMannequinView === 0) {
-      // Default state: noir front in hero
+      // Default state: BLANCO-FRONT in hero
       return {
-        hero: 'noir front.png',
-        top: 'noir right.png',
-        bottom: 'noir left.png'
+        hero: 'BLANCO-FRONT.png',
+        top: 'BLANCO-RIGHT.png',
+        bottom: 'BLANCO-LEFT.png'
       };
     } else if (selectedMannequinView === 1) {
-      // Top thumbnail clicked: noir right in hero, noir front in top
+      // Top thumbnail clicked: BLANCO-RIGHT in hero, BLANCO-FRONT in top
       return {
-        hero: 'noir right.png',
-        top: 'noir front.png',
-        bottom: 'noir left.png'
+        hero: 'BLANCO-RIGHT.png',
+        top: 'BLANCO-FRONT.png',
+        bottom: 'BLANCO-LEFT.png'
       };
     } else {
-      // Bottom thumbnail clicked: noir left in hero, noir front in bottom
+      // Bottom thumbnail clicked: BLANCO-LEFT in hero, BLANCO-FRONT in bottom
       return {
-        hero: 'noir left.png',
-        top: 'noir right.png',
-        bottom: 'noir front.png'
+        hero: 'BLANCO-LEFT.png',
+        top: 'BLANCO-RIGHT.png',
+        bottom: 'BLANCO-FRONT.png'
       };
     }
   };
@@ -465,7 +465,7 @@ function BlancoSelection() {
                       justifyContent: 'center',
                       width: '200px',
                       height: '290px',
-                      backgroundImage: `url('/assets/NOIR/${is3DView ? current3DImages.hero : 'leaf-brick.png'}')`,
+                      backgroundImage: `url('/assets/${is3DView ? current3DImages.hero : 'NOIR/leaf-brick.png'}')`,
                       backgroundRepeat: 'no-repeat',
                       overflow: 'visible'
                     }}
@@ -499,7 +499,7 @@ function BlancoSelection() {
                       style={{
                         width: '100px',
                         height: '140px',
-                        backgroundImage: `url('/assets/NOIR/${is3DView ? current3DImages.top : 'leaf-brick.png'}')`,
+                        backgroundImage: `url('/assets/${is3DView ? current3DImages.top : 'NOIR/leaf-brick.png'}')`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat'
@@ -531,7 +531,7 @@ function BlancoSelection() {
                       style={{
                         width: '100px',
                         height: '140px',
-                        backgroundImage: `url('/assets/NOIR/${is3DView ? current3DImages.bottom : 'leaf-brick.png'}')`,
+                        backgroundImage: `url('/assets/${is3DView ? current3DImages.bottom : 'NOIR/leaf-brick.png'}')`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat'
@@ -956,13 +956,15 @@ function BlancoSelection() {
             {/* PRODUCT SHOTS SECTION */}
             <div className="mt-8 mb-6" style={{ transform: 'translateY(-34px)' }}>
               {/* Product Images with Drag/Swipe Scroll */}
-              <div className="relative overflow-hidden" style={{ height: '300px' }}>
+              <div className="relative overflow-hidden" style={{ height: '310px', minHeight: '310px', paddingTop: '70px' }}>
                 <div 
                   className="flex transition-transform duration-300 ease-out"
                   style={{ 
                     width: '300%',
                     transform: `translateX(${scrollPosition}px)`,
-                    gap: '11px'
+                    gap: '11px',
+                    alignItems: 'center',
+                    height: '100%'
                   }}
                   onMouseDown={handleMouseDown}
                   onMouseMove={handleMouseMove}
@@ -973,24 +975,24 @@ function BlancoSelection() {
                   onTouchEnd={handleTouchEnd}
                 >
                   <img
-                    src="/assets/NOIR/noir front.png"
-                    alt="NOIR Front View"
-                    className="h-full object-cover"
-                    style={{ width: '18%' }}
+                    src="/assets/BLANCO-FRONT.png"
+                    alt="BLANCO Front View"
+                    className="object-cover"
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-70px)' }}
                     draggable={false}
                   />
                   <img
-                    src="/assets/NOIR/noir left.png"
-                    alt="NOIR Left View"
-                    className="h-full object-cover"
-                    style={{ width: '18%' }}
+                    src="/assets/BLANCO-LEFT.png"
+                    alt="BLANCO Left View"
+                    className="object-cover"
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-70px)' }}
                     draggable={false}
                   />
                   <img
-                    src="/assets/NOIR/noir right.png"
-                    alt="NOIR Right View"
-                    className="h-full object-cover"
-                    style={{ width: '18%' }}
+                    src="/assets/BLANCO-RIGHT.png"
+                    alt="BLANCO Right View"
+                    className="object-cover"
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-70px)' }}
                     draggable={false}
                   />
                 </div>

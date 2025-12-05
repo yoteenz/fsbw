@@ -2710,7 +2710,9 @@ function NoirSelection() {
                 style={{ 
                   width: '300%',
                   transform: `translateX(${scrollPosition}px)`,
-                  gap: '11px'
+                  gap: '11px',
+                  alignItems: 'center',
+                  height: '100%'
                 }}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
@@ -2723,22 +2725,22 @@ function NoirSelection() {
                 <img
                   src="/assets/NOIR/noir front.png"
                   alt="NOIR Front View"
-                  className="h-full object-cover"
-                  style={{ width: '18%' }}
+                  className="object-cover"
+                  style={{ width: '18%', height: '300px', maxHeight: '300px', flexShrink: 0 }}
                   draggable={false}
                 />
                 <img
                   src="/assets/NOIR/noir left.png"
                   alt="NOIR Left View"
-                  className="h-full object-cover"
-                  style={{ width: '18%' }}
+                  className="object-cover"
+                  style={{ width: '18%', height: '300px', maxHeight: '300px', flexShrink: 0 }}
                   draggable={false}
                 />
                 <img
                   src="/assets/NOIR/noir right.png"
                   alt="NOIR Right View"
-                  className="h-full object-cover"
-                  style={{ width: '18%' }}
+                  className="object-cover"
+                  style={{ width: '18%', height: '300px', maxHeight: '300px', flexShrink: 0 }}
                   draggable={false}
                 />
               </div>
