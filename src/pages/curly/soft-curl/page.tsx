@@ -1244,96 +1244,106 @@ function SoftCurlSelection() {
             </button>
           </div>
 
-          {/* SIMILAR PRODUCTS SECTION */}
-          <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
-            <div style={{ 
-              border: '1.3px solid black', 
-              backgroundColor: 'rgba(255, 255, 255, 0.6)', 
-              backdropFilter: 'blur(10px)',
-              padding: '0px',
-              maxWidth: '100%',
-              margin: '0 auto'
-            }}>
-              <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-                <div style={{ 
-                  width: '1px', 
-                  height: '15px', 
-                  backgroundColor: 'black',
-                  margin: '0 auto 8px auto'
-                }}></div>
-                <h3 style={{ 
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                  fontSize: '12px',
-                  color: '#EB1C24',
-                  textTransform: 'uppercase',
-                  margin: '0',
-                  fontWeight: '500'
+        {/* SIMILAR PRODUCTS SECTION */}
+        <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
+          <div style={{ 
+            border: '1.3px solid black', 
+            backgroundColor: 'rgba(255, 255, 255, 0.6)', 
+            backdropFilter: 'blur(10px)',
+            padding: '0px',
+            maxWidth: '100%',
+            margin: '0 auto'
+          }}>
+            {/* Header */}
+            <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+              <div style={{ 
+                width: '1px', 
+                height: '15px', 
+                backgroundColor: 'black',
+                margin: '0 auto 8px auto'
+              }}></div>
+              <h3 style={{ 
+                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                fontSize: '12px',
+                color: '#EB1C24',
+                textTransform: 'uppercase',
+                margin: '0',
+                fontWeight: '500'
+              }}>
+                SIMILAR PRODUCTS
+              </h3>
+            </div>
+            
+            {/* Content Area */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+              {/* Left Arrow */}
+              <button 
+                onClick={handleSimilarProductsLeftArrow}
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  cursor: 'pointer',
+                  padding: '5px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  minHeight: '50px',
+                  transform: `translateX(10px) translateY(${is3DView ? '-26px' : '-10px'})`
                 }}>
-                  SIMILAR PRODUCTS
-                </h3>
-              </div>
-              
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-                <button 
-                  onClick={handleSimilarProductsLeftArrow}
+                <img
+                  src="/assets/NOIR/left-facing-arrow.svg"
+                  alt="Left Arrow"
                   style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    padding: '5px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '50px',
-                    transform: `translateX(10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                  }}>
-                  <img
-                    src="/assets/NOIR/left-facing-arrow.svg"
-                    alt="Left Arrow"
-                    style={{ width: '14px', height: '14px' }}
-                  />
-                </button>
+                    width: '14px', 
+                    height: '14px'
+                  }}
+                />
+              </button>
+              
+              {/* Product Thumbnails Container with Static Vertical Line */}
+              <div style={{ flex: '1', position: 'relative' }}>
+                {/* Single Center Line with Masking */}
+                <div style={{
+                  position: 'absolute',
+                  left: '50%',
+                  top: '0',
+                  bottom: '0',
+                  width: '1px',
+                  backgroundColor: 'black',
+                  zIndex: 20,
+                  transform: 'translateX(-50%)'
+                }}></div>
                 
-                <div style={{ flex: '1', position: 'relative' }}>
-                  <div style={{
-                    position: 'absolute',
-                    left: '50%',
-                    top: '0',
-                    bottom: '0',
-                    width: '1px',
-                    backgroundColor: 'black',
-                    zIndex: 20,
-                    transform: 'translateX(-50%)'
-                  }}></div>
-                  
-                  <div style={{
-                    position: 'absolute',
-                    left: '50%',
-                    top: '0',
-                    bottom: '0',
-                    width: '10px',
-                    backgroundColor: 'transparent',
-                    zIndex: 15,
-                    transform: 'translateX(-50%)',
-                    pointerEvents: 'none'
-                  }}></div>
-                  
-                  <div style={{ 
-                    overflowX: 'hidden',
-                    width: '100%',
-                    position: 'relative',
-                    maxWidth: '100%'
-                  }}>
-                    <div 
-                      style={{ 
-                        display: 'flex', 
-                        gap: '0',
-                        transform: `translateX(${similarProductsScroll}px) translateY(-15px)`,
-                        transition: 'none',
-                        width: 'calc(200% - 20px)'
-                      }}
-                    >
+                {/* Masking Overlay for Tunnel Effect */}
+                <div style={{
+                  position: 'absolute',
+                  left: '50%',
+                  top: '0',
+                  bottom: '0',
+                  width: '10px',
+                  backgroundColor: 'transparent',
+                  zIndex: 15,
+                  transform: 'translateX(-50%)',
+                  pointerEvents: 'none'
+                }}></div>
+                
+                {/* Scrolling Product Thumbnails Container */}
+                <div style={{ 
+                  overflowX: 'hidden',
+                  width: '100%',
+                  position: 'relative',
+                  maxWidth: '100%'
+                }}>
+                  <div 
+                    style={{ 
+                      display: 'flex', 
+                      gap: '0',
+                      transform: `translateX(${similarProductsScroll}px) translateY(-15px)`,
+                      transition: 'none',
+                      width: 'calc(200% - 20px)'
+                    }}
+                  >
                 {/* Product 1 - BLANCO */}
                 <div 
                   onClick={() => navigate('/straight/blanco')}
@@ -1621,85 +1631,95 @@ function SoftCurlSelection() {
                     ))}
                   </div>
                 </div>
-                    </div>
                   </div>
                 </div>
-                
-                <button 
-                  onClick={handleSimilarProductsRightArrow}
-                  style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    padding: '5px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '50px',
-                    transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                  }}>
-                  <img
-                    src="/assets/NOIR/right-facing-arrow.svg"
-                    alt="Right Arrow"
-                    style={{ width: '14px', height: '14px' }}
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* RECENTLY VIEWED SECTION */}
-          <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
-            <div style={{ 
-              border: '1.3px solid black', 
-              backgroundColor: 'rgba(255, 255, 255, 0.6)', 
-              backdropFilter: 'blur(10px)',
-              padding: '0px',
-              maxWidth: '100%',
-              margin: '0 auto'
-            }}>
-              <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-                <div style={{ 
-                  width: '1px', 
-                  height: '15px', 
-                  backgroundColor: 'black',
-                  margin: '0 auto 8px auto'
-                }}></div>
-                <h3 style={{ 
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                  fontSize: '12px',
-                  color: '#EB1C24',
-                  textTransform: 'uppercase',
-                  margin: '0',
-                  fontWeight: '500'
-                }}>
-                  RECENTLY VIEWED
-                </h3>
               </div>
               
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-                <button 
-                  onClick={handleRecentlyViewedLeftArrow}
+              {/* Right Arrow */}
+              <button 
+                onClick={handleSimilarProductsRightArrow}
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  cursor: 'pointer',
+                  padding: '5px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  minHeight: '50px',
+                  transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
+                }}>
+                <img
+                  src="/assets/NOIR/right-facing-arrow.svg"
+                  alt="Right Arrow"
                   style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    padding: '5px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '50px',
-                    transform: `translateX(10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                  }}>
-                  <img
-                    src="/assets/NOIR/left-facing-arrow.svg"
-                    alt="Left Arrow"
-                    style={{ width: '14px', height: '14px' }}
-                  />
-                </button>
-                
+                    width: '14px', 
+                    height: '14px'
+                  }}
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* RECENTLY VIEWED SECTION */}
+        <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
+          <div style={{ 
+            border: '1.3px solid black', 
+            backgroundColor: 'rgba(255, 255, 255, 0.6)', 
+            backdropFilter: 'blur(10px)',
+            padding: '0px',
+            maxWidth: '100%',
+            margin: '0 auto'
+          }}>
+            {/* Header */}
+            <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+              <div style={{ 
+                width: '1px', 
+                height: '15px', 
+                backgroundColor: 'black',
+                margin: '0 auto 8px auto'
+              }}></div>
+              <h3 style={{ 
+                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                fontSize: '12px',
+                color: '#EB1C24',
+                textTransform: 'uppercase',
+                margin: '0',
+                fontWeight: '500'
+              }}>
+                RECENTLY VIEWED
+              </h3>
+            </div>
+            
+            {/* Content Area */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+              {/* Left Arrow */}
+              <button 
+                onClick={handleRecentlyViewedLeftArrow}
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  cursor: 'pointer',
+                  padding: '5px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  minHeight: '50px',
+                  transform: `translateX(10px) translateY(${is3DView ? '-26px' : '-10px'})`
+                }}>
+                <img
+                  src="/assets/NOIR/left-facing-arrow.svg"
+                  alt="Left Arrow"
+                  style={{ 
+                    width: '14px', 
+                    height: '14px'
+                  }}
+                />
+              </button>
+              
               {/* Product Thumbnails Container with Static Vertical Line */}
               <div style={{ flex: '1', position: 'relative' }}>
                 {/* Single Center Line with Masking */}
@@ -2033,30 +2053,34 @@ function SoftCurlSelection() {
                   </div>
                 </div>
               </div>
-                
-                <button 
-                  onClick={handleRecentlyViewedRightArrow}
+              
+              {/* Right Arrow */}
+              <button 
+                onClick={handleRecentlyViewedRightArrow}
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  cursor: 'pointer',
+                  padding: '5px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  minHeight: '50px',
+                  transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
+                }}>
+                <img
+                  src="/assets/NOIR/right-facing-arrow.svg"
+                  alt="Right Arrow"
                   style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    padding: '5px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '50px',
-                    transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                  }}>
-                  <img
-                    src="/assets/NOIR/right-facing-arrow.svg"
-                    alt="Right Arrow"
-                    style={{ width: '14px', height: '14px' }}
-                  />
-                </button>
-              </div>
+                    width: '14px', 
+                    height: '14px'
+                  }}
+                />
+              </button>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>
