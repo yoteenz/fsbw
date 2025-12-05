@@ -614,7 +614,6 @@ function DensitySelection() {
     
     // CRITICAL: For blanco customize mode, always use blanco defaults (don't read noir's localStorage)
     if (isOnBlancoCustomizeRoute) {
-      const isBlancoCustomizeMode = window.location.pathname.includes('/blanco/customize');
       const defaultDensity = '250%'; // Blanco always defaults to 250%
       console.log('Density page - Blanco customize mode, using default', defaultDensity);
       setSelectedDensity(defaultDensity);

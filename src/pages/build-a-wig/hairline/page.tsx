@@ -157,7 +157,6 @@ function HairlineSelection() {
 
   // Hairline options - Updated with pricing (NATURAL is default)
   const isBlancoCustomizeMode = window.location.pathname.includes('/blanco/customize');
-  const hairlineImage = isBlancoCustomizeMode ? '/assets/BLANCO-HAIRLINE.png' : '/assets/Natural Hairline-icon.svg';
   
   const hairlineOptions: HairlineOption[] = [
     {
