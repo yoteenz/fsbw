@@ -2310,7 +2310,17 @@ export default function BuildAWigPage() {
   }, []);
 
   // Currency state
-  const [selectedCurrency, setSelectedCurrency] = useState<string>('USD');
+  const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedCurrency = localStorage.getItem('selectedCurrency');
+        return savedCurrency || 'USD';
+      } catch (e) {
+        return 'USD';
+      }
+    }
+    return 'USD';
+  });
 
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -3223,13 +3233,18 @@ export default function BuildAWigPage() {
     };
   }, [customization, basePrice, refreshTrigger, location, calculatePricesFromSelections, savePricesToLocalStorage]);
 
-  // Load selected currency from localStorage
+  // Load selected currency from localStorage on mount only
+  // Initial state already loads from localStorage, this is a safety check
   useEffect(() => {
     const savedCurrency = localStorage.getItem('selectedCurrency');
     if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
-      setSelectedCurrency(savedCurrency);
+      // Only update if different to avoid unnecessary re-renders
+      if (savedCurrency !== selectedCurrency) {
+        setSelectedCurrency(savedCurrency);
+      }
     }
-  }, [currencyRates]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount, not when currencyRates changes
 
   // Save selected currency to localStorage
   useEffect(() => {
@@ -3245,8 +3260,31 @@ export default function BuildAWigPage() {
       }
     };
 
+    // Listen for storage events (from other tabs/windows)
     window.addEventListener('storage', handleCurrencyChange);
-    return () => window.removeEventListener('storage', handleCurrencyChange);
+    
+    // Listen for custom currencyChanged event (from same window)
+    const handleCustomCurrencyChange = (event: CustomEvent) => {
+      const newCurrency = event.detail;
+      if (newCurrency && currencyRates[newCurrency as keyof typeof currencyRates]) {
+        setSelectedCurrency(newCurrency);
+        // Also update localStorage to ensure consistency
+        localStorage.setItem('selectedCurrency', newCurrency);
+      }
+    };
+    
+    window.addEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
+    
+    // Poll localStorage periodically to catch any currency changes
+    const interval = setInterval(() => {
+      handleCurrencyChange();
+    }, 500); // Check every 500ms
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('storage', handleCurrencyChange);
+      window.removeEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
+    };
   }, [currencyRates]);
 
   // Format price with currency
@@ -3257,7 +3295,7 @@ export default function BuildAWigPage() {
       __html: currency.symbol + convertedPrice.toLocaleString('en-US', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0
-      })
+      }) + ' ' + selectedCurrency
     };
   }, [currencyRates, selectedCurrency]);
 
@@ -4049,9 +4087,9 @@ export default function BuildAWigPage() {
               </button>
             </div>
             
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               <span 
-                style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
+                style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
                 onClick={() => {
                   const pathname = location.pathname;
                   // Check for product-specific routes first (main, customize, edit)
@@ -4065,7 +4103,7 @@ export default function BuildAWigPage() {
                 BUILD-A-WIG &gt;
               </span>{' '}
               <span
-                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', cursor: 'pointer' }}
+                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500', cursor: 'pointer' }}
                 onClick={() => {
                   const pathname = location.pathname;
                   // Check for product-specific routes (main, customize, edit) - order matters!
@@ -4276,14 +4314,14 @@ export default function BuildAWigPage() {
               {/* SELECT ICONS BELOW Header */}
             <p
               className="text-xs sm:text-sm md:text-base lg:text-lg text-center text-red-500 mb-4"
-              style={{ fontFamily: '"Covered By Your Grace", cursive', color: '#EB1C24', transform: 'translateY(18px)' }}
+              style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', color: '#EB1C24', transform: 'translateY(18px)' }}
             >
               SELECT ICONS BELOW
             </p>
 
               {/* BASIC MEMBERSHIP OPTIONS */}
             <div className="flex flex-col gap-3 mt-4 mx-auto" style={{ marginBottom: '18px', transform: 'translateY(6px)' }}>
-                <p className="text-[9px] sm:text-sm md:text-base lg:text-lg font-medium text-black text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}>
+                <p className="text-[9px] sm:text-sm md:text-base lg:text-lg font-medium text-black text-center" style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>
                 BASIC MEMBERSHIP OPTIONS:
               </p>
                 <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6 mx-auto justify-evenly">
@@ -4302,7 +4340,7 @@ export default function BuildAWigPage() {
                 >
                   <p
                     className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
+                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
                   >
                     CAP SIZE
                   </p>
@@ -4328,7 +4366,7 @@ export default function BuildAWigPage() {
                       }}
                     />
                   </div>
-                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}>
+                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>
                     {customization.capSize}
                   </p>
                 </div>
@@ -4348,7 +4386,7 @@ export default function BuildAWigPage() {
                 >
                   <p
                     className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
+                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
                   >
                     LENGTH
                   </p>
@@ -4374,7 +4412,7 @@ export default function BuildAWigPage() {
                       }}
                     />
                   </div>
-                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}>
+                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>
                       {customization.length}
                   </p>
                 </div>
@@ -4394,7 +4432,7 @@ export default function BuildAWigPage() {
                 >
                   <p
                     className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
+                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
                   >
                     DENSITY
                   </p>
@@ -4420,7 +4458,7 @@ export default function BuildAWigPage() {
                       }}
                     />
                   </div>
-                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}>
+                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>
                     {customization.density}
                   </p>
                 </div>
@@ -4429,7 +4467,7 @@ export default function BuildAWigPage() {
 
               {/* PREMIUM MEMBERSHIP OPTIONS */}
             <div className="flex flex-col gap-3 mx-auto mb-6" style={{ marginTop: '18px', transform: 'translateY(3px)' }}>
-                <p className="text-[9px] sm:text-sm md:text-base lg:text-lg font-medium text-black text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}>
+                <p className="text-[9px] sm:text-sm md:text-base lg:text-lg font-medium text-black text-center" style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>
                 PREMIUM MEMBERSHIP OPTIONS:
               </p>
                 <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6 mx-auto justify-evenly">
@@ -4448,7 +4486,7 @@ export default function BuildAWigPage() {
                 >
                   <p
                     className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
+                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
                   >
                     LACE
                   </p>
@@ -4474,7 +4512,7 @@ export default function BuildAWigPage() {
                       }}
                     />
                   </div>
-                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}>
+                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>
                     {customization.lace}
                   </p>
                 </div>
@@ -4494,7 +4532,7 @@ export default function BuildAWigPage() {
                 >
                   <p
                     className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
+                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
                   >
                     TEXTURE
                   </p>
@@ -4520,7 +4558,7 @@ export default function BuildAWigPage() {
                       }}
                     />
                   </div>
-                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}>
+                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>
                     {customization.texture}
                   </p>
                 </div>
@@ -4545,7 +4583,7 @@ export default function BuildAWigPage() {
                 >
                   <p
                     className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
+                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
                   >
                     COLOR
                   </p>
@@ -4593,7 +4631,7 @@ export default function BuildAWigPage() {
                   </div>
                       </div>
                     </div>
-                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}>
+                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>
                     {customization.color}
                   </p>
                 </div>
@@ -4613,7 +4651,7 @@ export default function BuildAWigPage() {
                 >
                   <p
                     className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
+                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
                   >
                     HAIRLINE
                   </p>
@@ -4639,7 +4677,7 @@ export default function BuildAWigPage() {
                       }}
                     />
                   </div>
-                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}>
+                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>
                     {getHairlineDisplayText()}
                   </p>
                 </div>
@@ -4659,7 +4697,7 @@ export default function BuildAWigPage() {
                 >
                   <p
                       className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
+                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
                   >
                     STYLING
                   </p>
@@ -4685,7 +4723,7 @@ export default function BuildAWigPage() {
                       }}
                     />
                     </div>
-                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}>
+                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>
                     {getStylingDisplayText()}
                   </p>
                 </div>
@@ -4705,7 +4743,7 @@ export default function BuildAWigPage() {
                 >
                   <p
                     className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
+                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
                   >
                     ADD-ONS
                   </p>
@@ -4731,7 +4769,7 @@ export default function BuildAWigPage() {
                       }}
                     />
                     </div>
-                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}>
+                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>
                     {getAddOnsDisplayText()}
                   </p>
                 </div>
@@ -4741,7 +4779,7 @@ export default function BuildAWigPage() {
             {/* DYNAMIC PROCESSING TIME NOTE */}
             <p
               className="font-futura text-[10px] md:text-xs text-center my-6 w-[95%] mx-auto uppercase"
-              style={{ color: '#EB1C24', fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', transform: 'translateY(-7px)' }}
+              style={{ color: '#EB1C24', fontFamily: '"Futura PT Demi"', fontWeight: '500', transform: 'translateY(-7px)' }}
             >
         PLEASE NOTE: EACH CUSTOM UNIT IS MADE TO ORDER.<br />
         WE ENSURE ALL DETAILS ARE ACCURATE + PRECISE.<br />
@@ -4755,7 +4793,7 @@ export default function BuildAWigPage() {
               </p>
               <p
                 className="text-black font-medium text-base md:text-xl lg:text-2xl"
-                  style={{ fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif', fontWeight: '500' }}
+                  style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
                   dangerouslySetInnerHTML={formatPrice(totalPrice)}
               />
             </div>
@@ -4773,7 +4811,7 @@ export default function BuildAWigPage() {
             style={{ 
               borderWidth: '1.3px', 
               color: addToBagState === 'adding' ? '#EB1C24' : '#EB1C24', 
-              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' 
+              fontFamily: '"Futura PT Medium"' 
             }}
           >
             {(() => {
@@ -4908,7 +4946,7 @@ export default function BuildAWigPage() {
                   {/* Currency Selector */}
                   <div className="flex items-center gap-2">
                     <span style={{ 
-                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: '"Futura PT Medium"',
                       fontSize: '14px',
                       color: 'black',
                       fontWeight: '500'
@@ -4928,7 +4966,7 @@ export default function BuildAWigPage() {
                   <button
                     onClick={() => handleMobileMenuTabClick('SHOP')}
                     style={{ 
-                      fontFamily: mobileMenuActiveTab === 'SHOP' ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: mobileMenuActiveTab === 'SHOP' ? '"Futura PT Medium"' : '"Futura PT Book"',
                       fontSize: '14px',
                       color: mobileMenuActiveTab === 'SHOP' ? '#EB1C24' : 'black',
                       fontWeight: '500',
@@ -4945,7 +4983,7 @@ export default function BuildAWigPage() {
                   <button
                     onClick={() => handleMobileMenuTabClick('TOOLS')}
                     style={{ 
-                      fontFamily: mobileMenuActiveTab === 'TOOLS' ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: mobileMenuActiveTab === 'TOOLS' ? '"Futura PT Medium"' : '"Futura PT Book"',
                       fontSize: '14px',
                       color: mobileMenuActiveTab === 'TOOLS' ? '#EB1C24' : 'black',
                       fontWeight: '500',
@@ -4962,7 +5000,7 @@ export default function BuildAWigPage() {
                   <button
                     onClick={() => handleMobileMenuTabClick('BRAND')}
                     style={{ 
-                      fontFamily: mobileMenuActiveTab === 'BRAND' ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: mobileMenuActiveTab === 'BRAND' ? '"Futura PT Medium"' : '"Futura PT Book"',
                       fontSize: '14px',
                       color: mobileMenuActiveTab === 'BRAND' ? '#EB1C24' : 'black',
                       fontWeight: '500',
@@ -4985,7 +5023,7 @@ export default function BuildAWigPage() {
                       ['GIFT CARD'].map((item, index) => (
                         <div key={index} className="flex items-center justify-between">
                           <span style={{ 
-                            fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                            fontFamily: '"Futura PT Book"',
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
@@ -4999,7 +5037,7 @@ export default function BuildAWigPage() {
                       ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
                         <div key={index} className="flex items-center justify-between">
                           <span style={{ 
-                            fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                            fontFamily: '"Futura PT Book"',
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
@@ -5024,7 +5062,7 @@ export default function BuildAWigPage() {
                             onClick={() => item.isExpandable ? handleMobileMenuItemToggle(item.label) : null}
                           >
                             <span style={{ 
-                              fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                              fontFamily: '"Futura PT Book"',
                               fontSize: '14px',
                               color: 'black',
                               fontWeight: '500',
@@ -5051,7 +5089,7 @@ export default function BuildAWigPage() {
                               {item.subItems.map((subItem, subIndex) => (
                                 <div key={subIndex} className="flex items-center">
                                   <span style={{ 
-                                    fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                    fontFamily: '"Futura PT Book"',
                                     fontSize: '14px',
                                     color: '#EB1C24',
                                     fontWeight: '500',
@@ -5074,7 +5112,7 @@ export default function BuildAWigPage() {
                 <span 
                   onClick={handleMobileMenuSignInToggle}
                   style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '14px',
                     color: '#EB1C24',
                     fontWeight: '500',

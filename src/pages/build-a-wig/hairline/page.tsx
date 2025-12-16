@@ -435,9 +435,9 @@ function HairlineSelection() {
               />
             </button>
           </div>
-          <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
+          <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
             <span 
-              style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
+              style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
               onClick={() => {
                 const pathname = window.location.pathname;
                 if (pathname.includes('/noir/')) navigate('/build-a-wig/noir');
@@ -450,7 +450,7 @@ function HairlineSelection() {
               BUILD-A-WIG &gt;
             </span>{' '}
             <span
-              style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', cursor: 'pointer' }}
+              style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500', cursor: 'pointer' }}
               onClick={() => {
                 const pathname = window.location.pathname;
                 if (pathname.includes('/blanco/customize')) navigate('/straight/blanco');
@@ -625,7 +625,7 @@ function HairlineSelection() {
           {/* HAIRLINE SELECTION HEADER */}
           <p 
             className="text-xs sm:text-sm text-center text-red-500 mb-4"
-            style={{ fontFamily: '"Covered By Your Grace", cursive', color: '#EB1C24', transform: 'translateY(18px)' }}
+            style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', color: '#EB1C24', transform: 'translateY(18px)' }}
           >
             VENTILLATION EFFECT
           </p>
@@ -654,7 +654,7 @@ function HairlineSelection() {
           {/* DYNAMIC HAIRLINE NOTE */}
           <p
             className="font-futura text-[10px] md:text-xs text-center my-6 w-[95%] mx-auto uppercase"
-            style={{ color: '#EB1C24', fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', transform: 'translateY(-7px)' }}
+            style={{ color: '#EB1C24', fontFamily: '"Futura PT Demi"', fontWeight: '500', transform: 'translateY(-7px)' }}
           >
             {getHairlineNoteText()}
           </p>
@@ -666,7 +666,7 @@ function HairlineSelection() {
             </p>
             <p 
               className="text-black font-medium text-base"
-              style={{ fontFamily: '"Futura PT", "Futura PT Medium", Futura, Futura, Inter, sans-serif', fontWeight: '500' }}
+              style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
             >
               {totalPrice < 0 ? '-' : totalPrice > 0 ? '+' : ''}${Math.abs(totalPrice)} USD
             </p>

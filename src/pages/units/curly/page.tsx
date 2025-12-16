@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { MouseEvent } from 'react';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -14,6 +14,33 @@ function CurlyUnitsPage() {
       return 0;
     }
   });
+
+  // Currency state - load from localStorage on mount
+  const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedCurrency = localStorage.getItem('selectedCurrency');
+        return savedCurrency || 'USD';
+      } catch (e) {
+        return 'USD';
+      }
+    }
+    return 'USD';
+  });
+  
+  // Currency exchange rates (same as CartDropdown)
+  const currencyRates = React.useMemo(() => ({
+    USD: { symbol: '&#36;', rate: 1.0, name: 'US Dollar' },
+    EUR: { symbol: '&euro;', rate: 0.85, name: 'Euro' },
+    GBP: { symbol: '&pound;', rate: 0.73, name: 'British Pound' },
+    CAD: { symbol: 'C&#36;', rate: 1.25, name: 'Canadian Dollar' },
+    AUD: { symbol: 'A&#36;', rate: 1.35, name: 'Australian Dollar' },
+    JPY: { symbol: '&yen;', rate: 110.0, name: 'Japanese Yen' },
+    CNY: { symbol: '&yen;', rate: 6.45, name: 'Chinese Yuan' },
+    INR: { symbol: '&#8377;', rate: 75.0, name: 'Indian Rupee' },
+    BRL: { symbol: 'R&#36;', rate: 5.2, name: 'Brazilian Real' },
+    MXN: { symbol: '&#36;', rate: 20.0, name: 'Mexican Peso' }
+  }), []);
 
   // Listen for cart count changes
   useEffect(() => {
@@ -64,12 +91,74 @@ function CurlyUnitsPage() {
     }
   ]);
 
-  const formatPrice = (price: number): { __html: string } => {
-    if (!price || isNaN(price)) {
-      return { __html: '$0 USD' };
+  // Load selected currency from localStorage on mount only
+  // Initial state already loads from localStorage, this is a safety check
+  useEffect(() => {
+    const savedCurrency = localStorage.getItem('selectedCurrency');
+    if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
+      // Only update if different to avoid unnecessary re-renders
+      if (savedCurrency !== selectedCurrency) {
+        setSelectedCurrency(savedCurrency);
+      }
     }
-    return { __html: '$' + price.toString() + ' USD' };
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount, not when currencyRates changes
+
+  // Save selected currency to localStorage
+  useEffect(() => {
+    localStorage.setItem('selectedCurrency', selectedCurrency);
+  }, [selectedCurrency]);
+
+  // Listen for currency changes from cart dropdown
+  useEffect(() => {
+    const handleCurrencyChange = () => {
+      const savedCurrency = localStorage.getItem('selectedCurrency');
+      if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
+        setSelectedCurrency(savedCurrency);
+      }
+    };
+
+    // Listen for storage events (from other tabs/windows)
+    window.addEventListener('storage', handleCurrencyChange);
+    
+    // Listen for custom currencyChanged event (from same window)
+    const handleCustomCurrencyChange = (event: CustomEvent) => {
+      const newCurrency = event.detail;
+      if (newCurrency && currencyRates[newCurrency as keyof typeof currencyRates]) {
+        setSelectedCurrency(newCurrency);
+        localStorage.setItem('selectedCurrency', newCurrency);
+      }
+    };
+    
+    window.addEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
+    
+    // Poll localStorage periodically to catch any currency changes
+    const interval = setInterval(() => {
+      handleCurrencyChange();
+    }, 500);
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('storage', handleCurrencyChange);
+      window.removeEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
+    };
+  }, [currencyRates]);
+
+  // Format price with currency
+  const formatPrice = React.useCallback((price: number): { __html: string } => {
+    if (!price || isNaN(price)) {
+      const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+      return { __html: currency.symbol + '0 ' + selectedCurrency };
+    }
+    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+    const convertedPrice = price * currency.rate;
+    return {
+      __html: currency.symbol + convertedPrice.toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }) + ' ' + selectedCurrency
+    };
+  }, [currencyRates, selectedCurrency]);
 
   const handleAddToCart = (product: any, e?: MouseEvent<HTMLDivElement>) => {
     if (e) {
@@ -139,15 +228,15 @@ function CurlyUnitsPage() {
             </div>
 
             {/* Text in the middle */}
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               <span 
-                style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
+                style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
                 onClick={() => navigate('/build-a-wig')}
               >
                 UNITS &gt;
               </span>{' '}
               <span
-                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}
+                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
               >
                 CURLY
               </span>
@@ -266,7 +355,7 @@ function CurlyUnitsPage() {
                     {/* Product Name */}
                     <p
                       style={{
-                        fontFamily: '"Covered By Your Grace", cursive',
+                        fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                         fontSize: product.name === 'NOIR' ? '19px' : '18px',
                         color: 'black',
                         textTransform: 'uppercase',
@@ -280,7 +369,7 @@ function CurlyUnitsPage() {
                     {/* Hair Details */}
                     <p
                       style={{
-                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                        fontFamily: '"Futura PT Medium"',
                         fontSize: '10px',
                         color: '#EB1C24',
                         textTransform: 'uppercase',
@@ -295,7 +384,7 @@ function CurlyUnitsPage() {
                     {/* Price */}
                     <p
                       style={{
-                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                        fontFamily: '"Futura PT Medium"',
                         fontSize: '12px',
                         color: 'black',
                         textTransform: 'uppercase',

@@ -198,18 +198,18 @@ export default function StatsCard({ data, onCardClick }: StatsCardProps) {
         <button
           onClick={() => handleTitleClick(data.title)}
           className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
-          style={{ fontFamily: '"Covered By Your Grace", cursive', color: '#EB1C24' }}
+          style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', color: '#EB1C24' }}
         >
           {data.title}
         </button>
         <span
           className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
-          style={{ fontFamily: '"Covered By Your Grace", cursive' }}
+          style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
         >
           {data.title === 'BRAND' ? (
             <>
               {data.count.toString().replace('%', '')}
-              <span style={{ fontFamily: 'Futura PT Medium, Arial, sans-serif', fontSize: '14px' }}>%</span>
+              <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '14px' }}>%</span>
             </>
           ) : (
             data.count

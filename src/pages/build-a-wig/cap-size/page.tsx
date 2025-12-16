@@ -524,9 +524,9 @@ function CapSizeSelection() {
               />
             </button>
           </div>
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               <span 
-                style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
+                style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
                 onClick={() => {
                   const pathname = location.pathname;
                   if (pathname.includes('/noir/')) navigate('/build-a-wig/noir');
@@ -539,7 +539,7 @@ function CapSizeSelection() {
                 BUILD-A-WIG &gt;
               </span>{' '}
               <span
-                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', cursor: 'pointer' }}
+                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500', cursor: 'pointer' }}
                 onClick={() => {
                   const pathname = location.pathname;
                   if (pathname.includes('/blanco/customize')) navigate('/straight/blanco');
@@ -716,12 +716,12 @@ function CapSizeSelection() {
 
           {/* TOTAL DUE - Hidden on mobile to match reference */}
           <div className="text-center hidden md:block">
-            <p className="text-sm font-medium" style={{ color: '#909090', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
+            <p className="text-sm font-medium" style={{ color: '#909090', fontFamily: '"Futura PT Medium"' }}>
               TOTAL DUE
             </p>
             <p 
               className="text-base font-medium"
-              style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}
+              style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
             >
               $400 USD
             </p>
@@ -732,7 +732,7 @@ function CapSizeSelection() {
             {/* CUSTOM SIZING SECTION */}
             <p 
               className="text-xs sm:text-sm text-center mb-4"
-              style={{ fontFamily: '"Covered By Your Grace", cursive', color: '#EB1C24', transform: 'translateY(18px)' }}
+              style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', color: '#EB1C24', transform: 'translateY(18px)' }}
             >
               CUSTOM SIZING
             </p>
@@ -760,7 +760,7 @@ function CapSizeSelection() {
             <div className="mt-5" style={{ transform: 'translateY(-9px) translateZ(0)', position: 'relative' }}>
               <p 
                 className="text-xs sm:text-sm text-center mb-4"
-                style={{ fontFamily: '"Covered By Your Grace", cursive', color: '#EB1C24' }}
+                style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', color: '#EB1C24' }}
               >
                 FLEXIBLE SIZING
               </p>
@@ -785,11 +785,11 @@ function CapSizeSelection() {
 
               {/* SIZE MEASUREMENTS */}
               <div className="flex justify-center mx-auto gap-5" style={{ paddingTop: '1.5rem', paddingBottom: '1.5rem' }}>
-                <p className="text-[10px] font-semibold text-[#EB1C24]" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>XXS: 19"</p>
-                <p className="text-[10px] font-semibold text-[#EB1C24]" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>XS: 20"</p>
-                <p className="text-[10px] font-semibold text-[#EB1C24]" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>S: 21"</p>
-                <p className="text-[10px] font-semibold text-[#EB1C24]" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>M: 22"</p>
-                <p className="text-[10px] font-semibold text-[#EB1C24]" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>L: 23"</p>
+                <p className="text-[10px] font-semibold text-[#EB1C24]" style={{ fontFamily: '"Futura PT Medium"' }}>XXS: 19"</p>
+                <p className="text-[10px] font-semibold text-[#EB1C24]" style={{ fontFamily: '"Futura PT Medium"' }}>XS: 20"</p>
+                <p className="text-[10px] font-semibold text-[#EB1C24]" style={{ fontFamily: '"Futura PT Medium"' }}>S: 21"</p>
+                <p className="text-[10px] font-semibold text-[#EB1C24]" style={{ fontFamily: '"Futura PT Medium"' }}>M: 22"</p>
+                <p className="text-[10px] font-semibold text-[#EB1C24]" style={{ fontFamily: '"Futura PT Medium"' }}>L: 23"</p>
               </div>
             </div>
 
@@ -800,7 +800,7 @@ function CapSizeSelection() {
               </p>
               <p 
                 className="text-black font-medium text-base"
-                style={{ fontFamily: '"Futura PT", "Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}
+                style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
               >
                 {totalPrice < 0 ? '-' : totalPrice > 0 ? '+' : ''}${Math.abs(totalPrice)} USD
               </p>
@@ -908,7 +908,7 @@ function CapSizeSelection() {
                   {/* Currency Selector */}
                   <div className="flex items-center gap-2">
                     <span style={{ 
-                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: '"Futura PT Medium"',
                       fontSize: '14px',
                       color: 'black',
                       fontWeight: '500'
@@ -928,7 +928,7 @@ function CapSizeSelection() {
                   <button
                     onClick={() => handleMobileMenuTabClick('SHOP')}
                     style={{ 
-                      fontFamily: mobileMenuActiveTab === 'SHOP' ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: mobileMenuActiveTab === 'SHOP' ? '"Futura PT Medium"' : '"Futura PT Book"',
                       fontSize: '14px',
                       color: mobileMenuActiveTab === 'SHOP' ? '#EB1C24' : 'black',
                       fontWeight: '500',
@@ -945,7 +945,7 @@ function CapSizeSelection() {
                   <button
                     onClick={() => handleMobileMenuTabClick('TOOLS')}
                     style={{ 
-                      fontFamily: mobileMenuActiveTab === 'TOOLS' ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: mobileMenuActiveTab === 'TOOLS' ? '"Futura PT Medium"' : '"Futura PT Book"',
                       fontSize: '14px',
                       color: mobileMenuActiveTab === 'TOOLS' ? '#EB1C24' : 'black',
                       fontWeight: '500',
@@ -962,7 +962,7 @@ function CapSizeSelection() {
                   <button
                     onClick={() => handleMobileMenuTabClick('BRAND')}
                     style={{ 
-                      fontFamily: mobileMenuActiveTab === 'BRAND' ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: mobileMenuActiveTab === 'BRAND' ? '"Futura PT Medium"' : '"Futura PT Book"',
                       fontSize: '14px',
                       color: mobileMenuActiveTab === 'BRAND' ? '#EB1C24' : 'black',
                       fontWeight: '500',
@@ -985,7 +985,7 @@ function CapSizeSelection() {
                       ['GIFT CARD'].map((item, index) => (
                         <div key={index} className="flex items-center justify-between">
                           <span style={{ 
-                            fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                            fontFamily: '"Futura PT Book"',
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
@@ -999,7 +999,7 @@ function CapSizeSelection() {
                       ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
                         <div key={index} className="flex items-center justify-between">
                           <span style={{ 
-                            fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                            fontFamily: '"Futura PT Book"',
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
@@ -1024,7 +1024,7 @@ function CapSizeSelection() {
                             onClick={() => item.isExpandable ? handleMobileMenuItemToggle(item.label) : null}
                           >
                             <span style={{ 
-                              fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                              fontFamily: '"Futura PT Book"',
                               fontSize: '14px',
                               color: 'black',
                               fontWeight: '500',
@@ -1051,7 +1051,7 @@ function CapSizeSelection() {
                               {item.subItems.map((subItem, subIndex) => (
                                 <div key={subIndex} className="flex items-center">
                                   <span style={{ 
-                                    fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                    fontFamily: '"Futura PT Book"',
                                     fontSize: '14px',
                                     color: '#EB1C24',
                                     fontWeight: '500',
@@ -1074,7 +1074,7 @@ function CapSizeSelection() {
                 <span 
                   onClick={handleMobileMenuSignInToggle}
                   style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '14px',
                     color: '#EB1C24',
                     fontWeight: '500',

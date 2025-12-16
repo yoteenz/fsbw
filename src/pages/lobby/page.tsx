@@ -271,7 +271,7 @@ const LobbyPage: React.FC = () => {
           </svg>
         </button>
         <div style={{
-          fontFamily: 'Futura PT Medium, Futura PT, Futura, sans-serif',
+          fontFamily: '"Futura PT Medium"',
           fontSize: '8px',
           color: 'white',
           opacity: 0.6,
@@ -489,7 +489,7 @@ const LoungePage: React.FC = () => {
           </svg>
         </button>
         <div style={{
-          fontFamily: 'Futura PT Medium, Futura PT, Futura, sans-serif',
+          fontFamily: '"Futura PT Medium"',
           fontSize: '8px',
           color: 'white',
           opacity: 0.6,

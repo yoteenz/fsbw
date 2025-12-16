@@ -484,9 +484,9 @@ export default function AddOnsSelectionPage() {
               />
             </button>
           </div>
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               <span 
-                style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
+                style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
                 onClick={() => {
                   const pathname = window.location.pathname;
                   if (pathname.includes('/noir/')) navigate('/build-a-wig/noir');
@@ -499,7 +499,7 @@ export default function AddOnsSelectionPage() {
                 BUILD-A-WIG &gt;
               </span>{' '}
               <span
-                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', cursor: 'pointer' }}
+                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500', cursor: 'pointer' }}
                 onClick={() => {
                   const pathname = window.location.pathname;
                   if (pathname.includes('/blanco/customize')) navigate('/straight/blanco');
@@ -677,7 +677,7 @@ export default function AddOnsSelectionPage() {
               {/* ADD-ONS OPTIONS HEADER */}
             <p
               className="text-xs sm:text-sm text-center text-red-500 mb-4"
-              style={{ fontFamily: '"Covered By Your Grace", cursive', color: '#EB1C24', transform: 'translateY(18px)' }}
+              style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', color: '#EB1C24', transform: 'translateY(18px)' }}
             >
               CUSTOMIZATION KIT
             </p>
@@ -704,7 +704,7 @@ export default function AddOnsSelectionPage() {
             {/* DYNAMIC ADD-ONS NOTE */}
             <p
               className="font-futura text-[10px] text-center w-[95%] mx-auto uppercase"
-              style={{ color: '#EB1C24', fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', transform: 'translateY(-7px)', marginTop: '10px', marginBottom: '1.5rem' }}
+              style={{ color: '#EB1C24', fontFamily: '"Futura PT Demi"', fontWeight: '500', transform: 'translateY(-7px)', marginTop: '10px', marginBottom: '1.5rem' }}
             >
               {getAddOnsNoteText()}
             </p>
@@ -716,7 +716,7 @@ export default function AddOnsSelectionPage() {
               </p>
               <p 
                 className="text-black font-medium text-base"
-                style={{ fontFamily: '"Futura PT", "Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}
+                style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
               >
                 {totalPrice < 0 ? '-' : totalPrice > 0 ? '+' : ''}${Math.abs(totalPrice)} USD
               </p>
@@ -825,7 +825,7 @@ export default function AddOnsSelectionPage() {
                   {/* Currency Selector */}
                   <div className="flex items-center gap-2">
                     <span style={{ 
-                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: '"Futura PT Medium"',
                       fontSize: '14px',
                       color: 'black',
                       fontWeight: '500'
@@ -845,7 +845,7 @@ export default function AddOnsSelectionPage() {
                   <button
                     onClick={() => handleMobileMenuTabClick('SHOP')}
                     style={{ 
-                      fontFamily: mobileMenuActiveTab === 'SHOP' ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: mobileMenuActiveTab === 'SHOP' ? '"Futura PT Medium"' : '"Futura PT Book"',
                       fontSize: '14px',
                       color: mobileMenuActiveTab === 'SHOP' ? '#EB1C24' : 'black',
                       fontWeight: '500',
@@ -862,7 +862,7 @@ export default function AddOnsSelectionPage() {
                   <button
                     onClick={() => handleMobileMenuTabClick('TOOLS')}
                     style={{ 
-                      fontFamily: mobileMenuActiveTab === 'TOOLS' ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: mobileMenuActiveTab === 'TOOLS' ? '"Futura PT Medium"' : '"Futura PT Book"',
                       fontSize: '14px',
                       color: mobileMenuActiveTab === 'TOOLS' ? '#EB1C24' : 'black',
                       fontWeight: '500',
@@ -879,7 +879,7 @@ export default function AddOnsSelectionPage() {
                   <button
                     onClick={() => handleMobileMenuTabClick('BRAND')}
                     style={{ 
-                      fontFamily: mobileMenuActiveTab === 'BRAND' ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: mobileMenuActiveTab === 'BRAND' ? '"Futura PT Medium"' : '"Futura PT Book"',
                       fontSize: '14px',
                       color: mobileMenuActiveTab === 'BRAND' ? '#EB1C24' : 'black',
                       fontWeight: '500',
@@ -902,7 +902,7 @@ export default function AddOnsSelectionPage() {
                       ['GIFT CARD'].map((item, index) => (
                         <div key={index} className="flex items-center justify-between">
                           <span style={{ 
-                            fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                            fontFamily: '"Futura PT Book"',
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
@@ -916,7 +916,7 @@ export default function AddOnsSelectionPage() {
                       ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
                         <div key={index} className="flex items-center justify-between">
                           <span style={{ 
-                            fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                            fontFamily: '"Futura PT Book"',
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
@@ -941,7 +941,7 @@ export default function AddOnsSelectionPage() {
                             onClick={() => item.isExpandable ? handleMobileMenuItemToggle(item.label) : null}
                           >
                             <span style={{ 
-                              fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                              fontFamily: '"Futura PT Book"',
                               fontSize: '14px',
                               color: 'black',
                               fontWeight: '500',
@@ -968,7 +968,7 @@ export default function AddOnsSelectionPage() {
                               {item.subItems.map((subItem, subIndex) => (
                                 <div key={subIndex} className="flex items-center">
                                   <span style={{ 
-                                    fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                    fontFamily: '"Futura PT Book"',
                                     fontSize: '14px',
                                     color: '#EB1C24',
                                     fontWeight: '500',
@@ -991,7 +991,7 @@ export default function AddOnsSelectionPage() {
                 <span 
                   onClick={handleMobileMenuSignInToggle}
                   style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '14px',
                     color: '#EB1C24',
                     fontWeight: '500',

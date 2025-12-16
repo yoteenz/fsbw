@@ -50,7 +50,7 @@ export default function ThumbBox({
     >
       <p
         className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-        style={{ fontFamily: '"Covered By Your Grace", cursive' }}
+        style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
       >
         {title}
       </p>
@@ -133,7 +133,7 @@ export default function ThumbBox({
           className={`absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center ${
             isDisabled ? 'text-gray-400' : isSelected ? 'text-[#EB1C24]' : 'text-black'
           }`}
-          style={{ fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}
+          style={{ fontFamily: '"Futura PT Medium"' }}
         >
           {label}
         </p>

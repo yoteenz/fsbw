@@ -14,8 +14,18 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   
-  // Currency state
-  const [selectedCurrency, setSelectedCurrency] = useState<string>('USD');
+  // Currency state - load from localStorage on mount
+  const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedCurrency = localStorage.getItem('selectedCurrency');
+        return savedCurrency || 'USD';
+      } catch (e) {
+        return 'USD';
+      }
+    }
+    return 'USD';
+  });
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
 
   // Currency exchange rates
@@ -285,18 +295,25 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     };
   }, [cartCount, refreshTrigger]); // Reload when cart count changes or refresh triggered
 
-  // Load selected currency from localStorage
+  // Save selected currency to localStorage whenever it changes
+  useEffect(() => {
+    if (selectedCurrency) {
+      localStorage.setItem('selectedCurrency', selectedCurrency);
+    }
+  }, [selectedCurrency]);
+
+  // Load selected currency from localStorage on mount (only once)
+  // This ensures we load the saved currency when the component first mounts
   useEffect(() => {
     const savedCurrency = localStorage.getItem('selectedCurrency');
     if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
-      setSelectedCurrency(savedCurrency);
+      // Only update if different to avoid unnecessary re-renders and prevent overwriting
+      if (savedCurrency !== selectedCurrency) {
+        setSelectedCurrency(savedCurrency);
+      }
     }
-  }, [currencyRates]);
-
-  // Save selected currency to localStorage
-  useEffect(() => {
-    localStorage.setItem('selectedCurrency', selectedCurrency);
-  }, [selectedCurrency]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount, not when currencyRates changes
 
   // Listen for currency changes from other components
   useEffect(() => {
@@ -723,7 +740,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                       <p 
                         className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
                         style={{ 
-                          fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                          fontFamily: '"Futura PT Book"',
                           color: '#EB1C24',
                           textTransform: 'uppercase',
                           fontSize: '8px',
@@ -826,7 +843,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                       <p 
                         className="font-medium truncate cart-product-name"
                         style={{ 
-                          fontFamily: '"Covered By Your Grace", cursive',
+                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                           color: '#000000',
                           textTransform: 'uppercase',
                           fontSize: (() => {
@@ -844,7 +861,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                       <p 
                         className="font-bold"
                         style={{ 
-                          fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                          fontFamily: '"Futura PT Book"',
                           color: '#EB1C24',
                           textTransform: 'uppercase',
                           fontSize: '9px',
@@ -858,7 +875,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                       <p 
                         className="font-bold"
                         style={{ 
-                          fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                          fontFamily: '"Futura PT Book"',
                           color: '#000000',
                           textTransform: 'uppercase',
                           fontSize: '9px',
@@ -1080,7 +1097,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     <p 
                       className="font-semibold"
                       style={{ 
-                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                        fontFamily: '"Futura PT Medium"',
                             color: '#808080',
                             textTransform: 'uppercase',
                             fontSize: '10px',
@@ -1104,7 +1121,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                       <p 
                         className="font-bold"
                         style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontFamily: '"Futura PT Medium"',
                           color: '#000000',
                           textTransform: 'uppercase',
                           fontSize: '13px',
@@ -1152,69 +1169,78 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
         </div>
 
           {/* Footer with Total and Actions */}
-        {cartItems.length > 0 && (
-            <div className="px-3 py-2" style={{ paddingBottom: '16px' }}>
-              {/* Separator line above footer */}
-              <div className="border-t border-gray-200 mb-2"></div>
-            <div className="flex items-center justify-center mb-3" style={{ paddingTop: '8px' }}>
-              <span 
-                  className="font-bold"
+          <div className="px-3 py-2" style={{ paddingBottom: '16px' }}>
+            {/* Separator line above footer */}
+            {cartItems.length > 0 && <div className="border-t border-gray-200 mb-2"></div>}
+            
+            {/* Total Due - only show when cart has items */}
+            {cartItems.length > 0 && (
+              <div className="flex items-center justify-center mb-3" style={{ paddingTop: '8px' }}>
+                <span 
+                    className="font-bold"
+                  style={{ 
+                    fontSize: '12px',
+                    fontFamily: '"Futura PT Medium"',
+                      color: '#000000',
+                      textTransform: 'uppercase'
+                  }}
+                  dangerouslySetInnerHTML={{
+                    __html: `TOTAL DUE: ${formatPrice(getTotalPrice()).__html}`
+                  }}
+                />
+              </div>
+            )}
+            
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+              {/* CHANGE CURRENCY button - always visible */}
+              <button
+                onClick={() => setShowCurrencyModal(true)}
+                className="py-2 px-3 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
                 style={{ 
-                  fontSize: '12px',
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    color: '#000000',
-                    textTransform: 'uppercase'
+                  borderWidth: '1.3px',
+                  fontSize: '11px',
+                  fontFamily: '"Futura PT Medium"',
+                  color: '#EB1C24',
+                  textTransform: 'uppercase'
                 }}
-                dangerouslySetInnerHTML={{
-                  __html: `TOTAL DUE: ${formatPrice(getTotalPrice()).__html}`
-                }}
-              />
-              </div>
+              >
+                CHANGE CURRENCY
+              </button>
               
-              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-                <button
-                  onClick={() => setShowCurrencyModal(true)}
-                  className="py-2 px-3 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
-                  style={{ 
-                    borderWidth: '1.3px',
-                    fontSize: '11px',
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    color: '#EB1C24',
-                    textTransform: 'uppercase'
-                  }}
-                >
-                  CHANGE CURRENCY
-                </button>
-                <button
-                  onClick={handleViewCart}
-                  className="flex-1 py-2 px-3 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
-                  style={{ 
-                    borderWidth: '1.3px',
-                    fontSize: '11px',
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    color: '#EB1C24',
-                    textTransform: 'uppercase'
-                  }}
-                >
-                  VIEW BAG
-                </button>
-            <button
-                  onClick={handleCheckout}
-                  className="flex-1 py-2 px-3 border border-black font-medium hover:bg-gray-50 transition-colors"
-              style={{
-                borderWidth: '1.3px',
-                fontSize: '11px',
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    backgroundColor: '#FFFFFF',
-                    color: '#EB1C24',
-                    textTransform: 'uppercase'
-              }}
-            >
-              CHECKOUT
-            </button>
-              </div>
+              {/* VIEW BAG and CHECKOUT buttons - only show when cart has items */}
+              {cartItems.length > 0 && (
+                <>
+                  <button
+                    onClick={handleViewCart}
+                    className="flex-1 py-2 px-3 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
+                    style={{ 
+                      borderWidth: '1.3px',
+                      fontSize: '11px',
+                      fontFamily: '"Futura PT Medium"',
+                      color: '#EB1C24',
+                      textTransform: 'uppercase'
+                    }}
+                  >
+                    VIEW BAG
+                  </button>
+                  <button
+                    onClick={handleCheckout}
+                    className="flex-1 py-2 px-3 border border-black font-medium hover:bg-gray-50 transition-colors"
+                    style={{
+                      borderWidth: '1.3px',
+                      fontSize: '11px',
+                      fontFamily: '"Futura PT Medium"',
+                      backgroundColor: '#FFFFFF',
+                      color: '#EB1C24',
+                      textTransform: 'uppercase'
+                    }}
+                  >
+                    CHECKOUT
+                  </button>
+                </>
+              )}
+            </div>
           </div>
-        )}
 
         {/* Currency Modal */}
         {showCurrencyModal && (
@@ -1256,7 +1282,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                   className="font-bold uppercase absolute left-1/2 transform -translate-x-1/2"
                 style={{ 
                     fontSize: '15px',
-                  fontFamily: '"Covered By Your Grace", cursive',
+                  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     color: '#000000',
                     transform: 'translateX(-50%) translateY(1px)'
                 }}
@@ -1290,7 +1316,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                 style={{ 
                   fontSize: '8px',
                   color: '#909090',
-              fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif'
+              fontFamily: '"Futura PT Book"'
                 }}
               >
                 SCROLL TO SEE MORE
@@ -1310,7 +1336,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     onClick={(e) => {
                       e.stopPropagation();
                     setSelectedCurrency(code);
+                    // Save to localStorage immediately
+                    localStorage.setItem('selectedCurrency', code);
                     setShowCurrencyModal(false);
+                    // Dispatch custom event to notify other components in the same window
+                    window.dispatchEvent(new CustomEvent('currencyChanged', { detail: code }));
                   }}
                     className={`w-full p-2 text-left border border-black hover:bg-gray-50 transition-colors ${
                       selectedCurrency === code ? 'bg-gray-100' : 'bg-white'
@@ -1318,7 +1348,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                   style={{ 
                     borderWidth: '1.3px',
                       fontSize: '10px',
-                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: '"Futura PT Medium"',
                       color: '#000000',
                     textTransform: 'uppercase'
                   }}

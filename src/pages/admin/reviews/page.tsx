@@ -57,16 +57,16 @@ export default function AdminReviews() {
         <div className="pb-6 px-4">
           <div className="max-w-md mx-auto space-y-4">
             <div className="bg-white/60 backdrop-blur-sm border border-black p-4" style={{ borderWidth: '1.4px' }}>
-              <h2 className="text-lg font-bold mb-4" style={{ fontFamily: '"Covered By Your Grace", cursive', color: '#EB1C24' }}>
+              <h2 className="text-lg font-bold mb-4" style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', color: '#EB1C24' }}>
                 REVIEW OVERVIEW
               </h2>
               <div className="grid grid-cols-2 gap-4 text-center">
                 <div>
-                  <div className="text-2xl font-bold" style={{ fontFamily: '"Covered By Your Grace", cursive' }}>4.8</div>
+                  <div className="text-2xl font-bold" style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}>4.8</div>
                   <div className="text-xs font-futura text-gray-600">AVERAGE RATING</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold" style={{ fontFamily: '"Covered By Your Grace", cursive' }}>247</div>
+                  <div className="text-2xl font-bold" style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}>247</div>
                   <div className="text-xs font-futura text-gray-600">TOTAL REVIEWS</div>
                 </div>
               </div>

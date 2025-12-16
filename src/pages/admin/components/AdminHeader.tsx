@@ -653,7 +653,7 @@ export default function AdminHeader({
                             </div>
                             <div
                               className="text-xs font-bold uppercase"
-                              style={{ color: tierColor, fontSize: '8px', fontFamily: '"Futura PT Medium", Futura, Arial, sans-serif' }}
+                              style={{ color: tierColor, fontSize: '8px', fontFamily: '"Futura PT Medium"' }}
                             >
                               {message.tier}
                             </div>

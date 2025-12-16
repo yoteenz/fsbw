@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 
@@ -12,6 +12,33 @@ function WishlistSelection() {
       return 0;
     }
   });
+
+  // Currency state - load from localStorage on mount
+  const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedCurrency = localStorage.getItem('selectedCurrency');
+        return savedCurrency || 'USD';
+      } catch (e) {
+        return 'USD';
+      }
+    }
+    return 'USD';
+  });
+  
+  // Currency exchange rates (same as CartDropdown)
+  const currencyRates = React.useMemo(() => ({
+    USD: { symbol: '&#36;', rate: 1.0, name: 'US Dollar' },
+    EUR: { symbol: '&euro;', rate: 0.85, name: 'Euro' },
+    GBP: { symbol: '&pound;', rate: 0.73, name: 'British Pound' },
+    CAD: { symbol: 'C&#36;', rate: 1.25, name: 'Canadian Dollar' },
+    AUD: { symbol: 'A&#36;', rate: 1.35, name: 'Australian Dollar' },
+    JPY: { symbol: '&yen;', rate: 110.0, name: 'Japanese Yen' },
+    CNY: { symbol: '&yen;', rate: 6.45, name: 'Chinese Yuan' },
+    INR: { symbol: '&#8377;', rate: 75.0, name: 'Indian Rupee' },
+    BRL: { symbol: 'R&#36;', rate: 5.2, name: 'Brazilian Real' },
+    MXN: { symbol: '&#36;', rate: 20.0, name: 'Mexican Peso' }
+  }), []);
 
   // Listen for cart count changes
   useEffect(() => {
@@ -93,15 +120,74 @@ function WishlistSelection() {
     }
   }, []);
 
-  const formatPrice = (price: number) => {
-    if (!price || isNaN(price)) return { __html: '$0' };
+  // Load selected currency from localStorage on mount only
+  // Initial state already loads from localStorage, this is a safety check
+  useEffect(() => {
+    const savedCurrency = localStorage.getItem('selectedCurrency');
+    if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
+      // Only update if different to avoid unnecessary re-renders
+      if (savedCurrency !== selectedCurrency) {
+        setSelectedCurrency(savedCurrency);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount, not when currencyRates changes
+
+  // Save selected currency to localStorage
+  useEffect(() => {
+    localStorage.setItem('selectedCurrency', selectedCurrency);
+  }, [selectedCurrency]);
+
+  // Listen for currency changes from cart dropdown
+  useEffect(() => {
+    const handleCurrencyChange = () => {
+      const savedCurrency = localStorage.getItem('selectedCurrency');
+      if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
+        setSelectedCurrency(savedCurrency);
+      }
+    };
+
+    // Listen for storage events (from other tabs/windows)
+    window.addEventListener('storage', handleCurrencyChange);
+    
+    // Listen for custom currencyChanged event (from same window)
+    const handleCustomCurrencyChange = (event: CustomEvent) => {
+      const newCurrency = event.detail;
+      if (newCurrency && currencyRates[newCurrency as keyof typeof currencyRates]) {
+        setSelectedCurrency(newCurrency);
+        localStorage.setItem('selectedCurrency', newCurrency);
+      }
+    };
+    
+    window.addEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
+    
+    // Poll localStorage periodically to catch any currency changes
+    const interval = setInterval(() => {
+      handleCurrencyChange();
+    }, 500);
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('storage', handleCurrencyChange);
+      window.removeEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
+    };
+  }, [currencyRates]);
+
+  // Format price with currency
+  const formatPrice = React.useCallback((price: number) => {
+    if (!price || isNaN(price)) {
+      const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+      return { __html: currency.symbol + '0 ' + selectedCurrency };
+    }
+    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+    const convertedPrice = price * currency.rate;
     return {
-      __html: '$' + price.toLocaleString('en-US', {
+      __html: currency.symbol + convertedPrice.toLocaleString('en-US', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0
-      })
+      }) + ' ' + selectedCurrency
     };
-  };
+  }, [currencyRates, selectedCurrency]);
 
   const handleQuantityChange = (itemId: string, delta: number) => {
     try {
@@ -197,15 +283,15 @@ function WishlistSelection() {
             </div>
 
             {/* Text in the middle */}
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               <span 
-                style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
+                style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
                 onClick={() => navigate('/build-a-wig')}
               >
                 ACCOUNT &gt;
               </span>{' '}
               <span
-                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}
+                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
               >
                 WISHLIST
               </span>
@@ -244,7 +330,7 @@ function WishlistSelection() {
             <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px', paddingTop: '20px' }}>
               {wishlistItems.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '40px 20px', color: '#909090' }}>
-                  <p style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: '14px' }}>
+                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '14px' }}>
                     Your wishlist is empty
                   </p>
                 </div>
@@ -291,7 +377,7 @@ function WishlistSelection() {
                             top: '4px',
                             left: '4px',
                             color: '#EB1C24',
-                            fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
+                            fontFamily: '"Futura PT Demi"',
                             fontSize: '10px',
                             fontWeight: '600',
                             margin: '0',
@@ -307,7 +393,7 @@ function WishlistSelection() {
                       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minWidth: 0 }}>
                         <p
                           style={{
-                            fontFamily: '"Covered By Your Grace", cursive',
+                            fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                             color: '#000000',
                             fontSize: '28px',
                             lineHeight: '1.1',
@@ -320,7 +406,7 @@ function WishlistSelection() {
 
                         <p
                           style={{
-                            fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                            fontFamily: '"Futura PT Book"',
                             color: '#EB1C24',
                             fontSize: '10px',
                             margin: '0 0 4px 0',
@@ -334,7 +420,7 @@ function WishlistSelection() {
                         {item.capSize && (
                           <p
                             style={{
-                              fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                              fontFamily: '"Futura PT Book"',
                               color: '#000000',
                               fontSize: '9px',
                               margin: '0 0 8px 0',
@@ -347,7 +433,7 @@ function WishlistSelection() {
 
                         <p
                           style={{
-                            fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                            fontFamily: '"Futura PT Book"',
                             color: '#000000',
                             fontSize: '14px',
                             margin: '0 0 12px 0',
@@ -370,7 +456,7 @@ function WishlistSelection() {
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                fontFamily: '"Futura PT Book"',
                                 fontSize: '16px',
                                 padding: '0'
                               }}
@@ -382,7 +468,7 @@ function WishlistSelection() {
                               style={{
                                 width: '40px',
                                 textAlign: 'center',
-                                fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                fontFamily: '"Futura PT Book"',
                                 fontSize: '14px',
                                 borderLeft: '1.3px solid #000',
                                 borderRight: '1.3px solid #000',
@@ -402,7 +488,7 @@ function WishlistSelection() {
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                fontFamily: '"Futura PT Book"',
                                 fontSize: '16px',
                                 padding: '0'
                               }}
@@ -415,7 +501,7 @@ function WishlistSelection() {
                           <button
                             onClick={() => handleAddToBag(item)}
                             style={{
-                              fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                              fontFamily: '"Futura PT Book"',
                               fontSize: '12px',
                               color: '#909090',
                               background: 'none',
@@ -435,7 +521,7 @@ function WishlistSelection() {
                           <p
                             onClick={() => handleEdit(item)}
                             style={{
-                              fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                              fontFamily: '"Futura PT Book"',
                               color: '#EB1C24',
                               fontSize: '9px',
                               margin: '8px 0 0 0',
@@ -468,7 +554,7 @@ function WishlistSelection() {
               style={{ 
                 borderWidth: '1.3px', 
                 color: '#EB1C24',
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                fontFamily: '"Futura PT Medium"',
                 backgroundColor: '#FFFFFF'
               }}
               type="button"
@@ -488,7 +574,7 @@ function WishlistSelection() {
               style={{ 
                 borderWidth: '1.3px', 
                 color: '#EB1C24',
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
+                fontFamily: '"Futura PT Medium"'
               }}
               type="button"
             >

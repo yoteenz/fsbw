@@ -15,6 +15,33 @@ function BlancoSelection() {
     return parseInt(localStorage.getItem('cartCount') || '0');
   });
   
+  // Currency state - load from localStorage on mount
+  const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedCurrency = localStorage.getItem('selectedCurrency');
+        return savedCurrency || 'USD';
+      } catch (e) {
+        return 'USD';
+      }
+    }
+    return 'USD';
+  });
+  
+  // Currency exchange rates (same as CartDropdown)
+  const currencyRates = React.useMemo(() => ({
+    USD: { symbol: '&#36;', rate: 1.0, name: 'US Dollar' },
+    EUR: { symbol: '&euro;', rate: 0.85, name: 'Euro' },
+    GBP: { symbol: '&pound;', rate: 0.73, name: 'British Pound' },
+    CAD: { symbol: 'C&#36;', rate: 1.25, name: 'Canadian Dollar' },
+    AUD: { symbol: 'A&#36;', rate: 1.35, name: 'Australian Dollar' },
+    JPY: { symbol: '&yen;', rate: 110.0, name: 'Japanese Yen' },
+    CNY: { symbol: '&yen;', rate: 6.45, name: 'Chinese Yuan' },
+    INR: { symbol: '&#8377;', rate: 75.0, name: 'Indian Rupee' },
+    BRL: { symbol: 'R&#36;', rate: 5.2, name: 'Brazilian Real' },
+    MXN: { symbol: '&#36;', rate: 20.0, name: 'Mexican Peso' }
+  }), []);
+  
   // CRITICAL: Clear any noir-specific localStorage values and set BLANCO defaults on page load
   // This prevents noir page settings from interfering with blanco page
   useEffect(() => {
@@ -48,32 +75,160 @@ function BlancoSelection() {
     localStorage.setItem('selectedAddOnsPrice', '0');
   }, []);
 
-  // Listen for cart count changes
-  useEffect(() => {
-    const handleCartCountUpdate = (event: CustomEvent) => {
-      setCartCount(event.detail);
+  // Helper function to check if a cart item matches the default configuration exactly
+  // This does explicit field-by-field comparison to ensure no false matches
+  const matchesDefaultConfiguration = (item: any): boolean => {
+    // Ensure item is for BLANCO product
+    if (item.name !== 'BLANCO') {
+      return false;
+    }
+    
+    // Ensure item has ALL required properties
+    if (!item.capSize || !item.length || !item.density || !item.lace || !item.texture || !item.color || !item.hairline || !item.styling) {
+      return false;
+    }
+    
+    // Get current default configuration values
+    const currentCapSize = selectedCustomCap || selectedFlexibleCap || 'M';
+    const DEFAULT_LENGTH = '24"';
+    const DEFAULT_DENSITY = '200%';
+    const DEFAULT_LACE = '13X6';
+    const DEFAULT_TEXTURE = 'SILKY';
+    const DEFAULT_COLOR = 'OFF BLACK';
+    const DEFAULT_HAIRLINE = 'NATURAL';
+    const DEFAULT_STYLING = 'NONE';
+    const DEFAULT_ADDONS = '';
+    
+    // Normalize values for comparison (remove all spaces and convert to string)
+    const normalize = (value: any): string => {
+      return (value || '').toString().replace(/\s+/g, '').toUpperCase();
     };
+    
+    // Handle addOns - convert array to comma-separated string or empty string
+    const itemAddOns = item.addOns && Array.isArray(item.addOns) && item.addOns.length > 0 
+      ? item.addOns.join(',').replace(/\s+/g, '').toUpperCase()
+      : '';
+    
+    // Compare each field explicitly - ALL must match exactly
+    const capSizeMatch = normalize(item.capSize) === normalize(currentCapSize);
+    const lengthMatch = normalize(item.length) === normalize(DEFAULT_LENGTH);
+    const densityMatch = normalize(item.density) === normalize(DEFAULT_DENSITY);
+    const laceMatch = normalize(item.lace) === normalize(DEFAULT_LACE);
+    const textureMatch = normalize(item.texture) === normalize(DEFAULT_TEXTURE);
+    const colorMatch = normalize(item.color) === normalize(DEFAULT_COLOR);
+    const hairlineMatch = normalize(item.hairline) === normalize(DEFAULT_HAIRLINE);
+    const stylingMatch = normalize(item.styling) === normalize(DEFAULT_STYLING);
+    const addOnsMatch = itemAddOns === normalize(DEFAULT_ADDONS);
+    
+    // ALL fields must match exactly
+    return capSizeMatch && lengthMatch && densityMatch && laceMatch && textureMatch && colorMatch && hairlineMatch && stylingMatch && addOnsMatch;
+  };
 
-    const handleStorageChange = () => {
-      try {
-        const newCartCount = parseInt(localStorage.getItem('cartCount') || '0');
-        setCartCount(newCartCount);
-      } catch (e) {
-        setCartCount(0);
+  // Listen for cart count changes and validate cart state
+  useEffect(() => {
+    const handleCartUpdate = () => {
+      const newCartCount = parseInt(localStorage.getItem('cartCount') || '0');
+      setCartCount(newCartCount);
+      
+      // Check button state from localStorage to avoid stale closure
+      const currentButtonState = localStorage.getItem('addToBagButtonState');
+        
+      // If button is currently 'adding', don't reset it
+      if (currentButtonState === 'adding') {
+        return;
+      }
+        
+      // ALWAYS validate cart state - don't trust localStorage alone
+      // If cart is completely empty, reset button state
+      if (newCartCount === 0) {
+        setAddToBagState('idle');
+        localStorage.removeItem('addToBagButtonState');
+        localStorage.removeItem('lastAddedItemId');
+        return;
+      }
+        
+      // ALWAYS re-validate that a cart item with default configuration exists
+      // This ensures we only show "IN THE BAG" for items with ALL default specs
+      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      
+      const matchingItem = cartItems.find((item: any) => {
+        // Use explicit field-by-field comparison to ensure exact match
+        return matchesDefaultConfiguration(item);
+      });
+        
+      // Update state based on actual cart contents, not localStorage
+      if (matchingItem) {
+        // Item with default configuration exists - set to 'added'
+        setAddToBagState('added');
+        localStorage.setItem('addToBagButtonState', 'added');
+        localStorage.setItem('lastAddedItemId', matchingItem.id);
+      } else {
+        // No matching item - reset to 'idle'
+        setAddToBagState('idle');
+        localStorage.removeItem('addToBagButtonState');
+        localStorage.removeItem('lastAddedItemId');
       }
     };
 
+    // @ts-expect-error - event parameter required by event listener signature but not used
+    const handleCartCountUpdate = (event: CustomEvent) => {
+      handleCartUpdate();
+    };
+    
+    // @ts-expect-error - event parameter required by event listener signature but not used
+    const handleCartUpdated = (event: CustomEvent) => {
+      handleCartUpdate();
+    };
+
+    const handleStorageChange = () => {
+      handleCartUpdate();
+    };
+
+    // CRITICAL: Validate cart state immediately on mount to clear any stale localStorage
+    // This ensures button state is correct even if localStorage was set incorrectly
+    handleCartUpdate();
+    
+    // Listen for custom events
     window.addEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
-    window.addEventListener('cartUpdated', handleStorageChange);
+    window.addEventListener('cartUpdated', handleCartUpdated as EventListener);
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('focus', handleStorageChange);
-
+    
+    // Simple polling - always validate, not just when localStorage says 'added'
+    // This catches cases where localStorage is wrong
+    const interval = setInterval(() => {
+      handleCartUpdate();
+    }, 1000); // Check every 1 second
+    
     return () => {
+      clearInterval(interval);
       window.removeEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
-      window.removeEventListener('cartUpdated', handleStorageChange);
+      window.removeEventListener('cartUpdated', handleCartUpdated as EventListener);
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('focus', handleStorageChange);
     };
+  }, [selectedCustomCap, selectedFlexibleCap]);
+
+  // Initialize button state from localStorage on page load
+  useEffect(() => {
+    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+    
+    // Always check if current configuration matches any cart item
+    // Only match items with ALL default selection options (M, 24", 200%, 13X6, etc.)
+    const matchingItem = cartItems.find((item: any) => {
+      // Use explicit field-by-field comparison to ensure exact match
+      return matchesDefaultConfiguration(item);
+    });
+    
+    if (matchingItem) {
+      setAddToBagState('added');
+      localStorage.setItem('addToBagButtonState', 'added');
+      localStorage.setItem('lastAddedItemId', matchingItem.id);
+    } else {
+      setAddToBagState('idle');
+      localStorage.removeItem('addToBagButtonState');
+      localStorage.removeItem('lastAddedItemId');
+    }
   }, []);
   const [selectedMannequinView, setSelectedMannequinView] = useState(0);
   const [is3DView, setIs3DView] = useState(() => {
@@ -274,14 +429,71 @@ function BlancoSelection() {
     return basePrice;
   };
 
-  const formatPrice = (price: number) => {
+  // Load selected currency from localStorage on mount only
+  // Initial state already loads from localStorage, this is a safety check
+  useEffect(() => {
+    const savedCurrency = localStorage.getItem('selectedCurrency');
+    if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
+      // Only update if different to avoid unnecessary re-renders
+      if (savedCurrency !== selectedCurrency) {
+        setSelectedCurrency(savedCurrency);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount, not when currencyRates changes
+
+  // Save selected currency to localStorage
+  useEffect(() => {
+    localStorage.setItem('selectedCurrency', selectedCurrency);
+  }, [selectedCurrency]);
+
+  // Listen for currency changes from cart dropdown
+  useEffect(() => {
+    const handleCurrencyChange = () => {
+      const savedCurrency = localStorage.getItem('selectedCurrency');
+      if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
+        setSelectedCurrency(savedCurrency);
+      }
+    };
+
+    // Listen for storage events (from other tabs/windows)
+    window.addEventListener('storage', handleCurrencyChange);
+    
+    // Listen for custom currencyChanged event (from same window)
+    const handleCustomCurrencyChange = (event: CustomEvent) => {
+      const newCurrency = event.detail;
+      if (newCurrency && currencyRates[newCurrency as keyof typeof currencyRates]) {
+        setSelectedCurrency(newCurrency);
+        // Also update localStorage to ensure consistency
+        localStorage.setItem('selectedCurrency', newCurrency);
+      }
+    };
+    
+    window.addEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
+    
+    // Poll localStorage periodically to catch any currency changes
+    const interval = setInterval(() => {
+      handleCurrencyChange();
+    }, 500); // Check every 500ms
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('storage', handleCurrencyChange);
+      window.removeEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
+    };
+  }, [currencyRates]);
+
+  // Format price with currency
+  const formatPrice = React.useCallback((price: number) => {
+    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+    const convertedPrice = price * currency.rate;
     return {
-      __html: '$' + price.toLocaleString('en-US', {
+      __html: currency.symbol + convertedPrice.toLocaleString('en-US', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0
-      }) + ' USD'
+      }) + ' ' + selectedCurrency
     };
-  };
+  }, [currencyRates, selectedCurrency]);
 
   const handleAddToBag = async () => {
     if (addToBagState === 'adding' || addToBagState === 'added') return;
@@ -291,14 +503,27 @@ function BlancoSelection() {
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      const defaultLength = '24"';
-      const defaultDensity = '200%';
-      const defaultLace = '13X6';
-      const defaultTexture = 'SILKY';
-      const defaultColor = 'OFF BLACK';
-      const defaultHairline = 'NATURAL';
-      const defaultStyling = 'NONE';
-      const defaultAddOns: string[] = [];
+      // CRITICAL: Read customization values from localStorage (or use defaults)
+      // This ensures that if user made selections in build-a-wig, they're included
+      const defaultLength = localStorage.getItem('selectedLength') || '24"';
+      const defaultDensity = localStorage.getItem('selectedDensity') || '200%';
+      const defaultLace = localStorage.getItem('selectedLace') || '13X6';
+      const defaultTexture = localStorage.getItem('selectedTexture') || 'SILKY';
+      const defaultColor = localStorage.getItem('selectedColor') || 'OFF BLACK';
+      const defaultHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
+      const defaultStyling = localStorage.getItem('selectedStyling') || 'NONE';
+      const defaultAddOns: string[] = JSON.parse(localStorage.getItem('selectedAddOns') || '[]');
+      
+      // CRITICAL: Read customization prices from localStorage (or use 0 if not set)
+      // This ensures add-ons and other customizations are included in the price
+      const lengthPrice = parseInt(localStorage.getItem('selectedLengthPrice') || '0');
+      const densityPrice = parseInt(localStorage.getItem('selectedDensityPrice') || '0');
+      const lacePrice = parseInt(localStorage.getItem('selectedLacePrice') || '0');
+      const texturePrice = parseInt(localStorage.getItem('selectedTexturePrice') || '0');
+      const colorPrice = parseInt(localStorage.getItem('selectedColorPrice') || '0');
+      const hairlinePrice = parseInt(localStorage.getItem('selectedHairlinePrice') || '0');
+      const stylingPrice = parseInt(localStorage.getItem('selectedStylingPrice') || '0');
+      const addOnsPrice = parseInt(localStorage.getItem('selectedAddOnsPrice') || '0');
       
       let capSize: string;
       let capSizePrice: number;
@@ -314,7 +539,8 @@ function BlancoSelection() {
       }
       
       const basePrice = 820;
-      const totalPrice = basePrice + capSizePrice;
+      // CRITICAL: Include all customization prices in total calculation
+      const totalPrice = basePrice + capSizePrice + lengthPrice + densityPrice + lacePrice + texturePrice + colorPrice + hairlinePrice + stylingPrice + addOnsPrice;
       
       const cartItem = {
         id: `blanco-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -331,7 +557,7 @@ function BlancoSelection() {
         lace: defaultLace,
         hairline: defaultHairline,
         styling: defaultStyling,
-        partSelection: 'MIDDLE',
+        partSelection: localStorage.getItem('selectedPartSelection') || 'MIDDLE',
         addOns: defaultAddOns
       };
       
@@ -400,15 +626,15 @@ function BlancoSelection() {
                 />
               </button>
             </div>
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               <span 
-                style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
+                style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
                 onClick={() => navigate('/units/straight')}
               >
                 STRAIGHT &gt;
               </span>{' '}
               <span
-                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}
+                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
               >
                 BLANCO
               </span>
@@ -452,7 +678,7 @@ function BlancoSelection() {
                     left: '8px', 
                     top: '2px', 
                     color: '#909090', 
-                    fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Demi"',
                     fontSize: '10px',
                     fontWeight: '600',
                     margin: '0'
@@ -481,7 +707,7 @@ function BlancoSelection() {
                   <span 
                     style={{ 
                       color: is3DView ? '#000000' : '#EB1C24', 
-                      fontFamily: is3DView ? '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: is3DView ? '"Futura PT Book"' : '"Futura PT Medium"',
                       fontSize: '11px',
                       fontWeight: is3DView ? '400' : '500',
                       margin: '0'
@@ -492,7 +718,7 @@ function BlancoSelection() {
                   <span 
                     style={{ 
                       color: '#000000', 
-                      fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: '"Futura PT Book"',
                       fontSize: '11px',
                       fontWeight: '400',
                       margin: '0'
@@ -503,7 +729,7 @@ function BlancoSelection() {
                   <span 
                     style={{ 
                       color: is3DView ? '#EB1C24' : '#000000', 
-                      fontFamily: is3DView ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: is3DView ? '"Futura PT Medium"' : '"Futura PT Book"',
                       fontSize: '11px',
                       fontWeight: is3DView ? '500' : '400',
                       margin: '0'
@@ -625,14 +851,14 @@ function BlancoSelection() {
               <p
                 className="text-center uppercase mb-2"
                 style={{ 
-                  fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                  fontFamily: '"Futura PT Book"',
                   fontSize: '11px',
                   fontWeight: '400',
                   transform: 'translateY(-13px)',
                   color: 'black'
                 }}
               >
-                (2D MODEL IS FOR <span style={{ color: '#909090', fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif' }}>VISUAL & AESTHETIC</span> PURPOSES ONLY)
+                (2D MODEL IS FOR <span style={{ color: '#909090', fontFamily: '"Futura PT Demi"' }}>VISUAL & AESTHETIC</span> PURPOSES ONLY)
               </p>
             </div>
 
@@ -640,7 +866,7 @@ function BlancoSelection() {
             <p
               className="text-center text-black mb-2"
               style={{ 
-                fontFamily: '"Covered By Your Grace", cursive',
+                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                 fontSize: '46px',
                 fontWeight: '400',
                 lineHeight: '1.2',
@@ -656,8 +882,8 @@ function BlancoSelection() {
             <p
               className="text-center text-red-500 uppercase mb-2"
               style={{ 
-                fontFamily: '"Futura PT", futuristic-pt, Futura, Inter, sans-serif',
-                fontSize: '10px',
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '11px',
                 fontWeight: '500',
                 transform: 'translateY(-8px)'
               }}
@@ -669,8 +895,8 @@ function BlancoSelection() {
             <p
               className="text-center text-black mb-1"
               style={{ 
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                fontSize: '21px',
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '20px',
                 fontWeight: '500',
                 transform: 'translateY(-16px)'
               }}
@@ -681,7 +907,7 @@ function BlancoSelection() {
             <p
               className="text-center text-black mb-3"
               style={{ 
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                fontFamily: '"Futura PT Medium"',
                 fontSize: '10px',
                 fontWeight: '500',
                 transform: 'translateY(-21px)'
@@ -711,7 +937,7 @@ function BlancoSelection() {
             <p
               className="text-center uppercase"
               style={{ 
-                fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
+                fontFamily: '"Futura PT Demi"',
                 fontSize: '10px',
                 fontWeight: '600',
                 color: '#909090',
@@ -726,7 +952,7 @@ function BlancoSelection() {
               <p
                 className="text-center text-black uppercase mb-4"
                 style={{ 
-                  fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
+                  fontFamily: '"Futura PT Demi"',
                   fontSize: '11px',
                   fontWeight: '500',
                   transform: 'translateY(0px)'
@@ -737,11 +963,11 @@ function BlancoSelection() {
 
               {/* CAP SIZE MEASUREMENTS */}
               <div className="flex justify-center gap-4 mb-6" style={{ transform: 'translateY(-7px)' }}>
-                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>XXS: 19"</span>
-                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>XS: 20"</span>
-                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>S: 21"</span>
-                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>M: 22"</span>
-                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>L: 23"</span>
+                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium"' }}>XXS: 19"</span>
+                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium"' }}>XS: 20"</span>
+                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium"' }}>S: 21"</span>
+                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium"' }}>M: 22"</span>
+                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium"' }}>L: 23"</span>
               </div>
 
               {/* CUSTOM CAP SECTION */}
@@ -749,7 +975,7 @@ function BlancoSelection() {
                 <p
                   className="text-center text-black mb-4"
                   style={{ 
-                    fontFamily: '"Bohemy", cursive',
+                    fontFamily: '"Bohemy", sans-serif',
                     fontSize: '20px',
                     fontWeight: '400',
                     transform: 'translateY(-16px)'
@@ -763,7 +989,7 @@ function BlancoSelection() {
                     className={`border border-black px-6 py-1 ${selectedCustomCap === 'XS' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
                     style={{ 
                       borderWidth: '1.3px',
-                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
                       minWidth: '60px',
                       fontSize: '11px'
@@ -776,7 +1002,7 @@ function BlancoSelection() {
                     className={`border border-black px-6 py-1 ${selectedCustomCap === 'S' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
                     style={{ 
                       borderWidth: '1.3px',
-                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
                       minWidth: '60px',
                       fontSize: '11px'
@@ -789,7 +1015,7 @@ function BlancoSelection() {
                     className={`border border-black px-6 py-1 ${selectedCustomCap === 'M' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
                     style={{ 
                       borderWidth: '1.3px',
-                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
                       minWidth: '60px',
                       fontSize: '11px'
@@ -802,7 +1028,7 @@ function BlancoSelection() {
                     className={`border border-black px-6 py-1 ${selectedCustomCap === 'L' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
                     style={{ 
                       borderWidth: '1.3px',
-                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
                       minWidth: '60px',
                       fontSize: '11px'
@@ -818,7 +1044,7 @@ function BlancoSelection() {
                 <p
                   className="text-center text-black mb-4"
                   style={{ 
-                    fontFamily: '"Bohemy", cursive',
+                    fontFamily: '"Bohemy", sans-serif',
                     fontSize: '20px',
                     fontWeight: '400',
                     transform: 'translateY(-24px)'
@@ -835,7 +1061,7 @@ function BlancoSelection() {
                       paddingBottom: '4px',
                       paddingLeft: '8px',
                       paddingRight: '8px',
-                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
                       width: '108px',
                       minWidth: '108px',
@@ -861,7 +1087,7 @@ function BlancoSelection() {
                       paddingBottom: '4px',
                       paddingLeft: '8px',
                       paddingRight: '8px',
-                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
                       width: '108px',
                       minWidth: '108px',
@@ -909,7 +1135,7 @@ function BlancoSelection() {
                     borderBottom: '1.3px solid black',
                     borderLeft: 'none',
                     borderRight: 'none',
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                    fontFamily: '"Futura PT Medium"', 
                     fontWeight: '500', 
                     fontSize: '12px', 
                     height: '27px',
@@ -1065,7 +1291,7 @@ function BlancoSelection() {
                   className="absolute left-1/2 transform -translate-x-1/2"
                   style={{
                     bottom: '14px',
-                    fontFamily: '"Bohemy", cursive',
+                    fontFamily: '"Bohemy", sans-serif',
                     fontSize: '43px',
                     color: 'white',
                     textShadow: '1px 1px 0px black, -1px 1px 0px black, 1px -1px 0px black, -1px -1px 0px black, 1px 0px 0px black, -1px 0px 0px black, 0px 1px 0px black, 0px -1px 0px black',
@@ -1087,35 +1313,35 @@ function BlancoSelection() {
                   <button
                     onClick={() => handleTabClick('DETAILS')}
                     className={`px-2 py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
                   >
                     DETAILS
                   </button>
                   <button
                     onClick={() => handleTabClick('SHIPPING')}
                     className={`px-2 py-1 text-xs font-medium ${activeTab === 'SHIPPING' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
                   >
                     SHIPPING
                   </button>
                   <button
                     onClick={() => handleTabClick('POLICY')}
                     className={`px-2 py-1 text-xs font-medium ${activeTab === 'POLICY' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
                   >
                     POLICY
                   </button>
                   <button
                     onClick={() => handleTabClick('CARE & STORAGE')}
                     className={`px-2 py-1 text-xs font-medium ${activeTab === 'CARE & STORAGE' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
                   >
                     CARE & STORAGE
                   </button>
                   <button
                     onClick={() => handleTabClick('REVIEWS')}
                     className={`px-2 py-1 text-xs font-medium ${activeTab === 'REVIEWS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
                   >
                     REVIEWS
                   </button>
@@ -1125,28 +1351,28 @@ function BlancoSelection() {
                 <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px' }}>
                   {activeTab === 'DETAILS' && (
                     <>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         13X6 ULTRA THIN HD FILM LACE, RAW RUSSIAN STRAIGHT 250% DENSITY.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         HANDMADE UNIT MEASURING 24 INCHES IN LENGTH, PLATINUM BLONDE HAIR COLOR.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         100% RAW HUMAN HAIR EXTENSIONS USING SINGLE DONOR BUNDLES.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         STRETCHY, BREATHABLE CAP WITH REMOVABLE COMBS + ELASTIC BAND FOR A SNUG FIT.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         SINGLE STRAND KNOTS ARE LIGHTLY BLEACHED FOR A SEAMLESS, READY TO WEAR APPLICATION.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         UNIT COMES CO-WASHED IN ITS NATURAL STATE. CAN BE BLEACHED, DYED OR COLORED.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         USE 3D WIG GENERATOR TO CUSTOMIZE UNIT AS PICTURED, FOR MEMBERS ONLY.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
                         PROPER VERIFICATION IS REQUIRED TO FINALIZE THE PURCHASE OF ALL UNITS.
                       </p>
                     </>
@@ -1154,16 +1380,16 @@ function BlancoSelection() {
                   
                   {activeTab === 'SHIPPING' && (
                     <>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         STANDARD PROCESSING IS 6 TO 8 WEEKS AND UP TO 10 WEEKS FOR CUSTOMIZED UNITS.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         EXPRESS PROCESSING IS 4 TO 6 WEEKS WITH RUSH SHIPPING FOR AN ADDITIONAL $120 USD.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         CUSTOM COLOR, STYLING & ADD-ONS ARE NOT APPLICABLE FOR EXPRESS PROCESSING.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
                         PROCESSING TIME DOES NOT INCLUDE WEEKENDS AND MAJOR US HOLIDAYS.
                       </p>
                     </>
@@ -1171,13 +1397,13 @@ function BlancoSelection() {
                   
                   {activeTab === 'POLICY' && (
                     <>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         WE ARE UNABLE TO ACCEPT RETURNS OR REFUNDS AT THIS TIME. ALL SALES ARE FINAL.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         WHEN APPLICABLE, WE DO OFFER STORE CREDIT TO GO TOWARDS A FUTURE PURCHASE.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
                         IF THERE IS AN ISSUE WITH YOUR ORDER, REACH OUT TO CONTACT@FRONTALSLAYER.COM
                       </p>
                     </>
@@ -1185,16 +1411,16 @@ function BlancoSelection() {
                   
                   {activeTab === 'CARE & STORAGE' && (
                     <>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         WASH WITH MILD SHAMPOO, AVOID GETTING CONDITIONER DIRECTLY ON THE LACE.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         APPLY LIGHT OILS & SERUMS ONLY TO YOUR RAW HAIR EXTENSIONS WHEN STYLING.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         ROUTINELY BRUSH HAIR WITH A PADDLE BRUSH TO AVOID MATTING & SHEDDING.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
                         CAREFULLY STORE UNIT INSIDE SATIN LINED DUST BAG TO MINIMIZE DAMAGE, FRIZZ + DEBRIS.
                       </p>
                     </>
@@ -1204,7 +1430,7 @@ function BlancoSelection() {
                     <div style={{ textAlign: 'center', padding: '20px 0 0px 0', transform: 'translateY(-12px)' }}>
                       <div style={{ marginBottom: '40px' }}>
                         <h3 style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                          fontFamily: '"Futura PT Medium"', 
                           fontSize: '11px', 
                           color: '#EB1C24', 
                           fontWeight: '500',
@@ -1233,7 +1459,7 @@ function BlancoSelection() {
                         
                         <div style={{ textAlign: 'center' }}>
                           <p style={{ 
-                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                            fontFamily: '"Futura PT Medium"', 
                             fontSize: '11px', 
                             color: 'black',
                             textTransform: 'uppercase',
@@ -1242,7 +1468,7 @@ function BlancoSelection() {
                             4.97 OUT OF 5 STARS
                           </p>
                           <p style={{ 
-                            fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', 
+                            fontFamily: '"Futura PT Demi"', 
                             fontSize: '9px', 
                             color: '#909090',
                             textTransform: 'uppercase',
@@ -1272,7 +1498,7 @@ function BlancoSelection() {
               style={{ 
                 borderWidth: '1.3px', 
                 color: '#EB1C24',
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                fontFamily: '"Futura PT Medium"',
                 backgroundColor: '#FFFFFF'
               }}
             >
@@ -1306,7 +1532,7 @@ function BlancoSelection() {
               style={{ 
                 borderWidth: '1.3px', 
                 color: '#EB1C24',
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
+                fontFamily: '"Futura PT Medium"'
               }}
             >
               CUSTOMIZE IN BUILD-A-WIG
@@ -1331,7 +1557,7 @@ function BlancoSelection() {
                   margin: '0 auto 8px auto'
                 }}></div>
                 <h3 style={{ 
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                  fontFamily: '"Futura PT Medium"',
                   fontSize: '12px',
                   color: '#EB1C24',
                   textTransform: 'uppercase',
@@ -1412,7 +1638,7 @@ function BlancoSelection() {
                     }}
                   />
                   <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -1423,7 +1649,7 @@ function BlancoSelection() {
                     BLANCO
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
@@ -1435,7 +1661,7 @@ function BlancoSelection() {
                     24" RAW RUSSIAN
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -1443,9 +1669,9 @@ function BlancoSelection() {
                     fontWeight: '500',
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
-                  }}>
-                    $820 USD
-                  </p>
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(820)}
+                  />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -1484,7 +1710,7 @@ function BlancoSelection() {
                     }}
                   />
                   <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -1495,7 +1721,7 @@ function BlancoSelection() {
                     SOFT WAVE
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
@@ -1507,7 +1733,7 @@ function BlancoSelection() {
                     24" RAW INDONESIAN
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -1516,8 +1742,19 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    $760 USD
                   </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '12px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(760)}
+                  />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -1556,7 +1793,7 @@ function BlancoSelection() {
                     }}
                   />
                   <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -1567,7 +1804,7 @@ function BlancoSelection() {
                     NOIR
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
@@ -1579,7 +1816,7 @@ function BlancoSelection() {
                     24" RAW CAMBODIAN
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -1587,9 +1824,9 @@ function BlancoSelection() {
                     fontWeight: '500',
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10.5px)' : undefined
-                  }}>
-                    $740 USD
-                  </p>
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(740)}
+                  />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10.5px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -1628,7 +1865,7 @@ function BlancoSelection() {
                     }}
                   />
                   <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -1639,7 +1876,7 @@ function BlancoSelection() {
                     SOFT CURL
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
@@ -1651,7 +1888,7 @@ function BlancoSelection() {
                     24" RAW VIETNAMESE
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -1659,9 +1896,9 @@ function BlancoSelection() {
                     fontWeight: '500',
                     lineHeight: '0.84',
                     transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
-                  }}>
-                    $780 USD
-                  </p>
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(780)}
+                  />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)' }}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -1724,7 +1961,7 @@ function BlancoSelection() {
                   margin: '0 auto 8px auto'
                 }}></div>
                 <h3 style={{ 
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                  fontFamily: '"Futura PT Medium"',
                   fontSize: '12px',
                   color: '#EB1C24',
                   textTransform: 'uppercase',
@@ -1821,7 +2058,7 @@ function BlancoSelection() {
                     }}
                   />
                   <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -1832,7 +2069,7 @@ function BlancoSelection() {
                     SOFT WAVE
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
@@ -1844,7 +2081,7 @@ function BlancoSelection() {
                     24" RAW INDONESIAN
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -1852,9 +2089,9 @@ function BlancoSelection() {
                     fontWeight: '500',
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
-                  }}>
-                    $760 USD
-                  </p>
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(760)}
+                  />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -1893,7 +2130,7 @@ function BlancoSelection() {
                     }}
                   />
                   <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -1904,7 +2141,7 @@ function BlancoSelection() {
                     SOFT CURL
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
@@ -1916,7 +2153,7 @@ function BlancoSelection() {
                     24" RAW VIETNAMESE
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -1924,9 +2161,9 @@ function BlancoSelection() {
                     fontWeight: '500',
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
-                  }}>
-                    $780 USD
-                  </p>
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(780)}
+                  />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -1965,7 +2202,7 @@ function BlancoSelection() {
                     }}
                   />
                   <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -1976,7 +2213,7 @@ function BlancoSelection() {
                     NOIR
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
@@ -1988,7 +2225,7 @@ function BlancoSelection() {
                     24" RAW CAMBODIAN
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -1996,9 +2233,9 @@ function BlancoSelection() {
                     fontWeight: '500',
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10.5px)' : undefined
-                  }}>
-                    $740 USD
-                  </p>
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(740)}
+                  />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10.5px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -2037,7 +2274,7 @@ function BlancoSelection() {
                     }}
                   />
                   <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -2048,7 +2285,7 @@ function BlancoSelection() {
                     BLANCO
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
@@ -2060,7 +2297,7 @@ function BlancoSelection() {
                     24" RAW RUSSIAN
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -2069,8 +2306,18 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}>
-                    $820 USD
                   </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '12px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84'
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(820)}
+                  />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)' }}>
                     {[...Array(5)].map((_, index) => (
                       <img

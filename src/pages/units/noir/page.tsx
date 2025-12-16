@@ -58,7 +58,17 @@ function NoirSelection() {
   });
 
   // Currency state
-  const [selectedCurrency, setSelectedCurrency] = useState<string>('USD');
+  const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedCurrency = localStorage.getItem('selectedCurrency');
+        return savedCurrency || 'USD';
+      } catch (e) {
+        return 'USD';
+      }
+    }
+    return 'USD';
+  });
 
   // Currency exchange rates (same as CartDropdown)
   const currencyRates = React.useMemo(() => ({
@@ -596,13 +606,18 @@ function NoirSelection() {
     };
   }, []);
 
-  // Load selected currency from localStorage
+  // Load selected currency from localStorage on mount only
+  // Initial state already loads from localStorage, this is a safety check
   useEffect(() => {
     const savedCurrency = localStorage.getItem('selectedCurrency');
     if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
-      setSelectedCurrency(savedCurrency);
+      // Only update if different to avoid unnecessary re-renders
+      if (savedCurrency !== selectedCurrency) {
+        setSelectedCurrency(savedCurrency);
+      }
     }
-  }, [currencyRates]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount, not when currencyRates changes
 
   // Save selected currency to localStorage
   useEffect(() => {
@@ -618,8 +633,31 @@ function NoirSelection() {
       }
     };
 
+    // Listen for storage events (from other tabs/windows)
     window.addEventListener('storage', handleCurrencyChange);
-    return () => window.removeEventListener('storage', handleCurrencyChange);
+    
+    // Listen for custom currencyChanged event (from same window)
+    const handleCustomCurrencyChange = (event: CustomEvent) => {
+      const newCurrency = event.detail;
+      if (newCurrency && currencyRates[newCurrency as keyof typeof currencyRates]) {
+        setSelectedCurrency(newCurrency);
+        // Also update localStorage to ensure consistency
+        localStorage.setItem('selectedCurrency', newCurrency);
+      }
+    };
+    
+    window.addEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
+    
+    // Poll localStorage periodically to catch any currency changes
+    const interval = setInterval(() => {
+      handleCurrencyChange();
+    }, 500); // Check every 500ms
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('storage', handleCurrencyChange);
+      window.removeEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
+    };
   }, [currencyRates]);
 
   // Format price with currency
@@ -630,7 +668,7 @@ function NoirSelection() {
       __html: currency.symbol + convertedPrice.toLocaleString('en-US', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0
-      })
+      }) + ' ' + selectedCurrency
     };
   }, [currencyRates, selectedCurrency]);
 
@@ -1746,9 +1784,9 @@ function NoirSelection() {
               />
             </button>
           </div>
-          <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
+          <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
             <span 
-                style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
+                style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
               onClick={() => {
                 // Store the selected cap size in localStorage for build-a-wig page
                 if (selectedCustomCap) {
@@ -1764,7 +1802,7 @@ function NoirSelection() {
               STRAIGHT &gt;
             </span>{' '}
             <span
-              style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}
+              style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
             >
               NOIR
             </span>
@@ -1872,7 +1910,7 @@ function NoirSelection() {
                 {/* Currency Selector */}
                 <div className="flex items-center gap-2">
                   <span style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '14px',
                     color: 'black',
                     fontWeight: '500'
@@ -1892,7 +1930,7 @@ function NoirSelection() {
                 <button
                   onClick={() => handleMobileMenuTabClick('SHOP')}
                   style={{ 
-                    fontFamily: mobileMenuActiveTab === 'SHOP' ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: mobileMenuActiveTab === 'SHOP' ? '"Futura PT Medium"' : '"Futura PT Book"',
                   fontSize: '14px',
                     color: mobileMenuActiveTab === 'SHOP' ? '#EB1C24' : 'black',
                   fontWeight: '500',
@@ -1909,7 +1947,7 @@ function NoirSelection() {
                 <button
                   onClick={() => handleMobileMenuTabClick('TOOLS')}
                   style={{ 
-                    fontFamily: mobileMenuActiveTab === 'TOOLS' ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: mobileMenuActiveTab === 'TOOLS' ? '"Futura PT Medium"' : '"Futura PT Book"',
                     fontSize: '14px',
                     color: mobileMenuActiveTab === 'TOOLS' ? '#EB1C24' : 'black',
                     fontWeight: '500',
@@ -1926,7 +1964,7 @@ function NoirSelection() {
                 <button
                   onClick={() => handleMobileMenuTabClick('BRAND')}
                   style={{ 
-                    fontFamily: mobileMenuActiveTab === 'BRAND' ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: mobileMenuActiveTab === 'BRAND' ? '"Futura PT Medium"' : '"Futura PT Book"',
                     fontSize: '14px',
                     color: mobileMenuActiveTab === 'BRAND' ? '#EB1C24' : 'black',
                     fontWeight: '500',
@@ -1949,7 +1987,7 @@ function NoirSelection() {
                     ['GIFT CARD'].map((item, index) => (
                       <div key={index} className="flex items-center justify-between">
                 <span style={{ 
-                          fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                          fontFamily: '"Futura PT Book"',
                   fontSize: '14px',
                   color: 'black',
                   fontWeight: '500',
@@ -1963,7 +2001,7 @@ function NoirSelection() {
                     ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
                       <div key={index} className="flex items-center justify-between">
                 <span style={{ 
-                          fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                          fontFamily: '"Futura PT Book"',
                   fontSize: '14px',
                   color: 'black',
                   fontWeight: '500',
@@ -1988,7 +2026,7 @@ function NoirSelection() {
                           onClick={() => item.isExpandable ? handleMobileMenuItemToggle(item.label) : null}
                         >
                       <span style={{ 
-                            fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                            fontFamily: '"Futura PT Book"',
                             fontSize: '14px',
                         color: 'black',
                         fontWeight: '500',
@@ -2023,7 +2061,7 @@ function NoirSelection() {
                                 }}
                               >
                                 <span style={{ 
-                                  fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                  fontFamily: '"Futura PT Book"',
                                   fontSize: '14px',
                                   color: '#EB1C24',
                                   fontWeight: '500',
@@ -2046,7 +2084,7 @@ function NoirSelection() {
                 <span 
                   onClick={handleMobileMenuSignInToggle}
                   style={{ 
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                  fontFamily: '"Futura PT Medium"',
                   fontSize: '14px',
                   color: '#EB1C24',
                   fontWeight: '500',
@@ -2108,7 +2146,7 @@ function NoirSelection() {
                   left: '8px', 
                   top: '2px', 
                   color: '#909090', 
-                  fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
+                  fontFamily: '"Futura PT Demi"',
                   fontSize: '10px',
                   fontWeight: '600',
                   margin: '0'
@@ -2137,7 +2175,7 @@ function NoirSelection() {
                 <span 
                   style={{ 
                     color: is3DView ? '#000000' : '#EB1C24', 
-                    fontFamily: is3DView ? '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: is3DView ? '"Futura PT Book"' : '"Futura PT Medium"',
                     fontSize: '11px',
                     fontWeight: is3DView ? '400' : '500',
                     margin: '0'
@@ -2148,7 +2186,7 @@ function NoirSelection() {
                 <span 
                   style={{ 
                     color: '#000000', 
-                    fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Book"',
                     fontSize: '11px',
                     fontWeight: '400',
                     margin: '0'
@@ -2159,7 +2197,7 @@ function NoirSelection() {
                 <span 
                   style={{ 
                     color: is3DView ? '#EB1C24' : '#000000', 
-                    fontFamily: is3DView ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: is3DView ? '"Futura PT Medium"' : '"Futura PT Book"',
                     fontSize: '11px',
                     fontWeight: is3DView ? '500' : '400',
                     margin: '0'
@@ -2345,21 +2383,21 @@ function NoirSelection() {
             <p
               className="text-center uppercase mb-2"
               style={{ 
-                fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                fontFamily: '"Futura PT Book"',
                 fontSize: '11px',
                 fontWeight: '400',
                 transform: 'translateY(-13px)',
                 color: 'black'
               }}
             >
-              (2D MODEL IS FOR <span style={{ color: '#909090', fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif' }}>VISUAL & AESTHETIC</span> PURPOSES ONLY)
+              (2D MODEL IS FOR <span style={{ color: '#909090', fontFamily: '"Futura PT Demi"' }}>VISUAL & AESTHETIC</span> PURPOSES ONLY)
             </p>
 
             {/* PRODUCT NAME */}
             <p
               className="text-center text-black mb-2 noir-product-name"
               style={{ 
-                fontFamily: '"Covered By Your Grace", cursive !important',
+                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif !important',
                 fontSize: '50px !important',
                 fontWeight: '400 !important',
                 lineHeight: '1.2 !important',
@@ -2388,8 +2426,8 @@ function NoirSelection() {
             <p
               className="text-center text-red-500 uppercase mb-2"
               style={{ 
-                fontFamily: '"Futura PT", futuristic-pt, Futura, Inter, sans-serif',
-                fontSize: '10px',
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '14px',
                 fontWeight: '500',
                 transform: 'translateY(-8px)'
               }}
@@ -2400,12 +2438,19 @@ function NoirSelection() {
             {/* PRICE */}
             {/* CRITICAL: Always use getTotalPrice() directly to ensure fresh calculation, never use cached values */}
             <p
-              className="text-center text-black mb-1"
+              className="text-center text-black mb-1 noir-price-display"
               style={{ 
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                fontFamily: '"Futura PT Medium"',
                 fontSize: '21px',
                 fontWeight: '500',
-                transform: 'translateY(-16px)'
+                transform: 'translateY(-16px)',
+                width: '100%',
+                minWidth: '100%',
+                maxWidth: 'none',
+                overflow: 'visible',
+                whiteSpace: 'nowrap',
+                textOverflow: 'clip',
+                display: 'block'
               }}
               dangerouslySetInnerHTML={formatPrice(getTotalPrice())}
             />
@@ -2414,7 +2459,7 @@ function NoirSelection() {
             <p
               className="text-center text-black mb-3"
               style={{ 
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                fontFamily: '"Futura PT Medium"',
                 fontSize: '10px',
                 fontWeight: '500',
                 transform: 'translateY(-21px)'
@@ -2445,7 +2490,7 @@ function NoirSelection() {
             <p
               className="text-center uppercase"
               style={{ 
-                fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
+                fontFamily: '"Futura PT Demi"',
                 fontSize: '10px',
                 fontWeight: '600',
                 color: '#909090',
@@ -2465,7 +2510,7 @@ function NoirSelection() {
             <p
               className="text-center text-black uppercase mb-4"
               style={{ 
-                fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
+                fontFamily: '"Futura PT Demi"',
                 fontSize: '11px',
                 fontWeight: '500',
                 transform: 'translateY(0px)'
@@ -2476,11 +2521,11 @@ function NoirSelection() {
 
           {/* CAP SIZE MEASUREMENTS */}
           <div className="flex justify-center gap-4 mb-6" style={{ transform: 'translateY(-7px)' }}>
-            <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>XXS: 19"</span>
-            <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>XS: 20"</span>
-            <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>S: 21"</span>
-            <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>M: 22"</span>
-            <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>L: 23"</span>
+            <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium"' }}>XXS: 19"</span>
+            <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium"' }}>XS: 20"</span>
+            <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium"' }}>S: 21"</span>
+            <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium"' }}>M: 22"</span>
+            <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium"' }}>L: 23"</span>
           </div>
 
           {/* CUSTOM CAP SECTION */}
@@ -2488,7 +2533,7 @@ function NoirSelection() {
             <p
               className="text-center text-black mb-4"
               style={{ 
-                fontFamily: '"Bohemy", cursive',
+                fontFamily: '"Bohemy", sans-serif',
                 fontSize: '20px',
                 fontWeight: '400',
                 transform: 'translateY(-16px)'
@@ -2502,7 +2547,7 @@ function NoirSelection() {
                 className={`border border-black px-6 py-1 ${selectedCustomCap === 'XS' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
                 style={{ 
                   borderWidth: '1.3px',
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                  fontFamily: '"Futura PT Medium"',
                   fontWeight: '500',
                   minWidth: '60px',
                   fontSize: '11px'
@@ -2515,7 +2560,7 @@ function NoirSelection() {
                 className={`border border-black px-6 py-1 ${selectedCustomCap === 'S' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
                 style={{ 
                   borderWidth: '1.3px',
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                  fontFamily: '"Futura PT Medium"',
                   fontWeight: '500',
                   minWidth: '60px',
                   fontSize: '11px'
@@ -2528,7 +2573,7 @@ function NoirSelection() {
                 className={`border border-black px-6 py-1 ${selectedCustomCap === 'M' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
                 style={{ 
                   borderWidth: '1.3px',
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                  fontFamily: '"Futura PT Medium"',
                   fontWeight: '500',
                   minWidth: '60px',
                   fontSize: '11px'
@@ -2541,7 +2586,7 @@ function NoirSelection() {
                 className={`border border-black px-6 py-1 ${selectedCustomCap === 'L' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
                 style={{ 
                   borderWidth: '1.3px',
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                  fontFamily: '"Futura PT Medium"',
                   fontWeight: '500',
                   minWidth: '60px',
                   fontSize: '11px'
@@ -2557,7 +2602,7 @@ function NoirSelection() {
             <p
               className="text-center text-black mb-4"
               style={{ 
-                fontFamily: '"Bohemy", cursive',
+                fontFamily: '"Bohemy", sans-serif',
                 fontSize: '20px',
                 fontWeight: '400',
                 transform: 'translateY(-24px)'
@@ -2575,7 +2620,7 @@ function NoirSelection() {
                   paddingBottom: '4px',
                   paddingLeft: '8px',
                   paddingRight: '8px',
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                  fontFamily: '"Futura PT Medium"',
                   fontWeight: '500',
                   width: '108px !important',
                   minWidth: '108px !important',
@@ -2602,7 +2647,7 @@ function NoirSelection() {
                   paddingBottom: '4px',
                   paddingLeft: '8px',
                   paddingRight: '8px',
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                  fontFamily: '"Futura PT Medium"',
                   fontWeight: '500',
                   width: '108px !important',
                   minWidth: '108px !important',
@@ -2654,7 +2699,7 @@ function NoirSelection() {
                 borderBottom: '1.3px solid black !important',
                 borderLeft: 'none !important',
                 borderRight: 'none !important',
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                fontFamily: '"Futura PT Medium"', 
                 fontWeight: '500', 
                 fontSize: '12px', 
                 height: '27px',
@@ -2751,7 +2796,7 @@ function NoirSelection() {
                 className="absolute left-1/2 transform -translate-x-1/2"
                 style={{
                   bottom: '14px',
-                  fontFamily: '"Bohemy", cursive',
+                  fontFamily: '"Bohemy", sans-serif',
                   fontSize: '43px',
                   color: 'white',
                   textShadow: '1px 1px 0px black, -1px 1px 0px black, 1px -1px 0px black, -1px -1px 0px black, 1px 0px 0px black, -1px 0px 0px black, 0px 1px 0px black, 0px -1px 0px black',
@@ -2773,35 +2818,35 @@ function NoirSelection() {
                 <button
                   onClick={() => handleTabClick('DETAILS')}
                   className={`px-2 py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                  style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
                 >
                   DETAILS
                 </button>
                 <button
                   onClick={() => handleTabClick('SHIPPING')}
                   className={`px-2 py-1 text-xs font-medium ${activeTab === 'SHIPPING' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                  style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
                 >
                   SHIPPING
                 </button>
                 <button
                   onClick={() => handleTabClick('POLICY')}
                   className={`px-2 py-1 text-xs font-medium ${activeTab === 'POLICY' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                  style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
                 >
                   POLICY
                 </button>
                 <button
                   onClick={() => handleTabClick('CARE & STORAGE')}
                   className={`px-2 py-1 text-xs font-medium ${activeTab === 'CARE & STORAGE' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                  style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
                 >
                   CARE & STORAGE
                 </button>
                 <button
                   onClick={() => handleTabClick('REVIEWS')}
                   className={`px-2 py-1 text-xs font-medium ${activeTab === 'REVIEWS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                  style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
                 >
                   REVIEWS
                 </button>
@@ -2811,28 +2856,28 @@ function NoirSelection() {
               <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px' }}>
                 {activeTab === 'DETAILS' && (
                   <>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                       13X6 ULTRA THIN HD FILM LACE, RAW CAMBODIAN STRAIGHT 200% DENSITY.
                     </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                       HANDMADE UNIT MEASURING 24 INCHES IN LENGTH, OFF BLACK HAIR COLOR.
                     </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                       100% RAW HUMAN HAIR EXTENSIONS USING SINGLE DONOR BUNDLES.
                     </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                       STRETCHY, BREATHABLE CAP WITH REMOVABLE COMBS + ELASTIC BAND FOR A SNUG FIT.
                     </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                       SINGLE STRAND KNOTS ARE LIGHTLY BLEACHED FOR A SEAMLESS, READY TO WEAR APPLICATION.
                     </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                       UNIT COMES CO-WASHED IN ITS NATURAL STATE. CAN BE BLEACHED, DYED OR COLORED.
                     </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                       USE 3D WIG GENERATOR TO CUSTOMIZE UNIT AS PICTURED, FOR MEMBERS ONLY.
                     </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
                       PROPER VERIFICATION IS REQUIRED TO FINALIZE THE PURCHASE OF ALL UNITS.
                     </p>
                   </>
@@ -2840,16 +2885,16 @@ function NoirSelection() {
                 
                 {activeTab === 'SHIPPING' && (
                   <>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                       STANDARD PROCESSING IS 6 TO 8 WEEKS AND UP TO 10 WEEKS FOR CUSTOMIZED UNITS.
                     </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                       EXPRESS PROCESSING IS 4 TO 6 WEEKS WITH RUSH SHIPPING FOR AN ADDITIONAL $120 USD.
                     </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                       CUSTOM COLOR, STYLING & ADD-ONS ARE NOT APPLICABLE FOR EXPRESS PROCESSING.
                     </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
                       PROCESSING TIME DOES NOT INCLUDE WEEKENDS AND MAJOR US HOLIDAYS.
                     </p>
                   </>
@@ -2857,13 +2902,13 @@ function NoirSelection() {
                 
                 {activeTab === 'POLICY' && (
                   <>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                       WE ARE UNABLE TO ACCEPT RETURNS OR REFUNDS AT THIS TIME. ALL SALES ARE FINAL.
                     </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                       WHEN APPLICABLE, WE DO OFFER STORE CREDIT TO GO TOWARDS A FUTURE PURCHASE.
                     </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
                       IF THERE IS AN ISSUE WITH YOUR ORDER, REACH OUT TO CONTACT@FRONTALSLAYER.COM
                     </p>
                   </>
@@ -2871,16 +2916,16 @@ function NoirSelection() {
                 
                 {activeTab === 'CARE & STORAGE' && (
                   <>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                       WASH WITH MILD SHAMPOO, AVOID GETTING CONDITIONER DIRECTLY ON THE LACE.
                     </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                       APPLY LIGHT OILS & SERUMS ONLY TO YOUR RAW HAIR EXTENSIONS WHEN STYLING.
                     </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                       ROUTINELY BRUSH HAIR WITH A PADDLE BRUSH TO AVOID MATTING & SHEDDING.
                     </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
                       CAREFULLY STORE UNIT INSIDE SATIN LINED DUST BAG TO MINIMIZE DAMAGE, FRIZZ + DEBRIS.
                     </p>
                   </>
@@ -2891,7 +2936,7 @@ function NoirSelection() {
                     {/* Leave a Review Section */}
                     <div style={{ marginBottom: '40px' }}>
                       <h3 style={{ 
-                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                        fontFamily: '"Futura PT Medium"', 
                         fontSize: '11px', 
                         color: '#EB1C24', 
                         fontWeight: '500',
@@ -2921,7 +2966,7 @@ function NoirSelection() {
                       
                       <div style={{ textAlign: 'center' }}>
                         <p style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                          fontFamily: '"Futura PT Medium"', 
                           fontSize: '11px', 
                           color: 'black',
                           textTransform: 'uppercase',
@@ -2930,7 +2975,7 @@ function NoirSelection() {
                           4.97 OUT OF 5 STARS
                         </p>
                         <p style={{ 
-                          fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', 
+                          fontFamily: '"Futura PT Demi"', 
                           fontSize: '9px', 
                           color: '#909090',
                           textTransform: 'uppercase',
@@ -2949,7 +2994,7 @@ function NoirSelection() {
                         {/* Name Input */}
                         <div style={{ marginBottom: '15px' }}>
                           <label style={{ 
-                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                            fontFamily: '"Futura PT Medium"', 
                             fontSize: '9px', 
                             color: 'black',
                             textTransform: 'uppercase',
@@ -2967,7 +3012,7 @@ function NoirSelection() {
                               padding: '8px',
                               border: '1px solid black',
                               borderRadius: '0',
-                              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                              fontFamily: '"Futura PT Medium"',
                               fontSize: '9px',
                               outline: 'none',
                               textIndent: '-1px',
@@ -2980,7 +3025,7 @@ function NoirSelection() {
                         {/* Email Input */}
                         <div style={{ marginBottom: '15px' }}>
                           <label style={{ 
-                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                            fontFamily: '"Futura PT Medium"', 
                             fontSize: '9px', 
                             color: 'black',
                             textTransform: 'uppercase',
@@ -2998,7 +3043,7 @@ function NoirSelection() {
                               padding: '8px',
                               border: '1px solid black',
                               borderRadius: '0',
-                              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                              fontFamily: '"Futura PT Medium"',
                               fontSize: '9px',
                               outline: 'none',
                               textIndent: '-1px',
@@ -3011,7 +3056,7 @@ function NoirSelection() {
                         {/* Question Text Area */}
                         <div style={{ marginBottom: '20px' }}>
                           <label style={{ 
-                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                            fontFamily: '"Futura PT Medium"', 
                             fontSize: '9px', 
                             color: 'black',
                             textTransform: 'uppercase',
@@ -3029,7 +3074,7 @@ function NoirSelection() {
                               padding: '8px',
                               border: '1px solid black',
                               borderRadius: '0',
-                              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                              fontFamily: '"Futura PT Medium"',
                               fontSize: '9px',
                               outline: 'none',
                               textIndent: '-1px',
@@ -3042,7 +3087,7 @@ function NoirSelection() {
                         
                         {/* Submit Button */}
                         <button style={{
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontFamily: '"Futura PT Medium"',
                           fontSize: '9px',
                           color: '#EB1C24',
                           textTransform: 'uppercase',
@@ -3065,7 +3110,7 @@ function NoirSelection() {
                       {/* Sort Option */}
                       <div style={{ marginBottom: '20px' }}>
                         <p style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                          fontFamily: '"Futura PT Medium"', 
                           fontSize: '8px', 
                           color: 'black',
                           textTransform: 'uppercase',
@@ -3095,7 +3140,7 @@ function NoirSelection() {
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <p style={{ 
-                                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                                  fontFamily: '"Futura PT Medium"', 
                                   fontSize: '8px', 
                                   color: 'black',
                                   textTransform: 'uppercase',
@@ -3105,7 +3150,7 @@ function NoirSelection() {
                                   AMY - NJ
                                 </p>
                                 <span style={{ 
-                                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                                  fontFamily: '"Futura PT Medium"', 
                                   fontSize: '7px', 
                                   color: '#EB1C24',
                                   textTransform: 'uppercase'
@@ -3114,7 +3159,7 @@ function NoirSelection() {
                                 </span>
                               </div>
                               <p style={{ 
-                                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                                fontFamily: '"Futura PT Medium"', 
                                 fontSize: '8px', 
                                 color: 'black',
                                 margin: '0'
@@ -3142,7 +3187,7 @@ function NoirSelection() {
                           </div>
                           
                           <h4 style={{ 
-                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                            fontFamily: '"Futura PT Medium"', 
                             fontSize: '8px', 
                             color: '#EB1C24',
                             textTransform: 'uppercase',
@@ -3153,7 +3198,7 @@ function NoirSelection() {
                           </h4>
                           
                           <p style={{ 
-                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                            fontFamily: '"Futura PT Medium"', 
                             fontSize: '7px', 
                             color: 'black',
                             margin: '0',
@@ -3180,7 +3225,7 @@ function NoirSelection() {
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <p style={{ 
-                                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                                  fontFamily: '"Futura PT Medium"', 
                                   fontSize: '8px', 
                                   color: 'black',
                                   textTransform: 'uppercase',
@@ -3190,7 +3235,7 @@ function NoirSelection() {
                                   GRETA - TX
                                 </p>
                                 <span style={{ 
-                                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                                  fontFamily: '"Futura PT Medium"', 
                                   fontSize: '7px', 
                                   color: '#EB1C24',
                                   textTransform: 'uppercase'
@@ -3199,7 +3244,7 @@ function NoirSelection() {
                                 </span>
                               </div>
                               <p style={{ 
-                                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                                fontFamily: '"Futura PT Medium"', 
                                 fontSize: '8px', 
                                 color: 'black',
                                 margin: '0'
@@ -3227,7 +3272,7 @@ function NoirSelection() {
                           </div>
                           
                           <h4 style={{ 
-                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                            fontFamily: '"Futura PT Medium"', 
                             fontSize: '8px', 
                             color: '#EB1C24',
                             textTransform: 'uppercase',
@@ -3238,7 +3283,7 @@ function NoirSelection() {
                           </h4>
                           
                           <p style={{ 
-                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                            fontFamily: '"Futura PT Medium"', 
                             fontSize: '7px', 
                             color: 'black',
                             margin: '0',
@@ -3271,7 +3316,7 @@ function NoirSelection() {
             style={{ 
               borderWidth: '1.3px', 
               color: '#EB1C24',
-              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+              fontFamily: '"Futura PT Medium"',
               backgroundColor: '#FFFFFF'
             }}
           >
@@ -3343,7 +3388,7 @@ function NoirSelection() {
             style={{ 
               borderWidth: '1.3px', 
               color: '#EB1C24',
-              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
+              fontFamily: '"Futura PT Medium"'
             }}
           >
             CUSTOMIZE IN BUILD-A-WIG
@@ -3369,7 +3414,7 @@ function NoirSelection() {
                 margin: '0 auto 8px auto'
               }}></div>
               <h3 style={{ 
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                fontFamily: '"Futura PT Medium"',
                 fontSize: '12px',
                 color: '#EB1C24',
                 textTransform: 'uppercase',
@@ -3467,7 +3512,7 @@ function NoirSelection() {
                     }}
                   />
                   <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -3477,7 +3522,7 @@ function NoirSelection() {
                     BLANCO
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
@@ -3488,16 +3533,16 @@ function NoirSelection() {
                     24" RAW RUSSIAN
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84'
-                  }}>
-                    $820 USD
-                  </p>
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(820)}
+                  />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -3532,7 +3577,7 @@ function NoirSelection() {
                     }}
                   />
                   <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -3542,7 +3587,7 @@ function NoirSelection() {
                     SOFT WAVE
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
@@ -3553,16 +3598,16 @@ function NoirSelection() {
                     24" RAW INDONESIAN
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84'
-                  }}>
-                    $760 USD
-                  </p>
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(760)}
+                  />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -3597,8 +3642,8 @@ function NoirSelection() {
                     }}
                   />
                   <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
-                    fontSize: '18px',
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                    fontSize: '19px',
                     color: 'black',
                     textTransform: 'uppercase',
                     margin: '-10px 0 -3px 0',
@@ -3607,7 +3652,7 @@ function NoirSelection() {
                     NOIR
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
@@ -3618,16 +3663,16 @@ function NoirSelection() {
                     24" RAW CAMBODIAN
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84'
-                  }}>
-                    $740 USD
-                  </p>
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(740)}
+                  />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -3662,7 +3707,7 @@ function NoirSelection() {
                     }}
                   />
                   <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -3672,7 +3717,7 @@ function NoirSelection() {
                     SOFT CURL
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
@@ -3683,16 +3728,16 @@ function NoirSelection() {
                     24" RAW VIETNAMESE
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84'
-                  }}>
-                    $780 USD
-                  </p>
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(780)}
+                  />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -3760,7 +3805,7 @@ function NoirSelection() {
                 margin: '0 auto 8px auto'
               }}></div>
               <h3 style={{ 
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                fontFamily: '"Futura PT Medium"',
                 fontSize: '12px',
                 color: '#EB1C24',
                 textTransform: 'uppercase',
@@ -3858,7 +3903,7 @@ function NoirSelection() {
                     }}
                   />
                   <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -3868,7 +3913,7 @@ function NoirSelection() {
                     SOFT WAVE
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
@@ -3879,16 +3924,16 @@ function NoirSelection() {
                     24" RAW INDONESIAN
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84'
-                  }}>
-                    $760 USD
-                  </p>
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(760)}
+                  />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -3923,7 +3968,7 @@ function NoirSelection() {
                     }}
                   />
                   <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -3933,7 +3978,7 @@ function NoirSelection() {
                     SOFT CURL
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
@@ -3944,16 +3989,16 @@ function NoirSelection() {
                     24" RAW VIETNAMESE
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84'
-                  }}>
-                    $780 USD
-                  </p>
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(780)}
+                  />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -3988,8 +4033,8 @@ function NoirSelection() {
                     }}
                   />
                   <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
-                    fontSize: '18px',
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                    fontSize: '19px',
                     color: 'black',
                     textTransform: 'uppercase',
                     margin: '-10px 0 -3px 0',
@@ -3998,7 +4043,7 @@ function NoirSelection() {
                     NOIR
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
@@ -4009,16 +4054,16 @@ function NoirSelection() {
                     24" RAW CAMBODIAN
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84'
-                  }}>
-                    $740 USD
-                  </p>
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(740)}
+                  />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -4053,7 +4098,7 @@ function NoirSelection() {
                     }}
                   />
                   <p style={{ 
-                    fontFamily: '"Covered By Your Grace", cursive',
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
@@ -4063,7 +4108,7 @@ function NoirSelection() {
                     BLANCO
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
@@ -4074,16 +4119,16 @@ function NoirSelection() {
                     24" RAW RUSSIAN
                   </p>
                   <p style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
                     textTransform: 'uppercase',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84'
-                  }}>
-                    $820 USD
-                  </p>
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(820)}
+                  />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
                     {[...Array(5)].map((_, index) => (
                       <img

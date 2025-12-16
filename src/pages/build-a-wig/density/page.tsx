@@ -762,9 +762,9 @@ function DensitySelection() {
               />
             </button>
           </div>
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               <span 
-                style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
+                style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
                 onClick={() => {
                   const pathname = location.pathname;
                   if (pathname.includes('/noir/')) navigate('/build-a-wig/noir');
@@ -777,7 +777,7 @@ function DensitySelection() {
                 BUILD-A-WIG &gt;
               </span>{' '}
               <span
-                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', cursor: 'pointer' }}
+                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500', cursor: 'pointer' }}
                 onClick={() => {
                   const pathname = location.pathname;
                   if (pathname.includes('/blanco/customize')) navigate('/straight/blanco');
@@ -953,7 +953,7 @@ function DensitySelection() {
           {/* DENSITY SELECTION HEADER */}
           <p 
             className="text-xs sm:text-sm text-center text-red-500 mb-4"
-            style={{ fontFamily: '"Covered By Your Grace", cursive', color: '#EB1C24', transform: 'translateY(18px)' }}
+            style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', color: '#EB1C24', transform: 'translateY(18px)' }}
           >
             HAIR VOLUME
           </p>
@@ -979,7 +979,7 @@ function DensitySelection() {
           {/* DYNAMIC DENSITY NOTE */}
           <p
             className="font-futura text-[10px] md:text-xs text-center my-6 w-[95%] mx-auto uppercase"
-            style={{ color: '#EB1C24', fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', transform: 'translateY(-7px)' }}
+            style={{ color: '#EB1C24', fontFamily: '"Futura PT Demi"', fontWeight: '500', transform: 'translateY(-7px)' }}
           >
             {getDensityNoteText()}
           </p>
@@ -991,7 +991,7 @@ function DensitySelection() {
             </p>
             <p 
               className="text-black font-medium text-base"
-              style={{ fontFamily: '"Futura PT", "Futura PT Medium", Futura, Futura, Inter, sans-serif', fontWeight: '500' }}
+              style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
             >
               {totalPrice < 0 ? '-' : totalPrice > 0 ? '+' : ''}${Math.abs(totalPrice)} USD
             </p>
@@ -1099,7 +1099,7 @@ function DensitySelection() {
                 {/* Currency Selector */}
                 <div className="flex items-center gap-2">
                   <span style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '14px',
                     color: 'black',
                     fontWeight: '500'
@@ -1119,7 +1119,7 @@ function DensitySelection() {
                 <button
                   onClick={() => handleMobileMenuTabClick('SHOP')}
                   style={{ 
-                    fontFamily: mobileMenuActiveTab === 'SHOP' ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: mobileMenuActiveTab === 'SHOP' ? '"Futura PT Medium"' : '"Futura PT Book"',
                     fontSize: '14px',
                     color: mobileMenuActiveTab === 'SHOP' ? '#EB1C24' : 'black',
                     fontWeight: '500',
@@ -1136,7 +1136,7 @@ function DensitySelection() {
                 <button
                   onClick={() => handleMobileMenuTabClick('TOOLS')}
                   style={{ 
-                    fontFamily: mobileMenuActiveTab === 'TOOLS' ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: mobileMenuActiveTab === 'TOOLS' ? '"Futura PT Medium"' : '"Futura PT Book"',
                     fontSize: '14px',
                     color: mobileMenuActiveTab === 'TOOLS' ? '#EB1C24' : 'black',
                     fontWeight: '500',
@@ -1153,7 +1153,7 @@ function DensitySelection() {
                 <button
                   onClick={() => handleMobileMenuTabClick('BRAND')}
                   style={{ 
-                    fontFamily: mobileMenuActiveTab === 'BRAND' ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: mobileMenuActiveTab === 'BRAND' ? '"Futura PT Medium"' : '"Futura PT Book"',
                     fontSize: '14px',
                     color: mobileMenuActiveTab === 'BRAND' ? '#EB1C24' : 'black',
                     fontWeight: '500',
@@ -1176,7 +1176,7 @@ function DensitySelection() {
                     ['GIFT CARD'].map((item, index) => (
                       <div key={index} className="flex items-center justify-between">
                         <span style={{ 
-                          fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                          fontFamily: '"Futura PT Book"',
                           fontSize: '14px',
                           color: 'black',
                           fontWeight: '500',
@@ -1190,7 +1190,7 @@ function DensitySelection() {
                     ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
                       <div key={index} className="flex items-center justify-between">
                         <span style={{ 
-                          fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                          fontFamily: '"Futura PT Book"',
                           fontSize: '14px',
                           color: 'black',
                           fontWeight: '500',
@@ -1215,7 +1215,7 @@ function DensitySelection() {
                           onClick={() => item.isExpandable ? handleMobileMenuItemToggle(item.label) : null}
                         >
                           <span style={{ 
-                            fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                            fontFamily: '"Futura PT Book"',
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
@@ -1242,7 +1242,7 @@ function DensitySelection() {
                             {item.subItems.map((subItem, subIndex) => (
                               <div key={subIndex} className="flex items-center">
                                 <span style={{ 
-                                  fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                  fontFamily: '"Futura PT Book"',
                                   fontSize: '14px',
                                   color: '#EB1C24',
                                   fontWeight: '500',
@@ -1265,7 +1265,7 @@ function DensitySelection() {
                 <span 
                   onClick={handleMobileMenuSignInToggle}
                   style={{ 
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Medium"',
                     fontSize: '14px',
                     color: '#EB1C24',
                     fontWeight: '500',
