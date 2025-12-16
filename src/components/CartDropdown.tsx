@@ -864,7 +864,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           fontSize: '9px',
                           marginTop: '1px',
                           marginRight: '20px',
-                          lineHeight: '1.3',
+                          lineHeight: '1.44',
                           wordBreak: 'break-word',
                           maxWidth: 'calc(100% - 20px)'
                         }}
