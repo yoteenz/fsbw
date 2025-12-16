@@ -127,7 +127,7 @@ function WishlistSelection() {
     if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
       // Only update if different to avoid unnecessary re-renders
       if (savedCurrency !== selectedCurrency) {
-        setSelectedCurrency(savedCurrency);
+      setSelectedCurrency(savedCurrency);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -209,16 +209,17 @@ function WishlistSelection() {
     try {
       const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
       const existingItem = cartItems.find((ci: any) => ci.id === item.id);
+      let updatedItems;
       if (existingItem) {
-        const updatedItems = cartItems.map((ci: any) =>
+        updatedItems = cartItems.map((ci: any) =>
           ci.id === item.id ? { ...ci, quantity: (ci.quantity || 1) + (item.quantity || 1) } : ci
         );
-        localStorage.setItem('cartItems', JSON.stringify(updatedItems));
       } else {
-        cartItems.push({ ...item, quantity: item.quantity || 1 });
-        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        // Add new item at the beginning (newest first)
+        updatedItems = [{ ...item, quantity: item.quantity || 1 }, ...cartItems];
       }
-      const newCount = cartItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
+      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+      const newCount = updatedItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
       localStorage.setItem('cartCount', newCount.toString());
       setCartCount(newCount);
       window.dispatchEvent(new CustomEvent('cartUpdated'));

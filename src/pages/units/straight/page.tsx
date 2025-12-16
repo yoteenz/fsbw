@@ -98,7 +98,7 @@ function StraightUnitsPage() {
     if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
       // Only update if different to avoid unnecessary re-renders
       if (savedCurrency !== selectedCurrency) {
-        setSelectedCurrency(savedCurrency);
+      setSelectedCurrency(savedCurrency);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

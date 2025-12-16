@@ -22,7 +22,10 @@ function HairlineSelection() {
   const [selectedHairline, setSelectedHairline] = useState<string[]>(() => {
     const pathname = window.location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
-    const isOnCustomizeRoute = pathname.includes('/noir/customize');
+    const isOnCustomizeRoute = pathname.includes('/noir/customize') ||
+                               pathname.includes('/blanco/customize') ||
+                               pathname.includes('/soft-wave/customize') ||
+                               pathname.includes('/soft-curl/customize');
     
     // CRITICAL: Check editSelected* keys first when in edit mode
     if (isOnEditRoute) {
@@ -89,21 +92,21 @@ function HairlineSelection() {
   const getWigViews = () => {
     const pathname = window.location.pathname;
     // Check if we're in product-specific customize modes
-    if (pathname.includes('/blanco/customize')) {
+    if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) {
       return [
         '/assets/2D BLANCO LEFT.png',
         '/assets/2D BLANCO FRONT.png',
         '/assets/2D BLANCO RIGHT.png'
       ];
     }
-    if (pathname.includes('/soft-wave/customize')) {
+    if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) {
       return [
         '/assets/2D WAVY LEFT.png',
         '/assets/2D WAVY FRONT.png',
         '/assets/2D WAVY RIGHT.png'
       ];
     }
-    if (pathname.includes('/soft-curl/customize')) {
+    if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) {
       return [
         '/assets/2D CURLY LEFT.png',
         '/assets/2D CURLY FRONT.png',
@@ -156,7 +159,7 @@ function HairlineSelection() {
   console.log('Hero size:', heroSize);
 
   // Hairline options - Updated with pricing (NATURAL is default)
-  const isBlancoCustomizeMode = window.location.pathname.includes('/blanco/customize');
+  const isBlancoRoute = window.location.pathname.includes('/blanco/customize') || window.location.pathname.includes('/blanco/edit');
   
   const hairlineOptions: HairlineOption[] = [
     {
@@ -164,21 +167,21 @@ function HairlineSelection() {
       name: 'NATURAL',
       description: 'Natural hairline',
       price: 0, // Default option - included in base price
-      image: isBlancoCustomizeMode ? '/assets/BLANCO-HAIRLINE.png' : '/assets/Natural Hairline-icon.svg'
+      image: isBlancoRoute ? '/assets/BLANCO-HAIRLINE.png' : '/assets/Natural Hairline-icon.svg'
     },
     {
       id: 'PEAK',
       name: 'PEAK',
       description: 'Peak hairline style',
       price: 40, // Additional cost for peak styling
-      image: isBlancoCustomizeMode ? '/assets/BLANCO-HAIRLINE.png' : '/assets/Peak Hairline-icon.svg'
+      image: isBlancoRoute ? '/assets/BLANCO-HAIRLINE.png' : '/assets/Peak Hairline-icon.svg'
     },
     {
       id: 'LAGOS',
       name: 'LAGOS',
       description: 'Lagos hairline style',
       price: 60, // Additional cost for Lagos styling
-      image: isBlancoCustomizeMode ? '/assets/BLANCO-HAIRLINE.png' : '/assets/Lagos Hairline-icon.svg'
+      image: isBlancoRoute ? '/assets/BLANCO-HAIRLINE.png' : '/assets/Lagos Hairline-icon.svg'
     }
   ];
 
@@ -247,8 +250,19 @@ function HairlineSelection() {
   const handleConfirmSelection = () => {
     const price = getSelectedPrice().toString();
     
-    // Check if we're in edit mode or customize mode
-    const isEditMode = localStorage.getItem('editingCartItem') !== null;
+    // Check if we're in edit mode or customize mode for ALL products
+    const pathname = window.location.pathname;
+    const isEditMode = localStorage.getItem('editingCartItem') !== null || 
+                       pathname.includes('/noir/edit') ||
+                       pathname.includes('/blanco/edit') ||
+                       pathname.includes('/soft-wave/edit') ||
+                       pathname.includes('/soft-curl/edit');
+    
+    // Check if we're in customize mode for ALL products
+    const isCustomizeMode = pathname.includes('/noir/customize') ||
+                            pathname.includes('/blanco/customize') ||
+                            pathname.includes('/soft-wave/customize') ||
+                            pathname.includes('/soft-curl/customize');
     
     // Get the source route from sessionStorage (set by main page when navigating to sub-page)
     // Also check if we're in edit or customize mode as fallback
@@ -259,19 +273,39 @@ function HairlineSelection() {
       const editingCartItem = localStorage.getItem('editingCartItem');
       const selectedCapSize = localStorage.getItem('selectedCapSize');
       
-      if (editingCartItem) {
-        sourceRoute = '/build-a-wig/edit';
-        console.log('Hairline page - No sourceRoute found, detected edit mode from localStorage');
-      } else if (selectedCapSize) {
-        sourceRoute = '/build-a-wig/noir/customize';
-        console.log('Hairline page - No sourceRoute found, detected customize mode from localStorage');
+      if (editingCartItem || isEditMode) {
+        // Determine product-specific edit route from pathname
+        if (pathname.includes('/blanco/edit')) {
+          sourceRoute = '/build-a-wig/blanco/edit';
+        } else if (pathname.includes('/soft-wave/edit')) {
+          sourceRoute = '/build-a-wig/soft-wave/edit';
+        } else if (pathname.includes('/soft-curl/edit')) {
+          sourceRoute = '/build-a-wig/soft-curl/edit';
+        } else if (pathname.includes('/noir/edit')) {
+          sourceRoute = '/build-a-wig/noir/edit';
+        } else {
+          sourceRoute = '/build-a-wig/edit'; // Fallback
+        }
+        console.log('Hairline page - No sourceRoute found, detected edit mode from localStorage/pathname');
+      } else if (selectedCapSize || isCustomizeMode) {
+        // Determine product-specific customize route from pathname
+        if (pathname.includes('/blanco/customize')) {
+          sourceRoute = '/build-a-wig/blanco/customize';
+        } else if (pathname.includes('/soft-wave/customize')) {
+          sourceRoute = '/build-a-wig/soft-wave/customize';
+        } else if (pathname.includes('/soft-curl/customize')) {
+          sourceRoute = '/build-a-wig/soft-curl/customize';
+        } else if (pathname.includes('/noir/customize')) {
+          sourceRoute = '/build-a-wig/noir/customize';
+        } else {
+          sourceRoute = '/build-a-wig'; // Fallback
+        }
+        console.log('Hairline page - No sourceRoute found, detected customize mode from localStorage/pathname:', sourceRoute);
       } else {
         sourceRoute = '/build-a-wig';
         console.log('Hairline page - No sourceRoute found, defaulting to main page');
       }
     }
-    
-    const isCustomizeMode = !isEditMode && sourceRoute === '/build-a-wig/noir/customize';
     
     // Save hairline (can be single selection or array)
     const hairlineValue = selectedHairline.length > 0 ? selectedHairline.join(',') : null;
@@ -453,17 +487,17 @@ function HairlineSelection() {
               style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500', cursor: 'pointer' }}
               onClick={() => {
                 const pathname = window.location.pathname;
-                if (pathname.includes('/blanco/customize')) navigate('/straight/blanco');
-                else if (pathname.includes('/soft-wave/customize')) navigate('/wavy/soft-wave');
-                else if (pathname.includes('/soft-curl/customize')) navigate('/curly/soft-curl');
+                if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) navigate('/straight/blanco');
+                else if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) navigate('/wavy/soft-wave');
+                else if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) navigate('/curly/soft-curl');
                 else navigate('/straight/noir');
               }}
             >
               {(() => {
                 const pathname = window.location.pathname;
-                if (pathname.includes('/blanco/customize')) return 'BLANCO';
-                if (pathname.includes('/soft-wave/customize')) return 'SOFT WAVE';
-                if (pathname.includes('/soft-curl/customize')) return 'SOFT CURL';
+                if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) return 'BLANCO';
+                if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) return 'SOFT WAVE';
+                if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) return 'SOFT CURL';
                 return 'NOIR';
               })()}
             </span>
@@ -535,6 +569,9 @@ function HairlineSelection() {
                       })(),
                       transform: (() => {
                         const pathname = window.location.pathname;
+                        if (pathname.includes('/blanco/')) {
+                          return 'translate(-50%, 5px)'; // Move down 5px for BLANCO
+                        }
                         if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/')) {
                           return 'translate(-50%, 2px)'; // Move down 2px for SOFT WAVE/CURL
                         }
@@ -543,17 +580,17 @@ function HairlineSelection() {
                     }}
                     onClick={() => {
                       const pathname = window.location.pathname;
-                      if (pathname.includes('/blanco/customize')) navigate('/straight/blanco');
-                      else if (pathname.includes('/soft-wave/customize')) navigate('/wavy/soft-wave');
-                      else if (pathname.includes('/soft-curl/customize')) navigate('/curly/soft-curl');
+                      if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) navigate('/straight/blanco');
+                      else if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) navigate('/wavy/soft-wave');
+                      else if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) navigate('/curly/soft-curl');
                       else navigate('/straight/noir');
                     }}
                 >
                   {(() => {
                     const pathname = window.location.pathname;
-                    if (pathname.includes('/blanco/customize')) return 'BLANCO';
-                    if (pathname.includes('/soft-wave/customize')) return 'SOFT WAVE';
-                    if (pathname.includes('/soft-curl/customize')) return 'SOFT CURL';
+                    if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) return 'BLANCO';
+                    if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) return 'SOFT WAVE';
+                    if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) return 'SOFT CURL';
                     return 'NOIR';
                   })()}
                 </p>
@@ -633,8 +670,8 @@ function HairlineSelection() {
           {/* HAIRLINE OPTIONS - Centered 3-column layout */}
           <div className="grid grid-cols-3 gap-4 mx-auto justify-center mb-6 max-w-[240px]" style={{ marginTop: '15px' }}>
             {hairlineOptions.map((option) => {
-              const isBlancoCustomizeMode = window.location.pathname.includes('/blanco/customize');
-              const imgSize = isBlancoCustomizeMode ? 45 : 75;
+              const isBlancoRoute = window.location.pathname.includes('/blanco/customize') || window.location.pathname.includes('/blanco/edit');
+              const imgSize = isBlancoRoute ? 45 : 75;
               return (
                 <ThumbBox
                   key={option.id}

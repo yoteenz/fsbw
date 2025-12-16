@@ -21,12 +21,22 @@ function ColorSelection() {
     const pathname = window.location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
     const isOnCustomizeRoute = pathname.includes('/customize');
-    const isBlancoCustomizeMode = pathname.includes('/blanco/customize');
+    const isBlancoRoute = pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit');
     
     // CRITICAL: Check editSelected* keys first when in edit mode
     if (isOnEditRoute) {
       const editSelectedColor = localStorage.getItem('editSelectedColor');
       if (editSelectedColor) {
+        // For BLANCO routes, validate color is a valid BLANCO color
+        if (isBlancoRoute) {
+          const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+          if (validBlancoColors.includes(editSelectedColor)) {
+            return editSelectedColor;
+          } else {
+            // Invalid color for BLANCO, default to PLATINUM
+            return 'PLATINUM';
+          }
+        }
         return editSelectedColor;
       }
       // Fallback to editingCartItem
@@ -35,11 +45,29 @@ function ColorSelection() {
         try {
           const item = JSON.parse(editingCartItem);
           if (item.color) {
+            // For BLANCO items, validate color is a valid BLANCO color
+            if (isBlancoRoute || item.name === 'BLANCO') {
+              const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+              if (validBlancoColors.includes(item.color)) {
+                return item.color;
+              } else {
+                // Invalid color for BLANCO, default to PLATINUM
+                return 'PLATINUM';
+              }
+            }
             return item.color;
+          }
+          // No color in item - use default based on product
+          if (isBlancoRoute || item.name === 'BLANCO') {
+            return 'PLATINUM';
           }
         } catch (e) {
           // Ignore parse errors
         }
+      }
+      // No editingCartItem or parse error - use default based on route
+      if (isBlancoRoute) {
+        return 'PLATINUM';
       }
     }
     
@@ -52,8 +80,8 @@ function ColorSelection() {
     }
     
     // Main mode: use selected* keys
-    // For blanco customize mode, default to PLATINUM
-    if (isBlancoCustomizeMode) {
+    // For blanco routes (both customize and edit), default to PLATINUM
+    if (isBlancoRoute) {
       return localStorage.getItem('selectedColor') || 'PLATINUM';
     }
     return localStorage.getItem('selectedColor') || 'OFF BLACK';
@@ -64,27 +92,45 @@ function ColorSelection() {
     const pathname = window.location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
     const isOnCustomizeRoute = pathname.includes('/customize');
-    const isBlancoCustomizeMode = pathname.includes('/blanco/customize');
+    const isBlancoRoute = pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit');
     
     let storedColor: string | null = null;
     if (isOnEditRoute) {
       storedColor = localStorage.getItem('editSelectedColor') || localStorage.getItem('selectedColor');
+      // For BLANCO routes, validate color is a valid BLANCO color
+      if (storedColor && isBlancoRoute) {
+        const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+        if (!validBlancoColors.includes(storedColor)) {
+          // Invalid color for BLANCO, reset to PLATINUM
+          storedColor = 'PLATINUM';
+          localStorage.setItem('editSelectedColor', 'PLATINUM');
+          localStorage.setItem('selectedColor', 'PLATINUM');
+        }
+      }
       // Fallback to editingCartItem if not found
       if (!storedColor) {
         const editingCartItem = localStorage.getItem('editingCartItem');
         if (editingCartItem) {
           try {
             const item = JSON.parse(editingCartItem);
-            storedColor = item.color || (isBlancoCustomizeMode ? 'PLATINUM' : 'OFF BLACK');
+            let itemColor = item.color;
+            // For BLANCO items, validate color
+            if (isBlancoRoute || item.name === 'BLANCO') {
+              const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+              if (!itemColor || !validBlancoColors.includes(itemColor)) {
+                itemColor = 'PLATINUM';
+              }
+            }
+            storedColor = itemColor || (isBlancoRoute ? 'PLATINUM' : 'OFF BLACK');
           } catch (e) {
-            storedColor = isBlancoCustomizeMode ? 'PLATINUM' : 'OFF BLACK';
+            storedColor = isBlancoRoute ? 'PLATINUM' : 'OFF BLACK';
           }
         }
       }
     } else if (isOnCustomizeRoute) {
       storedColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor');
-      // For blanco customize mode, default to PLATINUM if no color is stored
-      if (!storedColor && isBlancoCustomizeMode) {
+      // For blanco routes, default to PLATINUM if no color is stored
+      if (!storedColor && isBlancoRoute) {
         storedColor = 'PLATINUM';
         // Also save it to localStorage so it persists
         localStorage.setItem('selectedColor', 'PLATINUM');
@@ -92,22 +138,43 @@ function ColorSelection() {
       }
     } else {
       storedColor = localStorage.getItem('selectedColor');
-      // For blanco customize mode, default to PLATINUM if no color is stored
-      if (!storedColor && isBlancoCustomizeMode) {
+      // For blanco routes, default to PLATINUM if no color is stored
+      if (!storedColor && isBlancoRoute) {
         storedColor = 'PLATINUM';
         localStorage.setItem('selectedColor', 'PLATINUM');
       }
     }
     
     // Only update if we have a stored color and it's different
-    // For blanco customize mode, prioritize stored customizeSelectedColor over selectedColor
+    // For blanco routes, validate and prioritize stored color
     if (storedColor && storedColor !== selectedColor) {
-      setSelectedColor(storedColor);
-    } else if (!storedColor && isBlancoCustomizeMode) {
-      // Set PLATINUM as default for blanco customize mode only if nothing is stored
+      // For BLANCO routes, validate color is valid
+      if (isBlancoRoute) {
+        const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+        if (validBlancoColors.includes(storedColor)) {
+          setSelectedColor(storedColor);
+        } else {
+          // Invalid color for BLANCO, set to PLATINUM
+          setSelectedColor('PLATINUM');
+          if (isOnEditRoute) {
+            localStorage.setItem('editSelectedColor', 'PLATINUM');
+          } else if (isOnCustomizeRoute) {
+            localStorage.setItem('customizeSelectedColor', 'PLATINUM');
+          }
+          localStorage.setItem('selectedColor', 'PLATINUM');
+        }
+      } else {
+        setSelectedColor(storedColor);
+      }
+    } else if (!storedColor && isBlancoRoute) {
+      // Set PLATINUM as default for blanco routes only if nothing is stored
       setSelectedColor('PLATINUM');
+      if (isOnEditRoute) {
+        localStorage.setItem('editSelectedColor', 'PLATINUM');
+      } else if (isOnCustomizeRoute) {
+        localStorage.setItem('customizeSelectedColor', 'PLATINUM');
+      }
       localStorage.setItem('selectedColor', 'PLATINUM');
-      localStorage.setItem('customizeSelectedColor', 'PLATINUM');
     }
   }, [location.pathname]); // Only reload when route changes, NOT when selectedColor changes
   const [selectedView, setSelectedView] = useState(1);
@@ -139,10 +206,10 @@ function ColorSelection() {
       const pathname = window.location.pathname;
       const isOnEditRoute = pathname.includes('/edit');
       const isOnCustomizeRoute = pathname.includes('/customize');
-      const isBlancoCustomizeMode = pathname.includes('/blanco/customize');
+      const isBlancoRoute = pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit');
       
-      // Skip color updates from storage events in blanco customize mode to prevent overwriting
-      if (isBlancoCustomizeMode) {
+      // Skip color updates from storage events in blanco routes to prevent overwriting
+      if (isBlancoRoute) {
         return;
       }
       
@@ -191,7 +258,7 @@ function ColorSelection() {
     const pathname = window.location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
     const isOnCustomizeRoute = pathname.includes('/customize');
-    const isBlancoCustomizeMode = pathname.includes('/blanco/customize');
+    const isBlancoRoute = pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit');
     
     // CRITICAL: Check editSelected* keys first when in edit mode
     if (isOnEditRoute) {
@@ -222,8 +289,8 @@ function ColorSelection() {
       const customizeSelectedColor = localStorage.getItem('customizeSelectedColor');
       if (customizeSelectedColor) {
         setSelectedColor(customizeSelectedColor);
-      } else if (isBlancoCustomizeMode) {
-        // For blanco customize mode, set PLATINUM as default if nothing is stored
+      } else if (isBlancoRoute) {
+        // For blanco routes, set PLATINUM as default if nothing is stored
         setSelectedColor('PLATINUM');
         localStorage.setItem('selectedColor', 'PLATINUM');
         localStorage.setItem('customizeSelectedColor', 'PLATINUM');
@@ -234,22 +301,22 @@ function ColorSelection() {
   // Get wig views based on selected hairline from localStorage
   const getWigViews = () => {
     const pathname = window.location.pathname;
-    // Check if we're in product-specific customize modes
-    if (pathname.includes('/blanco/customize')) {
+    // Check if we're in product-specific customize or edit modes
+    if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) {
       return [
         '/assets/2D BLANCO LEFT.png',
         '/assets/2D BLANCO FRONT.png',
         '/assets/2D BLANCO RIGHT.png'
       ];
     }
-    if (pathname.includes('/soft-wave/customize')) {
+    if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) {
       return [
         '/assets/2D WAVY LEFT.png',
         '/assets/2D WAVY FRONT.png',
         '/assets/2D WAVY RIGHT.png'
       ];
     }
-    if (pathname.includes('/soft-curl/customize')) {
+    if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) {
       return [
         '/assets/2D CURLY LEFT.png',
         '/assets/2D CURLY FRONT.png',
@@ -309,12 +376,12 @@ function ColorSelection() {
 
   const wigViews = getWigViews();
 
-  // Check if we're in blanco customize mode
-  const isBlancoCustomizeMode = location.pathname.includes('/blanco/customize');
+  // Check if we're in blanco route (both customize and edit modes)
+  const isBlancoRoute = location.pathname.includes('/blanco/customize') || location.pathname.includes('/blanco/edit');
 
   // Color options with accurate hex codes from reference
-  // For blanco customize mode, only show 3 colors: Golden, Platinum, Ash
-  const colorOptions: ColorOption[] = isBlancoCustomizeMode ? [
+  // For blanco routes (both customize and edit), only show 3 colors: Golden, Platinum, Ash
+  const colorOptions: ColorOption[] = isBlancoRoute ? [
     {
       id: 'GOLDEN',
       name: 'GOLDEN',
@@ -335,7 +402,7 @@ function ColorSelection() {
       id: 'ASH',
       name: 'ASH',
       description: 'Ash blonde',
-      price: 0, // Same price as platinum
+      price: 20, // $20 additional cost
       colorCode: '#E5E3CB',
       image: ''
     }
@@ -508,19 +575,52 @@ function ColorSelection() {
     console.log('Color page - confirming selection:', selectedColor);
     const price = getSelectedPrice().toString();
     
-    // Check if we're in edit mode or customize mode
-    const isEditMode = localStorage.getItem('editingCartItem') !== null;
+    // Check if we're in edit mode or customize mode for ALL products
+    const pathname = window.location.pathname;
+    const isEditMode = localStorage.getItem('editingCartItem') !== null || 
+                       pathname.includes('/noir/edit') ||
+                       pathname.includes('/blanco/edit') ||
+                       pathname.includes('/soft-wave/edit') ||
+                       pathname.includes('/soft-curl/edit');
+    
+    // Check if we're in customize mode for ALL products
+    const isCustomizeMode = pathname.includes('/noir/customize') ||
+                            pathname.includes('/blanco/customize') ||
+                            pathname.includes('/soft-wave/customize') ||
+                            pathname.includes('/soft-curl/customize');
+    
     let sourceRoute = sessionStorage.getItem('sourceRoute');
     if (!sourceRoute) {
       const editingCartItem = localStorage.getItem('editingCartItem');
       const selectedCapSize = localStorage.getItem('selectedCapSize');
-      if (editingCartItem) {
-        sourceRoute = '/build-a-wig/edit';
-      } else if (selectedCapSize) {
-        sourceRoute = '/build-a-wig/noir/customize';
+      if (editingCartItem || isEditMode) {
+        // Determine product-specific edit route from pathname
+        if (pathname.includes('/blanco/edit')) {
+          sourceRoute = '/build-a-wig/blanco/edit';
+        } else if (pathname.includes('/soft-wave/edit')) {
+          sourceRoute = '/build-a-wig/soft-wave/edit';
+        } else if (pathname.includes('/soft-curl/edit')) {
+          sourceRoute = '/build-a-wig/soft-curl/edit';
+        } else if (pathname.includes('/noir/edit')) {
+          sourceRoute = '/build-a-wig/noir/edit';
+        } else {
+          sourceRoute = '/build-a-wig/edit'; // Fallback
+        }
+      } else if (selectedCapSize || isCustomizeMode) {
+        // Determine product-specific customize route from pathname
+        if (pathname.includes('/blanco/customize')) {
+          sourceRoute = '/build-a-wig/blanco/customize';
+        } else if (pathname.includes('/soft-wave/customize')) {
+          sourceRoute = '/build-a-wig/soft-wave/customize';
+        } else if (pathname.includes('/soft-curl/customize')) {
+          sourceRoute = '/build-a-wig/soft-curl/customize';
+        } else if (pathname.includes('/noir/customize')) {
+          sourceRoute = '/build-a-wig/noir/customize';
+        } else {
+          sourceRoute = '/build-a-wig'; // Fallback
+        }
       }
     }
-    const isCustomizeMode = !isEditMode && (sourceRoute === '/build-a-wig/noir/customize' || sourceRoute === '/build-a-wig/blanco/customize' || sourceRoute === '/build-a-wig/soft-wave/customize' || sourceRoute === '/build-a-wig/soft-curl/customize');
     
     // Always save with 'selected' prefix
     localStorage.setItem('selectedColor', selectedColor);
@@ -597,7 +697,7 @@ function ColorSelection() {
     let price = selected.price;
     
     // For blanco colors, don't add length surcharge
-    if (isBlancoCustomizeMode) {
+    if (isBlancoRoute) {
       return price; // Golden is -20, Platinum and Ash are 0
     }
     
@@ -705,17 +805,17 @@ function ColorSelection() {
                 style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500', cursor: 'pointer' }}
                 onClick={() => {
                   const pathname = location.pathname;
-                  if (pathname.includes('/blanco/customize')) navigate('/straight/blanco');
-                  else if (pathname.includes('/soft-wave/customize')) navigate('/wavy/soft-wave');
-                  else if (pathname.includes('/soft-curl/customize')) navigate('/curly/soft-curl');
+                  if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) navigate('/straight/blanco');
+                  else if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) navigate('/wavy/soft-wave');
+                  else if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) navigate('/curly/soft-curl');
                   else navigate('/straight/noir');
                 }}
               >
                 {(() => {
                   const pathname = location.pathname;
-                  if (pathname.includes('/blanco/customize')) return 'BLANCO';
-                  if (pathname.includes('/soft-wave/customize')) return 'SOFT WAVE';
-                  if (pathname.includes('/soft-curl/customize')) return 'SOFT CURL';
+                  if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) return 'BLANCO';
+                  if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) return 'SOFT WAVE';
+                  if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) return 'SOFT CURL';
                   return 'NOIR';
                 })()}
               </span>
@@ -788,6 +888,9 @@ function ColorSelection() {
                       })(),
                       transform: (() => {
                         const pathname = location.pathname;
+                        if (pathname.includes('/blanco/')) {
+                          return 'translate(-50%, 5px)'; // Move down 5px for BLANCO
+                        }
                         if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/')) {
                           return 'translate(-50%, 2px)'; // Move down 2px for SOFT WAVE/CURL
                         }
@@ -796,17 +899,17 @@ function ColorSelection() {
                     }}
                     onClick={() => {
                       const pathname = location.pathname;
-                      if (pathname.includes('/blanco/customize')) navigate('/straight/blanco');
-                      else if (pathname.includes('/soft-wave/customize')) navigate('/wavy/soft-wave');
-                      else if (pathname.includes('/soft-curl/customize')) navigate('/curly/soft-curl');
+                      if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) navigate('/straight/blanco');
+                      else if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) navigate('/wavy/soft-wave');
+                      else if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) navigate('/curly/soft-curl');
                       else navigate('/straight/noir');
                     }}
                   >
                     {(() => {
                       const pathname = location.pathname;
-                      if (pathname.includes('/blanco/customize')) return 'BLANCO';
-                      if (pathname.includes('/soft-wave/customize')) return 'SOFT WAVE';
-                      if (pathname.includes('/soft-curl/customize')) return 'SOFT CURL';
+                      if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) return 'BLANCO';
+                      if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) return 'SOFT WAVE';
+                      if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) return 'SOFT CURL';
                       return 'NOIR';
                     })()}
                   </p>
@@ -886,7 +989,7 @@ function ColorSelection() {
             </p>
 
             {/* COLOR OPTIONS */}
-            <div className={`grid ${isBlancoCustomizeMode ? 'grid-cols-3' : 'grid-cols-4'} gap-3 mx-auto justify-center mb-6 ${isBlancoCustomizeMode ? 'max-w-[240px]' : 'max-w-[320px]'}`} style={{ marginTop: '15px' }}>
+            <div className={`grid ${isBlancoRoute ? 'grid-cols-3' : 'grid-cols-4'} gap-3 mx-auto justify-center mb-6 ${isBlancoRoute ? 'max-w-[240px]' : 'max-w-[320px]'}`} style={{ marginTop: '15px' }}>
               {colorOptions.map((option) => (
                 <ThumbBox
                   key={option.id}

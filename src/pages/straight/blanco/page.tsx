@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 
 function BlancoSelection() {
@@ -9,6 +10,9 @@ function BlancoSelection() {
   const [quantity, setQuantity] = useState(1);
   const [showChartModal, setShowChartModal] = useState(false);
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
+  
+  // Wishlist state
+  const [isInWishlist, setIsInWishlist] = useState(false);
   
   // Cart count state
   const [cartCount, setCartCount] = useState(() => {
@@ -122,6 +126,72 @@ function BlancoSelection() {
     
     // ALL fields must match exactly
     return capSizeMatch && lengthMatch && densityMatch && laceMatch && textureMatch && colorMatch && hairlineMatch && stylingMatch && addOnsMatch;
+  };
+
+  // Check if BLANCO is in wishlist on mount and when wishlist changes
+  useEffect(() => {
+    const checkWishlist = () => {
+      try {
+        const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
+        const isInList = wishlistItems.some((item: any) => item.name === 'BLANCO');
+        setIsInWishlist(isInList);
+      } catch (e) {
+        setIsInWishlist(false);
+      }
+    };
+    
+    checkWishlist();
+    
+    // Listen for wishlist updates
+    const handleStorageChange = () => checkWishlist();
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('wishlistUpdated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('wishlistUpdated', handleStorageChange);
+    };
+  }, []);
+
+  // Toggle wishlist handler
+  const handleToggleWishlist = () => {
+    try {
+      const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
+      const totalPrice = parseInt(localStorage.getItem('blancoTotalPrice') || '820');
+      
+      if (isInWishlist) {
+        // Remove from wishlist
+        const updatedItems = wishlistItems.filter((item: any) => item.name !== 'BLANCO');
+        localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
+        setIsInWishlist(false);
+      } else {
+        // Add to wishlist
+        const blancoItem = {
+          id: 'blanco-unit',
+          name: 'BLANCO',
+          price: totalPrice,
+          quantity: quantity,
+          image: '/assets/BLANCO/blanco-thumb.png',
+          length: localStorage.getItem('selectedLength') || '24"',
+          hairOrigin: 'RUSSIAN',
+          capSize: selectedCustomCap || selectedFlexibleCap || 'M',
+          density: localStorage.getItem('selectedDensity') || '200%',
+          lace: localStorage.getItem('selectedLace') || '13X6',
+          texture: localStorage.getItem('selectedTexture') || 'SILKY',
+          color: localStorage.getItem('selectedColor') || 'PLATINUM',
+          hairline: localStorage.getItem('selectedHairline') || 'NATURAL',
+          styling: localStorage.getItem('selectedStyling') || 'MIDDLE'
+        };
+        const updatedItems = [...wishlistItems, blancoItem];
+        localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
+        setIsInWishlist(true);
+      }
+      
+      // Dispatch event to notify other components
+      window.dispatchEvent(new CustomEvent('wishlistUpdated'));
+    } catch (e) {
+      console.error('Error toggling wishlist:', e);
+    }
   };
 
   // Listen for cart count changes and validate cart state
@@ -436,8 +506,8 @@ function BlancoSelection() {
     if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
       // Only update if different to avoid unnecessary re-renders
       if (savedCurrency !== selectedCurrency) {
-        setSelectedCurrency(savedCurrency);
-      }
+      setSelectedCurrency(savedCurrency);
+    }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only run on mount, not when currencyRates changes
@@ -561,8 +631,9 @@ function BlancoSelection() {
         addOns: defaultAddOns
       };
       
+      // Add new item at the beginning (newest first)
       const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      const updatedCartItems = [...existingCartItems, cartItem];
+      const updatedCartItems = [cartItem, ...existingCartItems];
       localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
       
       const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
@@ -673,6 +744,7 @@ function BlancoSelection() {
               <div style={{ position: 'relative', width: '100%', marginBottom: '10px', transform: 'translateY(-31px)' }}>
                 {/* ADD TO WISHLIST - Top Left */}
                 <p 
+                  onClick={handleToggleWishlist}
                   style={{ 
                     position: 'absolute', 
                     left: '8px', 
@@ -681,10 +753,12 @@ function BlancoSelection() {
                     fontFamily: '"Futura PT Demi"',
                     fontSize: '10px',
                     fontWeight: '600',
-                    margin: '0'
+                    margin: '0',
+                    cursor: 'pointer',
+                    userSelect: 'none'
                   }}
                 >
-                  + ADD TO WISHLIST
+                  {isInWishlist ? '- REMOVE FROM WISHLIST' : '+ ADD TO WISHLIST'}
                 </p>
                 
                 {/* 2D VIEW/3D VIEW TOGGLE - Top Right */}
@@ -1178,36 +1252,38 @@ function BlancoSelection() {
                 />
               </div>
 
-              {/* CHART MODAL */}
-              {showChartModal && (
+              {/* CHART MODAL - Rendered via Portal */}
+              {showChartModal && createPortal(
                 <div 
                   style={{
                     position: 'fixed',
-                    top: '0',
-                    left: '0',
-                    right: '0',
-                    bottom: '0',
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    inset: '0',
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    backdropFilter: 'blur(3px)',
+                    WebkitBackdropFilter: 'blur(3px)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    zIndex: 1000
+                    zIndex: 10000,
+                    margin: '0',
+                    padding: '0'
                   }}
                   onClick={handleCloseChart}
                 >
                   <div 
                     style={{
                       position: 'relative',
-                      maxWidth: '90%',
-                      maxHeight: '90%',
+                      maxWidth: '90vw',
+                      maxHeight: '90vh',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center'
+                      justifyContent: 'center',
+                      margin: 'auto'
                     }}
                     onClick={(e) => e.stopPropagation()}
                   >
                     <img
-                      src="/assets/NOIR/chart.png"
+                      src="/assets/cap-chart.svg"
                       alt="Enlarged Cap Size Chart"
                       style={{ 
                         maxWidth: '100%',
@@ -1232,13 +1308,15 @@ function BlancoSelection() {
                         justifyContent: 'center',
                         cursor: 'pointer',
                         fontSize: '16px',
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
+                        color: 'black'
                       }}
                     >
                       ×
                     </button>
                   </div>
-                </div>
+                </div>,
+                document.body
               )}
             </div>
 
@@ -1517,6 +1595,8 @@ function BlancoSelection() {
           <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
             <button
               onClick={() => {
+                // Store the selected cap size in localStorage for customize page
+                // Save to both selectedCapSize and customizeSelectedCapSize for consistency
                 const capSizeToSave = selectedCustomCap || selectedFlexibleCap;
                 if (capSizeToSave) {
                   localStorage.setItem('selectedCapSize', capSizeToSave);
@@ -1526,6 +1606,64 @@ function BlancoSelection() {
                   localStorage.setItem('selectedCapSizePrice', capSizePrice);
                   localStorage.setItem('customizeSelectedCapSizePrice', capSizePrice);
                 }
+                
+                // Set defaults for other selections so customize page loads with defaults + selected cap
+                // BLANCO-specific defaults
+                const defaults = {
+                  length: '24"',
+                  density: '250%', // BLANCO default
+                  lace: '13X6',
+                  texture: 'SILKY',
+                  color: 'PLATINUM', // BLANCO default
+                  hairline: 'NATURAL',
+                  styling: 'NONE',
+                  addOns: [],
+                };
+                
+                // Save to both selected* and customizeSelected* keys
+                localStorage.setItem('selectedLength', defaults.length);
+                localStorage.setItem('selectedDensity', defaults.density);
+                localStorage.setItem('selectedLace', defaults.lace);
+                localStorage.setItem('selectedTexture', defaults.texture);
+                localStorage.setItem('selectedColor', defaults.color);
+                localStorage.setItem('selectedHairline', defaults.hairline);
+                localStorage.setItem('selectedStyling', defaults.styling);
+                localStorage.setItem('selectedAddOns', JSON.stringify(defaults.addOns));
+                
+                localStorage.setItem('customizeSelectedLength', defaults.length);
+                localStorage.setItem('customizeSelectedDensity', defaults.density);
+                localStorage.setItem('customizeSelectedLace', defaults.lace);
+                localStorage.setItem('customizeSelectedTexture', defaults.texture);
+                localStorage.setItem('customizeSelectedColor', defaults.color);
+                localStorage.setItem('customizeSelectedHairline', defaults.hairline);
+                localStorage.setItem('customizeSelectedStyling', defaults.styling);
+                localStorage.setItem('customizeSelectedAddOns', JSON.stringify(defaults.addOns));
+                
+                // Set all default prices to 0
+                localStorage.setItem('selectedLengthPrice', '0');
+                localStorage.setItem('selectedDensityPrice', '0');
+                localStorage.setItem('selectedLacePrice', '0');
+                localStorage.setItem('selectedTexturePrice', '0');
+                localStorage.setItem('selectedColorPrice', '0');
+                localStorage.setItem('selectedHairlinePrice', '0');
+                localStorage.setItem('selectedStylingPrice', '0');
+                localStorage.setItem('selectedAddOnsPrice', '0');
+                
+                localStorage.setItem('customizeSelectedLengthPrice', '0');
+                localStorage.setItem('customizeSelectedDensityPrice', '0');
+                localStorage.setItem('customizeSelectedLacePrice', '0');
+                localStorage.setItem('customizeSelectedTexturePrice', '0');
+                localStorage.setItem('customizeSelectedColorPrice', '0');
+                localStorage.setItem('customizeSelectedHairlinePrice', '0');
+                localStorage.setItem('customizeSelectedStylingPrice', '0');
+                localStorage.setItem('customizeSelectedAddOnsPrice', '0');
+                
+                // Clear any existing editing state
+                localStorage.removeItem('editingCartItem');
+                localStorage.removeItem('editingCartItemId');
+                
+                console.log('Customize page - Starting fresh customization with cap size:', capSizeToSave);
+                
                 navigate('/build-a-wig/blanco/customize');
               }}
               className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"

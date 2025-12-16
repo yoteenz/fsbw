@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 
 function SoftWaveSelection() {
   const navigate = useNavigate();
+  const [isInWishlist, setIsInWishlist] = useState(false);
   const [selectedCustomCap, setSelectedCustomCap] = useState('M');
   const [selectedFlexibleCap, setSelectedFlexibleCap] = useState('');
   const [quantity, setQuantity] = useState(1);
@@ -42,6 +44,72 @@ function SoftWaveSelection() {
     MXN: { symbol: '&#36;', rate: 20.0, name: 'Mexican Peso' }
   }), []);
   
+  // Check if SOFT WAVE is in wishlist on mount and when wishlist changes
+  useEffect(() => {
+    const checkWishlist = () => {
+      try {
+        const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
+        const isInList = wishlistItems.some((item: any) => item.name === 'SOFT WAVE');
+        setIsInWishlist(isInList);
+      } catch (e) {
+        setIsInWishlist(false);
+      }
+    };
+    
+    checkWishlist();
+    
+    // Listen for wishlist updates
+    const handleStorageChange = () => checkWishlist();
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('wishlistUpdated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('wishlistUpdated', handleStorageChange);
+    };
+  }, []);
+
+  // Toggle wishlist handler
+  const handleToggleWishlist = () => {
+    try {
+      const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
+      const totalPrice = parseInt(localStorage.getItem('softWaveTotalPrice') || '780');
+      
+      if (isInWishlist) {
+        // Remove from wishlist
+        const updatedItems = wishlistItems.filter((item: any) => item.name !== 'SOFT WAVE');
+        localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
+        setIsInWishlist(false);
+      } else {
+        // Add to wishlist
+        const softWaveItem = {
+          id: 'soft-wave-unit',
+          name: 'SOFT WAVE',
+          price: totalPrice,
+          quantity: quantity,
+          image: '/assets/NOIR/wave-thumb.png',
+          length: localStorage.getItem('selectedLength') || '24"',
+          hairOrigin: 'INDONESIAN',
+          capSize: selectedCustomCap || selectedFlexibleCap || 'M',
+          density: localStorage.getItem('selectedDensity') || '200%',
+          lace: localStorage.getItem('selectedLace') || '13X6',
+          texture: localStorage.getItem('selectedTexture') || 'SILKY',
+          color: localStorage.getItem('selectedColor') || 'OFF BLACK',
+          hairline: localStorage.getItem('selectedHairline') || 'NATURAL',
+          styling: localStorage.getItem('selectedStyling') || 'MIDDLE'
+        };
+        const updatedItems = [...wishlistItems, softWaveItem];
+        localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
+        setIsInWishlist(true);
+      }
+      
+      // Dispatch event to notify other components
+      window.dispatchEvent(new CustomEvent('wishlistUpdated'));
+    } catch (e) {
+      console.error('Error toggling wishlist:', e);
+    }
+  };
+
   // CRITICAL: Clear any noir-specific localStorage values and set SOFT WAVE defaults on page load
   // This prevents noir page settings from interfering with soft-wave page
   useEffect(() => {
@@ -568,8 +636,9 @@ function SoftWaveSelection() {
         addOns: defaultAddOns
       };
       
+      // Add new item at the beginning (newest first)
       const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      const updatedCartItems = [...existingCartItems, cartItem];
+      const updatedCartItems = [cartItem, ...existingCartItems];
       localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
       
       const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
@@ -680,6 +749,7 @@ function SoftWaveSelection() {
               <div style={{ position: 'relative', width: '100%', marginBottom: '10px', transform: 'translateY(-31px)' }}>
                 {/* ADD TO WISHLIST - Top Left */}
                 <p 
+                  onClick={handleToggleWishlist}
                   style={{ 
                     position: 'absolute', 
                     left: '8px', 
@@ -688,10 +758,12 @@ function SoftWaveSelection() {
                     fontFamily: '"Futura PT Demi"',
                     fontSize: '10px',
                     fontWeight: '600',
-                    margin: '0'
+                    margin: '0',
+                    cursor: 'pointer',
+                    userSelect: 'none'
                   }}
                 >
-                  + ADD TO WISHLIST
+                  {isInWishlist ? '- REMOVE FROM WISHLIST' : '+ ADD TO WISHLIST'}
                 </p>
                 
                 {/* 2D VIEW/3D VIEW TOGGLE - Top Right */}
@@ -877,15 +949,15 @@ function SoftWaveSelection() {
 
             {/* PRODUCT NAME */}
             <p
-              className="text-center text-black mb-2"
+              className="text-center text-black mb-2 soft-wave-product-name"
               style={{ 
-                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                fontSize: '44px',
-                fontWeight: '400',
+                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif !important',
+                fontSize: '42px !important',
+                fontWeight: '400 !important',
                 lineHeight: '1.2',
-                margin: '0',
+                margin: '0 !important',
                 padding: '0',
-                transform: 'translateY(-5px)'
+                transform: 'translateY(-8px) !important'
               }}
             >
               SOFT WAVE
@@ -898,7 +970,8 @@ function SoftWaveSelection() {
                 fontFamily: '"Futura PT Medium"',
                 fontSize: '11px',
                 fontWeight: '500',
-                transform: 'translateY(-8px)'
+                transform: 'translateY(-8px)',
+                marginTop: '-8px'
               }}
             >
               24" RAW INDONESIAN
@@ -1191,36 +1264,38 @@ function SoftWaveSelection() {
                 />
               </div>
 
-              {/* CHART MODAL */}
-              {showChartModal && (
+              {/* CHART MODAL - Rendered via Portal */}
+              {showChartModal && createPortal(
                 <div 
                   style={{
                     position: 'fixed',
-                    top: '0',
-                    left: '0',
-                    right: '0',
-                    bottom: '0',
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    inset: '0',
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    backdropFilter: 'blur(3px)',
+                    WebkitBackdropFilter: 'blur(3px)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    zIndex: 1000
+                    zIndex: 10000,
+                    margin: '0',
+                    padding: '0'
                   }}
                   onClick={handleCloseChart}
                 >
                   <div 
                     style={{
                       position: 'relative',
-                      maxWidth: '90%',
-                      maxHeight: '90%',
+                      maxWidth: '90vw',
+                      maxHeight: '90vh',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center'
+                      justifyContent: 'center',
+                      margin: 'auto'
                     }}
                     onClick={(e) => e.stopPropagation()}
                   >
                     <img
-                      src="/assets/NOIR/chart.png"
+                      src="/assets/cap-chart.svg"
                       alt="Enlarged Cap Size Chart"
                       style={{ 
                         maxWidth: '100%',
@@ -1245,13 +1320,15 @@ function SoftWaveSelection() {
                         justifyContent: 'center',
                         cursor: 'pointer',
                         fontSize: '16px',
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
+                        color: 'black'
                       }}
                     >
                       ×
                     </button>
                   </div>
-                </div>
+                </div>,
+                document.body
               )}
             </div>
 
@@ -1530,6 +1607,8 @@ function SoftWaveSelection() {
           <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
             <button
               onClick={() => {
+                // Store the selected cap size in localStorage for customize page
+                // Save to both selectedCapSize and customizeSelectedCapSize for consistency
                 const capSizeToSave = selectedCustomCap || selectedFlexibleCap;
                 if (capSizeToSave) {
                   if (typeof window !== 'undefined') {
@@ -1545,6 +1624,63 @@ function SoftWaveSelection() {
                     }
                   }
                 }
+                
+                // Set defaults for other selections so customize page loads with defaults + selected cap
+                const defaults = {
+                  length: '24"',
+                  density: '200%',
+                  lace: '13X6',
+                  texture: 'SILKY',
+                  color: 'OFF BLACK',
+                  hairline: 'NATURAL',
+                  styling: 'NONE',
+                  addOns: [],
+                };
+                
+                // Save to both selected* and customizeSelected* keys
+                localStorage.setItem('selectedLength', defaults.length);
+                localStorage.setItem('selectedDensity', defaults.density);
+                localStorage.setItem('selectedLace', defaults.lace);
+                localStorage.setItem('selectedTexture', defaults.texture);
+                localStorage.setItem('selectedColor', defaults.color);
+                localStorage.setItem('selectedHairline', defaults.hairline);
+                localStorage.setItem('selectedStyling', defaults.styling);
+                localStorage.setItem('selectedAddOns', JSON.stringify(defaults.addOns));
+                
+                localStorage.setItem('customizeSelectedLength', defaults.length);
+                localStorage.setItem('customizeSelectedDensity', defaults.density);
+                localStorage.setItem('customizeSelectedLace', defaults.lace);
+                localStorage.setItem('customizeSelectedTexture', defaults.texture);
+                localStorage.setItem('customizeSelectedColor', defaults.color);
+                localStorage.setItem('customizeSelectedHairline', defaults.hairline);
+                localStorage.setItem('customizeSelectedStyling', defaults.styling);
+                localStorage.setItem('customizeSelectedAddOns', JSON.stringify(defaults.addOns));
+                
+                // Set all default prices to 0
+                localStorage.setItem('selectedLengthPrice', '0');
+                localStorage.setItem('selectedDensityPrice', '0');
+                localStorage.setItem('selectedLacePrice', '0');
+                localStorage.setItem('selectedTexturePrice', '0');
+                localStorage.setItem('selectedColorPrice', '0');
+                localStorage.setItem('selectedHairlinePrice', '0');
+                localStorage.setItem('selectedStylingPrice', '0');
+                localStorage.setItem('selectedAddOnsPrice', '0');
+                
+                localStorage.setItem('customizeSelectedLengthPrice', '0');
+                localStorage.setItem('customizeSelectedDensityPrice', '0');
+                localStorage.setItem('customizeSelectedLacePrice', '0');
+                localStorage.setItem('customizeSelectedTexturePrice', '0');
+                localStorage.setItem('customizeSelectedColorPrice', '0');
+                localStorage.setItem('customizeSelectedHairlinePrice', '0');
+                localStorage.setItem('customizeSelectedStylingPrice', '0');
+                localStorage.setItem('customizeSelectedAddOnsPrice', '0');
+                
+                // Clear any existing editing state
+                localStorage.removeItem('editingCartItem');
+                localStorage.removeItem('editingCartItemId');
+                
+                console.log('Customize page - Starting fresh customization with cap size:', capSizeToSave);
+                
                 navigate('/build-a-wig/soft-wave/customize');
               }}
               className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"

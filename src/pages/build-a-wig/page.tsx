@@ -91,7 +91,20 @@ export default function BuildAWigPage() {
             localStorage.setItem('editSelectedTexture', item.texture || 'SILKY');
           }
           if (!localStorage.getItem('editSelectedColor')) {
-            localStorage.setItem('editSelectedColor', item.color || 'OFF BLACK');
+            // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
+            const defaultColor = (isBlancoRoute || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
+            // If item.color exists and is valid, use it; otherwise use default
+            // For BLANCO, if color is not a valid BLANCO color (GOLDEN, PLATINUM, ASH), use PLATINUM
+            let colorToSet = item.color;
+            if (isBlancoRoute || item.name === 'BLANCO') {
+              const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+              if (!colorToSet || !validBlancoColors.includes(colorToSet)) {
+                colorToSet = 'PLATINUM';
+              }
+            } else {
+              colorToSet = colorToSet || 'OFF BLACK';
+            }
+            localStorage.setItem('editSelectedColor', colorToSet);
           }
           if (!localStorage.getItem('editSelectedHairline')) {
             localStorage.setItem('editSelectedHairline', item.hairline || 'NATURAL');
@@ -103,27 +116,24 @@ export default function BuildAWigPage() {
             localStorage.setItem('editSelectedAddOns', JSON.stringify(item.addOns || []));
           }
           
-          // CRITICAL: Also preserve editSelected* price keys if they don't already exist
-          // This prevents overwriting prices saved by sub-pages when component re-mounts
-          // Prices are set by sub-pages when user confirms selection, so preserve them
-          // CRITICAL: Always set cap size price from cart item to ensure flexible cap (+$40) is recognized
-          // Calculate price from item if available, otherwise set to 0
-          const capSizePrice = (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L') ? '40' : '0';
-          console.log('[FLEX_CAP_DEBUG] INITIAL_LOAD - Setting cap size price:', {
-            itemCapSize: item.capSize,
-            calculatedPrice: capSizePrice,
-            isFlexible: item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L',
-            timestamp: new Date().toISOString()
-          });
-          localStorage.setItem('editSelectedCapSizePrice', capSizePrice);
-          // Also save to selected* for consistency
-          localStorage.setItem('selectedCapSizePrice', capSizePrice);
-          console.log('[FLEX_CAP_DEBUG] INITIAL_LOAD - Saved to localStorage:', {
-            editSelectedCapSizePrice: localStorage.getItem('editSelectedCapSizePrice'),
-            selectedCapSizePrice: localStorage.getItem('selectedCapSizePrice'),
-            editSelectedCapSize: localStorage.getItem('editSelectedCapSize'),
-            selectedCapSize: localStorage.getItem('selectedCapSize')
-          });
+          // CRITICAL: Set cap size price from cart item to ensure flexible cap (+$40) is recognized
+          // Other prices will be calculated in useEffect when calculatePricesFromSelections is available
+          if (!localStorage.getItem('editSelectedCapSizePrice')) {
+            const capSizePrice = (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L') ? '40' : '0';
+            console.log('[FLEX_CAP_DEBUG] INITIAL_LOAD - Setting cap size price:', {
+              itemCapSize: item.capSize,
+              calculatedPrice: capSizePrice,
+              isFlexible: item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L',
+              timestamp: new Date().toISOString()
+            });
+            localStorage.setItem('editSelectedCapSizePrice', capSizePrice);
+            localStorage.setItem('selectedCapSizePrice', capSizePrice);
+          }
+          
+          // CRITICAL: Only set default prices to 0 if they don't already exist
+          // This preserves prices set by sub-pages when user navigates back to main page
+          // Sub-pages set editSelected*Price keys when user confirms selections
+          // We should NOT recalculate from cart item as that would overwrite sub-page prices
           if (!localStorage.getItem('editSelectedColorPrice')) {
             localStorage.setItem('editSelectedColorPrice', '0'); // Default, will be updated by sub-pages
           }
@@ -155,19 +165,35 @@ export default function BuildAWigPage() {
           localStorage.setItem('selectedDensity', item.density || '200%');
           localStorage.setItem('selectedLace', item.lace || '13X6');
           localStorage.setItem('selectedTexture', item.texture || 'SILKY');
-          localStorage.setItem('selectedColor', item.color || 'OFF BLACK');
+          // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
+          const defaultColorForReturn = (isBlancoRoute || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
+          localStorage.setItem('selectedColor', item.color || defaultColorForReturn);
           localStorage.setItem('selectedHairline', item.hairline || 'NATURAL');
           localStorage.setItem('selectedStyling', item.styling || 'NONE');
           localStorage.setItem('selectedAddOns', JSON.stringify(item.addOns || []));
           
           // Return the cart item's selections
+          // CRITICAL: Validate BLANCO colors - if item.color is invalid for BLANCO, use PLATINUM
+          let returnColor = item.color;
+          if (isBlancoRoute || item.name === 'BLANCO') {
+            const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+            if (!returnColor || !validBlancoColors.includes(returnColor)) {
+              returnColor = 'PLATINUM'; // Default to PLATINUM for invalid/missing BLANCO colors
+              // Also update localStorage to fix the stored value
+              localStorage.setItem('editSelectedColor', 'PLATINUM');
+              localStorage.setItem('selectedColor', 'PLATINUM');
+            }
+          } else {
+            returnColor = returnColor || defaultColorForReturn;
+          }
+          
           return {
             capSize: item.capSize || 'M',
             length: item.length || '24"',
             density: item.density || '200%',
             lace: item.lace || '13X6',
             texture: item.texture || 'SILKY',
-            color: item.color || 'OFF BLACK',
+            color: returnColor,
             hairline: item.hairline || 'NATURAL',
             styling: item.styling || 'NONE',
             addOns: item.addOns || [],
@@ -324,14 +350,14 @@ export default function BuildAWigPage() {
     const defaultColor = isBlancoRoute ? 'PLATINUM' : 'OFF BLACK';
     
     if (selections.color && selections.color !== defaultColor) {
-      // For blanco colors: GOLDEN is -$20, ASH is $0 (same as PLATINUM)
+      // For blanco colors: GOLDEN is -$20, ASH is $20, PLATINUM is $0 (default)
       if (isBlancoRoute) {
         if (selections.color === 'GOLDEN') {
           prices.colorPrice = -20; // -$20 discount
         } else if (selections.color === 'ASH') {
-          prices.colorPrice = 0; // Same as platinum
+          prices.colorPrice = 20; // $20 additional cost
         } else {
-          prices.colorPrice = 100; // Other colors (shouldn't happen with blanco's 3 options)
+          prices.colorPrice = 0; // PLATINUM is default (free)
         }
       } else {
         // For noir and other products
@@ -491,11 +517,15 @@ export default function BuildAWigPage() {
   
   // Helper function to save prices with correct prefix (editSelected in edit mode, customizeSelected in customize mode, selected otherwise)
   const savePricesToLocalStorage = useCallback((prices: { [key: string]: number }) => {
-    const isEditMode = location.pathname === '/build-a-wig/edit' && localStorage.getItem('editingCartItem') !== null;
-    const isCustomizeMode = location.pathname === '/build-a-wig/noir/customize' || 
-                            location.pathname === '/build-a-wig/blanco/customize' ||
-                            location.pathname === '/build-a-wig/soft-wave/customize' ||
-                            location.pathname === '/build-a-wig/soft-curl/customize';
+    const isEditMode = (location.pathname === '/build-a-wig/edit' ||
+                       location.pathname === '/build-a-wig/noir/edit' ||
+                       location.pathname === '/build-a-wig/blanco/edit' ||
+                       location.pathname === '/build-a-wig/soft-wave/edit' ||
+                       location.pathname === '/build-a-wig/soft-curl/edit') && localStorage.getItem('editingCartItem') !== null;
+    const isCustomizeMode = location.pathname.startsWith('/build-a-wig/noir/customize') || 
+                            location.pathname.startsWith('/build-a-wig/blanco/customize') ||
+                            location.pathname.startsWith('/build-a-wig/soft-wave/customize') ||
+                            location.pathname.startsWith('/build-a-wig/soft-curl/customize');
     
     // CRITICAL: Validate cap size price - if cap size is flexible but price is 0, don't save (preserve existing)
     const currentCapSize = localStorage.getItem('editSelectedCapSize') || localStorage.getItem('selectedCapSize') || 'M';
@@ -924,7 +954,10 @@ export default function BuildAWigPage() {
         const savedDensity = savedDensityEdit || savedDensitySelected || '200%';
         const savedLace = savedLaceEdit || savedLaceSelected || '13X6';
         const savedTexture = savedTextureEdit || savedTextureSelected || 'SILKY';
-        const savedColor = savedColorEdit || savedColorSelected || 'OFF BLACK';
+        // For BLANCO routes, default to PLATINUM; for others, default to OFF BLACK
+        const isBlancoRouteForSaved = location.pathname.startsWith('/build-a-wig/blanco');
+        const defaultColorForSaved = isBlancoRouteForSaved ? 'PLATINUM' : 'OFF BLACK';
+        const savedColor = savedColorEdit || savedColorSelected || defaultColorForSaved;
         const savedHairline = savedHairlineEdit || savedHairlineSelected || 'NATURAL';
         const savedStyling = savedStylingEdit || savedStylingSelected || 'NONE';
         const savedAddOns = savedAddOnsEdit || savedAddOnsSelected || '[]';
@@ -1059,13 +1092,15 @@ export default function BuildAWigPage() {
               if (partSelectionOptions.includes(validStyling)) {
                 validStyling = 'NONE';
               }
+              // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
+              const defaultColorForOriginal = (isBlancoRoute || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
               const restoredOriginalItem = {
                 capSize: item.capSize || 'M',
                 length: item.length || '24"',
                 density: item.density || '200%',
                 lace: item.lace || '13X6',
                 texture: item.texture || 'SILKY',
-                color: item.color || 'OFF BLACK',
+                color: item.color || defaultColorForOriginal,
                 hairline: item.hairline || 'NATURAL',
                 styling: validStyling,
                 addOns: item.addOns || [],
@@ -1088,13 +1123,15 @@ export default function BuildAWigPage() {
               if (partSelectionOptions.includes(validStyling)) {
                 validStyling = 'NONE';
               }
+              // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
+              const defaultColorForOriginal2 = (isBlancoRoute || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
               return {
                 capSize: item.capSize || 'M',
                 length: item.length || '24"',
                 density: item.density || '200%',
                 lace: item.lace || '13X6',
                 texture: item.texture || 'SILKY',
-                color: item.color || 'OFF BLACK',
+                color: item.color || defaultColorForOriginal2,
                 hairline: item.hairline || 'NATURAL',
                 styling: validStyling,
                 addOns: item.addOns || [],
@@ -1139,7 +1176,10 @@ export default function BuildAWigPage() {
               const currentCapSize = localStorage.getItem('editSelectedCapSize') || localStorage.getItem('selectedCapSize') || 'M';
               const currentLength = localStorage.getItem('editSelectedLength') || localStorage.getItem('selectedLength') || '24"';
               const currentDensity = localStorage.getItem('editSelectedDensity') || localStorage.getItem('selectedDensity') || '200%';
-              const currentColor = localStorage.getItem('editSelectedColor') || localStorage.getItem('selectedColor') || 'OFF BLACK';
+              // For BLANCO routes, default to PLATINUM; for others, default to OFF BLACK
+              const isBlancoRouteForCheck = location.pathname.startsWith('/build-a-wig/blanco');
+              const defaultColorForCheck = isBlancoRouteForCheck ? 'PLATINUM' : 'OFF BLACK';
+              const currentColor = localStorage.getItem('editSelectedColor') || localStorage.getItem('selectedColor') || defaultColorForCheck;
               const currentTexture = localStorage.getItem('editSelectedTexture') || localStorage.getItem('selectedTexture') || 'SILKY';
               const currentLace = localStorage.getItem('editSelectedLace') || localStorage.getItem('selectedLace') || '13X6';
               const currentHairline = localStorage.getItem('editSelectedHairline') || localStorage.getItem('selectedHairline') || 'NATURAL';
@@ -1215,7 +1255,10 @@ export default function BuildAWigPage() {
           const savedDensity = savedDensityEdit || localStorage.getItem('selectedDensity') || '200%';
           const savedLace = savedLaceEdit || localStorage.getItem('selectedLace') || '13X6';
           const savedTexture = savedTextureEdit || localStorage.getItem('selectedTexture') || 'SILKY';
-          const savedColor = savedColorEdit || localStorage.getItem('selectedColor') || 'OFF BLACK';
+          // For BLANCO routes, default to PLATINUM; for others, default to OFF BLACK
+          const isBlancoRouteForSaved2 = location.pathname.startsWith('/build-a-wig/blanco');
+          const defaultColorForSaved2 = isBlancoRouteForSaved2 ? 'PLATINUM' : 'OFF BLACK';
+          const savedColor = savedColorEdit || localStorage.getItem('selectedColor') || defaultColorForSaved2;
           const savedHairline = savedHairlineEdit || localStorage.getItem('selectedHairline') || 'NATURAL';
           const savedStyling = savedStylingEdit || localStorage.getItem('selectedStyling') || 'NONE';
           const savedAddOns = savedAddOnsEdit || localStorage.getItem('selectedAddOns') || '[]';
@@ -1247,13 +1290,15 @@ export default function BuildAWigPage() {
               if (partSelectionOptions.includes(originalStyling)) {
                 originalStyling = 'NONE';
               }
+              // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
+              const defaultColorForOriginal3 = (isBlancoRoute || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
               setOriginalItem({
                 capSize: item.capSize || 'M',
                 length: item.length || '24"',
                 density: item.density || '200%',
                 lace: item.lace || '13X6',
                 texture: item.texture || 'SILKY',
-                color: item.color || 'OFF BLACK',
+                color: item.color || defaultColorForOriginal3,
                 hairline: item.hairline || 'NATURAL',
                 styling: originalStyling,
                 addOns: item.addOns || [],
@@ -1283,13 +1328,15 @@ export default function BuildAWigPage() {
             validStyling = 'NONE'; // If styling is a part selection, set to NONE
           }
           
+          // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
+          const defaultColorForEditCustom = (isBlancoRoute || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
           const editCustomization = {
             capSize: item.capSize || 'M',
             length: item.length || '24"',
             density: item.density || '200%',
             lace: item.lace || '13X6',
             texture: item.texture || 'SILKY',
-            color: item.color || 'OFF BLACK',
+            color: item.color || defaultColorForEditCustom,
             hairline: item.hairline || 'NATURAL',
             styling: validStyling,
             addOns: item.addOns || [],
@@ -1313,7 +1360,9 @@ export default function BuildAWigPage() {
           localStorage.setItem('selectedCapSize', item.capSize || 'M');
           localStorage.setItem('selectedLength', item.length || '24"');
           localStorage.setItem('selectedDensity', item.density || '200%');
-          localStorage.setItem('selectedColor', item.color || 'OFF BLACK');
+          // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
+          const defaultColorForSave = (isBlancoRoute || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
+          localStorage.setItem('selectedColor', item.color || defaultColorForSave);
           localStorage.setItem('selectedTexture', item.texture || 'SILKY');
           localStorage.setItem('selectedLace', item.lace || '13X6');
           localStorage.setItem('selectedHairline', item.hairline || 'NATURAL');
@@ -1357,8 +1406,10 @@ export default function BuildAWigPage() {
           localStorage.setItem('selectedLength', item.length || '24"');
           localStorage.setItem('editSelectedDensity', item.density || '200%');
           localStorage.setItem('selectedDensity', item.density || '200%');
-          localStorage.setItem('editSelectedColor', item.color || 'OFF BLACK');
-          localStorage.setItem('selectedColor', item.color || 'OFF BLACK');
+          // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
+          const defaultColorForEdit = (isBlancoRoute || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
+          localStorage.setItem('editSelectedColor', item.color || defaultColorForEdit);
+          localStorage.setItem('selectedColor', item.color || defaultColorForEdit);
           localStorage.setItem('editSelectedTexture', item.texture || 'SILKY');
           localStorage.setItem('selectedTexture', item.texture || 'SILKY');
           localStorage.setItem('editSelectedLace', item.lace || '13X6');
@@ -1449,8 +1500,55 @@ export default function BuildAWigPage() {
             savePricesToLocalStorage(pricesToSave);
           } else {
             // Not coming from sub-page: use calculated prices (which now include correct negative values)
-            // CRITICAL: Preserve cap size price from localStorage if it exists (set from initial load or sub-pages)
-            // This ensures flexible cap price (+$40) is preserved correctly
+            // CRITICAL: When first entering edit mode, save calculated prices to editSelected*Price keys
+            // This ensures all prices are available when entering edit mode
+            // Only save if prices don't already exist (preserve sub-page selections)
+            if (!localStorage.getItem('editSelectedColorPrice')) {
+              localStorage.setItem('editSelectedColorPrice', calculatedPrices.colorPrice.toString());
+              localStorage.setItem('selectedColorPrice', calculatedPrices.colorPrice.toString());
+            }
+            if (!localStorage.getItem('editSelectedLengthPrice')) {
+              localStorage.setItem('editSelectedLengthPrice', calculatedPrices.lengthPrice.toString());
+              localStorage.setItem('selectedLengthPrice', calculatedPrices.lengthPrice.toString());
+            }
+            if (!localStorage.getItem('editSelectedDensityPrice')) {
+              localStorage.setItem('editSelectedDensityPrice', calculatedPrices.densityPrice.toString());
+              localStorage.setItem('selectedDensityPrice', calculatedPrices.densityPrice.toString());
+            }
+            if (!localStorage.getItem('editSelectedLacePrice')) {
+              localStorage.setItem('editSelectedLacePrice', calculatedPrices.lacePrice.toString());
+              localStorage.setItem('selectedLacePrice', calculatedPrices.lacePrice.toString());
+            }
+            if (!localStorage.getItem('editSelectedTexturePrice')) {
+              localStorage.setItem('editSelectedTexturePrice', calculatedPrices.texturePrice.toString());
+              localStorage.setItem('selectedTexturePrice', calculatedPrices.texturePrice.toString());
+            }
+            if (!localStorage.getItem('editSelectedHairlinePrice')) {
+              localStorage.setItem('editSelectedHairlinePrice', calculatedPrices.hairlinePrice.toString());
+              localStorage.setItem('selectedHairlinePrice', calculatedPrices.hairlinePrice.toString());
+            }
+            if (!localStorage.getItem('editSelectedStylingPrice')) {
+              localStorage.setItem('editSelectedStylingPrice', calculatedPrices.stylingPrice.toString());
+              localStorage.setItem('selectedStylingPrice', calculatedPrices.stylingPrice.toString());
+            }
+            if (!localStorage.getItem('editSelectedAddOnsPrice')) {
+              localStorage.setItem('editSelectedAddOnsPrice', calculatedPrices.addOnsPrice.toString());
+              localStorage.setItem('selectedAddOnsPrice', calculatedPrices.addOnsPrice.toString());
+            }
+            
+            // CRITICAL: Always set cap size price based on preserved cap size (not cart item's potentially stale cap size)
+            const capSizePrice = (capSizeToUse === 'XXS/XS/S' || capSizeToUse === 'S/M/L') ? 40 : 0;
+            localStorage.setItem('editSelectedCapSizePrice', capSizePrice.toString());
+            localStorage.setItem('selectedCapSizePrice', capSizePrice.toString());
+            
+            console.log('[EDIT MODE INITIAL LOAD] Calculated and saved prices from cart item:', {
+              editCustomizationWithPreservedCapSize,
+              calculatedPrices,
+              capSizePrice,
+              timestamp: new Date().toISOString()
+            });
+            
+            // Preserve cap size price if it exists in localStorage (may have been set from initial load or sub-pages)
             const existingCapSizePrice = localStorage.getItem('editSelectedCapSizePrice') || localStorage.getItem('selectedCapSizePrice');
             
             // CRITICAL: Handle add-on prices correctly
@@ -1464,7 +1562,6 @@ export default function BuildAWigPage() {
               ...calculatedPrices
             };
             
-            // Preserve cap size price if it exists in localStorage (may have been set from initial load or sub-pages)
             console.log('[FLEX_CAP_DEBUG] ROUTE_CHANGE - Price preservation check (NOT from sub-page):', {
               existingCapSizePrice,
               capSizeToUse,
@@ -2129,8 +2226,11 @@ export default function BuildAWigPage() {
         const editSelectedAddOns = localStorage.getItem('editSelectedAddOns');
         
         // Fallback to selected* keys if editSelected* don't exist
+        // For BLANCO routes, default to PLATINUM; for others, default to OFF BLACK
+        const isBlancoRouteForCurrent = location.pathname.startsWith('/build-a-wig/blanco');
+        const defaultColorForCurrent = isBlancoRouteForCurrent ? 'PLATINUM' : 'OFF BLACK';
         const currentTexture = editSelectedTexture || localStorage.getItem('selectedTexture') || 'SILKY';
-        const currentColor = editSelectedColor || localStorage.getItem('selectedColor') || 'OFF BLACK';
+        const currentColor = editSelectedColor || localStorage.getItem('selectedColor') || defaultColorForCurrent;
         const currentLength = editSelectedLength || localStorage.getItem('selectedLength') || '24"';
         const currentDensity = editSelectedDensity || localStorage.getItem('selectedDensity') || '200%';
         const currentLace = editSelectedLace || localStorage.getItem('selectedLace') || '13X6';
@@ -2310,17 +2410,7 @@ export default function BuildAWigPage() {
   }, []);
 
   // Currency state
-  const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const savedCurrency = localStorage.getItem('selectedCurrency');
-        return savedCurrency || 'USD';
-      } catch (e) {
-        return 'USD';
-      }
-    }
-    return 'USD';
-  });
+  const [selectedCurrency, setSelectedCurrency] = useState<string>('USD');
 
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -2897,9 +2987,13 @@ export default function BuildAWigPage() {
       
       let total = basePrice;
       
-      // Check which mode we're in
+      // Check which mode we're in for ALL products
       const editingCartItem = localStorage.getItem('editingCartItem');
-      const isEditMode = location.pathname === '/build-a-wig/edit' && editingCartItem !== null;
+      const isEditMode = (location.pathname === '/build-a-wig/edit' ||
+                         location.pathname === '/build-a-wig/noir/edit' ||
+                         location.pathname === '/build-a-wig/blanco/edit' ||
+                         location.pathname === '/build-a-wig/soft-wave/edit' ||
+                         location.pathname === '/build-a-wig/soft-curl/edit') && editingCartItem !== null;
       const isCustomizeMode = location.pathname.startsWith('/build-a-wig/noir/customize') || 
                               location.pathname.startsWith('/build-a-wig/blanco/customize') ||
                               location.pathname.startsWith('/build-a-wig/soft-wave/customize') ||
@@ -2923,7 +3017,7 @@ export default function BuildAWigPage() {
         prefix = 'customizeSelected';
       }
       
-      // CRITICAL: In edit mode, read current selections directly from localStorage
+      // CRITICAL: In edit mode or customize mode, read current selections directly from localStorage
       // This ensures we always use the latest values, not stale state
       let currentCustomization = customization;
       if (isEditMode) {
@@ -2943,7 +3037,26 @@ export default function BuildAWigPage() {
           capSize: localStorage.getItem('editSelectedCapSize') || localStorage.getItem('selectedCapSize') || editingItemData?.capSize || 'M',
           length: localStorage.getItem('editSelectedLength') || localStorage.getItem('selectedLength') || editingItemData?.length || '24"',
           density: localStorage.getItem('editSelectedDensity') || localStorage.getItem('selectedDensity') || editingItemData?.density || '200%',
-          color: localStorage.getItem('editSelectedColor') || localStorage.getItem('selectedColor') || editingItemData?.color || 'OFF BLACK',
+          color: (() => {
+            const savedColor = localStorage.getItem('editSelectedColor') || localStorage.getItem('selectedColor') || editingItemData?.color;
+            // For BLANCO routes, validate color is valid BLANCO color
+            const isBlancoRouteForDefault = location.pathname.startsWith('/build-a-wig/blanco');
+            if (savedColor) {
+              // If it's a BLANCO route and color is invalid, default to PLATINUM
+              if (isBlancoRouteForDefault || editingItemData?.name === 'BLANCO') {
+                const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+                if (validBlancoColors.includes(savedColor)) {
+                  return savedColor;
+                } else {
+                  // Invalid color for BLANCO, default to PLATINUM
+                  return 'PLATINUM';
+                }
+              }
+              return savedColor;
+            }
+            // For BLANCO routes, default to PLATINUM; for others, default to OFF BLACK
+            return isBlancoRouteForDefault ? 'PLATINUM' : 'OFF BLACK';
+          })(),
           texture: localStorage.getItem('editSelectedTexture') || localStorage.getItem('selectedTexture') || editingItemData?.texture || 'SILKY',
           lace: localStorage.getItem('editSelectedLace') || localStorage.getItem('selectedLace') || editingItemData?.lace || '13X6',
           hairline: localStorage.getItem('editSelectedHairline') || localStorage.getItem('selectedHairline') || editingItemData?.hairline || 'NATURAL',
@@ -2961,6 +3074,37 @@ export default function BuildAWigPage() {
             selectedTexturePrice: localStorage.getItem('selectedTexturePrice')
           }
         });
+      } else if (isCustomizeMode) {
+        // CRITICAL: In customize mode, read current selections from customizeSelected* keys
+        // This ensures we use the selections made in customize mode sub-pages
+        currentCustomization = {
+          capSize: localStorage.getItem('customizeSelectedCapSize') || localStorage.getItem('selectedCapSize') || 'M',
+          length: localStorage.getItem('customizeSelectedLength') || localStorage.getItem('selectedLength') || '24"',
+          density: localStorage.getItem('customizeSelectedDensity') || localStorage.getItem('selectedDensity') || '200%',
+          color: (() => {
+            const savedColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor');
+            if (savedColor) return savedColor;
+            // For BLANCO routes, default to PLATINUM; for others, default to OFF BLACK
+            const isBlancoRouteForDefault = location.pathname.startsWith('/build-a-wig/blanco');
+            return isBlancoRouteForDefault ? 'PLATINUM' : 'OFF BLACK';
+          })(),
+          texture: localStorage.getItem('customizeSelectedTexture') || localStorage.getItem('selectedTexture') || 'SILKY',
+          lace: localStorage.getItem('customizeSelectedLace') || localStorage.getItem('selectedLace') || '13X6',
+          hairline: localStorage.getItem('customizeSelectedHairline') || localStorage.getItem('selectedHairline') || 'NATURAL',
+          styling: localStorage.getItem('customizeSelectedStyling') || localStorage.getItem('selectedStyling') || 'NONE',
+          addOns: JSON.parse(localStorage.getItem('customizeSelectedAddOns') || localStorage.getItem('selectedAddOns') || '[]')
+        };
+        
+        // DEBUGGING: Log currentCustomization in customize mode
+        console.log('[CUSTOMIZE MODE] currentCustomization built from localStorage:', {
+          ...currentCustomization,
+          localStorageValues: {
+            customizeSelectedTexture: localStorage.getItem('customizeSelectedTexture'),
+            selectedTexture: localStorage.getItem('selectedTexture'),
+            customizeSelectedTexturePrice: localStorage.getItem('customizeSelectedTexturePrice'),
+            selectedTexturePrice: localStorage.getItem('selectedTexturePrice')
+          }
+        });
       }
       
       // DEBUGGING: Log edit mode price calculation
@@ -2975,7 +3119,18 @@ export default function BuildAWigPage() {
         });
       }
       
-      // CRITICAL: Always recalculate prices from current selections (from localStorage in edit mode)
+      // DEBUGGING: Log customize mode price calculation
+      if (isCustomizeMode) {
+        console.log('[CUSTOMIZE MODE PRICE CALCULATION]', {
+          mode: 'CUSTOMIZE',
+          prefix,
+          customization: currentCustomization,
+          basePrice,
+          timestamp: new Date().toISOString()
+        });
+      }
+      
+      // CRITICAL: Always recalculate prices from current selections (from localStorage in edit/customize mode)
       // This ensures prices are always correct even after many edits
       const calculatedPrices = calculatePricesFromSelections(currentCustomization);
       
@@ -2983,6 +3138,22 @@ export default function BuildAWigPage() {
       if (isEditMode) {
         console.log('[EDIT MODE] Calculated prices from selections:', calculatedPrices);
         console.log('[EDIT MODE] Input to calculatePricesFromSelections:', {
+          capSize: currentCustomization.capSize,
+          length: currentCustomization.length,
+          density: currentCustomization.density,
+          color: currentCustomization.color,
+          texture: currentCustomization.texture,
+          lace: currentCustomization.lace,
+          hairline: currentCustomization.hairline,
+          styling: currentCustomization.styling,
+          addOns: currentCustomization.addOns
+        });
+      }
+      
+      // DEBUGGING: Log calculated prices for customize mode
+      if (isCustomizeMode) {
+        console.log('[CUSTOMIZE MODE] Calculated prices from selections:', calculatedPrices);
+        console.log('[CUSTOMIZE MODE] Input to calculatePricesFromSelections:', {
           capSize: currentCustomization.capSize,
           length: currentCustomization.length,
           density: currentCustomization.density,
@@ -3003,8 +3174,8 @@ export default function BuildAWigPage() {
         const primaryValue = localStorage.getItem(primaryKey);
         const fallbackValue = localStorage.getItem(fallbackKey);
         
-        // DEBUGGING: Log price lookup for edit mode
-        if (isEditMode) {
+        // DEBUGGING: Log price lookup for edit mode and customize mode
+        if (isEditMode || isCustomizeMode) {
           console.log(`[EDIT MODE] ${key} price lookup:`, {
             primaryKey,
             primaryValue,
@@ -3075,8 +3246,9 @@ export default function BuildAWigPage() {
         }
       };
       
-      // CRITICAL: Use getPrice helper for capSizePrice to read from localStorage when available
-      // This ensures the flexible cap price (+$40) persists when navigating away
+      // CRITICAL: Use getPrice helper for all prices to read from localStorage when available
+      // This ensures prices persist when navigating away
+      // Works for both edit mode (editSelected*) and customize mode (customizeSelected*)
       const capSizePrice = getPrice('CapSize', calculatedPrices.capSizePrice);
       
       console.log('[FLEX_CAP_DEBUG] CALCULATE_PRICE - After getPrice:', {
@@ -3084,10 +3256,10 @@ export default function BuildAWigPage() {
         calculatedCapSizePrice: calculatedPrices.capSizePrice,
         currentCapSize: currentCustomization.capSize,
         isFlexibleCap: currentCustomization.capSize === 'XXS/XS/S' || currentCustomization.capSize === 'S/M/L',
-        localStorageEditSelectedCapSizePrice: localStorage.getItem('editSelectedCapSizePrice'),
-        localStorageSelectedCapSizePrice: localStorage.getItem('selectedCapSizePrice'),
-        localStorageEditSelectedCapSize: localStorage.getItem('editSelectedCapSize'),
-        localStorageSelectedCapSize: localStorage.getItem('selectedCapSize'),
+        prefix,
+        primaryKey: `${prefix}CapSizePrice`,
+        primaryValue: localStorage.getItem(`${prefix}CapSizePrice`),
+        fallbackValue: localStorage.getItem('selectedCapSizePrice'),
         timestamp: new Date().toISOString()
       });
       
@@ -3101,37 +3273,36 @@ export default function BuildAWigPage() {
       const addOnsPrice = getPrice('AddOns', calculatedPrices.addOnsPrice);
       
       // DEBUGGING: Log all prices being used
-      if (isEditMode) {
-        console.log('[EDIT MODE] All prices:', {
+      const modeLabel = isEditMode ? 'EDIT MODE' : isCustomizeMode ? 'CUSTOMIZE MODE' : 'NON-EDIT MODE';
+      console.log(`[${modeLabel}] All prices:`, {
         basePrice,
-          capSizePrice,
-          colorPrice,
-          lengthPrice,
-          densityPrice,
-          lacePrice,
-          texturePrice,
-          hairlinePrice,
-          stylingPrice,
-          addOnsPrice,
-          sum: capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice
-        });
-      }
+        capSizePrice,
+        colorPrice,
+        lengthPrice,
+        densityPrice,
+        lacePrice,
+        texturePrice,
+        hairlinePrice,
+        stylingPrice,
+        addOnsPrice,
+        sum: capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice,
+        prefix
+      });
       
       // Add all the actual prices
       total += capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
       
       // DEBUGGING: Log final total
+      console.log(`[${modeLabel}] Final total:`, {
+        basePrice,
+        additions: capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice,
+        total,
+        prefix
+      });
+      
+      // CRITICAL: Trigger change detection after price calculation (for both edit and non-edit modes)
+      // This ensures hasChanges is updated when prices change
       if (isEditMode) {
-        console.log('[EDIT MODE] Final total:', {
-          basePrice,
-          additions: capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice,
-          total
-        });
-        
-        
-        // CRITICAL: Trigger change detection after price calculation
-        // This ensures hasChanges is updated when prices change
-        // Use a longer delay to ensure all state updates have completed
         setTimeout(() => {
           detectChanges();
         }, 150);
@@ -3233,18 +3404,13 @@ export default function BuildAWigPage() {
     };
   }, [customization, basePrice, refreshTrigger, location, calculatePricesFromSelections, savePricesToLocalStorage]);
 
-  // Load selected currency from localStorage on mount only
-  // Initial state already loads from localStorage, this is a safety check
+  // Load selected currency from localStorage
   useEffect(() => {
     const savedCurrency = localStorage.getItem('selectedCurrency');
     if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
-      // Only update if different to avoid unnecessary re-renders
-      if (savedCurrency !== selectedCurrency) {
-        setSelectedCurrency(savedCurrency);
-      }
+      setSelectedCurrency(savedCurrency);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run on mount, not when currencyRates changes
+  }, [currencyRates]);
 
   // Save selected currency to localStorage
   useEffect(() => {
@@ -3260,31 +3426,8 @@ export default function BuildAWigPage() {
       }
     };
 
-    // Listen for storage events (from other tabs/windows)
     window.addEventListener('storage', handleCurrencyChange);
-    
-    // Listen for custom currencyChanged event (from same window)
-    const handleCustomCurrencyChange = (event: CustomEvent) => {
-      const newCurrency = event.detail;
-      if (newCurrency && currencyRates[newCurrency as keyof typeof currencyRates]) {
-        setSelectedCurrency(newCurrency);
-        // Also update localStorage to ensure consistency
-        localStorage.setItem('selectedCurrency', newCurrency);
-      }
-    };
-    
-    window.addEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
-    
-    // Poll localStorage periodically to catch any currency changes
-    const interval = setInterval(() => {
-      handleCurrencyChange();
-    }, 500); // Check every 500ms
-    
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener('storage', handleCurrencyChange);
-      window.removeEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
-    };
+    return () => window.removeEventListener('storage', handleCurrencyChange);
   }, [currencyRates]);
 
   // Format price with currency
@@ -3295,7 +3438,7 @@ export default function BuildAWigPage() {
       __html: currency.symbol + convertedPrice.toLocaleString('en-US', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0
-      }) + ' ' + selectedCurrency
+      })
     };
   }, [currencyRates, selectedCurrency]);
 
@@ -3450,7 +3593,8 @@ export default function BuildAWigPage() {
             density: item.density || '200%',
             lace: item.lace || '13X6',
             texture: item.texture || 'SILKY',
-            color: item.color || 'OFF BLACK',
+            // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
+            color: item.color || ((location.pathname.startsWith('/build-a-wig/blanco') || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK'),
             hairline: item.hairline || 'NATURAL',
             styling: validStyling,
             addOns: item.addOns || []
@@ -3468,7 +3612,10 @@ export default function BuildAWigPage() {
       const currentCapSize = localStorage.getItem('editSelectedCapSize') || localStorage.getItem('selectedCapSize') || 'M';
       const currentLength = localStorage.getItem('editSelectedLength') || localStorage.getItem('selectedLength') || '24"';
       const currentDensity = localStorage.getItem('editSelectedDensity') || localStorage.getItem('selectedDensity') || '200%';
-      const currentColor = localStorage.getItem('editSelectedColor') || localStorage.getItem('selectedColor') || 'OFF BLACK';
+      // For BLANCO routes, default to PLATINUM; for others, default to OFF BLACK
+      const isBlancoRouteForCurrent2 = location.pathname.startsWith('/build-a-wig/blanco');
+      const defaultColorForCurrent2 = isBlancoRouteForCurrent2 ? 'PLATINUM' : 'OFF BLACK';
+      const currentColor = localStorage.getItem('editSelectedColor') || localStorage.getItem('selectedColor') || defaultColorForCurrent2;
       const currentTexture = localStorage.getItem('editSelectedTexture') || localStorage.getItem('selectedTexture') || 'SILKY';
       const currentLace = localStorage.getItem('editSelectedLace') || localStorage.getItem('selectedLace') || '13X6';
       const currentHairline = localStorage.getItem('editSelectedHairline') || localStorage.getItem('selectedHairline') || 'NATURAL';
@@ -4087,9 +4234,9 @@ export default function BuildAWigPage() {
               </button>
             </div>
             
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
               <span 
-                style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
                 onClick={() => {
                   const pathname = location.pathname;
                   // Check for product-specific routes first (main, customize, edit)
@@ -4103,7 +4250,7 @@ export default function BuildAWigPage() {
                 BUILD-A-WIG &gt;
               </span>{' '}
               <span
-                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500', cursor: 'pointer' }}
+                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', cursor: 'pointer' }}
                 onClick={() => {
                   const pathname = location.pathname;
                   // Check for product-specific routes (main, customize, edit) - order matters!
@@ -4208,6 +4355,9 @@ export default function BuildAWigPage() {
                       })(),
                       transform: (() => {
                         const pathname = location.pathname;
+                        if (pathname.startsWith('/build-a-wig/blanco')) {
+                          return 'translate(-50%, 5px)'; // Move down 5px for BLANCO
+                        }
                         if (pathname.startsWith('/build-a-wig/soft-wave') || pathname.startsWith('/build-a-wig/soft-curl')) {
                           return 'translate(-50%, 2px)'; // Move down 2px for SOFT WAVE/CURL
                         }
@@ -4314,14 +4464,14 @@ export default function BuildAWigPage() {
               {/* SELECT ICONS BELOW Header */}
             <p
               className="text-xs sm:text-sm md:text-base lg:text-lg text-center text-red-500 mb-4"
-              style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', color: '#EB1C24', transform: 'translateY(18px)' }}
+              style={{ fontFamily: '"Covered By Your Grace", cursive', color: '#EB1C24', transform: 'translateY(18px)' }}
             >
               SELECT ICONS BELOW
             </p>
 
               {/* BASIC MEMBERSHIP OPTIONS */}
             <div className="flex flex-col gap-3 mt-4 mx-auto" style={{ marginBottom: '18px', transform: 'translateY(6px)' }}>
-                <p className="text-[9px] sm:text-sm md:text-base lg:text-lg font-medium text-black text-center" style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>
+                <p className="text-[9px] sm:text-sm md:text-base lg:text-lg font-medium text-black text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}>
                 BASIC MEMBERSHIP OPTIONS:
               </p>
                 <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6 mx-auto justify-evenly">
@@ -4340,7 +4490,7 @@ export default function BuildAWigPage() {
                 >
                   <p
                     className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
+                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
                   >
                     CAP SIZE
                   </p>
@@ -4366,7 +4516,7 @@ export default function BuildAWigPage() {
                       }}
                     />
                   </div>
-                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>
+                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}>
                     {customization.capSize}
                   </p>
                 </div>
@@ -4386,7 +4536,7 @@ export default function BuildAWigPage() {
                 >
                   <p
                     className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
+                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
                   >
                     LENGTH
                   </p>
@@ -4412,7 +4562,7 @@ export default function BuildAWigPage() {
                       }}
                     />
                   </div>
-                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>
+                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}>
                       {customization.length}
                   </p>
                 </div>
@@ -4432,7 +4582,7 @@ export default function BuildAWigPage() {
                 >
                   <p
                     className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
+                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
                   >
                     DENSITY
                   </p>
@@ -4458,7 +4608,7 @@ export default function BuildAWigPage() {
                       }}
                     />
                   </div>
-                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>
+                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}>
                     {customization.density}
                   </p>
                 </div>
@@ -4467,7 +4617,7 @@ export default function BuildAWigPage() {
 
               {/* PREMIUM MEMBERSHIP OPTIONS */}
             <div className="flex flex-col gap-3 mx-auto mb-6" style={{ marginTop: '18px', transform: 'translateY(3px)' }}>
-                <p className="text-[9px] sm:text-sm md:text-base lg:text-lg font-medium text-black text-center" style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>
+                <p className="text-[9px] sm:text-sm md:text-base lg:text-lg font-medium text-black text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}>
                 PREMIUM MEMBERSHIP OPTIONS:
               </p>
                 <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6 mx-auto justify-evenly">
@@ -4486,7 +4636,7 @@ export default function BuildAWigPage() {
                 >
                   <p
                     className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
+                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
                   >
                     LACE
                   </p>
@@ -4512,7 +4662,7 @@ export default function BuildAWigPage() {
                       }}
                     />
                   </div>
-                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>
+                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}>
                     {customization.lace}
                   </p>
                 </div>
@@ -4532,17 +4682,26 @@ export default function BuildAWigPage() {
                 >
                   <p
                     className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
+                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
                   >
                     TEXTURE
                   </p>
                   <div
                     className="absolute left-1/2 transform -translate-x-1/2 z-[99999] flex items-center justify-center"
                     style={{
-                      width: '83px',
-                      height: '83px',
+                      width: (() => {
+                        const isBlancoRoute = location.pathname.startsWith('/build-a-wig/blanco');
+                        return isBlancoRoute ? '37.35px' : '83px';
+                      })(),
+                      height: (() => {
+                        const isBlancoRoute = location.pathname.startsWith('/build-a-wig/blanco');
+                        return isBlancoRoute ? '37.35px' : '83px';
+                      })(),
                       overflow: 'visible',
-                      top: 'calc(50% + 2px)',
+                      top: (() => {
+                        const isBlancoRoute = location.pathname.startsWith('/build-a-wig/blanco');
+                        return isBlancoRoute ? 'calc(50% + 5px)' : 'calc(50% + 2px)';
+                      })(),
                       transform: 'translateX(-50%) translateY(-50%)'
                     }}
                   >
@@ -4558,7 +4717,7 @@ export default function BuildAWigPage() {
                       }}
                     />
                   </div>
-                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>
+                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}>
                     {customization.texture}
                   </p>
                 </div>
@@ -4583,7 +4742,7 @@ export default function BuildAWigPage() {
                 >
                   <p
                     className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
+                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
                   >
                     COLOR
                   </p>
@@ -4631,7 +4790,7 @@ export default function BuildAWigPage() {
                   </div>
                       </div>
                     </div>
-                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>
+                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}>
                     {customization.color}
                   </p>
                 </div>
@@ -4651,7 +4810,7 @@ export default function BuildAWigPage() {
                 >
                   <p
                     className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
+                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
                   >
                     HAIRLINE
                   </p>
@@ -4677,7 +4836,7 @@ export default function BuildAWigPage() {
                       }}
                     />
                   </div>
-                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>
+                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}>
                     {getHairlineDisplayText()}
                   </p>
                 </div>
@@ -4697,7 +4856,7 @@ export default function BuildAWigPage() {
                 >
                   <p
                       className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
+                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
                   >
                     STYLING
                   </p>
@@ -4723,7 +4882,7 @@ export default function BuildAWigPage() {
                       }}
                     />
                     </div>
-                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>
+                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}>
                     {getStylingDisplayText()}
                   </p>
                 </div>
@@ -4743,7 +4902,7 @@ export default function BuildAWigPage() {
                 >
                   <p
                     className="text-[12px] md:text-base text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
-                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
+                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
                   >
                     ADD-ONS
                   </p>
@@ -4769,7 +4928,7 @@ export default function BuildAWigPage() {
                       }}
                     />
                     </div>
-                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>
+                    <p className="absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center" style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}>
                     {getAddOnsDisplayText()}
                   </p>
                 </div>
@@ -4779,7 +4938,7 @@ export default function BuildAWigPage() {
             {/* DYNAMIC PROCESSING TIME NOTE */}
             <p
               className="font-futura text-[10px] md:text-xs text-center my-6 w-[95%] mx-auto uppercase"
-              style={{ color: '#EB1C24', fontFamily: '"Futura PT Demi"', fontWeight: '500', transform: 'translateY(-7px)' }}
+              style={{ color: '#EB1C24', fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', transform: 'translateY(-7px)' }}
             >
         PLEASE NOTE: EACH CUSTOM UNIT IS MADE TO ORDER.<br />
         WE ENSURE ALL DETAILS ARE ACCURATE + PRECISE.<br />
@@ -4793,7 +4952,7 @@ export default function BuildAWigPage() {
               </p>
               <p
                 className="text-black font-medium text-base md:text-xl lg:text-2xl"
-                  style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
+                  style={{ fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif', fontWeight: '500' }}
                   dangerouslySetInnerHTML={formatPrice(totalPrice)}
               />
             </div>
@@ -4811,7 +4970,7 @@ export default function BuildAWigPage() {
             style={{ 
               borderWidth: '1.3px', 
               color: addToBagState === 'adding' ? '#EB1C24' : '#EB1C24', 
-              fontFamily: '"Futura PT Medium"' 
+              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' 
             }}
           >
             {(() => {
@@ -4946,7 +5105,7 @@ export default function BuildAWigPage() {
                   {/* Currency Selector */}
                   <div className="flex items-center gap-2">
                     <span style={{ 
-                      fontFamily: '"Futura PT Medium"',
+                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                       fontSize: '14px',
                       color: 'black',
                       fontWeight: '500'
@@ -4966,7 +5125,7 @@ export default function BuildAWigPage() {
                   <button
                     onClick={() => handleMobileMenuTabClick('SHOP')}
                     style={{ 
-                      fontFamily: mobileMenuActiveTab === 'SHOP' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                      fontFamily: mobileMenuActiveTab === 'SHOP' ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                       fontSize: '14px',
                       color: mobileMenuActiveTab === 'SHOP' ? '#EB1C24' : 'black',
                       fontWeight: '500',
@@ -4983,7 +5142,7 @@ export default function BuildAWigPage() {
                   <button
                     onClick={() => handleMobileMenuTabClick('TOOLS')}
                     style={{ 
-                      fontFamily: mobileMenuActiveTab === 'TOOLS' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                      fontFamily: mobileMenuActiveTab === 'TOOLS' ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                       fontSize: '14px',
                       color: mobileMenuActiveTab === 'TOOLS' ? '#EB1C24' : 'black',
                       fontWeight: '500',
@@ -5000,7 +5159,7 @@ export default function BuildAWigPage() {
                   <button
                     onClick={() => handleMobileMenuTabClick('BRAND')}
                     style={{ 
-                      fontFamily: mobileMenuActiveTab === 'BRAND' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                      fontFamily: mobileMenuActiveTab === 'BRAND' ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                       fontSize: '14px',
                       color: mobileMenuActiveTab === 'BRAND' ? '#EB1C24' : 'black',
                       fontWeight: '500',
@@ -5023,7 +5182,7 @@ export default function BuildAWigPage() {
                       ['GIFT CARD'].map((item, index) => (
                         <div key={index} className="flex items-center justify-between">
                           <span style={{ 
-                            fontFamily: '"Futura PT Book"',
+                            fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
@@ -5037,7 +5196,7 @@ export default function BuildAWigPage() {
                       ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
                         <div key={index} className="flex items-center justify-between">
                           <span style={{ 
-                            fontFamily: '"Futura PT Book"',
+                            fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
@@ -5062,7 +5221,7 @@ export default function BuildAWigPage() {
                             onClick={() => item.isExpandable ? handleMobileMenuItemToggle(item.label) : null}
                           >
                             <span style={{ 
-                              fontFamily: '"Futura PT Book"',
+                              fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                               fontSize: '14px',
                               color: 'black',
                               fontWeight: '500',
@@ -5089,7 +5248,7 @@ export default function BuildAWigPage() {
                               {item.subItems.map((subItem, subIndex) => (
                                 <div key={subIndex} className="flex items-center">
                                   <span style={{ 
-                                    fontFamily: '"Futura PT Book"',
+                                    fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                                     fontSize: '14px',
                                     color: '#EB1C24',
                                     fontWeight: '500',
@@ -5112,7 +5271,7 @@ export default function BuildAWigPage() {
                 <span 
                   onClick={handleMobileMenuSignInToggle}
                   style={{ 
-                    fontFamily: '"Futura PT Medium"',
+                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                     fontSize: '14px',
                     color: '#EB1C24',
                     fontWeight: '500',

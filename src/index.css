@@ -905,6 +905,24 @@ p.noir-product-name,
   zoom: 1 !important;
 }
 
+/* Override for SOFT CURL product name - specific class to avoid noir-product-name override */
+.soft-curl-product-name,
+p.soft-curl-product-name,
+.text-center.soft-curl-product-name {
+  font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
+  font-size: 42px !important;
+  transform: translateY(-8px) !important;
+}
+
+/* Ensure SOFT WAVE product name uses Covered By Your Grace font */
+.soft-wave-product-name,
+p.soft-wave-product-name,
+.text-center.soft-wave-product-name {
+  font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
+  font-size: 42px !important;
+  transform: translateY(-8px) !important;
+}
+
 /* Cart product name - remove any "WIG" text added by global styles */
 .cart-product-name::after,
 .cart-product-name::before {
@@ -923,6 +941,13 @@ p.noir-price-display,
   white-space: nowrap !important;
   text-overflow: clip !important;
   display: block !important;
+}
+
+/* Ensure noir raw text (24" RAW CAMBODIAN) font size is not constrained */
+.noir-raw-text,
+p.noir-raw-text,
+.text-center.noir-raw-text {
+  font-size: 16px;
 }
 
 /* ULTIMATE OVERRIDE for quantity selector borders - highest specificity */

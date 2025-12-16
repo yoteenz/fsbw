@@ -90,6 +90,9 @@ function NoirSelection() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
   const [showDebugPanel, setShowDebugPanel] = useState(true);
+  
+  // Wishlist state
+  const [isInWishlist, setIsInWishlist] = useState(false);
 
   // Helper function to add debug logs (both console and visible)
   const addDebugLog = (message: string) => {
@@ -107,6 +110,77 @@ function NoirSelection() {
   useEffect(() => {
     addDebugLog('🚀 NOIR page loaded - Debug panel active!');
   }, []);
+
+  // Check if NOIR is in wishlist on mount and when wishlist changes
+  useEffect(() => {
+    const checkWishlist = () => {
+      try {
+        const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
+        const isInList = wishlistItems.some((item: any) => item.name === 'NOIR');
+        setIsInWishlist(isInList);
+      } catch (e) {
+        setIsInWishlist(false);
+      }
+    };
+    
+    checkWishlist();
+    
+    // Listen for wishlist updates
+    const handleStorageChange = () => checkWishlist();
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('wishlistUpdated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('wishlistUpdated', handleStorageChange);
+    };
+  }, []);
+
+  // Toggle wishlist handler
+  const handleToggleWishlist = () => {
+    try {
+      const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
+      
+      if (isInWishlist) {
+        // Remove from wishlist
+        const updatedItems = wishlistItems.filter((item: any) => item.name !== 'NOIR');
+        localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
+        setIsInWishlist(false);
+      } else {
+        // Add to wishlist - calculate price same way as getTotalPrice()
+        const capSize = selectedCustomCap || selectedFlexibleCap || 'M';
+        let basePrice = 740; // Default for standard caps (XS, S, M, L)
+        if (capSize === 'XXS/XS/S' || capSize === 'S/M/L') {
+          basePrice = 780; // Flexible cap options base price is $780
+        }
+        
+        const noirItem = {
+          id: 'noir-unit',
+          name: 'NOIR',
+          price: basePrice,
+          quantity: quantity,
+          image: '/assets/NOIR/noir-thumb.png',
+          length: localStorage.getItem('selectedLength') || '24"',
+          hairOrigin: 'CAMBODIAN',
+          capSize: capSize,
+          density: selectedDensity || '200%',
+          lace: localStorage.getItem('selectedLace') || '13X6',
+          texture: localStorage.getItem('selectedTexture') || 'SILKY',
+          color: localStorage.getItem('selectedColor') || 'OFF BLACK',
+          hairline: localStorage.getItem('selectedHairline') || 'NATURAL',
+          styling: localStorage.getItem('selectedStyling') || 'MIDDLE'
+        };
+        const updatedItems = [...wishlistItems, noirItem];
+        localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
+        setIsInWishlist(true);
+      }
+      
+      // Dispatch event to notify other components
+      window.dispatchEvent(new CustomEvent('wishlistUpdated'));
+    } catch (e) {
+      console.error('Error toggling wishlist:', e);
+    }
+  };
 
 
   // @ts-expect-error - Function kept for potential future use
@@ -1270,9 +1344,9 @@ function NoirSelection() {
         addOns: JSON.parse(localStorage.getItem('selectedAddOns') || '[]')
       };
 
-      // Get existing cart items and add new item
+      // Get existing cart items and add new item at the beginning (newest first)
       const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      const updatedCartItems = [...existingCartItems, cartItem];
+      const updatedCartItems = [cartItem, ...existingCartItems];
       localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
 
       // Update cart count
@@ -2138,9 +2212,15 @@ function NoirSelection() {
           {/* WIG PREVIEW */}
           <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column', marginBottom: '24px', transform: 'translateY(20px)', overflow: 'visible', minWidth: '100%', maxWidth: 'none' }}>
             {/* ADD TO WISHLIST & PHOTO COUNT */}
-            <div style={{ position: 'relative', width: '100%', marginBottom: '10px', transform: 'translateY(-31px)' }}>
+            <div style={{ position: 'relative', width: '100%', marginBottom: '10px', transform: 'translateY(-31px)', zIndex: 100 }}>
               {/* ADD TO WISHLIST - Top Left */}
               <p 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('Wishlist button clicked!');
+                  handleToggleWishlist();
+                }}
                 style={{ 
                   position: 'absolute', 
                   left: '8px', 
@@ -2149,10 +2229,14 @@ function NoirSelection() {
                   fontFamily: '"Futura PT Demi"',
                   fontSize: '10px',
                   fontWeight: '600',
-                  margin: '0'
+                  margin: '0',
+                  cursor: 'pointer',
+                  userSelect: 'none',
+                  zIndex: 1000,
+                  pointerEvents: 'auto'
                 }}
               >
-                + ADD TO WISHLIST
+                {isInWishlist ? '- REMOVE FROM WISHLIST' : '+ ADD TO WISHLIST'}
               </p>
               
               {/* 2D VIEW/3D VIEW TOGGLE - Top Right */}
@@ -2319,16 +2403,18 @@ function NoirSelection() {
             {showChartModal && (
               <div 
                 style={{
-                  position: 'absolute',
+                  position: 'fixed',
                   top: '0',
                   left: '0',
                   right: '0',
                   bottom: '0',
-                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                  backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                  backdropFilter: 'blur(3px)',
+                  WebkitBackdropFilter: 'blur(3px)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  zIndex: '1000',
+                  zIndex: 10000,
                   borderRadius: '8px'
                 }}
                 onClick={handleCloseChart}
@@ -2345,7 +2431,7 @@ function NoirSelection() {
                   onClick={(e) => e.stopPropagation()}
                 >
                   <img
-                    src="/assets/NOIR/chart.png"
+                    src="/assets/cap-chart.svg"
                     alt="Enlarged Cap Size Chart"
                     style={{ 
                       maxWidth: '100%',
@@ -2370,7 +2456,8 @@ function NoirSelection() {
                       justifyContent: 'center',
                       cursor: 'pointer',
                       fontSize: '16px',
-                      fontWeight: 'bold'
+                      fontWeight: 'bold',
+                      color: 'black'
                     }}
                   >
                     ×
@@ -2424,10 +2511,9 @@ function NoirSelection() {
 
             {/* PRODUCT SPECIFICATION */}
             <p
-              className="text-center text-red-500 uppercase mb-2"
+              className="text-center text-red-500 uppercase mb-2 noir-raw-text"
               style={{ 
                 fontFamily: '"Futura PT Medium"',
-                fontSize: '14px',
                 fontWeight: '500',
                 transform: 'translateY(-8px)'
               }}
@@ -2441,7 +2527,7 @@ function NoirSelection() {
               className="text-center text-black mb-1 noir-price-display"
               style={{ 
                 fontFamily: '"Futura PT Medium"',
-                fontSize: '21px',
+                fontSize: '20px',
                 fontWeight: '500',
                 transform: 'translateY(-16px)',
                 width: '100%',
@@ -2740,7 +2826,7 @@ function NoirSelection() {
           {/* CAP SIZE CHART IMAGE - Centered below quantity selector */}
           <div className="flex justify-center mt-4" style={{ transform: 'translateX(4px) translateY(-27px)' }}>
             <img
-              src="/assets/NOIR/cap-size-chart.png"
+              src="/assets/cap-chart.svg"
               alt="Cap Size Chart"
               style={{ maxWidth: '194px', maxHeight: '154px', cursor: 'pointer' }}
               onClick={handleChartClick}

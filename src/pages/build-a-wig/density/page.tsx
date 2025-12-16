@@ -64,21 +64,21 @@ function DensitySelection() {
   const getWigViews = () => {
     const pathname = window.location.pathname;
     // Check if we're in product-specific customize modes
-    if (pathname.includes('/blanco/customize')) {
+    if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) {
       return [
         '/assets/2D BLANCO LEFT.png',
         '/assets/2D BLANCO FRONT.png',
         '/assets/2D BLANCO RIGHT.png'
       ];
     }
-    if (pathname.includes('/soft-wave/customize')) {
+    if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) {
       return [
         '/assets/2D WAVY LEFT.png',
         '/assets/2D WAVY FRONT.png',
         '/assets/2D WAVY RIGHT.png'
       ];
     }
-    if (pathname.includes('/soft-curl/customize')) {
+    if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) {
       return [
         '/assets/2D CURLY LEFT.png',
         '/assets/2D CURLY FRONT.png',
@@ -116,8 +116,8 @@ function DensitySelection() {
 
   // Density options with correct pricing structure
   // Use location.pathname from React Router to ensure updates on route changes
-  const isBlancoCustomizeMode = location.pathname.includes('/blanco/customize');
-  const densityImage = isBlancoCustomizeMode ? '/assets/BLANCO-DENSITY.png' : '/assets/density.png';
+  const isBlancoRoute = location.pathname.includes('/blanco/customize') || location.pathname.includes('/blanco/edit');
+  const densityImage = isBlancoRoute ? '/assets/BLANCO-DENSITY.png' : '/assets/density.png';
   
   const densityOptions: DensityOption[] = [
     {
@@ -235,8 +235,19 @@ function DensitySelection() {
   const handleConfirmSelection = () => {
     const price = getSelectedPrice().toString();
     
-    // Check if we're in edit mode or customize mode
-    const isEditMode = localStorage.getItem('editingCartItem') !== null;
+    // Check if we're in edit mode or customize mode for ALL products
+    const pathname = window.location.pathname;
+    const isEditMode = localStorage.getItem('editingCartItem') !== null || 
+                       pathname.includes('/noir/edit') ||
+                       pathname.includes('/blanco/edit') ||
+                       pathname.includes('/soft-wave/edit') ||
+                       pathname.includes('/soft-curl/edit');
+    
+    // Check if we're in customize mode for ALL products
+    const isCustomizeMode = pathname.includes('/noir/customize') ||
+                            pathname.includes('/blanco/customize') ||
+                            pathname.includes('/soft-wave/customize') ||
+                            pathname.includes('/soft-curl/customize');
     
     // Get the source route from sessionStorage (set by main page when navigating to sub-page)
     // Also check if we're in edit or customize mode as fallback
@@ -247,31 +258,39 @@ function DensitySelection() {
       const editingCartItem = localStorage.getItem('editingCartItem');
       const selectedCapSize = localStorage.getItem('selectedCapSize');
       
-      if (editingCartItem) {
-        sourceRoute = '/build-a-wig/edit';
-        console.log('Density page - No sourceRoute found, detected edit mode from localStorage');
-      } else if (selectedCapSize) {
-        // Check if we're in product-specific customize mode
-        const pathname = window.location.pathname;
+      if (editingCartItem || isEditMode) {
+        // Determine product-specific edit route from pathname
+        if (pathname.includes('/blanco/edit')) {
+          sourceRoute = '/build-a-wig/blanco/edit';
+        } else if (pathname.includes('/soft-wave/edit')) {
+          sourceRoute = '/build-a-wig/soft-wave/edit';
+        } else if (pathname.includes('/soft-curl/edit')) {
+          sourceRoute = '/build-a-wig/soft-curl/edit';
+        } else if (pathname.includes('/noir/edit')) {
+          sourceRoute = '/build-a-wig/noir/edit';
+        } else {
+          sourceRoute = '/build-a-wig/edit'; // Fallback
+        }
+        console.log('Density page - No sourceRoute found, detected edit mode from localStorage/pathname');
+      } else if (selectedCapSize || isCustomizeMode) {
+        // Determine product-specific customize route from pathname
         if (pathname.includes('/blanco/customize')) {
           sourceRoute = '/build-a-wig/blanco/customize';
         } else if (pathname.includes('/soft-wave/customize')) {
           sourceRoute = '/build-a-wig/soft-wave/customize';
         } else if (pathname.includes('/soft-curl/customize')) {
           sourceRoute = '/build-a-wig/soft-curl/customize';
-        } else {
+        } else if (pathname.includes('/noir/customize')) {
           sourceRoute = '/build-a-wig/noir/customize';
+        } else {
+          sourceRoute = '/build-a-wig'; // Fallback
         }
-        console.log('Density page - No sourceRoute found, detected customize mode from localStorage:', sourceRoute);
+        console.log('Density page - No sourceRoute found, detected customize mode from localStorage/pathname:', sourceRoute);
       } else {
         sourceRoute = '/build-a-wig';
         console.log('Density page - No sourceRoute found, defaulting to main page');
       }
     }
-    
-    const isBlancoCustomizeMode = window.location.pathname.includes('/blanco/customize');
-    const isNoirCustomizeMode = !isEditMode && sourceRoute === '/build-a-wig/noir/customize';
-    const isCustomizeMode = isNoirCustomizeMode || isBlancoCustomizeMode;
     
     // Always save with 'selected' prefix
     localStorage.setItem('selectedDensity', selectedDensity);
@@ -689,7 +708,10 @@ function DensitySelection() {
       // CRITICAL: Check editSelected* keys first when in edit mode, then customizeSelected* for customize mode
       const pathname = window.location.pathname;
       const isOnEditRoute = pathname.includes('/edit');
-      const isOnCustomizeRoute = pathname.includes('/noir/customize');
+      const isOnCustomizeRoute = pathname.includes('/noir/customize') ||
+                                 pathname.includes('/blanco/customize') ||
+                                 pathname.includes('/soft-wave/customize') ||
+                                 pathname.includes('/soft-curl/customize');
       
       let currentDensity: string | null = null;
       if (isOnEditRoute) {
@@ -780,17 +802,17 @@ function DensitySelection() {
                 style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500', cursor: 'pointer' }}
                 onClick={() => {
                   const pathname = location.pathname;
-                  if (pathname.includes('/blanco/customize')) navigate('/straight/blanco');
-                  else if (pathname.includes('/soft-wave/customize')) navigate('/wavy/soft-wave');
-                  else if (pathname.includes('/soft-curl/customize')) navigate('/curly/soft-curl');
+                  if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) navigate('/straight/blanco');
+                  else if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) navigate('/wavy/soft-wave');
+                  else if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) navigate('/curly/soft-curl');
                   else navigate('/straight/noir');
                 }}
               >
                 {(() => {
                   const pathname = location.pathname;
-                  if (pathname.includes('/blanco/customize')) return 'BLANCO';
-                  if (pathname.includes('/soft-wave/customize')) return 'SOFT WAVE';
-                  if (pathname.includes('/soft-curl/customize')) return 'SOFT CURL';
+                  if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) return 'BLANCO';
+                  if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) return 'SOFT WAVE';
+                  if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) return 'SOFT CURL';
                   return 'NOIR';
                 })()}
               </span>
@@ -863,6 +885,9 @@ function DensitySelection() {
                       })(),
                       transform: (() => {
                         const pathname = window.location.pathname;
+                        if (pathname.includes('/blanco/')) {
+                          return 'translate(-50%, 5px)'; // Move down 5px for BLANCO
+                        }
                         if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/')) {
                           return 'translate(-50%, 2px)'; // Move down 2px for SOFT WAVE/CURL
                         }
@@ -871,17 +896,17 @@ function DensitySelection() {
                     }}
                     onClick={() => {
                       const pathname = window.location.pathname;
-                      if (pathname.includes('/blanco/customize')) navigate('/straight/blanco');
-                      else if (pathname.includes('/soft-wave/customize')) navigate('/wavy/soft-wave');
-                      else if (pathname.includes('/soft-curl/customize')) navigate('/curly/soft-curl');
+                      if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) navigate('/straight/blanco');
+                      else if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) navigate('/wavy/soft-wave');
+                      else if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) navigate('/curly/soft-curl');
                       else navigate('/straight/noir');
                     }}
                   >
                     {(() => {
                       const pathname = window.location.pathname;
-                      if (pathname.includes('/blanco/customize')) return 'BLANCO';
-                      if (pathname.includes('/soft-wave/customize')) return 'SOFT WAVE';
-                      if (pathname.includes('/soft-curl/customize')) return 'SOFT CURL';
+                      if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) return 'BLANCO';
+                      if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) return 'SOFT WAVE';
+                      if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) return 'SOFT CURL';
                       return 'NOIR';
                     })()}
                   </p>

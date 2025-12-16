@@ -82,11 +82,41 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
       const isEditMode = localStorage.getItem('editingCartItem') !== null;
       const prefix = isEditMode ? 'editSelected' : 'selected';
       
+      // Get product name to determine base price
+      let productName = 'NOIR'; // Default
+      if (isEditMode) {
+        const editingCartItem = localStorage.getItem('editingCartItem');
+        if (editingCartItem) {
+          try {
+            const item = JSON.parse(editingCartItem);
+            productName = item.name || 'NOIR';
+          } catch (e) {
+            // Fallback to NOIR if parsing fails
+          }
+        }
+      } else {
+        // Try to get product name from current route or localStorage
+        const pathname = window.location.pathname;
+        if (pathname.includes('blanco')) productName = 'BLANCO';
+        else if (pathname.includes('soft-wave')) productName = 'SOFT WAVE';
+        else if (pathname.includes('soft-curl')) productName = 'SOFT CURL';
+        else productName = localStorage.getItem('selectedProductName') || 'NOIR';
+      }
+      
       // Get cap size to determine cap size price
       const capSize = localStorage.getItem(`${prefix}CapSize`) || 'M';
       
-      // CRITICAL: Base price is ALWAYS 740 for NOIR - flexible cap adds $40 via capSizePrice
-      const basePrice = 740;
+      // CRITICAL: Base price depends on product - flexible cap adds $40 via capSizePrice
+      const getBasePrice = (productName: string) => {
+        switch (productName) {
+          case 'NOIR': return 740;
+          case 'BLANCO': return 820;
+          case 'SOFT CURL': return 780;
+          case 'SOFT WAVE': return 760;
+          default: return 740;
+        }
+      };
+      const basePrice = getBasePrice(productName);
       
       // Get additional prices
       // CRITICAL: Read capSizePrice from localStorage FIRST, then calculate only if missing
@@ -337,8 +367,19 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     return 0;
   };
 
-  // Helper function to get color price based on color name and length
-  const _getColorPrice = (color: string, length?: string) => {
+  // Helper function to get color price based on color name, length, and product name
+  const _getColorPrice = (color: string, length?: string, productName?: string) => {
+    // BLANCO colors
+    if (productName === 'BLANCO') {
+      const blancoColorPrices: { [key: string]: number } = {
+        'GOLDEN': -20,  // -$20 discount
+        'PLATINUM': 0,  // Default (free)
+        'ASH': 20       // $20 additional cost
+      };
+      return blancoColorPrices[color] || 0;
+    }
+    
+    // Other product colors
     const colorPrices: { [key: string]: number } = {
       'JET BLACK': 100,  // Fixed: JET BLACK should be $100, not $0
       'OFF BLACK': 0,    // Only OFF BLACK is free
@@ -517,7 +558,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     }, 0);
   };
 
-  // Format price with currency
+  // Format price with currency (for main cart prices, not detail prices in red)
   const formatPrice = useCallback((price: number) => {
     const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
     const convertedPrice = price * currency.rate;
@@ -525,7 +566,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
       __html: currency.symbol + convertedPrice.toLocaleString('en-US', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0
-      })
+      }) + ' ' + selectedCurrency
     };
   }, [currencyRates, selectedCurrency]);
 
@@ -619,17 +660,17 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                 fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
               }}
             >
-              SHOPPING BAG (<span style={{ color: '#808080' }}>{cartCount}</span>)
+              SHOPPING BAG (<span style={{ color: '#EB1C24' }}>{cartCount}</span>)
             </h3>
               <div className="flex items-center" style={{ gap: '6px', flexWrap: 'wrap' }}>
             <span
               style={{ 
-                color: '#EB1C24', 
                 fontSize: '10px',
                 fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
               }}
             >
-              CURRENCY &gt; {selectedCurrency}
+              <span style={{ color: '#000000' }}>CURRENCY &gt; </span>
+              <span style={{ color: '#EB1C24' }}>{selectedCurrency}</span>
             </span>
               </div>
             </div>
@@ -759,7 +800,16 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           const capSize = item.capSize || 'M';
                           const length = item.length || '24"';
                           const density = item.density || '200%';
-                          const color = item.color || 'OFF BLACK';
+                          // CRITICAL: Validate BLANCO colors - if item.color is invalid for BLANCO, use PLATINUM
+                          let color = item.color;
+                          if (item.name === 'BLANCO') {
+                            const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+                            if (!color || !validBlancoColors.includes(color)) {
+                              color = 'PLATINUM'; // Default to PLATINUM for invalid/missing BLANCO colors
+                            }
+                          } else {
+                            color = color || 'OFF BLACK';
+                          }
                           const texture = item.texture || 'SILKY';
                           const lace = item.lace || '13X6';
                           const hairline = item.hairline || 'NATURAL';
@@ -870,7 +920,24 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           lineHeight: '1.1'
                         }}
                       >
-                        {item.length || '24"'} RAW CAMBODIAN
+                        {(() => {
+                          // Get the correct hair origin based on product name
+                          const getHairOrigin = (productName: string) => {
+                            switch (productName) {
+                              case 'NOIR':
+                                return 'CAMBODIAN';
+                              case 'BLANCO':
+                                return 'CAMBODIAN'; // or 'RUSSIAN' if needed
+                              case 'SOFT CURL':
+                                return 'VIETNAMESE';
+                              case 'SOFT WAVE':
+                                return 'INDONESIAN';
+                              default:
+                                return 'CAMBODIAN';
+                            }
+                          };
+                          return `${item.length || '24"'} RAW ${getHairOrigin(item.name)}`;
+                        })()}
                       </p>
                       <p 
                         className="font-bold"
@@ -903,7 +970,17 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           if (item.density && item.density !== '200%') items.push({ type: 'density', value: item.density, fullName: `${item.density} density` });
                           if (item.lace && item.lace !== '13X6') items.push({ type: 'lace', value: item.lace, fullName: `${item.lace} lace` });
                           if (item.texture && item.texture !== 'SILKY') items.push({ type: 'texture', value: item.texture, fullName: item.texture });
-                          if (item.color && item.color !== 'OFF BLACK') items.push({ type: 'color', value: item.color, fullName: item.color });
+                          // For BLANCO, default color is PLATINUM; for others, default is OFF BLACK
+                          // CRITICAL: Validate BLANCO colors - if item.color is invalid for BLANCO, use PLATINUM
+                          let itemColor = item.color;
+                          if (item.name === 'BLANCO') {
+                            const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+                            if (!itemColor || !validBlancoColors.includes(itemColor)) {
+                              itemColor = 'PLATINUM'; // Default to PLATINUM for invalid/missing BLANCO colors
+                            }
+                          }
+                          const defaultColor = item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
+                          if (itemColor && itemColor !== defaultColor) items.push({ type: 'color', value: itemColor, fullName: itemColor });
                           if (item.hairline && item.hairline !== 'NATURAL') items.push({ type: 'hairline', value: item.hairline, fullName: `${item.hairline} hairline` });
                           
                           // Only show styling if it's a valid styling option (BANGS, CRIMPS, etc.), not a part selection (MIDDLE, LEFT, RIGHT)
@@ -920,18 +997,26 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           const customizableItems = items.filter(item => item.type !== 'density' && item.type !== 'lace');
                           const useFullNames = customizableItems.length === 1;
                           
-                          // Helper function to format price with red color
+                          // Helper function to format price with red color and currency conversion
                           // CRITICAL: This function must not be optimized away in production builds
                           const formatPriceDisplay = (price: number): string => {
                             // Explicitly check for zero to prevent optimization issues
                             if (price === 0 || price === null || price === undefined || isNaN(price)) {
                               return '';
                             }
+                            // Get currency info
+                            const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
+                            // Convert price to selected currency
+                            const convertedPrice = price * currency.rate;
                             // Show negative sign for negative prices, positive sign for positive prices
                             const sign = price > 0 ? '+' : '-';
-                            const priceStr = Math.abs(price).toString();
+                            // Format the converted price
+                            const priceStr = Math.abs(convertedPrice).toLocaleString('en-US', {
+                              minimumFractionDigits: 0,
+                              maximumFractionDigits: 0
+                            });
                             // Explicitly construct the HTML string to prevent minification issues
-                            return ' <span style="color: #EB1C24;">' + sign + '$' + priceStr + '</span>';
+                            return ' <span style="color: #000000;">' + sign + currency.symbol + priceStr + '</span>';
                           };
                           
                           // Build text with each item on its own line and prices in red
@@ -1003,10 +1088,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               text += displayValue.toUpperCase();
                             } else if (itemData.type === 'color') {
                               // Color: show value followed by "COLOR" in all caps with price
-                              // CRITICAL: Include length to calculate correct price (30"+ adds $40)
+                              // CRITICAL: Include length and product name to calculate correct price
                               const colorValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
                               const itemLength = item.length || '24"';
-                              const price = _getColorPrice(colorValue, itemLength);
+                              const price = _getColorPrice(colorValue, itemLength, item.name);
                               const priceDisplay = formatPriceDisplay(price);
                               const displayValue = `${colorValue} COLOR${priceDisplay}`;
                               text += displayValue.toUpperCase();
@@ -1060,31 +1145,28 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             } else if (itemData.type === 'addOns') {
                               const addOnsArray = Array.isArray(itemData.value) ? itemData.value : [];
                               const itemLace = item.lace || '13X6';
-                              const totalAddOnPrice = _getAddOnsPrice(addOnsArray, itemLace);
-                              const priceDisplay = formatPriceDisplay(totalAddOnPrice);
                               
-                              if (useFullNames) {
-                                // For single item, show full add-on names with price
-                                const addOnText = Array.isArray(itemData.value) ? itemData.value.join(', ') : String(itemData.value);
-                                text += addOnText.toUpperCase() + priceDisplay;
+                              // Show each add-on on its own line with its price immediately after it
+                              if (Array.isArray(itemData.value)) {
+                                itemData.value.forEach((addOn: string, addOnIndex: number) => {
+                                  // Use non-breaking spaces within add-on section
+                                  const addOnPrice = _getAddOnsPrice([addOn], itemLace);
+                                  const addOnPriceDisplay = formatPriceDisplay(addOnPrice);
+                                  // Replace "BLEACH" with "BLEACH KNOTS" for display
+                                  const addOnText = addOn.toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/ /g, '\u00A0');
+                                  // Add line break before each add-on except the first (each on its own line)
+                                  if (addOnIndex > 0) {
+                                    text += '<br/>';
+                                  }
+                                  text += addOnText + addOnPriceDisplay;
+                                });
                               } else {
-                                // For multiple items, show abbreviated add-ons with price
-                                if (Array.isArray(itemData.value)) {
-                                  itemData.value.forEach((addOn: string, addOnIndex: number) => {
-                                    // Use non-breaking spaces within add-on section
-                                    const addOnPrice = _getAddOnsPrice([addOn], itemLace);
-                                    const addOnPriceDisplay = formatPriceDisplay(addOnPrice);
-                                    const addOnText = addOn.toUpperCase().replace(/ /g, '\u00A0');
-                                    if (addOnIndex > 0) {
-                                      text += '<br/>';
-                                    }
-                                    text += addOnText + addOnPriceDisplay;
-                                  });
-                                } else {
-                                  // Handle single string case
-                                  const addOnText = String(itemData.value).toUpperCase().replace(/ /g, '\u00A0');
-                                  text += addOnText + priceDisplay;
-                                }
+                                // Handle single string case
+                                const addOnPrice = _getAddOnsPrice([String(itemData.value)], itemLace);
+                                const addOnPriceDisplay = formatPriceDisplay(addOnPrice);
+                                // Replace "BLEACH" with "BLEACH KNOTS" for display
+                                const addOnText = String(itemData.value).toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/ /g, '\u00A0');
+                                text += addOnText + addOnPriceDisplay;
                               }
                             }
                           });
@@ -1106,7 +1188,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               const hasSpecs = (item.density && item.density !== '200%') || 
                                              (item.lace && item.lace !== '13X6') || 
                                              (item.texture && item.texture !== 'SILKY') || 
-                                             (item.color && item.color !== 'OFF BLACK') || 
+                                             (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
                                              (item.hairline && item.hairline !== 'NATURAL') || 
                                              (item.styling && item.styling !== 'NONE') || 
                                              (item.addOns && item.addOns.length > 0);
@@ -1130,7 +1212,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             const hasSpecs = (item.density && item.density !== '200%') || 
                                            (item.lace && item.lace !== '13X6') || 
                                            (item.texture && item.texture !== 'SILKY') || 
-                                           (item.color && item.color !== 'OFF BLACK') || 
+                                           (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
                                            (item.hairline && item.hairline !== 'NATURAL') || 
                                            (item.styling && item.styling !== 'NONE') || 
                                            (item.addOns && item.addOns.length > 0);
