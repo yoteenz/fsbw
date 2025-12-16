@@ -2446,32 +2446,13 @@ function NoirSelection() {
                     style={{ 
                       maxWidth: '100%',
                       maxHeight: '100%',
+                      width: '100%',
+                      height: '100%',
                       objectFit: 'contain',
-                      borderRadius: '4px'
+                      borderRadius: '0',
+                      transform: 'scale(1.05)'
                     }}
                   />
-                  <button
-                    onClick={handleCloseChart}
-                    style={{
-                      position: 'absolute',
-                      top: '-10px',
-                      right: '-10px',
-                      backgroundColor: 'white',
-                      border: '2px solid black',
-                      borderRadius: '50%',
-                      width: '30px',
-                      height: '30px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      fontSize: '16px',
-                      fontWeight: 'bold',
-                      color: 'black'
-                    }}
-                  >
-                    ×
-                  </button>
                 </div>
               </div>,
               document.body
@@ -2830,7 +2811,7 @@ function NoirSelection() {
           {/* CAP SIZE CHART IMAGE - Centered below quantity selector */}
           <div className="flex justify-center mt-4" style={{ transform: 'translateX(4px) translateY(-27px)' }}>
             <img
-              src="/assets/cap-chart.svg"
+              src="/assets/NOIR/cap-size-chart.png"
               alt="Cap Size Chart"
               style={{ maxWidth: '194px', maxHeight: '154px', cursor: 'pointer' }}
               onClick={handleChartClick}

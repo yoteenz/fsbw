@@ -264,8 +264,9 @@ function CurlyUnitsPage() {
               display: 'flex',
               flexWrap: 'wrap',
               gap: '28px',
-              paddingTop: '10px',
-              justifyContent: 'center'
+              paddingTop: '50px',
+              justifyContent: 'center',
+              position: 'relative'
             }}
           >
             {products && products.length > 0 ? products.map((product, index) => {
@@ -285,6 +286,57 @@ function CurlyUnitsPage() {
                     maxWidth: '300px'
                   }}
                 >
+                  {/* Toggle icon above left card (index 0) */}
+                  {index === 0 && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        left: '5px',
+                        bottom: '100%',
+                        marginBottom: '3px',
+                        zIndex: 5,
+                        pointerEvents: 'none'
+                      }}
+                    >
+                      <img
+                        src="/assets/toggle.svg"
+                        alt="Toggle"
+                        style={{
+                          width: 'auto',
+                          height: 'auto',
+                          maxWidth: '30px',
+                          maxHeight: '30px'
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  {/* Product count text above right card (index 1) */}
+                  {index === 1 && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        right: '5px',
+                        bottom: '100%',
+                        marginBottom: '6px',
+                        transform: 'translateY(20px)',
+                        zIndex: 5,
+                        pointerEvents: 'none'
+                      }}
+                    >
+                      <p
+                        style={{
+                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                          fontSize: '14px',
+                          color: 'black',
+                          margin: '0',
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        {products.length} UNITS
+                      </p>
+                    </div>
+                  )}
                   <div
                     className="relative border border-black"
                     style={{
