@@ -78,8 +78,8 @@ function BlancoSelection() {
   const [selectedMannequinView, setSelectedMannequinView] = useState(0);
   const [is3DView, setIs3DView] = useState(() => {
     // Check localStorage for saved 3D view preference, default to false (2D view)
-    // Use BLANCO-specific key to avoid conflicts with other products
-    const saved3DView = localStorage.getItem('blanco-3d-view');
+    // Use shared key so 3D/2D view preference persists across all product pages
+    const saved3DView = localStorage.getItem('product-3d-view');
     return saved3DView === 'true';
   });
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -475,7 +475,7 @@ function BlancoSelection() {
                 onClick={() => {
                   const new3DView = !is3DView;
                   setIs3DView(new3DView);
-                  localStorage.setItem('blanco-3d-view', new3DView.toString());
+                  localStorage.setItem('product-3d-view', new3DView.toString());
                 }}
                 >
                   <span 
@@ -641,12 +641,12 @@ function BlancoSelection() {
               className="text-center text-black mb-2"
               style={{ 
                 fontFamily: '"Covered By Your Grace", cursive',
-                fontSize: '50px',
+                fontSize: '46px',
                 fontWeight: '400',
                 lineHeight: '1.2',
                 margin: '0',
                 padding: '0',
-                transform: 'translateY(-8px)'
+                transform: 'translateY(-5px)'
               }}
             >
               BLANCO

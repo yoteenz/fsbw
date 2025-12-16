@@ -768,7 +768,8 @@ function ColorSelection() {
                     backgroundImage: `url('/assets/leaf-brick.png')`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat'
+                    backgroundRepeat: 'no-repeat',
+                    overflow: 'visible'
                   }}
                 >
                   <p
@@ -776,12 +777,21 @@ function ColorSelection() {
                     style={{
                       color: '#EB1C24',
                       whiteSpace: 'nowrap',
+                      overflow: 'visible',
+                      width: 'max-content',
                       fontSize: (() => {
                         const pathname = location.pathname;
-                        if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-curl/customize')) {
-                          return 'calc(clamp(2rem, 4vw, 2.5rem) + 2px)'; // Increased by 2px for SOFT WAVE/CURL
+                        if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/') || pathname.includes('/blanco/')) {
+                          return 'calc(clamp(2rem, 4vw, 2.5rem) + 8px)'; // Same size for SOFT WAVE/CURL/BLANCO
                         }
                         return undefined; // Default size
+                      })(),
+                      transform: (() => {
+                        const pathname = location.pathname;
+                        if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/')) {
+                          return 'translate(-50%, 2px)'; // Move down 2px for SOFT WAVE/CURL
+                        }
+                        return 'translate(-50%, 0)'; // Default position
                       })(),
                     }}
                     onClick={() => {

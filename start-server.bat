@@ -4,3 +4,4 @@ cd /d "%~dp0"
 echo Starting Vite dev server from: %CD%
 echo.
 call npm run dev
+

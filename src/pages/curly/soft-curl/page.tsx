@@ -78,10 +78,10 @@ function SoftCurlSelection() {
   const [selectedMannequinView, setSelectedMannequinView] = useState(0);
   const [is3DView, setIs3DView] = useState(() => {
     // Check localStorage for saved 3D view preference, default to false (2D view)
-    // Use SOFT CURL-specific key to avoid conflicts with other products
+    // Use shared key so 3D/2D view preference persists across all product pages
     if (typeof window !== 'undefined') {
       try {
-        const saved3DView = localStorage.getItem('soft-curl-3d-view');
+        const saved3DView = localStorage.getItem('product-3d-view');
         return saved3DView === 'true';
       } catch (e) {
         return false;
@@ -482,7 +482,7 @@ function SoftCurlSelection() {
                   onClick={() => {
                     const new3DView = !is3DView;
                     setIs3DView(new3DView);
-                    localStorage.setItem('soft-curl-3d-view', new3DView.toString());
+                    localStorage.setItem('product-3d-view', new3DView.toString());
                   }}
                 >
                   <span 
@@ -647,7 +647,7 @@ function SoftCurlSelection() {
                 className="text-center text-black mb-2 noir-product-name"
                 style={{ 
                   fontFamily: '"Covered By Your Grace", cursive !important',
-                  fontSize: '50px !important',
+                  fontSize: '46px !important',
                   fontWeight: '400 !important',
                   lineHeight: '1.2 !important',
                   margin: '0 !important',
@@ -663,7 +663,7 @@ function SoftCurlSelection() {
                   whiteSpace: 'nowrap !important',
                   position: 'relative' as const,
                   zIndex: '999 !important',
-                  transform: 'translateY(-8px) !important',
+                  transform: 'translateY(-5px) !important',
                   scale: '1 !important',
                   zoom: '1 !important'
                 }}

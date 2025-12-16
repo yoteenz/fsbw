@@ -32,3 +32,4 @@ npm run dev 2>&1 | ForEach-Object {
         Write-Host $_ -ForegroundColor Red
     }
 }
+

@@ -45,3 +45,4 @@ Write-Host ""
 # Start server with explicit error handling
 $env:NODE_ENV = "development"
 npm run dev
+

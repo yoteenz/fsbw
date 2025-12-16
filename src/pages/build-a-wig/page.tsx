@@ -4068,20 +4068,36 @@ export default function BuildAWigPage() {
                 style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', cursor: 'pointer' }}
                 onClick={() => {
                   const pathname = location.pathname;
-                  // Check for product-specific routes (main, customize, edit)
-                  if (pathname.startsWith('/build-a-wig/blanco')) navigate('/straight/blanco');
-                  else if (pathname.startsWith('/build-a-wig/soft-wave')) navigate('/wavy/soft-wave');
-                  else if (pathname.startsWith('/build-a-wig/soft-curl')) navigate('/curly/soft-curl');
-                  else if (pathname.startsWith('/build-a-wig/noir')) navigate('/straight/noir');
-                  else navigate('/straight/noir');
+                  // Check for product-specific routes (main, customize, edit) - order matters!
+                  if (pathname.startsWith('/build-a-wig/blanco')) {
+                    navigate('/straight/blanco');
+                  } else if (pathname.startsWith('/build-a-wig/soft-wave')) {
+                    navigate('/wavy/soft-wave');
+                  } else if (pathname.startsWith('/build-a-wig/soft-curl')) {
+                    navigate('/curly/soft-curl');
+                  } else if (pathname.startsWith('/build-a-wig/noir')) {
+                    navigate('/straight/noir');
+                  } else {
+                    navigate('/straight/noir');
+                  }
                 }}
               >
                 {(() => {
                   const pathname = location.pathname;
-                  if (pathname.startsWith('/build-a-wig/blanco')) return 'BLANCO';
-                  if (pathname.startsWith('/build-a-wig/soft-wave')) return 'SOFT WAVE';
-                  if (pathname.startsWith('/build-a-wig/soft-curl')) return 'SOFT CURL';
-                  if (pathname.startsWith('/build-a-wig/noir')) return 'NOIR';
+                  // Check for product-specific routes - order matters! Check specific products before noir
+                  if (pathname.startsWith('/build-a-wig/blanco')) {
+                    return 'BLANCO';
+                  }
+                  if (pathname.startsWith('/build-a-wig/soft-wave')) {
+                    return 'SOFT WAVE';
+                  }
+                  if (pathname.startsWith('/build-a-wig/soft-curl')) {
+                    return 'SOFT CURL';
+                  }
+                  if (pathname.startsWith('/build-a-wig/noir')) {
+                    return 'NOIR';
+                  }
+                  // Default fallback
                   return 'NOIR';
                 })()}
               </span>
@@ -4134,7 +4150,8 @@ export default function BuildAWigPage() {
                     backgroundImage: `url('/assets/leaf-brick.png')`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat'
+                    backgroundRepeat: 'no-repeat',
+                    overflow: 'visible'
                   }}
                 >
                   <p
@@ -4142,27 +4159,55 @@ export default function BuildAWigPage() {
                     style={{
                       color: '#EB1C24',
                       whiteSpace: 'nowrap',
+                      overflow: 'visible',
+                      width: 'max-content',
                       fontSize: (() => {
                         const pathname = location.pathname;
-                        if (pathname.startsWith('/build-a-wig/soft-wave') || pathname.startsWith('/build-a-wig/soft-curl')) {
-                          return 'calc(clamp(2rem, 4vw, 2.5rem) + 2px)'; // Increased by 2px for SOFT WAVE/CURL
+                        if (pathname.startsWith('/build-a-wig/soft-wave') || pathname.startsWith('/build-a-wig/soft-curl') || pathname.startsWith('/build-a-wig/blanco')) {
+                          return 'calc(clamp(2rem, 4vw, 2.5rem) + 8px)'; // Same size for SOFT WAVE/CURL/BLANCO
                         }
                         return undefined; // Default size
+                      })(),
+                      transform: (() => {
+                        const pathname = location.pathname;
+                        if (pathname.startsWith('/build-a-wig/soft-wave') || pathname.startsWith('/build-a-wig/soft-curl')) {
+                          return 'translate(-50%, 2px)'; // Move down 2px for SOFT WAVE/CURL
+                        }
+                        return 'translate(-50%, 0)'; // Default position
                       })(),
                     }}
                     onClick={() => {
                       const pathname = location.pathname;
-                      if (pathname === '/build-a-wig/blanco/customize') navigate('/straight/blanco');
-                      else if (pathname === '/build-a-wig/soft-wave/customize') navigate('/wavy/soft-wave');
-                      else if (pathname === '/build-a-wig/soft-curl/customize') navigate('/curly/soft-curl');
-                      else navigate('/straight/noir');
+                      // Check for product-specific routes (main, customize, edit)
+                      if (pathname.startsWith('/build-a-wig/blanco')) {
+                        navigate('/straight/blanco');
+                      } else if (pathname.startsWith('/build-a-wig/soft-wave')) {
+                        navigate('/wavy/soft-wave');
+                      } else if (pathname.startsWith('/build-a-wig/soft-curl')) {
+                        navigate('/curly/soft-curl');
+                      } else if (pathname.startsWith('/build-a-wig/noir')) {
+                        navigate('/straight/noir');
+                      } else {
+                        navigate('/straight/noir');
+                      }
                     }}
                   >
                     {(() => {
                       const pathname = location.pathname;
-                      if (pathname === '/build-a-wig/blanco/customize') return 'BLANCO';
-                      if (pathname === '/build-a-wig/soft-wave/customize') return 'SOFT WAVE';
-                      if (pathname === '/build-a-wig/soft-curl/customize') return 'SOFT CURL';
+                      // Check for product-specific routes (main, customize, edit) - order matters!
+                      if (pathname.startsWith('/build-a-wig/blanco')) {
+                        return 'BLANCO';
+                      }
+                      if (pathname.startsWith('/build-a-wig/soft-wave')) {
+                        return 'SOFT WAVE';
+                      }
+                      if (pathname.startsWith('/build-a-wig/soft-curl')) {
+                        return 'SOFT CURL';
+                      }
+                      if (pathname.startsWith('/build-a-wig/noir')) {
+                        return 'NOIR';
+                      }
+                      // Default fallback
                       return 'NOIR';
                     })()}
                   </p>

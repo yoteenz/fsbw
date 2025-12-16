@@ -578,11 +578,14 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
       <div className="absolute left-4 right-4 pointer-events-auto" style={{ top: '86px' }}>
         <div
           data-dropdown-content
-          className="bg-white/60 backdrop-blur-md border border-black shadow-lg hover:shadow-xl transition-all duration-300 ease-out"
+          className="bg-white/60 backdrop-blur-md border border-black shadow-lg hover:shadow-xl transition-all duration-300 ease-out flex flex-col"
         style={{
           borderWidth: '1.3px',
             zIndex: 999999999,
-            position: 'relative'
+            position: 'relative',
+            maxHeight: 'calc(100vh - 100px)',
+            display: 'flex',
+            flexDirection: 'column'
           }}
           onMouseDown={(e) => {
             // Prevent backdrop from closing dropdown when clicking inside
@@ -599,7 +602,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                 fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
               }}
             >
-              SHOPPING BAG (<span style={{ color: '#EB1C24' }}>{cartCount}</span>)
+              SHOPPING BAG (<span style={{ color: '#808080' }}>{cartCount}</span>)
             </h3>
               <div className="flex items-center" style={{ gap: '6px', flexWrap: 'wrap' }}>
             <span
@@ -617,7 +620,14 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
 
 
         {/* Cart Items */}
-          <div className="px-3 py-2">
+          <div 
+            className="px-3 py-2 overflow-y-auto flex-1"
+            style={{
+              maxHeight: '280px',
+              minHeight: '0',
+              overflowY: 'auto'
+            }}
+          >
           {cartItems.length === 0 ? (
               <div className="text-center py-4">
               <p 
@@ -812,14 +822,19 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     </div>
                   
                     {/* Item Details */}
-                   <div className="flex-1 min-w-0 flex flex-col justify-center" style={{ marginLeft: '18px', marginTop: '4px' }}>
+                   <div className="flex-1 min-w-0 flex flex-col" style={{ marginLeft: '18px', marginTop: '4px' }}>
                       <p 
                         className="font-medium truncate cart-product-name"
                         style={{ 
                           fontFamily: '"Covered By Your Grace", cursive',
                           color: '#000000',
                           textTransform: 'uppercase',
-                          fontSize: '20px',
+                          fontSize: (() => {
+                            if (item.name === 'BLANCO' || item.name === 'SOFT CURL' || item.name === 'SOFT WAVE') {
+                              return '18px'; // Decreased by 2px for BLANCO, SOFT CURL, SOFT WAVE
+                            }
+                            return '21px'; // Increased by 1px for NOIR
+                          })(),
                           lineHeight: '1.1',
                           transform: 'translateY(-9px)'
                         }}
