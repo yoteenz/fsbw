@@ -3808,12 +3808,28 @@ export default function BuildAWigPage() {
         validStyling = 'NONE'; // If styling is a part selection, set to NONE
       }
       
+      // Determine product name and image based on current route
+      const pathname = location.pathname;
+      let productName = 'NOIR';
+      let productImage = '/assets/NOIR/noir-thumb.png';
+      
+      if (pathname.startsWith('/build-a-wig/blanco')) {
+        productName = 'BLANCO';
+        productImage = '/assets/NOIR/blanco-thumb.png';
+      } else if (pathname.startsWith('/build-a-wig/soft-wave')) {
+        productName = 'SOFT WAVE';
+        productImage = '/assets/NOIR/wave-thumb.png';
+      } else if (pathname.startsWith('/build-a-wig/soft-curl')) {
+        productName = 'SOFT CURL';
+        productImage = '/assets/NOIR/curl-thumb.png';
+      }
+      
       const cartItem = {
         id: `build-a-wig-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        name: 'NOIR',
+        name: productName,
         price: totalPrice, // Use the calculated total price
         quantity: 1,
-        image: '/assets/NOIR/noir-thumb.png',
+        image: productImage,
         capSize: customization.capSize,
         length: customization.length,
         density: customization.density,

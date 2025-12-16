@@ -11,13 +11,15 @@ export default defineConfig({
   },
   server: {
     port: 3001,
-    host: '0.0.0.0',
-    open: true,
-    strictPort: true,
+    host: true, // This is equivalent to '0.0.0.0' but more reliable
+    open: false,
+    strictPort: false,
     hmr: {
-      host: '0.0.0.0',
+      clientPort: 3001,
     },
   },
+  logLevel: 'info',
+  clearScreen: false,
 })
 
 

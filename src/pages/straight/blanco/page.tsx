@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import DynamicCartIcon from '../../../components/DynamicCartIcon';
 
 function BlancoSelection() {
   const navigate = useNavigate();
@@ -8,10 +9,77 @@ function BlancoSelection() {
   const [quantity, setQuantity] = useState(1);
   const [showChartModal, setShowChartModal] = useState(false);
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
+  
+  // Cart count state
+  const [cartCount, setCartCount] = useState(() => {
+    return parseInt(localStorage.getItem('cartCount') || '0');
+  });
+  
+  // CRITICAL: Clear any noir-specific localStorage values and set BLANCO defaults on page load
+  // This prevents noir page settings from interfering with blanco page
+  useEffect(() => {
+    // Clear any edit mode flags that might be from other products
+    if (localStorage.getItem('editingCartItem')) {
+      const editingItem = JSON.parse(localStorage.getItem('editingCartItem') || '{}');
+      // Only clear if it's not a BLANCO item
+      if (editingItem.name !== 'BLANCO') {
+        localStorage.removeItem('editingCartItem');
+        localStorage.removeItem('editingCartItemId');
+      }
+    }
+    
+    // Set BLANCO-specific defaults (don't read from localStorage to avoid noir contamination)
+    // These are only used if user goes to build-a-wig page from blanco
+    localStorage.setItem('selectedLength', '24"');
+    localStorage.setItem('selectedLengthPrice', '0');
+    localStorage.setItem('selectedDensity', '200%');
+    localStorage.setItem('selectedDensityPrice', '0');
+    localStorage.setItem('selectedLace', '13X6');
+    localStorage.setItem('selectedLacePrice', '0');
+    localStorage.setItem('selectedTexture', 'SILKY');
+    localStorage.setItem('selectedTexturePrice', '0');
+    localStorage.setItem('selectedColor', 'OFF BLACK');
+    localStorage.setItem('selectedColorPrice', '0');
+    localStorage.setItem('selectedHairline', 'NATURAL');
+    localStorage.setItem('selectedHairlinePrice', '0');
+    localStorage.setItem('selectedStyling', 'NONE');
+    localStorage.setItem('selectedStylingPrice', '0');
+    localStorage.setItem('selectedAddOns', JSON.stringify([]));
+    localStorage.setItem('selectedAddOnsPrice', '0');
+  }, []);
+
+  // Listen for cart count changes
+  useEffect(() => {
+    const handleCartCountUpdate = (event: CustomEvent) => {
+      setCartCount(event.detail);
+    };
+
+    const handleStorageChange = () => {
+      try {
+        const newCartCount = parseInt(localStorage.getItem('cartCount') || '0');
+        setCartCount(newCartCount);
+      } catch (e) {
+        setCartCount(0);
+      }
+    };
+
+    window.addEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
+    window.addEventListener('cartUpdated', handleStorageChange);
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('focus', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
+      window.removeEventListener('cartUpdated', handleStorageChange);
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('focus', handleStorageChange);
+    };
+  }, []);
   const [selectedMannequinView, setSelectedMannequinView] = useState(0);
   const [is3DView, setIs3DView] = useState(() => {
     // Check localStorage for saved 3D view preference, default to false (2D view)
-    const saved3DView = localStorage.getItem('noir-3d-view');
+    // Use BLANCO-specific key to avoid conflicts with other products
+    const saved3DView = localStorage.getItem('blanco-3d-view');
     return saved3DView === 'true';
   });
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -274,6 +342,7 @@ function BlancoSelection() {
       const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
       const newCount = currentCount + quantity;
       localStorage.setItem('cartCount', newCount.toString());
+      setCartCount(newCount);
       
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
@@ -345,14 +414,8 @@ function BlancoSelection() {
               </span>
             </p>
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
-              <div style={{ position: 'relative', width: '22px', height: '19px' }}>
-                <img 
-                  src="/assets/inactive cart-icon.svg"
-                  alt="Cart"
-                  width={22}
-                  height={19}
-                  style={{ width: '22px', height: '19px' }}
-                />
+              <div>
+                <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
               <img
                 alt="Menu"
@@ -412,7 +475,7 @@ function BlancoSelection() {
                 onClick={() => {
                   const new3DView = !is3DView;
                   setIs3DView(new3DView);
-                  localStorage.setItem('noir-3d-view', new3DView.toString());
+                  localStorage.setItem('blanco-3d-view', new3DView.toString());
                 }}
                 >
                   <span 

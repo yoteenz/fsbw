@@ -151,36 +151,46 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
           // CRITICAL: Use the SAVED PRICE from each item, don't recalculate
           // Each item already has its correct price saved when it was added to cart
           // Recalculating would use current localStorage values, causing all items to show the same price
+          // This applies to ALL product types (NOIR, BLANCO, SOFT CURL, SOFT WAVE)
           const itemsWithCorrectPrices = items.map((item: any, index: number) => {
-            if (item.name === 'NOIR') {
-              const originalPrice = item.price;
-              const finalPrice = item.price || 740; // Fallback to base price if missing
-              
-              // Log price comparison if price seems wrong
-              if (isEditMode && index === 0) {
-                const calculatedPrice = calculateActualPrice();
-                console.log('[CART DROPDOWN] Price comparison for first item:', {
-                  itemId: item.id,
-                  originalStoredPrice: originalPrice,
-                  finalPriceUsed: finalPrice,
-                  calculatedPriceFromLocalStorage: calculatedPrice,
-                  priceDifference: finalPrice - calculatedPrice,
-                  isEditMode,
-                  warning: originalPrice !== calculatedPrice ? 'PRICE MISMATCH DETECTED!' : 'Prices match'
-                });
+            // Get base price fallback based on product name
+            const getBasePrice = (productName: string) => {
+              switch (productName) {
+                case 'NOIR': return 740;
+                case 'BLANCO': return 820;
+                case 'SOFT CURL': return 780;
+                case 'SOFT WAVE': return 760;
+                default: return 740;
               }
-              
-              console.log('[CART DROPDOWN] Using saved price for item:', {
+            };
+            
+            const originalPrice = item.price;
+            const finalPrice = item.price || getBasePrice(item.name || 'NOIR'); // Fallback to base price if missing
+            
+            // Log price comparison if price seems wrong (only for edit mode and first item)
+            if (isEditMode && index === 0 && item.name === 'NOIR') {
+              const calculatedPrice = calculateActualPrice();
+              console.log('[CART DROPDOWN] Price comparison for first item:', {
                 itemId: item.id,
-                capSize: item.capSize,
-                color: item.color,
-                storedPrice: originalPrice,
-                finalPrice: finalPrice
+                originalStoredPrice: originalPrice,
+                finalPriceUsed: finalPrice,
+                calculatedPriceFromLocalStorage: calculatedPrice,
+                priceDifference: finalPrice - calculatedPrice,
+                isEditMode,
+                warning: originalPrice !== calculatedPrice ? 'PRICE MISMATCH DETECTED!' : 'Prices match'
               });
-              
-              return { ...item, price: finalPrice };
             }
-            return item;
+            
+            console.log('[CART DROPDOWN] Using saved price for item:', {
+              itemId: item.id,
+              name: item.name,
+              capSize: item.capSize,
+              color: item.color,
+              storedPrice: originalPrice,
+              finalPrice: finalPrice
+            });
+            
+            return { ...item, price: finalPrice };
           });
           
           console.log('[CART DROPDOWN] Loading cart items with saved prices:', itemsWithCorrectPrices);
@@ -589,7 +599,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                 fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
               }}
             >
-              SHOPPING BAG
+              SHOPPING BAG (<span style={{ color: '#EB1C24' }}>{cartCount}</span>)
             </h3>
               <div className="flex items-center" style={{ gap: '6px', flexWrap: 'wrap' }}>
             <span
@@ -632,12 +642,67 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
                         style={{ width: '88px', height: '88px' }}
                         onClick={() => {
+                          // Determine the correct product page route based on item name
+                          let productRoute = '/straight/noir'; // Default fallback
+                          if (item.name === 'NOIR') {
+                            productRoute = '/straight/noir';
+                          } else if (item.name === 'BLANCO') {
+                            productRoute = '/straight/blanco';
+                          } else if (item.name === 'SOFT WAVE') {
+                            productRoute = '/wavy/soft-wave';
+                          } else if (item.name === 'SOFT CURL') {
+                            productRoute = '/curly/soft-curl';
+                          }
+                          
                           onClose(); // Close the dropdown first
-                          navigate('/straight/noir'); // Navigate to NOIR unit page
+                          navigate(productRoute); // Navigate to product-specific unit page
                         }}
                       >
                         <img
-                          src={item.image || "/assets/NOIR/noir-thumb.png"}
+                          src={(() => {
+                            // Determine thumbnail based on product name and hairline selection
+                            const hairline = item.hairline || 'NATURAL';
+                            const hairlineUpper = hairline.toUpperCase();
+                            const hasPeak = hairlineUpper.includes('PEAK');
+                            const hasLagos = hairlineUpper.includes('LAGOS');
+                            
+                            // For NOIR product: use peak/lagos thumbnails if selected
+                            if (item.name === 'NOIR') {
+                              if (hasPeak) {
+                                return '/assets/noir-peak-thumb.png';
+                              } else if (hasLagos) {
+                                return '/assets/noir-lagos-thumb.png';
+                              }
+                              // Default to noir thumbnail for natural hairline
+                              return item.image || '/assets/NOIR/noir-thumb.png';
+                            }
+                            
+                            // For other products (BLANCO, SOFT WAVE, SOFT CURL):
+                            // Use product-specific peak/lagos thumbnails when available
+                            // TODO: Update these paths when product-specific thumbnails are added
+                            if (item.name === 'BLANCO') {
+                              if (hasPeak) {
+                                // return '/assets/blanco peak front.png'; // Uncomment when available
+                              } else if (hasLagos) {
+                                // return '/assets/blanco lagos front.png'; // Uncomment when available
+                              }
+                            } else if (item.name === 'SOFT WAVE') {
+                              if (hasPeak) {
+                                // return '/assets/soft-wave peak front.png'; // Uncomment when available
+                              } else if (hasLagos) {
+                                // return '/assets/soft-wave lagos front.png'; // Uncomment when available
+                              }
+                            } else if (item.name === 'SOFT CURL') {
+                              if (hasPeak) {
+                                // return '/assets/soft-curl peak front.png'; // Uncomment when available
+                              } else if (hasLagos) {
+                                // return '/assets/soft-curl lagos front.png'; // Uncomment when available
+                              }
+                            }
+                            
+                            // Default: use the product's default thumbnail
+                            return item.image || '/assets/NOIR/noir-thumb.png';
+                          })()}
                           alt={item.name}
                           className="object-cover rounded"
                           style={{ width: '88px', height: '88px' }}
@@ -726,8 +791,20 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           // Dispatch custom event to notify edit page of item change
                           window.dispatchEvent(new CustomEvent('editingCartItemChanged', { detail: { itemId: item.id } }));
                           
+                          // Determine the correct edit route based on product name
+                          let editRoute = '/build-a-wig/edit'; // Default fallback
+                          if (item.name === 'NOIR') {
+                            editRoute = '/build-a-wig/noir/edit';
+                          } else if (item.name === 'BLANCO') {
+                            editRoute = '/build-a-wig/blanco/edit';
+                          } else if (item.name === 'SOFT WAVE') {
+                            editRoute = '/build-a-wig/soft-wave/edit';
+                          } else if (item.name === 'SOFT CURL') {
+                            editRoute = '/build-a-wig/soft-curl/edit';
+                          }
+                          
                           onClose(); // Close the dropdown first
-                          navigate('/build-a-wig/edit'); // Navigate to build-a-wig edit page
+                          navigate(editRoute); // Navigate to product-specific edit page
                         }}
                       >
                         EDIT IN BUILD-A-WIG
@@ -822,7 +899,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             const sign = price > 0 ? '+' : '-';
                             const priceStr = Math.abs(price).toString();
                             // Explicitly construct the HTML string to prevent minification issues
-                            return ' (<span style="color: #EB1C24;">' + sign + '$' + priceStr + '</span>)';
+                            return ' <span style="color: #EB1C24;">' + sign + '$' + priceStr + '</span>';
                           };
                           
                           // Build text with each item on its own line and prices in red
@@ -832,11 +909,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               text += '<br/>';
                             }
                             
-                            // Add hyphen before each line
-                            text += '-';
-                            
                             if (itemData.type === 'capSize') {
-                              // Cap Size: show "FLEX CAP" with price (+$40)
+                              // Cap Size: show "FLEX CAP" with price +$40
                               const price = 40; // Flexible caps cost $40 extra
                               const priceDisplay = formatPriceDisplay(price);
                               text += `FLEX CAP${priceDisplay}`;
@@ -970,7 +1044,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                                     const addOnPriceDisplay = formatPriceDisplay(addOnPrice);
                                     const addOnText = addOn.toUpperCase().replace(/ /g, '\u00A0');
                                     if (addOnIndex > 0) {
-                                      text += '<br/>-';
+                                      text += '<br/>';
                                     }
                                     text += addOnText + addOnPriceDisplay;
                                   });

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import DynamicCartIcon from '../../components/DynamicCartIcon';
 
 function WishlistSelection() {
   const navigate = useNavigate();
@@ -212,35 +213,8 @@ function WishlistSelection() {
 
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
-              <div style={{ position: 'relative', width: '22px', height: '19px', cursor: 'pointer' }}>
-                <img 
-                  src={cartCount > 0 ? "/assets/active-bag-icon.svg" : "/assets/inactive cart-icon.svg"}
-                  alt="Cart"
-                  width={22}
-                  height={19}
-                  style={{ width: '22px', height: '19px' }}
-                />
-                {cartCount > 0 && (
-                  <div 
-                    style={{
-                      position: 'absolute',
-                      top: '60%',
-                      left: '70%',
-                      transform: 'translate(calc(-50% + 1px), calc(-50% + 3.5px))',
-                      fontSize: '10px',
-                      fontFamily: '"Covered By Your Grace", cursive',
-                      color: 'white',
-                      lineHeight: '1',
-                      width: '12px',
-                      height: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                  >
-                    {cartCount > 99 ? '99+' : cartCount}
-                  </div>
-                )}
+              <div>
+                <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
               <img
                 alt="Menu"
