@@ -92,11 +92,11 @@ export default function BuildAWigPage() {
           }
           if (!localStorage.getItem('editSelectedColor')) {
             // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
-            const defaultColor = (isBlancoRoute || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
+            const isBlancoRouteForColor = currentPath.startsWith('/build-a-wig/blanco');
             // If item.color exists and is valid, use it; otherwise use default
             // For BLANCO, if color is not a valid BLANCO color (GOLDEN, PLATINUM, ASH), use PLATINUM
             let colorToSet = item.color;
-            if (isBlancoRoute || item.name === 'BLANCO') {
+            if (isBlancoRouteForColor || item.name === 'BLANCO') {
               const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
               if (!colorToSet || !validBlancoColors.includes(colorToSet)) {
                 colorToSet = 'PLATINUM';
@@ -1093,7 +1093,8 @@ export default function BuildAWigPage() {
                 validStyling = 'NONE';
               }
               // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
-              const defaultColorForOriginal = (isBlancoRoute || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
+              const isBlancoRouteForOriginal = location.pathname.startsWith('/build-a-wig/blanco');
+              const defaultColorForOriginal = (isBlancoRouteForOriginal || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
               const restoredOriginalItem = {
                 capSize: item.capSize || 'M',
                 length: item.length || '24"',
@@ -1124,7 +1125,8 @@ export default function BuildAWigPage() {
                 validStyling = 'NONE';
               }
               // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
-              const defaultColorForOriginal2 = (isBlancoRoute || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
+              const isBlancoRouteForOriginal2 = location.pathname.startsWith('/build-a-wig/blanco');
+              const defaultColorForOriginal2 = (isBlancoRouteForOriginal2 || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
               return {
                 capSize: item.capSize || 'M',
                 length: item.length || '24"',
@@ -1291,7 +1293,8 @@ export default function BuildAWigPage() {
                 originalStyling = 'NONE';
               }
               // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
-              const defaultColorForOriginal3 = (isBlancoRoute || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
+              const isBlancoRouteForOriginal3 = location.pathname.startsWith('/build-a-wig/blanco');
+              const defaultColorForOriginal3 = (isBlancoRouteForOriginal3 || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
               setOriginalItem({
                 capSize: item.capSize || 'M',
                 length: item.length || '24"',
@@ -1329,7 +1332,8 @@ export default function BuildAWigPage() {
           }
           
           // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
-          const defaultColorForEditCustom = (isBlancoRoute || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
+          const isBlancoRouteForEditCustom = location.pathname.startsWith('/build-a-wig/blanco');
+          const defaultColorForEditCustom = (isBlancoRouteForEditCustom || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
           const editCustomization = {
             capSize: item.capSize || 'M',
             length: item.length || '24"',
@@ -1361,7 +1365,8 @@ export default function BuildAWigPage() {
           localStorage.setItem('selectedLength', item.length || '24"');
           localStorage.setItem('selectedDensity', item.density || '200%');
           // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
-          const defaultColorForSave = (isBlancoRoute || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
+          const isBlancoRouteForSave = location.pathname.startsWith('/build-a-wig/blanco');
+          const defaultColorForSave = (isBlancoRouteForSave || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
           localStorage.setItem('selectedColor', item.color || defaultColorForSave);
           localStorage.setItem('selectedTexture', item.texture || 'SILKY');
           localStorage.setItem('selectedLace', item.lace || '13X6');
@@ -1407,7 +1412,8 @@ export default function BuildAWigPage() {
           localStorage.setItem('editSelectedDensity', item.density || '200%');
           localStorage.setItem('selectedDensity', item.density || '200%');
           // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
-          const defaultColorForEdit = (isBlancoRoute || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
+          const isBlancoRouteForEdit = location.pathname.startsWith('/build-a-wig/blanco');
+          const defaultColorForEdit = (isBlancoRouteForEdit || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
           localStorage.setItem('editSelectedColor', item.color || defaultColorForEdit);
           localStorage.setItem('selectedColor', item.color || defaultColorForEdit);
           localStorage.setItem('editSelectedTexture', item.texture || 'SILKY');

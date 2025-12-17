@@ -292,8 +292,7 @@ function StraightUnitsPage() {
                       style={{
                         position: 'absolute',
                         left: '5px',
-                        bottom: '100%',
-                        marginBottom: '3px',
+                        top: '-13px',
                         zIndex: 5,
                         pointerEvents: 'none'
                       }}
@@ -317,8 +316,7 @@ function StraightUnitsPage() {
                       style={{
                         position: 'absolute',
                         right: '5px',
-                        bottom: '100%',
-                        marginBottom: '6px',
+                        top: '-13px',
                         transform: 'translateY(20px)',
                         zIndex: 5,
                         pointerEvents: 'none'

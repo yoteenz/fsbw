@@ -1143,7 +1143,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             }
                               }
                             } else if (itemData.type === 'addOns') {
-                              const addOnsArray = Array.isArray(itemData.value) ? itemData.value : [];
                               const itemLace = item.lace || '13X6';
                               
                               // Show each add-on on its own line with its price immediately after it
