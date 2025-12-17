@@ -630,7 +630,7 @@ function TextureSelection() {
                 label={option.name}
                 isSelected={selectedTexture === option.id}
                 onClick={() => handleTextureSelect(option.id)}
-                imgSize={isBlancoRoute ? 37.35 : 83}
+                imgSize={isBlancoRoute ? 35.48 : 83}
                 containerSize={60}
                 topPosition={isBlancoRoute ? "calc(50% + 5px)" : "calc(50% + 2px)"}
               />

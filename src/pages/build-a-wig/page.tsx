@@ -4699,11 +4699,11 @@ export default function BuildAWigPage() {
                     style={{
                       width: (() => {
                         const isBlancoRoute = location.pathname.startsWith('/build-a-wig/blanco');
-                        return isBlancoRoute ? '37.35px' : '83px';
+                        return isBlancoRoute ? '35.48px' : '83px';
                       })(),
                       height: (() => {
                         const isBlancoRoute = location.pathname.startsWith('/build-a-wig/blanco');
-                        return isBlancoRoute ? '37.35px' : '83px';
+                        return isBlancoRoute ? '35.48px' : '83px';
                       })(),
                       overflow: 'visible',
                       top: (() => {
