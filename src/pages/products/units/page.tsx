@@ -72,16 +72,16 @@ function ProductsUnitsPage() {
 
   const [productsByTexture, setProductsByTexture] = useState({
     straight: [
-      { id: 'noir', name: 'NOIR', price: 680, image: '/assets/NOIR/noir-thumb.png', length: '24"', hairOrigin: 'CAMBODIAN', inCart: false, selectedSize: 'M', route: '/straight/noir' },
-      { id: 'blanco', name: 'BLANCO', price: 760, image: '/assets/NOIR/blanco-thumb.png', length: '24"', hairOrigin: 'RUSSIAN', inCart: false, selectedSize: 'M', route: '/straight/blanco' },
+      { id: 'noir', name: 'NOIR', price: 740, image: '/assets/NOIR/noir-thumb.png', length: '24"', hairOrigin: 'CAMBODIAN', inCart: false, selectedSize: 'M', route: '/straight/noir' },
+      { id: 'blanco', name: 'BLANCO', price: 820, image: '/assets/NOIR/blanco-thumb.png', length: '24"', hairOrigin: 'RUSSIAN', inCart: false, selectedSize: 'M', route: '/straight/blanco' },
     ],
     wavy: [
-      { id: 'soft-wave', name: 'SOFT WAVE', price: 700, image: '/assets/NOIR/wave-thumb.png', length: '24"', hairOrigin: 'INDIAN', inCart: false, selectedSize: 'M', route: '/wavy/soft-wave' },
-      { id: 'beach-wave', name: 'BEACH WAVE', price: 700, image: '/assets/NOIR/wave-thumb.png', length: '24"', hairOrigin: 'INDIAN', inCart: false, selectedSize: 'M', route: '/wavy/soft-wave' },
+      { id: 'soft-wave', name: 'SOFT WAVE', price: 760, image: '/assets/NOIR/wave-thumb.png', length: '24"', hairOrigin: 'INDIAN', inCart: false, selectedSize: 'M', route: '/wavy/soft-wave' },
+      { id: 'beach-wave', name: 'BEACH WAVE', price: 760, image: '/assets/NOIR/wave-thumb.png', length: '24"', hairOrigin: 'INDIAN', inCart: false, selectedSize: 'M', route: '/wavy/soft-wave' },
     ],
     curly: [
-      { id: 'soft-curl', name: 'SOFT CURL', price: 720, image: '/assets/NOIR/curl-thumb.png', length: '24"', hairOrigin: 'VIETNAMESE', inCart: false, selectedSize: 'M', route: '/curly/soft-curl' },
-      { id: 'ocean-curl', name: 'OCEAN CURL', price: 720, image: '/assets/NOIR/curl-thumb.png', length: '24"', hairOrigin: 'VIETNAMESE', inCart: false, selectedSize: 'M', route: '/curly/soft-curl' },
+      { id: 'soft-curl', name: 'SOFT CURL', price: 780, image: '/assets/NOIR/curl-thumb.png', length: '24"', hairOrigin: 'VIETNAMESE', inCart: false, selectedSize: 'M', route: '/curly/soft-curl' },
+      { id: 'ocean-curl', name: 'OCEAN CURL', price: 780, image: '/assets/NOIR/curl-thumb.png', length: '24"', hairOrigin: 'VIETNAMESE', inCart: false, selectedSize: 'M', route: '/curly/soft-curl' },
     ],
   });
 
@@ -154,25 +154,154 @@ function ProductsUnitsPage() {
     };
   }, [currencyRates, selectedCurrency]);
 
+  // Check if product is in cart on mount and when cart changes
+  useEffect(() => {
+    const checkCartItems = () => {
+      try {
+        const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+        setProductsByTexture(prev => {
+          const updated = { ...prev };
+          Object.keys(updated).forEach(textureKey => {
+            updated[textureKey as keyof typeof updated] = updated[textureKey as keyof typeof updated].map(p => {
+              // Check if product is in cart (match by name and capSize)
+              const inCart = cartItems.some((item: any) => 
+                item.name === p.name && item.capSize === p.selectedSize
+              );
+              return { ...p, inCart };
+            });
+          });
+          return updated;
+        });
+      } catch (e) {
+        console.error('Error checking cart items:', e);
+      }
+    };
+
+    checkCartItems();
+    
+    // Listen for cart updates
+    const handleCartUpdate = () => checkCartItems();
+    window.addEventListener('cartUpdated', handleCartUpdate);
+    window.addEventListener('storage', handleCartUpdate);
+    
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdate);
+      window.removeEventListener('storage', handleCartUpdate);
+    };
+  }, []);
+
   const handleAddToCart = (product: any, texture: string, e?: MouseEvent<HTMLDivElement>) => {
     if (e) {
       e.stopPropagation();
     }
-    setProductsByTexture(prev => ({
-      ...prev,
-      [texture]: prev[texture as keyof typeof prev].map(p => 
-        p.id === product.id ? { ...p, inCart: !p.inCart } : p
-      )
-    }));
+
+    try {
+      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      const selectedCapSize = product.selectedSize || 'M';
+      
+      // Check if this exact product (name + capSize) is already in cart
+      const existingItemIndex = cartItems.findIndex((item: any) => 
+        item.name === product.name && item.capSize === selectedCapSize
+      );
+
+      if (existingItemIndex !== -1) {
+        // Remove from cart
+        const updatedCartItems = cartItems.filter((_: any, index: number) => index !== existingItemIndex);
+        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+        
+        // Update cart count
+        const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
+        const removedQuantity = cartItems[existingItemIndex].quantity || 1;
+        const newCount = Math.max(0, currentCount - removedQuantity);
+        localStorage.setItem('cartCount', newCount.toString());
+        setCartCount(newCount);
+        
+        // Update UI state
+        setProductsByTexture(prev => ({
+          ...prev,
+          [texture]: prev[texture as keyof typeof prev].map(p => 
+            p.id === product.id ? { ...p, inCart: false } : p
+          )
+        }));
+        
+        // Dispatch cart count update event
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+          window.dispatchEvent(new Event('cartUpdated'));
+        }, 100);
+      } else {
+        // Add to cart
+        const capSizePrice = 0; // Standard cap sizes (XS, S, M, L) have no additional price
+        
+        // Create cart item with product details and selected cap size
+        const cartItem = {
+          id: `${product.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          name: product.name,
+          price: product.price + capSizePrice,
+          quantity: 1,
+          image: product.image,
+          capSize: selectedCapSize,
+          capSizePrice: capSizePrice,
+          length: product.length || '24"',
+          density: '200%',
+          color: product.name === 'NOIR' ? 'OFF BLACK' : product.name === 'BLANCO' ? 'OFF WHITE' : 'OFF BLACK',
+          texture: texture === 'straight' ? 'SILKY' : texture === 'wavy' ? 'WAVY' : 'CURLY',
+          lace: '13X6',
+          hairline: 'NATURAL',
+          styling: 'NONE',
+          partSelection: 'MIDDLE',
+          addOns: []
+        };
+
+        // Add new item at the beginning (newest first)
+        const updatedCartItems = [cartItem, ...cartItems];
+        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+
+        // Update cart count
+        const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
+        const newCount = currentCount + 1;
+        localStorage.setItem('cartCount', newCount.toString());
+        setCartCount(newCount);
+        
+        // Update UI state
+        setProductsByTexture(prev => ({
+          ...prev,
+          [texture]: prev[texture as keyof typeof prev].map(p => 
+            p.id === product.id ? { ...p, inCart: true } : p
+          )
+        }));
+        
+        // Dispatch cart count update event
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+          window.dispatchEvent(new Event('cartUpdated'));
+        }, 100);
+      }
+    } catch (error) {
+      console.error('Error in handleAddToCart:', error);
+    }
   };
 
   const handleSizeSelect = (productId: string, texture: string, size: string) => {
-    setProductsByTexture(prev => ({
-      ...prev,
-      [texture]: prev[texture as keyof typeof prev].map(p => 
-        p.id === productId ? { ...p, selectedSize: size } : p
-      )
-    }));
+    setProductsByTexture(prev => {
+      const updated = { ...prev };
+      updated[texture as keyof typeof updated] = updated[texture as keyof typeof updated].map(p => {
+        if (p.id === productId) {
+          // Check if this product with the new size is in cart
+          try {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+            const inCart = cartItems.some((item: any) => 
+              item.name === p.name && item.capSize === size
+            );
+            return { ...p, selectedSize: size, inCart };
+          } catch (e) {
+            return { ...p, selectedSize: size, inCart: false };
+          }
+        }
+        return p;
+      });
+      return updated;
+    });
   };
 
   const handleProductClick = (product: any) => {
@@ -211,14 +340,16 @@ function ProductsUnitsPage() {
     const handleRightArrow = texture === 'straight' ? handleStraightRightArrow : texture === 'wavy' ? handleWavyRightArrow : handleCurlyRightArrow;
     
     return (
-      <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
+      <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', overflow: 'visible' }}>
         <div style={{
           border: '1.3px solid black',
           backgroundColor: 'rgba(255, 255, 255, 0.6)',
           backdropFilter: 'blur(10px)',
           padding: '0px',
           maxWidth: '100%',
-          margin: '0 auto'
+          margin: '0 auto',
+          overflow: 'visible',
+          position: 'relative'
         }}>
           {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: '15px' }}>
@@ -236,7 +367,10 @@ function ProductsUnitsPage() {
                 textTransform: 'uppercase',
                 margin: '0',
                 fontWeight: '500',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                display: 'inline-block',
+                width: 'auto',
+                height: 'auto'
               }}
             >
               {textureLabel}
@@ -244,7 +378,7 @@ function ProductsUnitsPage() {
           </div>
           
           {/* Content Area */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: products.length >= 4 ? 'space-between' : 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: products.length >= 4 ? 'space-between' : 'center', gap: '10px', overflow: 'visible' }}>
             {/* Left Arrow - Only show if 4+ products */}
             {products.length >= 4 && (
               <button 
@@ -270,7 +404,7 @@ function ProductsUnitsPage() {
             )}
             
             {/* Product Thumbnails Container with Static Vertical Line */}
-            <div style={{ flex: '1', position: 'relative' }}>
+            <div style={{ flex: '1', position: 'relative', overflow: 'visible' }}>
               {/* Single Center Line with Masking */}
               <div style={{
                 position: 'absolute',
@@ -296,9 +430,69 @@ function ProductsUnitsPage() {
                 pointerEvents: 'none'
               }}></div>
               
+              {/* Shopping Bag Icons Container */}
+              <div style={{ 
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                zIndex: 1000,
+                pointerEvents: 'none',
+                overflow: 'visible'
+              }}>
+                {products.map((product, index) => {
+                  // Position icons relative to their products
+                  // Left products (even index): left edge + 16px + scroll offset
+                  // Right products (odd index): right edge of product - 34px + scroll offset (-30px - 4px)
+                  const isLeft = index % 2 === 0;
+                  
+                  return (
+                    <div
+                      key={`icon-${product.id}`}
+                      style={{
+                        position: 'absolute',
+                        top: '-38px',
+                        ...(isLeft 
+                          ? { left: `calc(${index * 50}% + ${scrollState}px + 16px)` }
+                          : { left: `calc(${index * 50}% + 50% + ${scrollState}px - 34px)` }
+                        ),
+                        pointerEvents: 'auto',
+                        cursor: 'pointer',
+                        width: '20px',
+                        height: '23px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                      onClick={(e) => { e.stopPropagation(); handleAddToCart(product, texture, e); }}
+                    >
+                      {product.inCart ? (
+                        <img
+                          src="/assets/card-added.svg"
+                          alt="In cart"
+                          width={20}
+                          height={23}
+                          style={{ width: '20px !important', height: '23px !important' }}
+                        />
+                      ) : (
+                        <img
+                          src="/assets/card-add.svg"
+                          alt="Add to cart"
+                          width={20}
+                          height={23}
+                          style={{ width: '20px !important', height: '23px !important' }}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              
               {/* Scrolling Product Thumbnails Container */}
               <div style={{ 
                 overflowX: 'hidden',
+                overflowY: 'visible',
                 width: '100%',
                 position: 'relative',
                 maxWidth: '100%'
@@ -323,7 +517,9 @@ function ProductsUnitsPage() {
                         transform: index % 2 === 0 ? 'translateX(0px)' : 'translateX(10px)',
                         cursor: 'pointer',
                         flex: '0 0 50%',
-                        boxSizing: 'border-box'
+                        boxSizing: 'border-box',
+                        position: 'relative',
+                        overflow: 'visible'
                       }}
                     >
                       {/* Product Image */}
