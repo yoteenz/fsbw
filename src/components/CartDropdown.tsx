@@ -654,10 +654,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
           <div className="px-3 py-2 border-b border-gray-100" style={{ marginTop: '6px', paddingBottom: '9px' }}>
             <div className="flex items-center justify-between" style={{ flexWrap: 'wrap', gap: '8px' }}>
             <h3 
-              className="font-bold text-black uppercase" 
+              className="text-black uppercase" 
               style={{ 
                 fontSize: '10px',
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
+                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                fontWeight: '500'
               }}
             >
               SHOPPING BAG (<span style={{ color: '#EB1C24' }}>{cartCount}</span>)
