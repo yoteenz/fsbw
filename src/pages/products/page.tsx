@@ -265,7 +265,7 @@ function ProductsPage() {
   }, [currencyRates, selectedCurrency]);
 
   // Units scroll handlers
-  const handleUnitsMouseMove = (e: React.MouseEvent) => {
+  const handleUnitsMouseMove = () => {
     if (!isUnitsDragging) return;
     // Drag scrolling removed - this handler is kept for compatibility but never executes
   };
@@ -295,7 +295,7 @@ function ProductsPage() {
   };
 
   // Gift card scroll handlers
-  const handleGiftCardMouseMove = (e: React.MouseEvent) => {
+  const handleGiftCardMouseMove = () => {
     if (!isGiftCardDragging) return;
     // Drag scrolling removed - this handler is kept for compatibility but never executes
   };

@@ -169,21 +169,21 @@ function HairlineSelection() {
       name: 'NATURAL',
       description: 'Natural hairline',
       price: 0, // Default option - included in base price
-      image: isBlancoRoute ? '/assets/BLANCO-HAIRLINE.png' : '/assets/Natural Hairline-icon.svg'
+      image: isBlancoRoute ? '/assets/hairline-blanco.png' : '/assets/Natural Hairline-icon.svg'
     },
     {
       id: 'PEAK',
       name: 'PEAK',
       description: 'Peak hairline style',
       price: 40, // Additional cost for peak styling
-      image: isBlancoRoute ? '/assets/BLANCO-HAIRLINE.png' : '/assets/Peak Hairline-icon.svg'
+      image: isBlancoRoute ? '/assets/hairline-blanco.png' : '/assets/Peak Hairline-icon.svg'
     },
     {
       id: 'LAGOS',
       name: 'LAGOS',
       description: 'Lagos hairline style',
       price: 60, // Additional cost for Lagos styling
-      image: isBlancoRoute ? '/assets/BLANCO-HAIRLINE.png' : '/assets/Lagos Hairline-icon.svg'
+      image: isBlancoRoute ? '/assets/hairline-blanco.png' : '/assets/Lagos Hairline-icon.svg'
     }
   ];
 
@@ -709,7 +709,7 @@ function HairlineSelection() {
           <div className="grid grid-cols-3 gap-4 mx-auto justify-center mb-6 max-w-[240px]" style={{ marginTop: '15px' }}>
             {hairlineOptions.map((option) => {
               const isBlancoRoute = window.location.pathname.includes('/blanco/customize') || window.location.pathname.includes('/blanco/edit');
-              const imgSize = isBlancoRoute ? 45 : 75;
+              const imgSize = isBlancoRoute ? 34 : 75; // Reduced blanco size by 10% (38 * 0.9 = 34.2, rounded to 34)
               return (
                 <ThumbBox
                   key={option.id}

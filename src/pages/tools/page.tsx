@@ -222,7 +222,7 @@ function ToolsPage() {
   }, [currencyRates, selectedCurrency]);
 
   // Gift card scroll handlers
-  const handleGiftCardMouseMove = (e: React.MouseEvent) => {
+  const handleGiftCardMouseMove = () => {
     if (!isGiftCardDragging) return;
     // Drag scrolling removed - this handler is kept for compatibility but never executes
   };

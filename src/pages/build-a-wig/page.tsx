@@ -2519,18 +2519,22 @@ export default function BuildAWigPage() {
 
   const getDensityIcon = () => {
     // Check if we're in blanco route (main, customize, edit)
-    const isBlancoRoute = location.pathname.startsWith('/build-a-wig/blanco');
+    const isBlancoRoute = location.pathname.startsWith('/build-a-wig/blanco') || 
+                         location.pathname.includes('/blanco/customize') || 
+                         location.pathname.includes('/blanco/edit');
     if (isBlancoRoute) {
-      return '/assets/BLANCO-DENSITY.png';
+      return '/assets/density-blanco.png';
     }
     return '/assets/density.png'; // All densities use the same icon
   };
 
   const getLaceIcon = () => {
     // Check if we're in blanco route (main, customize, edit)
-    const isBlancoRoute = location.pathname.startsWith('/build-a-wig/blanco');
+    const isBlancoRoute = location.pathname.startsWith('/build-a-wig/blanco') || 
+                         location.pathname.includes('/blanco/customize') || 
+                         location.pathname.includes('/blanco/edit');
     if (isBlancoRoute) {
-      return '/assets/BLANCO-LACE.png';
+      return '/assets/lace-blanco.png';
     }
     
     const selectedLace = customization.lace || '13X6';
@@ -2560,9 +2564,11 @@ export default function BuildAWigPage() {
 
   const getHairlineIcon = () => {
     // Check if we're in blanco route (main, customize, edit)
-    const isBlancoRoute = location.pathname.startsWith('/build-a-wig/blanco');
+    const isBlancoRoute = location.pathname.startsWith('/build-a-wig/blanco') || 
+                         location.pathname.includes('/blanco/customize') || 
+                         location.pathname.includes('/blanco/edit');
     if (isBlancoRoute) {
-      return '/assets/BLANCO-HAIRLINE.png';
+      return '/assets/hairline-blanco.png';
     }
     
     const selectedHairline = customization.hairline || 'NATURAL';

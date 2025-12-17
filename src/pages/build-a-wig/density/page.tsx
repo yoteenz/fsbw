@@ -119,7 +119,7 @@ function DensitySelection() {
   // Density options with correct pricing structure
   // Use location.pathname from React Router to ensure updates on route changes
   const isBlancoRoute = location.pathname.includes('/blanco/customize') || location.pathname.includes('/blanco/edit');
-  const densityImage = isBlancoRoute ? '/assets/BLANCO-DENSITY.png' : '/assets/density.png';
+  const densityImage = isBlancoRoute ? '/assets/density-blanco.png' : '/assets/density.png';
   
   const densityOptions: DensityOption[] = [
     {
@@ -1025,8 +1025,8 @@ function DensitySelection() {
                 label={option.name}
                 isSelected={selectedDensity === option.id}
                 onClick={() => handleDensitySelect(option.id)}
-                imgSize={57}
-                containerSize={60}
+                imgSize={isBlancoRoute ? 71 : 57}
+                containerSize={isBlancoRoute ? 75 : 60}
                 topPosition="55%"
               />
             ))}

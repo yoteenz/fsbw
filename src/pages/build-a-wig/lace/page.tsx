@@ -149,7 +149,7 @@ function LaceSelection() {
 
   // Lace options - Updated with exact order and pricing (13X6 is default)
   const isBlancoRoute = window.location.pathname.includes('/blanco/customize') || window.location.pathname.includes('/blanco/edit');
-  const laceImage = isBlancoRoute ? '/assets/BLANCO-LACE.png' : 'https://hair-saloon-one.vercel.app/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fimage4.ea33a249.png&w=256&q=75';
+  const laceImage = isBlancoRoute ? '/assets/lace-blanco.png' : 'https://hair-saloon-one.vercel.app/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fimage4.ea33a249.png&w=256&q=75';
   
   const laceOptions: LaceOption[] = [
     {
@@ -772,7 +772,8 @@ function LaceSelection() {
           <div className="grid grid-cols-4 gap-3 mx-auto justify-center mb-6 max-w-[320px]">
             {laceOptions.map((option) => {
               const isBlancoRoute = window.location.pathname.includes('/blanco/customize') || window.location.pathname.includes('/blanco/edit');
-              const imgSize = isBlancoRoute ? 44 : 74;
+              const imgSize = isBlancoRoute ? 50 : 74; // Decreased blanco size by 10% (55 * 0.9 = 49.5, rounded to 50)
+              const containerSize = isBlancoRoute ? 49 : 54; // Decreased blanco container by 10% (54 * 0.9 = 48.6, rounded to 49)
               return (
                 <ThumbBox
                   key={option.id}
@@ -782,7 +783,7 @@ function LaceSelection() {
                   isSelected={selectedLace === option.id}
                   onClick={() => handleLaceSelect(option.id)}
                   imgSize={imgSize}
-                  containerSize={54}
+                  containerSize={containerSize}
                   topPosition="52%"
                   customTransform="translateX(calc(-50% - 3px)) translateY(-50%)"
                 />
