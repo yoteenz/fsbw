@@ -36,27 +36,45 @@ export default function BuildAWigPage() {
                        currentPath === '/build-a-wig/noir/edit' ||
                        currentPath === '/build-a-wig/blanco/edit' ||
                        currentPath === '/build-a-wig/soft-wave/edit' ||
-                       currentPath === '/build-a-wig/soft-curl/edit';
+                       currentPath === '/build-a-wig/soft-curl/edit' ||
+                       currentPath === '/build-a-wig/ocean-curl/edit' ||
+                       currentPath === '/build-a-wig/beach-wave/edit';
     const isCustomizeMode = currentPath === '/build-a-wig/noir/customize' || 
                             currentPath === '/build-a-wig/blanco/customize' ||
                             currentPath === '/build-a-wig/soft-wave/customize' ||
-                            currentPath === '/build-a-wig/soft-curl/customize';
+                            currentPath === '/build-a-wig/soft-curl/customize' ||
+                            currentPath === '/build-a-wig/ocean-curl/customize' ||
+                            currentPath === '/build-a-wig/beach-wave/customize';
     const isBlancoRoute = currentPath.startsWith('/build-a-wig/blanco');
     const isProductMainRoute = currentPath === '/build-a-wig/blanco' ||
                                currentPath === '/build-a-wig/soft-wave' ||
                                currentPath === '/build-a-wig/soft-curl' ||
+                               currentPath === '/build-a-wig/ocean-curl' ||
+                               currentPath === '/build-a-wig/beach-wave' ||
                                currentPath === '/build-a-wig/noir';
     
     // If in customize mode or product-specific main route, load cap size with defaults
     if (isCustomizeMode || isProductMainRoute) {
       const savedCapSize = localStorage.getItem('selectedCapSize');
       if (savedCapSize || isCustomizeMode) {
+        // Determine default texture based on product route
+        const isOceanCurlRoute = currentPath.startsWith('/build-a-wig/ocean-curl');
+        const isBeachWaveRoute = currentPath.startsWith('/build-a-wig/beach-wave');
+        const isSoftCurlRoute = currentPath.startsWith('/build-a-wig/soft-curl');
+        const isSoftWaveRoute = currentPath.startsWith('/build-a-wig/soft-wave');
+        let defaultTexture = 'SILKY';
+        if (isOceanCurlRoute || isSoftCurlRoute) {
+          defaultTexture = 'CURLY';
+        } else if (isBeachWaveRoute || isSoftWaveRoute) {
+          defaultTexture = 'WAVY';
+        }
+        
         return {
           capSize: savedCapSize || 'M',
           length: '24"',
           density: isBlancoRoute ? '250%' : '200%',
           lace: '13X6',
-          texture: 'SILKY',
+          texture: defaultTexture,
           color: isBlancoRoute ? 'PLATINUM' : 'OFF BLACK',
           hairline: 'NATURAL',
           styling: 'NONE',
@@ -300,8 +318,8 @@ export default function BuildAWigPage() {
     const pathname = location.pathname;
     // Check for product-specific routes (main, customize, edit)
     if (pathname.startsWith('/build-a-wig/blanco')) return 820; // Blanco base price is 820
-    if (pathname.startsWith('/build-a-wig/soft-wave')) return 760; // Soft Wave base price is 760
-    if (pathname.startsWith('/build-a-wig/soft-curl')) return 780; // Soft Curl base price is 780
+    if (pathname.startsWith('/build-a-wig/soft-wave') || pathname.startsWith('/build-a-wig/beach-wave')) return 760; // Soft Wave/Beach Wave base price is 760
+    if (pathname.startsWith('/build-a-wig/soft-curl') || pathname.startsWith('/build-a-wig/ocean-curl')) return 780; // Soft Curl/Ocean Curl base price is 780
     if (pathname.startsWith('/build-a-wig/noir')) return 740; // Noir base price is 740
     return 740; // Default noir base price, flexible caps add $40 via capSizePrice
   }, [location.pathname]);
@@ -523,11 +541,15 @@ export default function BuildAWigPage() {
                        location.pathname === '/build-a-wig/noir/edit' ||
                        location.pathname === '/build-a-wig/blanco/edit' ||
                        location.pathname === '/build-a-wig/soft-wave/edit' ||
-                       location.pathname === '/build-a-wig/soft-curl/edit') && localStorage.getItem('editingCartItem') !== null;
+                       location.pathname === '/build-a-wig/soft-curl/edit' ||
+                       location.pathname === '/build-a-wig/ocean-curl/edit' ||
+                       location.pathname === '/build-a-wig/beach-wave/edit') && localStorage.getItem('editingCartItem') !== null;
     const isCustomizeMode = location.pathname.startsWith('/build-a-wig/noir/customize') || 
                             location.pathname.startsWith('/build-a-wig/blanco/customize') ||
                             location.pathname.startsWith('/build-a-wig/soft-wave/customize') ||
-                            location.pathname.startsWith('/build-a-wig/soft-curl/customize');
+                            location.pathname.startsWith('/build-a-wig/soft-curl/customize') ||
+                            location.pathname.startsWith('/build-a-wig/ocean-curl/customize') ||
+                            location.pathname.startsWith('/build-a-wig/beach-wave/customize');
     
     // CRITICAL: Validate cap size price - if cap size is flexible but price is 0, don't save (preserve existing)
     const currentCapSize = localStorage.getItem('editSelectedCapSize') || localStorage.getItem('selectedCapSize') || 'M';
@@ -628,7 +650,9 @@ export default function BuildAWigPage() {
     const isCustomizePage = location.pathname.startsWith('/build-a-wig/noir/customize') || 
                             location.pathname.startsWith('/build-a-wig/blanco/customize') ||
                             location.pathname.startsWith('/build-a-wig/soft-wave/customize') ||
-                            location.pathname.startsWith('/build-a-wig/soft-curl/customize');
+                            location.pathname.startsWith('/build-a-wig/soft-curl/customize') ||
+                            location.pathname.startsWith('/build-a-wig/ocean-curl/customize') ||
+                            location.pathname.startsWith('/build-a-wig/beach-wave/customize');
     
     // Check if coming from sub-page early to set loading flag immediately
     const comingFromSubPage = sessionStorage.getItem('comingFromSubPage') === 'true';
@@ -1654,8 +1678,8 @@ export default function BuildAWigPage() {
           const pathname = location.pathname;
           let currentBasePrice = 740; // Default noir
           if (pathname.startsWith('/build-a-wig/blanco')) currentBasePrice = 820;
-          else if (pathname.startsWith('/build-a-wig/soft-wave')) currentBasePrice = 760;
-          else if (pathname.startsWith('/build-a-wig/soft-curl')) currentBasePrice = 780;
+          else if (pathname.startsWith('/build-a-wig/soft-wave') || pathname.startsWith('/build-a-wig/beach-wave')) currentBasePrice = 760;
+          else if (pathname.startsWith('/build-a-wig/soft-curl') || pathname.startsWith('/build-a-wig/ocean-curl')) currentBasePrice = 780;
           else if (pathname.startsWith('/build-a-wig/noir')) currentBasePrice = 740;
           // CRITICAL: Use preserved cap size price if it exists, otherwise use calculated
           const existingCapSizePriceForTotal = localStorage.getItem('editSelectedCapSizePrice') || localStorage.getItem('selectedCapSizePrice');
@@ -2798,11 +2822,19 @@ export default function BuildAWigPage() {
       ];
     }
     
-    if (pathname.startsWith('/build-a-wig/soft-curl')) {
+    if (pathname.startsWith('/build-a-wig/soft-curl') || pathname.startsWith('/build-a-wig/ocean-curl')) {
       return [
         '/assets/2D CURLY LEFT.png',
         '/assets/2D CURLY FRONT.png',
         '/assets/2D CURLY RIGHT.png'
+      ];
+    }
+    
+    if (pathname.startsWith('/build-a-wig/beach-wave')) {
+      return [
+        '/assets/2D WAVY LEFT.png',
+        '/assets/2D WAVY FRONT.png',
+        '/assets/2D WAVY RIGHT.png'
       ];
     }
     
@@ -3475,7 +3507,9 @@ export default function BuildAWigPage() {
                        pathname.startsWith('/build-a-wig/noir/edit') ||
                        pathname.startsWith('/build-a-wig/blanco/edit') ||
                        pathname.startsWith('/build-a-wig/soft-wave/edit') ||
-                       pathname.startsWith('/build-a-wig/soft-curl/edit');
+                       pathname.startsWith('/build-a-wig/soft-curl/edit') ||
+                       pathname.startsWith('/build-a-wig/ocean-curl/edit') ||
+                       pathname.startsWith('/build-a-wig/beach-wave/edit');
     
     // Determine base route based on current pathname
     // CRITICAL: Check for customize/edit modes FIRST before checking product routes
@@ -3484,6 +3518,8 @@ export default function BuildAWigPage() {
       if (pathname.startsWith('/build-a-wig/blanco/edit')) baseRoute = '/build-a-wig/blanco/edit';
       else if (pathname.startsWith('/build-a-wig/soft-wave/edit')) baseRoute = '/build-a-wig/soft-wave/edit';
       else if (pathname.startsWith('/build-a-wig/soft-curl/edit')) baseRoute = '/build-a-wig/soft-curl/edit';
+      else if (pathname.startsWith('/build-a-wig/ocean-curl/edit')) baseRoute = '/build-a-wig/ocean-curl/edit';
+      else if (pathname.startsWith('/build-a-wig/beach-wave/edit')) baseRoute = '/build-a-wig/beach-wave/edit';
       else if (pathname.startsWith('/build-a-wig/noir/edit')) baseRoute = '/build-a-wig/noir/edit';
       else baseRoute = '/build-a-wig/edit';
     } else if (pathname.startsWith('/build-a-wig/blanco/customize')) {
@@ -3492,6 +3528,10 @@ export default function BuildAWigPage() {
       baseRoute = '/build-a-wig/soft-wave/customize';
     } else if (pathname.startsWith('/build-a-wig/soft-curl/customize')) {
       baseRoute = '/build-a-wig/soft-curl/customize';
+    } else if (pathname.startsWith('/build-a-wig/ocean-curl/customize')) {
+      baseRoute = '/build-a-wig/ocean-curl/customize';
+    } else if (pathname.startsWith('/build-a-wig/beach-wave/customize')) {
+      baseRoute = '/build-a-wig/beach-wave/customize';
     } else if (pathname.startsWith('/build-a-wig/noir/customize')) {
       baseRoute = '/build-a-wig/noir/customize';
     } else if (pathname.startsWith('/build-a-wig/blanco')) {
@@ -3500,6 +3540,10 @@ export default function BuildAWigPage() {
       baseRoute = '/build-a-wig/soft-wave';
     } else if (pathname.startsWith('/build-a-wig/soft-curl')) {
       baseRoute = '/build-a-wig/soft-curl';
+    } else if (pathname.startsWith('/build-a-wig/ocean-curl')) {
+      baseRoute = '/build-a-wig/ocean-curl';
+    } else if (pathname.startsWith('/build-a-wig/beach-wave')) {
+      baseRoute = '/build-a-wig/beach-wave';
     } else if (pathname.startsWith('/build-a-wig/noir')) {
       baseRoute = '/build-a-wig/noir';
     }
@@ -4015,6 +4059,12 @@ export default function BuildAWigPage() {
       } else if (pathname.startsWith('/build-a-wig/soft-curl')) {
         productName = 'SOFT CURL';
         productImage = '/assets/NOIR/curl-thumb.png';
+      } else if (pathname.startsWith('/build-a-wig/beach-wave')) {
+        productName = 'BEACH WAVE';
+        productImage = '/assets/NOIR/wave-thumb.png';
+      } else if (pathname.startsWith('/build-a-wig/ocean-curl')) {
+        productName = 'OCEAN CURL';
+        productImage = '/assets/NOIR/curl-thumb.png';
       }
       
       const cartItem = {
@@ -4035,9 +4085,9 @@ export default function BuildAWigPage() {
         addOns: customization.addOns
       };
 
-      // Get existing cart items and add new item
+      // Get existing cart items and add new item at the beginning (newest first)
       const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      const updatedCartItems = [...existingCartItems, cartItem];
+      const updatedCartItems = [cartItem, ...existingCartItems];
       localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
 
       // Increment cart count when item is successfully added
@@ -4251,6 +4301,8 @@ export default function BuildAWigPage() {
                   if (pathname.startsWith('/build-a-wig/blanco')) navigate('/build-a-wig/blanco');
                   else if (pathname.startsWith('/build-a-wig/soft-wave')) navigate('/build-a-wig/soft-wave');
                   else if (pathname.startsWith('/build-a-wig/soft-curl')) navigate('/build-a-wig/soft-curl');
+                  else if (pathname.startsWith('/build-a-wig/beach-wave')) navigate('/build-a-wig/beach-wave');
+                  else if (pathname.startsWith('/build-a-wig/ocean-curl')) navigate('/build-a-wig/ocean-curl');
                   else if (pathname.startsWith('/build-a-wig/noir')) navigate('/build-a-wig/noir');
                   else navigate('/build-a-wig');
                 }}
@@ -4268,6 +4320,10 @@ export default function BuildAWigPage() {
                     navigate('/wavy/soft-wave');
                   } else if (pathname.startsWith('/build-a-wig/soft-curl')) {
                     navigate('/curly/soft-curl');
+                  } else if (pathname.startsWith('/build-a-wig/beach-wave')) {
+                    navigate('/wavy/beach-wave');
+                  } else if (pathname.startsWith('/build-a-wig/ocean-curl')) {
+                    navigate('/curly/ocean-curl');
                   } else if (pathname.startsWith('/build-a-wig/noir')) {
                     navigate('/straight/noir');
                   } else {
@@ -4286,6 +4342,12 @@ export default function BuildAWigPage() {
                   }
                   if (pathname.startsWith('/build-a-wig/soft-curl')) {
                     return 'SOFT CURL';
+                  }
+                  if (pathname.startsWith('/build-a-wig/beach-wave')) {
+                    return 'BEACH WAVE';
+                  }
+                  if (pathname.startsWith('/build-a-wig/ocean-curl')) {
+                    return 'OCEAN CURL';
                   }
                   if (pathname.startsWith('/build-a-wig/noir')) {
                     return 'NOIR';
@@ -4356,8 +4418,8 @@ export default function BuildAWigPage() {
                       width: 'max-content',
                       fontSize: (() => {
                         const pathname = location.pathname;
-                        if (pathname.startsWith('/build-a-wig/soft-wave') || pathname.startsWith('/build-a-wig/soft-curl') || pathname.startsWith('/build-a-wig/blanco')) {
-                          return 'calc(clamp(2rem, 4vw, 2.5rem) + 8px)'; // Same size for SOFT WAVE/CURL/BLANCO
+                        if (pathname.startsWith('/build-a-wig/soft-wave') || pathname.startsWith('/build-a-wig/soft-curl') || pathname.startsWith('/build-a-wig/blanco') || pathname.startsWith('/build-a-wig/beach-wave') || pathname.startsWith('/build-a-wig/ocean-curl')) {
+                          return 'calc(clamp(2rem, 4vw, 2.5rem) + 8px)'; // Same size for SOFT WAVE/CURL/BLANCO/BEACH WAVE/OCEAN CURL
                         }
                         return undefined; // Default size
                       })(),
@@ -4366,8 +4428,8 @@ export default function BuildAWigPage() {
                         if (pathname.startsWith('/build-a-wig/blanco')) {
                           return 'translate(-50%, 5px)'; // Move down 5px for BLANCO
                         }
-                        if (pathname.startsWith('/build-a-wig/soft-wave') || pathname.startsWith('/build-a-wig/soft-curl')) {
-                          return 'translate(-50%, 2px)'; // Move down 2px for SOFT WAVE/CURL
+                        if (pathname.startsWith('/build-a-wig/soft-wave') || pathname.startsWith('/build-a-wig/soft-curl') || pathname.startsWith('/build-a-wig/beach-wave') || pathname.startsWith('/build-a-wig/ocean-curl')) {
+                          return 'translate(-50%, 2px)'; // Move down 2px for SOFT WAVE/CURL/BEACH WAVE/OCEAN CURL
                         }
                         return 'translate(-50%, 0)'; // Default position
                       })(),
@@ -4381,6 +4443,10 @@ export default function BuildAWigPage() {
                         navigate('/wavy/soft-wave');
                       } else if (pathname.startsWith('/build-a-wig/soft-curl')) {
                         navigate('/curly/soft-curl');
+                      } else if (pathname.startsWith('/build-a-wig/beach-wave')) {
+                        navigate('/wavy/beach-wave');
+                      } else if (pathname.startsWith('/build-a-wig/ocean-curl')) {
+                        navigate('/curly/ocean-curl');
                       } else if (pathname.startsWith('/build-a-wig/noir')) {
                         navigate('/straight/noir');
                       } else {
@@ -4399,6 +4465,12 @@ export default function BuildAWigPage() {
                       }
                       if (pathname.startsWith('/build-a-wig/soft-curl')) {
                         return 'SOFT CURL';
+                      }
+                      if (pathname.startsWith('/build-a-wig/beach-wave')) {
+                        return 'BEACH WAVE';
+                      }
+                      if (pathname.startsWith('/build-a-wig/ocean-curl')) {
+                        return 'OCEAN CURL';
                       }
                       if (pathname.startsWith('/build-a-wig/noir')) {
                         return 'NOIR';

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 
-function SoftCurlSelection() {
+function OceanCurlSelection() {
   const navigate = useNavigate();
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [selectedCustomCap, setSelectedCustomCap] = useState('M');
@@ -44,12 +44,12 @@ function SoftCurlSelection() {
     MXN: { symbol: '&#36;', rate: 20.0, name: 'Mexican Peso' }
   }), []);
   
-  // Check if SOFT CURL is in wishlist on mount and when wishlist changes
+  // Check if OCEAN CURL is in wishlist on mount and when wishlist changes
   useEffect(() => {
     const checkWishlist = () => {
       try {
         const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
-        const isInList = wishlistItems.some((item: any) => item.name === 'SOFT CURL');
+        const isInList = wishlistItems.some((item: any) => item.name === 'OCEAN CURL');
         setIsInWishlist(isInList);
       } catch (e) {
         setIsInWishlist(false);
@@ -73,23 +73,23 @@ function SoftCurlSelection() {
   const handleToggleWishlist = () => {
     try {
       const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
-      const totalPrice = parseInt(localStorage.getItem('softCurlTotalPrice') || '780');
+      const totalPrice = parseInt(localStorage.getItem('oceanCurlTotalPrice') || '780');
       
       if (isInWishlist) {
         // Remove from wishlist
-        const updatedItems = wishlistItems.filter((item: any) => item.name !== 'SOFT CURL');
+        const updatedItems = wishlistItems.filter((item: any) => item.name !== 'OCEAN CURL');
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(false);
       } else {
         // Add to wishlist
-        const softCurlItem = {
-          id: 'soft-curl-unit',
-          name: 'SOFT CURL',
+        const oceanCurlItem = {
+          id: 'ocean-curl-unit',
+          name: 'OCEAN CURL',
           price: totalPrice,
           quantity: quantity,
           image: '/assets/NOIR/curl-thumb.png',
           length: localStorage.getItem('selectedLength') || '24"',
-          hairOrigin: 'VIETNAMESE',
+          hairOrigin: 'FILIPINO',
           capSize: selectedCustomCap || selectedFlexibleCap || 'M',
           density: localStorage.getItem('selectedDensity') || '200%',
           lace: localStorage.getItem('selectedLace') || '13X6',
@@ -98,7 +98,7 @@ function SoftCurlSelection() {
           hairline: localStorage.getItem('selectedHairline') || 'NATURAL',
           styling: localStorage.getItem('selectedStyling') || 'MIDDLE'
         };
-        const updatedItems = [...wishlistItems, softCurlItem];
+        const updatedItems = [...wishlistItems, oceanCurlItem];
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(true);
       }
@@ -110,21 +110,21 @@ function SoftCurlSelection() {
     }
   };
 
-  // CRITICAL: Clear any noir-specific localStorage values and set SOFT CURL defaults on page load
-  // This prevents noir page settings from interfering with soft-curl page
+  // CRITICAL: Clear any noir-specific localStorage values and set OCEAN CURL defaults on page load
+  // This prevents noir page settings from interfering with ocean-curl page
   useEffect(() => {
     // Clear any edit mode flags that might be from other products
     if (localStorage.getItem('editingCartItem')) {
       const editingItem = JSON.parse(localStorage.getItem('editingCartItem') || '{}');
-      // Only clear if it's not a SOFT CURL item
-      if (editingItem.name !== 'SOFT CURL') {
+      // Only clear if it's not a OCEAN CURL item
+      if (editingItem.name !== 'OCEAN CURL') {
         localStorage.removeItem('editingCartItem');
         localStorage.removeItem('editingCartItemId');
       }
     }
     
-    // Set SOFT CURL-specific defaults (don't read from localStorage to avoid noir contamination)
-    // These are only used if user goes to build-a-wig page from soft-curl
+    // Set OCEAN CURL-specific defaults (don't read from localStorage to avoid noir contamination)
+    // These are only used if user goes to build-a-wig page from ocean-curl
     localStorage.setItem('selectedLength', '24"');
     localStorage.setItem('selectedLengthPrice', '0');
     localStorage.setItem('selectedDensity', '200%');
@@ -146,8 +146,8 @@ function SoftCurlSelection() {
   // Helper function to check if a cart item matches the default configuration exactly
   // This does explicit field-by-field comparison to ensure no false matches
   const matchesDefaultConfiguration = (item: any): boolean => {
-    // Ensure item is for SOFT CURL product
-    if (item.name !== 'SOFT CURL') {
+    // Ensure item is for OCEAN CURL product
+    if (item.name !== 'OCEAN CURL') {
       return false;
     }
     
@@ -613,8 +613,8 @@ function SoftCurlSelection() {
       const totalPrice = basePrice + capSizePrice + lengthPrice + densityPrice + lacePrice + texturePrice + colorPrice + hairlinePrice + stylingPrice + addOnsPrice;
       
       const cartItem = {
-        id: `soft-curl-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        name: 'SOFT CURL',
+        id: `ocean-curl-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        name: 'OCEAN CURL',
         price: totalPrice,
         quantity: quantity,
         image: '/assets/NOIR/curl-thumb.png',
@@ -707,7 +707,7 @@ function SoftCurlSelection() {
               <span
                 style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
               >
-                SOFT CURL
+                OCEAN CURL
               </span>
             </p>
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
@@ -938,7 +938,7 @@ function SoftCurlSelection() {
 
             {/* PRODUCT NAME */}
             <p
-              className="text-center text-black mb-2 soft-curl-product-name"
+              className="text-center text-black mb-2 ocean-curl-product-name"
               style={{ 
                 fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif !important',
                 fontSize: '42px !important',
@@ -949,7 +949,7 @@ function SoftCurlSelection() {
                 transform: 'translateY(-8px) !important'
               }}
             >
-              SOFT CURL
+              OCEAN CURL
             </p>
 
             {/* PRODUCT SPECIFICATION */}
@@ -963,7 +963,7 @@ function SoftCurlSelection() {
                 marginTop: '-8px'
               }}
             >
-              24" RAW VIETNAMESE
+              24" RAW FILIPINO
             </p>
 
             {/* PRICE */}
@@ -1325,21 +1325,21 @@ function SoftCurlSelection() {
                 >
                   <img
                     src="/assets/SOFT-WAVE FRONT.png"
-                    alt="SOFT CURL Front View"
+                    alt="OCEAN CURL Front View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-70px)' }}
                     draggable={false}
                   />
                   <img
                     src="/assets/SOFT-WAVE LEFT.png"
-                    alt="SOFT CURL Left View"
+                    alt="OCEAN CURL Left View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-70px)' }}
                     draggable={false}
                   />
                   <img
                     src="/assets/SOFT-WAVE RIGHT.png"
-                    alt="SOFT CURL Right View"
+                    alt="OCEAN CURL Right View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-70px)' }}
                     draggable={false}
@@ -1412,7 +1412,7 @@ function SoftCurlSelection() {
                   {activeTab === 'DETAILS' && (
                     <>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        13X6 ULTRA THIN HD FILM LACE, RAW VIETNAMESE CURLY 200% DENSITY.
+                        13X6 ULTRA THIN HD FILM LACE, RAW FILIPINO CURLY 200% DENSITY.
                       </p>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         HANDMADE UNIT MEASURING 24 INCHES IN LENGTH, OFF BLACK HAIR COLOR.
@@ -1651,7 +1651,7 @@ function SoftCurlSelection() {
                 
                 console.log('Customize page - Starting fresh customization with cap size:', capSizeToSave);
                 
-                navigate('/build-a-wig/soft-curl/customize');
+                navigate('/build-a-wig/ocean-curl/customize');
               }}
               className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
               style={{ 
@@ -1980,9 +1980,9 @@ function SoftCurlSelection() {
                   </div>
                 </div>
                 
-                {/* Product 4 - SOFT CURL */}
+                {/* Product 4 - OCEAN CURL */}
                 <div 
-                  onClick={() => navigate('/curly/soft-curl')}
+                  onClick={() => navigate('/curly/ocean-curl')}
                   style={{ 
                     padding: '10px 10px 4px 10px',
                     textAlign: 'center',
@@ -1992,7 +1992,7 @@ function SoftCurlSelection() {
                 >
                   <img
                     src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/curl-thumb.png"}
-                    alt="SOFT CURL"
+                    alt="OCEAN CURL"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -2009,7 +2009,7 @@ function SoftCurlSelection() {
                     fontWeight: '500',
                     transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}>
-                    SOFT CURL
+                    OCEAN CURL
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2021,7 +2021,7 @@ function SoftCurlSelection() {
                     lineHeight: '0.84',
                     transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}>
-                    24" RAW VIETNAMESE
+                    24" RAW FILIPINO
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2255,9 +2255,9 @@ function SoftCurlSelection() {
                   </div>
                 </div>
                 
-                {/* Product 2 - OCEAN CURL */}
+                {/* Product 2 - SOFT CURL */}
                 <div 
-                  onClick={() => navigate('/curly/ocean-curl')}
+                  onClick={() => navigate('/curly/soft-curl')}
                   style={{ 
                     padding: '10px 10px 4px 10px',
                     textAlign: 'center',
@@ -2267,7 +2267,7 @@ function SoftCurlSelection() {
                 >
                   <img
                     src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/curl-thumb.png"}
-                    alt="OCEAN CURL"
+                    alt="SOFT CURL"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -2284,7 +2284,7 @@ function SoftCurlSelection() {
                     fontWeight: '500',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    OCEAN CURL
+                    SOFT CURL
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2296,7 +2296,7 @@ function SoftCurlSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    24" RAW FILIPINO
+                    24" RAW VIETNAMESE
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2507,4 +2507,4 @@ function SoftCurlSelection() {
   );
 }
 
-export default SoftCurlSelection;
+export default OceanCurlSelection;

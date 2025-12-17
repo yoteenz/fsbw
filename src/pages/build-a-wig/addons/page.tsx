@@ -112,14 +112,16 @@ export default function AddOnsSelectionPage() {
         '/assets/2D BLANCO RIGHT.png'
       ];
     }
-    if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) {
+    if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit') ||
+        pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) {
       return [
         '/assets/2D WAVY LEFT.png',
         '/assets/2D WAVY FRONT.png',
         '/assets/2D WAVY RIGHT.png'
       ];
     }
-    if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) {
+    if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit') ||
+        pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) {
       return [
         '/assets/2D CURLY LEFT.png',
         '/assets/2D CURLY FRONT.png',
@@ -527,6 +529,8 @@ export default function AddOnsSelectionPage() {
                   else if (pathname.includes('/blanco/')) navigate('/build-a-wig/blanco');
                   else if (pathname.includes('/soft-wave/')) navigate('/build-a-wig/soft-wave');
                   else if (pathname.includes('/soft-curl/')) navigate('/build-a-wig/soft-curl');
+                  else if (pathname.includes('/ocean-curl/')) navigate('/build-a-wig/ocean-curl');
+                  else if (pathname.includes('/beach-wave/')) navigate('/build-a-wig/beach-wave');
                   else navigate('/build-a-wig');
                 }}
               >
@@ -539,6 +543,8 @@ export default function AddOnsSelectionPage() {
                   if (pathname.includes('/blanco/customize')) navigate('/straight/blanco');
                   else if (pathname.includes('/soft-wave/customize')) navigate('/wavy/soft-wave');
                   else if (pathname.includes('/soft-curl/customize')) navigate('/curly/soft-curl');
+                  else if (pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) navigate('/wavy/beach-wave');
+                  else if (pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) navigate('/curly/ocean-curl');
                   else navigate('/straight/noir');
                 }}
               >
@@ -547,6 +553,8 @@ export default function AddOnsSelectionPage() {
                   if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) return 'BLANCO';
                   if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) return 'SOFT WAVE';
                   if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) return 'SOFT CURL';
+                  if (pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) return 'BEACH WAVE';
+                  if (pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) return 'OCEAN CURL';
                   return 'NOIR';
                 })()}
               </span>
@@ -633,6 +641,8 @@ export default function AddOnsSelectionPage() {
                       if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) navigate('/straight/blanco');
                       else if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) navigate('/wavy/soft-wave');
                       else if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) navigate('/curly/soft-curl');
+                      else if (pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) navigate('/wavy/beach-wave');
+                      else if (pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) navigate('/curly/ocean-curl');
                       else navigate('/straight/noir');
                     }}
                   >
@@ -641,6 +651,8 @@ export default function AddOnsSelectionPage() {
                       if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) return 'BLANCO';
                       if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) return 'SOFT WAVE';
                       if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) return 'SOFT CURL';
+                      if (pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) return 'BEACH WAVE';
+                      if (pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) return 'OCEAN CURL';
                       return 'NOIR';
                     })()}
                   </p>

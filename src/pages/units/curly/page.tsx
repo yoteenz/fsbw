@@ -86,7 +86,7 @@ function CurlyUnitsPage() {
       price: 780,
       image: '/assets/NOIR/curl-thumb.png',
       length: '24"',
-      hairOrigin: 'VIETNAMESE',
+      hairOrigin: 'FILIPINO',
       inCart: false
     }
   ]);
@@ -177,7 +177,7 @@ function CurlyUnitsPage() {
     if (product.name === 'SOFT CURL') {
       navigate('/curly/soft-curl');
     } else if (product.name === 'OCEAN CURL') {
-      navigate('/curly/soft-curl'); // Using same page for now
+      navigate('/curly/ocean-curl');
     }
   };
 
@@ -347,10 +347,8 @@ function CurlyUnitsPage() {
                       backgroundPosition: 'center',
                       backgroundRepeat: 'no-repeat',
                       transform: isStaggered ? 'translateY(20px)' : 'translateY(0px)',
-                      transition: 'transform 0.3s ease',
-                      cursor: (product.name === 'SOFT CURL' || product.name === 'OCEAN CURL') ? 'pointer' : 'default'
+                      transition: 'transform 0.3s ease'
                     }}
-                    onClick={() => handleCardClick(product)}
                   >
                     {/* Shopping Bag Icon */}
                     <div 
@@ -392,12 +390,14 @@ function CurlyUnitsPage() {
                       <img
                         src={product.image}
                         alt={product.name}
+                        onClick={() => handleCardClick(product)}
                         style={{
                           width: '100%',
                           height: 'auto',
                           marginBottom: '10px',
                           marginLeft: '5px',
-                          marginTop: '0'
+                          marginTop: '0',
+                          cursor: (product.name === 'SOFT CURL' || product.name === 'OCEAN CURL') ? 'pointer' : 'default'
                         }}
                       />
                     </div>

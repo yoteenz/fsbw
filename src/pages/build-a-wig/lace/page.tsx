@@ -102,14 +102,16 @@ function LaceSelection() {
         '/assets/2D BLANCO RIGHT.png'
       ];
     }
-    if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) {
+    if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit') ||
+        pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) {
       return [
         '/assets/2D WAVY LEFT.png',
         '/assets/2D WAVY FRONT.png',
         '/assets/2D WAVY RIGHT.png'
       ];
     }
-    if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) {
+    if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit') ||
+        pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) {
       return [
         '/assets/2D CURLY LEFT.png',
         '/assets/2D CURLY FRONT.png',

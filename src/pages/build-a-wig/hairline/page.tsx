@@ -99,14 +99,16 @@ function HairlineSelection() {
         '/assets/2D BLANCO RIGHT.png'
       ];
     }
-    if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) {
+    if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit') ||
+        pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) {
       return [
         '/assets/2D WAVY LEFT.png',
         '/assets/2D WAVY FRONT.png',
         '/assets/2D WAVY RIGHT.png'
       ];
     }
-    if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) {
+    if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit') ||
+        pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) {
       return [
         '/assets/2D CURLY LEFT.png',
         '/assets/2D CURLY FRONT.png',
@@ -256,13 +258,17 @@ function HairlineSelection() {
                        pathname.includes('/noir/edit') ||
                        pathname.includes('/blanco/edit') ||
                        pathname.includes('/soft-wave/edit') ||
-                       pathname.includes('/soft-curl/edit');
+                       pathname.includes('/soft-curl/edit') ||
+                       pathname.includes('/ocean-curl/edit') ||
+                       pathname.includes('/beach-wave/edit');
     
     // Check if we're in customize mode for ALL products
     const isCustomizeMode = pathname.includes('/noir/customize') ||
                             pathname.includes('/blanco/customize') ||
                             pathname.includes('/soft-wave/customize') ||
-                            pathname.includes('/soft-curl/customize');
+                            pathname.includes('/soft-curl/customize') ||
+                            pathname.includes('/ocean-curl/customize') ||
+                            pathname.includes('/beach-wave/customize');
     
     // Get the source route from sessionStorage (set by main page when navigating to sub-page)
     // Also check if we're in edit or customize mode as fallback
@@ -281,6 +287,10 @@ function HairlineSelection() {
           sourceRoute = '/build-a-wig/soft-wave/edit';
         } else if (pathname.includes('/soft-curl/edit')) {
           sourceRoute = '/build-a-wig/soft-curl/edit';
+        } else if (pathname.includes('/ocean-curl/edit')) {
+          sourceRoute = '/build-a-wig/ocean-curl/edit';
+        } else if (pathname.includes('/beach-wave/edit')) {
+          sourceRoute = '/build-a-wig/beach-wave/edit';
         } else if (pathname.includes('/noir/edit')) {
           sourceRoute = '/build-a-wig/noir/edit';
         } else {
@@ -295,6 +305,10 @@ function HairlineSelection() {
           sourceRoute = '/build-a-wig/soft-wave/customize';
         } else if (pathname.includes('/soft-curl/customize')) {
           sourceRoute = '/build-a-wig/soft-curl/customize';
+        } else if (pathname.includes('/ocean-curl/customize')) {
+          sourceRoute = '/build-a-wig/ocean-curl/customize';
+        } else if (pathname.includes('/beach-wave/customize')) {
+          sourceRoute = '/build-a-wig/beach-wave/customize';
         } else if (pathname.includes('/noir/customize')) {
           sourceRoute = '/build-a-wig/noir/customize';
         } else {
@@ -348,10 +362,24 @@ function HairlineSelection() {
       returnRoute = '/build-a-wig/soft-wave/edit';
     } else if (location.pathname.startsWith('/build-a-wig/soft-curl/edit/')) {
       returnRoute = '/build-a-wig/soft-curl/edit';
+    } else if (location.pathname.startsWith('/build-a-wig/ocean-curl/edit/')) {
+      returnRoute = '/build-a-wig/ocean-curl/edit';
+    } else if (location.pathname.startsWith('/build-a-wig/beach-wave/edit/')) {
+      returnRoute = '/build-a-wig/beach-wave/edit';
     } else if (location.pathname.startsWith('/build-a-wig/edit/')) {
       returnRoute = '/build-a-wig/edit';
     } else if (location.pathname.startsWith('/build-a-wig/noir/customize/')) {
       returnRoute = '/build-a-wig/noir/customize';
+    } else if (location.pathname.startsWith('/build-a-wig/blanco/customize/')) {
+      returnRoute = '/build-a-wig/blanco/customize';
+    } else if (location.pathname.startsWith('/build-a-wig/soft-wave/customize/')) {
+      returnRoute = '/build-a-wig/soft-wave/customize';
+    } else if (location.pathname.startsWith('/build-a-wig/soft-curl/customize/')) {
+      returnRoute = '/build-a-wig/soft-curl/customize';
+    } else if (location.pathname.startsWith('/build-a-wig/ocean-curl/customize/')) {
+      returnRoute = '/build-a-wig/ocean-curl/customize';
+    } else if (location.pathname.startsWith('/build-a-wig/beach-wave/customize/')) {
+      returnRoute = '/build-a-wig/beach-wave/customize';
     } else if (sourceRoute) {
       returnRoute = sourceRoute;
     }
@@ -478,6 +506,8 @@ function HairlineSelection() {
                 else if (pathname.includes('/blanco/')) navigate('/build-a-wig/blanco');
                 else if (pathname.includes('/soft-wave/')) navigate('/build-a-wig/soft-wave');
                 else if (pathname.includes('/soft-curl/')) navigate('/build-a-wig/soft-curl');
+                else if (pathname.includes('/ocean-curl/')) navigate('/build-a-wig/ocean-curl');
+                else if (pathname.includes('/beach-wave/')) navigate('/build-a-wig/beach-wave');
                 else navigate('/build-a-wig');
               }}
             >
@@ -490,6 +520,8 @@ function HairlineSelection() {
                 if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) navigate('/straight/blanco');
                 else if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) navigate('/wavy/soft-wave');
                 else if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) navigate('/curly/soft-curl');
+                else if (pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) navigate('/wavy/beach-wave');
+                else if (pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) navigate('/curly/ocean-curl');
                 else navigate('/straight/noir');
               }}
             >
@@ -498,6 +530,8 @@ function HairlineSelection() {
                 if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) return 'BLANCO';
                 if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) return 'SOFT WAVE';
                 if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) return 'SOFT CURL';
+                if (pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) return 'BEACH WAVE';
+                if (pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) return 'OCEAN CURL';
                 return 'NOIR';
               })()}
             </span>
@@ -583,6 +617,8 @@ function HairlineSelection() {
                       if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) navigate('/straight/blanco');
                       else if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) navigate('/wavy/soft-wave');
                       else if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) navigate('/curly/soft-curl');
+                      else if (pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) navigate('/wavy/beach-wave');
+                      else if (pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) navigate('/curly/ocean-curl');
                       else navigate('/straight/noir');
                     }}
                 >
@@ -591,6 +627,8 @@ function HairlineSelection() {
                     if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) return 'BLANCO';
                     if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) return 'SOFT WAVE';
                     if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) return 'SOFT CURL';
+                    if (pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) return 'BEACH WAVE';
+                    if (pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) return 'OCEAN CURL';
                     return 'NOIR';
                   })()}
                 </p>

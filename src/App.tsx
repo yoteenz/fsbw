@@ -27,6 +27,8 @@ const NoirUnitPage = lazy(() => import('./pages/build-a-wig/units/noir/page'));
 const BlancoUnitPage = lazy(() => import('./pages/straight/blanco/page'));
 const SoftCurlUnitPage = lazy(() => import('./pages/curly/soft-curl/page'));
 const SoftWaveUnitPage = lazy(() => import('./pages/wavy/soft-wave/page'));
+const OceanCurlUnitPage = lazy(() => import('./pages/curly/ocean-curl/page'));
+const BeachWaveUnitPage = lazy(() => import('./pages/wavy/beach-wave/page'));
 const WishlistPage = lazy(() => import('./pages/wishlist/page'));
 const StraightUnitsPage = lazy(() => import('./pages/units/straight/page'));
 const WavyUnitsPage = lazy(() => import('./pages/units/wavy/page'));
@@ -157,6 +159,16 @@ function App() {
             <SoftWaveUnitPage />
           </Suspense>
         } />
+        <Route path="/wavy/beach-wave" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <BeachWaveUnitPage />
+          </Suspense>
+        } />
+        <Route path="/curly/ocean-curl" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <OceanCurlUnitPage />
+          </Suspense>
+        } />
         <Route path="/straight/noir" element={
           <Suspense fallback={<LoadingScreen />}>
             <NoirUnitPage />
@@ -238,6 +250,29 @@ function App() {
         <Route path="/build-a-wig/soft-wave/customize" element={<BuildAWigPage />} />
         <Route path="/build-a-wig/soft-wave" element={<BuildAWigPage />} />
         
+        {/* Beach Wave routes */}
+        <Route path="/build-a-wig/beach-wave/edit/color" element={<ColorPage />} />
+        <Route path="/build-a-wig/beach-wave/edit/length" element={<LengthPage />} />
+        <Route path="/build-a-wig/beach-wave/edit/density" element={<DensityPage />} />
+        <Route path="/build-a-wig/beach-wave/edit/lace" element={<LacePage />} />
+        <Route path="/build-a-wig/beach-wave/edit/texture" element={<TexturePage />} />
+        <Route path="/build-a-wig/beach-wave/edit/hairline" element={<HairlinePage />} />
+        <Route path="/build-a-wig/beach-wave/edit/cap" element={<CapSizePage />} />
+        <Route path="/build-a-wig/beach-wave/edit/styling" element={<StylingPage />} />
+        <Route path="/build-a-wig/beach-wave/edit/addons" element={<AddOnsPage />} />
+        <Route path="/build-a-wig/beach-wave/edit" element={<BuildAWigPage />} />
+        <Route path="/build-a-wig/beach-wave/customize/color" element={<ColorPage />} />
+        <Route path="/build-a-wig/beach-wave/customize/length" element={<LengthPage />} />
+        <Route path="/build-a-wig/beach-wave/customize/density" element={<DensityPage />} />
+        <Route path="/build-a-wig/beach-wave/customize/lace" element={<LacePage />} />
+        <Route path="/build-a-wig/beach-wave/customize/texture" element={<TexturePage />} />
+        <Route path="/build-a-wig/beach-wave/customize/hairline" element={<HairlinePage />} />
+        <Route path="/build-a-wig/beach-wave/customize/cap" element={<CapSizePage />} />
+        <Route path="/build-a-wig/beach-wave/customize/styling" element={<StylingPage />} />
+        <Route path="/build-a-wig/beach-wave/customize/addons" element={<AddOnsPage />} />
+        <Route path="/build-a-wig/beach-wave/customize" element={<BuildAWigPage />} />
+        <Route path="/build-a-wig/beach-wave" element={<BuildAWigPage />} />
+        
         {/* Soft Curl routes */}
         <Route path="/build-a-wig/soft-curl/edit/color" element={<ColorPage />} />
         <Route path="/build-a-wig/soft-curl/edit/length" element={<LengthPage />} />
@@ -260,6 +295,29 @@ function App() {
         <Route path="/build-a-wig/soft-curl/customize/addons" element={<AddOnsPage />} />
         <Route path="/build-a-wig/soft-curl/customize" element={<BuildAWigPage />} />
         <Route path="/build-a-wig/soft-curl" element={<BuildAWigPage />} />
+        
+        {/* Ocean Curl routes */}
+        <Route path="/build-a-wig/ocean-curl/edit/color" element={<ColorPage />} />
+        <Route path="/build-a-wig/ocean-curl/edit/length" element={<LengthPage />} />
+        <Route path="/build-a-wig/ocean-curl/edit/density" element={<DensityPage />} />
+        <Route path="/build-a-wig/ocean-curl/edit/lace" element={<LacePage />} />
+        <Route path="/build-a-wig/ocean-curl/edit/texture" element={<TexturePage />} />
+        <Route path="/build-a-wig/ocean-curl/edit/hairline" element={<HairlinePage />} />
+        <Route path="/build-a-wig/ocean-curl/edit/cap" element={<CapSizePage />} />
+        <Route path="/build-a-wig/ocean-curl/edit/styling" element={<StylingPage />} />
+        <Route path="/build-a-wig/ocean-curl/edit/addons" element={<AddOnsPage />} />
+        <Route path="/build-a-wig/ocean-curl/edit" element={<BuildAWigPage />} />
+        <Route path="/build-a-wig/ocean-curl/customize/color" element={<ColorPage />} />
+        <Route path="/build-a-wig/ocean-curl/customize/length" element={<LengthPage />} />
+        <Route path="/build-a-wig/ocean-curl/customize/density" element={<DensityPage />} />
+        <Route path="/build-a-wig/ocean-curl/customize/lace" element={<LacePage />} />
+        <Route path="/build-a-wig/ocean-curl/customize/texture" element={<TexturePage />} />
+        <Route path="/build-a-wig/ocean-curl/customize/hairline" element={<HairlinePage />} />
+        <Route path="/build-a-wig/ocean-curl/customize/cap" element={<CapSizePage />} />
+        <Route path="/build-a-wig/ocean-curl/customize/styling" element={<StylingPage />} />
+        <Route path="/build-a-wig/ocean-curl/customize/addons" element={<AddOnsPage />} />
+        <Route path="/build-a-wig/ocean-curl/customize" element={<BuildAWigPage />} />
+        <Route path="/build-a-wig/ocean-curl" element={<BuildAWigPage />} />
         
         {/* Legacy edit routes (for backward compatibility) */}
         <Route path="/build-a-wig/edit/color" element={<ColorPage />} />

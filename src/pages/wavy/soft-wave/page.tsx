@@ -89,7 +89,7 @@ function SoftWaveSelection() {
           quantity: quantity,
           image: '/assets/NOIR/wave-thumb.png',
           length: localStorage.getItem('selectedLength') || '24"',
-          hairOrigin: 'INDONESIAN',
+          hairOrigin: 'INDIAN',
           capSize: selectedCustomCap || selectedFlexibleCap || 'M',
           density: localStorage.getItem('selectedDensity') || '200%',
           lace: localStorage.getItem('selectedLace') || '13X6',
@@ -974,7 +974,7 @@ function SoftWaveSelection() {
                 marginTop: '-8px'
               }}
             >
-              24" RAW INDONESIAN
+              24" RAW INDIAN
             </p>
 
             {/* PRICE */}
@@ -1423,7 +1423,7 @@ function SoftWaveSelection() {
                   {activeTab === 'DETAILS' && (
                     <>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        13X6 ULTRA THIN HD FILM LACE, RAW INDONESIAN WAVY 200% DENSITY.
+                        13X6 ULTRA THIN HD FILM LACE, RAW INDIAN WAVY 200% DENSITY.
                       </p>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         HANDMADE UNIT MEASURING 24 INCHES IN LENGTH, OFF BLACK HAIR COLOR.
@@ -1847,9 +1847,9 @@ function SoftWaveSelection() {
                   </div>
                 </div>
                 
-                {/* Product 2 - SOFT WAVE */}
+                {/* Product 2 - BEACH WAVE */}
                 <div 
-                  onClick={() => navigate('/wavy/soft-wave')}
+                  onClick={() => navigate('/wavy/beach-wave')}
                   style={{ 
                     padding: '10px 10px 4px 10px',
                     textAlign: 'center',
@@ -1859,7 +1859,7 @@ function SoftWaveSelection() {
                 >
                   <img
                     src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/wave-thumb.png"}
-                    alt="SOFT WAVE"
+                    alt="BEACH WAVE"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -1876,7 +1876,7 @@ function SoftWaveSelection() {
                     fontWeight: '500',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    SOFT WAVE
+                    BEACH WAVE
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2196,7 +2196,7 @@ function SoftWaveSelection() {
                   >
                 {/* Product 1 - BEACH WAVE */}
                 <div 
-                  onClick={() => navigate('/wavy/soft-wave')}
+                  onClick={() => navigate('/wavy/beach-wave')}
                   style={{ 
                     padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
                     textAlign: 'center',
@@ -2206,7 +2206,7 @@ function SoftWaveSelection() {
                 >
                   <img
                     src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/wave-thumb.png"}
-                    alt="SOFT WAVE"
+                    alt="BEACH WAVE"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -2223,7 +2223,7 @@ function SoftWaveSelection() {
                     fontWeight: '500',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    SOFT WAVE
+                    BEACH WAVE
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',

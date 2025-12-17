@@ -347,10 +347,8 @@ function StraightUnitsPage() {
                       backgroundPosition: 'center',
                       backgroundRepeat: 'no-repeat',
                       transform: isStaggered ? 'translateY(20px)' : 'translateY(0px)',
-                      transition: 'transform 0.3s ease',
-                      cursor: (product.name === 'NOIR' || product.name === 'BLANCO') ? 'pointer' : 'default'
+                      transition: 'transform 0.3s ease'
                     }}
-                    onClick={() => handleCardClick(product)}
                   >
                     {/* Shopping Bag Icon */}
                     <div 
@@ -392,12 +390,14 @@ function StraightUnitsPage() {
                       <img
                         src={product.image}
                         alt={product.name}
+                        onClick={() => handleCardClick(product)}
                         style={{
                           width: '100%',
                           height: 'auto',
                           marginBottom: '10px',
                           marginLeft: '5px',
-                          marginTop: '0'
+                          marginTop: '0',
+                          cursor: (product.name === 'NOIR' || product.name === 'BLANCO') ? 'pointer' : 'default'
                         }}
                       />
                     </div>

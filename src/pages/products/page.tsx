@@ -100,10 +100,21 @@ function ProductsPage() {
       price: 760,
       image: '/assets/NOIR/wave-thumb.png',
       length: '24"',
-      hairOrigin: 'INDONESIAN',
+      hairOrigin: 'INDIAN',
       inCart: false,
       selectedSize: 'M',
       route: '/wavy/soft-wave'
+    },
+    {
+      id: 'beach-wave',
+      name: 'BEACH WAVE',
+      price: 760,
+      image: '/assets/NOIR/wave-thumb.png',
+      length: '24"',
+      hairOrigin: 'INDONESIAN',
+      inCart: false,
+      selectedSize: 'M',
+      route: '/wavy/beach-wave'
     },
     {
       id: 'soft-curl',
@@ -115,11 +126,22 @@ function ProductsPage() {
       inCart: false,
       selectedSize: 'M',
       route: '/curly/soft-curl'
+    },
+    {
+      id: 'ocean-curl',
+      name: 'OCEAN CURL',
+      price: 780,
+      image: '/assets/NOIR/curl-thumb.png',
+      length: '24"',
+      hairOrigin: 'FILIPINO',
+      inCart: false,
+      selectedSize: 'M',
+      route: '/curly/ocean-curl'
     }
   ]);
 
   // Gift card products state
-  const [giftCardProducts, setGiftCardProducts] = useState([
+  const [_giftCardProducts, setGiftCardProducts] = useState([
     {
       id: 'gift-card-10',
       name: 'GIFT CARD',
@@ -247,7 +269,7 @@ function ProductsPage() {
   }, [currencyRates, selectedCurrency]);
 
   // Units scroll handlers
-  const handleUnitsMouseDown = (e: React.MouseEvent) => {
+  const _handleUnitsMouseDown = (e: React.MouseEvent) => {
     setIsUnitsDragging(true);
     setUnitsStartX(e.clientX);
     setUnitsStartScroll(unitsScroll);
@@ -272,13 +294,13 @@ function ProductsPage() {
     }
   };
 
-  const handleUnitsTouchStart = (e: React.TouchEvent) => {
+  const _handleUnitsTouchStart = (e: React.TouchEvent) => {
     setIsUnitsDragging(true);
     setUnitsStartX(e.touches[0].clientX);
     setUnitsStartScroll(unitsScroll);
   };
 
-  const handleUnitsTouchMove = (e: React.TouchEvent) => {
+  const _handleUnitsTouchMove = (e: React.TouchEvent) => {
     if (!isUnitsDragging) return;
     const currentX = e.touches[0].clientX;
     const diff = currentX - unitsStartX;
@@ -288,7 +310,7 @@ function ProductsPage() {
     setUnitsScroll(Math.max(minScroll, Math.min(maxScroll, newPosition)));
   };
 
-  const handleUnitsTouchEnd = () => {
+  const _handleUnitsTouchEnd = () => {
     setIsUnitsDragging(false);
     if (unitsScroll > -window.innerWidth * 0.3565) {
       setUnitsScroll(0);
@@ -298,15 +320,22 @@ function ProductsPage() {
   };
 
   const handleUnitsLeftArrow = () => {
-    setUnitsScroll(0);
+    const currentView = Math.abs(Math.round(unitsScroll / window.innerWidth));
+    const newScroll = currentView > 0 ? -(currentView - 1) * window.innerWidth : 0;
+    setUnitsScroll(newScroll);
   };
 
   const handleUnitsRightArrow = () => {
-    setUnitsScroll(-window.innerWidth * 0.713);
+    const totalViews = Math.ceil(unitsProducts.length / 2);
+    const currentView = Math.abs(Math.round(unitsScroll / window.innerWidth));
+    const maxView = totalViews - 1;
+    if (currentView < maxView) {
+      setUnitsScroll(-(currentView + 1) * window.innerWidth);
+    }
   };
 
   // Gift card scroll handlers
-  const handleGiftCardMouseDown = (e: React.MouseEvent) => {
+  const _handleGiftCardMouseDown = (e: React.MouseEvent) => {
     setIsGiftCardDragging(true);
     setGiftCardStartX(e.clientX);
     setGiftCardStartScroll(giftCardScroll);
@@ -337,13 +366,13 @@ function ProductsPage() {
     }
   };
 
-  const handleGiftCardTouchStart = (e: React.TouchEvent) => {
+  const _handleGiftCardTouchStart = (e: React.TouchEvent) => {
     setIsGiftCardDragging(true);
     setGiftCardStartX(e.touches[0].clientX);
     setGiftCardStartScroll(giftCardScroll);
   };
 
-  const handleGiftCardTouchMove = (e: React.TouchEvent) => {
+  const _handleGiftCardTouchMove = (e: React.TouchEvent) => {
     if (!isGiftCardDragging) return;
     const currentX = e.touches[0].clientX;
     const diff = currentX - giftCardStartX;
@@ -353,7 +382,7 @@ function ProductsPage() {
     setGiftCardScroll(Math.max(minScroll, Math.min(maxScroll, newPosition)));
   };
 
-  const handleGiftCardTouchEnd = () => {
+  const _handleGiftCardTouchEnd = () => {
     setIsGiftCardDragging(false);
     // Snap to nearest position (0, -71.3%, -142.6%, -213.9%)
     const scrollPercent = Math.abs(giftCardScroll) / window.innerWidth;
@@ -368,11 +397,11 @@ function ProductsPage() {
     }
   };
 
-  const handleGiftCardLeftArrow = () => {
+  const _handleGiftCardLeftArrow = () => {
     setGiftCardScroll(0);
   };
 
-  const handleGiftCardRightArrow = () => {
+  const _handleGiftCardRightArrow = () => {
     // Cycle through positions: 0 -> -71.3% -> -142.6% -> -213.9% -> 0
     const scrollPercent = Math.abs(giftCardScroll) / window.innerWidth;
     if (scrollPercent < 0.3565) {
@@ -387,32 +416,114 @@ function ProductsPage() {
   };
 
   const handleSizeSelect = (productId: string, size: string) => {
-    setUnitsProducts(prev => 
-      prev.map(p => 
-        p.id === productId ? { ...p, selectedSize: size } : p
-      )
-    );
+    setUnitsProducts(prev => {
+      const updated = prev.map(p => {
+        if (p.id === productId) {
+          // Check if this product with the new size is in cart
+          try {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+            const inCart = cartItems.some((item: any) => 
+              item.name === p.name && item.capSize === size
+            );
+            return { ...p, selectedSize: size, inCart };
+          } catch (e) {
+            return { ...p, selectedSize: size, inCart: false };
+          }
+        }
+        return p;
+      });
+      return updated;
+    });
   };
 
   const handleAddToCart = (product: any, e?: MouseEvent<HTMLDivElement>) => {
     if (e) {
       e.stopPropagation();
     }
-    console.log('Add to cart clicked for:', product.name);
-    if (product.route) {
-      // Units product
-      setUnitsProducts(prevProducts => 
-        prevProducts.map(p => 
-          p.id === product.id ? { ...p, inCart: !p.inCart } : p
-        )
-      );
-    } else {
-      // Gift card product
+
+    if (!product.route) {
+      // Gift card product - handle separately if needed
       setGiftCardProducts(prevProducts => 
         prevProducts.map(p => 
           p.id === product.id ? { ...p, inCart: !p.inCart } : p
         )
       );
+      return;
+    }
+
+    // Units product - handle localStorage and cart updates
+    try {
+      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      const selectedCapSize = product.selectedSize || 'M';
+      
+      // Check if this exact product (name + capSize) is already in cart
+      const existingItemIndex = cartItems.findIndex((item: any) => 
+        item.name === product.name && item.capSize === selectedCapSize
+      );
+
+      if (existingItemIndex !== -1) {
+        // Remove from cart
+        const updatedCartItems = cartItems.filter((_: any, index: number) => index !== existingItemIndex);
+        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+        
+        // Update cart count
+        const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
+        const removedQuantity = cartItems[existingItemIndex].quantity || 1;
+        const newCount = Math.max(0, currentCount - removedQuantity);
+        localStorage.setItem('cartCount', newCount.toString());
+        setCartCount(newCount);
+        
+        // Update UI state
+        setUnitsProducts(prevProducts => 
+          prevProducts.map(p => 
+            p.id === product.id ? { ...p, inCart: false } : p
+          )
+        );
+        
+        // Dispatch cart count update event
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+          window.dispatchEvent(new Event('cartUpdated'));
+        }, 100);
+      } else {
+        // Add to cart
+        const capSizePrice = 0; // Standard cap sizes (XS, S, M, L) have no additional price
+        
+        // Create cart item with product details and selected cap size
+        const cartItem = {
+          id: `${product.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          name: product.name,
+          price: product.price + capSizePrice,
+          quantity: 1,
+          image: product.image,
+          capSize: selectedCapSize,
+          route: product.route
+        };
+        
+        const updatedCartItems = [cartItem, ...cartItems];
+        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+        
+        // Update cart count
+        const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
+        const newCount = currentCount + 1;
+        localStorage.setItem('cartCount', newCount.toString());
+        setCartCount(newCount);
+        
+        // Update UI state
+        setUnitsProducts(prevProducts => 
+          prevProducts.map(p => 
+            p.id === product.id ? { ...p, inCart: true } : p
+          )
+        );
+        
+        // Dispatch cart count update event
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+          window.dispatchEvent(new Event('cartUpdated'));
+        }, 100);
+      }
+    } catch (error) {
+      console.error('Error handling add to cart:', error);
     }
   };
 
@@ -526,64 +637,70 @@ function ProductsPage() {
           </div>
 
           {/* UNITS CONTAINER */}
-          <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
-            <div style={{ 
-              border: '1.3px solid black', 
-              backgroundColor: 'rgba(255, 255, 255, 0.6)', 
-              backdropFilter: 'blur(10px)',
+          <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', overflow: 'visible' }}>
+            <div style={{
+              border: '1.3px solid black',
+              backgroundColor: '#f5f5f5',
+              backgroundImage: `url('/assets/marble-container.png')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
               padding: '0px',
               maxWidth: '100%',
-              margin: '0 auto'
+              margin: '0 auto',
+              overflow: 'visible',
+              position: 'relative'
             }}>
               {/* Header */}
-              <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-                <div style={{ 
-                  width: '1px', 
-                  height: '15px', 
-                  backgroundColor: 'black',
-                  margin: '0 auto 8px auto'
-                }}></div>
-                <h3 
+              <div style={{ textAlign: 'center', marginBottom: '5px' }}>
+                <div style={{ width: '1px', height: '15px', backgroundColor: 'black', margin: '0 auto 8px auto' }}></div>
+                <h3
                   onClick={() => navigate('/products/units')}
-                  style={{ 
+                  style={{
                     fontFamily: '"Futura PT Medium"',
-                    fontSize: '12px',
+                    fontSize: '13px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
                     margin: '0',
                     fontWeight: '500',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    display: 'inline-block',
+                    width: 'auto',
+                    height: 'auto'
                   }}
                 >
                   UNITS
                 </h3>
               </div>
-              <div 
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}
-              >
-                <button 
-                  onClick={handleUnitsLeftArrow}
-                  style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    padding: '5px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '50px',
-                    transform: 'translateX(10px) translateY(-10px)'
-                  }}>
-                  <img
-                    src="/assets/NOIR/left-facing-arrow.svg"
-                    alt="Left Arrow"
-                    style={{ width: '14px', height: '14px' }}
-                  />
-                </button>
+              
+              {/* Content Area */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: unitsProducts.length >= 4 ? 'space-between' : 'center', gap: '10px', overflow: 'visible' }}>
+                {/* Left Arrow (Conditional) */}
+                {unitsProducts.length >= 4 && (
+                  <button 
+                    onClick={handleUnitsLeftArrow}
+                    style={{ 
+                      background: 'none', 
+                      border: 'none', 
+                      cursor: 'pointer',
+                      padding: '5px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      height: '100%',
+                      minHeight: '50px',
+                      transform: 'translateX(10px) translateY(-10px)'
+                    }}>
+                    <img
+                      src="/assets/NOIR/left-facing-arrow.svg"
+                      alt="Left Arrow"
+                      style={{ width: '14px', height: '14px' }}
+                    />
+                  </button>
+                )}
                 
                 {/* Product Thumbnails Container with Static Vertical Line */}
-                <div style={{ flex: '1', position: 'relative' }}>
+                <div style={{ flex: '1', position: 'relative', overflow: 'visible' }}>
                   {/* Single Center Line with Masking */}
                   <div style={{
                     position: 'absolute',
@@ -609,9 +726,66 @@ function ProductsPage() {
                     pointerEvents: 'none'
                   }}></div>
                   
+                  {/* Shopping Bag Icons Container */}
+                  <div style={{ 
+                    position: 'absolute',
+                    top: '0',
+                    left: '0',
+                    right: '0',
+                    bottom: '0',
+                    zIndex: 1000,
+                    pointerEvents: 'none',
+                    overflow: 'visible'
+                  }}>
+                    {unitsProducts.map((product, index) => {
+                      const isLeft = index % 2 === 0;
+                      
+                      return (
+                        <div
+                          key={`icon-${product.id}`}
+                          style={{
+                            position: 'absolute',
+                            top: '-38px',
+                            ...(isLeft 
+                              ? { left: `calc(${index * 50}% + ${unitsScroll}px + 16px)` }
+                              : { left: `calc(${index * 50}% + 50% + ${unitsScroll}px - 34px)` }
+                            ),
+                            pointerEvents: 'auto',
+                            cursor: 'pointer',
+                            width: '20px',
+                            height: '23px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                          onClick={(e) => { e.stopPropagation(); handleAddToCart(product, e); }}
+                        >
+                          {product.inCart ? (
+                            <img
+                              src="/assets/card-added.svg"
+                              alt="In cart"
+                              width={20}
+                              height={23}
+                              style={{ width: '20px !important', height: '23px !important' }}
+                            />
+                          ) : (
+                            <img
+                              src="/assets/card-add.svg"
+                              alt="Add to cart"
+                              width={20}
+                              height={23}
+                              style={{ width: '20px !important', height: '23px !important' }}
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  
                   {/* Scrolling Product Thumbnails Container */}
                   <div style={{ 
                     overflowX: 'hidden',
+                    overflowY: 'visible',
                     width: '100%',
                     position: 'relative',
                     maxWidth: '100%'
@@ -619,79 +793,49 @@ function ProductsPage() {
                     <div 
                       style={{ 
                         display: 'flex', 
+                        flexWrap: 'nowrap',
                         gap: '0',
-                        transform: `translateX(${unitsScroll}px) translateY(-15px)`,
+                        transform: `translateX(${unitsScroll}px) translateY(-5px)`,
                         transition: 'none',
-                        width: 'calc(200% - 20px)'
+                        width: `calc(${Math.ceil(unitsProducts.length / 2) * 100}% - 20px)`
                       }}
                     >
                       {unitsProducts.map((product, index) => (
-                        <div 
+                        <div
                           key={product.id}
-                          onClick={() => handleProductClick(product)}
                           style={{ 
-                            padding: index === 0 ? '10px 10px 4px 0px' : '10px 10px 4px 10px',
+                            padding: '5px 10px 4px 10px',
                             textAlign: 'center',
-                            transform: index === 0 ? 'translateX(-2.5px)' : 'translateX(13px)',
-                            cursor: 'pointer'
+                            transform: index % 2 === 0 ? 'translateX(0px)' : 'translateX(10px)',
+                            flex: `0 0 calc(50% / ${Math.ceil(unitsProducts.length / 2)})`,
+                            boxSizing: 'border-box',
+                            position: 'relative',
+                            overflow: 'visible'
                           }}
                         >
-                          {/* Shopping Bag Icon */}
-                          <div 
-                            style={{ 
-                              position: 'absolute', 
-                              top: '8px',
-                              ...(index % 2 === 0 ? { left: '12px' } : { right: '12px' }),
-                              cursor: 'pointer',
-                              zIndex: 10,
-                              width: '20px',
-                              height: '23px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center'
-                            }}
-                            onClick={(e) => handleAddToCart(product, e)}
-                          >
-                            {product.inCart ? (
-                              <img
-                                src="/assets/card-added.svg"
-                                alt="In cart"
-                                width={20}
-                                height={23}
-                                style={{ width: '20px !important', height: '23px !important' }}
-                              />
-                            ) : (
-                              <img
-                                src="/assets/card-add.svg"
-                                alt="Add to cart"
-                                width={20}
-                                height={23}
-                                style={{ width: '20px !important', height: '23px !important' }}
-                              />
-                            )}
-                          </div>
-
                           {/* Product Image */}
                           <img
                             src={product.image}
                             alt={product.name}
+                            onClick={() => handleProductClick(product)}
                             style={{ 
                               width: '90%', 
                               height: 'auto',
-                              marginBottom: '10px',
-                              marginLeft: '10px'
+                              marginBottom: '5px',
+                              marginLeft: '10px',
+                              maxWidth: '100%',
+                              cursor: 'pointer'
                             }}
                           />
                           
                           {/* Product Name */}
                           <p style={{ 
                             fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                            fontSize: '18px',
+                            fontSize: product.name === 'NOIR' ? '19px' : '18px',
                             color: 'black',
                             textTransform: 'uppercase',
                             margin: '-10px 0 -3px 0',
-                            fontWeight: '500',
-                            transform: 'translateX(10px)'
+                            fontWeight: '500'
                           }}>
                             {product.name}
                           </p>
@@ -704,8 +848,7 @@ function ProductsPage() {
                             textTransform: 'uppercase',
                             margin: '0 0 5px 0',
                             fontWeight: '500',
-                            lineHeight: '0.84',
-                            transform: 'translateX(10px)'
+                            lineHeight: '0.84'
                           }}>
                             {product.length} RAW {product.hairOrigin}
                           </p>
@@ -719,19 +862,13 @@ function ProductsPage() {
                             margin: '0 0 5px 0',
                             fontWeight: '500',
                             lineHeight: '0.84',
-                            transform: 'translateX(10px)'
+                            transform: 'translateY(2px)'
                           }}
                           dangerouslySetInnerHTML={formatPrice(product.price)}
                           />
                           
                           {/* Cap Size Options */}
-                          <div style={{ 
-                            display: 'flex', 
-                            justifyContent: 'center', 
-                            gap: '14px', 
-                            marginTop: '2px',
-                            transform: 'translateX(10px)'
-                          }}>
+                          <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', marginTop: '2px', transform: 'translateY(1px)' }}>
                             {['XS', 'S', 'M', 'L'].map(size => (
                               <span
                                 key={size}
@@ -753,26 +890,29 @@ function ProductsPage() {
                   </div>
                 </div>
                 
-                <button 
-                  onClick={handleUnitsRightArrow}
-                  style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    padding: '5px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '50px',
-                    transform: 'translateX(-10px) translateY(-10px)'
-                  }}>
-                  <img
-                    src="/assets/NOIR/right-facing-arrow.svg"
-                    alt="Right Arrow"
-                    style={{ width: '14px', height: '14px' }}
-                  />
-                </button>
+                {/* Right Arrow (Conditional) */}
+                {unitsProducts.length >= 4 && (
+                  <button 
+                    onClick={handleUnitsRightArrow}
+                    style={{ 
+                      background: 'none', 
+                      border: 'none', 
+                      cursor: 'pointer',
+                      padding: '5px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      height: '100%',
+                      minHeight: '50px',
+                      transform: 'translateX(-10px) translateY(-10px)'
+                    }}>
+                    <img
+                      src="/assets/NOIR/right-facing-arrow.svg"
+                      alt="Right Arrow"
+                      style={{ width: '14px', height: '14px' }}
+                    />
+                  </button>
+                )}
               </div>
             </div>
           </div>

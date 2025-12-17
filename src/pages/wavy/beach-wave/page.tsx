@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 
-function SoftCurlSelection() {
+function BeachWaveSelection() {
   const navigate = useNavigate();
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [selectedCustomCap, setSelectedCustomCap] = useState('M');
@@ -44,12 +44,12 @@ function SoftCurlSelection() {
     MXN: { symbol: '&#36;', rate: 20.0, name: 'Mexican Peso' }
   }), []);
   
-  // Check if SOFT CURL is in wishlist on mount and when wishlist changes
+  // Check if BEACH WAVE is in wishlist on mount and when wishlist changes
   useEffect(() => {
     const checkWishlist = () => {
       try {
         const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
-        const isInList = wishlistItems.some((item: any) => item.name === 'SOFT CURL');
+        const isInList = wishlistItems.some((item: any) => item.name === 'BEACH WAVE');
         setIsInWishlist(isInList);
       } catch (e) {
         setIsInWishlist(false);
@@ -73,23 +73,23 @@ function SoftCurlSelection() {
   const handleToggleWishlist = () => {
     try {
       const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
-      const totalPrice = parseInt(localStorage.getItem('softCurlTotalPrice') || '780');
+      const totalPrice = parseInt(localStorage.getItem('beachWaveTotalPrice') || '760');
       
       if (isInWishlist) {
         // Remove from wishlist
-        const updatedItems = wishlistItems.filter((item: any) => item.name !== 'SOFT CURL');
+        const updatedItems = wishlistItems.filter((item: any) => item.name !== 'BEACH WAVE');
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(false);
       } else {
         // Add to wishlist
-        const softCurlItem = {
-          id: 'soft-curl-unit',
-          name: 'SOFT CURL',
+        const beachWaveItem = {
+          id: 'beach-wave-unit',
+          name: 'BEACH WAVE',
           price: totalPrice,
           quantity: quantity,
-          image: '/assets/NOIR/curl-thumb.png',
+          image: '/assets/NOIR/wave-thumb.png',
           length: localStorage.getItem('selectedLength') || '24"',
-          hairOrigin: 'VIETNAMESE',
+          hairOrigin: 'INDONESIAN',
           capSize: selectedCustomCap || selectedFlexibleCap || 'M',
           density: localStorage.getItem('selectedDensity') || '200%',
           lace: localStorage.getItem('selectedLace') || '13X6',
@@ -98,7 +98,7 @@ function SoftCurlSelection() {
           hairline: localStorage.getItem('selectedHairline') || 'NATURAL',
           styling: localStorage.getItem('selectedStyling') || 'MIDDLE'
         };
-        const updatedItems = [...wishlistItems, softCurlItem];
+        const updatedItems = [...wishlistItems, beachWaveItem];
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(true);
       }
@@ -110,21 +110,21 @@ function SoftCurlSelection() {
     }
   };
 
-  // CRITICAL: Clear any noir-specific localStorage values and set SOFT CURL defaults on page load
-  // This prevents noir page settings from interfering with soft-curl page
+  // CRITICAL: Clear any noir-specific localStorage values and set BEACH WAVE defaults on page load
+  // This prevents noir page settings from interfering with beach-wave page
   useEffect(() => {
     // Clear any edit mode flags that might be from other products
     if (localStorage.getItem('editingCartItem')) {
       const editingItem = JSON.parse(localStorage.getItem('editingCartItem') || '{}');
-      // Only clear if it's not a SOFT CURL item
-      if (editingItem.name !== 'SOFT CURL') {
+      // Only clear if it's not a BEACH WAVE item
+      if (editingItem.name !== 'BEACH WAVE') {
         localStorage.removeItem('editingCartItem');
         localStorage.removeItem('editingCartItemId');
       }
     }
     
-    // Set SOFT CURL-specific defaults (don't read from localStorage to avoid noir contamination)
-    // These are only used if user goes to build-a-wig page from soft-curl
+    // Set BEACH WAVE-specific defaults (don't read from localStorage to avoid noir contamination)
+    // These are only used if user goes to build-a-wig page from beach-wave
     localStorage.setItem('selectedLength', '24"');
     localStorage.setItem('selectedLengthPrice', '0');
     localStorage.setItem('selectedDensity', '200%');
@@ -146,8 +146,8 @@ function SoftCurlSelection() {
   // Helper function to check if a cart item matches the default configuration exactly
   // This does explicit field-by-field comparison to ensure no false matches
   const matchesDefaultConfiguration = (item: any): boolean => {
-    // Ensure item is for SOFT CURL product
-    if (item.name !== 'SOFT CURL') {
+    // Ensure item is for BEACH WAVE product
+    if (item.name !== 'BEACH WAVE') {
       return false;
     }
     
@@ -350,35 +350,35 @@ function SoftCurlSelection() {
     setShowChartModal(false);
   };
 
-  // Mannequin images for soft curl product (2D view)
+  // Mannequin images for soft wave product (2D view)
   const mannequinImages = [
-    '/assets/2D CURLY FRONT.png',  // View 1 (default)
-    '/assets/2D CURLY LEFT.png',  // View 2 (top thumbnail)
-    '/assets/2D CURLY RIGHT.png'  // View 3 (bottom thumbnail)
+    '/assets/2D WAVY FRONT.png',  // View 1 (default)
+    '/assets/2D WAVY LEFT.png',  // View 2 (top thumbnail)
+    '/assets/2D WAVY RIGHT.png'  // View 3 (bottom thumbnail)
   ];
 
   // Get current mannequin images based on selected view
   const getCurrentImages = () => {
     if (selectedMannequinView === 0) {
-      // Default state: 2D CURLY FRONT in hero
+      // Default state: 2D WAVY FRONT in hero
       return {
-        hero: mannequinImages[0], // 2D CURLY FRONT
-        top: mannequinImages[1], // 2D CURLY LEFT
-        bottom: mannequinImages[2] // 2D CURLY RIGHT
+        hero: mannequinImages[0], // 2D WAVY FRONT
+        top: mannequinImages[1], // 2D WAVY LEFT
+        bottom: mannequinImages[2] // 2D WAVY RIGHT
       };
     } else if (selectedMannequinView === 1) {
-      // Top thumbnail clicked: 2D CURLY LEFT in hero, 2D CURLY FRONT in top
+      // Top thumbnail clicked: 2D WAVY LEFT in hero, 2D WAVY FRONT in top
       return {
-        hero: mannequinImages[1], // 2D CURLY LEFT
-        top: mannequinImages[0], // 2D CURLY FRONT
-        bottom: mannequinImages[2] // 2D CURLY RIGHT (stays in bottom)
+        hero: mannequinImages[1], // 2D WAVY LEFT
+        top: mannequinImages[0], // 2D WAVY FRONT
+        bottom: mannequinImages[2] // 2D WAVY RIGHT (stays in bottom)
       };
     } else {
-      // Bottom thumbnail clicked: 2D CURLY RIGHT in hero, 2D CURLY FRONT in bottom
+      // Bottom thumbnail clicked: 2D WAVY RIGHT in hero, 2D WAVY FRONT in bottom
       return {
-        hero: mannequinImages[2], // 2D CURLY RIGHT
-        top: mannequinImages[1], // 2D CURLY LEFT (stays in top)
-        bottom: mannequinImages[0] // 2D CURLY FRONT
+        hero: mannequinImages[2], // 2D WAVY RIGHT
+        top: mannequinImages[1], // 2D WAVY LEFT (stays in top)
+        bottom: mannequinImages[0] // 2D WAVY FRONT
       };
     }
   };
@@ -497,20 +497,25 @@ function SoftCurlSelection() {
 
   const getTotalPrice = () => {
     const capSize = selectedCustomCap || selectedFlexibleCap || 'M';
-    let basePrice = 780; // Default for standard caps (XS, S, M, L)
+    let basePrice = 760; // Default for standard caps (XS, S, M, L)
     if (capSize === 'XXS/XS/S' || capSize === 'S/M/L') {
-      basePrice = 820; // Flexible cap options base price is $820
+      basePrice = 800; // Flexible cap options base price is $800
     }
     return basePrice;
   };
 
-  // Load selected currency from localStorage
+  // Load selected currency from localStorage on mount only
+  // Initial state already loads from localStorage, this is a safety check
   useEffect(() => {
     const savedCurrency = localStorage.getItem('selectedCurrency');
     if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
-      setSelectedCurrency(savedCurrency);
+      // Only update if different to avoid unnecessary re-renders
+      if (savedCurrency !== selectedCurrency) {
+        setSelectedCurrency(savedCurrency);
+      }
     }
-  }, [currencyRates]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount, not when currencyRates changes
 
   // Save selected currency to localStorage
   useEffect(() => {
@@ -608,16 +613,16 @@ function SoftCurlSelection() {
         capSizePrice = 0;
       }
       
-      const basePrice = 780;
+      const basePrice = 760;
       // CRITICAL: Include all customization prices in total calculation
       const totalPrice = basePrice + capSizePrice + lengthPrice + densityPrice + lacePrice + texturePrice + colorPrice + hairlinePrice + stylingPrice + addOnsPrice;
       
       const cartItem = {
-        id: `soft-curl-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        name: 'SOFT CURL',
+        id: `beach-wave-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        name: 'BEACH WAVE',
         price: totalPrice,
         quantity: quantity,
-        image: '/assets/NOIR/curl-thumb.png',
+        image: '/assets/NOIR/wave-thumb.png',
         capSize: capSize,
         capSizePrice: capSizePrice,
         length: defaultLength,
@@ -700,14 +705,14 @@ function SoftCurlSelection() {
             <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               <span 
                 style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                onClick={() => navigate('/units/curly')}
+                onClick={() => navigate('/units/wavy')}
               >
-                CURLY &gt;
+                WAVY &gt;
               </span>{' '}
               <span
                 style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
               >
-                SOFT CURL
+                BEACH WAVE
               </span>
             </p>
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
@@ -740,7 +745,7 @@ function SoftCurlSelection() {
           >
             {/* WIG PREVIEW */}
             <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column', marginBottom: '24px', transform: 'translateY(20px)', overflow: 'visible', minWidth: '100%', maxWidth: 'none' }}>
-              {/* ADD TO WISHLIST & PHOTO COUNT */}
+              {/* ADD TO WISHLIST & 2D/3D VIEW TOGGLE */}
               <div style={{ position: 'relative', width: '100%', marginBottom: '10px', transform: 'translateY(-31px)' }}>
                 {/* ADD TO WISHLIST - Top Left */}
                 <p 
@@ -775,7 +780,13 @@ function SoftCurlSelection() {
                   onClick={() => {
                     const new3DView = !is3DView;
                     setIs3DView(new3DView);
-                    localStorage.setItem('product-3d-view', new3DView.toString());
+                    if (typeof window !== 'undefined') {
+                      try {
+                        localStorage.setItem('product-3d-view', new3DView.toString());
+                      } catch (e) {
+                        console.error('Error saving 3D view:', e);
+                      }
+                    }
                   }}
                 >
                   <span 
@@ -816,7 +827,7 @@ function SoftCurlSelection() {
               
               {/* MANNEQUIN LAYOUT - Hero on left, Top + Bottom stacked on right */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: is3DView ? '10px' : '5px', marginBottom: '16px', overflow: 'visible', margin: '0 auto', transform: 'translateY(-19px)' }}>
-                {/* Hero Mannequin - Left Side with leaf-brick background */}
+                {/* Hero Mannequin - Left Side */}
                 <div style={{ position: 'relative', overflow: 'visible', flexShrink: '0' }}>
                   <div
                     style={{
@@ -938,7 +949,7 @@ function SoftCurlSelection() {
 
             {/* PRODUCT NAME */}
             <p
-              className="text-center text-black mb-2 soft-curl-product-name"
+              className="text-center text-black mb-2 beach-wave-product-name"
               style={{ 
                 fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif !important',
                 fontSize: '42px !important',
@@ -949,7 +960,7 @@ function SoftCurlSelection() {
                 transform: 'translateY(-8px) !important'
               }}
             >
-              SOFT CURL
+              BEACH WAVE
             </p>
 
             {/* PRODUCT SPECIFICATION */}
@@ -963,7 +974,7 @@ function SoftCurlSelection() {
                 marginTop: '-8px'
               }}
             >
-              24" RAW VIETNAMESE
+              24" RAW INDONESIAN
             </p>
 
             {/* PRICE */}
@@ -1325,21 +1336,21 @@ function SoftCurlSelection() {
                 >
                   <img
                     src="/assets/SOFT-WAVE FRONT.png"
-                    alt="SOFT CURL Front View"
+                    alt="BEACH WAVE Front View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-70px)' }}
                     draggable={false}
                   />
                   <img
                     src="/assets/SOFT-WAVE LEFT.png"
-                    alt="SOFT CURL Left View"
+                    alt="BEACH WAVE Left View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-70px)' }}
                     draggable={false}
                   />
                   <img
                     src="/assets/SOFT-WAVE RIGHT.png"
-                    alt="SOFT CURL Right View"
+                    alt="BEACH WAVE Right View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-70px)' }}
                     draggable={false}
@@ -1412,7 +1423,7 @@ function SoftCurlSelection() {
                   {activeTab === 'DETAILS' && (
                     <>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        13X6 ULTRA THIN HD FILM LACE, RAW VIETNAMESE CURLY 200% DENSITY.
+                        13X6 ULTRA THIN HD FILM LACE, RAW INDONESIAN WAVY 200% DENSITY.
                       </p>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         HANDMADE UNIT MEASURING 24 INCHES IN LENGTH, OFF BLACK HAIR COLOR.
@@ -1651,7 +1662,7 @@ function SoftCurlSelection() {
                 
                 console.log('Customize page - Starting fresh customization with cap size:', capSizeToSave);
                 
-                navigate('/build-a-wig/soft-curl/customize');
+                navigate('/build-a-wig/beach-wave/customize');
               }}
               className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
               style={{ 
@@ -2183,7 +2194,7 @@ function SoftCurlSelection() {
                       width: 'calc(200% - 20px)'
                     }}
                   >
-                {/* Product 1 - BEACH WAVE */}
+                {/* Product 1 - SOFT WAVE */}
                 <div 
                   onClick={() => navigate('/wavy/soft-wave')}
                   style={{ 
@@ -2255,9 +2266,9 @@ function SoftCurlSelection() {
                   </div>
                 </div>
                 
-                {/* Product 2 - OCEAN CURL */}
+                {/* Product 2 - SOFT CURL */}
                 <div 
-                  onClick={() => navigate('/curly/ocean-curl')}
+                  onClick={() => navigate('/curly/soft-curl')}
                   style={{ 
                     padding: '10px 10px 4px 10px',
                     textAlign: 'center',
@@ -2267,7 +2278,7 @@ function SoftCurlSelection() {
                 >
                   <img
                     src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/curl-thumb.png"}
-                    alt="OCEAN CURL"
+                    alt="SOFT CURL"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -2284,7 +2295,7 @@ function SoftCurlSelection() {
                     fontWeight: '500',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    OCEAN CURL
+                    SOFT CURL
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2296,7 +2307,7 @@ function SoftCurlSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    24" RAW FILIPINO
+                    24" RAW VIETNAMESE
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2507,4 +2518,4 @@ function SoftCurlSelection() {
   );
 }
 
-export default SoftCurlSelection;
+export default BeachWaveSelection;

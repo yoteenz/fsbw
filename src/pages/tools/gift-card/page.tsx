@@ -166,10 +166,11 @@ function GiftCardPage() {
           type: 'gift-card'
         };
         
-        cartItems.push(newItem);
-        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        // Add new item at the beginning (newest first)
+        const updatedCartItems = [newItem, ...cartItems];
+        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
         
-        const newCartCount = cartItems.length;
+        const newCartCount = updatedCartItems.length;
         localStorage.setItem('cartCount', newCartCount.toString());
         setCartCount(newCartCount);
         

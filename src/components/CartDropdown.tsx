@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { CartItem } from '../types/cart';
+import ConfirmationModal from './ConfirmationModal';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -27,6 +28,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     return 'USD';
   });
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
+  const [showEmptyBagConfirm, setShowEmptyBagConfirm] = useState(false);
 
   // Currency exchange rates
   const currencyRates = useMemo(() => ({
@@ -113,6 +115,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
           case 'BLANCO': return 820;
           case 'SOFT CURL': return 780;
           case 'SOFT WAVE': return 760;
+          case 'OCEAN CURL': return 780;
+          case 'BEACH WAVE': return 760;
           default: return 740;
         }
       };
@@ -200,6 +204,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                 case 'BLANCO': return 820;
                 case 'SOFT CURL': return 780;
                 case 'SOFT WAVE': return 760;
+                case 'OCEAN CURL': return 780;
+                case 'BEACH WAVE': return 760;
                 default: return 740;
               }
             };
@@ -586,6 +592,19 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: updatedItems, count: newCount } }));
   };
 
+  const emptyBag = () => {
+    setCartItems([]);
+    localStorage.setItem('cartItems', JSON.stringify([]));
+    localStorage.setItem('cartCount', '0');
+    
+    // Dispatch both events to ensure all components are notified
+    window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: 0 }));
+    window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: [], count: 0 } }));
+    
+    setShowEmptyBagConfirm(false);
+    onClose();
+  };
+
   // updateQuantity function removed - not currently used
 
   const getTotalPrice = () => {
@@ -610,9 +629,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   useEffect(() => {
     const handleBackdropClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      // Don't close if clicking inside cart dropdown, currency modal, or cart icon
+      // Don't close if clicking inside cart dropdown, currency modal, confirmation modals, or cart icon
       if (!target.closest('[data-dropdown-content]') && 
           !target.closest('[data-currency-modal]') &&
+          !target.closest('[data-attribute="empty-bag-confirm"]') &&
           !target.closest('[data-cart-icon]')) {
         onClose();
       }
@@ -665,9 +685,12 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             </h3>
               <div className="flex items-center" style={{ gap: '6px', flexWrap: 'wrap' }}>
             <span
+              onClick={() => setShowCurrencyModal(true)}
               style={{ 
                 fontSize: '10px',
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
+                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                cursor: 'pointer',
+                userSelect: 'none'
               }}
             >
               <span style={{ color: '#000000' }}>CURRENCY &gt; </span>
@@ -721,6 +744,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             productRoute = '/wavy/soft-wave';
                           } else if (item.name === 'SOFT CURL') {
                             productRoute = '/curly/soft-curl';
+                          } else if (item.name === 'BEACH WAVE') {
+                            productRoute = '/wavy/beach-wave';
+                          } else if (item.name === 'OCEAN CURL') {
+                            productRoute = '/curly/ocean-curl';
                           }
                           
                           onClose(); // Close the dropdown first
@@ -931,7 +958,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                                 return 'CAMBODIAN'; // or 'RUSSIAN' if needed
                               case 'SOFT CURL':
                                 return 'VIETNAMESE';
+                              case 'OCEAN CURL':
+                                return 'FILIPINO';
                               case 'SOFT WAVE':
+                                return 'INDIAN';
+                              case 'BEACH WAVE':
                                 return 'INDONESIAN';
                               default:
                                 return 'CAMBODIAN';
@@ -970,7 +1001,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           }
                           if (item.density && item.density !== '200%') items.push({ type: 'density', value: item.density, fullName: `${item.density} density` });
                           if (item.lace && item.lace !== '13X6') items.push({ type: 'lace', value: item.lace, fullName: `${item.lace} lace` });
-                          if (item.texture && item.texture !== 'SILKY') items.push({ type: 'texture', value: item.texture, fullName: item.texture });
+                          // Texture detail removed - no longer showing curly/wavy texture in cart
                           // For BLANCO, default color is PLATINUM; for others, default is OFF BLACK
                           // CRITICAL: Validate BLANCO colors - if item.color is invalid for BLANCO, use PLATINUM
                           let itemColor = item.color;
@@ -1274,20 +1305,22 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             )}
             
             <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-              {/* CHANGE CURRENCY button - always visible */}
-              <button
-                onClick={() => setShowCurrencyModal(true)}
-                className="py-2 px-3 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
-                style={{ 
-                  borderWidth: '1.3px',
-                  fontSize: '11px',
-                  fontFamily: '"Futura PT Medium"',
-                  color: '#EB1C24',
-                  textTransform: 'uppercase'
-                }}
-              >
-                CHANGE CURRENCY
-              </button>
+              {/* EMPTY BAG button - only show when cart has items */}
+              {cartItems.length > 0 && (
+                <button
+                  onClick={() => setShowEmptyBagConfirm(true)}
+                  className="py-2 px-3 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
+                  style={{ 
+                    borderWidth: '1.3px',
+                    fontSize: '11px',
+                    fontFamily: '"Futura PT Medium"',
+                    color: '#EB1C24',
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  EMPTY BAG
+                </button>
+              )}
               
               {/* VIEW BAG and CHECKOUT buttons - only show when cart has items */}
               {cartItems.length > 0 && (
@@ -1323,6 +1356,18 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
               )}
             </div>
           </div>
+
+        {/* Empty Bag Confirmation Modal */}
+        <ConfirmationModal
+          isOpen={showEmptyBagConfirm}
+          onClose={() => setShowEmptyBagConfirm(false)}
+          onConfirm={emptyBag}
+          title="EMPTY SHOPPING BAG?"
+          message="ARE YOU SURE YOU WANT TO REMOVE ALL ITEMS?"
+          confirmText="CONFIRM"
+          cancelText="CANCEL"
+          dataAttribute="empty-bag-confirm"
+        />
 
         {/* Currency Modal */}
         {showCurrencyModal && (

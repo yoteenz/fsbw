@@ -949,6 +949,24 @@ p.soft-wave-product-name,
   transform: translateY(-8px) !important;
 }
 
+/* Ensure OCEAN CURL product name uses Covered By Your Grace font */
+.ocean-curl-product-name,
+p.ocean-curl-product-name,
+.text-center.ocean-curl-product-name {
+  font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
+  font-size: 42px !important;
+  transform: translateY(-7px) !important;
+}
+
+/* Ensure BEACH WAVE product name uses Covered By Your Grace font */
+.beach-wave-product-name,
+p.beach-wave-product-name,
+.text-center.beach-wave-product-name {
+  font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
+  font-size: 42px !important;
+  transform: translateY(-8px) !important;
+}
+
 /* Cart product name - remove any "WIG" text added by global styles */
 .cart-product-name::after,
 .cart-product-name::before {

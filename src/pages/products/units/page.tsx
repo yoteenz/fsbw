@@ -77,11 +77,11 @@ function ProductsUnitsPage() {
     ],
     wavy: [
       { id: 'soft-wave', name: 'SOFT WAVE', price: 760, image: '/assets/NOIR/wave-thumb.png', length: '24"', hairOrigin: 'INDIAN', inCart: false, selectedSize: 'M', route: '/wavy/soft-wave' },
-      { id: 'beach-wave', name: 'BEACH WAVE', price: 760, image: '/assets/NOIR/wave-thumb.png', length: '24"', hairOrigin: 'INDIAN', inCart: false, selectedSize: 'M', route: '/wavy/soft-wave' },
+      { id: 'beach-wave', name: 'BEACH WAVE', price: 760, image: '/assets/NOIR/wave-thumb.png', length: '24"', hairOrigin: 'INDONESIAN', inCart: false, selectedSize: 'M', route: '/wavy/beach-wave' },
     ],
     curly: [
       { id: 'soft-curl', name: 'SOFT CURL', price: 780, image: '/assets/NOIR/curl-thumb.png', length: '24"', hairOrigin: 'VIETNAMESE', inCart: false, selectedSize: 'M', route: '/curly/soft-curl' },
-      { id: 'ocean-curl', name: 'OCEAN CURL', price: 780, image: '/assets/NOIR/curl-thumb.png', length: '24"', hairOrigin: 'VIETNAMESE', inCart: false, selectedSize: 'M', route: '/curly/soft-curl' },
+      { id: 'ocean-curl', name: 'OCEAN CURL', price: 780, image: '/assets/NOIR/curl-thumb.png', length: '24"', hairOrigin: 'FILIPINO', inCart: false, selectedSize: 'M', route: '/curly/ocean-curl' },
     ],
   });
 
@@ -343,16 +343,19 @@ function ProductsUnitsPage() {
       <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', overflow: 'visible' }}>
         <div style={{
           border: '1.3px solid black',
-          backgroundColor: 'rgba(255, 255, 255, 0.6)',
-          backdropFilter: 'blur(10px)',
-          padding: '0px',
+          backgroundColor: '#f5f5f5',
+          backgroundImage: `url('/assets/marble-container.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          padding: '0px 0px 0px 0px',
           maxWidth: '100%',
           margin: '0 auto',
           overflow: 'visible',
           position: 'relative'
         }}>
           {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '5px' }}>
             <div style={{ width: '1px', height: '15px', backgroundColor: 'black', margin: '0 auto 8px auto' }}></div>
             <h3 
               onClick={() => {
@@ -362,7 +365,7 @@ function ProductsUnitsPage() {
               }}
               style={{
                 fontFamily: '"Futura PT Medium"',
-                fontSize: '12px',
+                fontSize: '13px',
                 color: '#EB1C24',
                 textTransform: 'uppercase',
                 margin: '0',
@@ -502,7 +505,7 @@ function ProductsUnitsPage() {
                     display: 'flex', 
                     flexWrap: 'nowrap',
                     gap: '0',
-                    transform: `translateX(${scrollState}px) translateY(-15px)`,
+                    transform: `translateX(${scrollState}px) translateY(-5px)`,
                     transition: 'none',
                     width: products.length >= 4 ? 'calc(200% - 20px)' : 'calc(100% - 20px)'
                   }}
@@ -510,12 +513,10 @@ function ProductsUnitsPage() {
                   {products.map((product, index) => (
                     <div
                       key={product.id}
-                      onClick={() => handleProductClick(product)}
                       style={{ 
-                        padding: '10px 10px 4px 10px',
+                        padding: '5px 10px 4px 10px',
                         textAlign: 'center',
                         transform: index % 2 === 0 ? 'translateX(0px)' : 'translateX(10px)',
-                        cursor: 'pointer',
                         flex: '0 0 50%',
                         boxSizing: 'border-box',
                         position: 'relative',
@@ -526,12 +527,14 @@ function ProductsUnitsPage() {
                       <img
                         src={product.image}
                         alt={product.name}
+                        onClick={() => handleProductClick(product)}
                         style={{ 
                           width: '90%', 
                           height: 'auto',
-                          marginBottom: '10px',
+                          marginBottom: '5px',
                           marginLeft: '10px',
-                          maxWidth: '100%'
+                          maxWidth: '100%',
+                          cursor: 'pointer'
                         }}
                       />
                       

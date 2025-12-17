@@ -193,7 +193,7 @@ function ToolsPage() {
   }, [currencyRates, selectedCurrency]);
 
   // Gift card scroll handlers
-  const handleGiftCardMouseDown = (e: React.MouseEvent) => {
+  const _handleGiftCardMouseDown = (e: React.MouseEvent) => {
     setIsGiftCardDragging(true);
     setGiftCardStartX(e.clientX);
     setGiftCardStartScroll(giftCardScroll);
@@ -224,13 +224,13 @@ function ToolsPage() {
     }
   };
 
-  const handleGiftCardTouchStart = (e: React.TouchEvent) => {
+  const _handleGiftCardTouchStart = (e: React.TouchEvent) => {
     setIsGiftCardDragging(true);
     setGiftCardStartX(e.touches[0].clientX);
     setGiftCardStartScroll(giftCardScroll);
   };
 
-  const handleGiftCardTouchMove = (e: React.TouchEvent) => {
+  const _handleGiftCardTouchMove = (e: React.TouchEvent) => {
     if (!isGiftCardDragging) return;
     const currentX = e.touches[0].clientX;
     const diff = currentX - giftCardStartX;
@@ -240,7 +240,7 @@ function ToolsPage() {
     setGiftCardScroll(Math.max(minScroll, Math.min(maxScroll, newPosition)));
   };
 
-  const handleGiftCardTouchEnd = () => {
+  const _handleGiftCardTouchEnd = () => {
     setIsGiftCardDragging(false);
     // Snap to nearest position (0, -71.3%, -142.6%, -213.9%)
     const scrollPercent = Math.abs(giftCardScroll) / window.innerWidth;
@@ -381,14 +381,17 @@ function ToolsPage() {
           <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
             <div style={{ 
               border: '1.3px solid black', 
-              backgroundColor: 'rgba(255, 255, 255, 0.6)', 
-              backdropFilter: 'blur(10px)',
+              backgroundColor: '#f5f5f5',
+              backgroundImage: `url('/assets/marble-container.png')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
               padding: '0px',
               maxWidth: '100%',
               margin: '0 auto'
             }}>
               {/* Header */}
-              <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+              <div style={{ textAlign: 'center', marginBottom: '5px' }}>
                 <div style={{ 
                   width: '1px', 
                   height: '15px', 
@@ -471,7 +474,7 @@ function ToolsPage() {
                       style={{ 
                         display: 'flex', 
                         gap: '0',
-                        transform: `translateX(${giftCardScroll}px) translateY(-15px)`,
+                        transform: `translateX(${giftCardScroll}px) translateY(-5px)`,
                         transition: 'none',
                         width: 'calc(400% - 20px)'
                       }}
@@ -480,7 +483,7 @@ function ToolsPage() {
                         <div 
                           key={product.id}
                           style={{ 
-                            padding: '10px 0px 4px 0px',
+                            padding: '5px 0px 4px 0px',
                             textAlign: 'center',
                             transform: index === 0 ? 'translateX(-2.5px)' : 'translateX(13px)',
                             cursor: 'pointer'
@@ -528,7 +531,7 @@ function ToolsPage() {
                             style={{ 
                               width: '60%', 
                               height: 'auto',
-                              marginBottom: '10px',
+                              marginBottom: '5px',
                               marginLeft: '10px',
                               maxWidth: '100%'
                             }}

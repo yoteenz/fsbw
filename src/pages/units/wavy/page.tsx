@@ -77,7 +77,7 @@ function WavyUnitsPage() {
       price: 760,
       image: '/assets/NOIR/wave-thumb.png',
       length: '24"',
-      hairOrigin: 'INDONESIAN',
+      hairOrigin: 'INDIAN',
       inCart: false
     },
     {
@@ -177,7 +177,7 @@ function WavyUnitsPage() {
     if (product.name === 'SOFT WAVE') {
       navigate('/wavy/soft-wave');
     } else if (product.name === 'BEACH WAVE') {
-      navigate('/wavy/soft-wave'); // Using same page for now
+      navigate('/wavy/beach-wave');
     }
   };
 
@@ -347,10 +347,8 @@ function WavyUnitsPage() {
                       backgroundPosition: 'center',
                       backgroundRepeat: 'no-repeat',
                       transform: isStaggered ? 'translateY(20px)' : 'translateY(0px)',
-                      transition: 'transform 0.3s ease',
-                      cursor: (product.name === 'SOFT WAVE' || product.name === 'BEACH WAVE') ? 'pointer' : 'default'
+                      transition: 'transform 0.3s ease'
                     }}
-                    onClick={() => handleCardClick(product)}
                   >
                     {/* Shopping Bag Icon */}
                     <div 
@@ -392,12 +390,14 @@ function WavyUnitsPage() {
                       <img
                         src={product.image}
                         alt={product.name}
+                        onClick={() => handleCardClick(product)}
                         style={{
                           width: '100%',
                           height: 'auto',
                           marginBottom: '10px',
                           marginLeft: '5px',
-                          marginTop: '0'
+                          marginTop: '0',
+                          cursor: (product.name === 'SOFT WAVE' || product.name === 'BEACH WAVE') ? 'pointer' : 'default'
                         }}
                       />
                     </div>
