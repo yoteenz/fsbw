@@ -905,6 +905,32 @@ p.noir-product-name,
   zoom: 1 !important;
 }
 
+/* ULTIMATE OVERRIDE for GIFT CARD product name - highest specificity */
+.gift-card-product-name,
+p.gift-card-product-name,
+.text-center.gift-card-product-name {
+  font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
+  font-size: 38px !important;
+  font-weight: 400 !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  text-align: center !important;
+  height: auto !important;
+  max-height: none !important;
+  width: 100% !important;
+  min-width: auto !important;
+  max-width: none !important;
+  overflow: visible !important;
+  white-space: nowrap !important;
+  position: relative !important;
+  z-index: 999 !important;
+  transform: translateY(-128px) !important;
+  scale: 1 !important;
+  zoom: 1 !important;
+}
+
 /* Override for SOFT CURL product name - specific class to avoid noir-product-name override */
 .soft-curl-product-name,
 p.soft-curl-product-name,

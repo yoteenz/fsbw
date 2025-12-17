@@ -31,6 +31,10 @@ const WishlistPage = lazy(() => import('./pages/wishlist/page'));
 const StraightUnitsPage = lazy(() => import('./pages/units/straight/page'));
 const WavyUnitsPage = lazy(() => import('./pages/units/wavy/page'));
 const CurlyUnitsPage = lazy(() => import('./pages/units/curly/page'));
+const ProductsPage = lazy(() => import('./pages/products/page'));
+const ProductsUnitsPage = lazy(() => import('./pages/products/units/page'));
+const ToolsPage = lazy(() => import('./pages/tools/page'));
+const GiftCardPage = lazy(() => import('./pages/tools/gift-card/page'));
 
 // Error Boundary to catch component errors
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null }> {
@@ -293,6 +297,31 @@ function App() {
         <Route path="/units/curly" element={
           <Suspense fallback={<LoadingScreen />}>
             <CurlyUnitsPage />
+          </Suspense>
+        } />
+        <Route path="/products/units" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ProductsUnitsPage />
+          </Suspense>
+        } />
+        <Route path="/home/products" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ProductsPage />
+          </Suspense>
+        } />
+        <Route path="/tools" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ToolsPage />
+          </Suspense>
+        } />
+        <Route path="/home/tools" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ToolsPage />
+          </Suspense>
+        } />
+        <Route path="/tools/gift-card" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <GiftCardPage />
           </Suspense>
         } />
         <Route path="/wishlist" element={

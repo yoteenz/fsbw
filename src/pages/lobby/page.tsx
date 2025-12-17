@@ -101,13 +101,14 @@ const LobbyPage: React.FC = () => {
           <img 
             src="/assets/neon-products.png" 
             alt="Products" 
-            onClick={() => navigate('/build-a-wig')}
+            onClick={() => navigate('/home/products')}
             className="w-auto cursor-pointer hover:opacity-80 transition-opacity"
             style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(4px)', height: '41px' }}
           />
           <img 
             src="/assets/neon-tools.png" 
             alt="Tools" 
+            onClick={() => navigate('/home/tools')}
             className="w-auto cursor-pointer hover:opacity-80 transition-opacity"
             style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(-50px)', height: '41px' }}
           />

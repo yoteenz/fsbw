@@ -231,7 +231,7 @@ function CurlyUnitsPage() {
             <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               <span 
                 style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                onClick={() => navigate('/build-a-wig')}
+                onClick={() => navigate('/products/units')}
               >
                 UNITS &gt;
               </span>{' '}
