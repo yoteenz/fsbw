@@ -142,6 +142,27 @@ function App() {
             <AdminReviews />
           </Suspense>
         } />
+        {/* Unit page routes - placed early to ensure proper matching */}
+        <Route path="/curly/soft-curl" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <SoftCurlUnitPage />
+          </Suspense>
+        } />
+        <Route path="/wavy/soft-wave" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <SoftWaveUnitPage />
+          </Suspense>
+        } />
+        <Route path="/straight/noir" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <NoirUnitPage />
+          </Suspense>
+        } />
+        <Route path="/straight/blanco" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <BlancoUnitPage />
+          </Suspense>
+        } />
         {/* Build-a-wig routes - specific routes must come before general /build-a-wig route */}
         
         {/* Noir routes */}
@@ -259,26 +280,6 @@ function App() {
         <Route path="/build-a-wig/cap" element={<CapSizePage />} />
         <Route path="/build-a-wig/styling" element={<StylingPage />} />
         <Route path="/build-a-wig/addons" element={<AddOnsPage />} />
-        <Route path="/straight/noir" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <NoirUnitPage />
-          </Suspense>
-        } />
-        <Route path="/straight/blanco" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <BlancoUnitPage />
-          </Suspense>
-        } />
-        <Route path="/curly/soft-curl" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <SoftCurlUnitPage />
-          </Suspense>
-        } />
-        <Route path="/wavy/soft-wave" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <SoftWaveUnitPage />
-          </Suspense>
-        } />
         <Route path="/units/straight" element={
           <Suspense fallback={<LoadingScreen />}>
             <StraightUnitsPage />
