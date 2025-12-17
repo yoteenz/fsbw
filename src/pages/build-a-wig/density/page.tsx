@@ -1017,19 +1017,24 @@ function DensitySelection() {
 
           {/* DENSITY OPTIONS - Updated to fit 4 containers per row with centered layout */}
           <div className="grid grid-cols-4 gap-4 mx-auto justify-center mb-6 max-w-[320px]" style={{ marginTop: '15px' }}>
-            {densityOptions.map((option) => (
-              <ThumbBox
-                key={option.id}
-                image={option.image}
-                title="DENSITY"
-                label={option.name}
-                isSelected={selectedDensity === option.id}
-                onClick={() => handleDensitySelect(option.id)}
-                imgSize={isBlancoRoute ? 71 : 57}
-                containerSize={isBlancoRoute ? 75 : 60}
-                topPosition="55%"
-              />
-            ))}
+            {densityOptions.map((option) => {
+              // For BLANCO, use larger image but keep container at 60px - image will overflow slightly
+              const imgSize = isBlancoRoute ? 80 : 57;
+              const containerSize = 60; // Always 60px for all routes
+              return (
+                <ThumbBox
+                  key={option.id}
+                  image={option.image}
+                  title="DENSITY"
+                  label={option.name}
+                  isSelected={selectedDensity === option.id}
+                  onClick={() => handleDensitySelect(option.id)}
+                  imgSize={imgSize}
+                  containerSize={containerSize}
+                  topPosition="55%"
+                />
+              );
+            })}
           </div>
 
 

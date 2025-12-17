@@ -59,7 +59,7 @@ export default function ThumbBox({
         style={{
           width: `${imgSize}px`,
           height: `${imgSize}px`,
-          overflow: 'visible',
+          overflow: imgSize > containerSize ? 'hidden' : 'visible',
           top: topPosition,
           transform: customTransform || 'translateX(-50%) translateY(-50%)'
         }}

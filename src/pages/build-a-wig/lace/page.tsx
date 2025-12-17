@@ -772,8 +772,8 @@ function LaceSelection() {
           <div className="grid grid-cols-4 gap-3 mx-auto justify-center mb-6 max-w-[320px]">
             {laceOptions.map((option) => {
               const isBlancoRoute = window.location.pathname.includes('/blanco/customize') || window.location.pathname.includes('/blanco/edit');
-              const imgSize = isBlancoRoute ? 50 : 74; // Decreased blanco size by 10% (55 * 0.9 = 49.5, rounded to 50)
-              const containerSize = isBlancoRoute ? 49 : 54; // Decreased blanco container by 10% (54 * 0.9 = 48.6, rounded to 49)
+              const imgSize = isBlancoRoute ? 44 : 74; // Match main page edit mode size (44px for BLANCO)
+              const containerSize = 54; // Always 54px for all routes (restored to match main page)
               return (
                 <ThumbBox
                   key={option.id}

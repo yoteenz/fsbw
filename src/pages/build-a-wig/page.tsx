@@ -4675,8 +4675,20 @@ export default function BuildAWigPage() {
                   <div
                     className="absolute left-1/2 transform -translate-x-1/2 z-[99999] flex items-center justify-center"
                     style={{
-                      width: '57px',
-                      height: '57px',
+                      width: (() => {
+                        const pathname = location.pathname;
+                        const isBlancoRoute = pathname.startsWith('/build-a-wig/blanco') || 
+                                             pathname.includes('/blanco/customize') || 
+                                             pathname.includes('/blanco/edit');
+                        return isBlancoRoute ? '80px' : '57px';
+                      })(),
+                      height: (() => {
+                        const pathname = location.pathname;
+                        const isBlancoRoute = pathname.startsWith('/build-a-wig/blanco') || 
+                                             pathname.includes('/blanco/customize') || 
+                                             pathname.includes('/blanco/edit');
+                        return isBlancoRoute ? '80px' : '57px';
+                      })(),
                       overflow: 'visible',
                       top: '55%',
                       transform: 'translateX(-50%) translateY(-50%)'
@@ -4729,8 +4741,20 @@ export default function BuildAWigPage() {
                   <div
                     className="absolute left-1/2 transform -translate-x-1/2 z-[99999] flex items-center justify-center"
                     style={{
-                      width: location.pathname === '/build-a-wig/blanco/customize' ? '44px' : '74px',
-                      height: location.pathname === '/build-a-wig/blanco/customize' ? '44px' : '74px',
+                      width: (() => {
+                        const pathname = location.pathname;
+                        const isBlancoRoute = pathname.startsWith('/build-a-wig/blanco') || 
+                                             pathname.includes('/blanco/customize') || 
+                                             pathname.includes('/blanco/edit');
+                        return isBlancoRoute ? '44px' : '74px';
+                      })(),
+                      height: (() => {
+                        const pathname = location.pathname;
+                        const isBlancoRoute = pathname.startsWith('/build-a-wig/blanco') || 
+                                             pathname.includes('/blanco/customize') || 
+                                             pathname.includes('/blanco/edit');
+                        return isBlancoRoute ? '44px' : '74px';
+                      })(),
                       overflow: 'visible',
                       top: '52%',
                       transform: 'translateX(calc(-50% - 3px)) translateY(-50%)'
@@ -4903,8 +4927,20 @@ export default function BuildAWigPage() {
                   <div
                     className="absolute left-1/2 transform -translate-x-1/2 z-[99999] flex items-center justify-center"
                     style={{
-                      width: location.pathname === '/build-a-wig/blanco/customize' ? '45px' : '75px',
-                      height: location.pathname === '/build-a-wig/blanco/customize' ? '45px' : '75px',
+                      width: (() => {
+                        const pathname = location.pathname;
+                        const isBlancoRoute = pathname.startsWith('/build-a-wig/blanco') || 
+                                             pathname.includes('/blanco/customize') || 
+                                             pathname.includes('/blanco/edit');
+                        return isBlancoRoute ? '45px' : '75px';
+                      })(),
+                      height: (() => {
+                        const pathname = location.pathname;
+                        const isBlancoRoute = pathname.startsWith('/build-a-wig/blanco') || 
+                                             pathname.includes('/blanco/customize') || 
+                                             pathname.includes('/blanco/edit');
+                        return isBlancoRoute ? '45px' : '75px';
+                      })(),
                       overflow: 'visible',
                         top: '50%',
                       transform: 'translateX(-50%) translateY(-50%)'
