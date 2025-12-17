@@ -309,10 +309,12 @@ export default function BuildAWigPage() {
   // Helper function to calculate prices from selections
   const calculatePricesFromSelections = useCallback((selections: WigCustomization) => {
     // Calculate cap size price: flexible caps (XXS/XS/S, S/M/L) cost $40 more than regular caps
+    // Custom caps (XS, S, M, L) have price 0 (included in base price)
     let capSizePrice = 0;
     if (selections.capSize === 'XXS/XS/S' || selections.capSize === 'S/M/L') {
       capSizePrice = 40; // Flexible caps cost $40 more
     }
+    // Note: Custom caps (XS, S, M, L) have price 0 by default - they're included in base price
     
     const prices: { [key: string]: number } = {
       capSizePrice: capSizePrice,
