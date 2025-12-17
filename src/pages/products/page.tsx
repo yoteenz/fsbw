@@ -269,12 +269,6 @@ function ProductsPage() {
   }, [currencyRates, selectedCurrency]);
 
   // Units scroll handlers
-  const _handleUnitsMouseDown = (e: React.MouseEvent) => {
-    setIsUnitsDragging(true);
-    setUnitsStartX(e.clientX);
-    setUnitsStartScroll(unitsScroll);
-  };
-
   const handleUnitsMouseMove = (e: React.MouseEvent) => {
     if (!isUnitsDragging) return;
     const currentX = e.clientX;
@@ -286,31 +280,6 @@ function ProductsPage() {
   };
 
   const handleUnitsMouseUp = () => {
-    setIsUnitsDragging(false);
-    if (unitsScroll > -window.innerWidth * 0.3565) {
-      setUnitsScroll(0);
-    } else {
-      setUnitsScroll(-window.innerWidth * 0.713);
-    }
-  };
-
-  const _handleUnitsTouchStart = (e: React.TouchEvent) => {
-    setIsUnitsDragging(true);
-    setUnitsStartX(e.touches[0].clientX);
-    setUnitsStartScroll(unitsScroll);
-  };
-
-  const _handleUnitsTouchMove = (e: React.TouchEvent) => {
-    if (!isUnitsDragging) return;
-    const currentX = e.touches[0].clientX;
-    const diff = currentX - unitsStartX;
-    const newPosition = unitsStartScroll - diff;
-    const minScroll = -window.innerWidth * 0.713;
-    const maxScroll = 0;
-    setUnitsScroll(Math.max(minScroll, Math.min(maxScroll, newPosition)));
-  };
-
-  const _handleUnitsTouchEnd = () => {
     setIsUnitsDragging(false);
     if (unitsScroll > -window.innerWidth * 0.3565) {
       setUnitsScroll(0);
@@ -335,12 +304,6 @@ function ProductsPage() {
   };
 
   // Gift card scroll handlers
-  const _handleGiftCardMouseDown = (e: React.MouseEvent) => {
-    setIsGiftCardDragging(true);
-    setGiftCardStartX(e.clientX);
-    setGiftCardStartScroll(giftCardScroll);
-  };
-
   const handleGiftCardMouseMove = (e: React.MouseEvent) => {
     if (!isGiftCardDragging) return;
     const currentX = e.clientX;
@@ -363,55 +326,6 @@ function ProductsPage() {
       setGiftCardScroll(-window.innerWidth * 1.426);
     } else {
       setGiftCardScroll(-window.innerWidth * 2.139);
-    }
-  };
-
-  const _handleGiftCardTouchStart = (e: React.TouchEvent) => {
-    setIsGiftCardDragging(true);
-    setGiftCardStartX(e.touches[0].clientX);
-    setGiftCardStartScroll(giftCardScroll);
-  };
-
-  const _handleGiftCardTouchMove = (e: React.TouchEvent) => {
-    if (!isGiftCardDragging) return;
-    const currentX = e.touches[0].clientX;
-    const diff = currentX - giftCardStartX;
-    const newPosition = giftCardStartScroll - diff;
-    const minScroll = -window.innerWidth * 2.139; // 3 scroll positions (71.3% * 3)
-    const maxScroll = 0;
-    setGiftCardScroll(Math.max(minScroll, Math.min(maxScroll, newPosition)));
-  };
-
-  const _handleGiftCardTouchEnd = () => {
-    setIsGiftCardDragging(false);
-    // Snap to nearest position (0, -71.3%, -142.6%, -213.9%)
-    const scrollPercent = Math.abs(giftCardScroll) / window.innerWidth;
-    if (scrollPercent < 0.3565) {
-      setGiftCardScroll(0);
-    } else if (scrollPercent < 1.0695) {
-      setGiftCardScroll(-window.innerWidth * 0.713);
-    } else if (scrollPercent < 1.7825) {
-      setGiftCardScroll(-window.innerWidth * 1.426);
-    } else {
-      setGiftCardScroll(-window.innerWidth * 2.139);
-    }
-  };
-
-  const _handleGiftCardLeftArrow = () => {
-    setGiftCardScroll(0);
-  };
-
-  const _handleGiftCardRightArrow = () => {
-    // Cycle through positions: 0 -> -71.3% -> -142.6% -> -213.9% -> 0
-    const scrollPercent = Math.abs(giftCardScroll) / window.innerWidth;
-    if (scrollPercent < 0.3565) {
-      setGiftCardScroll(-window.innerWidth * 0.713);
-    } else if (scrollPercent < 1.0695) {
-      setGiftCardScroll(-window.innerWidth * 1.426);
-    } else if (scrollPercent < 1.7825) {
-      setGiftCardScroll(-window.innerWidth * 2.139);
-    } else {
-      setGiftCardScroll(0);
     }
   };
 
