@@ -355,7 +355,7 @@ function ProductsUnitsPage() {
           position: 'relative'
         }}>
           {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: '5px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '1px' }}>
             <div style={{ width: '1px', height: '15px', backgroundColor: 'black', margin: '0 auto 8px auto' }}></div>
             <h3 
               onClick={() => {
@@ -498,14 +498,16 @@ function ProductsUnitsPage() {
                 overflowY: 'visible',
                 width: '100%',
                 position: 'relative',
-                maxWidth: '100%'
+                maxWidth: '100%',
+                marginTop: '-4px',
+                paddingTop: '0px'
               }}>
                 <div 
                   style={{ 
                     display: 'flex', 
                     flexWrap: 'nowrap',
                     gap: '0',
-                    transform: `translateX(${scrollState}px) translateY(-5px)`,
+                    transform: `translateX(${scrollState}px)`,
                     transition: 'none',
                     width: products.length >= 4 ? 'calc(200% - 20px)' : 'calc(100% - 20px)'
                   }}
@@ -516,7 +518,7 @@ function ProductsUnitsPage() {
                       style={{ 
                         padding: '5px 10px 4px 10px',
                         textAlign: 'center',
-                        transform: index % 2 === 0 ? 'translateX(0px)' : 'translateX(10px)',
+                        transform: index % 2 === 0 ? 'translateX(0px) translateY(-4px)' : 'translateX(10px) translateY(-4px)',
                         flex: '0 0 50%',
                         boxSizing: 'border-box',
                         position: 'relative',

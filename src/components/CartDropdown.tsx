@@ -914,6 +914,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               editRoute = '/build-a-wig/soft-wave/edit';
                             } else if (item.name === 'SOFT CURL') {
                               editRoute = '/build-a-wig/soft-curl/edit';
+                            } else if (item.name === 'BEACH WAVE') {
+                              editRoute = '/build-a-wig/beach-wave/edit';
+                            } else if (item.name === 'OCEAN CURL') {
+                              editRoute = '/build-a-wig/ocean-curl/edit';
                             }
                             
                             onClose(); // Close the dropdown first

@@ -351,14 +351,90 @@ export default function AddOnsSelectionPage() {
 
   const handleBack = () => {
     const pathname = location.pathname;
-    let returnRoute = '/build-a-wig'; // Default to noir
     
-    if (pathname.includes('/blanco/')) {
+    // CRITICAL: Only save selections when on product-specific edit/customize sub-page routes
+    // Check if we're on a product-specific edit or customize sub-page route
+    const isOnProductSpecificEditRoute = pathname.startsWith('/build-a-wig/noir/edit/') ||
+                                         pathname.startsWith('/build-a-wig/blanco/edit/') ||
+                                         pathname.startsWith('/build-a-wig/soft-wave/edit/') ||
+                                         pathname.startsWith('/build-a-wig/soft-curl/edit/') ||
+                                         pathname.startsWith('/build-a-wig/ocean-curl/edit/') ||
+                                         pathname.startsWith('/build-a-wig/beach-wave/edit/') ||
+                                         pathname.startsWith('/build-a-wig/edit/');
+    
+    const isOnProductSpecificCustomizeRoute = pathname.startsWith('/build-a-wig/noir/customize/') ||
+                                              pathname.startsWith('/build-a-wig/blanco/customize/') ||
+                                              pathname.startsWith('/build-a-wig/soft-wave/customize/') ||
+                                              pathname.startsWith('/build-a-wig/soft-curl/customize/') ||
+                                              pathname.startsWith('/build-a-wig/ocean-curl/customize/') ||
+                                              pathname.startsWith('/build-a-wig/beach-wave/customize/');
+    
+    // Only save if we're on a product-specific edit or customize sub-page route
+    if (isOnProductSpecificEditRoute || isOnProductSpecificCustomizeRoute) {
+      // Calculate and save price
+      const price = getTotalAddOnPrice().toString();
+      
+      // Always save with 'selected' prefix
+      localStorage.setItem('selectedAddOns', JSON.stringify(selectedAddOns));
+      localStorage.setItem('selectedAddOnsPrice', price);
+      
+      // Also save with 'editSelected' prefix in edit mode
+      if (isOnProductSpecificEditRoute) {
+        localStorage.setItem('editSelectedAddOns', JSON.stringify(selectedAddOns));
+        localStorage.setItem('editSelectedAddOnsPrice', price);
+      }
+      
+      // Also save with 'customizeSelected' prefix in customize mode
+      if (isOnProductSpecificCustomizeRoute) {
+        localStorage.setItem('customizeSelectedAddOns', JSON.stringify(selectedAddOns));
+        localStorage.setItem('customizeSelectedAddOnsPrice', price);
+      }
+      
+      // Set flag to indicate we're returning from a sub-page
+      sessionStorage.setItem('comingFromSubPage', 'true');
+      
+      // Dispatch custom event to notify main page of changes
+      window.dispatchEvent(new CustomEvent('customStorageChange'));
+    }
+    
+    // Determine return route
+    let returnRoute = '/build-a-wig'; // Default
+    
+    // Check for edit routes first, then customize, then main
+    if (pathname.includes('/blanco/edit/')) {
+      returnRoute = '/build-a-wig/blanco/edit';
+    } else if (pathname.includes('/blanco/customize/')) {
+      returnRoute = '/build-a-wig/blanco/customize';
+    } else if (pathname.includes('/blanco/')) {
       returnRoute = '/build-a-wig/blanco';
+    } else if (pathname.includes('/soft-wave/edit/')) {
+      returnRoute = '/build-a-wig/soft-wave/edit';
+    } else if (pathname.includes('/soft-wave/customize/')) {
+      returnRoute = '/build-a-wig/soft-wave/customize';
     } else if (pathname.includes('/soft-wave/')) {
       returnRoute = '/build-a-wig/soft-wave';
+    } else if (pathname.includes('/soft-curl/edit/')) {
+      returnRoute = '/build-a-wig/soft-curl/edit';
+    } else if (pathname.includes('/soft-curl/customize/')) {
+      returnRoute = '/build-a-wig/soft-curl/customize';
     } else if (pathname.includes('/soft-curl/')) {
       returnRoute = '/build-a-wig/soft-curl';
+    } else if (pathname.includes('/beach-wave/edit/')) {
+      returnRoute = '/build-a-wig/beach-wave/edit';
+    } else if (pathname.includes('/beach-wave/customize/')) {
+      returnRoute = '/build-a-wig/beach-wave/customize';
+    } else if (pathname.includes('/beach-wave/')) {
+      returnRoute = '/build-a-wig/beach-wave';
+    } else if (pathname.includes('/ocean-curl/edit/')) {
+      returnRoute = '/build-a-wig/ocean-curl/edit';
+    } else if (pathname.includes('/ocean-curl/customize/')) {
+      returnRoute = '/build-a-wig/ocean-curl/customize';
+    } else if (pathname.includes('/ocean-curl/')) {
+      returnRoute = '/build-a-wig/ocean-curl';
+    } else if (pathname.includes('/noir/edit/')) {
+      returnRoute = '/build-a-wig/noir/edit';
+    } else if (pathname.includes('/noir/customize/')) {
+      returnRoute = '/build-a-wig/noir/customize';
     } else if (pathname.includes('/noir/')) {
       returnRoute = '/build-a-wig/noir';
     }
@@ -452,10 +528,24 @@ export default function AddOnsSelectionPage() {
       returnRoute = '/build-a-wig/soft-wave/edit';
     } else if (location.pathname.startsWith('/build-a-wig/soft-curl/edit/')) {
       returnRoute = '/build-a-wig/soft-curl/edit';
+    } else if (location.pathname.startsWith('/build-a-wig/beach-wave/edit/')) {
+      returnRoute = '/build-a-wig/beach-wave/edit';
+    } else if (location.pathname.startsWith('/build-a-wig/ocean-curl/edit/')) {
+      returnRoute = '/build-a-wig/ocean-curl/edit';
     } else if (location.pathname.startsWith('/build-a-wig/edit/')) {
       returnRoute = '/build-a-wig/edit';
     } else if (location.pathname.startsWith('/build-a-wig/noir/customize/')) {
       returnRoute = '/build-a-wig/noir/customize';
+    } else if (location.pathname.startsWith('/build-a-wig/blanco/customize/')) {
+      returnRoute = '/build-a-wig/blanco/customize';
+    } else if (location.pathname.startsWith('/build-a-wig/soft-wave/customize/')) {
+      returnRoute = '/build-a-wig/soft-wave/customize';
+    } else if (location.pathname.startsWith('/build-a-wig/soft-curl/customize/')) {
+      returnRoute = '/build-a-wig/soft-curl/customize';
+    } else if (location.pathname.startsWith('/build-a-wig/beach-wave/customize/')) {
+      returnRoute = '/build-a-wig/beach-wave/customize';
+    } else if (location.pathname.startsWith('/build-a-wig/ocean-curl/customize/')) {
+      returnRoute = '/build-a-wig/ocean-curl/customize';
     } else if (sourceRoute) {
       returnRoute = sourceRoute;
     }

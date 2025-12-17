@@ -231,7 +231,24 @@ function WishlistSelection() {
   const handleEdit = (item: any) => {
     try {
       localStorage.setItem('editingCartItem', JSON.stringify(item));
-      navigate('/build-a-wig/edit');
+      
+      // Determine the correct edit route based on product name
+      let editRoute = '/build-a-wig/edit'; // Default fallback
+      if (item.name === 'NOIR') {
+        editRoute = '/build-a-wig/noir/edit';
+      } else if (item.name === 'BLANCO') {
+        editRoute = '/build-a-wig/blanco/edit';
+      } else if (item.name === 'SOFT WAVE') {
+        editRoute = '/build-a-wig/soft-wave/edit';
+      } else if (item.name === 'SOFT CURL') {
+        editRoute = '/build-a-wig/soft-curl/edit';
+      } else if (item.name === 'BEACH WAVE') {
+        editRoute = '/build-a-wig/beach-wave/edit';
+      } else if (item.name === 'OCEAN CURL') {
+        editRoute = '/build-a-wig/ocean-curl/edit';
+      }
+      
+      navigate(editRoute);
     } catch (e) {
       console.error('Error setting edit item:', e);
     }

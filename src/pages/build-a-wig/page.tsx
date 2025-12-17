@@ -646,7 +646,9 @@ export default function BuildAWigPage() {
                        location.pathname === '/build-a-wig/noir/edit' ||
                        location.pathname === '/build-a-wig/blanco/edit' ||
                        location.pathname === '/build-a-wig/soft-wave/edit' ||
-                       location.pathname === '/build-a-wig/soft-curl/edit';
+                       location.pathname === '/build-a-wig/soft-curl/edit' ||
+                       location.pathname === '/build-a-wig/beach-wave/edit' ||
+                       location.pathname === '/build-a-wig/ocean-curl/edit';
     const isCustomizePage = location.pathname.startsWith('/build-a-wig/noir/customize') || 
                             location.pathname.startsWith('/build-a-wig/blanco/customize') ||
                             location.pathname.startsWith('/build-a-wig/soft-wave/customize') ||
@@ -983,7 +985,14 @@ export default function BuildAWigPage() {
         // For BLANCO routes, default to PLATINUM; for others, default to OFF BLACK
         const isBlancoRouteForSaved = location.pathname.startsWith('/build-a-wig/blanco');
         const defaultColorForSaved = isBlancoRouteForSaved ? 'PLATINUM' : 'OFF BLACK';
-        const savedColor = savedColorEdit || savedColorSelected || defaultColorForSaved;
+        // CRITICAL: Validate color for BLANCO routes - if invalid, default to PLATINUM
+        let savedColor = savedColorEdit || savedColorSelected || defaultColorForSaved;
+        if (isBlancoRouteForSaved) {
+          const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+          if (!validBlancoColors.includes(savedColor)) {
+            savedColor = 'PLATINUM'; // Invalid color for BLANCO, default to PLATINUM
+          }
+        }
         const savedHairline = savedHairlineEdit || savedHairlineSelected || 'NATURAL';
         const savedStyling = savedStylingEdit || savedStylingSelected || 'NONE';
         const savedAddOns = savedAddOnsEdit || savedAddOnsSelected || '[]';
@@ -1393,7 +1402,15 @@ export default function BuildAWigPage() {
           // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
           const isBlancoRouteForSave = location.pathname.startsWith('/build-a-wig/blanco');
           const defaultColorForSave = (isBlancoRouteForSave || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
-          localStorage.setItem('selectedColor', item.color || defaultColorForSave);
+          // CRITICAL: Validate color for BLANCO - if invalid, use PLATINUM
+          let colorToSave = item.color || defaultColorForSave;
+          if (isBlancoRouteForSave || item.name === 'BLANCO') {
+            const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+            if (!validBlancoColors.includes(colorToSave)) {
+              colorToSave = 'PLATINUM'; // Invalid color for BLANCO, default to PLATINUM
+            }
+          }
+          localStorage.setItem('selectedColor', colorToSave);
           localStorage.setItem('selectedTexture', item.texture || 'SILKY');
           localStorage.setItem('selectedLace', item.lace || '13X6');
           localStorage.setItem('selectedHairline', item.hairline || 'NATURAL');
@@ -1440,8 +1457,16 @@ export default function BuildAWigPage() {
           // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
           const isBlancoRouteForEdit = location.pathname.startsWith('/build-a-wig/blanco');
           const defaultColorForEdit = (isBlancoRouteForEdit || item.name === 'BLANCO') ? 'PLATINUM' : 'OFF BLACK';
-          localStorage.setItem('editSelectedColor', item.color || defaultColorForEdit);
-          localStorage.setItem('selectedColor', item.color || defaultColorForEdit);
+          // CRITICAL: Validate color for BLANCO - if invalid, use PLATINUM
+          let colorToEdit = item.color || defaultColorForEdit;
+          if (isBlancoRouteForEdit || item.name === 'BLANCO') {
+            const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+            if (!validBlancoColors.includes(colorToEdit)) {
+              colorToEdit = 'PLATINUM'; // Invalid color for BLANCO, default to PLATINUM
+            }
+          }
+          localStorage.setItem('editSelectedColor', colorToEdit);
+          localStorage.setItem('selectedColor', colorToEdit);
           localStorage.setItem('editSelectedTexture', item.texture || 'SILKY');
           localStorage.setItem('selectedTexture', item.texture || 'SILKY');
           localStorage.setItem('editSelectedLace', item.lace || '13X6');
@@ -1983,11 +2008,19 @@ export default function BuildAWigPage() {
       }
       
       // Only handle storage changes for edit and customize modes
-      const isEditMode = location.pathname === '/build-a-wig/edit' && localStorage.getItem('editingCartItem') !== null;
+      const isEditMode = (location.pathname === '/build-a-wig/edit' ||
+                         location.pathname === '/build-a-wig/noir/edit' ||
+                         location.pathname === '/build-a-wig/blanco/edit' ||
+                         location.pathname === '/build-a-wig/soft-wave/edit' ||
+                         location.pathname === '/build-a-wig/soft-curl/edit' ||
+                         location.pathname === '/build-a-wig/beach-wave/edit' ||
+                         location.pathname === '/build-a-wig/ocean-curl/edit') && localStorage.getItem('editingCartItem') !== null;
       const isCustomizeMode = location.pathname === '/build-a-wig/noir/customize' || 
                               location.pathname === '/build-a-wig/blanco/customize' ||
                               location.pathname === '/build-a-wig/soft-wave/customize' ||
-                              location.pathname === '/build-a-wig/soft-curl/customize';
+                              location.pathname === '/build-a-wig/soft-curl/customize' ||
+                              location.pathname === '/build-a-wig/beach-wave/customize' ||
+                              location.pathname === '/build-a-wig/ocean-curl/customize';
       
       if (isEditMode || isCustomizeMode) {
         // CRITICAL: In edit mode, read from editSelected* keys (set by sub-pages)
@@ -2080,7 +2113,9 @@ export default function BuildAWigPage() {
                        location.pathname === '/build-a-wig/noir/edit' ||
                        location.pathname === '/build-a-wig/blanco/edit' ||
                        location.pathname === '/build-a-wig/soft-wave/edit' ||
-                       location.pathname === '/build-a-wig/soft-curl/edit';
+                       location.pathname === '/build-a-wig/soft-curl/edit' ||
+                       location.pathname === '/build-a-wig/beach-wave/edit' ||
+                       location.pathname === '/build-a-wig/ocean-curl/edit';
       
       if (isEditPage) {
         const newItemId = event.detail?.itemId;
@@ -2115,7 +2150,9 @@ export default function BuildAWigPage() {
                        location.pathname === '/build-a-wig/noir/edit' ||
                        location.pathname === '/build-a-wig/blanco/edit' ||
                        location.pathname === '/build-a-wig/soft-wave/edit' ||
-                       location.pathname === '/build-a-wig/soft-curl/edit';
+                       location.pathname === '/build-a-wig/soft-curl/edit' ||
+                       location.pathname === '/build-a-wig/beach-wave/edit' ||
+                       location.pathname === '/build-a-wig/ocean-curl/edit';
     if (isEditPage) {
     }
   }, [customization, location.pathname]);
@@ -2131,11 +2168,19 @@ export default function BuildAWigPage() {
     }
     
     // Check if we're in edit mode or customize mode
-    const isEditMode = location.pathname === '/build-a-wig/edit' && localStorage.getItem('editingCartItem') !== null;
+    const isEditMode = (location.pathname === '/build-a-wig/edit' ||
+                       location.pathname === '/build-a-wig/noir/edit' ||
+                       location.pathname === '/build-a-wig/blanco/edit' ||
+                       location.pathname === '/build-a-wig/soft-wave/edit' ||
+                       location.pathname === '/build-a-wig/soft-curl/edit' ||
+                       location.pathname === '/build-a-wig/beach-wave/edit' ||
+                       location.pathname === '/build-a-wig/ocean-curl/edit') && localStorage.getItem('editingCartItem') !== null;
     const isCustomizeMode = location.pathname === '/build-a-wig/noir/customize' ||
                             location.pathname === '/build-a-wig/blanco/customize' ||
                             location.pathname === '/build-a-wig/soft-wave/customize' ||
-                            location.pathname === '/build-a-wig/soft-curl/customize';
+                            location.pathname === '/build-a-wig/soft-curl/customize' ||
+                            location.pathname === '/build-a-wig/beach-wave/customize' ||
+                            location.pathname === '/build-a-wig/ocean-curl/customize';
     
     // CRITICAL: For all modes, skip syncing if we just came from a sub-page (let the route change effect handle it)
     // Check this BEFORE any other logic to prevent race conditions
@@ -2218,7 +2263,9 @@ export default function BuildAWigPage() {
                        location.pathname === '/build-a-wig/noir/edit' ||
                        location.pathname === '/build-a-wig/blanco/edit' ||
                        location.pathname === '/build-a-wig/soft-wave/edit' ||
-                       location.pathname === '/build-a-wig/soft-curl/edit';
+                       location.pathname === '/build-a-wig/soft-curl/edit' ||
+                       location.pathname === '/build-a-wig/beach-wave/edit' ||
+                       location.pathname === '/build-a-wig/ocean-curl/edit';
     
     if (!isEditPage) {
       return;
@@ -2231,16 +2278,19 @@ export default function BuildAWigPage() {
         return;
       }
       
-      // CRITICAL: Skip if we just came from a sub-page (route change effect handles it)
       const comingFromSubPage = sessionStorage.getItem('comingFromSubPage') === 'true';
+      
+      // CRITICAL: If coming from sub-page, use a longer delay to ensure route change effect runs first
+      // But still handle it here as a fallback to ensure thumbnails update
+      const delay = comingFromSubPage ? 300 : 150;
+      
       if (comingFromSubPage) {
-        console.log('[SYNC EFFECT] Skipping sync - comingFromSubPage is true, route change effect will handle it');
-        return;
+        console.log('[SYNC EFFECT] Coming from sub-page, will sync after delay to ensure route change effect runs first');
+      } else {
+        console.log('[SYNC EFFECT] Running sync from localStorage');
       }
       
-      console.log('[SYNC EFFECT] Running sync from localStorage');
-      
-      // Small delay to ensure localStorage is fully updated
+      // Delay to ensure localStorage is fully updated (longer delay if coming from sub-page)
       setTimeout(() => {
         if (isLoadingFromStorage.current) {
           return;
@@ -2323,7 +2373,7 @@ export default function BuildAWigPage() {
           
           return prev;
         });
-      }, 150);
+      }, delay);
     };
     
     // Listen for customStorageChange events
@@ -2347,7 +2397,9 @@ export default function BuildAWigPage() {
                        location.pathname === '/build-a-wig/noir/edit' ||
                        location.pathname === '/build-a-wig/blanco/edit' ||
                        location.pathname === '/build-a-wig/soft-wave/edit' ||
-                       location.pathname === '/build-a-wig/soft-curl/edit';
+                       location.pathname === '/build-a-wig/soft-curl/edit' ||
+                       location.pathname === '/build-a-wig/beach-wave/edit' ||
+                       location.pathname === '/build-a-wig/ocean-curl/edit';
     if (isEditPage) {
       const editingCartItem = localStorage.getItem('editingCartItem');
       if (editingCartItem) {
@@ -2898,7 +2950,13 @@ export default function BuildAWigPage() {
     }
     
     // CRITICAL: Skip in edit mode - prices are managed by route change effect and sub-pages
-    const isEditMode = location.pathname === '/build-a-wig/edit' && localStorage.getItem('editingCartItem') !== null;
+    const isEditMode = (location.pathname === '/build-a-wig/edit' ||
+                       location.pathname === '/build-a-wig/noir/edit' ||
+                       location.pathname === '/build-a-wig/blanco/edit' ||
+                       location.pathname === '/build-a-wig/soft-wave/edit' ||
+                       location.pathname === '/build-a-wig/soft-curl/edit' ||
+                       location.pathname === '/build-a-wig/beach-wave/edit' ||
+                       location.pathname === '/build-a-wig/ocean-curl/edit') && localStorage.getItem('editingCartItem') !== null;
     if (isEditMode) {
       return; // Don't overwrite prices in edit mode
     }
@@ -3039,11 +3097,15 @@ export default function BuildAWigPage() {
                          location.pathname === '/build-a-wig/noir/edit' ||
                          location.pathname === '/build-a-wig/blanco/edit' ||
                          location.pathname === '/build-a-wig/soft-wave/edit' ||
-                         location.pathname === '/build-a-wig/soft-curl/edit') && editingCartItem !== null;
+                         location.pathname === '/build-a-wig/soft-curl/edit' ||
+                         location.pathname === '/build-a-wig/beach-wave/edit' ||
+                         location.pathname === '/build-a-wig/ocean-curl/edit') && editingCartItem !== null;
       const isCustomizeMode = location.pathname.startsWith('/build-a-wig/noir/customize') || 
                               location.pathname.startsWith('/build-a-wig/blanco/customize') ||
                               location.pathname.startsWith('/build-a-wig/soft-wave/customize') ||
-                              location.pathname.startsWith('/build-a-wig/soft-curl/customize');
+                              location.pathname.startsWith('/build-a-wig/soft-curl/customize') ||
+                              location.pathname.startsWith('/build-a-wig/beach-wave/customize') ||
+                              location.pathname.startsWith('/build-a-wig/ocean-curl/customize');
       
       // DEBUGGING: Always log when on edit route to verify detection
       console.log('[EDIT MODE DETECTION]', {
@@ -3626,7 +3688,9 @@ export default function BuildAWigPage() {
                        location.pathname === '/build-a-wig/noir/edit' ||
                        location.pathname === '/build-a-wig/blanco/edit' ||
                        location.pathname === '/build-a-wig/soft-wave/edit' ||
-                       location.pathname === '/build-a-wig/soft-curl/edit';
+                       location.pathname === '/build-a-wig/soft-curl/edit' ||
+                       location.pathname === '/build-a-wig/beach-wave/edit' ||
+                       location.pathname === '/build-a-wig/ocean-curl/edit';
     
     // Skip change detection if we're currently loading from localStorage (to avoid overwriting hasChanges set by route change effect)
     if (isLoadingFromStorage.current) {
@@ -3731,7 +3795,9 @@ export default function BuildAWigPage() {
                        location.pathname === '/build-a-wig/noir/edit' ||
                        location.pathname === '/build-a-wig/blanco/edit' ||
                        location.pathname === '/build-a-wig/soft-wave/edit' ||
-                       location.pathname === '/build-a-wig/soft-curl/edit';
+                       location.pathname === '/build-a-wig/soft-curl/edit' ||
+                       location.pathname === '/build-a-wig/beach-wave/edit' ||
+                       location.pathname === '/build-a-wig/ocean-curl/edit';
     
     if (!isEditPage) {
       return;
@@ -3762,7 +3828,9 @@ export default function BuildAWigPage() {
                        location.pathname === '/build-a-wig/noir/edit' ||
                        location.pathname === '/build-a-wig/blanco/edit' ||
                        location.pathname === '/build-a-wig/soft-wave/edit' ||
-                       location.pathname === '/build-a-wig/soft-curl/edit';
+                       location.pathname === '/build-a-wig/soft-curl/edit' ||
+                       location.pathname === '/build-a-wig/beach-wave/edit' ||
+                       location.pathname === '/build-a-wig/ocean-curl/edit';
     
     // In edit mode, button should always start as 'added' (IN THE BAG)
     if (isEditPage) {
@@ -3796,7 +3864,9 @@ export default function BuildAWigPage() {
                        location.pathname === '/build-a-wig/noir/edit' ||
                        location.pathname === '/build-a-wig/blanco/edit' ||
                        location.pathname === '/build-a-wig/soft-wave/edit' ||
-                       location.pathname === '/build-a-wig/soft-curl/edit';
+                       location.pathname === '/build-a-wig/soft-curl/edit' ||
+                       location.pathname === '/build-a-wig/beach-wave/edit' ||
+                       location.pathname === '/build-a-wig/ocean-curl/edit';
     
     // In edit mode: only allow if changes have been made
     if (isEditPage && !hasChanges) {
@@ -3828,8 +3898,8 @@ export default function BuildAWigPage() {
       const pathname = location.pathname;
       let basePrice = 740; // Default noir
       if (pathname.startsWith('/build-a-wig/blanco')) basePrice = 820;
-      else if (pathname.startsWith('/build-a-wig/soft-wave')) basePrice = 760;
-      else if (pathname.startsWith('/build-a-wig/soft-curl')) basePrice = 780;
+      else if (pathname.startsWith('/build-a-wig/soft-wave') || pathname.startsWith('/build-a-wig/beach-wave')) basePrice = 760;
+      else if (pathname.startsWith('/build-a-wig/soft-curl') || pathname.startsWith('/build-a-wig/ocean-curl')) basePrice = 780;
       else if (pathname.startsWith('/build-a-wig/noir')) basePrice = 740;
       
       // Get prices from localStorage with fallback to calculated prices
@@ -3919,33 +3989,33 @@ export default function BuildAWigPage() {
         timestamp: new Date().toISOString()
       });
       
-      const updatedCartItems = existingCartItems.map((item: any) => {
-        if (item.id === editingCartItemId) {
-          const updatedItem = {
-            ...item,
-            price: finalPrice, // Use recalculated price, not state
-            capSize: customization.capSize,
-            // CRITICAL: Store capSizePrice in cart item for future reference
-            capSizePrice: capSizePriceValue,
-            length: customization.length,
-            density: customization.density,
-            color: customization.color,
-            texture: customization.texture,
-            lace: customization.lace,
-            hairline: customization.hairline,
-            styling: validStyling,
-            partSelection: localStorage.getItem('selectedPartSelection') || 'MIDDLE',
-            addOns: customization.addOns
-          };
-          
-          // DEBUGGING: Log updated item
-          console.log('[EDIT MODE SAVE] Updated cart item:', updatedItem);
-          console.log('[FLEX_CAP_DEBUG] handleAddToBag Save - Cart item capSizePrice:', updatedItem.capSizePrice);
-          
-          return updatedItem;
-        }
-        return item;
-      });
+      // CRITICAL: Remove the old item and add updated item at the beginning (newest first)
+      // This makes the updated item appear at the top of the cart as the most recent item
+      const updatedItem = {
+        ...JSON.parse(editingCartItem),
+        id: editingCartItemId, // Keep the same ID
+        price: finalPrice, // Use recalculated price, not state
+        capSize: customization.capSize,
+        // CRITICAL: Store capSizePrice in cart item for future reference
+        capSizePrice: capSizePriceValue,
+        length: customization.length,
+        density: customization.density,
+        color: customization.color,
+        texture: customization.texture,
+        lace: customization.lace,
+        hairline: customization.hairline,
+        styling: validStyling,
+        partSelection: localStorage.getItem('selectedPartSelection') || 'MIDDLE',
+        addOns: customization.addOns
+      };
+      
+      // DEBUGGING: Log updated item
+      console.log('[EDIT MODE SAVE] Updated cart item:', updatedItem);
+      console.log('[FLEX_CAP_DEBUG] handleAddToBag Save - Cart item capSizePrice:', updatedItem.capSizePrice);
+      
+      // Remove the old item and add updated item at the beginning
+      const filteredCartItems = existingCartItems.filter((item: any) => item.id !== editingCartItemId);
+      const updatedCartItems = [updatedItem, ...filteredCartItems];
       
       localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
       
@@ -5100,7 +5170,9 @@ export default function BuildAWigPage() {
                        location.pathname === '/build-a-wig/noir/edit' ||
                        location.pathname === '/build-a-wig/blanco/edit' ||
                        location.pathname === '/build-a-wig/soft-wave/edit' ||
-                       location.pathname === '/build-a-wig/soft-curl/edit';
+                       location.pathname === '/build-a-wig/soft-curl/edit' ||
+                       location.pathname === '/build-a-wig/beach-wave/edit' ||
+                       location.pathname === '/build-a-wig/ocean-curl/edit';
               
               // Edit mode: show "SAVE CHANGES" > "SAVING..." > "IN THE BAG"
               if (isEditPage) {

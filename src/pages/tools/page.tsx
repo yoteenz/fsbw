@@ -250,7 +250,7 @@ function ToolsPage() {
     // Cycle through positions: 0 -> -71.3% -> -142.6% -> -213.9% -> 0
     const scrollPercent = Math.abs(giftCardScroll) / window.innerWidth;
     if (scrollPercent < 0.3565) {
-      setGiftCardScroll(-window.innerWidth * 0.713);
+    setGiftCardScroll(-window.innerWidth * 0.713);
     } else if (scrollPercent < 1.0695) {
       setGiftCardScroll(-window.innerWidth * 1.426);
     } else if (scrollPercent < 1.7825) {
@@ -318,11 +318,11 @@ function ToolsPage() {
         setCartCount(newCartCount);
         
         // Update UI state
-        setGiftCardProducts(prevProducts => 
-          prevProducts.map(p => 
+    setGiftCardProducts(prevProducts => 
+      prevProducts.map(p => 
             p.id === product.id ? { ...p, inCart: true } : p
-          )
-        );
+      )
+    );
         
         // Dispatch cart count update event
         setTimeout(() => {
@@ -451,11 +451,11 @@ function ToolsPage() {
                 <h3 
                   onClick={() => navigate('/tools/gift-card')}
                   style={{ 
-                    fontFamily: '"Futura PT Medium"',
-                    fontSize: '12px',
-                    color: '#EB1C24',
-                    textTransform: 'uppercase',
-                    margin: '0',
+                  fontFamily: '"Futura PT Medium"',
+                  fontSize: '12px',
+                  color: '#EB1C24',
+                  textTransform: 'uppercase',
+                  margin: '0',
                     fontWeight: '500',
                     cursor: 'pointer',
                     display: 'inline-block',

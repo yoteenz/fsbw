@@ -78,7 +78,8 @@ function CurlyUnitsPage() {
       image: '/assets/NOIR/curl-thumb.png',
       length: '24"',
       hairOrigin: 'VIETNAMESE',
-      inCart: false
+      inCart: false,
+      selectedSize: 'M'
     },
     {
       id: 'ocean-curl-curly',
@@ -87,7 +88,8 @@ function CurlyUnitsPage() {
       image: '/assets/NOIR/curl-thumb.png',
       length: '24"',
       hairOrigin: 'FILIPINO',
-      inCart: false
+      inCart: false,
+      selectedSize: 'M'
     }
   ]);
 
@@ -144,6 +146,31 @@ function CurlyUnitsPage() {
     };
   }, [currencyRates]);
 
+  // Sync inCart state from localStorage on mount and when cart updates
+  useEffect(() => {
+    const syncCartState = () => {
+      try {
+        const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+        setProducts(prevProducts => 
+          prevProducts.map(p => {
+            const inCart = cartItems.some((item: any) => 
+              item.name === p.name && item.capSize === (p.selectedSize || 'M')
+            );
+            return { ...p, inCart };
+          })
+        );
+      } catch (e) {
+        console.error('Error syncing cart state:', e);
+      }
+    };
+
+    syncCartState();
+    window.addEventListener('cartUpdated', syncCartState);
+    return () => {
+      window.removeEventListener('cartUpdated', syncCartState);
+    };
+  }, []);
+
   // Format price with currency
   const formatPrice = React.useCallback((price: number): { __html: string } => {
     if (!price || isNaN(price)) {
@@ -162,15 +189,112 @@ function CurlyUnitsPage() {
 
   const handleAddToCart = (product: any, e?: MouseEvent<HTMLDivElement>) => {
     if (e) {
-      e.stopPropagation(); // Prevent card click when clicking cart icon
+      e.stopPropagation();
     }
-    console.log('Add to cart clicked for:', product.name);
-    // Toggle the inCart state
-    setProducts(prevProducts => 
-      prevProducts.map(p => 
-        p.id === product.id ? { ...p, inCart: !p.inCart } : p
-      )
-    );
+
+    try {
+      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      const selectedCapSize = product.selectedSize || 'M';
+      
+      // Check if this exact product (name + capSize) is already in cart
+      const existingItemIndex = cartItems.findIndex((item: any) => 
+        item.name === product.name && item.capSize === selectedCapSize
+      );
+
+      if (existingItemIndex !== -1) {
+        // Remove from cart
+        const updatedCartItems = cartItems.filter((_: any, index: number) => index !== existingItemIndex);
+        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+        
+        // Update cart count
+        const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
+        const removedQuantity = cartItems[existingItemIndex].quantity || 1;
+        const newCount = Math.max(0, currentCount - removedQuantity);
+        localStorage.setItem('cartCount', newCount.toString());
+        setCartCount(newCount);
+        
+        // Update UI state
+        setProducts(prevProducts => 
+          prevProducts.map(p => 
+            p.id === product.id ? { ...p, inCart: false } : p
+          )
+        );
+        
+        // Dispatch cart count update event
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+          window.dispatchEvent(new Event('cartUpdated'));
+        }, 100);
+      } else {
+        // Add to cart
+        const capSizePrice = 0; // Standard cap sizes (XS, S, M, L) have no additional price
+        
+        // Create cart item with product details and selected cap size
+        const cartItem = {
+          id: `${product.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          name: product.name,
+          price: product.price + capSizePrice,
+          quantity: 1,
+          image: product.image,
+          capSize: selectedCapSize,
+          capSizePrice: capSizePrice,
+          length: product.length || '24"',
+          density: '200%',
+          color: 'OFF BLACK',
+          texture: 'CURLY',
+          lace: '13X6',
+          hairline: 'NATURAL',
+          styling: 'NONE',
+          partSelection: 'MIDDLE',
+          addOns: []
+        };
+
+        // Add new item at the beginning (newest first)
+        const updatedCartItems = [cartItem, ...cartItems];
+        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+
+        // Update cart count
+        const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
+        const newCount = currentCount + 1;
+        localStorage.setItem('cartCount', newCount.toString());
+        setCartCount(newCount);
+        
+        // Update UI state
+        setProducts(prevProducts => 
+          prevProducts.map(p => 
+            p.id === product.id ? { ...p, inCart: true } : p
+          )
+        );
+        
+        // Dispatch cart count update event
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+          window.dispatchEvent(new Event('cartUpdated'));
+        }, 100);
+      }
+    } catch (error) {
+      console.error('Error in handleAddToCart:', error);
+    }
+  };
+
+  const handleSizeSelect = (productId: string, size: string) => {
+    setProducts(prevProducts => {
+      return prevProducts.map(p => {
+        if (p.id === productId) {
+          // Check if this product with the new size is in cart
+          try {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+            const inCart = cartItems.some((item: any) => 
+              item.name === p.name && item.capSize === size
+            );
+            return { ...p, selectedSize: size, inCart };
+          } catch (e) {
+            return { ...p, selectedSize: size, inCart: false };
+          }
+        }
+        return p;
+      });
+    });
   };
 
   const handleCardClick = (product: any) => {
@@ -386,7 +510,7 @@ function CurlyUnitsPage() {
                     </div>
 
                     {/* Product Image */}
-                    <div style={{ textAlign: 'center', marginTop: '0', marginBottom: '0' }}>
+                    <div style={{ textAlign: 'center', marginTop: '2px', marginBottom: '0' }}>
                       <img
                         src={product.image}
                         alt={product.name}
@@ -410,7 +534,8 @@ function CurlyUnitsPage() {
                         color: 'black',
                         textTransform: 'uppercase',
                         margin: '-10px 0 -3px 0',
-                        fontWeight: '500'
+                        fontWeight: '500',
+                        transform: 'translateY(4px)'
                       }}
                     >
                       {product.name}
@@ -425,7 +550,8 @@ function CurlyUnitsPage() {
                         textTransform: 'uppercase',
                         margin: '0 0 5px 0',
                         fontWeight: '500',
-                        lineHeight: '0.84'
+                        lineHeight: '0.84',
+                        transform: 'translateY(4px)'
                       }}
                     >
                       {product.length} RAW {product.hairOrigin}
@@ -440,25 +566,27 @@ function CurlyUnitsPage() {
                         textTransform: 'uppercase',
                         margin: '0 0 5px 0',
                         fontWeight: '500',
-                        lineHeight: '0.84'
+                        lineHeight: '0.84',
+                        transform: 'translateY(4px)'
                       }}
                       dangerouslySetInnerHTML={formatPrice(product.price)}
                     />
 
-                    {/* Star Ratings */}
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', marginBottom: '0' }}>
-                      {[...Array(5)].map((_, index) => (
-                        <img
-                          key={index}
-                          src="/assets/NOIR/star-symbol.png"
-                          alt="Star Rating"
-                          style={{ 
-                            width: '10px', 
-                            height: '10px',
-                            filter: 'drop-shadow(0 0 0 1px black)',
-                            stroke: '1px black'
+                    {/* Cap Size Options */}
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', marginTop: '2px', transform: 'translateY(3px)' }}>
+                      {['XS', 'S', 'M', 'L'].map(size => (
+                        <span
+                          key={size}
+                          onClick={(e) => { e.stopPropagation(); handleSizeSelect(product.id, size); }}
+                          style={{
+                            fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                            fontSize: '12px',
+                            color: product.selectedSize === size ? '#EB1C24' : 'black',
+                            cursor: 'pointer'
                           }}
-                        />
+                        >
+                          {size}
+                        </span>
                       ))}
                     </div>
                   </div>

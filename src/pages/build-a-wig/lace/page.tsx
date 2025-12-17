@@ -230,6 +230,53 @@ function LaceSelection() {
 
   const handleBack = () => {
     const pathname = location.pathname;
+    
+    // CRITICAL: Only save selections when on product-specific edit/customize sub-page routes
+    // Check if we're on a product-specific edit or customize sub-page route
+    const isOnProductSpecificEditRoute = pathname.startsWith('/build-a-wig/noir/edit/') ||
+                                         pathname.startsWith('/build-a-wig/blanco/edit/') ||
+                                         pathname.startsWith('/build-a-wig/soft-wave/edit/') ||
+                                         pathname.startsWith('/build-a-wig/soft-curl/edit/') ||
+                                         pathname.startsWith('/build-a-wig/ocean-curl/edit/') ||
+                                         pathname.startsWith('/build-a-wig/beach-wave/edit/') ||
+                                         pathname.startsWith('/build-a-wig/edit/');
+    
+    const isOnProductSpecificCustomizeRoute = pathname.startsWith('/build-a-wig/noir/customize/') ||
+                                              pathname.startsWith('/build-a-wig/blanco/customize/') ||
+                                              pathname.startsWith('/build-a-wig/soft-wave/customize/') ||
+                                              pathname.startsWith('/build-a-wig/soft-curl/customize/') ||
+                                              pathname.startsWith('/build-a-wig/ocean-curl/customize/') ||
+                                              pathname.startsWith('/build-a-wig/beach-wave/customize/');
+    
+    // Only save if we're on a product-specific edit or customize sub-page route
+    if (isOnProductSpecificEditRoute || isOnProductSpecificCustomizeRoute) {
+      // Calculate and save price
+      const price = getSelectedPrice().toString();
+      
+      // Always save with 'selected' prefix
+      localStorage.setItem('selectedLace', selectedLace);
+      localStorage.setItem('selectedLacePrice', price);
+      
+      // Also save with 'editSelected' prefix in edit mode
+      if (isOnProductSpecificEditRoute) {
+        localStorage.setItem('editSelectedLace', selectedLace);
+        localStorage.setItem('editSelectedLacePrice', price);
+      }
+      
+      // Also save with 'customizeSelected' prefix in customize mode
+      if (isOnProductSpecificCustomizeRoute) {
+        localStorage.setItem('customizeSelectedLace', selectedLace);
+        localStorage.setItem('customizeSelectedLacePrice', price);
+      }
+      
+      // Set flag to indicate we're returning from a sub-page
+      sessionStorage.setItem('comingFromSubPage', 'true');
+      
+      // Dispatch custom event to notify main page of changes
+      window.dispatchEvent(new CustomEvent('customStorageChange'));
+    }
+    
+    // Determine return route
     let returnRoute = '/build-a-wig'; // Default
     
     // Check for edit routes first, then customize, then main
@@ -251,6 +298,18 @@ function LaceSelection() {
       returnRoute = '/build-a-wig/soft-curl/customize';
     } else if (pathname.includes('/soft-curl/')) {
       returnRoute = '/build-a-wig/soft-curl';
+    } else if (pathname.includes('/beach-wave/edit/')) {
+      returnRoute = '/build-a-wig/beach-wave/edit';
+    } else if (pathname.includes('/beach-wave/customize/')) {
+      returnRoute = '/build-a-wig/beach-wave/customize';
+    } else if (pathname.includes('/beach-wave/')) {
+      returnRoute = '/build-a-wig/beach-wave';
+    } else if (pathname.includes('/ocean-curl/edit/')) {
+      returnRoute = '/build-a-wig/ocean-curl/edit';
+    } else if (pathname.includes('/ocean-curl/customize/')) {
+      returnRoute = '/build-a-wig/ocean-curl/customize';
+    } else if (pathname.includes('/ocean-curl/')) {
+      returnRoute = '/build-a-wig/ocean-curl';
     } else if (pathname.includes('/noir/edit/')) {
       returnRoute = '/build-a-wig/noir/edit';
     } else if (pathname.includes('/noir/customize/')) {
@@ -590,6 +649,8 @@ function LaceSelection() {
                   if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) navigate('/straight/blanco');
                   else if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) navigate('/wavy/soft-wave');
                   else if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) navigate('/curly/soft-curl');
+                  else if (pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) navigate('/wavy/beach-wave');
+                  else if (pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) navigate('/curly/ocean-curl');
                   else navigate('/straight/noir');
                 }}
               >
@@ -598,6 +659,8 @@ function LaceSelection() {
                   if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) return 'BLANCO';
                   if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) return 'SOFT WAVE';
                   if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) return 'SOFT CURL';
+                  if (pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) return 'BEACH WAVE';
+                  if (pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) return 'OCEAN CURL';
                   return 'NOIR';
                 })()}
               </span>
@@ -684,6 +747,8 @@ function LaceSelection() {
                       if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) navigate('/straight/blanco');
                       else if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) navigate('/wavy/soft-wave');
                       else if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) navigate('/curly/soft-curl');
+                      else if (pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) navigate('/wavy/beach-wave');
+                      else if (pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) navigate('/curly/ocean-curl');
                       else navigate('/straight/noir');
                     }}
                   >
@@ -692,6 +757,8 @@ function LaceSelection() {
                       if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) return 'BLANCO';
                       if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) return 'SOFT WAVE';
                       if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) return 'SOFT CURL';
+                      if (pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) return 'BEACH WAVE';
+                      if (pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) return 'OCEAN CURL';
                       return 'NOIR';
                     })()}
                   </p>

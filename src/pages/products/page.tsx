@@ -385,7 +385,7 @@ function ProductsPage() {
           window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
           window.dispatchEvent(new Event('cartUpdated'));
         }, 100);
-      } else {
+    } else {
         // Add to cart
         const capSizePrice = 0; // Standard cap sizes (XS, S, M, L) have no additional price
         
@@ -411,10 +411,10 @@ function ProductsPage() {
         
         // Update UI state
         setUnitsProducts(prevProducts => 
-          prevProducts.map(p => 
+        prevProducts.map(p => 
             p.id === product.id ? { ...p, inCart: true } : p
-          )
-        );
+        )
+      );
         
         // Dispatch cart count update event
         setTimeout(() => {
@@ -538,8 +538,8 @@ function ProductsPage() {
 
           {/* UNITS CONTAINER */}
           <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', overflow: 'visible' }}>
-            <div style={{
-              border: '1.3px solid black',
+            <div style={{ 
+              border: '1.3px solid black', 
               backgroundColor: '#f5f5f5',
               backgroundImage: `url('/assets/marble-container.png')`,
               backgroundSize: 'cover',
@@ -554,9 +554,9 @@ function ProductsPage() {
               {/* Header */}
               <div style={{ textAlign: 'center', marginBottom: '5px' }}>
                 <div style={{ width: '1px', height: '15px', backgroundColor: 'black', margin: '0 auto 8px auto' }}></div>
-                <h3
+                <h3 
                   onClick={() => navigate('/products/units')}
-                  style={{
+                  style={{ 
                     fontFamily: '"Futura PT Medium"',
                     fontSize: '13px',
                     color: '#EB1C24',
@@ -577,26 +577,26 @@ function ProductsPage() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: unitsProducts.length >= 4 ? 'space-between' : 'center', gap: '10px', overflow: 'visible' }}>
                 {/* Left Arrow (Conditional) */}
                 {unitsProducts.length >= 4 && (
-                  <button 
-                    onClick={handleUnitsLeftArrow}
-                    style={{ 
-                      background: 'none', 
-                      border: 'none', 
-                      cursor: 'pointer',
-                      padding: '5px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      height: '100%',
-                      minHeight: '50px',
-                      transform: 'translateX(10px) translateY(-10px)'
-                    }}>
-                    <img
-                      src="/assets/NOIR/left-facing-arrow.svg"
-                      alt="Left Arrow"
-                      style={{ width: '14px', height: '14px' }}
-                    />
-                  </button>
+                <button 
+                  onClick={handleUnitsLeftArrow}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    padding: '5px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                    minHeight: '50px',
+                    transform: 'translateX(10px) translateY(-10px)'
+                  }}>
+                  <img
+                    src="/assets/NOIR/left-facing-arrow.svg"
+                    alt="Left Arrow"
+                    style={{ width: '14px', height: '14px' }}
+                  />
+                </button>
                 )}
                 
                 {/* Product Thumbnails Container with Static Vertical Line */}
@@ -643,44 +643,44 @@ function ProductsPage() {
                       return (
                         <div
                           key={`icon-${product.id}`}
-                          style={{
-                            position: 'absolute',
+                            style={{ 
+                              position: 'absolute', 
                             top: '-38px',
                             ...(isLeft 
                               ? { left: `calc(${index * 50}% + ${unitsScroll}px + 16px)` }
                               : { left: `calc(${index * 50}% + 50% + ${unitsScroll}px - 34px)` }
                             ),
                             pointerEvents: 'auto',
-                            cursor: 'pointer',
-                            width: '20px',
-                            height: '23px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}
+                              cursor: 'pointer',
+                              width: '20px',
+                              height: '23px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}
                           onClick={(e) => { e.stopPropagation(); handleAddToCart(product, e); }}
-                        >
-                          {product.inCart ? (
-                            <img
-                              src="/assets/card-added.svg"
-                              alt="In cart"
-                              width={20}
-                              height={23}
-                              style={{ width: '20px !important', height: '23px !important' }}
-                            />
-                          ) : (
-                            <img
-                              src="/assets/card-add.svg"
-                              alt="Add to cart"
-                              width={20}
-                              height={23}
-                              style={{ width: '20px !important', height: '23px !important' }}
-                            />
-                          )}
-                        </div>
+                          >
+                            {product.inCart ? (
+                              <img
+                                src="/assets/card-added.svg"
+                                alt="In cart"
+                                width={20}
+                                height={23}
+                                style={{ width: '20px !important', height: '23px !important' }}
+                              />
+                            ) : (
+                              <img
+                                src="/assets/card-add.svg"
+                                alt="Add to cart"
+                                width={20}
+                                height={23}
+                                style={{ width: '20px !important', height: '23px !important' }}
+                              />
+                            )}
+                          </div>
                       );
                     })}
-                  </div>
+                </div>
                   
                   {/* Scrolling Product Thumbnails Container */}
                   <div style={{ 
@@ -701,7 +701,7 @@ function ProductsPage() {
                       }}
                     >
                       {unitsProducts.map((product, index) => (
-                        <div
+                        <div 
                           key={product.id}
                           style={{ 
                             padding: '5px 10px 4px 10px',
@@ -711,7 +711,7 @@ function ProductsPage() {
                             boxSizing: 'border-box',
                             position: 'relative',
                             overflow: 'visible'
-                          }}
+                            }}
                         >
                           {/* Product Image */}
                           <img
@@ -773,7 +773,7 @@ function ProductsPage() {
                               <span
                                 key={size}
                                 onClick={(e) => { e.stopPropagation(); handleSizeSelect(product.id, size); }}
-                                style={{
+                                style={{ 
                                   fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                                   fontSize: '12px',
                                   color: product.selectedSize === size ? '#EB1C24' : 'black',
@@ -792,26 +792,26 @@ function ProductsPage() {
                 
                 {/* Right Arrow (Conditional) */}
                 {unitsProducts.length >= 4 && (
-                  <button 
+                <button 
                     onClick={handleUnitsRightArrow}
-                    style={{ 
-                      background: 'none', 
-                      border: 'none', 
-                      cursor: 'pointer',
-                      padding: '5px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      height: '100%',
-                      minHeight: '50px',
-                      transform: 'translateX(-10px) translateY(-10px)'
-                    }}>
-                    <img
-                      src="/assets/NOIR/right-facing-arrow.svg"
-                      alt="Right Arrow"
-                      style={{ width: '14px', height: '14px' }}
-                    />
-                  </button>
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    padding: '5px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                    minHeight: '50px',
+                    transform: 'translateX(-10px) translateY(-10px)'
+                  }}>
+                  <img
+                    src="/assets/NOIR/right-facing-arrow.svg"
+                    alt="Right Arrow"
+                    style={{ width: '14px', height: '14px' }}
+                  />
+                </button>
                 )}
               </div>
             </div>
