@@ -619,11 +619,13 @@ function GiftCardPage() {
                         <img
                           src="/assets/NOIR/blanco-thumb.png"
                           alt="BLANCO"
+                          onClick={() => navigate('/straight/blanco')}
                           style={{ 
                             width: '100%', 
                             height: 'auto',
                             marginBottom: '10px',
-                            marginLeft: '10px'
+                            marginLeft: '10px',
+                            cursor: 'pointer'
                           }}
                         />
                         <p style={{ 
@@ -689,11 +691,13 @@ function GiftCardPage() {
                         <img
                           src="/assets/NOIR/wave-thumb.png"
                           alt="SOFT WAVE"
+                          onClick={() => navigate('/wavy/soft-wave')}
                           style={{ 
                             width: '100%', 
                             height: 'auto',
                             marginBottom: '10px',
-                            marginLeft: '10px'
+                            marginLeft: '10px',
+                            cursor: 'pointer'
                           }}
                         />
                         <p style={{ 
@@ -759,11 +763,13 @@ function GiftCardPage() {
                         <img
                           src="/assets/NOIR/noir-thumb.png"
                           alt="NOIR"
+                          onClick={() => navigate('/straight/noir')}
                           style={{ 
                             width: '100%', 
                             height: 'auto',
                             marginBottom: '10px',
-                            marginLeft: '10px'
+                            marginLeft: '10px',
+                            cursor: 'pointer'
                           }}
                         />
                         <p style={{ 
@@ -829,11 +835,13 @@ function GiftCardPage() {
                         <img
                           src="/assets/NOIR/curl-thumb.png"
                           alt="SOFT CURL"
+                          onClick={() => navigate('/curly/soft-curl')}
                           style={{ 
                             width: '100%', 
                             height: 'auto',
                             marginBottom: '10px',
-                            marginLeft: '10px'
+                            marginLeft: '10px',
+                            cursor: 'pointer'
                           }}
                         />
                         <p style={{ 
@@ -1014,11 +1022,13 @@ function GiftCardPage() {
                         <img
                           src="/assets/NOIR/wave-thumb.png"
                           alt="SOFT WAVE"
+                          onClick={() => navigate('/wavy/soft-wave')}
                           style={{ 
                             width: '100%', 
                             height: 'auto',
                             marginBottom: '10px',
-                            marginLeft: '10px'
+                            marginLeft: '10px',
+                            cursor: 'pointer'
                           }}
                         />
                         <p style={{ 
@@ -1082,11 +1092,13 @@ function GiftCardPage() {
                         <img
                           src="/assets/NOIR/curl-thumb.png"
                           alt="SOFT CURL"
+                          onClick={() => navigate('/curly/soft-curl')}
                           style={{ 
                             width: '100%', 
                             height: 'auto',
                             marginBottom: '10px',
-                            marginLeft: '10px'
+                            marginLeft: '10px',
+                            cursor: 'pointer'
                           }}
                         />
                         <p style={{ 
@@ -1150,11 +1162,13 @@ function GiftCardPage() {
                         <img
                           src="/assets/NOIR/noir-thumb.png"
                           alt="NOIR"
+                          onClick={() => navigate('/straight/noir')}
                           style={{ 
                             width: '100%', 
                             height: 'auto',
                             marginBottom: '10px',
-                            marginLeft: '10px'
+                            marginLeft: '10px',
+                            cursor: 'pointer'
                           }}
                         />
                         <p style={{ 
@@ -1218,11 +1232,13 @@ function GiftCardPage() {
                         <img
                           src="/assets/NOIR/blanco-thumb.png"
                           alt="BLANCO"
+                          onClick={() => navigate('/straight/blanco')}
                           style={{ 
                             width: '100%', 
                             height: 'auto',
                             marginBottom: '10px',
-                            marginLeft: '10px'
+                            marginLeft: '10px',
+                            cursor: 'pointer'
                           }}
                         />
                         <p style={{ 

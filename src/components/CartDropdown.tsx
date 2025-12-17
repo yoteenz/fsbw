@@ -736,7 +736,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         onClick={() => {
                           // Determine the correct product page route based on item name
                           let productRoute = '/straight/noir'; // Default fallback
-                          if (item.name === 'NOIR') {
+                          if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
+                            productRoute = '/tools/gift-card';
+                          } else if (item.name === 'NOIR') {
                             productRoute = '/straight/noir';
                           } else if (item.name === 'BLANCO') {
                             productRoute = '/straight/blanco';
@@ -756,6 +758,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                       >
                         <img
                           src={(() => {
+                            // Gift card uses specific thumbnail
+                            if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
+                              return '/assets/gift-card asset.png';
+                            }
+                            
                             // Determine thumbnail based on product name and hairline selection
                             const hairline = item.hairline || 'NATURAL';
                             const hairlineUpper = hairline.toUpperCase();
@@ -805,115 +812,117 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         />
                       </div>
                       
-                      {/* EDIT IN BUILD-A-WIG text */}
-                      <p 
-                        className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
-                        style={{ 
-                          fontFamily: '"Futura PT Book"',
-                          color: '#EB1C24',
-                          textTransform: 'uppercase',
-                          fontSize: '8px',
-                          marginTop: '6px',
-                          lineHeight: '1.1'
-                        }}
-                        onClick={() => {
-                          console.log('Cart item being edited:', item);
-                          
-                          // Store the current item details for editing
-                          localStorage.setItem('editingCartItem', JSON.stringify(item));
-                          localStorage.setItem('editingCartItemId', item.id);
-                          
-                          // CRITICAL: Store individual customization options with BOTH selected* and editSelected* prefixes
-                          // This ensures consistency when loading edit mode
-                          const capSize = item.capSize || 'M';
-                          const length = item.length || '24"';
-                          const density = item.density || '200%';
-                          // CRITICAL: Validate BLANCO colors - if item.color is invalid for BLANCO, use PLATINUM
-                          let color = item.color;
-                          if (item.name === 'BLANCO') {
-                            const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
-                            if (!color || !validBlancoColors.includes(color)) {
-                              color = 'PLATINUM'; // Default to PLATINUM for invalid/missing BLANCO colors
+                      {/* EDIT IN BUILD-A-WIG text - Only show for units, not gift cards */}
+                      {!(item.name === 'GIFT CARD' || item.type === 'gift-card') && (
+                        <p 
+                          className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
+                          style={{ 
+                            fontFamily: '"Futura PT Book"',
+                            color: '#EB1C24',
+                            textTransform: 'uppercase',
+                            fontSize: '8px',
+                            marginTop: '6px',
+                            lineHeight: '1.1'
+                          }}
+                          onClick={() => {
+                            console.log('Cart item being edited:', item);
+                            
+                            // Store the current item details for editing
+                            localStorage.setItem('editingCartItem', JSON.stringify(item));
+                            localStorage.setItem('editingCartItemId', item.id);
+                            
+                            // CRITICAL: Store individual customization options with BOTH selected* and editSelected* prefixes
+                            // This ensures consistency when loading edit mode
+                            const capSize = item.capSize || 'M';
+                            const length = item.length || '24"';
+                            const density = item.density || '200%';
+                            // CRITICAL: Validate BLANCO colors - if item.color is invalid for BLANCO, use PLATINUM
+                            let color = item.color;
+                            if (item.name === 'BLANCO') {
+                              const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+                              if (!color || !validBlancoColors.includes(color)) {
+                                color = 'PLATINUM'; // Default to PLATINUM for invalid/missing BLANCO colors
+                              }
+                            } else {
+                              color = color || 'OFF BLACK';
                             }
-                          } else {
-                            color = color || 'OFF BLACK';
-                          }
-                          const texture = item.texture || 'SILKY';
-                          const lace = item.lace || '13X6';
-                          const hairline = item.hairline || 'NATURAL';
-                          const partSelection = item.partSelection || 'MIDDLE';
-                          const styling = item.styling || 'NONE';
-                          const addOns = item.addOns || [];
-                          
-                          // CRITICAL: Calculate capSizePrice based on capSize from cart item
-                          const capSizePrice = (capSize === 'XXS/XS/S' || capSize === 'S/M/L') ? '40' : '0';
-                          
-                          console.log('[FLEX_CAP_DEBUG] CartDropdown Edit Button - Setting capSizePrice:', {
-                            capSize,
-                            capSizePrice,
-                            isFlexible: capSize === 'XXS/XS/S' || capSize === 'S/M/L',
-                            timestamp: new Date().toISOString()
-                          });
-                          
-                          // Store with selected* prefix (for sub-pages)
-                          localStorage.setItem('selectedCapSize', capSize);
-                          localStorage.setItem('selectedCapSizePrice', capSizePrice);
-                          localStorage.setItem('selectedLength', length);
-                          localStorage.setItem('selectedDensity', density);
-                          localStorage.setItem('selectedColor', color);
-                          localStorage.setItem('selectedTexture', texture);
-                          localStorage.setItem('selectedLace', lace);
-                          localStorage.setItem('selectedHairline', hairline);
-                          localStorage.setItem('selectedPartSelection', partSelection);
-                          localStorage.setItem('selectedStyling', styling);
-                          localStorage.setItem('selectedAddOns', JSON.stringify(addOns));
-                          
-                          // CRITICAL: Also store with editSelected* prefix (for edit mode sub-pages)
-                          localStorage.setItem('editSelectedCapSize', capSize);
-                          localStorage.setItem('editSelectedCapSizePrice', capSizePrice);
-                          localStorage.setItem('editSelectedLength', length);
-                          localStorage.setItem('editSelectedDensity', density);
-                          localStorage.setItem('editSelectedColor', color);
-                          localStorage.setItem('editSelectedTexture', texture);
-                          localStorage.setItem('editSelectedLace', lace);
-                          localStorage.setItem('editSelectedHairline', hairline);
-                          localStorage.setItem('editSelectedStyling', styling);
-                          localStorage.setItem('editSelectedAddOns', JSON.stringify(addOns));
-                          
-                          console.log('Stored localStorage values:', {
-                            capSize,
-                            length,
-                            density,
-                            color,
-                            texture,
-                            lace,
-                            hairline,
-                            partSelection,
-                            styling,
-                            addOns
-                          });
-                          
-                          // Dispatch custom event to notify edit page of item change
-                          window.dispatchEvent(new CustomEvent('editingCartItemChanged', { detail: { itemId: item.id } }));
-                          
-                          // Determine the correct edit route based on product name
-                          let editRoute = '/build-a-wig/edit'; // Default fallback
-                          if (item.name === 'NOIR') {
-                            editRoute = '/build-a-wig/noir/edit';
-                          } else if (item.name === 'BLANCO') {
-                            editRoute = '/build-a-wig/blanco/edit';
-                          } else if (item.name === 'SOFT WAVE') {
-                            editRoute = '/build-a-wig/soft-wave/edit';
-                          } else if (item.name === 'SOFT CURL') {
-                            editRoute = '/build-a-wig/soft-curl/edit';
-                          }
-                          
-                          onClose(); // Close the dropdown first
-                          navigate(editRoute); // Navigate to product-specific edit page
-                        }}
-                      >
-                        EDIT IN BUILD-A-WIG
-                      </p>
+                            const texture = item.texture || 'SILKY';
+                            const lace = item.lace || '13X6';
+                            const hairline = item.hairline || 'NATURAL';
+                            const partSelection = item.partSelection || 'MIDDLE';
+                            const styling = item.styling || 'NONE';
+                            const addOns = item.addOns || [];
+                            
+                            // CRITICAL: Calculate capSizePrice based on capSize from cart item
+                            const capSizePrice = (capSize === 'XXS/XS/S' || capSize === 'S/M/L') ? '40' : '0';
+                            
+                            console.log('[FLEX_CAP_DEBUG] CartDropdown Edit Button - Setting capSizePrice:', {
+                              capSize,
+                              capSizePrice,
+                              isFlexible: capSize === 'XXS/XS/S' || capSize === 'S/M/L',
+                              timestamp: new Date().toISOString()
+                            });
+                            
+                            // Store with selected* prefix (for sub-pages)
+                            localStorage.setItem('selectedCapSize', capSize);
+                            localStorage.setItem('selectedCapSizePrice', capSizePrice);
+                            localStorage.setItem('selectedLength', length);
+                            localStorage.setItem('selectedDensity', density);
+                            localStorage.setItem('selectedColor', color);
+                            localStorage.setItem('selectedTexture', texture);
+                            localStorage.setItem('selectedLace', lace);
+                            localStorage.setItem('selectedHairline', hairline);
+                            localStorage.setItem('selectedPartSelection', partSelection);
+                            localStorage.setItem('selectedStyling', styling);
+                            localStorage.setItem('selectedAddOns', JSON.stringify(addOns));
+                            
+                            // CRITICAL: Also store with editSelected* prefix (for edit mode sub-pages)
+                            localStorage.setItem('editSelectedCapSize', capSize);
+                            localStorage.setItem('editSelectedCapSizePrice', capSizePrice);
+                            localStorage.setItem('editSelectedLength', length);
+                            localStorage.setItem('editSelectedDensity', density);
+                            localStorage.setItem('editSelectedColor', color);
+                            localStorage.setItem('editSelectedTexture', texture);
+                            localStorage.setItem('editSelectedLace', lace);
+                            localStorage.setItem('editSelectedHairline', hairline);
+                            localStorage.setItem('editSelectedStyling', styling);
+                            localStorage.setItem('editSelectedAddOns', JSON.stringify(addOns));
+                            
+                            console.log('Stored localStorage values:', {
+                              capSize,
+                              length,
+                              density,
+                              color,
+                              texture,
+                              lace,
+                              hairline,
+                              partSelection,
+                              styling,
+                              addOns
+                            });
+                            
+                            // Dispatch custom event to notify edit page of item change
+                            window.dispatchEvent(new CustomEvent('editingCartItemChanged', { detail: { itemId: item.id } }));
+                            
+                            // Determine the correct edit route based on product name
+                            let editRoute = '/build-a-wig/edit'; // Default fallback
+                            if (item.name === 'NOIR') {
+                              editRoute = '/build-a-wig/noir/edit';
+                            } else if (item.name === 'BLANCO') {
+                              editRoute = '/build-a-wig/blanco/edit';
+                            } else if (item.name === 'SOFT WAVE') {
+                              editRoute = '/build-a-wig/soft-wave/edit';
+                            } else if (item.name === 'SOFT CURL') {
+                              editRoute = '/build-a-wig/soft-curl/edit';
+                            }
+                            
+                            onClose(); // Close the dropdown first
+                            navigate(editRoute); // Navigate to product-specific edit page
+                          }}
+                        >
+                          EDIT IN BUILD-A-WIG
+                        </p>
+                      )}
                     </div>
                   
                     {/* Item Details */}
@@ -944,11 +953,16 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           textTransform: 'uppercase',
                           fontSize: '9px',
                           marginTop: '-5px',
-                          transform: 'translateY(-2px)',
+                          transform: 'translateY(-1px)',
                           lineHeight: '1.1'
                         }}
                       >
                         {(() => {
+                          // Gift card shows "DIGITAL ONLY"
+                          if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
+                            return 'DIGITAL ONLY';
+                          }
+                          
                           // Get the correct hair origin based on product name
                           const getHairOrigin = (productName: string) => {
                             switch (productName) {

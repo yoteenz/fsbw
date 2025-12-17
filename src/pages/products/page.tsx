@@ -195,14 +195,10 @@ function ProductsPage() {
   // Scroll state for units container
   const [unitsScroll, setUnitsScroll] = useState(0);
   const [isUnitsDragging, setIsUnitsDragging] = useState(false);
-  const [unitsStartX, setUnitsStartX] = useState(0);
-  const [unitsStartScroll, setUnitsStartScroll] = useState(0);
 
   // Scroll state for gift card container
   const [giftCardScroll, setGiftCardScroll] = useState(0);
   const [isGiftCardDragging, setIsGiftCardDragging] = useState(false);
-  const [giftCardStartX, setGiftCardStartX] = useState(0);
-  const [giftCardStartScroll, setGiftCardStartScroll] = useState(0);
 
   // Load selected currency from localStorage on mount only
   useEffect(() => {
@@ -271,12 +267,7 @@ function ProductsPage() {
   // Units scroll handlers
   const handleUnitsMouseMove = (e: React.MouseEvent) => {
     if (!isUnitsDragging) return;
-    const currentX = e.clientX;
-    const diff = currentX - unitsStartX;
-    const newPosition = unitsStartScroll - diff;
-    const minScroll = -window.innerWidth * 0.713;
-    const maxScroll = 0;
-    setUnitsScroll(Math.max(minScroll, Math.min(maxScroll, newPosition)));
+    // Drag scrolling removed - this handler is kept for compatibility but never executes
   };
 
   const handleUnitsMouseUp = () => {
@@ -306,12 +297,7 @@ function ProductsPage() {
   // Gift card scroll handlers
   const handleGiftCardMouseMove = (e: React.MouseEvent) => {
     if (!isGiftCardDragging) return;
-    const currentX = e.clientX;
-    const diff = currentX - giftCardStartX;
-    const newPosition = giftCardStartScroll - diff;
-    const minScroll = -window.innerWidth * 2.139; // 3 scroll positions (71.3% * 3)
-    const maxScroll = 0;
-    setGiftCardScroll(Math.max(minScroll, Math.min(maxScroll, newPosition)));
+    // Drag scrolling removed - this handler is kept for compatibility but never executes
   };
 
   const handleGiftCardMouseUp = () => {
@@ -456,7 +442,7 @@ function ProductsPage() {
         window.removeEventListener('mouseup', handleUnitsMouseUp);
       };
     }
-  }, [isUnitsDragging, unitsStartX, unitsStartScroll]);
+  }, [isUnitsDragging]);
 
   useEffect(() => {
     if (isGiftCardDragging) {
@@ -467,7 +453,7 @@ function ProductsPage() {
         window.removeEventListener('mouseup', handleGiftCardMouseUp);
       };
     }
-  }, [isGiftCardDragging, giftCardStartX, giftCardStartScroll]);
+  }, [isGiftCardDragging]);
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>

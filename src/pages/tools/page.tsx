@@ -122,11 +122,40 @@ function ToolsPage() {
     }
   ]);
 
+  // Sync gift card products' inCart state with cart items
+  useEffect(() => {
+    const updateGiftCardCartStatus = () => {
+      try {
+        const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+        setGiftCardProducts(prevProducts => 
+          prevProducts.map(p => {
+            const inCart = cartItems.some((item: any) => 
+              (item.name === 'GIFT CARD' || item.type === 'gift-card') && item.balance === p.price
+            );
+            return { ...p, inCart };
+          })
+        );
+      } catch (error) {
+        console.error('Error updating gift card cart status:', error);
+      }
+    };
+
+    // Initial sync
+    updateGiftCardCartStatus();
+
+    // Listen for cart updates
+    window.addEventListener('cartUpdated', updateGiftCardCartStatus);
+    window.addEventListener('storage', updateGiftCardCartStatus);
+
+    return () => {
+      window.removeEventListener('cartUpdated', updateGiftCardCartStatus);
+      window.removeEventListener('storage', updateGiftCardCartStatus);
+    };
+  }, []);
+
   // Scroll state for gift card container
   const [giftCardScroll, setGiftCardScroll] = useState(0);
   const [isGiftCardDragging, setIsGiftCardDragging] = useState(false);
-  const [giftCardStartX, setGiftCardStartX] = useState(0);
-  const [giftCardStartScroll, setGiftCardStartScroll] = useState(0);
 
   // Load selected currency from localStorage on mount only
   useEffect(() => {
@@ -195,12 +224,7 @@ function ToolsPage() {
   // Gift card scroll handlers
   const handleGiftCardMouseMove = (e: React.MouseEvent) => {
     if (!isGiftCardDragging) return;
-    const currentX = e.clientX;
-    const diff = currentX - giftCardStartX;
-    const newPosition = giftCardStartScroll - diff;
-    const minScroll = -window.innerWidth * 2.139; // 3 scroll positions (71.3% * 3)
-    const maxScroll = 0;
-    setGiftCardScroll(Math.max(minScroll, Math.min(maxScroll, newPosition)));
+    // Drag scrolling removed - this handler is kept for compatibility but never executes
   };
 
   const handleGiftCardMouseUp = () => {
@@ -240,12 +264,75 @@ function ToolsPage() {
     if (e) {
       e.stopPropagation();
     }
-    console.log('Add to cart clicked for:', product.name);
-    setGiftCardProducts(prevProducts => 
-      prevProducts.map(p => 
-        p.id === product.id ? { ...p, inCart: !p.inCart } : p
-      )
-    );
+    
+    try {
+      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      
+      // Check if this exact gift card (same balance) is already in cart
+      const existingItemIndex = cartItems.findIndex((item: any) => 
+        (item.name === 'GIFT CARD' || item.type === 'gift-card') && item.balance === product.price
+      );
+
+      if (existingItemIndex !== -1) {
+        // Remove from cart
+        const updatedCartItems = cartItems.filter((_: any, index: number) => index !== existingItemIndex);
+        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+        
+        // Update cart count
+        const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
+        const removedQuantity = cartItems[existingItemIndex].quantity || 1;
+        const newCount = Math.max(0, currentCount - removedQuantity);
+        localStorage.setItem('cartCount', newCount.toString());
+        setCartCount(newCount);
+        
+        // Update UI state
+        setGiftCardProducts(prevProducts => 
+          prevProducts.map(p => 
+            p.id === product.id ? { ...p, inCart: false } : p
+          )
+        );
+        
+        // Dispatch cart count update event
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+          window.dispatchEvent(new Event('cartUpdated'));
+        }, 100);
+      } else {
+        // Add to cart
+        const newItem = {
+          id: `gift-card-${product.price}-${Date.now()}`,
+          name: 'GIFT CARD',
+          price: product.price,
+          quantity: 1,
+          balance: product.price,
+          image: '/assets/gift-card asset.png',
+          type: 'gift-card'
+        };
+        
+        // Add new item at the beginning (newest first)
+        const updatedCartItems = [newItem, ...cartItems];
+        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+        
+        const newCartCount = updatedCartItems.length;
+        localStorage.setItem('cartCount', newCartCount.toString());
+        setCartCount(newCartCount);
+        
+        // Update UI state
+        setGiftCardProducts(prevProducts => 
+          prevProducts.map(p => 
+            p.id === product.id ? { ...p, inCart: true } : p
+          )
+        );
+        
+        // Dispatch cart count update event
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCartCount }));
+          window.dispatchEvent(new Event('cartUpdated'));
+        }, 100);
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    }
   };
 
   useEffect(() => {
@@ -257,7 +344,7 @@ function ToolsPage() {
         window.removeEventListener('mouseup', handleGiftCardMouseUp);
       };
     }
-  }, [isGiftCardDragging, giftCardStartX, giftCardStartScroll]);
+  }, [isGiftCardDragging]);
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -361,14 +448,21 @@ function ToolsPage() {
                   backgroundColor: 'black',
                   margin: '0 auto 8px auto'
                 }}></div>
-                <h3 style={{ 
-                  fontFamily: '"Futura PT Medium"',
-                  fontSize: '12px',
-                  color: '#EB1C24',
-                  textTransform: 'uppercase',
-                  margin: '0',
-                  fontWeight: '500'
-                }}>
+                <h3 
+                  onClick={() => navigate('/tools/gift-card')}
+                  style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '12px',
+                    color: '#EB1C24',
+                    textTransform: 'uppercase',
+                    margin: '0',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    display: 'inline-block',
+                    width: 'auto',
+                    height: 'auto'
+                  }}
+                >
                   GIFT CARD
                 </h3>
               </div>
@@ -448,8 +542,7 @@ function ToolsPage() {
                           style={{ 
                             padding: '5px 0px 4px 0px',
                             textAlign: 'center',
-                            transform: index === 0 ? 'translateX(-2.5px)' : 'translateX(13px)',
-                            cursor: 'pointer'
+                            transform: index === 0 ? 'translateX(-2.5px)' : 'translateX(13px)'
                           }}
                         >
                           {/* Shopping Bag Icon */}
@@ -491,12 +584,14 @@ function ToolsPage() {
                           <img
                             src="/assets/gift-card asset.png"
                             alt="Gift Card"
+                            onClick={() => navigate('/tools/gift-card')}
                             style={{ 
                               width: '60%', 
                               height: 'auto',
                               marginBottom: '5px',
                               marginLeft: '10px',
-                              maxWidth: '100%'
+                              maxWidth: '100%',
+                              cursor: 'pointer'
                             }}
                           />
                           
