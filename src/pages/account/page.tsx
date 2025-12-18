@@ -16,7 +16,18 @@ function AccountPage() {
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [membershipType, setMembershipType] = useState<'BASIC' | 'PREMIUM'>('BASIC'); // Will be set dynamically later
-  const [profileImage, setProfileImage] = useState('/assets/profile-thumb.png');
+  const [profileImage, setProfileImage] = useState(() => {
+    // Load from localStorage on mount
+    if (typeof window !== 'undefined') {
+      try {
+        const savedImage = localStorage.getItem('profileImage');
+        return savedImage || '/assets/profile-thumb.png';
+      } catch (e) {
+        return '/assets/profile-thumb.png';
+      }
+    }
+    return '/assets/profile-thumb.png';
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showCropModal, setShowCropModal] = useState(false);
@@ -172,7 +183,14 @@ function AccountPage() {
   };
 
   const handleConfirmReset = () => {
-    setProfileImage('/assets/profile-thumb.png');
+    const defaultImage = '/assets/profile-thumb.png';
+    setProfileImage(defaultImage);
+    // Clear from localStorage
+    try {
+      localStorage.removeItem('profileImage');
+    } catch (e) {
+      // Ignore errors
+    }
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -378,12 +396,12 @@ function AccountPage() {
   }, [isDragging, dragStart, cropScale, cropPosition, pinchStart]);
 
   const handleApproveCrop = () => {
-    if (imageToCrop && imageRef.current) {
+    if (imageToCrop && cropContainerRef.current && imageRef.current) {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      const outputSize = 200; // Output size
+      const outputSize = 200;
       canvas.width = outputSize;
       canvas.height = outputSize;
 
@@ -392,46 +410,85 @@ function AccountPage() {
       ctx.arc(outputSize / 2, outputSize / 2, outputSize / 2, 0, Math.PI * 2);
       ctx.clip();
 
-      // Get image dimensions
+      // Draw directly to output canvas - capture exactly what's visible in the crop circle
       const img = imageRef.current;
       const imgWidth = img.naturalWidth;
       const imgHeight = img.naturalHeight;
-      const displaySize = 200;
-      const displayImageSize = 300; // The displayed image size before scale
+      const containerSize = 200;
+      const displayImageSize = 300;
       
-      // Calculate the effective image size with zoom
-      const effectiveImageSize = displayImageSize * cropScale;
+      // Calculate cover scale
+      const scaleX = displayImageSize / imgWidth;
+      const scaleY = displayImageSize / imgHeight;
+      const coverScale = Math.max(scaleX, scaleY);
       
-      // Calculate how the image maps to natural dimensions
-      const imageToNaturalScale = Math.max(imgWidth / displayImageSize, imgHeight / displayImageSize);
+      // The image transform: top: 50%, left: 50% then translate(calc(-50% + cropPosition.x), ...) scale(cropScale)
+      // top: 50%, left: 50% positions image top-left at container center (100, 100) in 200px container
+      // translate(-50% + cropPosition.x) = translate(-150px + cropPosition.x) for 300px element
+      // So image center (150px from top-left) is at: (100 - 150 + cropPosition.x, 100 - 150 + cropPosition.y) = (cropPosition.x - 50, cropPosition.y - 50)
+      // 
+      // When cropPosition = (0, 0): image center = (-50, -50) - NOT centered!
+      // This means the initial position is wrong, OR cropPosition needs to be (150, 150) to center
+      // 
+      // Actually, wait: the -50% translate centers the image. So:
+      // - Image top-left starts at (100, 100) from top:50%, left:50%
+      // - Image center is naturally at (100 + 150, 100 + 150) = (250, 250) from container top-left
+      // - After translate(-150), image center moves to (250 - 150, 250 - 150) = (100, 100) ✓ CENTERED!
+      // - Then translate(cropPosition.x) moves it to (100 + cropPosition.x, 100 + cropPosition.y)
+      // 
+      // So the FULL transform is: translate(-150 + cropPosition.x, -150 + cropPosition.y)
+      // Image center: (100 + 150 - 150 + cropPosition.x, 100 + 150 - 150 + cropPosition.y) = (100 + cropPosition.x, 100 + cropPosition.y)
+      // 
+      // So when cropPosition = (0, 0), image center is at (100, 100) = container center ✓
+      // The crop circle center is also at (100, 100)
+      // So the offset from image center to crop center is: (100 - (100 + cropPosition.x), 100 - (100 + cropPosition.y)) = (-cropPosition.x, -cropPosition.y)
       
-      // Calculate source crop position accounting for zoom and position
-      // The crop area is 200px, centered in the 300px image
-      // With zoom, the effective image is larger
-      const cropAreaOffset = (effectiveImageSize - displaySize) / 2;
-      const sourceOffsetX = (cropAreaOffset - cropPosition.x) * imageToNaturalScale;
-      const sourceOffsetY = (cropAreaOffset - cropPosition.y) * imageToNaturalScale;
+      ctx.save();
       
-      const sourceX = Math.max(0, Math.min(imgWidth - displaySize * imageToNaturalScale, sourceOffsetX));
-      const sourceY = Math.max(0, Math.min(imgHeight - displaySize * imageToNaturalScale, sourceOffsetY));
-      const sourceSize = displaySize * imageToNaturalScale;
-
-      // Draw the cropped image
-      const sourceImg = new Image();
-      sourceImg.onload = () => {
-        ctx.drawImage(
-          sourceImg,
-          sourceX, sourceY, sourceSize, sourceSize,
-          0, 0, outputSize, outputSize
-        );
-        const croppedImage = canvas.toDataURL('image/png');
-        setProfileImage(croppedImage);
-        setShowCropModal(false);
-        setImageToCrop(null);
-        setCropPosition({ x: 0, y: 0 });
-        setCropScale(1);
-      };
-      sourceImg.src = imageToCrop;
+      // Start at crop circle center
+      ctx.translate(outputSize / 2, outputSize / 2);
+      
+      // Apply inverse transforms (reverse order: inverse scale, then inverse translate)
+      // 1. Inverse scale
+      ctx.scale(1 / cropScale, 1 / cropScale);
+      
+      // 2. Image center in container: (100 + cropPosition.x, 100 + cropPosition.y)
+      //    Crop center: (100, 100)
+      //    Offset: (100 - (100 + cropPosition.x), 100 - (100 + cropPosition.y)) = (-cropPosition.x, -cropPosition.y)
+      ctx.translate(-cropPosition.x, -cropPosition.y);
+      
+      // 3. Translate to image center (150px from image top-left)
+      ctx.translate(-displayImageSize / 2, -displayImageSize / 2);
+      
+      // Draw the source image with cover scaling
+      const displayedWidth = imgWidth * coverScale;
+      const displayedHeight = imgHeight * coverScale;
+      const coverOffsetX = (displayedWidth - displayImageSize) / 2;
+      const coverOffsetY = (displayedHeight - displayImageSize) / 2;
+      
+      ctx.drawImage(
+        img,
+        -coverOffsetX,
+        -coverOffsetY,
+        displayedWidth,
+        displayedHeight
+      );
+      
+      ctx.restore();
+      
+      const croppedImage = canvas.toDataURL('image/png');
+      setProfileImage(croppedImage);
+      // Save to localStorage
+      try {
+        localStorage.setItem('profileImage', croppedImage);
+      } catch (e) {
+        // Ignore errors (e.g., if localStorage is full)
+        console.warn('Failed to save profile image to localStorage:', e);
+      }
+      setShowCropModal(false);
+      setImageToCrop(null);
+      setCropPosition({ x: 0, y: 0 });
+      setCropScale(1);
     }
   };
 
@@ -552,8 +609,8 @@ function AccountPage() {
               </div>
               <img
                 alt="Menu"
-                width="21"
-                height="21"
+                width="17"
+                height="18"
                 className="cursor-pointer"
                 src="/assets/menu-icon.svg"
                 onClick={handleMobileMenuToggle}
@@ -822,7 +879,7 @@ function AccountPage() {
                         style={{
                           width: '100%',
                           height: '100%',
-                          objectFit: isImageChanged ? 'cover' : 'fill',
+                          objectFit: isImageChanged ? 'contain' : 'fill',
                           borderRadius: '50%',
                           border: '1.3px solid #000'
                         }}
@@ -1192,7 +1249,9 @@ function AccountPage() {
                 WebkitTouchCallout: 'none',
                 WebkitUserSelect: 'none',
                 userSelect: 'none',
-                transform: 'translateY(-10px)'
+                transform: 'translateY(-10px)',
+                clipPath: 'circle(100px at 50% 50%)',
+                WebkitClipPath: 'circle(100px at 50% 50%)'
               }}
               onMouseDown={handleCropMouseDown}
               onTouchStart={handleCropTouchStart}

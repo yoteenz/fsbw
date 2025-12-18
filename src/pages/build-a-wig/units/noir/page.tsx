@@ -522,8 +522,8 @@ function NoirSelection() {
                 </div>
                 <img
                   alt="Menu"
-                  width="21"
-                  height="21"
+                  width="17"
+                  height="18"
                   className="cursor-pointer"
                   src="/assets/menu-icon.svg"
                   onClick={handleMobileMenuToggle}
