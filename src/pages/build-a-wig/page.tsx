@@ -2196,21 +2196,48 @@ export default function BuildAWigPage() {
     // Sub-pages set these values, and we should NOT overwrite them
     // Only sync selected* keys for sub-pages to read, but don't overwrite editSelected* keys
     if (isEditMode) {
+      // CRITICAL: Match customize mode - sync selected* keys from editSelected* keys if they exist
+      // This ensures sub-pages always see the latest selections when navigating between sub-pages
+      // Check editSelected* keys first, then fall back to customization state
+      // This prevents overwriting with stale state while preserving change detection
+      const editSelectedColor = localStorage.getItem('editSelectedColor');
+      const editSelectedLength = localStorage.getItem('editSelectedLength');
+      const editSelectedDensity = localStorage.getItem('editSelectedDensity');
+      const editSelectedTexture = localStorage.getItem('editSelectedTexture');
+      const editSelectedLace = localStorage.getItem('editSelectedLace');
+      const editSelectedHairline = localStorage.getItem('editSelectedHairline');
+      const editSelectedStyling = localStorage.getItem('editSelectedStyling');
+      const editSelectedCapSize = localStorage.getItem('editSelectedCapSize');
+      const editSelectedAddOns = localStorage.getItem('editSelectedAddOns');
+      
+      // Use editSelected* values for selected* keys if they exist, otherwise use customization state
+      // This matches customize mode where customizeSelected* takes priority for selected* keys
+      const colorToSync = editSelectedColor !== null ? editSelectedColor : customization.color;
+      const lengthToSync = editSelectedLength !== null ? editSelectedLength : customization.length;
+      const densityToSync = editSelectedDensity !== null ? editSelectedDensity : customization.density;
+      const textureToSync = editSelectedTexture !== null ? editSelectedTexture : customization.texture;
+      const laceToSync = editSelectedLace !== null ? editSelectedLace : customization.lace;
+      const hairlineToSync = editSelectedHairline !== null ? editSelectedHairline : customization.hairline;
+      const capSizeToSync = editSelectedCapSize !== null ? editSelectedCapSize : customization.capSize;
+      const addOnsToSync = editSelectedAddOns !== null ? editSelectedAddOns : JSON.stringify(customization.addOns);
+      
       // Only sync selected* keys (for sub-pages), NOT editSelected* keys (set by sub-pages)
       const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
-      const validStyling = partSelectionOptions.includes(customization.styling) ? 'NONE' : customization.styling;
+      let stylingToSync = editSelectedStyling !== null ? editSelectedStyling : customization.styling;
+      const validStyling = partSelectionOptions.includes(stylingToSync) ? 'NONE' : stylingToSync;
       
-      localStorage.setItem('selectedCapSize', customization.capSize);
-      localStorage.setItem('selectedLength', customization.length);
-      localStorage.setItem('selectedDensity', customization.density);
-      localStorage.setItem('selectedColor', customization.color);
-      localStorage.setItem('selectedTexture', customization.texture);
-      localStorage.setItem('selectedLace', customization.lace);
-      localStorage.setItem('selectedHairline', customization.hairline);
+      localStorage.setItem('selectedCapSize', capSizeToSync);
+      localStorage.setItem('selectedLength', lengthToSync);
+      localStorage.setItem('selectedDensity', densityToSync);
+      localStorage.setItem('selectedColor', colorToSync);
+      localStorage.setItem('selectedTexture', textureToSync);
+      localStorage.setItem('selectedLace', laceToSync);
+      localStorage.setItem('selectedHairline', hairlineToSync);
       localStorage.setItem('selectedStyling', validStyling);
-      localStorage.setItem('selectedAddOns', JSON.stringify(customization.addOns));
+      localStorage.setItem('selectedAddOns', addOnsToSync);
       
       // DO NOT sync editSelected* keys here - they are set by sub-pages and route change effect
+      // DO NOT update customization state here - that would break change detection
       // DO NOT recalculate prices here - prices are set by sub-pages
       return; // Exit early to prevent overwriting editSelected* keys
     }

@@ -1837,6 +1837,31 @@ function NoirSelection() {
           style={{ border: '1.3px solid black' }}
         >
           <div className="flex gap-5 absolute left-4">
+            {showMobileMenu ? (
+              <>
+                <button 
+                  onClick={() => navigate('/wishlist')} 
+                  className="cursor-pointer"
+                  style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
+                >
+                  <img
+                    alt="Wishlist"
+                    width="19"
+                    height="19"
+                    src="/assets/wishlist-heart.svg"
+                  />
+                </button>
+                <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                  <img
+                    alt="Account icon"
+                    width="16"
+                    height="16"
+                    src="/assets/NOIR/account-icon.svg"
+                  />
+                </button>
+              </>
+            ) : (
+              <>
             <button 
               onClick={handleBack} 
               className="cursor-pointer"
@@ -1857,8 +1882,26 @@ function NoirSelection() {
                 src="/assets/search-icon.svg"
               />
             </button>
+              </>
+            )}
           </div>
           <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
+            {showMobileMenu ? (
+              <>
+                <span 
+                  style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                  onClick={() => navigate('/build-a-wig')}
+                >
+                  HOME &gt;
+                </span>{' '}
+                <span
+                  style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
+                >
+                  MENU
+                </span>
+              </>
+            ) : (
+              <>
             <span 
                 style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
               onClick={() => {
@@ -1880,134 +1923,51 @@ function NoirSelection() {
             >
               NOIR
             </span>
+              </>
+            )}
           </p>
-          <div className="gap-5 flex absolute" style={{ right: '17px' }}>
-            <div>
+          <div className="gap-5 flex absolute" style={{ right: showMobileMenu ? '14px' : '17px' }}>
+            <div style={{ transform: showMobileMenu ? 'translateY(0.7px)' : 'none' }}>
               <DynamicCartIcon count={cartCount} width={22} height={19} />
             </div>
             <img
-              alt="Menu"
-              width="17"
-              height="18"
+              alt={showMobileMenu ? "Close" : "Menu"}
+              width={showMobileMenu ? "24" : "21"}
+              height={showMobileMenu ? "24" : "21"}
               className="cursor-pointer"
-              src="/assets/menu-icon.svg"
+              src={showMobileMenu ? "/assets/close-icon.svg" : "/assets/menu-icon.svg"}
               onClick={handleMobileMenuToggle}
             />
           </div>
         </div>
 
-        {/* MOBILE MENU POP-UP */}
-        {showMobileMenu && (
-          <div 
-            className="fixed inset-0 z-50"
-            style={{
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              backdropFilter: 'blur(5px)'
-            }}
-            onClick={handleCloseMobileMenu}
-          >
-            <div 
-              className="fixed inset-0 w-full h-full"
-              style={{
-                backgroundImage: 'url("/assets/Marble Floor.jpg")',
-                backgroundSize: '500%',
-                backgroundPosition: 'center 60%',
-                backgroundRepeat: 'no-repeat'
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Glassmorphism Container */}
-              <div 
-                className="border border-black bg-white/60 backdrop-blur-sm"
-                style={{ 
-                  borderWidth: '1.3px',
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  width: '90%',
-                  height: 'calc(80% + 120px)',
-                padding: '20px',
-                backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-                willChange: 'backdrop-filter'
-                }}
-              >
-                {/* Close Button */}
-                <button
-                  onClick={handleCloseMobileMenu}
-                  className="absolute z-10"
-                  style={{
-                    top: '9px',
-                    right: '9px',
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    padding: '8px'
-                  }}
-                >
-                  <img
-                    src="/assets/close-icon.svg"
-                    alt="Close"
-                    style={{ width: '21px', height: '21px' }}
-                  />
-                </button>
-
-              {/* Top Icons and Currency */}
-              <div className="absolute top-16 left-6 right-6 flex justify-between items-center z-10">
-                {/* Top Icons */}
-                <div className="flex gap-4">
-                <div className="flex items-center" style={{ transform: 'translateY(1px)' }}>
-                  <DynamicCartIcon count={cartCount} width={28} height={23} />
-                </div>
-                {isSignedIn ? (
-                <img
-                  src="/assets/NOIR/account-wishlist.svg"
-                  alt="Wishlist"
-                  style={{ width: '21px', height: '21px', transform: 'translateY(4px) translateX(-1px)' }}
-                />
-                ) : (
-                  <img
-                    src="/assets/wishlist-heart.svg"
-                    alt="Wishlist"
-                    style={{ width: '21px', height: '21px', transform: 'translateY(4px) translateX(-1px)' }}
-                  />
-                )}
-                <img
-                  src="/assets/NOIR/account-icon.svg"
-                  alt="Account"
-                  style={{ width: '21px', height: '21px', transform: 'translateY(4px)' }}
-                />
-                </div>
-                
-                {/* Currency Selector */}
-                <div className="flex items-center gap-2">
-                  <span style={{ 
-                    fontFamily: '"Futura PT Medium"',
-                    fontSize: '14px',
-                    color: 'black',
-                    fontWeight: '500'
-                  }}>
-                    $ USD
-                  </span>
-                  <img
-                    src="/assets/NOIR/down-arrow.svg"
-                    alt="Currency"
-                    style={{ width: '14px', height: '14px' }}
-                  />
-                </div>
-              </div>
-
+        {/* MAIN BUILD AREA */}
+        <div
+          className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+          style={{ 
+            borderWidth: '1.3px', 
+            minWidth: '100%', 
+            maxWidth: 'none', 
+            overflow: 'visible',
+            backgroundColor: 'rgba(255, 255, 255, 0.6)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            willChange: 'backdrop-filter',
+            minHeight: showMobileMenu ? '500px' : 'auto'
+          }}
+        >
+          {showMobileMenu ? (
+            /* MENU CONTENT */
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '450px', position: 'relative' }}>
               {/* Navigation Links */}
-              <div className="absolute top-24 left-1/2 transform -translate-x-1/2 flex gap-8 z-10" style={{ marginTop: '30px' }}>
+              <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                 <button
                   onClick={() => handleMobileMenuTabClick('SHOP')}
                   style={{ 
                     fontFamily: mobileMenuActiveTab === 'SHOP' ? '"Futura PT Medium"' : '"Futura PT Book"',
-                  fontSize: '14px',
+                    fontSize: '14px',
                     color: mobileMenuActiveTab === 'SHOP' ? '#EB1C24' : 'black',
-                  fontWeight: '500',
+                    fontWeight: '500',
                     textTransform: 'uppercase',
                     borderBottom: mobileMenuActiveTab === 'SHOP' ? '2px solid #EB1C24' : 'none',
                     paddingBottom: '4px',
@@ -2054,36 +2014,40 @@ function NoirSelection() {
                 </button>
               </div>
 
-              {/* Menu Items */}
-              <div className="absolute top-40 right-6 z-10" style={{ marginTop: '15px', left: '27px' }}>
+              {/* Menu Items - Fixed height with scroll if needed */}
+              <div style={{ flex: '1', overflowY: 'auto', marginBottom: '20px', minHeight: '0' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
                   {mobileMenuActiveTab === 'TOOLS' ? (
                     ['GIFT CARD'].map((item, index) => (
-                      <div key={index} className="flex items-center justify-between">
-                <span style={{ 
+                      <div 
+                        key={index} 
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => navigate('/tools/gift-card')}
+                      >
+                        <span style={{ 
                           fontFamily: '"Futura PT Book"',
-                  fontSize: '14px',
-                  color: 'black',
-                  fontWeight: '500',
-                  textTransform: 'uppercase'
-                }}>
+                          fontSize: '14px',
+                          color: 'black',
+                          fontWeight: '500',
+                          textTransform: 'uppercase'
+                        }}>
                           {item}
-                </span>
+                        </span>
                       </div>
                     ))
                   ) : mobileMenuActiveTab === 'BRAND' ? (
                     ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
                       <div key={index} className="flex items-center justify-between">
-                <span style={{ 
+                        <span style={{ 
                           fontFamily: '"Futura PT Book"',
-                  fontSize: '14px',
-                  color: 'black',
-                  fontWeight: '500',
-                  textTransform: 'uppercase'
-                }}>
+                          fontSize: '14px',
+                          color: 'black',
+                          fontWeight: '500',
+                          textTransform: 'uppercase'
+                        }}>
                           {item}
-                </span>
-              </div>
+                        </span>
+                      </div>
                     ))
                   ) : (
                     // SHOP tab with dropdown functionality
@@ -2097,24 +2061,34 @@ function NoirSelection() {
                         <div 
                           className="flex items-center justify-between cursor-pointer"
                           style={{ alignItems: 'center' }}
-                          onClick={() => item.isExpandable ? handleMobileMenuItemToggle(item.label) : null}
+                          onClick={() => {
+                            if (item.isExpandable) {
+                              // If UNITS is already expanded, navigate to products/units page
+                              if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
+                                navigate('/products/units');
+                              } else {
+                                // Otherwise, toggle expansion
+                                handleMobileMenuItemToggle(item.label);
+                              }
+                            }
+                          }}
                         >
-                      <span style={{ 
+                          <span style={{ 
                             fontFamily: '"Futura PT Book"',
                             fontSize: '14px',
-                        color: 'black',
-                        fontWeight: '500',
-                        textTransform: 'uppercase'
-                      }}>
+                            color: 'black',
+                            fontWeight: '500',
+                            textTransform: 'uppercase'
+                          }}>
                             {item.label}
-                      </span>
+                          </span>
                           {item.hasArrow && (
-                      <img
-                        src="/assets/NOIR/closed-arrow.svg"
-                        alt="Arrow"
-                        style={{ 
-                          width: '16px', 
-                          height: '16px',
+                            <img
+                              src="/assets/NOIR/closed-arrow.svg"
+                              alt="Arrow"
+                              style={{ 
+                                width: '16px', 
+                                height: '16px',
                                 transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px)`,
                                 display: 'flex',
                                 alignItems: 'center'
@@ -2131,6 +2105,10 @@ function NoirSelection() {
                                 onClick={() => {
                                   if (subItem === 'STRAIGHT') {
                                     navigate('/units/straight');
+                                  } else if (subItem === 'WAVY') {
+                                    navigate('/units/wavy');
+                                  } else if (subItem === 'CURLY') {
+                                    navigate('/units/curly');
                                   }
                                 }}
                               >
@@ -2143,8 +2121,8 @@ function NoirSelection() {
                                 }}>
                                   {subItem}
                                 </span>
-                    </div>
-                  ))}
+                              </div>
+                            ))}
                           </div>
                         )}
                       </div>
@@ -2153,15 +2131,15 @@ function NoirSelection() {
                 </div>
               </div>
 
-              {/* Sign In/Out */}
-              <div className="absolute left-1/2 transform -translate-x-1/2 z-10" style={{ bottom: '86px' }}>
+              {/* Sign In/Out - Fixed at bottom */}
+              <div className="flex justify-center" style={{ marginBottom: '20px', marginTop: 'auto' }}>
                 <span 
                   onClick={handleMobileMenuSignInToggle}
                   style={{ 
-                  fontFamily: '"Futura PT Medium"',
-                  fontSize: '14px',
-                  color: '#EB1C24',
-                  fontWeight: '500',
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '14px',
+                    color: '#EB1C24',
+                    fontWeight: '500',
                     textTransform: 'uppercase',
                     cursor: 'pointer'
                   }}
@@ -2170,45 +2148,29 @@ function NoirSelection() {
                 </span>
               </div>
 
-                {/* Social Media Icons */}
-                <div className="absolute left-1/2 transform -translate-x-1/2 z-10" style={{ bottom: '37px' }}>
-                  <div className="flex" style={{ gap: '19px' }}>
-                    <img
-                      src="/assets/instagram-icon.svg"
-                      alt="Instagram"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                    <img
-                      src="/assets/twitter-icon.svg"
-                      alt="Twitter"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                    <img
-                      src="/assets/facebook-icon.svg"
-                      alt="Facebook"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                  </div>
+              {/* Social Media Icons - Fixed at bottom */}
+              <div className="flex justify-center" style={{ marginBottom: '0' }}>
+                <div className="flex" style={{ gap: '19px' }}>
+                  <img
+                    src="/assets/instagram-icon.svg"
+                    alt="Instagram"
+                    style={{ width: '20px', height: '20px' }}
+                  />
+                  <img
+                    src="/assets/twitter-icon.svg"
+                    alt="Twitter"
+                    style={{ width: '20px', height: '20px' }}
+                  />
+                  <img
+                    src="/assets/facebook-icon.svg"
+                    alt="Facebook"
+                    style={{ width: '20px', height: '20px' }}
+                  />
                 </div>
               </div>
             </div>
-          </div>
-        )}
-
-        {/* MAIN BUILD AREA */}
-        <div
-          className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
-          style={{ 
-            borderWidth: '1.3px', 
-            minWidth: '100%', 
-            maxWidth: 'none', 
-            overflow: 'visible',
-            backgroundColor: 'rgba(255, 255, 255, 0.6)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            willChange: 'backdrop-filter'
-          }}
-        >
+          ) : (
+            <>
           {/* WIG PREVIEW */}
           <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column', marginBottom: '24px', transform: 'translateY(20px)', overflow: 'visible', minWidth: '100%', maxWidth: 'none' }}>
             {/* ADD TO WISHLIST & PHOTO COUNT */}
@@ -4242,6 +4204,8 @@ function NoirSelection() {
               </button>
             </div>
           </div>
+            </>
+          )}
         </div>
       </div>
         </div>
