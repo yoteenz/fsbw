@@ -577,12 +577,16 @@ function HairlineSelection() {
                 src="/assets/back-button.svg"
               />
             </button>
-            <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+            <button 
+              onClick={() => navigate('/wishlist')} 
+              className="cursor-pointer"
+              style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
+            >
               <img
-                alt="Search icon"
-                width="16"
-                height="15"
-                src="/assets/search-icon.svg"
+                alt="Wishlist"
+                width="19"
+                height="19"
+                src="/assets/wishlist-heart.svg"
               />
             </button>
           </div>

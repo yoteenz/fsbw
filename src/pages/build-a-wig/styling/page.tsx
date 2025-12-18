@@ -762,12 +762,16 @@ export default function StylingSelectionPage() {
                 src="/assets/back-button.svg"
               />
             </button>
-            <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+            <button 
+              onClick={() => navigate('/wishlist')} 
+              className="cursor-pointer"
+              style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
+            >
               <img
-                alt="Search icon"
-                width="16"
-                height="15"
-                src="/assets/search-icon.svg"
+                alt="Wishlist"
+                width="19"
+                height="19"
+                src="/assets/wishlist-heart.svg"
               />
             </button>
           </div>
@@ -1144,6 +1148,11 @@ export default function StylingSelectionPage() {
                 <div className="flex items-center" style={{ transform: 'translateY(1px)' }}>
                   <DynamicCartIcon count={cartCount} width={28} height={23} />
                 </div>
+                <img
+                  src="/assets/NOIR/account-icon.svg"
+                  alt="Account"
+                  style={{ width: '21px', height: '21px', transform: 'translateY(4px)' }}
+                />
                 {isSignedIn ? (
                   <img
                     src="/assets/NOIR/account-wishlist.svg"
@@ -1157,11 +1166,6 @@ export default function StylingSelectionPage() {
                     style={{ width: '21px', height: '21px', transform: 'translateY(4px) translateX(-1px)' }}
                   />
                 )}
-                <img
-                  src="/assets/NOIR/account-icon.svg"
-                  alt="Account"
-                  style={{ width: '21px', height: '21px', transform: 'translateY(4px)' }}
-                />
                 </div>
                 
                 {/* Currency Selector */}

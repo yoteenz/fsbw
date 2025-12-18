@@ -319,9 +319,33 @@ function SoftWaveSelection() {
   const [activeTab, setActiveTab] = useState('DETAILS');
   const [similarProductsScroll, setSimilarProductsScroll] = useState(0);
   const [recentlyViewedScroll, setRecentlyViewedScroll] = useState(0);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState('SHOP');
+  const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   const handleBack = () => {
     navigate(-1);
+  };
+
+  const handleMobileMenuToggle = () => {
+    setShowMobileMenu(!showMobileMenu);
+  };
+
+  const handleMobileMenuTabClick = (tab: string) => {
+    setMobileMenuActiveTab(tab);
+  };
+
+  const handleMobileMenuItemToggle = (item: string) => {
+    setMobileMenuExpandedItems(prev => 
+      prev.includes(item) 
+        ? prev.filter(i => i !== item)
+        : [...prev, item]
+    );
+  };
+
+  const handleMobileMenuSignInToggle = () => {
+    setIsSignedIn(!isSignedIn);
   };
 
   const handleCustomCapSelect = (capSize: string) => {
@@ -681,50 +705,96 @@ function SoftWaveSelection() {
             style={{ border: '1.3px solid black' }}
           >
             <div className="flex gap-5 absolute left-4">
-              <button 
-                onClick={handleBack} 
-                className="cursor-pointer"
-                style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
-              >
-                <img
-                  alt="Back"
-                  width="21"
-                  height="15"
-                  src="/assets/back-button.svg"
-                />
-              </button>
-              <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                <img
-                  alt="Search icon"
-                  width="16"
-                  height="15"
-                  src="/assets/search-icon.svg"
-                />
-              </button>
+              {showMobileMenu ? (
+                <>
+                  <button className="cursor-pointer" style={{ transform: 'translateX(0px)' }}>
+                    <img
+                      alt="Account icon"
+                      width="16"
+                      height="16"
+                      src="/assets/NOIR/account-icon.svg"
+                    />
+                  </button>
+                  <button 
+                    onClick={() => navigate('/wishlist')} 
+                    className="cursor-pointer"
+                    style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
+                  >
+                    <img
+                      alt="Wishlist"
+                      width="19"
+                      height="19"
+                      src="/assets/wishlist-heart.svg"
+                    />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button 
+                    onClick={handleBack} 
+                    className="cursor-pointer"
+                    style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
+                  >
+                    <img
+                      alt="Back"
+                      width="21"
+                      height="15"
+                      src="/assets/back-button.svg"
+                    />
+                  </button>
+                  <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                    <img
+                      alt="Search icon"
+                      width="16"
+                      height="15"
+                      src="/assets/search-icon.svg"
+                    />
+                  </button>
+                </>
+              )}
             </div>
             <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
-              <span 
-                style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                onClick={() => navigate('/units/wavy')}
-              >
-                WAVY &gt;
-              </span>{' '}
-              <span
-                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
-              >
-                SOFT WAVE
-              </span>
+              {showMobileMenu ? (
+                <>
+                  <span 
+                    style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                    onClick={() => navigate('/build-a-wig')}
+                  >
+                    HOME &gt;
+                  </span>{' '}
+                  <span
+                    style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
+                  >
+                    MENU
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span 
+                    style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                    onClick={() => navigate('/units/wavy')}
+                  >
+                    WAVY &gt;
+                  </span>{' '}
+                  <span
+                    style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
+                  >
+                    SOFT WAVE
+                  </span>
+                </>
+              )}
             </p>
-            <div className="gap-5 flex absolute" style={{ right: '17px' }}>
-              <div>
+            <div className="gap-5 flex absolute" style={{ right: showMobileMenu ? '14px' : '17px' }}>
+              <div style={{ transform: showMobileMenu ? 'translateY(0.7px)' : 'none' }}>
                 <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
               <img
                 alt="Menu"
-                width="17"
-                height="18"
+                width="21"
+                height="21"
                 className="cursor-pointer"
                 src="/assets/menu-icon.svg"
+                onClick={handleMobileMenuToggle}
               />
             </div>
           </div>
@@ -740,9 +810,226 @@ function SoftWaveSelection() {
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
-              willChange: 'backdrop-filter'
+              willChange: 'backdrop-filter',
+              paddingBottom: '34px',
+              minHeight: showMobileMenu ? '500px' : 'auto'
             }}
           >
+            {showMobileMenu ? (
+              /* MENU CONTENT */
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '450px', position: 'relative' }}>
+                {/* Navigation Links */}
+                <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
+                  <button
+                    onClick={() => handleMobileMenuTabClick('SHOP')}
+                    style={{ 
+                      fontFamily: mobileMenuActiveTab === 'SHOP' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                      fontSize: '14px',
+                      color: mobileMenuActiveTab === 'SHOP' ? '#EB1C24' : 'black',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      borderBottom: mobileMenuActiveTab === 'SHOP' ? '2px solid #EB1C24' : 'none',
+                      paddingBottom: '4px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    SHOP
+                  </button>
+                  <button
+                    onClick={() => handleMobileMenuTabClick('TOOLS')}
+                    style={{ 
+                      fontFamily: mobileMenuActiveTab === 'TOOLS' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                      fontSize: '14px',
+                      color: mobileMenuActiveTab === 'TOOLS' ? '#EB1C24' : 'black',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      borderBottom: mobileMenuActiveTab === 'TOOLS' ? '2px solid #EB1C24' : 'none',
+                      paddingBottom: '4px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    TOOLS
+                  </button>
+                  <button
+                    onClick={() => handleMobileMenuTabClick('BRAND')}
+                    style={{ 
+                      fontFamily: mobileMenuActiveTab === 'BRAND' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                      fontSize: '14px',
+                      color: mobileMenuActiveTab === 'BRAND' ? '#EB1C24' : 'black',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      borderBottom: mobileMenuActiveTab === 'BRAND' ? '2px solid #EB1C24' : 'none',
+                      paddingBottom: '4px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    BRAND
+                  </button>
+                </div>
+
+                {/* Menu Items - Fixed height with scroll if needed */}
+                <div style={{ flex: '1', overflowY: 'auto', marginBottom: '20px', minHeight: '0' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
+                    {mobileMenuActiveTab === 'TOOLS' ? (
+                      ['GIFT CARD'].map((item, index) => (
+                        <div 
+                          key={index} 
+                          className="flex items-center justify-between cursor-pointer"
+                          onClick={() => navigate('/tools/gift-card')}
+                        >
+                          <span style={{ 
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '14px',
+                            color: 'black',
+                            fontWeight: '500',
+                            textTransform: 'uppercase'
+                          }}>
+                            {item}
+                          </span>
+                        </div>
+                      ))
+                    ) : mobileMenuActiveTab === 'BRAND' ? (
+                      ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
+                        <div key={index} className="flex items-center justify-between">
+                          <span style={{ 
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '14px',
+                            color: 'black',
+                            fontWeight: '500',
+                            textTransform: 'uppercase'
+                          }}>
+                            {item}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      // SHOP tab with dropdown functionality
+                      [
+                        { label: 'UNITS', hasArrow: true, isExpandable: true, subItems: ['STRAIGHT', 'WAVY', 'CURLY'] },
+                        { label: 'BOOKING', hasArrow: true, isExpandable: true, subItems: ['APPOINTMENT', 'CONSULTATION'] },
+                        { label: 'BUILD-A-WIG', hasArrow: false },
+                        { label: 'ORDER AUTHORIZATION FORM', hasArrow: false }
+                      ].map((item, index) => (
+                        <div key={index}>
+                          <div 
+                            className="flex items-center justify-between cursor-pointer"
+                            style={{ alignItems: 'center' }}
+                            onClick={() => {
+                              if (item.isExpandable) {
+                                // If UNITS is already expanded, navigate to products/units page
+                                if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
+                                  navigate('/products/units');
+                                } else {
+                                  // Otherwise, toggle expansion
+                                  handleMobileMenuItemToggle(item.label);
+                                }
+                              }
+                            }}
+                          >
+                            <span style={{ 
+                              fontFamily: '"Futura PT Book"',
+                              fontSize: '14px',
+                              color: 'black',
+                              fontWeight: '500',
+                              textTransform: 'uppercase'
+                            }}>
+                              {item.label}
+                            </span>
+                            {item.hasArrow && (
+                              <img
+                                src="/assets/NOIR/closed-arrow.svg"
+                                alt="Arrow"
+                                style={{ 
+                                  width: '16px', 
+                                  height: '16px',
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px)`,
+                                  display: 'flex',
+                                  alignItems: 'center'
+                                }}
+                              />
+                            )}
+                          </div>
+                          {item.isExpandable && mobileMenuExpandedItems.includes(item.label) && item.subItems && (
+                            <div className="ml-4 mt-2 space-y-2">
+                              {item.subItems.map((subItem, subIndex) => (
+                                <div 
+                                  key={subIndex} 
+                                  className="flex items-center cursor-pointer"
+                                  onClick={() => {
+                                    if (subItem === 'STRAIGHT') {
+                                      navigate('/units/straight');
+                                    } else if (subItem === 'WAVY') {
+                                      navigate('/units/wavy');
+                                    } else if (subItem === 'CURLY') {
+                                      navigate('/units/curly');
+                                    }
+                                  }}
+                                >
+                                  <span style={{ 
+                                    fontFamily: '"Futura PT Book"',
+                                    fontSize: '14px',
+                                    color: '#EB1C24',
+                                    fontWeight: '500',
+                                    textTransform: 'uppercase'
+                                  }}>
+                                    {subItem}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                {/* Sign In/Out - Fixed at bottom */}
+                <div className="flex justify-center" style={{ marginBottom: '20px', marginTop: 'auto' }}>
+                  <span 
+                    onClick={handleMobileMenuSignInToggle}
+                    style={{ 
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '14px',
+                      color: '#EB1C24',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {isSignedIn ? 'SIGN OUT' : 'SIGN IN'}
+                  </span>
+                </div>
+
+                {/* Social Media Icons - Fixed at bottom */}
+                <div className="flex justify-center" style={{ marginBottom: '0' }}>
+                  <div className="flex" style={{ gap: '19px' }}>
+                    <img
+                      src="/assets/instagram-icon.svg"
+                      alt="Instagram"
+                      style={{ width: '20px', height: '20px' }}
+                    />
+                    <img
+                      src="/assets/twitter-icon.svg"
+                      alt="Twitter"
+                      style={{ width: '20px', height: '20px' }}
+                    />
+                    <img
+                      src="/assets/facebook-icon.svg"
+                      alt="Facebook"
+                      style={{ width: '20px', height: '20px' }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
             {/* WIG PREVIEW */}
             <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column', marginBottom: '24px', transform: 'translateY(20px)', overflow: 'visible', minWidth: '100%', maxWidth: 'none' }}>
               {/* ADD TO WISHLIST & 2D/3D VIEW TOGGLE */}
@@ -1338,21 +1625,21 @@ function SoftWaveSelection() {
                     src="/assets/SOFT-WAVE FRONT.png"
                     alt="SOFT WAVE Front View"
                     className="object-cover"
-                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-70px)' }}
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)' }}
                     draggable={false}
                   />
                   <img
                     src="/assets/SOFT-WAVE LEFT.png"
                     alt="SOFT WAVE Left View"
                     className="object-cover"
-                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-70px)' }}
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)' }}
                     draggable={false}
                   />
                   <img
                     src="/assets/SOFT-WAVE RIGHT.png"
                     alt="SOFT WAVE Right View"
                     className="object-cover"
-                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-70px)' }}
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)' }}
                     draggable={false}
                   />
                 </div>
@@ -1361,7 +1648,7 @@ function SoftWaveSelection() {
                 <div 
                   className="absolute left-1/2 transform -translate-x-1/2"
                   style={{
-                    bottom: '14px',
+                    bottom: '-1px',
                     fontFamily: '"Bohemy", sans-serif',
                     fontSize: '43px',
                     color: 'white',
@@ -1378,7 +1665,7 @@ function SoftWaveSelection() {
               </div>
 
               {/* Tabs Section */}
-              <div className="mt-6" style={{ transform: 'translateY(-35px)' }}>
+              <div className="mt-6" style={{ transform: 'translateY(-20px)' }}>
                 {/* Tab Navigation */}
                 <div className="flex justify-center">
                   <button
@@ -1555,39 +1842,38 @@ function SoftWaveSelection() {
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* ADD TO BAG BUTTON */}
-          <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
-            <button
-              onClick={handleAddToBag}
-              disabled={addToBagState === 'adding'}
-              className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
-                addToBagState === 'adding' ? 'bg-white cursor-not-allowed' : 
-                addToBagState === 'added' ? 'bg-white cursor-pointer' : 'bg-white cursor-pointer hover:bg-gray-50'
-              }`}
-              style={{ 
-                borderWidth: '1.3px', 
-                color: '#EB1C24',
-                fontFamily: '"Futura PT Medium"',
-                backgroundColor: '#FFFFFF'
-              }}
-            >
-              {addToBagState === 'idle' && 'ADD TO BAG'}
-              {addToBagState === 'adding' && 'ADDING...'}
-              {addToBagState === 'added' && (
-                <span className="flex items-center justify-center gap-1">
-                  <img src="/assets/check.svg" alt="Check" width="9" height="9" />
-                  <span style={{ color: '#909090' }}>IN THE BAG</span>
-                </span>
-              )}
-            </button>
-          </div>
+            {/* ADD TO BAG BUTTON */}
+            <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
+              <button
+                onClick={handleAddToBag}
+                disabled={addToBagState === 'adding'}
+                className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
+                  addToBagState === 'adding' ? 'bg-white cursor-not-allowed' : 
+                  addToBagState === 'added' ? 'bg-white cursor-pointer' : 'bg-white cursor-pointer hover:bg-gray-50'
+                }`}
+                style={{ 
+                  borderWidth: '1.3px', 
+                  color: '#EB1C24',
+                  fontFamily: '"Futura PT Medium"',
+                  backgroundColor: '#FFFFFF'
+                }}
+              >
+                {addToBagState === 'idle' && 'ADD TO BAG'}
+                {addToBagState === 'adding' && 'ADDING...'}
+                {addToBagState === 'added' && (
+                  <span className="flex items-center justify-center gap-1">
+                    <img src="/assets/check.svg" alt="Check" width="9" height="9" />
+                    <span style={{ color: '#909090' }}>IN THE BAG</span>
+                  </span>
+                )}
+              </button>
+            </div>
 
-          {/* CUSTOMIZE IN BUILD-A-WIG BUTTON */}
-          <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
-            <button
-              onClick={() => {
+            {/* CUSTOMIZE IN BUILD-A-WIG BUTTON */}
+            <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
+              <button
+                onClick={() => {
                 // Store the selected cap size in localStorage for customize page
                 // Save to both selectedCapSize and customizeSelectedCapSize for consistency
                 const capSizeToSave = selectedCustomCap || selectedFlexibleCap;
@@ -2512,6 +2798,9 @@ function SoftWaveSelection() {
             </div>
           </div>
         </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>

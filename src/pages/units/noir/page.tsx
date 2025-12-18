@@ -1839,6 +1839,14 @@ function NoirSelection() {
           <div className="flex gap-5 absolute left-4">
             {showMobileMenu ? (
               <>
+                <button className="cursor-pointer" style={{ transform: 'translateX(0px)' }}>
+                  <img
+                    alt="Account icon"
+                    width="16"
+                    height="16"
+                    src="/assets/NOIR/account-icon.svg"
+                  />
+                </button>
                 <button 
                   onClick={() => navigate('/wishlist')} 
                   className="cursor-pointer"
@@ -1849,14 +1857,6 @@ function NoirSelection() {
                     width="19"
                     height="19"
                     src="/assets/wishlist-heart.svg"
-                  />
-                </button>
-                <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                  <img
-                    alt="Account icon"
-                    width="16"
-                    height="16"
-                    src="/assets/NOIR/account-icon.svg"
                   />
                 </button>
               </>
@@ -1923,7 +1923,7 @@ function NoirSelection() {
             >
               NOIR
             </span>
-              </>
+            </>
             )}
           </p>
           <div className="gap-5 flex absolute" style={{ right: showMobileMenu ? '14px' : '17px' }}>
@@ -1931,11 +1931,11 @@ function NoirSelection() {
               <DynamicCartIcon count={cartCount} width={22} height={19} />
             </div>
             <img
-              alt={showMobileMenu ? "Close" : "Menu"}
-              width={showMobileMenu ? "24" : "21"}
-              height={showMobileMenu ? "24" : "21"}
+              alt="Menu"
+              width="21"
+              height="21"
               className="cursor-pointer"
-              src={showMobileMenu ? "/assets/close-icon.svg" : "/assets/menu-icon.svg"}
+              src="/assets/menu-icon.svg"
               onClick={handleMobileMenuToggle}
             />
           </div>
@@ -2457,6 +2457,7 @@ function NoirSelection() {
               className="text-center text-red-500 uppercase mb-2 noir-raw-text"
               style={{ 
                 fontFamily: '"Futura PT Medium"',
+                fontSize: '11px',
                 fontWeight: '500',
                 transform: 'translateY(-8px)'
               }}
@@ -2472,14 +2473,7 @@ function NoirSelection() {
                 fontFamily: '"Futura PT Medium"',
                 fontSize: '20px',
                 fontWeight: '500',
-                transform: 'translateY(-16px)',
-                width: '100%',
-                minWidth: '100%',
-                maxWidth: 'none',
-                overflow: 'visible',
-                whiteSpace: 'nowrap',
-                textOverflow: 'clip',
-                display: 'block'
+                transform: 'translateY(-16px)'
               }}
               dangerouslySetInnerHTML={formatPrice(getTotalPrice())}
             />
@@ -3346,7 +3340,8 @@ function NoirSelection() {
               borderWidth: '1.3px', 
               color: '#EB1C24',
               fontFamily: '"Futura PT Medium"',
-              backgroundColor: '#FFFFFF'
+              backgroundColor: '#FFFFFF',
+              boxSizing: 'border-box'
             }}
           >
             {addToBagState === 'idle' && 'ADD TO BAG'}
@@ -4204,10 +4199,9 @@ function NoirSelection() {
               </button>
             </div>
           </div>
-          </>
+            </>
           )}
-        </div>
-      </div>
+          </div>
         </div>
       </div>
     </>

@@ -300,6 +300,93 @@ function BlancoSelection() {
       localStorage.removeItem('lastAddedItemId');
     }
   }, []);
+
+  // Product data mapping helper
+  const getProductData = (name: string) => {
+    const productMap: { [key: string]: any } = {
+      'NOIR': {
+        name: 'NOIR',
+        route: '/straight/noir',
+        image: '/assets/NOIR/noir-thumb.png',
+        image3D: '/assets/NOIR/noir front.png',
+        price: 740,
+        hairOrigin: '24" RAW CAMBODIAN'
+      },
+      'BLANCO': {
+        name: 'BLANCO',
+        route: '/straight/blanco',
+        image: '/assets/NOIR/blanco-thumb.png',
+        image3D: '/assets/NOIR/blanco front.png',
+        price: 820,
+        hairOrigin: '24" RAW CAMBODIAN'
+      },
+      'SOFT WAVE': {
+        name: 'SOFT WAVE',
+        route: '/wavy/soft-wave',
+        image: '/assets/NOIR/wave-thumb.png',
+        image3D: '/assets/NOIR/wave front.png',
+        price: 760,
+        hairOrigin: '24" RAW INDIAN'
+      },
+      'BEACH WAVE': {
+        name: 'BEACH WAVE',
+        route: '/wavy/beach-wave',
+        image: '/assets/NOIR/wave-thumb.png',
+        image3D: '/assets/NOIR/wave front.png',
+        price: 760,
+        hairOrigin: '24" RAW INDONESIAN'
+      },
+      'SOFT CURL': {
+        name: 'SOFT CURL',
+        route: '/curly/soft-curl',
+        image: '/assets/NOIR/curl-thumb.png',
+        image3D: '/assets/NOIR/wave front.png',
+        price: 780,
+        hairOrigin: '24" RAW VIETNAMESE'
+      },
+      'OCEAN CURL': {
+        name: 'OCEAN CURL',
+        route: '/curly/ocean-curl',
+        image: '/assets/NOIR/curl-thumb.png',
+        image3D: '/assets/NOIR/wave front.png',
+        price: 780,
+        hairOrigin: '24" RAW FILIPINO'
+      }
+    };
+    return productMap[name] || null;
+  };
+
+  // Track page view for recently viewed
+  useEffect(() => {
+    const currentProduct = getProductData('BLANCO');
+    if (!currentProduct) return;
+    
+    // Get existing recently viewed
+    const recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewedUnits') || '[]');
+    
+    // Ensure all items have the correct structure by mapping through getProductData
+    const normalizedItems = recentlyViewed.map((item: any) => {
+      const productData = getProductData(item.name);
+      return productData || item;
+    }).filter((item: any) => item && item.name && item.route);
+    
+    // Remove current product if it exists
+    const filtered = normalizedItems.filter((item: any) => item.route !== currentProduct.route);
+    
+    // Add current product to the beginning
+    filtered.unshift(currentProduct);
+    
+    // Keep only last 4 items
+    const limited = filtered.slice(0, 4);
+    
+    // Save back to localStorage
+    localStorage.setItem('recentlyViewedUnits', JSON.stringify(limited));
+    
+    // Set recently viewed items for display (excluding current product)
+    const displayItems = limited.filter((item: any) => item.route !== currentProduct.route);
+    setRecentlyViewedItems(displayItems);
+  }, []);
+
   const [selectedMannequinView, setSelectedMannequinView] = useState(0);
   const [is3DView, setIs3DView] = useState(() => {
     // Check localStorage for saved 3D view preference, default to false (2D view)
@@ -314,6 +401,7 @@ function BlancoSelection() {
   const [activeTab, setActiveTab] = useState('DETAILS');
   const [similarProductsScroll, setSimilarProductsScroll] = useState(0);
   const [recentlyViewedScroll, setRecentlyViewedScroll] = useState(0);
+  const [recentlyViewedItems, setRecentlyViewedItems] = useState<any[]>([]);
 
   const handleBack = () => {
     navigate(-1);
@@ -735,7 +823,8 @@ function BlancoSelection() {
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
-              willChange: 'backdrop-filter'
+              willChange: 'backdrop-filter',
+              paddingBottom: '34px'
             }}
           >
             {/* WIG PREVIEW */}
@@ -1326,21 +1415,21 @@ function BlancoSelection() {
                     src="/assets/BLANCO-FRONT.png"
                     alt="BLANCO Front View"
                     className="object-cover"
-                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-70px)' }}
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)' }}
                     draggable={false}
                   />
                   <img
                     src="/assets/BLANCO-LEFT.png"
                     alt="BLANCO Left View"
                     className="object-cover"
-                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-70px)' }}
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)' }}
                     draggable={false}
                   />
                   <img
                     src="/assets/BLANCO-RIGHT.png"
                     alt="BLANCO Right View"
                     className="object-cover"
-                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-70px)' }}
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)' }}
                     draggable={false}
                   />
                 </div>
@@ -1349,7 +1438,7 @@ function BlancoSelection() {
                 <div 
                   className="absolute left-1/2 transform -translate-x-1/2"
                   style={{
-                    bottom: '14px',
+                    bottom: '-1px',
                     fontFamily: '"Bohemy", sans-serif',
                     fontSize: '43px',
                     color: 'white',
@@ -1366,7 +1455,7 @@ function BlancoSelection() {
               </div>
 
               {/* Tabs Section */}
-              <div className="mt-6" style={{ transform: 'translateY(-35px)' }}>
+              <div className="mt-6" style={{ transform: 'translateY(-20px)' }}>
                 {/* Tab Navigation */}
                 <div className="flex justify-center">
                   <button
@@ -1687,7 +1776,9 @@ function BlancoSelection() {
                 </h3>
               </div>
               
+              {/* Content Area */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                {/* Left Arrow */}
                 <button 
                   onClick={handleSimilarProductsLeftArrow}
                   style={{ 
@@ -1705,11 +1796,16 @@ function BlancoSelection() {
                   <img
                     src="/assets/NOIR/left-facing-arrow.svg"
                     alt="Left Arrow"
-                    style={{ width: '14px', height: '14px' }}
+                    style={{ 
+                      width: '14px', 
+                      height: '14px'
+                    }}
                   />
                 </button>
                 
+                {/* Product Thumbnails Container with Static Vertical Line */}
                 <div style={{ flex: '1', position: 'relative' }}>
+                  {/* Single Center Line with Masking */}
                   <div style={{
                     position: 'absolute',
                     left: '50%',
@@ -1721,6 +1817,20 @@ function BlancoSelection() {
                     transform: 'translateX(-50%)'
                   }}></div>
                   
+                  {/* Masking Overlay for Tunnel Effect */}
+                  <div style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '0',
+                    bottom: '0',
+                    width: '10px',
+                    backgroundColor: 'transparent',
+                    zIndex: 15,
+                    transform: 'translateX(-50%)',
+                    pointerEvents: 'none'
+                  }}></div>
+                  
+                  {/* Scrolling Product Thumbnails Container */}
                   <div style={{ 
                     overflowX: 'hidden',
                     width: '100%',
@@ -1736,9 +1846,9 @@ function BlancoSelection() {
                         width: 'calc(200% - 20px)'
                       }}
                     >
-                {/* Product 1 - BLANCO */}
+                {/* Product 1 - NOIR */}
                 <div 
-                  onClick={() => navigate('/straight/blanco')}
+                  onClick={() => navigate('/straight/noir')}
                   style={{ 
                     padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
                     textAlign: 'center',
@@ -1747,8 +1857,8 @@ function BlancoSelection() {
                   }}
                 >
                   <img
-                    src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
-                    alt="BLANCO"
+                    src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
+                    alt="NOIR"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -1765,7 +1875,7 @@ function BlancoSelection() {
                     fontWeight: '500',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    BLANCO
+                    NOIR
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -1777,7 +1887,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    24" RAW RUSSIAN
+                    24" RAW CAMBODIAN
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -1789,7 +1899,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}
-                  dangerouslySetInnerHTML={formatPrice(820)}
+                  dangerouslySetInnerHTML={formatPrice(740)}
                   />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
@@ -1891,9 +2001,9 @@ function BlancoSelection() {
                   </div>
                 </div>
                 
-                {/* Product 3 - NOIR */}
+                {/* Product 3 - BEACH WAVE */}
                 <div 
-                  onClick={() => navigate('/straight/noir')}
+                  onClick={() => navigate('/wavy/beach-wave')}
                   style={{ 
                     padding: '10px 10px 4px 10px',
                     textAlign: 'center',
@@ -1902,8 +2012,8 @@ function BlancoSelection() {
                   }}
                 >
                   <img
-                    src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
-                    alt="NOIR"
+                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/wave-thumb.png"}
+                    alt="BEACH WAVE"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -1920,7 +2030,7 @@ function BlancoSelection() {
                     fontWeight: '500',
                     transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}>
-                    NOIR
+                    BEACH WAVE
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -1932,7 +2042,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}>
-                    24" RAW CAMBODIAN
+                    24" RAW INDONESIAN
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -1944,7 +2054,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}
-                  dangerouslySetInnerHTML={formatPrice(740)}
+                  dangerouslySetInnerHTML={formatPrice(760)}
                   />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10.5px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
@@ -2037,30 +2147,35 @@ function BlancoSelection() {
                     </div>
                   </div>
                 </div>
-                
-                <button 
-                  onClick={handleSimilarProductsRightArrow}
-                  style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    padding: '5px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '50px',
-                    transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                  }}>
-                  <img
-                    src="/assets/NOIR/right-facing-arrow.svg"
-                    alt="Right Arrow"
-                    style={{ width: '14px', height: '14px' }}
-                  />
-                </button>
               </div>
+              
+              {/* Right Arrow */}
+              <button 
+                onClick={handleSimilarProductsRightArrow}
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  cursor: 'pointer',
+                  padding: '5px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  minHeight: '50px',
+                  transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
+                }}>
+                <img
+                  src="/assets/NOIR/right-facing-arrow.svg"
+                  alt="Right Arrow"
+                  style={{ 
+                    width: '14px', 
+                    height: '14px'
+                  }}
+                />
+              </button>
             </div>
           </div>
+        </div>
 
           {/* RECENTLY VIEWED SECTION */}
           <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
@@ -2091,7 +2206,9 @@ function BlancoSelection() {
                 </h3>
               </div>
               
+              {/* Content Area */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                {/* Left Arrow */}
                 <button 
                   onClick={handleRecentlyViewedLeftArrow}
                   style={{ 
@@ -2109,56 +2226,60 @@ function BlancoSelection() {
                   <img
                     src="/assets/NOIR/left-facing-arrow.svg"
                     alt="Left Arrow"
-                    style={{ width: '14px', height: '14px' }}
+                    style={{ 
+                      width: '14px', 
+                      height: '14px'
+                    }}
                   />
                 </button>
                 
-              {/* Product Thumbnails Container with Static Vertical Line */}
-              <div style={{ flex: '1', position: 'relative' }}>
-                {/* Single Center Line with Masking */}
-                <div style={{
-                  position: 'absolute',
-                  left: '50%',
-                  top: '0',
-                  bottom: '0',
-                  width: '1px',
-                  backgroundColor: 'black',
-                  zIndex: 20,
-                  transform: 'translateX(-50%)'
-                }}></div>
-                
-                {/* Masking Overlay for Tunnel Effect */}
-                <div style={{
-                  position: 'absolute',
-                  left: '50%',
-                  top: '0',
-                  bottom: '0',
-                  width: '10px',
-                  backgroundColor: 'transparent',
-                  zIndex: 15,
-                  transform: 'translateX(-50%)',
-                  pointerEvents: 'none'
-                }}></div>
-                
-                {/* Scrolling Product Thumbnails Container */}
-                <div style={{ 
-                  overflowX: 'hidden',
-                  width: '100%',
-                  position: 'relative',
-                  maxWidth: '100%'
-                }}>
-                  <div 
-                    style={{ 
-                      display: 'flex', 
-                      gap: '0',
-                      transform: `translateX(${recentlyViewedScroll}px) translateY(-15px)`,
-                      transition: 'none',
-                      width: 'calc(200% - 20px)'
-                    }}
-                  >
-                {/* Product 1 - BEACH WAVE */}
+                {/* Product Thumbnails Container with Static Vertical Line */}
+                <div style={{ flex: '1', position: 'relative' }}>
+                  {/* Single Center Line with Masking */}
+                  <div style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '0',
+                    bottom: '0',
+                    width: '1px',
+                    backgroundColor: 'black',
+                    zIndex: 20,
+                    transform: 'translateX(-50%)'
+                  }}></div>
+                  
+                  {/* Masking Overlay for Tunnel Effect */}
+                  <div style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '0',
+                    bottom: '0',
+                    width: '10px',
+                    backgroundColor: 'transparent',
+                    zIndex: 15,
+                    transform: 'translateX(-50%)',
+                    pointerEvents: 'none'
+                  }}></div>
+                  
+                  {/* Scrolling Product Thumbnails Container */}
+                  <div style={{ 
+                    overflowX: 'hidden',
+                    width: '100%',
+                    position: 'relative',
+                    maxWidth: '100%'
+                  }}>
+                    <div 
+                      style={{ 
+                        display: 'flex', 
+                        gap: '0',
+                        transform: `translateX(${recentlyViewedScroll}px) translateY(-15px)`,
+                        transition: 'none',
+                        width: 'calc(200% - 20px)'
+                      }}
+                    >
+                {/* Product 1 */}
+                {recentlyViewedItems[0] && recentlyViewedItems[0].name && (
                 <div 
-                  onClick={() => navigate('/wavy/soft-wave')}
+                  onClick={() => navigate(recentlyViewedItems[0]?.route || '/')}
                   style={{ 
                     padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
                     textAlign: 'center',
@@ -2167,8 +2288,8 @@ function BlancoSelection() {
                   }}
                 >
                   <img
-                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/wave-thumb.png"}
-                    alt="SOFT WAVE"
+                    src={is3DView ? (recentlyViewedItems[0]?.image3D || recentlyViewedItems[0]?.image) : (recentlyViewedItems[0]?.image || '/assets/NOIR/noir-thumb.png')}
+                    alt={recentlyViewedItems[0]?.name || 'Product'}
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -2185,7 +2306,7 @@ function BlancoSelection() {
                     fontWeight: '500',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    SOFT WAVE
+                    {recentlyViewedItems[0]?.name || ''}
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2197,7 +2318,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    24" RAW INDONESIAN
+                    {recentlyViewedItems[0]?.hairOrigin || '24" RAW'}
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2209,7 +2330,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}
-                  dangerouslySetInnerHTML={formatPrice(760)}
+                  dangerouslySetInnerHTML={formatPrice(recentlyViewedItems[0]?.price || 0)}
                   />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
@@ -2227,10 +2348,12 @@ function BlancoSelection() {
                     ))}
                   </div>
                 </div>
+                )}
                 
-                {/* Product 2 - SOFT CURL */}
+                {/* Product 2 */}
+                {recentlyViewedItems[1] && recentlyViewedItems[1].name && (
                 <div 
-                  onClick={() => navigate('/curly/soft-curl')}
+                  onClick={() => navigate(recentlyViewedItems[1]?.route || '/')}
                   style={{ 
                     padding: '10px 10px 4px 10px',
                     textAlign: 'center',
@@ -2239,8 +2362,8 @@ function BlancoSelection() {
                   }}
                 >
                   <img
-                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/curl-thumb.png"}
-                    alt="SOFT CURL"
+                    src={is3DView ? (recentlyViewedItems[1]?.image3D || recentlyViewedItems[1]?.image) : (recentlyViewedItems[1]?.image || '/assets/NOIR/noir-thumb.png')}
+                    alt={recentlyViewedItems[1]?.name || 'Product'}
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -2257,7 +2380,7 @@ function BlancoSelection() {
                     fontWeight: '500',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    SOFT CURL
+                    {recentlyViewedItems[1]?.name || ''}
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2269,7 +2392,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    24" RAW VIETNAMESE
+                    {recentlyViewedItems[1]?.hairOrigin || '24" RAW'}
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2281,7 +2404,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}
-                  dangerouslySetInnerHTML={formatPrice(780)}
+                  dangerouslySetInnerHTML={formatPrice(recentlyViewedItems[1]?.price || 0)}
                   />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
@@ -2299,10 +2422,12 @@ function BlancoSelection() {
                     ))}
                   </div>
                 </div>
+                )}
                 
-                {/* Product 3 - NOIR */}
+                {/* Product 3 */}
+                {recentlyViewedItems[2] && recentlyViewedItems[2].name && (
                 <div 
-                  onClick={() => navigate('/straight/noir')}
+                  onClick={() => navigate(recentlyViewedItems[2]?.route || '/')}
                   style={{ 
                     padding: '10px 10px 4px 10px',
                     textAlign: 'center',
@@ -2311,8 +2436,8 @@ function BlancoSelection() {
                   }}
                 >
                   <img
-                    src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
-                    alt="NOIR"
+                    src={is3DView ? (recentlyViewedItems[2]?.image3D || recentlyViewedItems[2]?.image) : (recentlyViewedItems[2]?.image || '/assets/NOIR/noir-thumb.png')}
+                    alt={recentlyViewedItems[2]?.name || 'Product'}
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -2329,7 +2454,7 @@ function BlancoSelection() {
                     fontWeight: '500',
                     transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}>
-                    NOIR
+                    {recentlyViewedItems[2]?.name || ''}
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2341,7 +2466,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}>
-                    24" RAW CAMBODIAN
+                    {recentlyViewedItems[2]?.hairOrigin || '24" RAW'}
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2353,7 +2478,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}
-                  dangerouslySetInnerHTML={formatPrice(740)}
+                  dangerouslySetInnerHTML={formatPrice(recentlyViewedItems[2]?.price || 0)}
                   />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10.5px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
@@ -2371,10 +2496,12 @@ function BlancoSelection() {
                     ))}
                   </div>
                 </div>
+                )}
                 
-                {/* Product 4 - BLANCO */}
+                {/* Product 4 */}
+                {recentlyViewedItems[3] && recentlyViewedItems[3].name && (
                 <div 
-                  onClick={() => navigate('/straight/blanco')}
+                  onClick={() => navigate(recentlyViewedItems[3]?.route || '/')}
                   style={{ 
                     padding: '10px 10px 4px 10px',
                     textAlign: 'center',
@@ -2383,8 +2510,8 @@ function BlancoSelection() {
                   }}
                 >
                   <img
-                    src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
-                    alt="BLANCO"
+                    src={is3DView ? (recentlyViewedItems[3]?.image3D || recentlyViewedItems[3]?.image) : (recentlyViewedItems[3]?.image || '/assets/NOIR/noir-thumb.png')}
+                    alt={recentlyViewedItems[3]?.name || 'Product'}
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -2401,7 +2528,7 @@ function BlancoSelection() {
                     fontWeight: '500',
                     transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}>
-                    BLANCO
+                    {recentlyViewedItems[3]?.name || ''}
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2413,7 +2540,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}>
-                    24" RAW RUSSIAN
+                    {recentlyViewedItems[3]?.hairOrigin || '24" RAW'}
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2424,18 +2551,8 @@ function BlancoSelection() {
                     fontWeight: '500',
                     lineHeight: '0.84',
                     transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
-                  }}>
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium"',
-                    fontSize: '12px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84'
                   }}
-                  dangerouslySetInnerHTML={formatPrice(820)}
+                  dangerouslySetInnerHTML={formatPrice(recentlyViewedItems[3]?.price || 0)}
                   />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)' }}>
                     {[...Array(5)].map((_, index) => (
@@ -2453,31 +2570,35 @@ function BlancoSelection() {
                     ))}
                   </div>
                 </div>
+                )}
                   </div>
                 </div>
               </div>
-                
-                <button 
-                  onClick={handleRecentlyViewedRightArrow}
+              
+              {/* Right Arrow */}
+              <button 
+                onClick={handleRecentlyViewedRightArrow}
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  cursor: 'pointer',
+                  padding: '5px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  minHeight: '50px',
+                  transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
+                }}>
+                <img
+                  src="/assets/NOIR/right-facing-arrow.svg"
+                  alt="Right Arrow"
                   style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    padding: '5px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '50px',
-                    transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                  }}>
-                  <img
-                    src="/assets/NOIR/right-facing-arrow.svg"
-                    alt="Right Arrow"
-                    style={{ width: '14px', height: '14px' }}
-                  />
-                </button>
-              </div>
+                    width: '14px', 
+                    height: '14px'
+                  }}
+                />
+              </button>
             </div>
           </div>
         </div>

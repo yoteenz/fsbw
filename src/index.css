@@ -991,7 +991,8 @@ p.noir-price-display,
 .noir-raw-text,
 p.noir-raw-text,
 .text-center.noir-raw-text {
-  font-size: 16px;
+  font-size: 11px;
+  font-family: "Futura PT Medium", sans-serif;
 }
 
 /* ULTIMATE OVERRIDE for quantity selector borders - highest specificity */

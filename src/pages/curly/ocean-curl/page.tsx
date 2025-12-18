@@ -735,7 +735,8 @@ function OceanCurlSelection() {
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
-              willChange: 'backdrop-filter'
+              willChange: 'backdrop-filter',
+              paddingBottom: '34px'
             }}
           >
             {/* WIG PREVIEW */}
@@ -1327,21 +1328,21 @@ function OceanCurlSelection() {
                     src="/assets/SOFT-WAVE FRONT.png"
                     alt="OCEAN CURL Front View"
                     className="object-cover"
-                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-70px)' }}
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)' }}
                     draggable={false}
                   />
                   <img
                     src="/assets/SOFT-WAVE LEFT.png"
                     alt="OCEAN CURL Left View"
                     className="object-cover"
-                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-70px)' }}
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)' }}
                     draggable={false}
                   />
                   <img
                     src="/assets/SOFT-WAVE RIGHT.png"
                     alt="OCEAN CURL Right View"
                     className="object-cover"
-                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-70px)' }}
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)' }}
                     draggable={false}
                   />
                 </div>
@@ -1350,7 +1351,7 @@ function OceanCurlSelection() {
                 <div 
                   className="absolute left-1/2 transform -translate-x-1/2"
                   style={{
-                    bottom: '14px',
+                    bottom: '-1px',
                     fontFamily: '"Bohemy", sans-serif',
                     fontSize: '43px',
                     color: 'white',
@@ -1367,7 +1368,7 @@ function OceanCurlSelection() {
               </div>
 
               {/* Tabs Section */}
-              <div className="mt-6" style={{ transform: 'translateY(-35px)' }}>
+              <div className="mt-6" style={{ transform: 'translateY(-20px)' }}>
                 {/* Tab Navigation */}
                 <div className="flex justify-center">
                   <button

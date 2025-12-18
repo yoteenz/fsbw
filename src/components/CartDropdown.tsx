@@ -621,7 +621,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
 
   const handleViewCart = () => {
     onClose();
-    navigate('/cart');
+    navigate('/bag');
   };
 
 

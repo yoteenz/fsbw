@@ -30,6 +30,10 @@ const SoftWaveUnitPage = lazy(() => import('./pages/wavy/soft-wave/page'));
 const OceanCurlUnitPage = lazy(() => import('./pages/curly/ocean-curl/page'));
 const BeachWaveUnitPage = lazy(() => import('./pages/wavy/beach-wave/page'));
 const WishlistPage = lazy(() => import('./pages/wishlist/page'));
+const AccountPage = lazy(() => import('./pages/account/page'));
+const SignInPage = lazy(() => import('./pages/sign-in/page'));
+const ShoppingBagPage = lazy(() => import('./pages/shopping-bag/page'));
+const CheckoutPage = lazy(() => import('./pages/checkout/page'));
 const StraightUnitsPage = lazy(() => import('./pages/units/straight/page'));
 const WavyUnitsPage = lazy(() => import('./pages/units/wavy/page'));
 const CurlyUnitsPage = lazy(() => import('./pages/units/curly/page'));
@@ -385,6 +389,26 @@ function App() {
         <Route path="/wishlist" element={
           <Suspense fallback={<LoadingScreen />}>
             <WishlistPage />
+          </Suspense>
+        } />
+        <Route path="/account" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <AccountPage />
+          </Suspense>
+        } />
+        <Route path="/sign-in" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <SignInPage />
+          </Suspense>
+        } />
+        <Route path="/bag" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ShoppingBagPage />
+          </Suspense>
+        } />
+        <Route path="/checkout" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <CheckoutPage />
           </Suspense>
         } />
       </Routes>

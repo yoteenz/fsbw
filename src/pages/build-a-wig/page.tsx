@@ -4371,6 +4371,14 @@ export default function BuildAWigPage() {
             <div className="flex gap-5 absolute left-4">
               {showMobileMenu ? (
                 <>
+                  <button className="cursor-pointer" style={{ transform: 'translateX(0px)' }}>
+                    <img
+                      alt="Account icon"
+                      width="16"
+                      height="16"
+                      src="/assets/NOIR/account-icon.svg"
+                    />
+                  </button>
                   <button 
                     onClick={() => navigate('/wishlist')} 
                     className="cursor-pointer"
@@ -4381,14 +4389,6 @@ export default function BuildAWigPage() {
                       width="19"
                       height="19"
                       src="/assets/wishlist-heart.svg"
-                    />
-                  </button>
-                  <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                    <img
-                      alt="Account icon"
-                      width="16"
-                      height="16"
-                      src="/assets/NOIR/account-icon.svg"
                     />
                   </button>
                 </>
@@ -4406,12 +4406,16 @@ export default function BuildAWigPage() {
                   src="/assets/back-button.svg"
                 />
               </button>
-              <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+              <button 
+                onClick={() => navigate('/wishlist')} 
+                className="cursor-pointer"
+                style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
+              >
                 <img
-                  alt="Search icon"
-                  width="16"
-                  height="15"
-                  src="/assets/search-icon.svg"
+                  alt="Wishlist"
+                  width="19"
+                  height="19"
+                  src="/assets/wishlist-heart.svg"
                 />
               </button>
                 </>
@@ -4506,11 +4510,11 @@ export default function BuildAWigPage() {
                   <DynamicCartIcon count={cartCount} width={22} height={19} />
                 </div>
               <img
-                alt={showMobileMenu ? "Close" : "Menu"}
-                width={showMobileMenu ? "24" : "21"}
-                height={showMobileMenu ? "24" : "21"}
+                alt="Menu"
+                width="21"
+                height="21"
                 className="cursor-pointer"
-                src={showMobileMenu ? "/assets/close-icon.svg" : "/assets/menu-icon.svg"}
+                src="/assets/menu-icon.svg"
                 onClick={handleMobileMenuToggle}
               />
             </div>
@@ -4535,7 +4539,7 @@ export default function BuildAWigPage() {
               }
               return '20px'; // Default padding (px-5 = 1.25rem = 20px)
             })(),
-            minHeight: showMobileMenu ? '540px' : 'auto'
+            minHeight: showMobileMenu ? '560px' : 'auto'
           }}
         >
           {showMobileMenu ? (
@@ -5429,7 +5433,12 @@ export default function BuildAWigPage() {
                   dangerouslySetInnerHTML={formatPrice(totalPrice)}
               />
             </div>
+            </>
+          )}
+        </div>
 
+        {!showMobileMenu && (
+          <>
             {/* ADD TO BAG BUTTON */}
             <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
               <button
@@ -5485,9 +5494,8 @@ export default function BuildAWigPage() {
                 })()}
               </button>
             </div>
-            </>
-          )}
-        </div>
+          </>
+        )}
           </div>
         </div>
       </div>

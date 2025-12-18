@@ -308,6 +308,14 @@ function WishlistSelection() {
             <div className="flex gap-5 absolute left-4">
               {showMobileMenu ? (
                 <>
+                  <button className="cursor-pointer" style={{ transform: 'translateX(0px)' }}>
+                    <img
+                      alt="Account icon"
+                      width="16"
+                      height="16"
+                      src="/assets/NOIR/account-icon.svg"
+                    />
+                  </button>
                   <button 
                     onClick={() => navigate('/wishlist')} 
                     className="cursor-pointer"
@@ -318,14 +326,6 @@ function WishlistSelection() {
                       width="19"
                       height="19"
                       src="/assets/wishlist-heart.svg"
-                    />
-                  </button>
-                  <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                    <img
-                      alt="Account icon"
-                      width="16"
-                      height="16"
-                      src="/assets/NOIR/account-icon.svg"
                     />
                   </button>
                 </>
@@ -394,11 +394,11 @@ function WishlistSelection() {
                 <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
               <img
-                alt={showMobileMenu ? "Close" : "Menu"}
-                width={showMobileMenu ? "24" : "21"}
-                height={showMobileMenu ? "24" : "21"}
+                alt="Menu"
+                width="21"
+                height="21"
                 className="cursor-pointer"
-                src={showMobileMenu ? "/assets/close-icon.svg" : "/assets/menu-icon.svg"}
+                src="/assets/menu-icon.svg"
                 onClick={handleMobileMenuToggle}
               />
             </div>
@@ -416,12 +416,12 @@ function WishlistSelection() {
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
               willChange: 'backdrop-filter',
-              minHeight: showMobileMenu ? '500px' : 'auto'
+              minHeight: showMobileMenu ? '560px' : 'auto'
             }}
           >
             {showMobileMenu ? (
               /* MENU CONTENT */
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '450px', position: 'relative' }}>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
                 {/* Navigation Links */}
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                   <button
