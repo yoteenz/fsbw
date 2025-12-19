@@ -14,6 +14,9 @@ interface Order {
   reviewInfo?: string; // Optional review/points information
   trackingNumber?: string; // Optional tracking number
   trackingCarrier?: string; // Optional tracking carrier (e.g., "DHL", "FEDEX")
+  deliveredAt?: number; // Timestamp when order was delivered (for 48-hour archive logic)
+  placedAt?: number; // Timestamp when order was placed (for 24-hour authorization countdown)
+  canceledAt?: number; // Timestamp when order was canceled (for 24-hour archive logic)
 }
 
 function OrdersPage() {
@@ -95,55 +98,160 @@ function OrdersPage() {
     }
   };
 
+  // Helper function to format date as MM-DD-YYYY
+  const formatDate = (date: Date): string => {
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}-${day}-${year}`;
+  };
+
+  // Helper function to get a date X days ago
+  const getDateDaysAgo = (daysAgo: number): string => {
+    const date = new Date();
+    date.setDate(date.getDate() - daysAgo);
+    return formatDate(date);
+  };
+
+  // Helper function to get a timestamp X hours ago
+  const getTimestampHoursAgo = (hoursAgo: number): number => {
+    return Date.now() - (hoursAgo * 60 * 60 * 1000);
+  };
+
+  // Helper function to format countdown time
+  const formatCountdown = (remainingMs: number): string => {
+    if (remainingMs <= 0) return '0 HOURS REMAINING';
+    
+    const hours = Math.floor(remainingMs / (60 * 60 * 1000));
+    
+    return `${hours} HOUR${hours !== 1 ? 'S' : ''} REMAINING`;
+  };
+
+  // Helper function to get remaining time for authorization
+  const getAuthorizationRemainingTime = (placedAt: number): number => {
+    const twentyFourHours = 24 * 60 * 60 * 1000;
+    const elapsed = Date.now() - placedAt;
+    return Math.max(0, twentyFourHours - elapsed);
+  };
+
   // Sample order data
   const [activeOrders, setActiveOrders] = useState<Order[]>([
     {
       id: '1',
       orderNumber: 'ORDER #237',
-      date: '04-26-2023',
-      status: 'PROCESSING',
+      date: getDateDaysAgo(2), // 2 days ago
+      status: 'PLACED',
       productName: 'NOIR',
       productImage: getProductImage('NOIR'),
-      total: 675,
+      total: 740,
       items: 1,
       trackingNumber: undefined,
-      trackingCarrier: undefined
+      trackingCarrier: undefined,
+      placedAt: getTimestampHoursAgo(2) // Placed 2 hours ago
     },
     {
       id: '2',
       orderNumber: 'ORDER #239',
-      date: '04-26-2023',
+      date: getDateDaysAgo(5), // 5 days ago
+      status: 'CONFIRMED',
+      productName: 'BLANCO',
+      productImage: getProductImage('BLANCO'),
+      total: 1640,
+      items: 2,
+      trackingNumber: undefined,
+      trackingCarrier: undefined
+    },
+    {
+      id: '3',
+      orderNumber: 'ORDER #241',
+      date: getDateDaysAgo(8), // 8 days ago
+      status: 'PROCESSING',
+      productName: 'NOIR',
+      productImage: getProductImage('NOIR'),
+      total: 2220,
+      items: 3,
+      trackingNumber: undefined,
+      trackingCarrier: undefined
+    },
+    {
+      id: '4',
+      orderNumber: 'ORDER #242',
+      date: getDateDaysAgo(12), // 12 days ago
       status: 'SHIPPED',
       productName: 'BLANCO',
       productImage: getProductImage('BLANCO'),
-      total: 1205,
+      total: 1640,
       items: 2,
       trackingNumber: '9400136106023046913338',
       trackingCarrier: 'DHL'
     },
     {
-      id: '3',
-      orderNumber: 'ORDER #241',
-      date: '04-26-2023',
-      status: 'SHIPPED',
-      productName: 'NOIR',
-      productImage: getProductImage('NOIR'),
-      total: 895,
-      items: 3,
-      trackingNumber: '9400136106023046913326',
-      trackingCarrier: 'FEDEX'
+      id: '8',
+      orderNumber: 'ORDER #240',
+      date: getDateDaysAgo(3), // 3 days ago
+      status: 'CANCELED',
+      productName: 'SOFT CURL',
+      productImage: getProductImage('SOFT CURL'),
+      total: 780,
+      items: 1,
+      trackingNumber: undefined,
+      trackingCarrier: undefined,
+      placedAt: getTimestampHoursAgo(50), // Placed 50 hours ago (expired)
+      canceledAt: getTimestampHoursAgo(12) // Canceled 12 hours ago (still in active, not archived yet)
+    },
+    {
+      id: '9',
+      orderNumber: 'ORDER #238',
+      date: getDateDaysAgo(4), // 4 days ago
+      status: 'CANCELED',
+      productName: 'BEACH WAVE',
+      productImage: getProductImage('BEACH WAVE'),
+      total: 1520,
+      items: 2,
+      trackingNumber: undefined,
+      trackingCarrier: undefined,
+      placedAt: getTimestampHoursAgo(52), // Placed 52 hours ago (expired)
+      canceledAt: getTimestampHoursAgo(18) // Canceled 18 hours ago (still in active, not archived yet)
     }
   ]);
 
   const [pastOrders, setPastOrders] = useState<Order[]>([
     {
-      id: '4',
-      orderNumber: 'ORDER #234',
-      date: '04-26-2023',
+      id: '10',
+      orderNumber: 'ORDER #236',
+      date: getDateDaysAgo(3), // 3 days ago
+      status: 'CANCELED',
+      productName: 'OCEAN CURL',
+      productImage: getProductImage('OCEAN CURL'),
+      total: 1560,
+      items: 2,
+      trackingNumber: undefined,
+      trackingCarrier: undefined,
+      placedAt: getTimestampHoursAgo(72), // Placed 72 hours ago (expired)
+      canceledAt: getTimestampHoursAgo(30) // Canceled 30 hours ago (archived after 24 hours)
+    },
+    {
+      id: '5',
+      orderNumber: 'ORDER #243',
+      date: getDateDaysAgo(25), // 25 days ago
       status: 'DELIVERED',
       productName: 'NOIR',
       productImage: getProductImage('NOIR'),
-      total: 740,
+      total: 2220,
+      items: 3,
+      reviewInfo: 'REVIEW NEEDED',
+      trackingNumber: '9400136106023046913326',
+      trackingCarrier: 'FEDEX',
+      deliveredAt: Date.now() - (30 * 60 * 60 * 1000) // Delivered 30 hours ago (archived but still shows in active for 48 hours)
+    },
+    {
+      id: '4',
+      orderNumber: 'ORDER #234',
+      date: getDateDaysAgo(42), // 42 days ago
+      status: 'DELIVERED',
+      productName: 'NOIR',
+      productImage: getProductImage('NOIR'),
+      total: 1480,
       items: 2,
       reviewInfo: 'REVIEW NEEDED',
       trackingNumber: '9400136106023046913338',
@@ -152,11 +260,11 @@ function OrdersPage() {
     {
       id: '5',
       orderNumber: 'ORDER #233',
-      date: '04-26-2023',
+      date: getDateDaysAgo(58), // 58 days ago
       status: 'DELIVERED',
       productName: 'SOFT CURL',
       productImage: getProductImage('SOFT CURL'),
-      total: 750,
+      total: 780,
       items: 1,
       reviewInfo: 'POINTS TO EARN',
       trackingNumber: '9400136106023046913326',
@@ -165,11 +273,11 @@ function OrdersPage() {
     {
       id: '6',
       orderNumber: 'ORDER #232',
-      date: '04-26-2023',
+      date: getDateDaysAgo(75), // 75 days ago
       status: 'DELIVERED',
       productName: 'BLANCO',
       productImage: getProductImage('BLANCO'),
-      total: 680,
+      total: 820,
       items: 1,
       reviewInfo: 'REVIEW NEEDED',
       trackingNumber: '9400136106023046913338',
@@ -178,12 +286,13 @@ function OrdersPage() {
     {
       id: '7',
       orderNumber: 'ORDER #231',
-      date: '04-26-2023',
+      date: getDateDaysAgo(92), // 92 days ago
       status: 'DELIVERED',
       productName: 'NOIR',
       productImage: getProductImage('NOIR'),
       total: 740,
       items: 1,
+      reviewInfo: 'POINTS TO EARN',
       trackingNumber: '9400136106023046913326',
       trackingCarrier: 'FEDEX'
     }
@@ -191,7 +300,6 @@ function OrdersPage() {
 
   // Refs for auto-scrolling
   const activeOrdersRef = useRef<HTMLDivElement>(null);
-  const pastOrdersRef = useRef<HTMLDivElement>(null);
   const pastOrdersReviewRef = useRef<HTMLDivElement>(null);
 
   // Listen for cart count changes
@@ -248,7 +356,6 @@ function OrdersPage() {
   useEffect(() => {
     const scrollElements = [
       { ref: activeOrdersRef, content: activeOrders.length > 0 ? 'active' : null },
-      { ref: pastOrdersRef, content: pastOrders.length > 0 ? 'past' : null },
       { ref: pastOrdersReviewRef, content: pastOrders.some(o => o.reviewInfo) ? 'pastReview' : null }
     ];
 
@@ -346,13 +453,112 @@ function OrdersPage() {
     };
   }, [activeOrders, pastOrders]);
 
+  // State for forcing re-render to update countdown
+  const [countdownTick, setCountdownTick] = useState(0);
+
+  // Update countdown display every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCountdownTick(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Auto-cancel PLACED orders after 24 hours if authorization form not signed
+  useEffect(() => {
+    const checkAndCancelExpired = () => {
+      const now = Date.now();
+      const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+      setActiveOrders(prevActive => {
+        return prevActive.map(order => {
+          if (order.status === 'PLACED' && order.placedAt) {
+            const timeSincePlaced = now - order.placedAt;
+            if (timeSincePlaced >= twentyFourHours) {
+              // Cancel order and issue refund
+              return {
+                ...order,
+                status: 'CANCELED',
+                canceledAt: now // Set cancellation timestamp
+              };
+            }
+          }
+          return order;
+        });
+      });
+    };
+
+    // Check immediately
+    checkAndCancelExpired();
+
+    // Check every minute
+    const interval = setInterval(checkAndCancelExpired, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+
+  // Auto-archive delivered and canceled orders after 24 hours
+  useEffect(() => {
+    const checkAndArchive = () => {
+      const now = Date.now();
+      const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+      setActiveOrders(prevActive => {
+        const toArchive: Order[] = [];
+        const toKeep: Order[] = [];
+
+        prevActive.forEach(order => {
+          // Archive DELIVERED orders after 24 hours
+          if (order.status === 'DELIVERED' && order.deliveredAt) {
+            const timeSinceDelivered = now - order.deliveredAt;
+            if (timeSinceDelivered >= twentyFourHours) {
+              // Move to archived after 24 hours
+              toArchive.push(order);
+            } else {
+              toKeep.push(order);
+            }
+          }
+          // Archive CANCELED orders after 24 hours
+          else if (order.status === 'CANCELED' && order.canceledAt) {
+            const timeSinceCanceled = now - order.canceledAt;
+            if (timeSinceCanceled >= twentyFourHours) {
+              // Move to archived after 24 hours
+              toArchive.push(order);
+            } else {
+              toKeep.push(order);
+            }
+          } else {
+            toKeep.push(order);
+          }
+        });
+
+        if (toArchive.length > 0) {
+          setPastOrders(prevPast => [...prevPast, ...toArchive]);
+        }
+
+        return toKeep;
+      });
+    };
+
+    // Check immediately
+    checkAndArchive();
+
+    // Check every hour
+    const interval = setInterval(checkAndArchive, 60 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const formatPrice = (price: number) => {
     const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
     if (!currency) {
-      return `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      const formatted = price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+      return `$${formatted}`;
     }
     const convertedPrice = price * currency.rate;
-    const formattedPrice = convertedPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const formattedPrice = convertedPrice.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
     return `${currency.symbol.replace('&#36;', '$').replace('&euro;', '€').replace('&pound;', '£').replace('&yen;', '¥').replace('&#8377;', '₹')}${formattedPrice}`;
   };
 
@@ -456,7 +662,7 @@ function OrdersPage() {
                     HOME &gt;
                   </span>{' '}
                   <span
-                    style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
+                    style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '400' }}
                   >
                     MENU
                   </span>
@@ -470,7 +676,7 @@ function OrdersPage() {
                     ACCOUNT &gt;
                   </span>{' '}
                   <span
-                    style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
+                    style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '400' }}
                   >
                     ORDERS
                   </span>
@@ -486,8 +692,8 @@ function OrdersPage() {
               {!showMobileMenu && (
                 <img
                   alt="Menu"
-                  width="21"
-                  height="21"
+                  width="17"
+                  height="18"
                   className="cursor-pointer"
                   src="/assets/menu-icon.svg"
                   onClick={handleMobileMenuToggle}
@@ -512,12 +718,12 @@ function OrdersPage() {
           {/* Orders Content */}
           <div className="flex flex-col gap-4 mb-5">
             {/* Active Orders Card */}
-            <div className="bg-white/60 backdrop-blur-sm border border-black p-4 min-h-[340px] flex flex-col overflow-hidden shadow-lg transition-all duration-300 ease-out" style={{ borderWidth: '1.3px' }}>
+            <div className="bg-white/60 backdrop-blur-sm border border-black p-4 min-h-[360px] flex flex-col overflow-hidden shadow-lg transition-all duration-300 ease-out" style={{ borderWidth: '1.3px' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
                   <button
                     className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
-                    style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px' }}
+                    style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
                   >
                     ACTIVE ORDERS
                   </button>
@@ -532,8 +738,8 @@ function OrdersPage() {
                  {/* Body */}
                  <div className="flex-1 flex flex-col overflow-hidden mt-2">
                    {/* Mannequin Thumbnails with order context - stacked vertically, left aligned */}
-                   <div className="flex flex-col justify-start items-start gap-4 my-2 flex-shrink-0">
-                     {activeOrders.slice(0, 2).map((order) => (
+                   <div className="flex flex-col justify-start items-start gap-4 my-2 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '265px', scrollBehavior: 'smooth' }}>
+                     {activeOrders.map((order) => (
                        <div key={order.id} className="flex items-center gap-3" style={{ flexShrink: 0 }}>
                          {/* Thumbnail */}
                          <div className="flex flex-col items-center" style={{ flexShrink: 0 }}>
@@ -580,23 +786,34 @@ function OrdersPage() {
                            <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#909090', margin: 0, lineHeight: '1.2' }}>
                              {formatPrice(order.total)} {selectedCurrency}
                            </p>
-                           <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#EB1C24', margin: 0, lineHeight: '1.2' }}>
-                             STATUS: {order.status}
+                           <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2' }}>
+                             <span style={{ color: '#EB1C24' }}>STATUS: </span>
+                             <span style={{ 
+                               color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'CANCELED') ? '#EB1C24' : '#909090',
+                               fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'CANCELED') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
+                             }}>{order.status}</span>
                            </p>
+                           {order.status === 'PLACED' && order.placedAt && (
+                             <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2' }}>
+                               <span style={{ color: '#000000' }}>CLICK </span>
+                               <span style={{ color: '#EB1C24' }}>HERE</span>
+                               <span style={{ color: '#000000' }}> TO SIGN ORDER FORM</span>
+                             </p>
+                           )}
                            {order.trackingNumber ? (
                              <div>
-                               <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2', transform: 'translateY(-1px)' }}>
+                               <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10.5px', color: '#000000', margin: 0, lineHeight: '1.2', transform: 'translateY(-1px)' }}>
                                  {order.trackingNumber}
                                </p>
                                <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '9px', color: '#909090', margin: 0, lineHeight: '1.2', transform: 'translateY(3px)' }}>
                                  TRACK VIA {order.trackingCarrier}
                                </p>
                              </div>
-                           ) : (
+                           ) : order.status !== 'PLACED' && order.status !== 'CANCELED' ? (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
                                TRACKING LOADING
                              </p>
-                           )}
+                           ) : null}
                          </div>
                        </div>
                      ))}
@@ -612,27 +829,95 @@ function OrdersPage() {
                     className="overflow-x-auto scrollbar-hide whitespace-nowrap"
                     style={{ scrollBehavior: 'auto' }}
                   >
-                    {activeOrders.map((order, index) => (
-                      <span key={order.id} className="text-[9px] text-left font-futura uppercase" style={{ fontWeight: '500', marginRight: '10px' }}>
-                        <span className="text-black" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
-                          {order.orderNumber}:{' '}
-                        </span>
-                        <span className="font-futura" style={{ fontWeight: '515', color: order.status === 'SHIPPED' ? '#EB1C24' : '#909090' }}>
-                          {order.status}
-                        </span>
-                      </span>
-                    ))}
+                    {(() => {
+                      const now = Date.now();
+                      const fortyEightHours = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
+                      
+                      // Get all orders to display: active orders + archived orders delivered within 48 hours
+                      const ordersToDisplay: Order[] = [];
+                      
+                      // Add active orders
+                      activeOrders.forEach(order => {
+                        ordersToDisplay.push(order);
+                      });
+                      
+                      // Add archived orders that were delivered within 48 hours
+                      pastOrders.forEach(order => {
+                        if (order.status === 'DELIVERED' && order.deliveredAt) {
+                          const timeSinceDelivered = now - order.deliveredAt;
+                          if (timeSinceDelivered < fortyEightHours) {
+                            ordersToDisplay.push(order);
+                          }
+                        }
+                      });
+                      
+                      return ordersToDisplay.map((order, index) => {
+                        // For delivered orders, only show "DELIVERED" status, hide all other statuses
+                        if (order.status === 'DELIVERED') {
+                          return (
+                            <span key={order.id} className="text-[9px] text-left font-futura uppercase" style={{ fontWeight: '500', marginRight: '10px' }}>
+                              <span className="text-black" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
+                                {order.orderNumber}:{' '}
+                              </span>
+                              <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
+                                DELIVERED
+                              </span>
+                            </span>
+                          );
+                        }
+                        // For PLACED orders, show countdown in scrolling text
+                        if (order.status === 'PLACED' && order.placedAt) {
+                          return (
+                            <span key={order.id} className="text-[9px] text-left font-futura uppercase" style={{ fontWeight: '500', marginRight: '10px' }}>
+                              <span className="text-black" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
+                                {order.orderNumber}:{' '}
+                              </span>
+                              <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
+                                {formatCountdown(getAuthorizationRemainingTime(order.placedAt))}
+                              </span>
+                            </span>
+                          );
+                        }
+                        // For CANCELED orders, show in red Futura PT Medium
+                        if (order.status === 'CANCELED') {
+                          return (
+                            <span key={order.id} className="text-[9px] text-left font-futura uppercase" style={{ fontWeight: '500', marginRight: '10px' }}>
+                              <span className="text-black" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
+                                {order.orderNumber}:{' '}
+                              </span>
+                              <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
+                                {order.status}
+                              </span>
+                            </span>
+                          );
+                        }
+                        // For non-delivered orders, show their current status
+                        return (
+                          <span key={order.id} className="text-[9px] text-left font-futura uppercase" style={{ fontWeight: '500', marginRight: '10px' }}>
+                            <span className="text-black" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
+                              {order.orderNumber}:{' '}
+                            </span>
+                            <span style={{ 
+                              color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED') ? '#EB1C24' : '#909090',
+                              fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
+                            }}>
+                              {order.status}
+                            </span>
+                          </span>
+                        );
+                      });
+                    })()}
                   </div>
                 </div>
               </div>
 
               {/* Past Orders Card */}
-              <div className="bg-white/60 backdrop-blur-sm border border-black p-4 min-h-[340px] flex flex-col overflow-hidden shadow-lg transition-all duration-300 ease-out" style={{ borderWidth: '1.3px' }}>
+              <div className="bg-white/60 backdrop-blur-sm border border-black p-4 min-h-[360px] flex flex-col overflow-hidden shadow-lg transition-all duration-300 ease-out" style={{ borderWidth: '1.3px' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
                   <button
                     className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
-                    style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px' }}
+                    style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
                   >
                     ARCHIVED ORDERS
                   </button>
@@ -647,8 +932,8 @@ function OrdersPage() {
                  {/* Body */}
                  <div className="flex-1 flex flex-col overflow-hidden mt-2">
                    {/* Mannequin Thumbnails with order context - stacked vertically, left aligned */}
-                   <div className="flex flex-col justify-start items-start gap-4 my-2 flex-shrink-0">
-                     {pastOrders.slice(0, 2).map((order) => (
+                   <div className="flex flex-col justify-start items-start gap-4 my-2 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '265px', scrollBehavior: 'smooth' }}>
+                     {pastOrders.map((order) => (
                        <div key={order.id} className="flex items-center gap-3" style={{ flexShrink: 0 }}>
                          {/* Thumbnail */}
                          <div className="flex flex-col items-center" style={{ flexShrink: 0 }}>
@@ -695,23 +980,27 @@ function OrdersPage() {
                            <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#909090', margin: 0, lineHeight: '1.2' }}>
                              {formatPrice(order.total)} {selectedCurrency}
                            </p>
-                           <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#EB1C24', margin: 0, lineHeight: '1.2' }}>
-                             STATUS: {order.status}
+                           <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2' }}>
+                             <span style={{ color: '#EB1C24' }}>STATUS: </span>
+                             <span style={{ 
+                               color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'CANCELED') ? '#EB1C24' : '#909090',
+                               fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'CANCELED') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
+                             }}>{order.status}</span>
                            </p>
                            {order.trackingNumber ? (
                              <div>
-                               <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2', transform: 'translateY(-1px)' }}>
+                               <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10.5px', color: '#000000', margin: 0, lineHeight: '1.2', transform: 'translateY(-1px)' }}>
                                  {order.trackingNumber}
                                </p>
                                <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '9px', color: '#909090', margin: 0, lineHeight: '1.2', transform: 'translateY(3px)' }}>
                                  TRACK VIA {order.trackingCarrier}
                                </p>
                              </div>
-                           ) : (
+                           ) : order.status !== 'PLACED' && order.status !== 'CANCELED' ? (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
                                TRACKING LOADING
                              </p>
-                           )}
+                           ) : null}
                          </div>
                        </div>
                      ))}
@@ -719,30 +1008,11 @@ function OrdersPage() {
                 </div>
 
                 {/* Scrolling Order Information - Bottom of card */}
-                <div className="overflow-hidden mt-auto pt-2 flex flex-col">
+                <div className="overflow-hidden mt-auto pt-2">
                   {/* Gray line separator */}
-                  <div className="border-t border-gray-200" style={{ paddingTop: '2px' }}></div>
-                  <div 
-                    ref={pastOrdersRef}
-                    className="overflow-x-auto scrollbar-hide whitespace-nowrap"
-                    style={{ scrollBehavior: 'auto', transform: 'translateY(-1px)' }}
-                  >
-                      {pastOrders.map((order, index) => (
-                        <span key={order.id} className="text-[9px] text-left font-futura uppercase" style={{ fontWeight: '500', marginRight: '10px' }}>
-                          <span className="text-black" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
-                            {order.orderNumber}:{' '}
-                          </span>
-                          <span className="font-futura" style={{ fontWeight: '515', color: order.status === 'SHIPPED' ? '#EB1C24' : '#909090' }}>
-                            {order.status}
-                          </span>
-                        </span>
-                      ))}
-                  </div>
+                  <div className="border-t border-gray-200" style={{ paddingTop: '2px', marginTop: '1px' }}></div>
                   
-                  {/* Gray line separator */}
-                  <div className="border-t border-gray-200" style={{ paddingTop: '2px', marginTop: '3px' }}></div>
-                  
-                  {/* Second scrolling line - Review/Points info in red */}
+                  {/* Review/Points info in red */}
                   <div 
                     ref={pastOrdersReviewRef}
                     className="overflow-x-auto scrollbar-hide whitespace-nowrap"
@@ -754,7 +1024,7 @@ function OrdersPage() {
                             <span style={{ color: '#000000', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
                               {order.orderNumber}:{' '}
                             </span>
-                            <span style={{ color: '#EB1C24' }}>
+                            <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
                               {order.reviewInfo}
                             </span>
                           </span>
