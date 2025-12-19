@@ -1011,17 +1011,22 @@ function AccountPage() {
 
                 {/* Navigation Options */}
                 {[
-                  { title: 'ORDERS', subtitle: '2 ACTIVE ORDERS' },
-                  { title: 'SHIPPING ADDRESS', subtitle: '2 ADDRESSES ON FILE' },
-                  { title: 'PAYMENT METHOD', subtitle: '2 CARDS ON FILE' },
-                  { title: 'MEMBERSHIP', subtitle: 'SUBSCRIPTIONS + REWARDS PROGRAM' },
-                  { title: 'AFFILIATE', subtitle: 'SUBMIT PHOTOS + VIDEOS FOR POINTS' },
-                  { title: 'REVIEWS', subtitle: '4 TOTAL REVIEWS' },
-                  { title: 'NOTIFICATIONS', subtitle: 'NEWSLETTER + ALERTS' },
-                  { title: 'SETTINGS', subtitle: 'PASSWORD + NOTIFICATIONS' }
+                  { title: 'ORDERS', subtitle: '2 ACTIVE ORDERS', route: '/account/orders' },
+                  { title: 'SHIPPING ADDRESS', subtitle: '2 ADDRESSES ON FILE', route: null },
+                  { title: 'PAYMENT METHOD', subtitle: '2 CARDS ON FILE', route: null },
+                  { title: 'MEMBERSHIP', subtitle: 'SUBSCRIPTIONS + REWARDS PROGRAM', route: null },
+                  { title: 'AFFILIATE', subtitle: 'SUBMIT PHOTOS + VIDEOS FOR POINTS', route: null },
+                  { title: 'REVIEWS', subtitle: '4 TOTAL REVIEWS', route: null },
+                  { title: 'NOTIFICATIONS', subtitle: 'NEWSLETTER + ALERTS', route: null },
+                  { title: 'SETTINGS', subtitle: 'PASSWORD + NOTIFICATIONS', route: null }
                 ].map((item, index) => (
                   <div
                     key={index}
+                    onClick={() => {
+                      if (item.route) {
+                        navigate(item.route);
+                      }
+                    }}
                     className="border border-black bg-white/60 backdrop-blur-sm cursor-pointer w-full"
                     style={{
                       borderWidth: '1.3px',
@@ -1036,7 +1041,7 @@ function AccountPage() {
                       style={{
                         fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                         color: '#000000',
-                        fontSize: '24px',
+                        fontSize: '22px',
                         lineHeight: '1.2',
                         margin: '0 0 4px 0',
                         textTransform: 'uppercase',
