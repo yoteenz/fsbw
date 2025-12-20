@@ -1,3 +1,5 @@
+import React from 'react';
+
 interface ConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -24,14 +26,16 @@ export default function ConfirmationModal({
   return (
     <div 
       data-attribute={dataAttribute}
-      className="fixed z-50"
+      className="fixed z-50 backdrop-blur-md"
       style={{
         top: '0',
         left: '0',
         right: '0',
         bottom: '0',
         zIndex: 999999999,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        backdropFilter: 'blur(3px)',
+        WebkitBackdropFilter: 'blur(3px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'

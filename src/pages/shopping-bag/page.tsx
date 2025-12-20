@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
+import ConfirmationModal from '../../components/ConfirmationModal';
 
 function ShoppingBagPage() {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ function ShoppingBagPage() {
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState('SHOP');
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   // Currency state - load from localStorage on mount
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -269,6 +271,20 @@ function ShoppingBagPage() {
     }
   };
 
+  const handleClearSavedItems = () => {
+    setShowClearConfirm(true);
+  };
+
+  const confirmClearSavedItems = () => {
+    try {
+      setSavedForLater([]);
+      localStorage.setItem('savedForLater', JSON.stringify([]));
+      setShowClearConfirm(false);
+    } catch (e) {
+      console.error('Error clearing saved items:', e);
+    }
+  };
+
   const handleEdit = (item: any) => {
     try {
       localStorage.setItem('editingCartItem', JSON.stringify(item));
@@ -446,17 +462,16 @@ function ShoppingBagPage() {
 
           {/* MAIN BUILD AREA */}
           <div
-            className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+            className="border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm min-h-[360px] overflow-hidden"
             style={{ 
               borderWidth: '1.3px', 
               minWidth: '100%', 
               maxWidth: 'none', 
-              overflow: 'visible',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
               willChange: 'backdrop-filter',
-              minHeight: showMobileMenu ? '560px' : 'auto'
+              minHeight: showMobileMenu ? '560px' : '360px'
             }}
           >
             {showMobileMenu ? (
@@ -668,45 +683,52 @@ function ShoppingBagPage() {
               </div>
             ) : (
               /* CART ITEMS */
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0', paddingTop: '20px' }}>
+              <>
                  {/* Shopping Bag Header */}
-                 <h1
-                   style={{
-                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                     color: '#EB1C24',
-                     fontSize: '26px',
-                     lineHeight: '1.1',
-                     margin: '-20px 0 20px 0',
-                     textTransform: 'uppercase',
-                     textAlign: 'center'
-                   }}
-                 >
-                   Shopping Bag
-                 </h1>
-                {cartItems.length === 0 ? (
-                  <div style={{ 
-                    textAlign: 'center', 
-                    padding: '40px 20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    minHeight: '40px'
-                  }}>
-                    <p 
-                      style={{ 
-                        fontSize: '11px',
-                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                        color: '#808080',
-                        textTransform: 'uppercase',
-                        margin: '0'
-                      }}
-                    >
-                      JUST DUST & LINT HERE.
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    {cartItems.map((item, index) => {
+                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
+                   <button
+                     className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
+                     style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
+                   >
+                     SHOPPING BAG
+                   </button>
+                   <span
+                     className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
+                     style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '17px' }}
+                   >
+                     {cartItems.length}
+                   </span>
+                 </div>
+
+                 {/* Body */}
+                 <div className="flex-1 flex flex-col overflow-hidden mt-2">
+                   {/* Cart Items - scrollable */}
+                   <div className="flex flex-col justify-start items-start gap-0 my-2 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '265px', scrollBehavior: 'smooth', width: '100%' }}>
+                     {cartItems.length === 0 ? (
+                       <div style={{ 
+                         textAlign: 'center', 
+                         padding: '40px 20px',
+                         display: 'flex',
+                         alignItems: 'center',
+                         justifyContent: 'center',
+                         minHeight: '40px',
+                         width: '100%'
+                       }}>
+                         <p 
+                           style={{ 
+                             fontSize: '11px',
+                             fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                             color: '#808080',
+                             textTransform: 'uppercase',
+                             margin: '0'
+                           }}
+                         >
+                           JUST DUST & LINT HERE.
+                         </p>
+                       </div>
+                     ) : (
+                       <>
+                         {cartItems.map((item, index) => {
                       const itemId = item.id || `cart-item-${index}`;
                       const itemName = item.name || 'NOIR';
                       
@@ -763,14 +785,17 @@ function ShoppingBagPage() {
                       const itemPrice = item.price || 580;
                       const itemQuantity = item.quantity || 1;
 
+                       const isLastItem = index === cartItems.length - 1;
                        return (
                          <div
                            key={itemId}
-                           className="flex items-center justify-start space-x-3 pt-1 pb-4 border-b border-gray-100 last:border-b-0"
+                           className="flex items-center justify-start space-x-3 pt-1 pb-4"
                            style={{
                              minHeight: '80px',
                              paddingBottom: '16px',
-                             borderBottom: '1px solid #e5e7eb'
+                             borderBottom: isLastItem ? 'none' : '1px solid #e5e7eb',
+                             width: '100%',
+                             flexShrink: 0
                            }}
                          >
                           {/* Thumbnail Container - Matching cart dropdown */}
@@ -940,12 +965,12 @@ function ShoppingBagPage() {
                             />
 
                             {/* Actions */}
-                            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '8px' }}>
+                            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '30.5px' }}>
                                 <button
                                   onClick={() => handleSaveForLater(item)}
                                   style={{
                                     fontFamily: '"Futura PT Book"',
-                                    fontSize: '12px',
+                                    fontSize: '8px',
                                     color: '#909090',
                                     background: 'none',
                                     border: 'none',
@@ -961,7 +986,7 @@ function ShoppingBagPage() {
                                   onClick={() => handleRemoveItem(itemId)}
                                   style={{
                                     fontFamily: '"Futura PT Book"',
-                                    fontSize: '12px',
+                                    fontSize: '8px',
                                     color: '#909090',
                                     background: 'none',
                                     border: 'none',
@@ -978,37 +1003,43 @@ function ShoppingBagPage() {
                           </div>
                       );
                     })}
+                       </>
+                     )}
+                   </div>
+                 </div>
 
-                    {/* Subtotal */}
-                    <div style={{ 
-                      marginTop: '20px', 
-                      paddingTop: '20px', 
-                      borderTop: '1.3px solid #000',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}>
-                      <p style={{
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '14px',
-                        fontWeight: '500',
-                        margin: '0'
-                      }}>
-                        SUBTOTAL:
-                      </p>
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          margin: '0'
-                        }}
-                        dangerouslySetInnerHTML={formatPrice(subtotal)}
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
+                 {/* Subtotal - Fixed at bottom */}
+                 {cartItems.length > 0 && (
+                   <div className="overflow-hidden mt-auto pt-2">
+                     <div style={{ 
+                       marginTop: '20px', 
+                       paddingTop: '20px', 
+                       borderTop: '1.3px solid #000',
+                       display: 'flex',
+                       justifyContent: 'space-between',
+                       alignItems: 'center'
+                     }}>
+                       <p style={{
+                         fontFamily: '"Futura PT Book"',
+                         fontSize: '12px',
+                         fontWeight: '500',
+                         margin: '0'
+                       }}>
+                         SUBTOTAL:
+                       </p>
+                       <p
+                         style={{
+                           fontFamily: '"Futura PT Book"',
+                           fontSize: '12px',
+                           fontWeight: '500',
+                           margin: '0'
+                         }}
+                         dangerouslySetInnerHTML={formatPrice(subtotal)}
+                       />
+                     </div>
+                   </div>
+                 )}
+              </>
             )}
           </div>
 
@@ -1034,12 +1065,11 @@ function ShoppingBagPage() {
           {/* SAVED FOR LATER SECTION - Only show when menu is closed and there are saved items */}
           {!showMobileMenu && savedForLater.length > 0 && (
             <div
-              className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+              className="border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm min-h-[360px] overflow-hidden"
               style={{ 
                 borderWidth: '1.3px', 
                 minWidth: '100%', 
                 maxWidth: 'none', 
-                overflow: 'visible',
                 backgroundColor: 'rgba(255, 255, 255, 0.6)',
                 backdropFilter: 'blur(10px)',
                 WebkitBackdropFilter: 'blur(10px)',
@@ -1047,21 +1077,27 @@ function ShoppingBagPage() {
                 marginTop: '10px'
               }}
             >
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0', paddingTop: '20px' }}>
-                <h1
-                  style={{
-                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                    color: '#EB1C24',
-                    fontSize: '26px',
-                    lineHeight: '1.1',
-                    margin: '-20px 0 20px 0',
-                    textTransform: 'uppercase',
-                    textAlign: 'center'
-                  }}
+              {/* Saved For Later Header */}
+              <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
+                <button
+                  className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
+                  style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
                 >
-                  Saved For Later
-                </h1>
-                {savedForLater.map((item, index) => {
+                  SAVED FOR LATER
+                </button>
+                <span
+                  className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
+                  style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '17px' }}
+                >
+                  {savedForLater.length}
+                </span>
+              </div>
+
+              {/* Body */}
+              <div className="flex-1 flex flex-col overflow-hidden mt-2">
+                {/* Saved Items - scrollable */}
+                <div className="flex flex-col justify-start items-start gap-0 my-2 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '265px', scrollBehavior: 'smooth', width: '100%' }}>
+                  {savedForLater.map((item, index) => {
                   const itemId = item.id || `saved-item-${index}`;
                   const itemName = item.name || 'NOIR';
                   
@@ -1109,15 +1145,18 @@ function ShoppingBagPage() {
                   const itemLength = item.length || '24"';
                   const itemHairOrigin = getHairOrigin(itemName);
                   const itemPrice = item.price || 580;
+                  const isLastItem = index === savedForLater.length - 1;
 
                   return (
                     <div
                       key={itemId}
-                      className="flex items-center justify-start space-x-3 pt-1 pb-4 border-b border-gray-100 last:border-b-0"
+                      className="flex items-center justify-start space-x-3 pt-1 pb-4"
                       style={{
                         minHeight: '80px',
                         paddingBottom: '16px',
-                        borderBottom: '1px solid #e5e7eb'
+                        borderBottom: isLastItem ? 'none' : '1px solid #e5e7eb',
+                        width: '100%',
+                        flexShrink: 0
                       }}
                     >
                       {/* Thumbnail Container - Matching cart dropdown */}
@@ -1277,10 +1316,74 @@ function ShoppingBagPage() {
                       </div>
                     </div>
                   );
-                })}
+                  })}
+                </div>
               </div>
+
+              {/* Subtotal - Fixed at bottom */}
+              {savedForLater.length > 0 && (
+                <div className="overflow-hidden mt-auto pt-2">
+                  <div style={{ 
+                    marginTop: '20px', 
+                    paddingTop: '20px', 
+                    borderTop: '1.3px solid #000',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}>
+                    <p style={{
+                      fontFamily: '"Futura PT Book"',
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      margin: '0'
+                    }}>
+                      SUBTOTAL:
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        margin: '0'
+                      }}
+                      dangerouslySetInnerHTML={formatPrice(savedForLater.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0))}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           )}
+
+          {/* CLEAR SAVED ITEMS BUTTON - Only show when menu is closed and there are saved items */}
+          {!showMobileMenu && savedForLater.length > 0 && (
+            <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
+              <button
+                onClick={handleClearSavedItems}
+                className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                style={{ 
+                  borderWidth: '1.3px', 
+                  color: '#EB1C24',
+                  fontFamily: '"Futura PT Medium"',
+                  backgroundColor: '#FFFFFF'
+                }}
+                type="button"
+              >
+                DELETE SAVED ITEMS
+              </button>
+            </div>
+          )}
+
+          {/* Clear Saved Items Confirmation Modal */}
+          <ConfirmationModal
+            isOpen={showClearConfirm}
+            onClose={() => setShowClearConfirm(false)}
+            onConfirm={confirmClearSavedItems}
+            title="DELETE SAVED ITEMS?"
+            message="ARE YOU SURE YOU WANT TO REMOVE ALL SAVED ITEMS?"
+            confirmText="CONFIRM"
+            cancelText="CANCEL"
+            dataAttribute="clear-saved-items-confirm"
+          />
         </div>
       </div>
     </div>

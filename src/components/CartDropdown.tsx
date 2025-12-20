@@ -1302,21 +1302,21 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
           {/* Footer with Total and Actions */}
           <div className="px-3 py-2" style={{ paddingBottom: '16px' }}>
             {/* Separator line above footer */}
-            {cartItems.length > 0 && <div className="border-t border-gray-200 mb-2"></div>}
+            {cartItems.length > 0 && <div className="border-t border-black mb-2"></div>}
             
-            {/* Total Due - only show when cart has items */}
+            {/* Subtotal - only show when cart has items */}
             {cartItems.length > 0 && (
               <div className="flex items-center justify-center mb-3" style={{ paddingTop: '8px' }}>
                 <span 
-                    className="font-bold"
                   style={{ 
                     fontSize: '12px',
-                    fontFamily: '"Futura PT Medium"',
-                      color: '#000000',
-                      textTransform: 'uppercase'
+                    fontFamily: '"Futura PT Book"',
+                    fontWeight: '500',
+                    color: '#000000',
+                    textTransform: 'uppercase'
                   }}
                   dangerouslySetInnerHTML={{
-                    __html: `TOTAL DUE: ${formatPrice(getTotalPrice()).__html}`
+                    __html: `SUBTOTAL: ${formatPrice(getTotalPrice()).__html}`
                   }}
                 />
               </div>
