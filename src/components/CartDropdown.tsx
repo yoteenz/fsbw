@@ -726,9 +726,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
           ) : (
               <div className="space-y-3">
                 {cartItems.map((item) => (
-                  <div key={item.id} className="flex items-center justify-start space-x-3 pt-1 pb-4 border-b border-gray-100 last:border-b-0 min-h-[80px]">
+                  <div key={item.id} className="flex items-start justify-start space-x-3 pt-1 pb-4 border-b border-gray-100 last:border-b-0 min-h-[80px]">
                     {/* Thumbnail Container */}
-                    <div className="flex flex-col items-center" style={{ flexShrink: 0, width: '88px' }}>
+                    <div className="flex flex-col items-center" style={{ flexShrink: 0, width: '88px', justifyContent: 'flex-start' }}>
                       {/* Item Image */}
                       <div 
                         className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
@@ -930,7 +930,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     </div>
                   
                     {/* Item Details */}
-                   <div className="flex-1 min-w-0 flex flex-col" style={{ marginLeft: '18px', marginTop: '4px' }}>
+                   <div className="flex-1 min-w-0 flex flex-col" style={{ marginLeft: '18px', paddingTop: '6px' }}>
                       <p 
                         className="font-medium truncate cart-product-name"
                         style={{ 
@@ -944,7 +944,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             return '23px'; // 23px for NOIR, BLANCO, GIFT CARD, OCEAN CURL, BEACH WAVE
                           })(),
                           lineHeight: '1.1',
-                          transform: 'translateY(-9px)'
+                          margin: '0'
                         }}
                       >
                         {item.name.replace(/WIG/gi, '').trim()}
@@ -974,7 +974,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             if (isBlancoNoSpecs) return '-4px';
                             return '-3px';
                           })(),
-                          transform: 'translateY(-1px)',
+                          transform: 'translateY(6px)',
                           lineHeight: '1.1'
                         }}
                       >
@@ -1013,24 +1013,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           color: '#000000',
                           textTransform: 'uppercase',
                           fontSize: '9px',
-                          marginTop: (() => {
-                            // Check if there's detail text (specifications)
-                            const hasSpecs = (item.density && item.density !== '200%') || 
-                                           (item.lace && item.lace !== '13X6') || 
-                                           (item.texture && item.texture !== 'SILKY') || 
-                                           (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
-                                           (item.hairline && item.hairline !== 'NATURAL') || 
-                                           (item.styling && item.styling !== 'NONE') || 
-                                           (item.addOns && item.addOns.length > 0) ||
-                                           (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
-                                           (item.length && item.length !== '24"');
-                            // Gift cards and BLANCO with no detail text should have reduced spacing
-                            const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
-                            const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
-                            if (isGiftCard || isBlancoNoSpecs) return '1px';
-                            if (!hasSpecs) return '2px';
-                            return '5px'; // Increased from 3px to center vertically between gray lines
-                          })(),
+                          marginTop: '8px',
                           marginRight: '20px',
                           lineHeight: '1.44',
                           wordBreak: 'break-word',

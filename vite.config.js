@@ -12,10 +12,12 @@ export default defineConfig({
         port: 3001,
         host: true, // This is equivalent to '0.0.0.0' but more reliable
         open: false,
-        strictPort: false,
+        strictPort: true, // Force port 3001, don't fall back to other ports
         hmr: {
             clientPort: 3001,
         },
+        // Ensure SPA routing works - all routes serve index.html
+        middlewareMode: false,
     },
     logLevel: 'info',
     clearScreen: false,

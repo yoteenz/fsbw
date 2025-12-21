@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
+import ConfirmationModal from '../../components/ConfirmationModal';
 
 function CheckoutPage() {
   const navigate = useNavigate();
@@ -20,9 +21,15 @@ function CheckoutPage() {
   // Form state
   const [sameAsBilling, setSameAsBilling] = useState(true);
   const [subscribeNewsletter, setSubscribeNewsletter] = useState(false);
-  const [agreeToTerms, setAgreeToTerms] = useState(true);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [showTermsRequiredModal, setShowTermsRequiredModal] = useState(false);
   const [selectedProcessing, setSelectedProcessing] = useState('standard');
   const [packageProtection, setPackageProtection] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedState, setSelectedState] = useState('');
+  const [zipCode, setZipCode] = useState('');
+  const [shippingCalculated, setShippingCalculated] = useState(false);
+  const [selectedShippingMethod, setSelectedShippingMethod] = useState<{carrier: string, speed: string, cost: number} | null>(null);
 
   // Currency state
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -36,6 +43,28 @@ function CheckoutPage() {
     }
     return 'USD';
   });
+
+  // Check if any product has color, styling, or add-ons (non-default values)
+  const hasColorStylingOrAddOns = React.useMemo(() => {
+    return cartItems.some((item) => {
+      // Skip gift cards
+      if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
+        return false;
+      }
+
+      // Check for non-default color
+      const defaultColor = item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
+      const hasNonDefaultColor = item.color && item.color !== defaultColor;
+
+      // Check for non-default styling
+      const hasNonDefaultStyling = item.styling && item.styling !== 'NONE';
+
+      // Check for add-ons
+      const hasAddOns = item.addOns && Array.isArray(item.addOns) && item.addOns.length > 0;
+
+      return hasNonDefaultColor || hasNonDefaultStyling || hasAddOns;
+    });
+  }, [cartItems]);
   
   const currencyRates = React.useMemo(() => ({
     USD: { symbol: '&#36;', rate: 1.0, name: 'US Dollar' },
@@ -108,6 +137,13 @@ function CheckoutPage() {
       }
     }
   }, []);
+
+  // Automatically switch to standard processing if rush becomes unavailable
+  useEffect(() => {
+    if (hasColorStylingOrAddOns && selectedProcessing === 'rush') {
+      setSelectedProcessing('standard');
+    }
+  }, [hasColorStylingOrAddOns, selectedProcessing]);
 
   useEffect(() => {
     localStorage.setItem('selectedCurrency', selectedCurrency);
@@ -198,18 +234,60 @@ function CheckoutPage() {
     setIsSignedIn(!isSignedIn);
   };
 
+  // Calculate available shipping options based on address
+  const calculateShippingOptions = () => {
+    if (!selectedCountry || !zipCode) return [];
+    
+    const isDomestic = selectedCountry === 'US';
+    
+    if (isDomestic) {
+      // Domestic options: USPS, UPS, FedEx with standard or express
+      return [
+        { carrier: 'USPS', speed: 'standard', cost: 60, label: 'USPS DOMESTIC STANDARD $60' },
+        { carrier: 'USPS', speed: 'express', cost: 80, label: 'USPS DOMESTIC EXPRESS $80' },
+        { carrier: 'UPS', speed: 'standard', cost: 60, label: 'UPS DOMESTIC STANDARD $60' },
+        { carrier: 'UPS', speed: 'express', cost: 80, label: 'UPS DOMESTIC EXPRESS $80' },
+        { carrier: 'FedEx', speed: 'standard', cost: 60, label: 'FEDEX DOMESTIC STANDARD $60' },
+        { carrier: 'FedEx', speed: 'express', cost: 80, label: 'FEDEX DOMESTIC EXPRESS $80' },
+      ];
+    } else {
+      // International options: DHL only with standard
+      return [
+        { carrier: 'DHL', speed: 'standard', cost: 100, label: 'DHL INTERNATIONAL STANDARD $100' },
+      ];
+    }
+  };
+
+  const availableShippingOptions = calculateShippingOptions();
+
   // Calculate order totals
   const orderAmount = cartItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
-  const taxesProcessing = 120;
-  const shippingHandling = 50;
+  const taxesProcessing = orderAmount * 0.10; // 10% sales tax on order amount (excluding shipping & discounts)
+  
+  // Calculate shipping based on selected method
+  const getShippingCost = () => {
+    if (!selectedShippingMethod) return 0;
+    return selectedShippingMethod.cost || 0;
+  };
+  const shippingHandling = getShippingCost();
+  
   const discount = 0;
   const rushProcessing = selectedProcessing === 'rush' ? 100 : 0;
   const protectionFee = packageProtection ? 5 : 0;
   const subtotal = orderAmount + taxesProcessing + shippingHandling + rushProcessing + protectionFee - discount;
 
   return (
-    <div className="min-h-screen" style={{ position: 'relative' }}>
-      {/* Marble Background */}
+    <>
+      <style>{`
+        input::placeholder,
+        textarea::placeholder {
+          font-family: "Futura PT Demi", "Futura PT", Futura, Inter, sans-serif !important;
+          font-weight: 600;
+          color: #909090 !important;
+        }
+      `}</style>
+      <div className="min-h-screen" style={{ position: 'relative' }}>
+        {/* Marble Background */}
       <div 
         className="fixed inset-0 -z-10"
         style={{
@@ -969,7 +1047,7 @@ function CheckoutPage() {
                       </label>
                       <input
                         type="text"
-                        placeholder="ENTER YOUR FULL NAME"
+                        placeholder="ENTER FULL NAME"
                         style={{
                           width: '100%',
                           height: '40px',
@@ -978,7 +1056,8 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          boxSizing: 'border-box'
+                          boxSizing: 'border-box',
+                          borderRadius: '0'
                         }}
                       />
                     </div>
@@ -997,7 +1076,7 @@ function CheckoutPage() {
                       </label>
                       <input
                         type="text"
-                        placeholder="ENTER YOUR SHIPPING ADDRESS"
+                        placeholder="ENTER SHIPPING ADDRESS"
                         style={{
                           width: '100%',
                           height: '40px',
@@ -1006,7 +1085,8 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          boxSizing: 'border-box'
+                          boxSizing: 'border-box',
+                          borderRadius: '0'
                         }}
                       />
                     </div>
@@ -1025,7 +1105,7 @@ function CheckoutPage() {
                       </label>
                       <input
                         type="text"
-                        placeholder="ENTER YOUR APARTMENT, SUITE OR UNIT NUMBER"
+                        placeholder="ENTER APARTMENT, SUITE OR UNIT NUMBER"
                         style={{
                           width: '100%',
                           height: '40px',
@@ -1034,7 +1114,8 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          boxSizing: 'border-box'
+                          boxSizing: 'border-box',
+                          borderRadius: '0'
                         }}
                       />
                     </div>
@@ -1053,7 +1134,7 @@ function CheckoutPage() {
                       </label>
                       <input
                         type="text"
-                        placeholder="ENTER YOUR CITY, STATE & ZIP CODE"
+                        placeholder="ENTER CITY, STATE & ZIP CODE"
                         style={{
                           width: '100%',
                           height: '40px',
@@ -1062,7 +1143,8 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          boxSizing: 'border-box'
+                          boxSizing: 'border-box',
+                          borderRadius: '0'
                         }}
                       />
                     </div>
@@ -1081,7 +1163,7 @@ function CheckoutPage() {
                       </label>
                       <input
                         type="tel"
-                        placeholder="ENTER YOUR MOBILE NUMBER"
+                        placeholder="ENTER MOBILE NUMBER"
                         style={{
                           width: '100%',
                           height: '40px',
@@ -1090,7 +1172,8 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          boxSizing: 'border-box'
+                          boxSizing: 'border-box',
+                          borderRadius: '0'
                         }}
                       />
                     </div>
@@ -1109,7 +1192,7 @@ function CheckoutPage() {
                       </label>
                       <input
                         type="email"
-                        placeholder="ENTER YOUR EMAIL ADDRESS"
+                        placeholder="ENTER EMAIL ADDRESS"
                         style={{
                           width: '100%',
                           height: '40px',
@@ -1118,21 +1201,34 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          boxSizing: 'border-box'
+                          boxSizing: 'border-box',
+                          borderRadius: '0'
                         }}
                       />
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-                      <input
-                        type="checkbox"
-                        checked={sameAsBilling}
-                        onChange={(e) => setSameAsBilling(e.target.checked)}
+                      <div
+                        onClick={() => setSameAsBilling(!sameAsBilling)}
                         style={{
                           width: '16px',
                           height: '16px',
-                          cursor: 'pointer'
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          border: '1.3px solid #000000',
+                          backgroundColor: 'transparent',
+                          position: 'relative'
                         }}
-                      />
+                      >
+                        {sameAsBilling && (
+                          <img 
+                            src="/assets/checkbox.svg" 
+                            alt="checked" 
+                            style={{ width: '16px', height: '16px', position: 'absolute' }}
+                          />
+                        )}
+                      </div>
                       <label 
                         style={{ 
                           fontFamily: '"Futura PT Book"',
@@ -1187,7 +1283,8 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          boxSizing: 'border-box'
+                          boxSizing: 'border-box',
+                          borderRadius: '0'
                         }}
                       />
                     </div>
@@ -1206,7 +1303,7 @@ function CheckoutPage() {
                       </label>
                       <input
                         type="text"
-                        placeholder="ENTER YOUR CREDIT OR DEBIT CARD NUMBER"
+                        placeholder="ENTER CREDIT OR DEBIT CARD NUMBER"
                         style={{
                           width: '100%',
                           height: '40px',
@@ -1215,7 +1312,8 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          boxSizing: 'border-box'
+                          boxSizing: 'border-box',
+                          borderRadius: '0'
                         }}
                       />
                     </div>
@@ -1242,7 +1340,8 @@ function CheckoutPage() {
                             border: '1.3px solid #000000',
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            borderRadius: '0'
                           }}
                         />
                       </div>
@@ -1268,7 +1367,8 @@ function CheckoutPage() {
                             border: '1.3px solid #000000',
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            borderRadius: '0'
                           }}
                         />
                       </div>
@@ -1290,14 +1390,15 @@ function CheckoutPage() {
                           </label>
                           <input
                             type="text"
-                            placeholder="ENTER YOUR CARD'S BILLING ADDRESS"
+                            placeholder="ENTER CARD'S BILLING ADDRESS"
                             style={{
                               width: '100%',
                               padding: '8px',
                               border: '1.3px solid #000000',
                               fontFamily: '"Futura PT Book"',
                               fontSize: '11px',
-                              backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                              borderRadius: '0'
                             }}
                           />
                         </div>
@@ -1316,14 +1417,15 @@ function CheckoutPage() {
                           </label>
                           <input
                             type="text"
-                            placeholder="ENTER YOUR CITY, STATE & ZIP CODE"
+                            placeholder="ENTER CITY, STATE & ZIP CODE"
                             style={{
                               width: '100%',
                               padding: '8px',
                               border: '1.3px solid #000000',
                               fontFamily: '"Futura PT Book"',
                               fontSize: '11px',
-                              backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                              borderRadius: '0'
                             }}
                           />
                         </div>
@@ -1382,7 +1484,8 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          boxSizing: 'border-box'
+                          boxSizing: 'border-box',
+                          borderRadius: '0'
                         }}
                       />
                       <button
@@ -1397,7 +1500,11 @@ function CheckoutPage() {
                           justifyContent: 'center'
                         }}
                       >
-                        ✓
+                        <img 
+                          src="/assets/discount-check.svg" 
+                          alt="apply discount" 
+                          style={{ width: '40%', height: '40%', objectFit: 'contain' }}
+                        />
                       </button>
                     </div>
                   </div>
@@ -1419,18 +1526,28 @@ function CheckoutPage() {
                   </h2>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <input
-                        type="radio"
-                        name="processing"
-                        value="standard"
-                        checked={selectedProcessing === 'standard'}
-                        onChange={(e) => setSelectedProcessing(e.target.value)}
+                      <div
+                        onClick={() => setSelectedProcessing('standard')}
                         style={{
                           width: '16px',
                           height: '16px',
-                          cursor: 'pointer'
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          border: '1.3px solid #000000',
+                          backgroundColor: 'transparent',
+                          position: 'relative'
                         }}
-                      />
+                      >
+                        {selectedProcessing === 'standard' && (
+                          <img 
+                            src="/assets/checkbox.svg" 
+                            alt="checked" 
+                            style={{ width: '16px', height: '16px', position: 'absolute' }}
+                          />
+                        )}
+                      </div>
                       <label 
                         style={{ 
                           fontFamily: '"Futura PT Book"',
@@ -1443,42 +1560,95 @@ function CheckoutPage() {
                         6-8 WEEKS STANDARD PROCESSING
                       </label>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <input
-                        type="radio"
-                        name="processing"
-                        value="rush"
-                        checked={selectedProcessing === 'rush'}
-                        onChange={(e) => setSelectedProcessing(e.target.value)}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', opacity: hasColorStylingOrAddOns ? 0.5 : 1 }}>
+                      <div
+                        onClick={() => {
+                          if (!hasColorStylingOrAddOns) {
+                            setSelectedProcessing('rush');
+                          }
+                        }}
                         style={{
                           width: '16px',
                           height: '16px',
-                          cursor: 'pointer'
-                        }}
-                      />
-                      <label 
-                        style={{ 
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '10px',
-                          color: '#000000',
-                          cursor: 'pointer',
-                          textTransform: 'uppercase'
+                          cursor: hasColorStylingOrAddOns ? 'not-allowed' : 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          border: '1.3px solid #000000',
+                          backgroundColor: 'transparent',
+                          marginTop: '2px',
+                          flexShrink: 0,
+                          position: 'relative'
                         }}
                       >
-                        4-6 WEEKS RUSH PROCESSING $100 (EXCLUDING COLOR, STYLING & ADD-ONS)
-                      </label>
+                        {selectedProcessing === 'rush' && !hasColorStylingOrAddOns && (
+                          <img 
+                            src="/assets/checkbox.svg" 
+                            alt="checked" 
+                            style={{ width: '16px', height: '16px', position: 'absolute' }}
+                          />
+                        )}
+                      </div>
+                      <div 
+                        style={{ 
+                          display: 'flex', 
+                          flexDirection: 'column', 
+                          cursor: hasColorStylingOrAddOns ? 'not-allowed' : 'pointer' 
+                        }} 
+                        onClick={() => {
+                          if (!hasColorStylingOrAddOns) {
+                            setSelectedProcessing('rush');
+                          }
+                        }}
+                      >
+                        <label 
+                          style={{ 
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '10px',
+                            color: '#000000',
+                            cursor: hasColorStylingOrAddOns ? 'not-allowed' : 'pointer',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          4-6 WEEKS RUSH PROCESSING $100
+                        </label>
+                        <label 
+                          style={{ 
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '9px',
+                            color: '#EB1C24',
+                            cursor: hasColorStylingOrAddOns ? 'not-allowed' : 'pointer',
+                            textTransform: 'uppercase',
+                            marginTop: '2px'
+                          }}
+                        >
+                          (EXCLUDING COLOR, STYLING & ADD-ONS)
+                        </label>
+                      </div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <input
-                        type="checkbox"
-                        checked={packageProtection}
-                        onChange={(e) => setPackageProtection(e.target.checked)}
+                      <div
+                        onClick={() => setPackageProtection(!packageProtection)}
                         style={{
                           width: '16px',
                           height: '16px',
-                          cursor: 'pointer'
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          border: '1.3px solid #000000',
+                          backgroundColor: 'transparent',
+                          position: 'relative'
                         }}
-                      />
+                      >
+                        {packageProtection && (
+                          <img 
+                            src="/assets/checkbox.svg" 
+                            alt="checked" 
+                            style={{ width: '16px', height: '16px', position: 'absolute' }}
+                          />
+                        )}
+                      </div>
                       <label 
                         style={{ 
                           fontFamily: '"Futura PT Book"',
@@ -1507,6 +1677,14 @@ function CheckoutPage() {
                     </p>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       <select
+                        value={selectedCountry}
+                        onChange={(e) => {
+                          setSelectedCountry(e.target.value);
+                          setSelectedState('');
+                          setZipCode('');
+                          setShippingCalculated(false);
+                          setSelectedShippingMethod(null);
+                        }}
                         style={{
                           width: '100%',
                           height: '40px',
@@ -1515,39 +1693,116 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          boxSizing: 'border-box'
+                          boxSizing: 'border-box',
+                          borderRadius: '0'
                         }}
                       >
-                        <option>COUNTRY</option>
+                        <option value="">COUNTRY</option>
+                        <option value="US">UNITED STATES</option>
+                        <option value="CA">CANADA</option>
+                        <option value="GB">UNITED KINGDOM</option>
+                        <option value="AU">AUSTRALIA</option>
+                        <option value="OTHER">OTHER</option>
                       </select>
-                      <select
-                        style={{
-                          width: '100%',
-                          height: '40px',
-                          padding: '8px',
-                          border: '1.3px solid #000000',
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          boxSizing: 'border-box'
-                        }}
-                      >
-                        <option>STATE</option>
-                      </select>
+                      {selectedCountry === 'US' && (
+                        <select
+                          value={selectedState}
+                          onChange={(e) => {
+                            setSelectedState(e.target.value);
+                            setShippingCalculated(false);
+                            setSelectedShippingMethod(null);
+                          }}
+                          style={{
+                            width: '100%',
+                            height: '40px',
+                            padding: '8px',
+                            border: '1.3px solid #000000',
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '11px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            boxSizing: 'border-box',
+                            borderRadius: '0'
+                          }}
+                        >
+                          <option value="">STATE</option>
+                          <option value="AL">ALABAMA</option>
+                          <option value="AK">ALASKA</option>
+                          <option value="AZ">ARIZONA</option>
+                          <option value="AR">ARKANSAS</option>
+                          <option value="CA">CALIFORNIA</option>
+                          <option value="CO">COLORADO</option>
+                          <option value="CT">CONNECTICUT</option>
+                          <option value="DE">DELAWARE</option>
+                          <option value="FL">FLORIDA</option>
+                          <option value="GA">GEORGIA</option>
+                          <option value="HI">HAWAII</option>
+                          <option value="ID">IDAHO</option>
+                          <option value="IL">ILLINOIS</option>
+                          <option value="IN">INDIANA</option>
+                          <option value="IA">IOWA</option>
+                          <option value="KS">KANSAS</option>
+                          <option value="KY">KENTUCKY</option>
+                          <option value="LA">LOUISIANA</option>
+                          <option value="ME">MAINE</option>
+                          <option value="MD">MARYLAND</option>
+                          <option value="MA">MASSACHUSETTS</option>
+                          <option value="MI">MICHIGAN</option>
+                          <option value="MN">MINNESOTA</option>
+                          <option value="MS">MISSISSIPPI</option>
+                          <option value="MO">MISSOURI</option>
+                          <option value="MT">MONTANA</option>
+                          <option value="NE">NEBRASKA</option>
+                          <option value="NV">NEVADA</option>
+                          <option value="NH">NEW HAMPSHIRE</option>
+                          <option value="NJ">NEW JERSEY</option>
+                          <option value="NM">NEW MEXICO</option>
+                          <option value="NY">NEW YORK</option>
+                          <option value="NC">NORTH CAROLINA</option>
+                          <option value="ND">NORTH DAKOTA</option>
+                          <option value="OH">OHIO</option>
+                          <option value="OK">OKLAHOMA</option>
+                          <option value="OR">OREGON</option>
+                          <option value="PA">PENNSYLVANIA</option>
+                          <option value="RI">RHODE ISLAND</option>
+                          <option value="SC">SOUTH CAROLINA</option>
+                          <option value="SD">SOUTH DAKOTA</option>
+                          <option value="TN">TENNESSEE</option>
+                          <option value="TX">TEXAS</option>
+                          <option value="UT">UTAH</option>
+                          <option value="VT">VERMONT</option>
+                          <option value="VA">VIRGINIA</option>
+                          <option value="WA">WASHINGTON</option>
+                          <option value="WV">WEST VIRGINIA</option>
+                          <option value="WI">WISCONSIN</option>
+                          <option value="WY">WYOMING</option>
+                        </select>
+                      )}
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <input
                           type="text"
                           placeholder="ZIP CODE"
+                          value={zipCode}
+                          onChange={(e) => {
+                            setZipCode(e.target.value);
+                            setShippingCalculated(false);
+                            setSelectedShippingMethod(null);
+                          }}
                           style={{
                             flex: 1,
                             padding: '8px',
                             border: '1.3px solid #000000',
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            borderRadius: '0'
                           }}
                         />
                         <button
+                          onClick={() => {
+                            if (selectedCountry && zipCode) {
+                              setShippingCalculated(true);
+                            }
+                          }}
                           style={{
                             padding: '8px 20px',
                             border: '1.3px solid #000000',
@@ -1564,6 +1819,83 @@ function CheckoutPage() {
                       </div>
                     </div>
                   </div>
+                  
+                  {/* SHIPPING METHOD SELECTION */}
+                  {shippingCalculated && availableShippingOptions.length > 0 && (
+                    <div style={{ marginTop: '16px', border: '1.3px solid #000000', padding: '12px' }}>
+                      <p 
+                        style={{ 
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#000000',
+                          margin: '0 0 8px 0',
+                          textTransform: 'uppercase',
+                          fontWeight: '500'
+                        }}
+                      >
+                        SHIPPING METHOD
+                      </p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {availableShippingOptions.map((option, index) => {
+                          const isSelected = selectedShippingMethod?.carrier === option.carrier && 
+                                           selectedShippingMethod?.speed === option.speed;
+                          return (
+                            <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <div
+                                onClick={() => setSelectedShippingMethod({
+                                  carrier: option.carrier,
+                                  speed: option.speed,
+                                  cost: option.cost
+                                })}
+                                style={{
+                                  width: '16px',
+                                  height: '16px',
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  border: '1.3px solid #000000',
+                                  backgroundColor: 'transparent',
+                                  position: 'relative'
+                                }}
+                              >
+                                {isSelected && (
+                                  <img 
+                                    src="/assets/checkbox.svg" 
+                                    alt="checked" 
+                                    style={{ width: '16px', height: '16px', position: 'absolute' }}
+                                  />
+                                )}
+                              </div>
+                              <label 
+                                style={{ 
+                                  fontFamily: '"Futura PT Book"',
+                                  fontSize: '10px',
+                                  color: '#000000',
+                                  cursor: 'pointer',
+                                  textTransform: 'uppercase'
+                                }}
+                              >
+                                {option.label}
+                              </label>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                  {!shippingCalculated && (
+                    <div style={{ marginTop: '16px', border: '1.3px solid #000000', padding: '12px' }}>
+                      <p style={{ 
+                        fontFamily: '"Futura PT Book"', 
+                        fontSize: '10px', 
+                        color: '#000000',
+                        textTransform: 'uppercase'
+                      }}>
+                        ENTER COUNTRY AND ZIP CODE, THEN CLICK CALCULATE TO SEE SHIPPING OPTIONS
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* ORDER SUMMARY (COST BREAKDOWN) */}
@@ -1589,7 +1921,7 @@ function CheckoutPage() {
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
-                        TAXES + PROCESSING:
+                        SALES TAX:
                       </span>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(taxesProcessing)}></span>
                     </div>
@@ -1645,7 +1977,7 @@ function CheckoutPage() {
                     ORDER NOTES:
                   </h2>
                   <textarea
-                    placeholder="ENTER YOUR FRONT TO NAPE MEASUREMENT, STYLING PREFERENCES, SKIN TONE SHADE OR ANYTHING SPECIFIC YOU THINK WE SHOULD KNOW ABOUT THIS ORDER."
+                    placeholder="ENTER FRONT TO NAPE MEASUREMENT, STYLING PREFERENCES, SKIN TONE SHADE OR ANYTHING SPECIFIC YOU THINK WE SHOULD KNOW ABOUT THIS ORDER."
                     rows={6}
                     style={{
                       width: '100%',
@@ -1654,7 +1986,8 @@ function CheckoutPage() {
                       fontFamily: '"Futura PT Book"',
                       fontSize: '11px',
                       backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                      resize: 'vertical'
+                      resize: 'vertical',
+                      borderRadius: '0'
                     }}
                   />
                 </div>
@@ -1662,16 +1995,28 @@ function CheckoutPage() {
                 {/* CHECKBOXES AND SUBMIT BUTTON */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <input
-                      type="checkbox"
-                      checked={subscribeNewsletter}
-                      onChange={(e) => setSubscribeNewsletter(e.target.checked)}
+                    <div
+                      onClick={() => setSubscribeNewsletter(!subscribeNewsletter)}
                       style={{
                         width: '16px',
                         height: '16px',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: '1.3px solid #000000',
+                        backgroundColor: 'transparent',
+                        position: 'relative'
                       }}
-                    />
+                    >
+                      {subscribeNewsletter && (
+                        <img 
+                          src="/assets/checkbox.svg" 
+                          alt="checked" 
+                          style={{ width: '16px', height: '16px', position: 'absolute' }}
+                        />
+                      )}
+                    </div>
                     <label 
                       style={{ 
                         fontFamily: '"Futura PT Book"',
@@ -1681,20 +2026,32 @@ function CheckoutPage() {
                         textTransform: 'uppercase'
                       }}
                     >
-                      SUBSCRIBE TO NEWSLETTER
+                      SUBSCRIBE TO EMAIL NEWSLETTER
                     </label>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <input
-                      type="checkbox"
-                      checked={agreeToTerms}
-                      onChange={(e) => setAgreeToTerms(e.target.checked)}
+                    <div
+                      onClick={() => setAgreeToTerms(!agreeToTerms)}
                       style={{
                         width: '16px',
                         height: '16px',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: '1.3px solid #000000',
+                        backgroundColor: 'transparent',
+                        position: 'relative'
                       }}
-                    />
+                    >
+                      {agreeToTerms && (
+                        <img 
+                          src="/assets/checkbox.svg" 
+                          alt="checked" 
+                          style={{ width: '16px', height: '16px', position: 'absolute' }}
+                        />
+                      )}
+                    </div>
                     <label 
                       style={{ 
                         fontFamily: '"Futura PT Book"',
@@ -1707,34 +2064,54 @@ function CheckoutPage() {
                       I HAVE READ & AGREE TO THE TERMS + CONDITIONS*
                     </label>
                   </div>
-                  <button
-                    onClick={() => {
-                      // Handle checkout submission
-                      console.log('Proceed to checkout');
-                    }}
-                    style={{
-                      width: '100%',
-                      padding: '14px',
-                      border: '1.3px solid #000000',
-                      backgroundColor: '#EB1C24',
-                      color: '#FFFFFF',
-                      fontFamily: '"Futura PT Medium"',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      textTransform: 'uppercase',
-                      marginTop: '8px'
-                    }}
-                  >
-                    PROCEED TO CHECKOUT
-                  </button>
                 </div>
               </div>
             )}
           </div>
+          
+          {/* CONFIRM ORDER BUTTON - Outside main card */}
+          {!showMobileMenu && (
+            <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
+              <button
+                onClick={() => {
+                  // Check if terms are agreed to
+                  if (!agreeToTerms) {
+                    setShowTermsRequiredModal(true);
+                    return;
+                  }
+                  // Handle checkout submission
+                  console.log('Confirm order');
+                }}
+                className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                style={{ 
+                  borderWidth: '1.3px', 
+                  color: '#EB1C24',
+                  fontFamily: '"Futura PT Medium"',
+                  backgroundColor: '#FFFFFF',
+                  textTransform: 'uppercase'
+                }}
+                type="button"
+              >
+                CONFIRM ORDER
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
+    
+    {/* Terms Required Modal */}
+    <ConfirmationModal
+      isOpen={showTermsRequiredModal}
+      onClose={() => setShowTermsRequiredModal(false)}
+      onConfirm={() => setShowTermsRequiredModal(false)}
+      title="TERMS & CONDITIONS REQUIRED"
+      message="you must agree to the terms & conditions to finalize purchase."
+      confirmText="OK"
+      cancelText="CLOSE"
+      messageTextTransform="uppercase"
+    />
+    </>
   );
 }
 

@@ -2171,10 +2171,10 @@ function NoirSelection() {
             </div>
           ) : (
             <>
-          {/* WIG PREVIEW */}
-          <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column', marginBottom: '24px', transform: 'translateY(20px)', overflow: 'visible', minWidth: '100%', maxWidth: 'none' }}>
-            {/* ADD TO WISHLIST & PHOTO COUNT */}
-            <div style={{ position: 'relative', width: '100%', marginBottom: '10px', transform: 'translateY(-31px)', zIndex: 100 }}>
+              {/* WIG PREVIEW */}
+              <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column', marginBottom: '24px', transform: 'translateY(20px)', overflow: 'visible', minWidth: '100%', maxWidth: 'none' }}>
+                {/* ADD TO WISHLIST & PHOTO COUNT */}
+                <div style={{ position: 'relative', width: '100%', marginBottom: '10px', transform: 'translateY(-31px)', zIndex: 100 }}>
               {/* ADD TO WISHLIST - Top Left */}
               <p 
                 onClick={(e) => {
@@ -4204,6 +4204,7 @@ function NoirSelection() {
           </div>
         </div>
       </div>
+    </div>
     </>
   );
 }

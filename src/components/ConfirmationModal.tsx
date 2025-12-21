@@ -9,6 +9,7 @@ interface ConfirmationModalProps {
   confirmText?: string;
   cancelText?: string;
   dataAttribute?: string;
+  messageTextTransform?: 'uppercase' | 'lowercase' | 'none';
 }
 
 export default function ConfirmationModal({
@@ -19,7 +20,8 @@ export default function ConfirmationModal({
   message,
   confirmText = 'CONFIRM',
   cancelText = 'CANCEL',
-  dataAttribute = 'confirmation-modal'
+  dataAttribute = 'confirmation-modal',
+  messageTextTransform = 'uppercase'
 }: ConfirmationModalProps) {
   if (!isOpen) return null;
 
@@ -74,19 +76,22 @@ export default function ConfirmationModal({
         >
           {title}
         </h3>
-        <p
-          style={{
-            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-            fontSize: '10px',
-            marginBottom: '20px',
-            color: '#000000',
-            textTransform: 'uppercase',
-            textAlign: 'center',
-            transform: 'translateY(-1px)'
-          }}
-        >
-          {message}
-        </p>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+          <p
+            style={{
+              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+              fontSize: '10px',
+              color: '#000000',
+              textTransform: messageTextTransform,
+              textAlign: 'center',
+              transform: 'translateY(-1px)',
+              whiteSpace: 'nowrap',
+              margin: 0
+            }}
+          >
+            {message}
+          </p>
+        </div>
         <div className="flex space-x-3">
           <button
             onClick={onClose}
