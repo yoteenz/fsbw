@@ -728,11 +728,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                 {cartItems.map((item) => (
                   <div key={item.id} className="flex items-center justify-start space-x-3 pt-1 pb-4 border-b border-gray-100 last:border-b-0 min-h-[80px]">
                     {/* Thumbnail Container */}
-                    <div className="flex flex-col items-center">
+                    <div className="flex flex-col items-center" style={{ flexShrink: 0, width: '88px' }}>
                       {/* Item Image */}
                       <div 
                         className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-                        style={{ width: '88px', height: '88px' }}
+                        style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
                         onClick={() => {
                           // Determine the correct product page route based on item name
                           let productRoute = '/straight/noir'; // Default fallback
@@ -808,7 +808,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           })()}
                           alt={item.name}
                           className="object-cover rounded"
-                          style={{ width: '88px', height: '88px' }}
+                          style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
                         />
                       </div>
                       
@@ -938,10 +938,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           color: '#000000',
                           textTransform: 'uppercase',
                           fontSize: (() => {
-                            if (item.name === 'BLANCO' || item.name === 'SOFT CURL' || item.name === 'SOFT WAVE') {
-                              return '18px'; // Decreased by 2px for BLANCO, SOFT CURL, SOFT WAVE
+                            if (item.name === 'SOFT CURL' || item.name === 'SOFT WAVE') {
+                              return '18px'; // Decreased by 2px for SOFT CURL, SOFT WAVE
                             }
-                            return '21px'; // Increased by 1px for NOIR
+                            return '23px'; // 23px for NOIR, BLANCO, GIFT CARD, OCEAN CURL, BEACH WAVE
                           })(),
                           lineHeight: '1.1',
                           transform: 'translateY(-9px)'
@@ -956,7 +956,24 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           color: '#EB1C24',
                           textTransform: 'uppercase',
                           fontSize: '9px',
-                          marginTop: '-5px',
+                          marginTop: (() => {
+                            // Check if there's detail text (specifications)
+                            const hasSpecs = (item.density && item.density !== '200%') || 
+                                           (item.lace && item.lace !== '13X6') || 
+                                           (item.texture && item.texture !== 'SILKY') || 
+                                           (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
+                                           (item.hairline && item.hairline !== 'NATURAL') || 
+                                           (item.styling && item.styling !== 'NONE') || 
+                                           (item.addOns && item.addOns.length > 0) ||
+                                           (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
+                                           (item.length && item.length !== '24"');
+                            // Gift cards and BLANCO with no detail text should have reduced spacing
+                            const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+                            const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
+                            if (isGiftCard) return '-3px'; // Gift cards moved down 1px
+                            if (isBlancoNoSpecs) return '-4px';
+                            return '-3px';
+                          })(),
                           transform: 'translateY(-1px)',
                           lineHeight: '1.1'
                         }}
@@ -996,7 +1013,24 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           color: '#000000',
                           textTransform: 'uppercase',
                           fontSize: '9px',
-                          marginTop: '1px',
+                          marginTop: (() => {
+                            // Check if there's detail text (specifications)
+                            const hasSpecs = (item.density && item.density !== '200%') || 
+                                           (item.lace && item.lace !== '13X6') || 
+                                           (item.texture && item.texture !== 'SILKY') || 
+                                           (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
+                                           (item.hairline && item.hairline !== 'NATURAL') || 
+                                           (item.styling && item.styling !== 'NONE') || 
+                                           (item.addOns && item.addOns.length > 0) ||
+                                           (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
+                                           (item.length && item.length !== '24"');
+                            // Gift cards and BLANCO with no detail text should have reduced spacing
+                            const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+                            const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
+                            if (isGiftCard || isBlancoNoSpecs) return '1px';
+                            if (!hasSpecs) return '2px';
+                            return '5px'; // Increased from 3px to center vertically between gray lines
+                          })(),
                           marginRight: '20px',
                           lineHeight: '1.44',
                           wordBreak: 'break-word',
@@ -1240,8 +1274,20 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                                              (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
                                              (item.hairline && item.hairline !== 'NATURAL') || 
                                              (item.styling && item.styling !== 'NONE') || 
-                                             (item.addOns && item.addOns.length > 0);
-                              return hasSpecs ? '2px' : '0px';
+                                             (item.addOns && item.addOns.length > 0) ||
+                                             (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
+                                             (item.length && item.length !== '24"');
+                              // Gift cards and BLANCO with no detail text should have reduced spacing
+                              const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+                              const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
+                              const isBlanco = item.name === 'BLANCO';
+                              let baseMargin = hasSpecs && !isGiftCard && !isBlancoNoSpecs ? '4px' : '1px';
+                              // Move BLANCO cap size up by 3px total (2px + 1px)
+                              if (isBlanco) {
+                                const numValue = parseInt(baseMargin);
+                                return `${Math.max(0, numValue - 3)}px`;
+                              }
+                              return baseMargin;
                             })(),
                             lineHeight: '1.1'
                           }}
@@ -1255,7 +1301,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           fontFamily: '"Futura PT Medium"',
                           color: '#000000',
                           textTransform: 'uppercase',
-                          fontSize: '13px',
+                          fontSize: '12px',
+                          fontWeight: '500',
                           marginTop: (() => {
                             // Check if there's black detail text (specifications)
                             const hasSpecs = (item.density && item.density !== '200%') || 
@@ -1264,8 +1311,20 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                                            (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
                                            (item.hairline && item.hairline !== 'NATURAL') || 
                                            (item.styling && item.styling !== 'NONE') || 
-                                           (item.addOns && item.addOns.length > 0);
-                            return hasSpecs ? '2px' : '1px';
+                                           (item.addOns && item.addOns.length > 0) ||
+                                           (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
+                                           (item.length && item.length !== '24"');
+                            // Gift cards and BLANCO with no detail text should have reduced spacing
+                            const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+                            const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
+                            const isBlanco = item.name === 'BLANCO';
+                            let baseMargin = hasSpecs && !isGiftCard && !isBlancoNoSpecs ? '4px' : '2px';
+                            // Move BLANCO price text up by 2px
+                            if (isBlanco) {
+                              const numValue = parseInt(baseMargin);
+                              return `${Math.max(0, numValue - 2)}px`;
+                            }
+                            return baseMargin;
                           })()
                         }}
                         dangerouslySetInnerHTML={formatPrice(item.price)}
@@ -1311,7 +1370,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                   style={{ 
                     fontSize: '12px',
                     fontFamily: '"Futura PT Book"',
-                    fontWeight: '500',
+                    fontWeight: '600',
                     color: '#000000',
                     textTransform: 'uppercase'
                   }}

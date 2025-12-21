@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createPortal } from 'react-dom';
-import DynamicCartIcon from '../../../components/DynamicCartIcon';
 
 function BlancoSelection() {
   const navigate = useNavigate();
@@ -587,158 +585,6 @@ function BlancoSelection() {
     return basePrice;
   };
 
-  // Load selected currency from localStorage on mount only
-  // Initial state already loads from localStorage, this is a safety check
-  useEffect(() => {
-    const savedCurrency = localStorage.getItem('selectedCurrency');
-    if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
-      // Only update if different to avoid unnecessary re-renders
-      if (savedCurrency !== selectedCurrency) {
-      setSelectedCurrency(savedCurrency);
-    }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run on mount, not when currencyRates changes
-
-  // Save selected currency to localStorage
-  useEffect(() => {
-    localStorage.setItem('selectedCurrency', selectedCurrency);
-  }, [selectedCurrency]);
-
-  // Listen for currency changes from cart dropdown
-  useEffect(() => {
-    const handleCurrencyChange = () => {
-      const savedCurrency = localStorage.getItem('selectedCurrency');
-      if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
-        setSelectedCurrency(savedCurrency);
-      }
-    };
-
-    // Listen for storage events (from other tabs/windows)
-    window.addEventListener('storage', handleCurrencyChange);
-    
-    // Listen for custom currencyChanged event (from same window)
-    const handleCustomCurrencyChange = (event: CustomEvent) => {
-      const newCurrency = event.detail;
-      if (newCurrency && currencyRates[newCurrency as keyof typeof currencyRates]) {
-        setSelectedCurrency(newCurrency);
-        // Also update localStorage to ensure consistency
-        localStorage.setItem('selectedCurrency', newCurrency);
-      }
-    };
-    
-    window.addEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
-    
-    // Poll localStorage periodically to catch any currency changes
-    const interval = setInterval(() => {
-      handleCurrencyChange();
-    }, 500); // Check every 500ms
-    
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener('storage', handleCurrencyChange);
-      window.removeEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
-    };
-  }, [currencyRates]);
-
-  // Format price with currency
-  const formatPrice = React.useCallback((price: number) => {
-    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
-    const convertedPrice = price * currency.rate;
-    return {
-      __html: currency.symbol + convertedPrice.toLocaleString('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      }) + ' ' + selectedCurrency
-    };
-  }, [currencyRates, selectedCurrency]);
-
-  const handleAddToBag = async () => {
-    if (addToBagState === 'adding' || addToBagState === 'added') return;
-    
-    setAddToBagState('adding');
-    
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // CRITICAL: Read customization values from localStorage (or use defaults)
-      // This ensures that if user made selections in build-a-wig, they're included
-      const defaultLength = localStorage.getItem('selectedLength') || '24"';
-      const defaultDensity = localStorage.getItem('selectedDensity') || '200%';
-      const defaultLace = localStorage.getItem('selectedLace') || '13X6';
-      const defaultTexture = localStorage.getItem('selectedTexture') || 'SILKY';
-      const defaultColor = localStorage.getItem('selectedColor') || 'OFF BLACK';
-      const defaultHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
-      const defaultStyling = localStorage.getItem('selectedStyling') || 'NONE';
-      const defaultAddOns: string[] = JSON.parse(localStorage.getItem('selectedAddOns') || '[]');
-      
-      // CRITICAL: Read customization prices from localStorage (or use 0 if not set)
-      // This ensures add-ons and other customizations are included in the price
-      const lengthPrice = parseInt(localStorage.getItem('selectedLengthPrice') || '0');
-      const densityPrice = parseInt(localStorage.getItem('selectedDensityPrice') || '0');
-      const lacePrice = parseInt(localStorage.getItem('selectedLacePrice') || '0');
-      const texturePrice = parseInt(localStorage.getItem('selectedTexturePrice') || '0');
-      const colorPrice = parseInt(localStorage.getItem('selectedColorPrice') || '0');
-      const hairlinePrice = parseInt(localStorage.getItem('selectedHairlinePrice') || '0');
-      const stylingPrice = parseInt(localStorage.getItem('selectedStylingPrice') || '0');
-      const addOnsPrice = parseInt(localStorage.getItem('selectedAddOnsPrice') || '0');
-      
-      let capSize: string;
-      let capSizePrice: number;
-      if (selectedCustomCap) {
-        capSize = selectedCustomCap;
-        capSizePrice = 0;
-      } else if (selectedFlexibleCap) {
-        capSize = selectedFlexibleCap;
-        capSizePrice = 40;
-      } else {
-        capSize = 'M';
-        capSizePrice = 0;
-      }
-      
-      const basePrice = 820;
-      // CRITICAL: Include all customization prices in total calculation
-      const totalPrice = basePrice + capSizePrice + lengthPrice + densityPrice + lacePrice + texturePrice + colorPrice + hairlinePrice + stylingPrice + addOnsPrice;
-      
-      const cartItem = {
-        id: `blanco-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        name: 'BLANCO',
-        price: totalPrice,
-        quantity: quantity,
-        image: '/assets/NOIR/blanco-thumb.png',
-        capSize: capSize,
-        capSizePrice: capSizePrice,
-        length: defaultLength,
-        density: defaultDensity,
-        color: defaultColor,
-        texture: defaultTexture,
-        lace: defaultLace,
-        hairline: defaultHairline,
-        styling: defaultStyling,
-        partSelection: localStorage.getItem('selectedPartSelection') || 'MIDDLE',
-        addOns: defaultAddOns
-      };
-      
-      // Add new item at the beginning (newest first)
-      const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      const updatedCartItems = [cartItem, ...existingCartItems];
-      localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
-      
-      const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
-      const newCount = currentCount + quantity;
-      localStorage.setItem('cartCount', newCount.toString());
-      setCartCount(newCount);
-      
-      window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
-      window.dispatchEvent(new CustomEvent('cartUpdated'));
-      
-      setAddToBagState('added');
-    } catch (error) {
-      console.error('Error adding to bag:', error);
-      setAddToBagState('idle');
-    }
-  };
-
   const totalPrice = getTotalPrice();
 
   return (
@@ -753,10 +599,11 @@ function BlancoSelection() {
           backgroundRepeat: 'no-repeat',
           backgroundAttachment: 'fixed'
         }}
-      />
+      ></div>
       
       {/* Scrollable Content */}
       <div className="relative z-10">
+        {/* MAIN CONTENT */}
         <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible' }}>
           {/* HEADER */}
           <div
@@ -785,35 +632,41 @@ function BlancoSelection() {
                 />
               </button>
             </div>
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
               <span 
-                style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                onClick={() => navigate('/units/straight')}
+                  style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
+                  onClick={() => navigate('/lobby')}
               >
-                STRAIGHT &gt;
-              </span>{' '}
-              <span
-                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
+                HOME
+              </span>
+              {' / '}
+              <span 
+                  style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
+                  onClick={() => navigate('/units/straight')}
               >
+                STRAIGHT
+              </span>
+              {' / '}
+              <span style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400' }}>
                 BLANCO
               </span>
             </p>
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
-              <div>
-                <DynamicCartIcon count={cartCount} width={22} height={19} />
+              <div style={{ position: 'relative', width: '22px', height: '19px' }}>
+                <img 
+                  src="/assets/inactive cart-icon.svg"
+                  alt="Cart"
+                  width={22}
+                  height={19}
+                  style={{ width: '22px', height: '19px' }}
+                />
               </div>
-              <img
-                alt="Menu"
-                width="17"
-                height="18"
-                className="cursor-pointer"
-                src="/assets/menu-icon.svg"
-              />
             </div>
           </div>
+        </div>
 
-          {/* MAIN BUILD AREA */}
-          <div
+        {/* MAIN BUILD AREA */}
+        <div
             className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
             style={{ 
               borderWidth: '1.3px', 
@@ -822,35 +675,8 @@ function BlancoSelection() {
               overflow: 'visible',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-              willChange: 'backdrop-filter',
-              paddingBottom: '34px'
             }}
           >
-            {/* WIG PREVIEW */}
-            <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column', marginBottom: '24px', transform: 'translateY(20px)', overflow: 'visible', minWidth: '100%', maxWidth: 'none' }}>
-              {/* ADD TO WISHLIST & 2D/3D VIEW TOGGLE */}
-              <div style={{ position: 'relative', width: '100%', marginBottom: '10px', transform: 'translateY(-31px)' }}>
-                {/* ADD TO WISHLIST - Top Left */}
-                <p 
-                  onClick={handleToggleWishlist}
-                  style={{ 
-                    position: 'absolute', 
-                    left: '8px', 
-                    top: '2px', 
-                    color: '#909090', 
-                    fontFamily: '"Futura PT Demi"',
-                    fontSize: '10px',
-                    fontWeight: '600',
-                    margin: '0',
-                    cursor: 'pointer',
-                    userSelect: 'none'
-                  }}
-                >
-                  {isInWishlist ? '- REMOVE FROM WISHLIST' : '+ ADD TO WISHLIST'}
-                </p>
-                
-                {/* 2D VIEW/3D VIEW TOGGLE - Top Right */}
                 <div 
                   style={{ 
                     position: 'absolute', 
@@ -1341,8 +1167,8 @@ function BlancoSelection() {
                 />
               </div>
 
-              {/* CHART MODAL - Rendered via Portal */}
-              {showChartModal && createPortal(
+              {/* CHART MODAL */}
+              {showChartModal && (
                 <div 
                   style={{
                     position: 'fixed',
@@ -1385,8 +1211,7 @@ function BlancoSelection() {
                       }}
                     />
                   </div>
-                </div>,
-                document.body
+                </div>
               )}
             </div>
 
@@ -1633,37 +1458,38 @@ function BlancoSelection() {
               </div>
             </div>
           </div>
+        </div>
 
-          {/* ADD TO BAG BUTTON */}
-          <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
-            <button
-              onClick={handleAddToBag}
-              disabled={addToBagState === 'adding'}
-              className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
-                addToBagState === 'adding' ? 'bg-white cursor-not-allowed' : 
-                addToBagState === 'added' ? 'bg-white cursor-pointer' : 'bg-white cursor-pointer hover:bg-gray-50'
-              }`}
-              style={{ 
-                borderWidth: '1.3px', 
-                color: '#EB1C24',
-                fontFamily: '"Futura PT Medium"',
-                backgroundColor: '#FFFFFF'
-              }}
-            >
-              {addToBagState === 'idle' && 'ADD TO BAG'}
-              {addToBagState === 'adding' && 'ADDING...'}
-              {addToBagState === 'added' && (
-                <span className="flex items-center justify-center gap-1">
-                  <img src="/assets/check.svg" alt="Check" width="9" height="9" />
-                  <span style={{ color: '#909090' }}>IN THE BAG</span>
-                </span>
-              )}
-            </button>
-          </div>
+        {/* ADD TO BAG BUTTON */}
+        <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
+          <button
+            onClick={handleAddToBag}
+            disabled={addToBagState === 'adding'}
+            className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
+              addToBagState === 'adding' ? 'bg-white cursor-not-allowed' : 
+              addToBagState === 'added' ? 'bg-white cursor-pointer' : 'bg-white cursor-pointer hover:bg-gray-50'
+            }`}
+            style={{ 
+              borderWidth: '1.3px', 
+              color: '#EB1C24',
+              fontFamily: '"Futura PT Medium"',
+              backgroundColor: '#FFFFFF'
+            }}
+          >
+            {addToBagState === 'idle' && 'ADD TO BAG'}
+            {addToBagState === 'adding' && 'ADDING...'}
+            {addToBagState === 'added' && (
+              <span className="flex items-center justify-center gap-1">
+                <img src="/assets/check.svg" alt="Check" width="9" height="9" />
+                <span style={{ color: '#909090' }}>IN THE BAG</span>
+              </span>
+            )}
+          </button>
+        </div>
 
-          {/* CUSTOMIZE IN BUILD-A-WIG BUTTON */}
-          <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
-            <button
+        {/* CUSTOMIZE IN BUILD-A-WIG BUTTON */}
+        <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
+          <button
               onClick={() => {
                 // Store the selected cap size in localStorage for customize page
                 // Save to both selectedCapSize and customizeSelectedCapSize for consistency
@@ -1742,15 +1568,17 @@ function BlancoSelection() {
                 color: '#EB1C24',
                 fontFamily: '"Futura PT Medium"'
               }}
-            >
-              CUSTOMIZE IN BUILD-A-WIG
-            </button>
-          </div>
+          >
+            CUSTOMIZE IN BUILD-A-WIG
+          </button>
+        </div>
 
-          {/* SIMILAR PRODUCTS SECTION */}
-          <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
+        {/* SIMILAR PRODUCTS SECTION */}
+        <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
             <div style={{ 
-              border: '1.3px solid black', 
+              borderWidth: '1.3px',
+              borderStyle: 'solid',
+              borderColor: 'black',
               backgroundColor: 'rgba(255, 255, 255, 0.6)', 
               backdropFilter: 'blur(10px)',
               padding: '0px',
@@ -2177,8 +2005,8 @@ function BlancoSelection() {
           </div>
         </div>
 
-          {/* RECENTLY VIEWED SECTION */}
-          <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
+        {/* RECENTLY VIEWED SECTION */}
+        <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
             <div style={{ 
               border: '1.3px solid black', 
               backgroundColor: 'rgba(255, 255, 255, 0.6)', 

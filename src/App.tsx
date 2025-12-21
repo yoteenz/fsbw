@@ -23,7 +23,7 @@ const AdminMeetings = lazy(() => import('./pages/admin/meetings/page'));
 const AdminPending = lazy(() => import('./pages/admin/pending/page'));
 const AdminRevenue = lazy(() => import('./pages/admin/revenue/page'));
 const AdminReviews = lazy(() => import('./pages/admin/reviews/page'));
-const NoirUnitPage = lazy(() => import('./pages/build-a-wig/units/noir/page'));
+const NoirUnitPage = lazy(() => import('./pages/straight/noir/page'));
 const BlancoUnitPage = lazy(() => import('./pages/straight/blanco/page'));
 const SoftCurlUnitPage = lazy(() => import('./pages/curly/soft-curl/page'));
 const SoftWaveUnitPage = lazy(() => import('./pages/wavy/soft-wave/page'));

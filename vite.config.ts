@@ -17,6 +17,8 @@ export default defineConfig({
     hmr: {
       clientPort: 3001,
     },
+    // Ensure SPA routing works - all routes serve index.html
+    middlewareMode: false,
   },
   logLevel: 'info',
   clearScreen: false,

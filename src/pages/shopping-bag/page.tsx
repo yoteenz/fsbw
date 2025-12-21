@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
@@ -19,6 +19,8 @@ function ShoppingBagPage() {
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [deleteItemConfirm, setDeleteItemConfirm] = useState<{ itemId: string; type: 'cart' | 'saved'; previousQuantity?: number } | null>(null);
+  const deleteTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Currency state - load from localStorage on mount
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -177,25 +179,77 @@ function ShoppingBagPage() {
 
   const handleQuantityChange = (itemId: string, delta: number) => {
     try {
+      const currentItem = cartItems.find(i => i.id === itemId);
+      if (!currentItem) return;
+      
+      const currentQty = currentItem.quantity ?? 0;
+      const newQty = currentQty + delta;
+      
+      // If trying to go below 0, show confirmation to delete immediately
+      if (newQty < 0) {
+        // Clear any existing timeout
+        if (deleteTimeoutRef.current) {
+          clearTimeout(deleteTimeoutRef.current);
+          deleteTimeoutRef.current = null;
+        }
+        setDeleteItemConfirm({ itemId, type: 'cart' });
+        return;
+      }
+      
       const newItems = cartItems.map(i => {
         if (i.id === itemId) {
-          const newQty = Math.max(1, Math.min(10, (i.quantity || 1) + delta));
-          return { ...i, quantity: newQty };
+          return { ...i, quantity: Math.max(0, Math.min(10, newQty)) };
         }
         return i;
       });
       setCartItems(newItems);
       localStorage.setItem('cartItems', JSON.stringify(newItems));
       
-      // Update cart count
-      const newCount = newItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
+      // Update cart count (treat 0 as 0, not 1)
+      const newCount = newItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 0), 0);
       localStorage.setItem('cartCount', newCount.toString());
       setCartCount(newCount);
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
+      
+      // If quantity becomes 0, set timeout to show popup after 400ms
+      if (newQty === 0) {
+        // Clear any existing timeout
+        if (deleteTimeoutRef.current) {
+          clearTimeout(deleteTimeoutRef.current);
+        }
+        deleteTimeoutRef.current = setTimeout(() => {
+          setDeleteItemConfirm({ itemId, type: 'cart', previousQuantity: currentQty });
+          deleteTimeoutRef.current = null;
+        }, 400);
+      } else {
+        // If quantity is not 0, clear any pending timeout
+        if (deleteTimeoutRef.current) {
+          clearTimeout(deleteTimeoutRef.current);
+          deleteTimeoutRef.current = null;
+        }
+      }
     } catch (e) {
       console.error('Error updating quantity:', e);
     }
+  };
+
+  const confirmDeleteItem = () => {
+    if (!deleteItemConfirm) return;
+    
+    // Clear any pending timeout
+    if (deleteTimeoutRef.current) {
+      clearTimeout(deleteTimeoutRef.current);
+      deleteTimeoutRef.current = null;
+    }
+    
+    if (deleteItemConfirm.type === 'cart') {
+      handleRemoveItem(deleteItemConfirm.itemId);
+    } else {
+      handleRemoveFromSaved(deleteItemConfirm.itemId);
+    }
+    
+    setDeleteItemConfirm(null);
   };
 
   const handleRemoveItem = (itemId: string) => {
@@ -268,6 +322,56 @@ function ShoppingBagPage() {
       localStorage.setItem('savedForLater', JSON.stringify(newSavedForLater));
     } catch (e) {
       console.error('Error removing from saved:', e);
+    }
+  };
+
+  const handleSavedQuantityChange = (itemId: string, delta: number) => {
+    try {
+      const currentItem = savedForLater.find(i => i.id === itemId);
+      if (!currentItem) return;
+      
+      const currentQty = currentItem.quantity ?? 0;
+      const newQty = currentQty + delta;
+      
+      // If trying to go below 0, show confirmation to delete immediately
+      if (newQty < 0) {
+        // Clear any existing timeout
+        if (deleteTimeoutRef.current) {
+          clearTimeout(deleteTimeoutRef.current);
+          deleteTimeoutRef.current = null;
+        }
+        setDeleteItemConfirm({ itemId, type: 'saved', previousQuantity: currentQty });
+        return;
+      }
+      
+      const newSavedForLater = savedForLater.map(i => {
+        if (i.id === itemId) {
+          return { ...i, quantity: Math.max(0, Math.min(10, newQty)) };
+        }
+        return i;
+      });
+      setSavedForLater(newSavedForLater);
+      localStorage.setItem('savedForLater', JSON.stringify(newSavedForLater));
+      
+      // If quantity becomes 0, set timeout to show popup after 400ms
+      if (newQty === 0) {
+        // Clear any existing timeout
+        if (deleteTimeoutRef.current) {
+          clearTimeout(deleteTimeoutRef.current);
+        }
+        deleteTimeoutRef.current = setTimeout(() => {
+          setDeleteItemConfirm({ itemId, type: 'saved', previousQuantity: currentQty });
+          deleteTimeoutRef.current = null;
+        }, 400);
+      } else {
+        // If quantity is not 0, clear any pending timeout
+        if (deleteTimeoutRef.current) {
+          clearTimeout(deleteTimeoutRef.current);
+          deleteTimeoutRef.current = null;
+        }
+      }
+    } catch (e) {
+      console.error('Error updating saved item quantity:', e);
     }
   };
 
@@ -783,27 +887,28 @@ function ShoppingBagPage() {
                       const itemLength = item.length || '24"';
                       const itemHairOrigin = getHairOrigin(itemName);
                       const itemPrice = item.price || 580;
-                      const itemQuantity = item.quantity || 1;
+                      const itemQuantity = item.quantity ?? 0;
 
                        const isLastItem = index === cartItems.length - 1;
                        return (
                          <div
                            key={itemId}
-                           className="flex items-center justify-start space-x-3 pt-1 pb-4"
+                           className="flex items-center justify-start space-x-3"
                            style={{
                              minHeight: '80px',
-                             paddingBottom: '16px',
+                             paddingTop: '20px',
+                             paddingBottom: '20px',
                              borderBottom: isLastItem ? 'none' : '1px solid #e5e7eb',
                              width: '100%',
                              flexShrink: 0
                            }}
                          >
                           {/* Thumbnail Container - Matching cart dropdown */}
-                          <div className="flex flex-col items-center" style={{ flexShrink: 0 }}>
+                          <div className="flex flex-col items-center justify-center" style={{ flexShrink: 0, width: '88px' }}>
                             {/* Item Image */}
                             <div 
                               className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-                              style={{ width: '88px', height: '88px' }}
+                              style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
                               onClick={() => {
                                 // Determine the correct product page route based on item name
                                 let productRoute = '/straight/noir';
@@ -829,7 +934,7 @@ function ShoppingBagPage() {
                                 src={itemImage}
                                 alt={itemName}
                                 className="object-cover rounded"
-                                style={{ width: '88px', height: '88px' }}
+                                style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
                               />
                             </div>
                             
@@ -853,7 +958,7 @@ function ShoppingBagPage() {
                           </div>
 
                           {/* Item Details - Matching cart dropdown */}
-                          <div className="flex-1 min-w-0 flex flex-col" style={{ marginLeft: '18px', marginTop: '4px' }}>
+                          <div className="flex-1 min-w-0 flex flex-col relative justify-center" style={{ marginLeft: '18px' }}>
                             <p 
                               className="font-medium truncate cart-product-name"
                               style={{ 
@@ -864,10 +969,12 @@ function ShoppingBagPage() {
                                   if (item.name === 'BLANCO' || item.name === 'SOFT CURL' || item.name === 'SOFT WAVE') {
                                     return '18px';
                                   }
+                                  if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
+                                    return '19px'; // Decreased by 2px for GIFT CARD
+                                  }
                                   return '21px';
                                 })(),
                                 lineHeight: '1.1',
-                                transform: 'translateY(-9px)',
                                 margin: '0'
                               }}
                             >
@@ -880,8 +987,7 @@ function ShoppingBagPage() {
                                 color: '#EB1C24',
                                 textTransform: 'uppercase',
                                 fontSize: '9px',
-                                marginTop: '-5px',
-                                transform: 'translateY(-1px)',
+                                marginTop: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '2px' : '1px',
                                 lineHeight: '1.1',
                                 marginBottom: '0'
                               }}
@@ -900,7 +1006,24 @@ function ShoppingBagPage() {
                                 color: '#000000',
                                 textTransform: 'uppercase',
                                 fontSize: '9px',
-                                marginTop: '1px',
+                                marginTop: (() => {
+                                  // Check if there's detail text (specifications)
+                                  const hasSpecs = (item.density && item.density !== '200%') || 
+                                                 (item.lace && item.lace !== '13X6') || 
+                                                 (item.texture && item.texture !== 'SILKY') || 
+                                                 (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
+                                                 (item.hairline && item.hairline !== 'NATURAL') || 
+                                                 (item.styling && item.styling !== 'NONE') || 
+                                                 (item.addOns && item.addOns.length > 0) ||
+                                                 (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
+                                                 (item.length && item.length !== '24"');
+                                  // Gift cards and BLANCO with no detail text should have reduced spacing
+                                  const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+                                  const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
+                                  if (isGiftCard || isBlancoNoSpecs) return '1px';
+                                  if (!hasSpecs) return '2px';
+                                  return '5px'; // Increased from 3px to center vertically between gray lines
+                                })(),
                                 marginRight: '20px',
                                 lineHeight: '1.44',
                                 wordBreak: 'break-word',
@@ -945,60 +1068,177 @@ function ShoppingBagPage() {
                                     if (idx > 0) {
                                       text += '<br/>';
                                     }
-                                    text += itemData.fullName;
+                                    
+                                    // Handle addOns specially - each addOn on its own line
+                                    if (itemData.type === 'addOns') {
+                                      if (Array.isArray(itemData.value)) {
+                                        itemData.value.forEach((addOn: string, addOnIndex: number) => {
+                                          if (addOnIndex > 0) {
+                                            text += '<br/>';
+                                          }
+                                          // Replace "BLEACH" with "BLEACH KNOTS" for display
+                                          const addOnText = addOn.toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS');
+                                          text += addOnText;
+                                        });
+                                      } else {
+                                        // Handle single string case
+                                        const addOnText = String(itemData.value).toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS');
+                                        text += addOnText;
+                                      }
+                                    } else {
+                                      text += itemData.fullName;
+                                    }
                                   });
                                   
                                   return text || '';
                                 })()
                               }}
                             />
-
+                            {item.capSize && (
+                              <p 
+                                className="font-semibold"
+                                style={{ 
+                                  fontFamily: '"Futura PT Medium"',
+                                  color: '#808080',
+                                  textTransform: 'uppercase',
+                                  fontSize: '10px',
+                                  marginTop: (() => {
+                                    // Check if there's black detail text (specifications)
+                                    const hasSpecs = (item.density && item.density !== '200%') || 
+                                                   (item.lace && item.lace !== '13X6') || 
+                                                   (item.texture && item.texture !== 'SILKY') || 
+                                                   (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
+                                                   (item.hairline && item.hairline !== 'NATURAL') || 
+                                                   (item.styling && item.styling !== 'NONE') || 
+                                                   (item.addOns && item.addOns.length > 0);
+                                    const isBlanco = item.name === 'BLANCO';
+                                    let baseMargin = hasSpecs ? '4px' : '2px';
+                                    // Move BLANCO cap size up by 3px total (2px + 1px)
+                                    if (isBlanco) {
+                                      const numValue = parseInt(baseMargin);
+                                      return `${Math.max(0, numValue - 3)}px`;
+                                    }
+                                    return baseMargin;
+                                  })(),
+                                  lineHeight: '1.1',
+                                  marginBottom: '0'
+                                }}
+                              >
+                                CAP SIZE: {item.capSize}
+                              </p>
+                            )}
                             <p
                               style={{
                                 fontFamily: '"Futura PT Book"',
                                 color: '#000000',
-                                fontSize: '14px',
-                                margin: '0 0 12px 0',
-                                fontWeight: '500'
+                                fontSize: '12px',
+                                marginTop: item.name === 'BLANCO' ? '0px' : '2px',
+                                marginBottom: '12px',
+                                marginLeft: '0',
+                                marginRight: '0',
+                                fontWeight: '600'
                               }}
                               dangerouslySetInnerHTML={formatPrice(itemPrice)}
                             />
 
-                            {/* Actions */}
-                            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '30.5px' }}>
-                                <button
-                                  onClick={() => handleSaveForLater(item)}
-                                  style={{
-                                    fontFamily: '"Futura PT Book"',
-                                    fontSize: '8px',
-                                    color: '#909090',
-                                    background: 'none',
-                                    border: 'none',
-                                    cursor: 'pointer',
-                                    padding: '0',
-                                    textTransform: 'uppercase'
+                            {/* Quantity Counter with Save For Later */}
+                            <div className="flex flex-col items-center justify-center absolute" style={{ right: '8px', top: '0', bottom: '0', marginLeft: 'auto' }}>
+                              <span
+                                style={{
+                                  fontFamily: '"Futura PT Medium"',
+                                  fontSize: '9px',
+                                  color: '#EB1C24',
+                                  textTransform: 'uppercase',
+                                  marginBottom: '6px'
+                                }}
+                              >
+                                + LIST
+                              </span>
+                              <div className="flex items-center">
+                                <button 
+                                  onClick={() => handleQuantityChange(itemId, -1)}
+                                  className="px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-minus-btn flex items-center justify-center cursor-pointer"
+                                  style={{ 
+                                    borderTop: '1.3px solid black !important',
+                                    borderLeft: '1.3px solid black !important', 
+                                    borderBottom: '1.3px solid black !important',
+                                    borderRight: 'none !important',
+                                    height: '20.25px',
+                                    minHeight: '20.25px',
+                                    maxHeight: '20.25px',
+                                    boxSizing: 'border-box',
+                                    outline: 'none',
+                                    border: 'none !important',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
                                   }}
-                                  type="button"
                                 >
-                                  SAVE FOR LATER
+                                  <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px' }}>-</span>
                                 </button>
-                                <button
-                                  onClick={() => handleRemoveItem(itemId)}
-                                  style={{
-                                    fontFamily: '"Futura PT Book"',
-                                    fontSize: '8px',
-                                    color: '#909090',
-                                    background: 'none',
-                                    border: 'none',
-                                    cursor: 'pointer',
-                                    padding: '0',
-                                    textTransform: 'uppercase'
+                                <div 
+                                  className="px-3 py-0.5 text-black bg-white flex items-center justify-center relative quantity-number" 
+                                  style={{ 
+                                    borderTop: '1.3px solid black !important',
+                                    borderBottom: '1.3px solid black !important',
+                                    borderLeft: 'none !important',
+                                    borderRight: 'none !important',
+                                    fontFamily: '"Futura PT Medium"', 
+                                    fontWeight: '500', 
+                                    fontSize: '9px', 
+                                    height: '20.25px',
+                                    minHeight: '20.25px',
+                                    maxHeight: '20.25px',
+                                    boxSizing: 'border-box',
+                                    border: 'none !important'
                                   }}
-                                  type="button"
                                 >
-                                  DELETE
+                                  <div className="absolute left-0 top-0 bottom-0 w-px bg-black"></div>
+                                  <div className="absolute right-0 top-0 bottom-0 w-px bg-black"></div>
+                                  {itemQuantity}
+                                </div>
+                                <button 
+                                  onClick={() => handleQuantityChange(itemId, 1)}
+                                  disabled={itemQuantity >= 10}
+                                  className={`px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-plus-btn flex items-center justify-center ${itemQuantity >= 10 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                  style={{ 
+                                    borderTop: '1.3px solid black !important',
+                                    borderRight: '1.3px solid black !important',
+                                    borderBottom: '1.3px solid black !important',
+                                    borderLeft: 'none !important',
+                                    height: '20.25px',
+                                    minHeight: '20.25px',
+                                    maxHeight: '20.25px',
+                                    boxSizing: 'border-box',
+                                    outline: 'none',
+                                    border: 'none !important',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                  }}
+                                >
+                                  <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px' }}>+</span>
                                 </button>
                               </div>
+                              <button
+                                onClick={() => handleSaveForLater(item)}
+                                style={{
+                                  fontFamily: '"Futura PT Demi"',
+                                  fontSize: '9px',
+                                  color: '#909090',
+                                  background: 'none',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  padding: '0',
+                                  textTransform: 'uppercase',
+                                  marginTop: '6px',
+                                  textAlign: 'center'
+                                }}
+                                type="button"
+                              >
+                                SAVE FOR LATER
+                              </button>
+                            </div>
                             </div>
                           </div>
                       );
@@ -1022,7 +1262,7 @@ function ShoppingBagPage() {
                        <p style={{
                          fontFamily: '"Futura PT Book"',
                          fontSize: '12px',
-                         fontWeight: '500',
+                         fontWeight: '600',
                          margin: '0'
                        }}>
                          SUBTOTAL:
@@ -1031,7 +1271,7 @@ function ShoppingBagPage() {
                          style={{
                            fontFamily: '"Futura PT Book"',
                            fontSize: '12px',
-                           fontWeight: '500',
+                           fontWeight: '600',
                            margin: '0'
                          }}
                          dangerouslySetInnerHTML={formatPrice(subtotal)}
@@ -1145,38 +1385,78 @@ function ShoppingBagPage() {
                   const itemLength = item.length || '24"';
                   const itemHairOrigin = getHairOrigin(itemName);
                   const itemPrice = item.price || 580;
+                  const itemQuantity = item.quantity ?? 0;
                   const isLastItem = index === savedForLater.length - 1;
 
                   return (
                     <div
                       key={itemId}
-                      className="flex items-center justify-start space-x-3 pt-1 pb-4"
+                      className="flex items-center justify-start space-x-3"
                       style={{
                         minHeight: '80px',
-                        paddingBottom: '16px',
+                        paddingTop: '20px',
+                        paddingBottom: '20px',
                         borderBottom: isLastItem ? 'none' : '1px solid #e5e7eb',
                         width: '100%',
                         flexShrink: 0
                       }}
                     >
                       {/* Thumbnail Container - Matching cart dropdown */}
-                      <div className="flex flex-col items-center" style={{ flexShrink: 0 }}>
+                      <div className="flex flex-col items-center justify-center" style={{ flexShrink: 0, width: '88px' }}>
                         {/* Item Image */}
                         <div 
                           className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-                          style={{ width: '88px', height: '88px' }}
+                          style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
+                          onClick={() => {
+                            // Determine the correct product page route based on item name
+                            let productRoute = '/straight/noir';
+                            if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
+                              productRoute = '/tools/gift-card';
+                            } else if (item.name === 'NOIR') {
+                              productRoute = '/straight/noir';
+                            } else if (item.name === 'BLANCO') {
+                              productRoute = '/straight/blanco';
+                            } else if (item.name === 'SOFT WAVE') {
+                              productRoute = '/wavy/soft-wave';
+                            } else if (item.name === 'SOFT CURL') {
+                              productRoute = '/curly/soft-curl';
+                            } else if (item.name === 'BEACH WAVE') {
+                              productRoute = '/wavy/beach-wave';
+                            } else if (item.name === 'OCEAN CURL') {
+                              productRoute = '/curly/ocean-curl';
+                            }
+                            navigate(productRoute);
+                          }}
                         >
                           <img
                             src={itemImage}
                             alt={itemName}
                             className="object-cover rounded"
-                            style={{ width: '88px', height: '88px' }}
+                            style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
                           />
                         </div>
+                        
+                        {/* EDIT IN BUILD-A-WIG text - Only show for units, not gift cards */}
+                        {!(item.name === 'GIFT CARD' || item.type === 'gift-card') && (
+                          <p 
+                            className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
+                            style={{ 
+                              fontFamily: '"Futura PT Book"',
+                              color: '#EB1C24',
+                              textTransform: 'uppercase',
+                              fontSize: '8px',
+                              marginTop: '6px',
+                              lineHeight: '1.1'
+                            }}
+                            onClick={() => handleEdit(item)}
+                          >
+                            EDIT IN BUILD-A-WIG
+                          </p>
+                        )}
                       </div>
 
                       {/* Product Details */}
-                      <div className="flex-1 min-w-0 flex flex-col" style={{ marginLeft: '18px', marginTop: '4px' }}>
+                      <div className="flex-1 min-w-0 flex flex-col relative justify-center" style={{ marginLeft: '18px' }}>
                          <p 
                            className="font-medium truncate cart-product-name"
                            style={{ 
@@ -1187,10 +1467,12 @@ function ShoppingBagPage() {
                                if (item.name === 'BLANCO' || item.name === 'SOFT CURL' || item.name === 'SOFT WAVE') {
                                  return '18px';
                                }
+                               if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
+                                 return '19px'; // Decreased by 2px for GIFT CARD
+                               }
                                return '21px';
                              })(),
                              lineHeight: '1.1',
-                             transform: 'translateY(-9px)',
                              margin: '0'
                            }}
                          >
@@ -1203,8 +1485,7 @@ function ShoppingBagPage() {
                              color: '#EB1C24',
                              textTransform: 'uppercase',
                              fontSize: '9px',
-                             marginTop: '-5px',
-                             transform: 'translateY(-1px)',
+                             marginTop: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '2px' : '1px',
                              lineHeight: '1.1',
                              marginBottom: '0'
                            }}
@@ -1223,7 +1504,24 @@ function ShoppingBagPage() {
                              color: '#000000',
                              textTransform: 'uppercase',
                              fontSize: '9px',
-                             marginTop: '1px',
+                             marginTop: (() => {
+                               // Check if there's detail text (specifications)
+                               const hasSpecs = (item.density && item.density !== '200%') || 
+                                              (item.lace && item.lace !== '13X6') || 
+                                              (item.texture && item.texture !== 'SILKY') || 
+                                              (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
+                                              (item.hairline && item.hairline !== 'NATURAL') || 
+                                              (item.styling && item.styling !== 'NONE') || 
+                                              (item.addOns && item.addOns.length > 0) ||
+                                              (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
+                                              (item.length && item.length !== '24"');
+                               // Gift cards and BLANCO with no detail text should have reduced spacing
+                               const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+                               const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
+                               if (isGiftCard || isBlancoNoSpecs) return '1px';
+                               if (!hasSpecs) return '2px';
+                               return '5px'; // Increased from 3px to center vertically between gray lines
+                             })(),
                              marginRight: '20px',
                              lineHeight: '1.44',
                              wordBreak: 'break-word',
@@ -1237,9 +1535,7 @@ function ShoppingBagPage() {
                                if (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) {
                                  items.push({ type: 'capSize', value: item.capSize, fullName: 'FLEX CAP' });
                                }
-                               if (item.length && item.length !== '24"') {
-                                 items.push({ type: 'length', value: item.length, fullName: item.length });
-                               }
+                               // Length is already shown in the red text above, so don't duplicate it here
                                if (item.density && item.density !== '200%') items.push({ type: 'density', value: item.density, fullName: `${item.density} density` });
                                if (item.lace && item.lace !== '13X6') items.push({ type: 'lace', value: item.lace, fullName: `${item.lace} lace` });
                                let itemColor = item.color;
@@ -1261,58 +1557,176 @@ function ShoppingBagPage() {
                                  if (idx > 0) {
                                    text += '<br/>';
                                  }
-                                 text += itemData.fullName;
+                                 
+                                 // Handle addOns specially - each addOn on its own line
+                                 if (itemData.type === 'addOns') {
+                                   if (Array.isArray(itemData.value)) {
+                                     itemData.value.forEach((addOn: string, addOnIndex: number) => {
+                                       if (addOnIndex > 0) {
+                                         text += '<br/>';
+                                       }
+                                       // Replace "BLEACH" with "BLEACH KNOTS" for display
+                                       const addOnText = addOn.toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS');
+                                       text += addOnText;
+                                     });
+                                   } else {
+                                     // Handle single string case
+                                     const addOnText = String(itemData.value).toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS');
+                                     text += addOnText;
+                                   }
+                                 } else {
+                                   text += itemData.fullName;
+                                 }
                                });
                                return text || '';
                              })()
                            }}
                          />
+                         {item.capSize && (
+                           <p 
+                             className="font-semibold"
+                             style={{ 
+                               fontFamily: '"Futura PT Medium"',
+                               color: '#808080',
+                               textTransform: 'uppercase',
+                               fontSize: '10px',
+                               marginTop: (() => {
+                                 // Check if there's black detail text (specifications)
+                                 const hasSpecs = (item.density && item.density !== '200%') || 
+                                                (item.lace && item.lace !== '13X6') || 
+                                                (item.texture && item.texture !== 'SILKY') || 
+                                                (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
+                                                (item.hairline && item.hairline !== 'NATURAL') || 
+                                                (item.styling && item.styling !== 'NONE') || 
+                                                (item.addOns && item.addOns.length > 0);
+                                 const isBlanco = item.name === 'BLANCO';
+                                 let baseMargin = hasSpecs ? '4px' : '2px';
+                                 // Move BLANCO cap size up by 3px total (2px + 1px)
+                                 if (isBlanco) {
+                                   const numValue = parseInt(baseMargin);
+                                   return `${Math.max(0, numValue - 3)}px`;
+                                 }
+                                 return baseMargin;
+                               })(),
+                               lineHeight: '1.1',
+                               marginBottom: '0'
+                             }}
+                           >
+                             CAP SIZE: {item.capSize}
+                           </p>
+                         )}
                          <p
                            style={{
                              fontFamily: '"Futura PT Book"',
                              color: '#000000',
-                             fontSize: '14px',
-                             margin: '0 0 12px 0',
-                             fontWeight: '500'
+                             fontSize: '12px',
+                             marginTop: item.name === 'BLANCO' ? '0px' : '2px',
+                             marginBottom: '12px',
+                             marginLeft: '0',
+                             marginRight: '0',
+                             fontWeight: '600'
                            }}
                            dangerouslySetInnerHTML={formatPrice(itemPrice)}
                          />
 
-                         {/* Actions */}
-                        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '8px' }}>
-                          <button
-                            onClick={() => handleMoveToCart(item)}
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '12px',
-                              color: '#909090',
-                              background: 'none',
-                              border: 'none',
-                              cursor: 'pointer',
-                              padding: '0',
-                              textTransform: 'uppercase'
-                            }}
-                            type="button"
-                          >
-                            MOVE TO CART
-                          </button>
-                          <button
-                            onClick={() => handleRemoveFromSaved(itemId)}
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '12px',
-                              color: '#909090',
-                              background: 'none',
-                              border: 'none',
-                              cursor: 'pointer',
-                              padding: '0',
-                              textTransform: 'uppercase'
-                            }}
-                            type="button"
-                          >
-                            DELETE
-                          </button>
-                        </div>
+                         {/* Quantity Counter */}
+                         <div className="flex flex-col items-center justify-center absolute" style={{ right: '8px', top: '0', bottom: '0', marginLeft: 'auto' }}>
+                           <span
+                             style={{
+                               fontFamily: '"Futura PT Medium"',
+                               fontSize: '9px',
+                               color: '#EB1C24',
+                               textTransform: 'uppercase',
+                               marginBottom: '6px'
+                             }}
+                           >
+                             + LIST
+                           </span>
+                           <div className="flex items-center">
+                             <button 
+                               onClick={() => handleSavedQuantityChange(itemId, -1)}
+                               className="px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-minus-btn flex items-center justify-center cursor-pointer"
+                               style={{ 
+                                 borderTop: '1.3px solid black !important',
+                                 borderLeft: '1.3px solid black !important', 
+                                 borderBottom: '1.3px solid black !important',
+                                 borderRight: 'none !important',
+                                 height: '20.25px',
+                                 minHeight: '20.25px',
+                                 maxHeight: '20.25px',
+                                 boxSizing: 'border-box',
+                                 outline: 'none',
+                                 border: 'none !important',
+                                 display: 'flex',
+                                 alignItems: 'center',
+                                 justifyContent: 'center'
+                               }}
+                             >
+                               <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px' }}>-</span>
+                             </button>
+                             <div 
+                               className="px-3 py-0.5 text-black bg-white flex items-center justify-center relative quantity-number" 
+                               style={{ 
+                                 borderTop: '1.3px solid black !important',
+                                 borderBottom: '1.3px solid black !important',
+                                 borderLeft: 'none !important',
+                                 borderRight: 'none !important',
+                                 fontFamily: '"Futura PT Medium"', 
+                                 fontWeight: '500', 
+                                 fontSize: '9px', 
+                                 height: '20.25px',
+                                 minHeight: '20.25px',
+                                 maxHeight: '20.25px',
+                                 boxSizing: 'border-box',
+                                 border: 'none !important'
+                               }}
+                             >
+                               <div className="absolute left-0 top-0 bottom-0 w-px bg-black"></div>
+                               <div className="absolute right-0 top-0 bottom-0 w-px bg-black"></div>
+                               {itemQuantity}
+                             </div>
+                             <button 
+                               onClick={() => handleSavedQuantityChange(itemId, 1)}
+                               disabled={itemQuantity >= 10}
+                               className={`px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-plus-btn flex items-center justify-center ${itemQuantity >= 10 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                               style={{ 
+                                 borderTop: '1.3px solid black !important',
+                                 borderRight: '1.3px solid black !important',
+                                 borderBottom: '1.3px solid black !important',
+                                 borderLeft: 'none !important',
+                                 height: '20.25px',
+                                 minHeight: '20.25px',
+                                 maxHeight: '20.25px',
+                                 boxSizing: 'border-box',
+                                 outline: 'none',
+                                 border: 'none !important',
+                                 display: 'flex',
+                                 alignItems: 'center',
+                                 justifyContent: 'center'
+                               }}
+                             >
+                               <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px' }}>+</span>
+                             </button>
+                           </div>
+                           <button
+                             onClick={() => handleMoveToCart(item)}
+                             style={{
+                               fontFamily: '"Futura PT Demi"',
+                               fontSize: '9px',
+                               color: '#909090',
+                               background: 'none',
+                               border: 'none',
+                               cursor: 'pointer',
+                               padding: '0',
+                               textTransform: 'uppercase',
+                               marginTop: '6px',
+                               textAlign: 'center'
+                             }}
+                             type="button"
+                           >
+                            MOVE TO BAG
+                           </button>
+                         </div>
                       </div>
                     </div>
                   );
@@ -1334,7 +1748,7 @@ function ShoppingBagPage() {
                     <p style={{
                       fontFamily: '"Futura PT Book"',
                       fontSize: '12px',
-                      fontWeight: '500',
+                      fontWeight: '600',
                       margin: '0'
                     }}>
                       SUBTOTAL:
@@ -1343,7 +1757,7 @@ function ShoppingBagPage() {
                       style={{
                         fontFamily: '"Futura PT Book"',
                         fontSize: '12px',
-                        fontWeight: '500',
+                        fontWeight: '600',
                         margin: '0'
                       }}
                       dangerouslySetInnerHTML={formatPrice(savedForLater.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0))}
@@ -1383,6 +1797,56 @@ function ShoppingBagPage() {
             confirmText="CONFIRM"
             cancelText="CANCEL"
             dataAttribute="clear-saved-items-confirm"
+          />
+
+          {/* Delete Item Confirmation Modal */}
+          <ConfirmationModal
+            isOpen={deleteItemConfirm !== null}
+            onClose={() => {
+              // Clear any pending timeout when closing
+              if (deleteTimeoutRef.current) {
+                clearTimeout(deleteTimeoutRef.current);
+                deleteTimeoutRef.current = null;
+              }
+              
+              // Restore previous quantity if it exists
+              if (deleteItemConfirm?.previousQuantity !== undefined) {
+                if (deleteItemConfirm.type === 'cart') {
+                  const newItems = cartItems.map(i => {
+                    if (i.id === deleteItemConfirm.itemId) {
+                      return { ...i, quantity: deleteItemConfirm.previousQuantity };
+                    }
+                    return i;
+                  });
+                  setCartItems(newItems);
+                  localStorage.setItem('cartItems', JSON.stringify(newItems));
+                  
+                  // Update cart count
+                  const newCount = newItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 0), 0);
+                  localStorage.setItem('cartCount', newCount.toString());
+                  setCartCount(newCount);
+                  window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+                  window.dispatchEvent(new CustomEvent('cartUpdated'));
+                } else {
+                  const newSavedForLater = savedForLater.map(i => {
+                    if (i.id === deleteItemConfirm.itemId) {
+                      return { ...i, quantity: deleteItemConfirm.previousQuantity };
+                    }
+                    return i;
+                  });
+                  setSavedForLater(newSavedForLater);
+                  localStorage.setItem('savedForLater', JSON.stringify(newSavedForLater));
+                }
+              }
+              
+              setDeleteItemConfirm(null);
+            }}
+            onConfirm={confirmDeleteItem}
+            title="REMOVE ITEM?"
+            message={deleteItemConfirm?.type === 'cart' ? "ARE YOU SURE YOU WANT TO REMOVE THIS ITEM FROM YOUR BAG?" : "ARE YOU SURE YOU WANT TO REMOVE THIS ITEM FROM SAVED?"}
+            confirmText="CONFIRM"
+            cancelText="CANCEL"
+            dataAttribute="delete-item-confirm"
           />
         </div>
       </div>

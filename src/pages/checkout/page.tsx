@@ -4,6 +4,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 
 function CheckoutPage() {
   const navigate = useNavigate();
+  const [cartItems, setCartItems] = useState<any[]>([]);
   const [cartCount, setCartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
@@ -49,6 +50,26 @@ function CheckoutPage() {
     MXN: { symbol: '&#36;', rate: 20.0, name: 'Mexican Peso' }
   }), []);
 
+  // Load cart items from localStorage
+  const loadCartItems = () => {
+    try {
+      const stored = localStorage.getItem('cartItems');
+      if (stored) {
+        const items = JSON.parse(stored);
+        if (Array.isArray(items)) {
+          setCartItems(items);
+        }
+      }
+    } catch (e) {
+      console.error('Error loading cart items:', e);
+      setCartItems([]);
+    }
+  };
+
+  useEffect(() => {
+    loadCartItems();
+  }, []);
+
   // Listen for cart count changes
   useEffect(() => {
     const handleCartCountUpdate = (event: CustomEvent) => {
@@ -59,6 +80,7 @@ function CheckoutPage() {
       try {
         const newCartCount = parseInt(localStorage.getItem('cartCount') || '0', 10);
         setCartCount(newCartCount);
+        loadCartItems();
       } catch (e) {
         setCartCount(0);
       }
@@ -162,7 +184,7 @@ function CheckoutPage() {
   };
 
   // Calculate order totals
-  const orderAmount = 1165;
+  const orderAmount = cartItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
   const taxesProcessing = 120;
   const shippingHandling = 50;
   const discount = 0;
@@ -577,6 +599,352 @@ function CheckoutPage() {
                     </span>
                   </div>
                 </div>
+
+                {/* SHOPPING BAG CARD */}
+                {cartItems.length > 0 && (
+                  <div
+                    className="border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm"
+                    style={{ 
+                      borderWidth: '1.3px', 
+                      minWidth: '100%', 
+                      maxWidth: 'none', 
+                      backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                      backdropFilter: 'blur(10px)',
+                      WebkitBackdropFilter: 'blur(10px)',
+                      willChange: 'backdrop-filter'
+                    }}
+                  >
+                    {/* Shopping Bag Header */}
+                    <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
+                      <button
+                        className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
+                        style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
+                      >
+                        SHOPPING BAG
+                      </button>
+                      <span
+                        className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
+                        style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '17px' }}
+                      >
+                        {cartItems.length}
+                      </span>
+                    </div>
+
+                    {/* Body */}
+                    <div className="flex-1 flex flex-col overflow-hidden mt-2">
+                      {/* Cart Items - scrollable */}
+                      <div className="flex flex-col justify-start items-start gap-0 my-2 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '265px', scrollBehavior: 'smooth', width: '100%' }}>
+                        {cartItems.map((item, index) => {
+                          const itemId = item.id || `cart-item-${index}`;
+                          const itemName = item.name || 'NOIR';
+                          
+                          // Get the correct image based on product name and hairline
+                          const getItemImage = () => {
+                            if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
+                              return '/assets/gift-card asset.png';
+                            }
+                            
+                            const hairline = item.hairline || 'NATURAL';
+                            const hairlineUpper = hairline.toUpperCase();
+                            const hasPeak = hairlineUpper.includes('PEAK');
+                            const hasLagos = hairlineUpper.includes('LAGOS');
+                            
+                            if (item.name === 'NOIR') {
+                              if (hasPeak) {
+                                return '/assets/noir-peak-thumb.png';
+                              } else if (hasLagos) {
+                                return '/assets/noir-lagos-thumb.png';
+                              }
+                              return item.image || '/assets/NOIR/noir-thumb.png';
+                            }
+                            
+                            return item.image || '/assets/NOIR/noir-thumb.png';
+                          };
+                          const itemImage = getItemImage();
+                          
+                          const getHairOrigin = (productName: string) => {
+                            switch (productName) {
+                              case 'NOIR':
+                                return 'CAMBODIAN';
+                              case 'BLANCO':
+                                return 'CAMBODIAN';
+                              case 'SOFT CURL':
+                                return 'VIETNAMESE';
+                              case 'OCEAN CURL':
+                                return 'FILIPINO';
+                              case 'SOFT WAVE':
+                                return 'INDIAN';
+                              case 'BEACH WAVE':
+                                return 'INDONESIAN';
+                              default:
+                                return 'CAMBODIAN';
+                            }
+                          };
+                          
+                          const itemLength = item.length || '24"';
+                          const itemHairOrigin = getHairOrigin(itemName);
+                          const itemPrice = item.price || 580;
+                          const itemQuantity = item.quantity ?? 0;
+                          const isLastItem = index === cartItems.length - 1;
+
+                          return (
+                            <div
+                              key={itemId}
+                              className="flex items-center justify-start space-x-3"
+                              style={{
+                                minHeight: '80px',
+                                paddingTop: '8px',
+                                paddingBottom: '8px',
+                                borderBottom: isLastItem ? 'none' : '1px solid #e5e7eb',
+                                width: '100%',
+                                flexShrink: 0
+                              }}
+                            >
+                              {/* Thumbnail Container */}
+                              <div className="flex flex-col items-center" style={{ flexShrink: 0, width: '88px' }}>
+                                <div 
+                                  className="flex items-center justify-center"
+                                  style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
+                                >
+                                  <img
+                                    src={itemImage}
+                                    alt={itemName}
+                                    className="object-cover rounded"
+                                    style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
+                                  />
+                                </div>
+                                
+                                {/* EDIT IN BUILD-A-WIG text - Only show for units, not gift cards */}
+                                {!(item.name === 'GIFT CARD' || item.type === 'gift-card') && (
+                                  <p 
+                                    className="font-bold text-center"
+                                    style={{ 
+                                      fontFamily: '"Futura PT Book"',
+                                      color: '#EB1C24',
+                                      textTransform: 'uppercase',
+                                      fontSize: '8px',
+                                      marginTop: '6px',
+                                      lineHeight: '1.1'
+                                    }}
+                                  >
+                                    EDIT IN BUILD-A-WIG
+                                  </p>
+                                )}
+                              </div>
+
+                              {/* Item Details */}
+                              <div className="flex-1 min-w-0 flex flex-col relative" style={{ marginLeft: '18px' }}>
+                                <p 
+                                  className="font-medium truncate cart-product-name"
+                                  style={{ 
+                                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                    color: '#000000',
+                                    textTransform: 'uppercase',
+                                    fontSize: (() => {
+                                      if (item.name === 'BLANCO' || item.name === 'SOFT CURL' || item.name === 'SOFT WAVE') {
+                                        return '18px';
+                                      }
+                                      if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
+                                        return '19px';
+                                      }
+                                      return '21px';
+                                    })(),
+                                    lineHeight: '1.1',
+                                    transform: 'translateY(-9px)',
+                                    margin: '0'
+                                  }}
+                                >
+                                  {itemName.replace(/WIG/gi, '').trim()}
+                                </p>
+                                <p 
+                                  className="font-bold"
+                                  style={{ 
+                                    fontFamily: '"Futura PT Book"',
+                                    color: '#EB1C24',
+                                    textTransform: 'uppercase',
+                                    fontSize: '9px',
+                                    marginTop: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '-2px' : '-3px',
+                                    transform: 'translateY(-1px)',
+                                    lineHeight: '1.1',
+                                    marginBottom: '0'
+                                  }}
+                                >
+                                  {(() => {
+                                    if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
+                                      return 'DIGITAL ONLY';
+                                    }
+                                    return `${itemLength} RAW ${itemHairOrigin}`;
+                                  })()}
+                                </p>
+                                <p 
+                                  className="font-bold"
+                                  style={{ 
+                                    fontFamily: '"Futura PT Book"',
+                                    color: '#000000',
+                                    textTransform: 'uppercase',
+                                    fontSize: '9px',
+                                    marginTop: (() => {
+                                      const hasSpecs = (item.density && item.density !== '200%') || 
+                                                     (item.lace && item.lace !== '13X6') || 
+                                                     (item.texture && item.texture !== 'SILKY') || 
+                                                     (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
+                                                     (item.hairline && item.hairline !== 'NATURAL') || 
+                                                     (item.styling && item.styling !== 'NONE') || 
+                                                     (item.addOns && item.addOns.length > 0) ||
+                                                     (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
+                                                     (item.length && item.length !== '24"');
+                                      const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+                                      const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
+                                      if (isGiftCard || isBlancoNoSpecs) return '1px';
+                                      if (!hasSpecs) return '2px';
+                                      return '3px';
+                                    })(),
+                                    marginRight: '20px',
+                                    lineHeight: '1.44',
+                                    wordBreak: 'break-word',
+                                    maxWidth: 'calc(100% - 20px)',
+                                    marginBottom: '0'
+                                  }}
+                                  dangerouslySetInnerHTML={{
+                                    __html: (() => {
+                                      let text = '';
+                                      const items = [];
+                                      if (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) {
+                                        items.push({ type: 'capSize', value: item.capSize, fullName: 'FLEX CAP' });
+                                      }
+                                      if (item.length && item.length !== '24"') {
+                                        items.push({ type: 'length', value: item.length, fullName: item.length });
+                                      }
+                                      if (item.density && item.density !== '200%') items.push({ type: 'density', value: item.density, fullName: `${item.density} density` });
+                                      if (item.lace && item.lace !== '13X6') items.push({ type: 'lace', value: item.lace, fullName: `${item.lace} lace` });
+                                      
+                                      let itemColor = item.color;
+                                      if (item.name === 'BLANCO') {
+                                        const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+                                        if (!itemColor || !validBlancoColors.includes(itemColor)) {
+                                          itemColor = 'PLATINUM';
+                                        }
+                                      }
+                                      const defaultColor = item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
+                                      if (itemColor && itemColor !== defaultColor) items.push({ type: 'color', value: itemColor, fullName: itemColor });
+                                      if (item.hairline && item.hairline !== 'NATURAL') items.push({ type: 'hairline', value: item.hairline, fullName: `${item.hairline} hairline` });
+                                      
+                                      const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
+                                      if (item.styling && item.styling !== 'NONE' && hairStylingOptions.includes(item.styling) && item.partSelection) {
+                                        items.push({ type: 'styling', value: item.styling, partSelection: item.partSelection, fullName: item.styling });
+                                      }
+                                      
+                                      if (item.addOns && item.addOns.length > 0) items.push({ type: 'addOns', value: item.addOns, fullName: item.addOns });
+                                      
+                                      items.forEach((itemData, idx) => {
+                                        if (idx > 0) {
+                                          text += '<br/>';
+                                        }
+                                        text += itemData.fullName;
+                                      });
+                                      
+                                      return text || '';
+                                    })()
+                                  }}
+                                />
+                                {item.capSize && (
+                                  <p 
+                                    className="font-semibold"
+                                    style={{ 
+                                      fontFamily: '"Futura PT Medium"',
+                                      color: '#808080',
+                                      textTransform: 'uppercase',
+                                      fontSize: '10px',
+                                      marginTop: (() => {
+                                        const hasSpecs = (item.density && item.density !== '200%') || 
+                                                       (item.lace && item.lace !== '13X6') || 
+                                                       (item.texture && item.texture !== 'SILKY') || 
+                                                       (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
+                                                       (item.hairline && item.hairline !== 'NATURAL') || 
+                                                       (item.styling && item.styling !== 'NONE') || 
+                                                       (item.addOns && item.addOns.length > 0) ||
+                                                       (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
+                                                       (item.length && item.length !== '24"');
+                                        const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+                                        const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
+                                        const isBlanco = item.name === 'BLANCO';
+                                        let baseMargin = hasSpecs && !isGiftCard && !isBlancoNoSpecs ? '4px' : '1px';
+                                        if (isBlanco) {
+                                          const numValue = parseInt(baseMargin);
+                                          return `${Math.max(0, numValue - 3)}px`;
+                                        }
+                                        return baseMargin;
+                                      })(),
+                                      lineHeight: '1.1',
+                                      marginBottom: '0'
+                                    }}
+                                  >
+                                    CAP SIZE: {item.capSize}
+                                  </p>
+                                )}
+                                <p
+                                  style={{
+                                    fontFamily: '"Futura PT Book"',
+                                    color: '#000000',
+                                    fontSize: '12px',
+                                    marginTop: item.name === 'BLANCO' ? '0px' : '2px',
+                                    marginBottom: '12px',
+                                    marginLeft: '0',
+                                    marginRight: '0',
+                                    fontWeight: '600'
+                                  }}
+                                  dangerouslySetInnerHTML={formatPrice(itemPrice)}
+                                />
+                                <div className="absolute" style={{ right: '8px', top: '0', bottom: '0', display: 'flex', alignItems: 'center' }}>
+                                  <span
+                                    style={{
+                                      fontFamily: '"Futura PT Medium"',
+                                      fontSize: '9px',
+                                      color: '#000000',
+                                      textTransform: 'uppercase'
+                                    }}
+                                  >
+                                    QTY: {itemQuantity}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Subtotal */}
+                    <div className="overflow-hidden mt-auto pt-2">
+                      <div style={{ 
+                        marginTop: '20px', 
+                        paddingTop: '20px', 
+                        borderTop: '1.3px solid #000',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                      }}>
+                        <p style={{
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          margin: '0'
+                        }}>
+                          SUBTOTAL:
+                        </p>
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            margin: '0'
+                          }}
+                          dangerouslySetInnerHTML={formatPrice(orderAmount)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* SHIPPING ADDRESS SECTION */}
                 <div>
