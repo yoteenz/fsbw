@@ -3323,8 +3323,6 @@ function NoirSelection() {
             </div>
           </div>
 
-          </div>
-
         </div>
 
         {/* ADD TO BAG BUTTON */}
@@ -4199,7 +4197,6 @@ function NoirSelection() {
               </button>
             </div>
           </div>
-          )}
           </div>
         </div>
       </div>
