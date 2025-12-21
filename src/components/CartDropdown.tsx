@@ -1235,8 +1235,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                                   // Use non-breaking spaces within add-on section
                                   const addOnPrice = _getAddOnsPrice([addOn], itemLace);
                                   const addOnPriceDisplay = formatPriceDisplay(addOnPrice);
-                                  // Replace "BLEACH" with "BLEACH KNOTS" for display
-                                  const addOnText = addOn.toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/ /g, '\u00A0');
+                                  // Replace "BLEACH" with "BLEACH KNOTS" and "PLUCK" with "PLUCK KNOTS" for display
+                                  const addOnText = addOn.toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/PLUCK/g, 'PLUCK KNOTS').replace(/ /g, '\u00A0');
                                   // Add line break before each add-on except the first (each on its own line)
                                   if (addOnIndex > 0) {
                                     text += '<br/>';
@@ -1247,8 +1247,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                                 // Handle single string case
                                 const addOnPrice = _getAddOnsPrice([String(itemData.value)], itemLace);
                                 const addOnPriceDisplay = formatPriceDisplay(addOnPrice);
-                                // Replace "BLEACH" with "BLEACH KNOTS" for display
-                                const addOnText = String(itemData.value).toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/ /g, '\u00A0');
+                                // Replace "BLEACH" with "BLEACH KNOTS" and "PLUCK" with "PLUCK KNOTS" for display
+                                const addOnText = String(itemData.value).toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/PLUCK/g, 'PLUCK KNOTS').replace(/ /g, '\u00A0');
                                 text += addOnText + addOnPriceDisplay;
                               }
                             }

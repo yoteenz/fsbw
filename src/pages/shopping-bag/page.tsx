@@ -555,8 +555,8 @@ function ShoppingBagPage() {
               </div>
               <img
                 alt="Menu"
-                width="21"
-                height="21"
+                width="17"
+                height="18"
                 className="cursor-pointer"
                 src="/assets/menu-icon.svg"
                 onClick={handleMobileMenuToggle}
@@ -1076,13 +1076,13 @@ function ShoppingBagPage() {
                                           if (addOnIndex > 0) {
                                             text += '<br/>';
                                           }
-                                          // Replace "BLEACH" with "BLEACH KNOTS" for display
-                                          const addOnText = addOn.toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS');
+                                          // Replace "BLEACH" with "BLEACH KNOTS" and "PLUCK" with "PLUCK KNOTS" for display
+                                          const addOnText = addOn.toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/PLUCK/g, 'PLUCK KNOTS');
                                           text += addOnText;
                                         });
                                       } else {
                                         // Handle single string case
-                                        const addOnText = String(itemData.value).toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS');
+                                        const addOnText = String(itemData.value).toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/PLUCK/g, 'PLUCK KNOTS');
                                         text += addOnText;
                                       }
                                     } else {
@@ -1565,13 +1565,13 @@ function ShoppingBagPage() {
                                        if (addOnIndex > 0) {
                                          text += '<br/>';
                                        }
-                                       // Replace "BLEACH" with "BLEACH KNOTS" for display
-                                       const addOnText = addOn.toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS');
+                                       // Replace "BLEACH" with "BLEACH KNOTS" and "PLUCK" with "PLUCK KNOTS" for display
+                                       const addOnText = addOn.toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/PLUCK/g, 'PLUCK KNOTS');
                                        text += addOnText;
                                      });
                                    } else {
                                      // Handle single string case
-                                     const addOnText = String(itemData.value).toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS');
+                                     const addOnText = String(itemData.value).toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/PLUCK/g, 'PLUCK KNOTS');
                                      text += addOnText;
                                    }
                                  } else {

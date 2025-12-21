@@ -159,6 +159,21 @@ function CheckoutPage() {
     };
   }, [currencyRates, selectedCurrency]);
 
+  const formatPriceWithoutCurrency = React.useCallback((price: number) => {
+    if (!price || isNaN(price)) {
+      const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+      return { __html: currency.symbol + '0' };
+    }
+    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+    const convertedPrice = price * currency.rate;
+    return {
+      __html: currency.symbol + convertedPrice.toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      })
+    };
+  }, [currencyRates, selectedCurrency]);
+
   const handleMobileMenuToggle = () => {
     setShowMobileMenu(!showMobileMenu);
   };
@@ -305,8 +320,8 @@ function CheckoutPage() {
               </div>
               <img
                 alt="Menu"
-                width="21"
-                height="21"
+                width="17"
+                height="18"
                 className="cursor-pointer"
                 src="/assets/menu-icon.svg"
                 onClick={handleMobileMenuToggle}
@@ -537,44 +552,23 @@ function CheckoutPage() {
               </div>
             ) : (
               /* CHECKOUT CONTENT */
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '24px', paddingTop: '20px' }}>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 {/* ORDER SUMMARY HEADER */}
-                <div style={{ textAlign: 'center', marginBottom: '10px' }}>
-                  <h1 
-                    style={{ 
-                      fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                      fontSize: '32px',
-                      color: '#000000',
-                      margin: '0 0 8px 0',
-                      textTransform: 'uppercase'
-                    }}
+                <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                  <button
+                    className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
+                    style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
                   >
                     ORDER SUMMARY
-                  </h1>
-                  <p 
-                    style={{ 
-                      fontFamily: '"Futura PT Book"',
-                      fontSize: '14px',
-                      color: '#EB1C24',
-                      margin: '0',
-                      fontWeight: '500'
-                    }}
-                    dangerouslySetInnerHTML={formatPrice(subtotal)}
+                  </button>
+                  <span
+                    className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
+                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '17px' }}
+                    dangerouslySetInnerHTML={formatPriceWithoutCurrency(subtotal)}
                   >
-                  </p>
-                  <div style={{ marginTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span 
-                      onClick={() => navigate('/bag')}
-                      style={{ 
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '11px',
-                        color: '#000000',
-                        cursor: 'pointer',
-                        textDecoration: 'underline'
-                      }}
-                    >
-                      &lt; RETURN TO SHOPPING BAG
-                    </span>
+                  </span>
+                </div>
+                <div style={{ marginTop: '12px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '16px' }}>
                     <span 
                       style={{ 
                         fontFamily: '"Futura PT Book"',
@@ -598,7 +592,6 @@ function CheckoutPage() {
                       DOWNLOAD OUR APP
                     </span>
                   </div>
-                </div>
 
                 {/* SHOPPING BAG CARD */}
                 {cartItems.length > 0 && (
@@ -622,7 +615,7 @@ function CheckoutPage() {
                       >
                         SHOPPING BAG
                       </button>
-                      <span
+                    <span 
                         className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
                         style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '17px' }}
                       >
@@ -718,8 +711,8 @@ function CheckoutPage() {
                                 {!(item.name === 'GIFT CARD' || item.type === 'gift-card') && (
                                   <p 
                                     className="font-bold text-center"
-                                    style={{ 
-                                      fontFamily: '"Futura PT Book"',
+                      style={{ 
+                        fontFamily: '"Futura PT Book"',
                                       color: '#EB1C24',
                                       textTransform: 'uppercase',
                                       fontSize: '8px',
@@ -738,7 +731,7 @@ function CheckoutPage() {
                                   className="font-medium truncate cart-product-name"
                                   style={{ 
                                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                                    color: '#000000',
+                        color: '#000000',
                                     textTransform: 'uppercase',
                                     fontSize: (() => {
                                       if (item.name === 'BLANCO' || item.name === 'SOFT CURL' || item.name === 'SOFT WAVE') {
@@ -905,14 +898,14 @@ function CheckoutPage() {
                                     }}
                                   >
                                     QTY: {itemQuantity}
-                                  </span>
+                    </span>
                                 </div>
                               </div>
                             </div>
                           );
                         })}
-                      </div>
-                    </div>
+                  </div>
+                </div>
 
                     {/* Subtotal */}
                     <div className="overflow-hidden mt-auto pt-2">
@@ -979,11 +972,13 @@ function CheckoutPage() {
                         placeholder="ENTER YOUR FULL NAME"
                         style={{
                           width: '100%',
+                          height: '40px',
                           padding: '8px',
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box'
                         }}
                       />
                     </div>
@@ -1005,11 +1000,13 @@ function CheckoutPage() {
                         placeholder="ENTER YOUR SHIPPING ADDRESS"
                         style={{
                           width: '100%',
+                          height: '40px',
                           padding: '8px',
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box'
                         }}
                       />
                     </div>
@@ -1031,11 +1028,13 @@ function CheckoutPage() {
                         placeholder="ENTER YOUR APARTMENT, SUITE OR UNIT NUMBER"
                         style={{
                           width: '100%',
+                          height: '40px',
                           padding: '8px',
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box'
                         }}
                       />
                     </div>
@@ -1057,11 +1056,13 @@ function CheckoutPage() {
                         placeholder="ENTER YOUR CITY, STATE & ZIP CODE"
                         style={{
                           width: '100%',
+                          height: '40px',
                           padding: '8px',
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box'
                         }}
                       />
                     </div>
@@ -1083,11 +1084,13 @@ function CheckoutPage() {
                         placeholder="ENTER YOUR MOBILE NUMBER"
                         style={{
                           width: '100%',
+                          height: '40px',
                           padding: '8px',
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box'
                         }}
                       />
                     </div>
@@ -1109,11 +1112,13 @@ function CheckoutPage() {
                         placeholder="ENTER YOUR EMAIL ADDRESS"
                         style={{
                           width: '100%',
+                          height: '40px',
                           padding: '8px',
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box'
                         }}
                       />
                     </div>
@@ -1176,11 +1181,13 @@ function CheckoutPage() {
                         placeholder="ENTER NAME ON CARD"
                         style={{
                           width: '100%',
+                          height: '40px',
                           padding: '8px',
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box'
                         }}
                       />
                     </div>
@@ -1202,11 +1209,13 @@ function CheckoutPage() {
                         placeholder="ENTER YOUR CREDIT OR DEBIT CARD NUMBER"
                         style={{
                           width: '100%',
+                          height: '40px',
                           padding: '8px',
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box'
                         }}
                       />
                     </div>
@@ -1367,11 +1376,13 @@ function CheckoutPage() {
                         placeholder="REFERRAL CODE, GIFT CARD OR DISCOUNT CODE"
                         style={{
                           flex: 1,
+                          height: '40px',
                           padding: '8px',
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box'
                         }}
                       />
                       <button
@@ -1498,11 +1509,13 @@ function CheckoutPage() {
                       <select
                         style={{
                           width: '100%',
+                          height: '40px',
                           padding: '8px',
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box'
                         }}
                       >
                         <option>COUNTRY</option>
@@ -1510,11 +1523,13 @@ function CheckoutPage() {
                       <select
                         style={{
                           width: '100%',
+                          height: '40px',
                           padding: '8px',
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box'
                         }}
                       >
                         <option>STATE</option>

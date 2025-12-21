@@ -1,19 +1,310 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
+import DynamicCartIcon from '../../../components/DynamicCartIcon';
 
 function SoftWaveSelection() {
   const navigate = useNavigate();
+  const [isInWishlist, setIsInWishlist] = useState(false);
   const [selectedCustomCap, setSelectedCustomCap] = useState('M');
   const [selectedFlexibleCap, setSelectedFlexibleCap] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [showChartModal, setShowChartModal] = useState(false);
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
+  
+  // Cart count state
+  const [cartCount, setCartCount] = useState(() => {
+    return parseInt(localStorage.getItem('cartCount') || '0');
+  });
+  
+  // Currency state - load from localStorage on mount
+  const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedCurrency = localStorage.getItem('selectedCurrency');
+        return savedCurrency || 'USD';
+      } catch (e) {
+        return 'USD';
+      }
+    }
+    return 'USD';
+  });
+  
+  // Currency exchange rates (same as CartDropdown)
+  const currencyRates = React.useMemo(() => ({
+    USD: { symbol: '&#36;', rate: 1.0, name: 'US Dollar' },
+    EUR: { symbol: '&euro;', rate: 0.85, name: 'Euro' },
+    GBP: { symbol: '&pound;', rate: 0.73, name: 'British Pound' },
+    CAD: { symbol: 'C&#36;', rate: 1.25, name: 'Canadian Dollar' },
+    AUD: { symbol: 'A&#36;', rate: 1.35, name: 'Australian Dollar' },
+    JPY: { symbol: '&yen;', rate: 110.0, name: 'Japanese Yen' },
+    CNY: { symbol: '&yen;', rate: 6.45, name: 'Chinese Yuan' },
+    INR: { symbol: '&#8377;', rate: 75.0, name: 'Indian Rupee' },
+    BRL: { symbol: 'R&#36;', rate: 5.2, name: 'Brazilian Real' },
+    MXN: { symbol: '&#36;', rate: 20.0, name: 'Mexican Peso' }
+  }), []);
+  
+  // Check if SOFT WAVE is in wishlist on mount and when wishlist changes
+  useEffect(() => {
+    const checkWishlist = () => {
+      try {
+        const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
+        const isInList = wishlistItems.some((item: any) => item.name === 'SOFT WAVE');
+        setIsInWishlist(isInList);
+      } catch (e) {
+        setIsInWishlist(false);
+      }
+    };
+    
+    checkWishlist();
+    
+    // Listen for wishlist updates
+    const handleStorageChange = () => checkWishlist();
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('wishlistUpdated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('wishlistUpdated', handleStorageChange);
+    };
+  }, []);
+
+  // Toggle wishlist handler
+  const handleToggleWishlist = () => {
+    try {
+      const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
+      const totalPrice = parseInt(localStorage.getItem('softWaveTotalPrice') || '780');
+      
+      if (isInWishlist) {
+        // Remove from wishlist
+        const updatedItems = wishlistItems.filter((item: any) => item.name !== 'SOFT WAVE');
+        localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
+        setIsInWishlist(false);
+      } else {
+        // Add to wishlist
+        const softWaveItem = {
+          id: 'soft-wave-unit',
+          name: 'SOFT WAVE',
+          price: totalPrice,
+          quantity: quantity,
+          image: '/assets/NOIR/wave-thumb.png',
+          length: localStorage.getItem('selectedLength') || '24"',
+          hairOrigin: 'INDONESIAN',
+          capSize: selectedCustomCap || selectedFlexibleCap || 'M',
+          density: localStorage.getItem('selectedDensity') || '200%',
+          lace: localStorage.getItem('selectedLace') || '13X6',
+          texture: localStorage.getItem('selectedTexture') || 'SILKY',
+          color: localStorage.getItem('selectedColor') || 'OFF BLACK',
+          hairline: localStorage.getItem('selectedHairline') || 'NATURAL',
+          styling: localStorage.getItem('selectedStyling') || 'MIDDLE'
+        };
+        const updatedItems = [...wishlistItems, softWaveItem];
+        localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
+        setIsInWishlist(true);
+      }
+      
+      // Dispatch event to notify other components
+      window.dispatchEvent(new CustomEvent('wishlistUpdated'));
+    } catch (e) {
+      console.error('Error toggling wishlist:', e);
+    }
+  };
+
+  // CRITICAL: Clear any noir-specific localStorage values and set SOFT WAVE defaults on page load
+  // This prevents noir page settings from interfering with soft-wave page
+  useEffect(() => {
+    // Clear any edit mode flags that might be from other products
+    if (localStorage.getItem('editingCartItem')) {
+      const editingItem = JSON.parse(localStorage.getItem('editingCartItem') || '{}');
+      // Only clear if it's not a SOFT WAVE item
+      if (editingItem.name !== 'SOFT WAVE') {
+        localStorage.removeItem('editingCartItem');
+        localStorage.removeItem('editingCartItemId');
+      }
+    }
+    
+    // Set SOFT WAVE-specific defaults (don't read from localStorage to avoid noir contamination)
+    // These are only used if user goes to build-a-wig page from soft-wave
+    localStorage.setItem('selectedLength', '24"');
+    localStorage.setItem('selectedLengthPrice', '0');
+    localStorage.setItem('selectedDensity', '200%');
+    localStorage.setItem('selectedDensityPrice', '0');
+    localStorage.setItem('selectedLace', '13X6');
+    localStorage.setItem('selectedLacePrice', '0');
+    localStorage.setItem('selectedTexture', 'SILKY');
+    localStorage.setItem('selectedTexturePrice', '0');
+    localStorage.setItem('selectedColor', 'OFF BLACK');
+    localStorage.setItem('selectedColorPrice', '0');
+    localStorage.setItem('selectedHairline', 'NATURAL');
+    localStorage.setItem('selectedHairlinePrice', '0');
+    localStorage.setItem('selectedStyling', 'NONE');
+    localStorage.setItem('selectedStylingPrice', '0');
+    localStorage.setItem('selectedAddOns', JSON.stringify([]));
+    localStorage.setItem('selectedAddOnsPrice', '0');
+  }, []);
+
+  // Helper function to check if a cart item matches the default configuration exactly
+  // This does explicit field-by-field comparison to ensure no false matches
+  const matchesDefaultConfiguration = (item: any): boolean => {
+    // Ensure item is for SOFT WAVE product
+    if (item.name !== 'SOFT WAVE') {
+      return false;
+    }
+    
+    // Ensure item has ALL required properties
+    if (!item.capSize || !item.length || !item.density || !item.lace || !item.texture || !item.color || !item.hairline || !item.styling) {
+      return false;
+    }
+    
+    // Get current default configuration values
+    const currentCapSize = selectedCustomCap || selectedFlexibleCap || 'M';
+    const DEFAULT_LENGTH = '24"';
+    const DEFAULT_DENSITY = '200%';
+    const DEFAULT_LACE = '13X6';
+    const DEFAULT_TEXTURE = 'SILKY';
+    const DEFAULT_COLOR = 'OFF BLACK';
+    const DEFAULT_HAIRLINE = 'NATURAL';
+    const DEFAULT_STYLING = 'NONE';
+    const DEFAULT_ADDONS = '';
+    
+    // Normalize values for comparison (remove all spaces and convert to string)
+    const normalize = (value: any): string => {
+      return (value || '').toString().replace(/\s+/g, '').toUpperCase();
+    };
+    
+    // Handle addOns - convert array to comma-separated string or empty string
+    const itemAddOns = item.addOns && Array.isArray(item.addOns) && item.addOns.length > 0 
+      ? item.addOns.join(',').replace(/\s+/g, '').toUpperCase()
+      : '';
+    
+    // Compare each field explicitly - ALL must match exactly
+    const capSizeMatch = normalize(item.capSize) === normalize(currentCapSize);
+    const lengthMatch = normalize(item.length) === normalize(DEFAULT_LENGTH);
+    const densityMatch = normalize(item.density) === normalize(DEFAULT_DENSITY);
+    const laceMatch = normalize(item.lace) === normalize(DEFAULT_LACE);
+    const textureMatch = normalize(item.texture) === normalize(DEFAULT_TEXTURE);
+    const colorMatch = normalize(item.color) === normalize(DEFAULT_COLOR);
+    const hairlineMatch = normalize(item.hairline) === normalize(DEFAULT_HAIRLINE);
+    const stylingMatch = normalize(item.styling) === normalize(DEFAULT_STYLING);
+    const addOnsMatch = itemAddOns === normalize(DEFAULT_ADDONS);
+    
+    // ALL fields must match exactly
+    return capSizeMatch && lengthMatch && densityMatch && laceMatch && textureMatch && colorMatch && hairlineMatch && stylingMatch && addOnsMatch;
+  };
+
+  // Listen for cart count changes and validate cart state
+  useEffect(() => {
+    const handleCartUpdate = () => {
+      const newCartCount = parseInt(localStorage.getItem('cartCount') || '0');
+      setCartCount(newCartCount);
+      
+      // Check button state from localStorage to avoid stale closure
+      const currentButtonState = localStorage.getItem('addToBagButtonState');
+        
+      // If button is currently 'adding', don't reset it
+      if (currentButtonState === 'adding') {
+        return;
+      }
+        
+      // ALWAYS validate cart state - don't trust localStorage alone
+      // If cart is completely empty, reset button state
+      if (newCartCount === 0) {
+        setAddToBagState('idle');
+        localStorage.removeItem('addToBagButtonState');
+        localStorage.removeItem('lastAddedItemId');
+        return;
+      }
+        
+      // ALWAYS re-validate that a cart item with default configuration exists
+      // This ensures we only show "IN THE BAG" for items with ALL default specs
+      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      
+      const matchingItem = cartItems.find((item: any) => {
+        // Use explicit field-by-field comparison to ensure exact match
+        return matchesDefaultConfiguration(item);
+      });
+        
+      // Update state based on actual cart contents, not localStorage
+      if (matchingItem) {
+        // Item with default configuration exists - set to 'added'
+        setAddToBagState('added');
+        localStorage.setItem('addToBagButtonState', 'added');
+        localStorage.setItem('lastAddedItemId', matchingItem.id);
+      } else {
+        // No matching item - reset to 'idle'
+        setAddToBagState('idle');
+        localStorage.removeItem('addToBagButtonState');
+        localStorage.removeItem('lastAddedItemId');
+      }
+    };
+
+    // @ts-expect-error - event parameter required by event listener signature but not used
+    const handleCartCountUpdate = (event: CustomEvent) => {
+      handleCartUpdate();
+    };
+    
+    // @ts-expect-error - event parameter required by event listener signature but not used
+    const handleCartUpdated = (event: CustomEvent) => {
+      handleCartUpdate();
+    };
+
+    const handleStorageChange = () => {
+      handleCartUpdate();
+    };
+
+    // CRITICAL: Validate cart state immediately on mount to clear any stale localStorage
+    // This ensures button state is correct even if localStorage was set incorrectly
+    handleCartUpdate();
+    
+    // Listen for custom events
+    window.addEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
+    window.addEventListener('cartUpdated', handleCartUpdated as EventListener);
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('focus', handleStorageChange);
+    
+    // Simple polling - always validate, not just when localStorage says 'added'
+    // This catches cases where localStorage is wrong
+    const interval = setInterval(() => {
+      handleCartUpdate();
+    }, 1000); // Check every 1 second
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
+      window.removeEventListener('cartUpdated', handleCartUpdated as EventListener);
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('focus', handleStorageChange);
+    };
+  }, [selectedCustomCap, selectedFlexibleCap]);
+
+  // Initialize button state from localStorage on page load
+  useEffect(() => {
+    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+    
+    // Always check if current configuration matches any cart item
+    // Only match items with ALL default selection options (M, 24", 200%, 13X6, etc.)
+    const matchingItem = cartItems.find((item: any) => {
+      // Use explicit field-by-field comparison to ensure exact match
+      return matchesDefaultConfiguration(item);
+    });
+    
+    if (matchingItem) {
+      setAddToBagState('added');
+      localStorage.setItem('addToBagButtonState', 'added');
+      localStorage.setItem('lastAddedItemId', matchingItem.id);
+    } else {
+      setAddToBagState('idle');
+      localStorage.removeItem('addToBagButtonState');
+      localStorage.removeItem('lastAddedItemId');
+    }
+  }, []);
   const [selectedMannequinView, setSelectedMannequinView] = useState(0);
   const [is3DView, setIs3DView] = useState(() => {
     // Check localStorage for saved 3D view preference, default to false (2D view)
+    // Use shared key so 3D/2D view preference persists across all product pages
     if (typeof window !== 'undefined') {
       try {
-        const saved3DView = localStorage.getItem('noir-3d-view');
+        const saved3DView = localStorage.getItem('product-3d-view');
         return saved3DView === 'true';
       } catch (e) {
         return false;
@@ -59,35 +350,35 @@ function SoftWaveSelection() {
     setShowChartModal(false);
   };
 
-  // Mannequin images for soft wave product (using noir images for now)
+  // Mannequin images for soft wave product (2D view)
   const mannequinImages = [
-    '/assets/natural front.png',  // View 1 (default)
-    '/assets/natural left.png',  // View 2 (top thumbnail)
-    '/assets/natural right.png'  // View 3 (bottom thumbnail)
+    '/assets/2D WAVY FRONT.png',  // View 1 (default)
+    '/assets/2D WAVY LEFT.png',  // View 2 (top thumbnail)
+    '/assets/2D WAVY RIGHT.png'  // View 3 (bottom thumbnail)
   ];
 
   // Get current mannequin images based on selected view
   const getCurrentImages = () => {
     if (selectedMannequinView === 0) {
-      // Default state: natural front in hero
+      // Default state: 2D WAVY FRONT in hero
       return {
-        hero: mannequinImages[0], // natural front
-        top: mannequinImages[1], // natural left
-        bottom: mannequinImages[2] // natural right
+        hero: mannequinImages[0], // 2D WAVY FRONT
+        top: mannequinImages[1], // 2D WAVY LEFT
+        bottom: mannequinImages[2] // 2D WAVY RIGHT
       };
     } else if (selectedMannequinView === 1) {
-      // Top thumbnail clicked: natural left in hero, natural front in top
+      // Top thumbnail clicked: 2D WAVY LEFT in hero, 2D WAVY FRONT in top
       return {
-        hero: mannequinImages[1], // natural left
-        top: mannequinImages[0], // natural front
-        bottom: mannequinImages[2] // natural right (stays in bottom)
+        hero: mannequinImages[1], // 2D WAVY LEFT
+        top: mannequinImages[0], // 2D WAVY FRONT
+        bottom: mannequinImages[2] // 2D WAVY RIGHT (stays in bottom)
       };
     } else {
-      // Bottom thumbnail clicked: natural right in hero, natural front in bottom
+      // Bottom thumbnail clicked: 2D WAVY RIGHT in hero, 2D WAVY FRONT in bottom
       return {
-        hero: mannequinImages[2], // natural right
-        top: mannequinImages[1], // natural left (stays in top)
-        bottom: mannequinImages[0] // natural front
+        hero: mannequinImages[2], // 2D WAVY RIGHT
+        top: mannequinImages[1], // 2D WAVY LEFT (stays in top)
+        bottom: mannequinImages[0] // 2D WAVY FRONT
       };
     }
   };
@@ -97,25 +388,25 @@ function SoftWaveSelection() {
   // Get current 3D view images based on selected view
   const get3DViewImages = () => {
     if (selectedMannequinView === 0) {
-      // Default state: noir front in hero
+      // Default state: SOFT-WAVE FRONT in hero
       return {
-        hero: 'noir front.png',
-        top: 'noir right.png',
-        bottom: 'noir left.png'
+        hero: 'SOFT-WAVE FRONT.png',
+        top: 'SOFT-WAVE RIGHT.png',
+        bottom: 'SOFT-WAVE LEFT.png'
       };
     } else if (selectedMannequinView === 1) {
-      // Top thumbnail clicked: noir right in hero, noir front in top
+      // Top thumbnail clicked: SOFT-WAVE RIGHT in hero, SOFT-WAVE FRONT in top
       return {
-        hero: 'noir right.png',
-        top: 'noir front.png',
-        bottom: 'noir left.png'
+        hero: 'SOFT-WAVE RIGHT.png',
+        top: 'SOFT-WAVE FRONT.png',
+        bottom: 'SOFT-WAVE LEFT.png'
       };
     } else {
-      // Bottom thumbnail clicked: noir left in hero, noir front in bottom
+      // Bottom thumbnail clicked: SOFT-WAVE LEFT in hero, SOFT-WAVE FRONT in bottom
       return {
-        hero: 'noir left.png',
-        top: 'noir right.png',
-        bottom: 'noir front.png'
+        hero: 'SOFT-WAVE LEFT.png',
+        top: 'SOFT-WAVE RIGHT.png',
+        bottom: 'SOFT-WAVE FRONT.png'
       };
     }
   };
@@ -213,14 +504,71 @@ function SoftWaveSelection() {
     return basePrice;
   };
 
-  const formatPrice = (price: number) => {
+  // Load selected currency from localStorage on mount only
+  // Initial state already loads from localStorage, this is a safety check
+  useEffect(() => {
+    const savedCurrency = localStorage.getItem('selectedCurrency');
+    if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
+      // Only update if different to avoid unnecessary re-renders
+      if (savedCurrency !== selectedCurrency) {
+        setSelectedCurrency(savedCurrency);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount, not when currencyRates changes
+
+  // Save selected currency to localStorage
+  useEffect(() => {
+    localStorage.setItem('selectedCurrency', selectedCurrency);
+  }, [selectedCurrency]);
+
+  // Listen for currency changes from cart dropdown
+  useEffect(() => {
+    const handleCurrencyChange = () => {
+      const savedCurrency = localStorage.getItem('selectedCurrency');
+      if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
+        setSelectedCurrency(savedCurrency);
+      }
+    };
+
+    // Listen for storage events (from other tabs/windows)
+    window.addEventListener('storage', handleCurrencyChange);
+    
+    // Listen for custom currencyChanged event (from same window)
+    const handleCustomCurrencyChange = (event: CustomEvent) => {
+      const newCurrency = event.detail;
+      if (newCurrency && currencyRates[newCurrency as keyof typeof currencyRates]) {
+        setSelectedCurrency(newCurrency);
+        // Also update localStorage to ensure consistency
+        localStorage.setItem('selectedCurrency', newCurrency);
+      }
+    };
+    
+    window.addEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
+    
+    // Poll localStorage periodically to catch any currency changes
+    const interval = setInterval(() => {
+      handleCurrencyChange();
+    }, 500); // Check every 500ms
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('storage', handleCurrencyChange);
+      window.removeEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
+    };
+  }, [currencyRates]);
+
+  // Format price with currency
+  const formatPrice = React.useCallback((price: number) => {
+    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+    const convertedPrice = price * currency.rate;
     return {
-      __html: '$' + price.toLocaleString('en-US', {
+      __html: currency.symbol + convertedPrice.toLocaleString('en-US', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0
-      }) + ' USD'
+      }) + ' ' + selectedCurrency
     };
-  };
+  }, [currencyRates, selectedCurrency]);
 
   const handleAddToBag = async () => {
     if (addToBagState === 'adding' || addToBagState === 'added') return;
@@ -230,14 +578,27 @@ function SoftWaveSelection() {
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      const defaultLength = '24"';
-      const defaultDensity = '200%';
-      const defaultLace = '13X6';
-      const defaultTexture = 'SILKY';
-      const defaultColor = 'OFF BLACK';
-      const defaultHairline = 'NATURAL';
-      const defaultStyling = 'NONE';
-      const defaultAddOns: string[] = [];
+      // CRITICAL: Read customization values from localStorage (or use defaults)
+      // This ensures that if user made selections in build-a-wig, they're included
+      const defaultLength = localStorage.getItem('selectedLength') || '24"';
+      const defaultDensity = localStorage.getItem('selectedDensity') || '200%';
+      const defaultLace = localStorage.getItem('selectedLace') || '13X6';
+      const defaultTexture = localStorage.getItem('selectedTexture') || 'SILKY';
+      const defaultColor = localStorage.getItem('selectedColor') || 'OFF BLACK';
+      const defaultHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
+      const defaultStyling = localStorage.getItem('selectedStyling') || 'NONE';
+      const defaultAddOns: string[] = JSON.parse(localStorage.getItem('selectedAddOns') || '[]');
+      
+      // CRITICAL: Read customization prices from localStorage (or use 0 if not set)
+      // This ensures add-ons and other customizations are included in the price
+      const lengthPrice = parseInt(localStorage.getItem('selectedLengthPrice') || '0');
+      const densityPrice = parseInt(localStorage.getItem('selectedDensityPrice') || '0');
+      const lacePrice = parseInt(localStorage.getItem('selectedLacePrice') || '0');
+      const texturePrice = parseInt(localStorage.getItem('selectedTexturePrice') || '0');
+      const colorPrice = parseInt(localStorage.getItem('selectedColorPrice') || '0');
+      const hairlinePrice = parseInt(localStorage.getItem('selectedHairlinePrice') || '0');
+      const stylingPrice = parseInt(localStorage.getItem('selectedStylingPrice') || '0');
+      const addOnsPrice = parseInt(localStorage.getItem('selectedAddOnsPrice') || '0');
       
       let capSize: string;
       let capSizePrice: number;
@@ -253,14 +614,15 @@ function SoftWaveSelection() {
       }
       
       const basePrice = 760;
-      const totalPrice = basePrice + capSizePrice;
+      // CRITICAL: Include all customization prices in total calculation
+      const totalPrice = basePrice + capSizePrice + lengthPrice + densityPrice + lacePrice + texturePrice + colorPrice + hairlinePrice + stylingPrice + addOnsPrice;
       
       const cartItem = {
         id: `soft-wave-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         name: 'SOFT WAVE',
         price: totalPrice,
         quantity: quantity,
-        image: '/assets/NOIR/noir-thumb.png',
+        image: '/assets/NOIR/wave-thumb.png',
         capSize: capSize,
         capSizePrice: capSizePrice,
         length: defaultLength,
@@ -270,17 +632,19 @@ function SoftWaveSelection() {
         lace: defaultLace,
         hairline: defaultHairline,
         styling: defaultStyling,
-        partSelection: 'MIDDLE',
+        partSelection: localStorage.getItem('selectedPartSelection') || 'MIDDLE',
         addOns: defaultAddOns
       };
       
+      // Add new item at the beginning (newest first)
       const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      const updatedCartItems = [...existingCartItems, cartItem];
+      const updatedCartItems = [cartItem, ...existingCartItems];
       localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
       
       const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
       const newCount = currentCount + quantity;
       localStorage.setItem('cartCount', newCount.toString());
+      setCartCount(newCount);
       
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
@@ -338,28 +702,22 @@ function SoftWaveSelection() {
                 />
               </button>
             </div>
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               <span 
-                style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
+                style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
                 onClick={() => navigate('/units/wavy')}
               >
                 WAVY &gt;
               </span>{' '}
               <span
-                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}
+                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
               >
                 SOFT WAVE
               </span>
             </p>
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
-              <div style={{ position: 'relative', width: '22px', height: '19px' }}>
-                <img 
-                  src="/assets/inactive cart-icon.svg"
-                  alt="Cart"
-                  width={22}
-                  height={19}
-                  style={{ width: '22px', height: '19px' }}
-                />
+              <div>
+                <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
               <img
                 alt="Menu"
@@ -391,18 +749,21 @@ function SoftWaveSelection() {
               <div style={{ position: 'relative', width: '100%', marginBottom: '10px', transform: 'translateY(-31px)' }}>
                 {/* ADD TO WISHLIST - Top Left */}
                 <p 
+                  onClick={handleToggleWishlist}
                   style={{ 
                     position: 'absolute', 
                     left: '8px', 
                     top: '2px', 
                     color: '#909090', 
-                    fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
+                    fontFamily: '"Futura PT Demi"',
                     fontSize: '10px',
                     fontWeight: '600',
-                    margin: '0'
+                    margin: '0',
+                    cursor: 'pointer',
+                    userSelect: 'none'
                   }}
                 >
-                  + ADD TO WISHLIST
+                  {isInWishlist ? '- REMOVE FROM WISHLIST' : '+ ADD TO WISHLIST'}
                 </p>
                 
                 {/* 2D VIEW/3D VIEW TOGGLE - Top Right */}
@@ -421,7 +782,7 @@ function SoftWaveSelection() {
                     setIs3DView(new3DView);
                     if (typeof window !== 'undefined') {
                       try {
-                        localStorage.setItem('noir-3d-view', new3DView.toString());
+                        localStorage.setItem('product-3d-view', new3DView.toString());
                       } catch (e) {
                         console.error('Error saving 3D view:', e);
                       }
@@ -431,7 +792,7 @@ function SoftWaveSelection() {
                   <span 
                     style={{ 
                       color: is3DView ? '#000000' : '#EB1C24', 
-                      fontFamily: is3DView ? '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: is3DView ? '"Futura PT Book"' : '"Futura PT Medium"',
                       fontSize: '11px',
                       fontWeight: is3DView ? '400' : '500',
                       margin: '0'
@@ -442,7 +803,7 @@ function SoftWaveSelection() {
                   <span 
                     style={{ 
                       color: '#000000', 
-                      fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: '"Futura PT Book"',
                       fontSize: '11px',
                       fontWeight: '400',
                       margin: '0'
@@ -453,7 +814,7 @@ function SoftWaveSelection() {
                   <span 
                     style={{ 
                       color: is3DView ? '#EB1C24' : '#000000', 
-                      fontFamily: is3DView ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: is3DView ? '"Futura PT Medium"' : '"Futura PT Book"',
                       fontSize: '11px',
                       fontWeight: is3DView ? '500' : '400',
                       margin: '0'
@@ -478,7 +839,7 @@ function SoftWaveSelection() {
                       justifyContent: 'center',
                       width: '200px',
                       height: '290px',
-                      backgroundImage: `url('/assets/NOIR/${is3DView ? current3DImages.hero : 'leaf-brick.png'}')`,
+                      backgroundImage: `url('/assets/${is3DView ? current3DImages.hero : 'NOIR/leaf-brick.png'}')`,
                       backgroundRepeat: 'no-repeat',
                       overflow: 'visible'
                     }}
@@ -512,7 +873,7 @@ function SoftWaveSelection() {
                       style={{
                         width: '100px',
                         height: '140px',
-                        backgroundImage: `url('/assets/NOIR/${is3DView ? current3DImages.top : 'leaf-brick.png'}')`,
+                        backgroundImage: `url('/assets/${is3DView ? current3DImages.top : 'NOIR/leaf-brick.png'}')`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat'
@@ -544,7 +905,7 @@ function SoftWaveSelection() {
                       style={{
                         width: '100px',
                         height: '140px',
-                        backgroundImage: `url('/assets/NOIR/${is3DView ? current3DImages.bottom : 'leaf-brick.png'}')`,
+                        backgroundImage: `url('/assets/${is3DView ? current3DImages.bottom : 'NOIR/leaf-brick.png'}')`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat'
@@ -575,28 +936,28 @@ function SoftWaveSelection() {
               <p
                 className="text-center uppercase mb-2"
                 style={{ 
-                  fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                  fontFamily: '"Futura PT Book"',
                   fontSize: '11px',
                   fontWeight: '400',
                   transform: 'translateY(-13px)',
                   color: 'black'
                 }}
               >
-                (2D MODEL IS FOR <span style={{ color: '#909090', fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif' }}>VISUAL & AESTHETIC</span> PURPOSES ONLY)
+                (2D MODEL IS FOR <span style={{ color: '#909090', fontFamily: '"Futura PT Demi"' }}>VISUAL & AESTHETIC</span> PURPOSES ONLY)
               </p>
             </div>
 
             {/* PRODUCT NAME */}
             <p
-              className="text-center text-black mb-2"
+              className="text-center text-black mb-2 soft-wave-product-name"
               style={{ 
-                fontFamily: '"Covered By Your Grace", cursive',
-                fontSize: '50px',
-                fontWeight: '400',
+                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif !important',
+                fontSize: '42px !important',
+                fontWeight: '400 !important',
                 lineHeight: '1.2',
-                margin: '0',
+                margin: '0 !important',
                 padding: '0',
-                transform: 'translateY(-8px)'
+                transform: 'translateY(-8px) !important'
               }}
             >
               SOFT WAVE
@@ -606,10 +967,11 @@ function SoftWaveSelection() {
             <p
               className="text-center text-red-500 uppercase mb-2"
               style={{ 
-                fontFamily: '"Futura PT", futuristic-pt, Futura, Inter, sans-serif',
-                fontSize: '10px',
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '11px',
                 fontWeight: '500',
-                transform: 'translateY(-8px)'
+                transform: 'translateY(-8px)',
+                marginTop: '-8px'
               }}
             >
               24" RAW INDONESIAN
@@ -619,8 +981,8 @@ function SoftWaveSelection() {
             <p
               className="text-center text-black mb-1"
               style={{ 
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                fontSize: '21px',
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '20px',
                 fontWeight: '500',
                 transform: 'translateY(-16px)'
               }}
@@ -631,7 +993,7 @@ function SoftWaveSelection() {
             <p
               className="text-center text-black mb-3"
               style={{ 
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                fontFamily: '"Futura PT Medium"',
                 fontSize: '10px',
                 fontWeight: '500',
                 transform: 'translateY(-21px)'
@@ -661,7 +1023,7 @@ function SoftWaveSelection() {
             <p
               className="text-center uppercase"
               style={{ 
-                fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
+                fontFamily: '"Futura PT Demi"',
                 fontSize: '10px',
                 fontWeight: '600',
                 color: '#909090',
@@ -676,7 +1038,7 @@ function SoftWaveSelection() {
               <p
                 className="text-center text-black uppercase mb-4"
                 style={{ 
-                  fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
+                  fontFamily: '"Futura PT Demi"',
                   fontSize: '11px',
                   fontWeight: '500',
                   transform: 'translateY(0px)'
@@ -687,11 +1049,11 @@ function SoftWaveSelection() {
 
               {/* CAP SIZE MEASUREMENTS */}
               <div className="flex justify-center gap-4 mb-6" style={{ transform: 'translateY(-7px)' }}>
-                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>XXS: 19"</span>
-                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>XS: 20"</span>
-                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>S: 21"</span>
-                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>M: 22"</span>
-                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>L: 23"</span>
+                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium"' }}>XXS: 19"</span>
+                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium"' }}>XS: 20"</span>
+                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium"' }}>S: 21"</span>
+                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium"' }}>M: 22"</span>
+                <span className="text-red-500 font-bold" style={{ fontSize: '10px', fontFamily: '"Futura PT Medium"' }}>L: 23"</span>
               </div>
 
               {/* CUSTOM CAP SECTION */}
@@ -699,7 +1061,7 @@ function SoftWaveSelection() {
                 <p
                   className="text-center text-black mb-4"
                   style={{ 
-                    fontFamily: '"Bohemy", cursive',
+                    fontFamily: '"Bohemy", sans-serif',
                     fontSize: '20px',
                     fontWeight: '400',
                     transform: 'translateY(-16px)'
@@ -713,7 +1075,7 @@ function SoftWaveSelection() {
                     className={`border border-black px-6 py-1 ${selectedCustomCap === 'XS' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
                     style={{ 
                       borderWidth: '1.3px',
-                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
                       minWidth: '60px',
                       fontSize: '11px'
@@ -726,7 +1088,7 @@ function SoftWaveSelection() {
                     className={`border border-black px-6 py-1 ${selectedCustomCap === 'S' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
                     style={{ 
                       borderWidth: '1.3px',
-                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
                       minWidth: '60px',
                       fontSize: '11px'
@@ -739,7 +1101,7 @@ function SoftWaveSelection() {
                     className={`border border-black px-6 py-1 ${selectedCustomCap === 'M' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
                     style={{ 
                       borderWidth: '1.3px',
-                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
                       minWidth: '60px',
                       fontSize: '11px'
@@ -752,7 +1114,7 @@ function SoftWaveSelection() {
                     className={`border border-black px-6 py-1 ${selectedCustomCap === 'L' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
                     style={{ 
                       borderWidth: '1.3px',
-                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
                       minWidth: '60px',
                       fontSize: '11px'
@@ -768,7 +1130,7 @@ function SoftWaveSelection() {
                 <p
                   className="text-center text-black mb-4"
                   style={{ 
-                    fontFamily: '"Bohemy", cursive',
+                    fontFamily: '"Bohemy", sans-serif',
                     fontSize: '20px',
                     fontWeight: '400',
                     transform: 'translateY(-24px)'
@@ -785,7 +1147,7 @@ function SoftWaveSelection() {
                       paddingBottom: '4px',
                       paddingLeft: '8px',
                       paddingRight: '8px',
-                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
                       width: '108px',
                       minWidth: '108px',
@@ -811,7 +1173,7 @@ function SoftWaveSelection() {
                       paddingBottom: '4px',
                       paddingLeft: '8px',
                       paddingRight: '8px',
-                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
                       width: '108px',
                       minWidth: '108px',
@@ -859,7 +1221,7 @@ function SoftWaveSelection() {
                     borderBottom: '1.3px solid black',
                     borderLeft: 'none',
                     borderRight: 'none',
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                    fontFamily: '"Futura PT Medium"', 
                     fontWeight: '500', 
                     fontSize: '12px', 
                     height: '27px',
@@ -893,7 +1255,7 @@ function SoftWaveSelection() {
               </div>
 
               {/* CAP SIZE CHART IMAGE */}
-              <div className="flex justify-center mt-4" style={{ transform: 'translateX(4px) translateY(-27px)' }}>
+              <div className="flex justify-center mt-4" style={{ transform: 'translateX(4px) translateY(-21px)' }}>
                 <img
                   src="/assets/NOIR/cap-size-chart.png"
                   alt="Cap Size Chart"
@@ -902,80 +1264,67 @@ function SoftWaveSelection() {
                 />
               </div>
 
-              {/* CHART MODAL */}
-              {showChartModal && (
+              {/* CHART MODAL - Rendered via Portal */}
+              {showChartModal && createPortal(
                 <div 
                   style={{
                     position: 'fixed',
-                    top: '0',
-                    left: '0',
-                    right: '0',
-                    bottom: '0',
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    inset: '0',
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    backdropFilter: 'blur(3px)',
+                    WebkitBackdropFilter: 'blur(3px)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    zIndex: 1000
+                    zIndex: 10000,
+                    margin: '0',
+                    padding: '0'
                   }}
                   onClick={handleCloseChart}
                 >
                   <div 
                     style={{
                       position: 'relative',
-                      maxWidth: '90%',
-                      maxHeight: '90%',
+                      maxWidth: '90vw',
+                      maxHeight: '90vh',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center'
+                      justifyContent: 'center',
+                      margin: 'auto'
                     }}
                     onClick={(e) => e.stopPropagation()}
                   >
                     <img
-                      src="/assets/NOIR/chart.png"
+                      src="/assets/cap-chart.svg"
                       alt="Enlarged Cap Size Chart"
                       style={{ 
                         maxWidth: '100%',
                         maxHeight: '100%',
+                        width: '100%',
+                        height: '100%',
                         objectFit: 'contain',
-                        borderRadius: '4px'
+                        borderRadius: '0',
+                        transform: 'scale(1.05)'
                       }}
                     />
-                    <button
-                      onClick={handleCloseChart}
-                      style={{
-                        position: 'absolute',
-                        top: '-10px',
-                        right: '-10px',
-                        backgroundColor: 'white',
-                        border: '2px solid black',
-                        borderRadius: '50%',
-                        width: '30px',
-                        height: '30px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                        fontSize: '16px',
-                        fontWeight: 'bold'
-                      }}
-                    >
-                      ×
-                    </button>
                   </div>
-                </div>
+                </div>,
+                document.body
               )}
             </div>
 
             {/* PRODUCT SHOTS SECTION */}
             <div className="mt-8 mb-6" style={{ transform: 'translateY(-34px)' }}>
               {/* Product Images with Drag/Swipe Scroll */}
-              <div className="relative overflow-hidden" style={{ height: '300px' }}>
+              <div className="relative overflow-hidden" style={{ height: '310px', minHeight: '310px', paddingTop: '70px' }}>
                 <div 
                   className="flex transition-transform duration-300 ease-out"
                   style={{ 
                     width: '300%',
                     transform: `translateX(${scrollPosition}px)`,
-                    gap: '11px'
+                    gap: '11px',
+                    alignItems: 'center',
+                    height: '100%'
                   }}
                   onMouseDown={handleMouseDown}
                   onMouseMove={handleMouseMove}
@@ -986,24 +1335,24 @@ function SoftWaveSelection() {
                   onTouchEnd={handleTouchEnd}
                 >
                   <img
-                    src="/assets/NOIR/noir front.png"
+                    src="/assets/SOFT-WAVE FRONT.png"
                     alt="SOFT WAVE Front View"
-                    className="h-full object-cover"
-                    style={{ width: '18%' }}
+                    className="object-cover"
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)' }}
                     draggable={false}
                   />
                   <img
-                    src="/assets/NOIR/noir left.png"
+                    src="/assets/SOFT-WAVE LEFT.png"
                     alt="SOFT WAVE Left View"
-                    className="h-full object-cover"
-                    style={{ width: '18%' }}
+                    className="object-cover"
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)' }}
                     draggable={false}
                   />
                   <img
-                    src="/assets/NOIR/noir right.png"
+                    src="/assets/SOFT-WAVE RIGHT.png"
                     alt="SOFT WAVE Right View"
-                    className="h-full object-cover"
-                    style={{ width: '18%' }}
+                    className="object-cover"
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)' }}
                     draggable={false}
                   />
                 </div>
@@ -1012,8 +1361,8 @@ function SoftWaveSelection() {
                 <div 
                   className="absolute left-1/2 transform -translate-x-1/2"
                   style={{
-                    bottom: '14px',
-                    fontFamily: '"Bohemy", cursive',
+                    bottom: '-1px',
+                    fontFamily: '"Bohemy", sans-serif',
                     fontSize: '43px',
                     color: 'white',
                     textShadow: '1px 1px 0px black, -1px 1px 0px black, 1px -1px 0px black, -1px -1px 0px black, 1px 0px 0px black, -1px 0px 0px black, 0px 1px 0px black, 0px -1px 0px black',
@@ -1029,41 +1378,41 @@ function SoftWaveSelection() {
               </div>
 
               {/* Tabs Section */}
-              <div className="mt-6" style={{ transform: 'translateY(-35px)' }}>
+              <div className="mt-6" style={{ transform: 'translateY(-20px)' }}>
                 {/* Tab Navigation */}
                 <div className="flex justify-center">
                   <button
                     onClick={() => handleTabClick('DETAILS')}
                     className={`px-2 py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
                   >
                     DETAILS
                   </button>
                   <button
                     onClick={() => handleTabClick('SHIPPING')}
                     className={`px-2 py-1 text-xs font-medium ${activeTab === 'SHIPPING' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
                   >
                     SHIPPING
                   </button>
                   <button
                     onClick={() => handleTabClick('POLICY')}
                     className={`px-2 py-1 text-xs font-medium ${activeTab === 'POLICY' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
                   >
                     POLICY
                   </button>
                   <button
                     onClick={() => handleTabClick('CARE & STORAGE')}
                     className={`px-2 py-1 text-xs font-medium ${activeTab === 'CARE & STORAGE' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
                   >
                     CARE & STORAGE
                   </button>
                   <button
                     onClick={() => handleTabClick('REVIEWS')}
                     className={`px-2 py-1 text-xs font-medium ${activeTab === 'REVIEWS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
                   >
                     REVIEWS
                   </button>
@@ -1073,28 +1422,28 @@ function SoftWaveSelection() {
                 <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px' }}>
                   {activeTab === 'DETAILS' && (
                     <>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        13X6 ULTRA THIN HD FILM LACE, RAW INDONESIAN WAVY 250% DENSITY.
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                        13X6 ULTRA THIN HD FILM LACE, RAW INDONESIAN WAVY 200% DENSITY.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         HANDMADE UNIT MEASURING 24 INCHES IN LENGTH, OFF BLACK HAIR COLOR.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         100% RAW HUMAN HAIR EXTENSIONS USING SINGLE DONOR BUNDLES.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         STRETCHY, BREATHABLE CAP WITH REMOVABLE COMBS + ELASTIC BAND FOR A SNUG FIT.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         SINGLE STRAND KNOTS ARE LIGHTLY BLEACHED FOR A SEAMLESS, READY TO WEAR APPLICATION.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         UNIT COMES CO-WASHED IN ITS NATURAL STATE. CAN BE BLEACHED, DYED OR COLORED.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         USE 3D WIG GENERATOR TO CUSTOMIZE UNIT AS PICTURED, FOR MEMBERS ONLY.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
                         PROPER VERIFICATION IS REQUIRED TO FINALIZE THE PURCHASE OF ALL UNITS.
                       </p>
                     </>
@@ -1102,16 +1451,16 @@ function SoftWaveSelection() {
                   
                   {activeTab === 'SHIPPING' && (
                     <>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         STANDARD PROCESSING IS 6 TO 8 WEEKS AND UP TO 10 WEEKS FOR CUSTOMIZED UNITS.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         EXPRESS PROCESSING IS 4 TO 6 WEEKS WITH RUSH SHIPPING FOR AN ADDITIONAL $120 USD.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        CUSTOM COLOR, STYLING & ADD-ONS ARE NOT APPLICABLE FOR RUSH PROCESSING.
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                        CUSTOM COLOR, STYLING & ADD-ONS ARE NOT APPLICABLE FOR EXPRESS PROCESSING.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
                         PROCESSING TIME DOES NOT INCLUDE WEEKENDS AND MAJOR US HOLIDAYS.
                       </p>
                     </>
@@ -1119,13 +1468,13 @@ function SoftWaveSelection() {
                   
                   {activeTab === 'POLICY' && (
                     <>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         WE ARE UNABLE TO ACCEPT RETURNS OR REFUNDS AT THIS TIME. ALL SALES ARE FINAL.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         WHEN APPLICABLE, WE DO OFFER STORE CREDIT TO GO TOWARDS A FUTURE PURCHASE.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
                         IF THERE IS AN ISSUE WITH YOUR ORDER, REACH OUT TO CONTACT@FRONTALSLAYER.COM
                       </p>
                     </>
@@ -1133,13 +1482,16 @@ function SoftWaveSelection() {
                   
                   {activeTab === 'CARE & STORAGE' && (
                     <>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         WASH WITH MILD SHAMPOO, AVOID GETTING CONDITIONER DIRECTLY ON THE LACE.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
+                        APPLY LIGHT OILS & SERUMS ONLY TO YOUR RAW HAIR EXTENSIONS WHEN STYLING.
+                      </p>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         ROUTINELY BRUSH HAIR WITH A PADDLE BRUSH TO AVOID MATTING & SHEDDING.
                       </p>
-                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
                         CAREFULLY STORE UNIT INSIDE SATIN LINED DUST BAG TO MINIMIZE DAMAGE, FRIZZ + DEBRIS.
                       </p>
                     </>
@@ -1149,7 +1501,7 @@ function SoftWaveSelection() {
                     <div style={{ textAlign: 'center', padding: '20px 0 0px 0', transform: 'translateY(-12px)' }}>
                       <div style={{ marginBottom: '40px' }}>
                         <h3 style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                          fontFamily: '"Futura PT Medium"', 
                           fontSize: '11px', 
                           color: '#EB1C24', 
                           fontWeight: '500',
@@ -1178,7 +1530,7 @@ function SoftWaveSelection() {
                         
                         <div style={{ textAlign: 'center' }}>
                           <p style={{ 
-                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
+                            fontFamily: '"Futura PT Medium"', 
                             fontSize: '11px', 
                             color: 'black',
                             textTransform: 'uppercase',
@@ -1187,7 +1539,7 @@ function SoftWaveSelection() {
                             4.97 OUT OF 5 STARS
                           </p>
                           <p style={{ 
-                            fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', 
+                            fontFamily: '"Futura PT Demi"', 
                             fontSize: '9px', 
                             color: '#909090',
                             textTransform: 'uppercase',
@@ -1217,7 +1569,7 @@ function SoftWaveSelection() {
               style={{ 
                 borderWidth: '1.3px', 
                 color: '#EB1C24',
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                fontFamily: '"Futura PT Medium"',
                 backgroundColor: '#FFFFFF'
               }}
             >
@@ -1236,833 +1588,930 @@ function SoftWaveSelection() {
           <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
             <button
               onClick={() => {
+                // Store the selected cap size in localStorage for customize page
+                // Save to both selectedCapSize and customizeSelectedCapSize for consistency
                 const capSizeToSave = selectedCustomCap || selectedFlexibleCap;
                 if (capSizeToSave) {
                   if (typeof window !== 'undefined') {
                     try {
                       localStorage.setItem('selectedCapSize', capSizeToSave);
                       localStorage.setItem('customizeSelectedCapSize', capSizeToSave);
-                      localStorage.setItem('selectedCapSizePrice', '0');
-                      localStorage.setItem('customizeSelectedCapSizePrice', '0');
+                      const isFlexibleCap = capSizeToSave === 'XXS/XS/S' || capSizeToSave === 'S/M/L';
+                      const capSizePrice = isFlexibleCap ? '40' : '0';
+                      localStorage.setItem('selectedCapSizePrice', capSizePrice);
+                      localStorage.setItem('customizeSelectedCapSizePrice', capSizePrice);
                     } catch (e) {
                       console.error('Error saving cap size:', e);
                     }
                   }
                 }
+                
+                // Set defaults for other selections so customize page loads with defaults + selected cap
+                const defaults = {
+                  length: '24"',
+                  density: '200%',
+                  lace: '13X6',
+                  texture: 'SILKY',
+                  color: 'OFF BLACK',
+                  hairline: 'NATURAL',
+                  styling: 'NONE',
+                  addOns: [],
+                };
+                
+                // Save to both selected* and customizeSelected* keys
+                localStorage.setItem('selectedLength', defaults.length);
+                localStorage.setItem('selectedDensity', defaults.density);
+                localStorage.setItem('selectedLace', defaults.lace);
+                localStorage.setItem('selectedTexture', defaults.texture);
+                localStorage.setItem('selectedColor', defaults.color);
+                localStorage.setItem('selectedHairline', defaults.hairline);
+                localStorage.setItem('selectedStyling', defaults.styling);
+                localStorage.setItem('selectedAddOns', JSON.stringify(defaults.addOns));
+                
+                localStorage.setItem('customizeSelectedLength', defaults.length);
+                localStorage.setItem('customizeSelectedDensity', defaults.density);
+                localStorage.setItem('customizeSelectedLace', defaults.lace);
+                localStorage.setItem('customizeSelectedTexture', defaults.texture);
+                localStorage.setItem('customizeSelectedColor', defaults.color);
+                localStorage.setItem('customizeSelectedHairline', defaults.hairline);
+                localStorage.setItem('customizeSelectedStyling', defaults.styling);
+                localStorage.setItem('customizeSelectedAddOns', JSON.stringify(defaults.addOns));
+                
+                // Set all default prices to 0
+                localStorage.setItem('selectedLengthPrice', '0');
+                localStorage.setItem('selectedDensityPrice', '0');
+                localStorage.setItem('selectedLacePrice', '0');
+                localStorage.setItem('selectedTexturePrice', '0');
+                localStorage.setItem('selectedColorPrice', '0');
+                localStorage.setItem('selectedHairlinePrice', '0');
+                localStorage.setItem('selectedStylingPrice', '0');
+                localStorage.setItem('selectedAddOnsPrice', '0');
+                
+                localStorage.setItem('customizeSelectedLengthPrice', '0');
+                localStorage.setItem('customizeSelectedDensityPrice', '0');
+                localStorage.setItem('customizeSelectedLacePrice', '0');
+                localStorage.setItem('customizeSelectedTexturePrice', '0');
+                localStorage.setItem('customizeSelectedColorPrice', '0');
+                localStorage.setItem('customizeSelectedHairlinePrice', '0');
+                localStorage.setItem('customizeSelectedStylingPrice', '0');
+                localStorage.setItem('customizeSelectedAddOnsPrice', '0');
+                
+                // Clear any existing editing state
+                localStorage.removeItem('editingCartItem');
+                localStorage.removeItem('editingCartItemId');
+                
+                console.log('Customize page - Starting fresh customization with cap size:', capSizeToSave);
+                
                 navigate('/build-a-wig/soft-wave/customize');
               }}
               className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
               style={{ 
                 borderWidth: '1.3px', 
                 color: '#EB1C24',
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
+                fontFamily: '"Futura PT Medium"'
               }}
             >
               CUSTOMIZE IN BUILD-A-WIG
             </button>
           </div>
 
-          {/* SIMILAR PRODUCTS SECTION */}
-          <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
-            <div style={{ 
-              border: '1.3px solid black', 
-              backgroundColor: 'rgba(255, 255, 255, 0.6)', 
-              backdropFilter: 'blur(10px)',
-              padding: '0px',
-              maxWidth: '100%',
-              margin: '0 auto'
-            }}>
-              <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-                <div style={{ 
-                  width: '1px', 
-                  height: '15px', 
-                  backgroundColor: 'black',
-                  margin: '0 auto 8px auto'
-                }}></div>
-                <h3 style={{ 
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                  fontSize: '12px',
-                  color: '#EB1C24',
-                  textTransform: 'uppercase',
-                  margin: '0',
-                  fontWeight: '500'
+        {/* SIMILAR PRODUCTS SECTION */}
+        <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
+          <div style={{ 
+            border: '1.3px solid black', 
+            backgroundColor: 'rgba(255, 255, 255, 0.6)', 
+            backdropFilter: 'blur(10px)',
+            padding: '0px',
+            maxWidth: '100%',
+            margin: '0 auto'
+          }}>
+            {/* Header */}
+            <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+              <div style={{ 
+                width: '1px', 
+                height: '15px', 
+                backgroundColor: 'black',
+                margin: '0 auto 8px auto'
+              }}></div>
+              <h3 style={{ 
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '12px',
+                color: '#EB1C24',
+                textTransform: 'uppercase',
+                margin: '0',
+                fontWeight: '500'
+              }}>
+                SIMILAR PRODUCTS
+              </h3>
+            </div>
+            
+            {/* Content Area */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+              {/* Left Arrow */}
+              <button 
+                onClick={handleSimilarProductsLeftArrow}
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  cursor: 'pointer',
+                  padding: '5px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  minHeight: '50px',
+                  transform: `translateX(10px) translateY(${is3DView ? '-26px' : '-10px'})`
                 }}>
-                  SIMILAR PRODUCTS
-                </h3>
-              </div>
-              
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-                <button 
-                  onClick={handleSimilarProductsLeftArrow}
+                <img
+                  src="/assets/NOIR/left-facing-arrow.svg"
+                  alt="Left Arrow"
                   style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    padding: '5px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '50px',
-                    transform: `translateX(10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                  }}>
-                  <img
-                    src="/assets/NOIR/left-facing-arrow.svg"
-                    alt="Left Arrow"
-                    style={{ width: '14px', height: '14px' }}
-                  />
-                </button>
+                    width: '14px', 
+                    height: '14px'
+                  }}
+                />
+              </button>
+              
+              {/* Product Thumbnails Container with Static Vertical Line */}
+              <div style={{ flex: '1', position: 'relative' }}>
+                {/* Single Center Line with Masking */}
+                <div style={{
+                  position: 'absolute',
+                  left: '50%',
+                  top: '0',
+                  bottom: '0',
+                  width: '1px',
+                  backgroundColor: 'black',
+                  zIndex: 20,
+                  transform: 'translateX(-50%)'
+                }}></div>
                 
-                <div style={{ flex: '1', position: 'relative' }}>
-                  <div style={{
-                    position: 'absolute',
-                    left: '50%',
-                    top: '0',
-                    bottom: '0',
-                    width: '1px',
-                    backgroundColor: 'black',
-                    zIndex: 20,
-                    transform: 'translateX(-50%)'
-                  }}></div>
-                  
-                  <div style={{ 
-                    overflowX: 'hidden',
-                    width: '100%',
-                    position: 'relative',
-                    maxWidth: '100%'
+                {/* Masking Overlay for Tunnel Effect */}
+                <div style={{
+                  position: 'absolute',
+                  left: '50%',
+                  top: '0',
+                  bottom: '0',
+                  width: '10px',
+                  backgroundColor: 'transparent',
+                  zIndex: 15,
+                  transform: 'translateX(-50%)',
+                  pointerEvents: 'none'
+                }}></div>
+                
+                {/* Scrolling Product Thumbnails Container */}
+                <div style={{ 
+                  overflowX: 'hidden',
+                  width: '100%',
+                  position: 'relative',
+                  maxWidth: '100%'
+                }}>
+                  <div 
+                    style={{ 
+                      display: 'flex', 
+                      gap: '0',
+                      transform: `translateX(${similarProductsScroll}px) translateY(-15px)`,
+                      transition: 'none',
+                      width: 'calc(200% - 20px)'
+                    }}
+                  >
+                {/* Product 1 - BLANCO */}
+                <div 
+                  onClick={() => navigate('/straight/blanco')}
+                  style={{ 
+                    padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
+                    textAlign: 'center',
+                    transform: is3DView ? 'translateX(1px)' : 'translateX(-2.5px)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <img
+                    src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
+                    alt="BLANCO"
+                    style={{ 
+                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
+                      marginBottom: '10px',
+                      marginLeft: '10px'
+                    }}
+                  />
+                  <p style={{ 
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                    fontSize: '18px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '-10px 0 -3px 0',
+                    fontWeight: '500',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    <div 
-                      style={{ 
-                        display: 'flex', 
-                        gap: '0',
-                        transform: `translateX(${similarProductsScroll}px) translateY(-15px)`,
-                        transition: 'none',
-                        width: 'calc(200% - 20px)'
-                      }}
-                    >
-                      {/* Product 1 - BLANCO */}
-                      <div 
-                        onClick={() => navigate('/straight/blanco')}
+                    BLANCO
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '10px',
+                    color: '#EB1C24',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
+                  }}>
+                    24" RAW RUSSIAN
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '12px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(820)}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
+                    {[...Array(5)].map((_, index) => (
+                      <img
+                        key={index}
+                        src="/assets/NOIR/star-symbol.png"
+                        alt="Star Rating"
                         style={{ 
-                          padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
-                          textAlign: 'center',
-                          transform: is3DView ? 'translateX(1px)' : 'translateX(-2.5px)',
-                          cursor: 'pointer'
+                          width: '10px', 
+                          height: '10px',
+                          filter: 'drop-shadow(0 0 0 1px black)',
+                          stroke: '1px black'
                         }}
-                      >
-                        <img
-                          src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
-                          alt="BLANCO"
-                          style={{ 
-                            width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                            height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                            marginBottom: '10px',
-                            marginLeft: '10px'
-                          }}
-                        />
-                        <p style={{ 
-                          fontFamily: '"Covered By Your Grace", cursive',
-                          fontSize: '18px',
-                          color: 'black',
-                          textTransform: 'uppercase',
-                          margin: '-10px 0 -3px 0',
-                          fontWeight: '500',
-                          transform: !is3DView ? 'translateX(10px)' : undefined
-                        }}>
-                          BLANCO
-                        </p>
-                        <p style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                          fontSize: '10px',
-                          color: '#EB1C24',
-                          textTransform: 'uppercase',
-                          margin: '0 0 5px 0',
-                          fontWeight: '500',
-                          lineHeight: '0.84',
-                          transform: !is3DView ? 'translateX(10px)' : undefined
-                        }}>
-                          24" RAW RUSSIAN
-                        </p>
-                        <p style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                          fontSize: '12px',
-                          color: 'black',
-                          textTransform: 'uppercase',
-                          margin: '0 0 5px 0',
-                          fontWeight: '500',
-                          lineHeight: '0.84',
-                          transform: !is3DView ? 'translateX(10px)' : undefined
-                        }}>
-                          $820 USD
-                        </p>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
-                          {[...Array(5)].map((_, index) => (
-                            <img
-                              key={index}
-                              src="/assets/NOIR/star-symbol.png"
-                              alt="Star Rating"
-                              style={{ 
-                                width: '10px', 
-                                height: '10px',
-                                filter: 'drop-shadow(0 0 0 1px black)',
-                                stroke: '1px black'
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      
-                      {/* Product 2 - SOFT WAVE */}
-                      <div 
-                        onClick={() => navigate('/wavy/soft-wave')}
-                        style={{ 
-                          padding: '10px 10px 4px 10px',
-                          textAlign: 'center',
-                          transform: 'translateX(13px)',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        <img
-                          src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
-                          alt="SOFT WAVE"
-                          style={{ 
-                            width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                            height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                            marginBottom: '10px',
-                            marginLeft: '10px'
-                          }}
-                        />
-                        <p style={{ 
-                          fontFamily: '"Covered By Your Grace", cursive',
-                          fontSize: '18px',
-                          color: 'black',
-                          textTransform: 'uppercase',
-                          margin: '-10px 0 -3px 0',
-                          fontWeight: '500',
-                          transform: !is3DView ? 'translateX(10px)' : undefined
-                        }}>
-                          SOFT WAVE
-                        </p>
-                        <p style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                          fontSize: '10px',
-                          color: '#EB1C24',
-                          textTransform: 'uppercase',
-                          margin: '0 0 5px 0',
-                          fontWeight: '500',
-                          lineHeight: '0.84',
-                          transform: !is3DView ? 'translateX(10px)' : undefined
-                        }}>
-                          24" RAW INDONESIAN
-                        </p>
-                        <p style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                          fontSize: '12px',
-                          color: 'black',
-                          textTransform: 'uppercase',
-                          margin: '0 0 5px 0',
-                          fontWeight: '500',
-                          lineHeight: '0.84',
-                          transform: !is3DView ? 'translateX(10px)' : undefined
-                        }}>
-                          $760 USD
-                        </p>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
-                          {[...Array(5)].map((_, index) => (
-                            <img
-                              key={index}
-                              src="/assets/NOIR/star-symbol.png"
-                              alt="Star Rating"
-                              style={{ 
-                                width: '10px', 
-                                height: '10px',
-                                filter: 'drop-shadow(0 0 0 1px black)',
-                                stroke: '1px black'
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      
-                      {/* Product 3 - NOIR */}
-                      <div 
-                        onClick={() => navigate('/straight/noir')}
-                        style={{ 
-                          padding: '10px 10px 4px 10px',
-                          textAlign: 'center',
-                          transform: is3DView ? 'translateX(-9.3px)' : 'translateX(-8.3px)',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        <img
-                          src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
-                          alt="NOIR"
-                          style={{ 
-                            width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                            height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                            marginBottom: '10px',
-                            marginLeft: is3DView ? '10px' : '10px'
-                          }}
-                        />
-                        <p style={{ 
-                          fontFamily: '"Covered By Your Grace", cursive',
-                          fontSize: '18px',
-                          color: 'black',
-                          textTransform: 'uppercase',
-                          margin: '-10px 0 -3px 0',
-                          fontWeight: '500',
-                          transform: !is3DView ? 'translateX(10.5px)' : undefined
-                        }}>
-                          NOIR
-                        </p>
-                        <p style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                          fontSize: '10px',
-                          color: '#EB1C24',
-                          textTransform: 'uppercase',
-                          margin: '0 0 5px 0',
-                          fontWeight: '500',
-                          lineHeight: '0.84',
-                          transform: !is3DView ? 'translateX(10.5px)' : undefined
-                        }}>
-                          24" RAW CAMBODIAN
-                        </p>
-                        <p style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                          fontSize: '12px',
-                          color: 'black',
-                          textTransform: 'uppercase',
-                          margin: '0 0 5px 0',
-                          fontWeight: '500',
-                          lineHeight: '0.84',
-                          transform: !is3DView ? 'translateX(10.5px)' : undefined
-                        }}>
-                          $740 USD
-                        </p>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10.5px)' : undefined }}>
-                          {[...Array(5)].map((_, index) => (
-                            <img
-                              key={index}
-                              src="/assets/NOIR/star-symbol.png"
-                              alt="Star Rating"
-                              style={{ 
-                                width: '10px', 
-                                height: '10px',
-                                filter: 'drop-shadow(0 0 0 1px black)',
-                                stroke: '1px black'
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      
-                      {/* Product 4 - SOFT CURL */}
-                      <div 
-                        onClick={() => navigate('/curly/soft-curl')}
-                        style={{ 
-                          padding: '10px 10px 4px 10px',
-                          textAlign: 'center',
-                          transform: is3DView ? 'translateX(2.9px)' : 'translateX(7.7px)',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        <img
-                          src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/curl-thumb.png"}
-                          alt="SOFT CURL"
-                          style={{ 
-                            width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                            height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                            marginBottom: '10px',
-                            marginLeft: is3DView ? '10px' : '10px'
-                          }}
-                        />
-                        <p style={{ 
-                          fontFamily: '"Covered By Your Grace", cursive',
-                          fontSize: '18px',
-                          color: 'black',
-                          textTransform: 'uppercase',
-                          margin: '-10px 0 -3px 0',
-                          fontWeight: '500',
-                          transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
-                        }}>
-                          SOFT CURL
-                        </p>
-                        <p style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                          fontSize: '10px',
-                          color: '#EB1C24',
-                          textTransform: 'uppercase',
-                          margin: '0 0 5px 0',
-                          fontWeight: '500',
-                          lineHeight: '0.84',
-                          transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
-                        }}>
-                          24" RAW VIETNAMESE
-                        </p>
-                        <p style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                          fontSize: '12px',
-                          color: 'black',
-                          textTransform: 'uppercase',
-                          margin: '0 0 5px 0',
-                          fontWeight: '500',
-                          lineHeight: '0.84',
-                          transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
-                        }}>
-                          $780 USD
-                        </p>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)' }}>
-                          {[...Array(5)].map((_, index) => (
-                            <img
-                              key={index}
-                              src="/assets/NOIR/star-symbol.png"
-                              alt="Star Rating"
-                              style={{ 
-                                width: '10px', 
-                                height: '10px',
-                                filter: 'drop-shadow(0 0 0 1px black)',
-                                stroke: '1px black'
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
+                      />
+                    ))}
                   </div>
                 </div>
                 
-                <button 
-                  onClick={handleSimilarProductsRightArrow}
+                {/* Product 2 - SOFT WAVE */}
+                <div 
+                  onClick={() => navigate('/wavy/soft-wave')}
                   style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    padding: '5px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '50px',
-                    transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                  }}>
+                    padding: '10px 10px 4px 10px',
+                    textAlign: 'center',
+                    transform: 'translateX(13px)',
+                    cursor: 'pointer'
+                  }}
+                >
                   <img
-                    src="/assets/NOIR/right-facing-arrow.svg"
-                    alt="Right Arrow"
-                    style={{ width: '14px', height: '14px' }}
+                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/wave-thumb.png"}
+                    alt="SOFT WAVE"
+                    style={{ 
+                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
+                      marginBottom: '10px',
+                      marginLeft: '10px'
+                    }}
                   />
-                </button>
+                  <p style={{ 
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                    fontSize: '18px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '-10px 0 -3px 0',
+                    fontWeight: '500',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
+                  }}>
+                    SOFT WAVE
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '10px',
+                    color: '#EB1C24',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
+                  }}>
+                    24" RAW INDONESIAN
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '12px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(760)}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
+                    {[...Array(5)].map((_, index) => (
+                      <img
+                        key={index}
+                        src="/assets/NOIR/star-symbol.png"
+                        alt="Star Rating"
+                        style={{ 
+                          width: '10px', 
+                          height: '10px',
+                          filter: 'drop-shadow(0 0 0 1px black)',
+                          stroke: '1px black'
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Product 3 - NOIR */}
+                <div 
+                  onClick={() => navigate('/straight/noir')}
+                  style={{ 
+                    padding: '10px 10px 4px 10px',
+                    textAlign: 'center',
+                    transform: is3DView ? 'translateX(-9.3px)' : 'translateX(-8.3px)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <img
+                    src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
+                    alt="NOIR"
+                    style={{ 
+                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
+                      marginBottom: '10px',
+                      marginLeft: is3DView ? '10px' : '10px'
+                    }}
+                  />
+                  <p style={{ 
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                    fontSize: '18px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '-10px 0 -3px 0',
+                    fontWeight: '500',
+                    transform: !is3DView ? 'translateX(10.5px)' : undefined
+                  }}>
+                    NOIR
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '10px',
+                    color: '#EB1C24',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10.5px)' : undefined
+                  }}>
+                    24" RAW CAMBODIAN
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '12px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10.5px)' : undefined
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(740)}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10.5px)' : undefined }}>
+                    {[...Array(5)].map((_, index) => (
+                      <img
+                        key={index}
+                        src="/assets/NOIR/star-symbol.png"
+                        alt="Star Rating"
+                        style={{ 
+                          width: '10px', 
+                          height: '10px',
+                          filter: 'drop-shadow(0 0 0 1px black)',
+                          stroke: '1px black'
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Product 4 - SOFT CURL */}
+                <div 
+                  onClick={() => navigate('/curly/soft-curl')}
+                  style={{ 
+                    padding: '10px 10px 4px 10px',
+                    textAlign: 'center',
+                    transform: is3DView ? 'translateX(2.9px)' : 'translateX(7.7px)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <img
+                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/curl-thumb.png"}
+                    alt="SOFT CURL"
+                    style={{ 
+                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
+                      marginBottom: '10px',
+                      marginLeft: is3DView ? '10px' : '10px'
+                    }}
+                  />
+                  <p style={{ 
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                    fontSize: '18px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '-10px 0 -3px 0',
+                    fontWeight: '500',
+                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
+                  }}>
+                    SOFT CURL
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '10px',
+                    color: '#EB1C24',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
+                  }}>
+                    24" RAW VIETNAMESE
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '12px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(780)}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)' }}>
+                    {[...Array(5)].map((_, index) => (
+                      <img
+                        key={index}
+                        src="/assets/NOIR/star-symbol.png"
+                        alt="Star Rating"
+                        style={{ 
+                          width: '10px', 
+                          height: '10px',
+                          filter: 'drop-shadow(0 0 0 1px black)',
+                          stroke: '1px black'
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                  </div>
+                </div>
               </div>
+              
+              {/* Right Arrow */}
+              <button 
+                onClick={handleSimilarProductsRightArrow}
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  cursor: 'pointer',
+                  padding: '5px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  minHeight: '50px',
+                  transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
+                }}>
+                <img
+                  src="/assets/NOIR/right-facing-arrow.svg"
+                  alt="Right Arrow"
+                  style={{ 
+                    width: '14px', 
+                    height: '14px'
+                  }}
+                />
+              </button>
             </div>
           </div>
+        </div>
 
-          {/* RECENTLY VIEWED SECTION */}
-          <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
-            <div style={{ 
-              border: '1.3px solid black', 
-              backgroundColor: 'rgba(255, 255, 255, 0.6)', 
-              backdropFilter: 'blur(10px)',
-              padding: '0px',
-              maxWidth: '100%',
-              margin: '0 auto'
-            }}>
-              <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-                <div style={{ 
-                  width: '1px', 
-                  height: '15px', 
-                  backgroundColor: 'black',
-                  margin: '0 auto 8px auto'
-                }}></div>
-                <h3 style={{ 
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                  fontSize: '12px',
-                  color: '#EB1C24',
-                  textTransform: 'uppercase',
-                  margin: '0',
-                  fontWeight: '500'
+        {/* RECENTLY VIEWED SECTION */}
+        <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
+          <div style={{ 
+            border: '1.3px solid black', 
+            backgroundColor: 'rgba(255, 255, 255, 0.6)', 
+            backdropFilter: 'blur(10px)',
+            padding: '0px',
+            maxWidth: '100%',
+            margin: '0 auto'
+          }}>
+            {/* Header */}
+            <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+              <div style={{ 
+                width: '1px', 
+                height: '15px', 
+                backgroundColor: 'black',
+                margin: '0 auto 8px auto'
+              }}></div>
+              <h3 style={{ 
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '12px',
+                color: '#EB1C24',
+                textTransform: 'uppercase',
+                margin: '0',
+                fontWeight: '500'
+              }}>
+                RECENTLY VIEWED
+              </h3>
+            </div>
+            
+            {/* Content Area */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+              {/* Left Arrow */}
+              <button 
+                onClick={handleRecentlyViewedLeftArrow}
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  cursor: 'pointer',
+                  padding: '5px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  minHeight: '50px',
+                  transform: `translateX(10px) translateY(${is3DView ? '-26px' : '-10px'})`
                 }}>
-                  RECENTLY VIEWED
-                </h3>
-              </div>
-              
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-                <button 
-                  onClick={handleRecentlyViewedLeftArrow}
+                <img
+                  src="/assets/NOIR/left-facing-arrow.svg"
+                  alt="Left Arrow"
                   style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    padding: '5px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '50px',
-                    transform: `translateX(10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                  }}>
-                  <img
-                    src="/assets/NOIR/left-facing-arrow.svg"
-                    alt="Left Arrow"
-                    style={{ width: '14px', height: '14px' }}
-                  />
-                </button>
+                    width: '14px', 
+                    height: '14px'
+                  }}
+                />
+              </button>
+              
+              {/* Product Thumbnails Container with Static Vertical Line */}
+              <div style={{ flex: '1', position: 'relative' }}>
+                {/* Single Center Line with Masking */}
+                <div style={{
+                  position: 'absolute',
+                  left: '50%',
+                  top: '0',
+                  bottom: '0',
+                  width: '1px',
+                  backgroundColor: 'black',
+                  zIndex: 20,
+                  transform: 'translateX(-50%)'
+                }}></div>
                 
-                {/* Product Thumbnails Container with Static Vertical Line */}
-                <div style={{ flex: '1', position: 'relative' }}>
-                  {/* Single Center Line with Masking */}
-                  <div style={{
-                    position: 'absolute',
-                    left: '50%',
-                    top: '0',
-                    bottom: '0',
-                    width: '1px',
-                    backgroundColor: 'black',
-                    zIndex: 20,
-                    transform: 'translateX(-50%)'
-                  }}></div>
-                  
-                  {/* Masking Overlay for Tunnel Effect */}
-                  <div style={{
-                    position: 'absolute',
-                    left: '50%',
-                    top: '0',
-                    bottom: '0',
-                    width: '10px',
-                    backgroundColor: 'transparent',
-                    zIndex: 15,
-                    transform: 'translateX(-50%)',
-                    pointerEvents: 'none'
-                  }}></div>
-                  
-                  {/* Scrolling Product Thumbnails Container */}
-                  <div style={{ 
-                    overflowX: 'hidden',
-                    width: '100%',
-                    position: 'relative',
-                    maxWidth: '100%'
+                {/* Masking Overlay for Tunnel Effect */}
+                <div style={{
+                  position: 'absolute',
+                  left: '50%',
+                  top: '0',
+                  bottom: '0',
+                  width: '10px',
+                  backgroundColor: 'transparent',
+                  zIndex: 15,
+                  transform: 'translateX(-50%)',
+                  pointerEvents: 'none'
+                }}></div>
+                
+                {/* Scrolling Product Thumbnails Container */}
+                <div style={{ 
+                  overflowX: 'hidden',
+                  width: '100%',
+                  position: 'relative',
+                  maxWidth: '100%'
+                }}>
+                  <div 
+                    style={{ 
+                      display: 'flex', 
+                      gap: '0',
+                      transform: `translateX(${recentlyViewedScroll}px) translateY(-15px)`,
+                      transition: 'none',
+                      width: 'calc(200% - 20px)'
+                    }}
+                  >
+                {/* Product 1 - BEACH WAVE */}
+                <div 
+                  onClick={() => navigate('/wavy/soft-wave')}
+                  style={{ 
+                    padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
+                    textAlign: 'center',
+                    transform: is3DView ? 'translateX(1px)' : 'translateX(-2.5px)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <img
+                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/wave-thumb.png"}
+                    alt="SOFT WAVE"
+                    style={{ 
+                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
+                      marginBottom: '10px',
+                      marginLeft: '10px'
+                    }}
+                  />
+                  <p style={{ 
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                    fontSize: '18px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '-10px 0 -3px 0',
+                    fontWeight: '500',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    <div 
-                      style={{ 
-                        display: 'flex', 
-                        gap: '0',
-                        transform: `translateX(${recentlyViewedScroll}px) translateY(-15px)`,
-                        transition: 'none',
-                        width: 'calc(200% - 20px)'
-                      }}
-                    >
-                      {/* Product 1 - SOFT WAVE */}
-                      <div 
-                        onClick={() => navigate('/wavy/soft-wave')}
+                    SOFT WAVE
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '10px',
+                    color: '#EB1C24',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
+                  }}>
+                    24" RAW INDONESIAN
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '12px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(760)}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
+                    {[...Array(5)].map((_, index) => (
+                      <img
+                        key={index}
+                        src="/assets/NOIR/star-symbol.png"
+                        alt="Star Rating"
                         style={{ 
-                          padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
-                          textAlign: 'center',
-                          transform: is3DView ? 'translateX(1px)' : 'translateX(-2.5px)',
-                          cursor: 'pointer'
+                          width: '10px', 
+                          height: '10px',
+                          filter: 'drop-shadow(0 0 0 1px black)',
+                          stroke: '1px black'
                         }}
-                      >
-                        <img
-                          src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
-                          alt="SOFT WAVE"
-                          style={{ 
-                            width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                            height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                            marginBottom: '10px',
-                            marginLeft: '10px'
-                          }}
-                        />
-                        <p style={{ 
-                          fontFamily: '"Covered By Your Grace", cursive',
-                          fontSize: '18px',
-                          color: 'black',
-                          textTransform: 'uppercase',
-                          margin: '-10px 0 -3px 0',
-                          fontWeight: '500',
-                          transform: !is3DView ? 'translateX(10px)' : undefined
-                        }}>
-                          SOFT WAVE
-                        </p>
-                        <p style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                          fontSize: '10px',
-                          color: '#EB1C24',
-                          textTransform: 'uppercase',
-                          margin: '0 0 5px 0',
-                          fontWeight: '500',
-                          lineHeight: '0.84',
-                          transform: !is3DView ? 'translateX(10px)' : undefined
-                        }}>
-                          24" RAW INDONESIAN
-                        </p>
-                        <p style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                          fontSize: '12px',
-                          color: 'black',
-                          textTransform: 'uppercase',
-                          margin: '0 0 5px 0',
-                          fontWeight: '500',
-                          lineHeight: '0.84',
-                          transform: !is3DView ? 'translateX(10px)' : undefined
-                        }}>
-                          $760 USD
-                        </p>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
-                          {[...Array(5)].map((_, index) => (
-                            <img
-                              key={index}
-                              src="/assets/NOIR/star-symbol.png"
-                              alt="Star Rating"
-                              style={{ 
-                                width: '10px', 
-                                height: '10px',
-                                filter: 'drop-shadow(0 0 0 1px black)',
-                                stroke: '1px black'
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      
-                      {/* Product 2 - SOFT CURL */}
-                      <div 
-                        onClick={() => navigate('/curly/soft-curl')}
-                        style={{ 
-                          padding: '10px 10px 4px 10px',
-                          textAlign: 'center',
-                          transform: 'translateX(13px)',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        <img
-                          src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/curl-thumb.png"}
-                          alt="SOFT CURL"
-                          style={{ 
-                            width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                            height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                            marginBottom: '10px',
-                            marginLeft: '10px'
-                          }}
-                        />
-                        <p style={{ 
-                          fontFamily: '"Covered By Your Grace", cursive',
-                          fontSize: '18px',
-                          color: 'black',
-                          textTransform: 'uppercase',
-                          margin: '-10px 0 -3px 0',
-                          fontWeight: '500',
-                          transform: !is3DView ? 'translateX(10px)' : undefined
-                        }}>
-                          SOFT CURL
-                        </p>
-                        <p style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                          fontSize: '10px',
-                          color: '#EB1C24',
-                          textTransform: 'uppercase',
-                          margin: '0 0 5px 0',
-                          fontWeight: '500',
-                          lineHeight: '0.84',
-                          transform: !is3DView ? 'translateX(10px)' : undefined
-                        }}>
-                          24" RAW VIETNAMESE
-                        </p>
-                        <p style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                          fontSize: '12px',
-                          color: 'black',
-                          textTransform: 'uppercase',
-                          margin: '0 0 5px 0',
-                          fontWeight: '500',
-                          lineHeight: '0.84',
-                          transform: !is3DView ? 'translateX(10px)' : undefined
-                        }}>
-                          $780 USD
-                        </p>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
-                          {[...Array(5)].map((_, index) => (
-                            <img
-                              key={index}
-                              src="/assets/NOIR/star-symbol.png"
-                              alt="Star Rating"
-                              style={{ 
-                                width: '10px', 
-                                height: '10px',
-                                filter: 'drop-shadow(0 0 0 1px black)',
-                                stroke: '1px black'
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      
-                      {/* Product 3 - NOIR */}
-                      <div 
-                        onClick={() => navigate('/straight/noir')}
-                        style={{ 
-                          padding: '10px 10px 4px 10px',
-                          textAlign: 'center',
-                          transform: is3DView ? 'translateX(-9.3px)' : 'translateX(-8.3px)',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        <img
-                          src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
-                          alt="NOIR"
-                          style={{ 
-                            width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                            height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                            marginBottom: '10px',
-                            marginLeft: '10px'
-                          }}
-                        />
-                        <p style={{ 
-                          fontFamily: '"Covered By Your Grace", cursive',
-                          fontSize: '18px',
-                          color: 'black',
-                          textTransform: 'uppercase',
-                          margin: '-10px 0 -3px 0',
-                          fontWeight: '500',
-                          transform: !is3DView ? 'translateX(10.5px)' : undefined
-                        }}>
-                          NOIR
-                        </p>
-                        <p style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                          fontSize: '10px',
-                          color: '#EB1C24',
-                          textTransform: 'uppercase',
-                          margin: '0 0 5px 0',
-                          fontWeight: '500',
-                          lineHeight: '0.84',
-                          transform: !is3DView ? 'translateX(10.5px)' : undefined
-                        }}>
-                          24" RAW CAMBODIAN
-                        </p>
-                        <p style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                          fontSize: '12px',
-                          color: 'black',
-                          textTransform: 'uppercase',
-                          margin: '0 0 5px 0',
-                          fontWeight: '500',
-                          lineHeight: '0.84',
-                          transform: !is3DView ? 'translateX(10.5px)' : undefined
-                        }}>
-                          $740 USD
-                        </p>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10.5px)' : undefined }}>
-                          {[...Array(5)].map((_, index) => (
-                            <img
-                              key={index}
-                              src="/assets/NOIR/star-symbol.png"
-                              alt="Star Rating"
-                              style={{ 
-                                width: '10px', 
-                                height: '10px',
-                                filter: 'drop-shadow(0 0 0 1px black)',
-                                stroke: '1px black'
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      
-                      {/* Product 4 - BLANCO */}
-                      <div 
-                        onClick={() => navigate('/straight/blanco')}
-                        style={{ 
-                          padding: '10px 10px 4px 10px',
-                          textAlign: 'center',
-                          transform: is3DView ? 'translateX(2.9px)' : 'translateX(7.7px)',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        <img
-                          src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
-                          alt="BLANCO"
-                          style={{ 
-                            width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                            height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                            marginBottom: '10px',
-                            marginLeft: '10px'
-                          }}
-                        />
-                        <p style={{ 
-                          fontFamily: '"Covered By Your Grace", cursive',
-                          fontSize: '18px',
-                          color: 'black',
-                          textTransform: 'uppercase',
-                          margin: '-10px 0 -3px 0',
-                          fontWeight: '500',
-                          transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
-                        }}>
-                          BLANCO
-                        </p>
-                        <p style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                          fontSize: '10px',
-                          color: '#EB1C24',
-                          textTransform: 'uppercase',
-                          margin: '0 0 5px 0',
-                          fontWeight: '500',
-                          lineHeight: '0.84',
-                          transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
-                        }}>
-                          24" RAW RUSSIAN
-                        </p>
-                        <p style={{ 
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                          fontSize: '12px',
-                          color: 'black',
-                          textTransform: 'uppercase',
-                          margin: '0 0 5px 0',
-                          fontWeight: '500',
-                          lineHeight: '0.84',
-                          transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
-                        }}>
-                          $820 USD
-                        </p>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)' }}>
-                          {[...Array(5)].map((_, index) => (
-                            <img
-                              key={index}
-                              src="/assets/NOIR/star-symbol.png"
-                              alt="Star Rating"
-                              style={{ 
-                                width: '10px', 
-                                height: '10px',
-                                filter: 'drop-shadow(0 0 0 1px black)',
-                                stroke: '1px black'
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
+                      />
+                    ))}
                   </div>
                 </div>
                 
-                <button 
-                  onClick={handleRecentlyViewedRightArrow}
+                {/* Product 2 - SOFT CURL */}
+                <div 
+                  onClick={() => navigate('/curly/soft-curl')}
                   style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    padding: '5px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '50px',
-                    transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                  }}>
+                    padding: '10px 10px 4px 10px',
+                    textAlign: 'center',
+                    transform: 'translateX(13px)',
+                    cursor: 'pointer'
+                  }}
+                >
                   <img
-                    src="/assets/NOIR/right-facing-arrow.svg"
-                    alt="Right Arrow"
-                    style={{ width: '14px', height: '14px' }}
+                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/curl-thumb.png"}
+                    alt="SOFT CURL"
+                    style={{ 
+                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
+                      marginBottom: '10px',
+                      marginLeft: '10px'
+                    }}
                   />
-                </button>
+                  <p style={{ 
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                    fontSize: '18px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '-10px 0 -3px 0',
+                    fontWeight: '500',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
+                  }}>
+                    SOFT CURL
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '10px',
+                    color: '#EB1C24',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
+                  }}>
+                    24" RAW VIETNAMESE
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '12px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10px)' : undefined
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(780)}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
+                    {[...Array(5)].map((_, index) => (
+                      <img
+                        key={index}
+                        src="/assets/NOIR/star-symbol.png"
+                        alt="Star Rating"
+                        style={{ 
+                          width: '10px', 
+                          height: '10px',
+                          filter: 'drop-shadow(0 0 0 1px black)',
+                          stroke: '1px black'
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Product 3 - NOIR */}
+                <div 
+                  onClick={() => navigate('/straight/noir')}
+                  style={{ 
+                    padding: '10px 10px 4px 10px',
+                    textAlign: 'center',
+                    transform: is3DView ? 'translateX(-9.3px)' : 'translateX(-8.3px)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <img
+                    src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
+                    alt="NOIR"
+                    style={{ 
+                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
+                      marginBottom: '10px',
+                      marginLeft: '10px'
+                    }}
+                  />
+                  <p style={{ 
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                    fontSize: '18px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '-10px 0 -3px 0',
+                    fontWeight: '500',
+                    transform: !is3DView ? 'translateX(10.5px)' : undefined
+                  }}>
+                    NOIR
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '10px',
+                    color: '#EB1C24',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10.5px)' : undefined
+                  }}>
+                    24" RAW CAMBODIAN
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '12px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                    transform: !is3DView ? 'translateX(10.5px)' : undefined
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(740)}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10.5px)' : undefined }}>
+                    {[...Array(5)].map((_, index) => (
+                      <img
+                        key={index}
+                        src="/assets/NOIR/star-symbol.png"
+                        alt="Star Rating"
+                        style={{ 
+                          width: '10px', 
+                          height: '10px',
+                          filter: 'drop-shadow(0 0 0 1px black)',
+                          stroke: '1px black'
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Product 4 - BLANCO */}
+                <div 
+                  onClick={() => navigate('/straight/blanco')}
+                  style={{ 
+                    padding: '10px 10px 4px 10px',
+                    textAlign: 'center',
+                    transform: is3DView ? 'translateX(2.9px)' : 'translateX(7.7px)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <img
+                    src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
+                    alt="BLANCO"
+                    style={{ 
+                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
+                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
+                      marginBottom: '10px',
+                      marginLeft: '10px'
+                    }}
+                  />
+                  <p style={{ 
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                    fontSize: '18px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '-10px 0 -3px 0',
+                    fontWeight: '500',
+                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
+                  }}>
+                    BLANCO
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '10px',
+                    color: '#EB1C24',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
+                  }}>
+                    24" RAW RUSSIAN
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '12px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(820)}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)' }}>
+                    {[...Array(5)].map((_, index) => (
+                      <img
+                        key={index}
+                        src="/assets/NOIR/star-symbol.png"
+                        alt="Star Rating"
+                        style={{ 
+                          width: '10px', 
+                          height: '10px',
+                          filter: 'drop-shadow(0 0 0 1px black)',
+                          stroke: '1px black'
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                  </div>
+                </div>
               </div>
+              
+              {/* Right Arrow */}
+              <button 
+                onClick={handleRecentlyViewedRightArrow}
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  cursor: 'pointer',
+                  padding: '5px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  minHeight: '50px',
+                  transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
+                }}>
+                <img
+                  src="/assets/NOIR/right-facing-arrow.svg"
+                  alt="Right Arrow"
+                  style={{ 
+                    width: '14px', 
+                    height: '14px'
+                  }}
+                />
+              </button>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>

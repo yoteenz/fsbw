@@ -4509,14 +4509,14 @@ export default function BuildAWigPage() {
               <div style={{ transform: showMobileMenu ? 'translateY(0.7px)' : 'none' }}>
                   <DynamicCartIcon count={cartCount} width={22} height={19} />
                 </div>
-              <img
-                alt="Menu"
-                width="21"
-                height="21"
-                className="cursor-pointer"
-                src="/assets/menu-icon.svg"
-                onClick={handleMobileMenuToggle}
-              />
+                <img
+                  alt="Menu"
+                  width="17"
+                  height="18"
+                  className="cursor-pointer"
+                  src="/assets/menu-icon.svg"
+                  onClick={handleMobileMenuToggle}
+                />
             </div>
         </div>
 

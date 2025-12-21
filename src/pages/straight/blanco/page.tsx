@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
+import DynamicCartIcon from '../../../components/DynamicCartIcon';
 
 function BlancoSelection() {
   const navigate = useNavigate();
@@ -298,93 +300,6 @@ function BlancoSelection() {
       localStorage.removeItem('lastAddedItemId');
     }
   }, []);
-
-  // Product data mapping helper
-  const getProductData = (name: string) => {
-    const productMap: { [key: string]: any } = {
-      'NOIR': {
-        name: 'NOIR',
-        route: '/straight/noir',
-        image: '/assets/NOIR/noir-thumb.png',
-        image3D: '/assets/NOIR/noir front.png',
-        price: 740,
-        hairOrigin: '24" RAW CAMBODIAN'
-      },
-      'BLANCO': {
-        name: 'BLANCO',
-        route: '/straight/blanco',
-        image: '/assets/NOIR/blanco-thumb.png',
-        image3D: '/assets/NOIR/blanco front.png',
-        price: 820,
-        hairOrigin: '24" RAW CAMBODIAN'
-      },
-      'SOFT WAVE': {
-        name: 'SOFT WAVE',
-        route: '/wavy/soft-wave',
-        image: '/assets/NOIR/wave-thumb.png',
-        image3D: '/assets/NOIR/wave front.png',
-        price: 760,
-        hairOrigin: '24" RAW INDIAN'
-      },
-      'BEACH WAVE': {
-        name: 'BEACH WAVE',
-        route: '/wavy/beach-wave',
-        image: '/assets/NOIR/wave-thumb.png',
-        image3D: '/assets/NOIR/wave front.png',
-        price: 760,
-        hairOrigin: '24" RAW INDONESIAN'
-      },
-      'SOFT CURL': {
-        name: 'SOFT CURL',
-        route: '/curly/soft-curl',
-        image: '/assets/NOIR/curl-thumb.png',
-        image3D: '/assets/NOIR/wave front.png',
-        price: 780,
-        hairOrigin: '24" RAW VIETNAMESE'
-      },
-      'OCEAN CURL': {
-        name: 'OCEAN CURL',
-        route: '/curly/ocean-curl',
-        image: '/assets/NOIR/curl-thumb.png',
-        image3D: '/assets/NOIR/wave front.png',
-        price: 780,
-        hairOrigin: '24" RAW FILIPINO'
-      }
-    };
-    return productMap[name] || null;
-  };
-
-  // Track page view for recently viewed
-  useEffect(() => {
-    const currentProduct = getProductData('BLANCO');
-    if (!currentProduct) return;
-    
-    // Get existing recently viewed
-    const recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewedUnits') || '[]');
-    
-    // Ensure all items have the correct structure by mapping through getProductData
-    const normalizedItems = recentlyViewed.map((item: any) => {
-      const productData = getProductData(item.name);
-      return productData || item;
-    }).filter((item: any) => item && item.name && item.route);
-    
-    // Remove current product if it exists
-    const filtered = normalizedItems.filter((item: any) => item.route !== currentProduct.route);
-    
-    // Add current product to the beginning
-    filtered.unshift(currentProduct);
-    
-    // Keep only last 4 items
-    const limited = filtered.slice(0, 4);
-    
-    // Save back to localStorage
-    localStorage.setItem('recentlyViewedUnits', JSON.stringify(limited));
-    
-    // Set recently viewed items for display (excluding current product)
-    const displayItems = limited.filter((item: any) => item.route !== currentProduct.route);
-    setRecentlyViewedItems(displayItems);
-  }, []);
-
   const [selectedMannequinView, setSelectedMannequinView] = useState(0);
   const [is3DView, setIs3DView] = useState(() => {
     // Check localStorage for saved 3D view preference, default to false (2D view)
@@ -399,7 +314,6 @@ function BlancoSelection() {
   const [activeTab, setActiveTab] = useState('DETAILS');
   const [similarProductsScroll, setSimilarProductsScroll] = useState(0);
   const [recentlyViewedScroll, setRecentlyViewedScroll] = useState(0);
-  const [recentlyViewedItems, setRecentlyViewedItems] = useState<any[]>([]);
 
   const handleBack = () => {
     navigate(-1);
@@ -585,6 +499,158 @@ function BlancoSelection() {
     return basePrice;
   };
 
+  // Load selected currency from localStorage on mount only
+  // Initial state already loads from localStorage, this is a safety check
+  useEffect(() => {
+    const savedCurrency = localStorage.getItem('selectedCurrency');
+    if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
+      // Only update if different to avoid unnecessary re-renders
+      if (savedCurrency !== selectedCurrency) {
+      setSelectedCurrency(savedCurrency);
+    }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount, not when currencyRates changes
+
+  // Save selected currency to localStorage
+  useEffect(() => {
+    localStorage.setItem('selectedCurrency', selectedCurrency);
+  }, [selectedCurrency]);
+
+  // Listen for currency changes from cart dropdown
+  useEffect(() => {
+    const handleCurrencyChange = () => {
+      const savedCurrency = localStorage.getItem('selectedCurrency');
+      if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
+        setSelectedCurrency(savedCurrency);
+      }
+    };
+
+    // Listen for storage events (from other tabs/windows)
+    window.addEventListener('storage', handleCurrencyChange);
+    
+    // Listen for custom currencyChanged event (from same window)
+    const handleCustomCurrencyChange = (event: CustomEvent) => {
+      const newCurrency = event.detail;
+      if (newCurrency && currencyRates[newCurrency as keyof typeof currencyRates]) {
+        setSelectedCurrency(newCurrency);
+        // Also update localStorage to ensure consistency
+        localStorage.setItem('selectedCurrency', newCurrency);
+      }
+    };
+    
+    window.addEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
+    
+    // Poll localStorage periodically to catch any currency changes
+    const interval = setInterval(() => {
+      handleCurrencyChange();
+    }, 500); // Check every 500ms
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('storage', handleCurrencyChange);
+      window.removeEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
+    };
+  }, [currencyRates]);
+
+  // Format price with currency
+  const formatPrice = React.useCallback((price: number) => {
+    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+    const convertedPrice = price * currency.rate;
+    return {
+      __html: currency.symbol + convertedPrice.toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }) + ' ' + selectedCurrency
+    };
+  }, [currencyRates, selectedCurrency]);
+
+  const handleAddToBag = async () => {
+    if (addToBagState === 'adding' || addToBagState === 'added') return;
+    
+    setAddToBagState('adding');
+    
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // CRITICAL: Read customization values from localStorage (or use defaults)
+      // This ensures that if user made selections in build-a-wig, they're included
+      const defaultLength = localStorage.getItem('selectedLength') || '24"';
+      const defaultDensity = localStorage.getItem('selectedDensity') || '200%';
+      const defaultLace = localStorage.getItem('selectedLace') || '13X6';
+      const defaultTexture = localStorage.getItem('selectedTexture') || 'SILKY';
+      const defaultColor = localStorage.getItem('selectedColor') || 'OFF BLACK';
+      const defaultHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
+      const defaultStyling = localStorage.getItem('selectedStyling') || 'NONE';
+      const defaultAddOns: string[] = JSON.parse(localStorage.getItem('selectedAddOns') || '[]');
+      
+      // CRITICAL: Read customization prices from localStorage (or use 0 if not set)
+      // This ensures add-ons and other customizations are included in the price
+      const lengthPrice = parseInt(localStorage.getItem('selectedLengthPrice') || '0');
+      const densityPrice = parseInt(localStorage.getItem('selectedDensityPrice') || '0');
+      const lacePrice = parseInt(localStorage.getItem('selectedLacePrice') || '0');
+      const texturePrice = parseInt(localStorage.getItem('selectedTexturePrice') || '0');
+      const colorPrice = parseInt(localStorage.getItem('selectedColorPrice') || '0');
+      const hairlinePrice = parseInt(localStorage.getItem('selectedHairlinePrice') || '0');
+      const stylingPrice = parseInt(localStorage.getItem('selectedStylingPrice') || '0');
+      const addOnsPrice = parseInt(localStorage.getItem('selectedAddOnsPrice') || '0');
+      
+      let capSize: string;
+      let capSizePrice: number;
+      if (selectedCustomCap) {
+        capSize = selectedCustomCap;
+        capSizePrice = 0;
+      } else if (selectedFlexibleCap) {
+        capSize = selectedFlexibleCap;
+        capSizePrice = 40;
+      } else {
+        capSize = 'M';
+        capSizePrice = 0;
+      }
+      
+      const basePrice = 820;
+      // CRITICAL: Include all customization prices in total calculation
+      const totalPrice = basePrice + capSizePrice + lengthPrice + densityPrice + lacePrice + texturePrice + colorPrice + hairlinePrice + stylingPrice + addOnsPrice;
+      
+      const cartItem = {
+        id: `blanco-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        name: 'BLANCO',
+        price: totalPrice,
+        quantity: quantity,
+        image: '/assets/NOIR/blanco-thumb.png',
+        capSize: capSize,
+        capSizePrice: capSizePrice,
+        length: defaultLength,
+        density: defaultDensity,
+        color: defaultColor,
+        texture: defaultTexture,
+        lace: defaultLace,
+        hairline: defaultHairline,
+        styling: defaultStyling,
+        partSelection: localStorage.getItem('selectedPartSelection') || 'MIDDLE',
+        addOns: defaultAddOns
+      };
+      
+      // Add new item at the beginning (newest first)
+      const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      const updatedCartItems = [cartItem, ...existingCartItems];
+      localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+      
+      const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
+      const newCount = currentCount + quantity;
+      localStorage.setItem('cartCount', newCount.toString());
+      setCartCount(newCount);
+      
+      window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+      window.dispatchEvent(new CustomEvent('cartUpdated'));
+      
+      setAddToBagState('added');
+    } catch (error) {
+      console.error('Error adding to bag:', error);
+      setAddToBagState('idle');
+    }
+  };
+
   const totalPrice = getTotalPrice();
 
   return (
@@ -599,11 +665,10 @@ function BlancoSelection() {
           backgroundRepeat: 'no-repeat',
           backgroundAttachment: 'fixed'
         }}
-      ></div>
+      />
       
       {/* Scrollable Content */}
       <div className="relative z-10">
-        {/* MAIN CONTENT */}
         <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible' }}>
           {/* HEADER */}
           <div
@@ -632,41 +697,35 @@ function BlancoSelection() {
                 />
               </button>
             </div>
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               <span 
-                  style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
-                  onClick={() => navigate('/lobby')}
+                style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                onClick={() => navigate('/units/straight')}
               >
-                HOME
-              </span>
-              {' / '}
-              <span 
-                  style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
-                  onClick={() => navigate('/units/straight')}
+                STRAIGHT &gt;
+              </span>{' '}
+              <span
+                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
               >
-                STRAIGHT
-              </span>
-              {' / '}
-              <span style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400' }}>
                 BLANCO
               </span>
             </p>
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
-              <div style={{ position: 'relative', width: '22px', height: '19px' }}>
-                <img 
-                  src="/assets/inactive cart-icon.svg"
-                  alt="Cart"
-                  width={22}
-                  height={19}
-                  style={{ width: '22px', height: '19px' }}
-                />
+              <div>
+                <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
+              <img
+                alt="Menu"
+                width="17"
+                height="18"
+                className="cursor-pointer"
+                src="/assets/menu-icon.svg"
+              />
             </div>
           </div>
-        </div>
 
-        {/* MAIN BUILD AREA */}
-        <div
+          {/* MAIN BUILD AREA */}
+          <div
             className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
             style={{ 
               borderWidth: '1.3px', 
@@ -675,8 +734,34 @@ function BlancoSelection() {
               overflow: 'visible',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              willChange: 'backdrop-filter'
             }}
           >
+            {/* WIG PREVIEW */}
+            <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column', marginBottom: '24px', transform: 'translateY(20px)', overflow: 'visible', minWidth: '100%', maxWidth: 'none' }}>
+              {/* ADD TO WISHLIST & 2D/3D VIEW TOGGLE */}
+              <div style={{ position: 'relative', width: '100%', marginBottom: '10px', transform: 'translateY(-31px)' }}>
+                {/* ADD TO WISHLIST - Top Left */}
+                <p 
+                  onClick={handleToggleWishlist}
+                  style={{ 
+                    position: 'absolute', 
+                    left: '8px', 
+                    top: '2px', 
+                    color: '#909090', 
+                    fontFamily: '"Futura PT Demi"',
+                    fontSize: '10px',
+                    fontWeight: '600',
+                    margin: '0',
+                    cursor: 'pointer',
+                    userSelect: 'none'
+                  }}
+                >
+                  {isInWishlist ? '- REMOVE FROM WISHLIST' : '+ ADD TO WISHLIST'}
+                </p>
+                
+                {/* 2D VIEW/3D VIEW TOGGLE - Top Right */}
                 <div 
                   style={{ 
                     position: 'absolute', 
@@ -1167,8 +1252,8 @@ function BlancoSelection() {
                 />
               </div>
 
-              {/* CHART MODAL */}
-              {showChartModal && (
+              {/* CHART MODAL - Rendered via Portal */}
+              {showChartModal && createPortal(
                 <div 
                   style={{
                     position: 'fixed',
@@ -1211,7 +1296,8 @@ function BlancoSelection() {
                       }}
                     />
                   </div>
-                </div>
+                </div>,
+                document.body
               )}
             </div>
 
@@ -1458,38 +1544,37 @@ function BlancoSelection() {
               </div>
             </div>
           </div>
-        </div>
 
-        {/* ADD TO BAG BUTTON */}
-        <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
-          <button
-            onClick={handleAddToBag}
-            disabled={addToBagState === 'adding'}
-            className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
-              addToBagState === 'adding' ? 'bg-white cursor-not-allowed' : 
-              addToBagState === 'added' ? 'bg-white cursor-pointer' : 'bg-white cursor-pointer hover:bg-gray-50'
-            }`}
-            style={{ 
-              borderWidth: '1.3px', 
-              color: '#EB1C24',
-              fontFamily: '"Futura PT Medium"',
-              backgroundColor: '#FFFFFF'
-            }}
-          >
-            {addToBagState === 'idle' && 'ADD TO BAG'}
-            {addToBagState === 'adding' && 'ADDING...'}
-            {addToBagState === 'added' && (
-              <span className="flex items-center justify-center gap-1">
-                <img src="/assets/check.svg" alt="Check" width="9" height="9" />
-                <span style={{ color: '#909090' }}>IN THE BAG</span>
-              </span>
-            )}
-          </button>
-        </div>
+          {/* ADD TO BAG BUTTON */}
+          <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
+            <button
+              onClick={handleAddToBag}
+              disabled={addToBagState === 'adding'}
+              className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
+                addToBagState === 'adding' ? 'bg-white cursor-not-allowed' : 
+                addToBagState === 'added' ? 'bg-white cursor-pointer' : 'bg-white cursor-pointer hover:bg-gray-50'
+              }`}
+              style={{ 
+                borderWidth: '1.3px', 
+                color: '#EB1C24',
+                fontFamily: '"Futura PT Medium"',
+                backgroundColor: '#FFFFFF'
+              }}
+            >
+              {addToBagState === 'idle' && 'ADD TO BAG'}
+              {addToBagState === 'adding' && 'ADDING...'}
+              {addToBagState === 'added' && (
+                <span className="flex items-center justify-center gap-1">
+                  <img src="/assets/check.svg" alt="Check" width="9" height="9" />
+                  <span style={{ color: '#909090' }}>IN THE BAG</span>
+                </span>
+              )}
+            </button>
+          </div>
 
-        {/* CUSTOMIZE IN BUILD-A-WIG BUTTON */}
-        <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
-          <button
+          {/* CUSTOMIZE IN BUILD-A-WIG BUTTON */}
+          <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
+            <button
               onClick={() => {
                 // Store the selected cap size in localStorage for customize page
                 // Save to both selectedCapSize and customizeSelectedCapSize for consistency
@@ -1568,17 +1653,15 @@ function BlancoSelection() {
                 color: '#EB1C24',
                 fontFamily: '"Futura PT Medium"'
               }}
-          >
-            CUSTOMIZE IN BUILD-A-WIG
-          </button>
-        </div>
+            >
+              CUSTOMIZE IN BUILD-A-WIG
+            </button>
+          </div>
 
-        {/* SIMILAR PRODUCTS SECTION */}
-        <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
+          {/* SIMILAR PRODUCTS SECTION */}
+          <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
             <div style={{ 
-              borderWidth: '1.3px',
-              borderStyle: 'solid',
-              borderColor: 'black',
+              border: '1.3px solid black', 
               backgroundColor: 'rgba(255, 255, 255, 0.6)', 
               backdropFilter: 'blur(10px)',
               padding: '0px',
@@ -1604,9 +1687,7 @@ function BlancoSelection() {
                 </h3>
               </div>
               
-              {/* Content Area */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-                {/* Left Arrow */}
                 <button 
                   onClick={handleSimilarProductsLeftArrow}
                   style={{ 
@@ -1624,16 +1705,11 @@ function BlancoSelection() {
                   <img
                     src="/assets/NOIR/left-facing-arrow.svg"
                     alt="Left Arrow"
-                    style={{ 
-                      width: '14px', 
-                      height: '14px'
-                    }}
+                    style={{ width: '14px', height: '14px' }}
                   />
                 </button>
                 
-                {/* Product Thumbnails Container with Static Vertical Line */}
                 <div style={{ flex: '1', position: 'relative' }}>
-                  {/* Single Center Line with Masking */}
                   <div style={{
                     position: 'absolute',
                     left: '50%',
@@ -1645,20 +1721,6 @@ function BlancoSelection() {
                     transform: 'translateX(-50%)'
                   }}></div>
                   
-                  {/* Masking Overlay for Tunnel Effect */}
-                  <div style={{
-                    position: 'absolute',
-                    left: '50%',
-                    top: '0',
-                    bottom: '0',
-                    width: '10px',
-                    backgroundColor: 'transparent',
-                    zIndex: 15,
-                    transform: 'translateX(-50%)',
-                    pointerEvents: 'none'
-                  }}></div>
-                  
-                  {/* Scrolling Product Thumbnails Container */}
                   <div style={{ 
                     overflowX: 'hidden',
                     width: '100%',
@@ -1674,9 +1736,9 @@ function BlancoSelection() {
                         width: 'calc(200% - 20px)'
                       }}
                     >
-                {/* Product 1 - NOIR */}
+                {/* Product 1 - BLANCO */}
                 <div 
-                  onClick={() => navigate('/straight/noir')}
+                  onClick={() => navigate('/straight/blanco')}
                   style={{ 
                     padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
                     textAlign: 'center',
@@ -1685,8 +1747,8 @@ function BlancoSelection() {
                   }}
                 >
                   <img
-                    src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
-                    alt="NOIR"
+                    src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
+                    alt="BLANCO"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -1703,7 +1765,7 @@ function BlancoSelection() {
                     fontWeight: '500',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    NOIR
+                    BLANCO
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -1715,7 +1777,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    24" RAW CAMBODIAN
+                    24" RAW RUSSIAN
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -1727,7 +1789,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}
-                  dangerouslySetInnerHTML={formatPrice(740)}
+                  dangerouslySetInnerHTML={formatPrice(820)}
                   />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
@@ -1829,9 +1891,9 @@ function BlancoSelection() {
                   </div>
                 </div>
                 
-                {/* Product 3 - BEACH WAVE */}
+                {/* Product 3 - NOIR */}
                 <div 
-                  onClick={() => navigate('/wavy/beach-wave')}
+                  onClick={() => navigate('/straight/noir')}
                   style={{ 
                     padding: '10px 10px 4px 10px',
                     textAlign: 'center',
@@ -1840,8 +1902,8 @@ function BlancoSelection() {
                   }}
                 >
                   <img
-                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/wave-thumb.png"}
-                    alt="BEACH WAVE"
+                    src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
+                    alt="NOIR"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -1858,7 +1920,7 @@ function BlancoSelection() {
                     fontWeight: '500',
                     transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}>
-                    BEACH WAVE
+                    NOIR
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -1870,7 +1932,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}>
-                    24" RAW INDONESIAN
+                    24" RAW CAMBODIAN
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -1882,7 +1944,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}
-                  dangerouslySetInnerHTML={formatPrice(760)}
+                  dangerouslySetInnerHTML={formatPrice(740)}
                   />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10.5px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
@@ -1975,38 +2037,33 @@ function BlancoSelection() {
                     </div>
                   </div>
                 </div>
-              </div>
-              
-              {/* Right Arrow */}
-              <button 
-                onClick={handleSimilarProductsRightArrow}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  cursor: 'pointer',
-                  padding: '5px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                  minHeight: '50px',
-                  transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                }}>
-                <img
-                  src="/assets/NOIR/right-facing-arrow.svg"
-                  alt="Right Arrow"
+                
+                <button 
+                  onClick={handleSimilarProductsRightArrow}
                   style={{ 
-                    width: '14px', 
-                    height: '14px'
-                  }}
-                />
-              </button>
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    padding: '5px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                    minHeight: '50px',
+                    transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
+                  }}>
+                  <img
+                    src="/assets/NOIR/right-facing-arrow.svg"
+                    alt="Right Arrow"
+                    style={{ width: '14px', height: '14px' }}
+                  />
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* RECENTLY VIEWED SECTION */}
-        <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
+          {/* RECENTLY VIEWED SECTION */}
+          <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
             <div style={{ 
               border: '1.3px solid black', 
               backgroundColor: 'rgba(255, 255, 255, 0.6)', 
@@ -2034,9 +2091,7 @@ function BlancoSelection() {
                 </h3>
               </div>
               
-              {/* Content Area */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-                {/* Left Arrow */}
                 <button 
                   onClick={handleRecentlyViewedLeftArrow}
                   style={{ 
@@ -2054,60 +2109,56 @@ function BlancoSelection() {
                   <img
                     src="/assets/NOIR/left-facing-arrow.svg"
                     alt="Left Arrow"
-                    style={{ 
-                      width: '14px', 
-                      height: '14px'
-                    }}
+                    style={{ width: '14px', height: '14px' }}
                   />
                 </button>
                 
-                {/* Product Thumbnails Container with Static Vertical Line */}
-                <div style={{ flex: '1', position: 'relative' }}>
-                  {/* Single Center Line with Masking */}
-                  <div style={{
-                    position: 'absolute',
-                    left: '50%',
-                    top: '0',
-                    bottom: '0',
-                    width: '1px',
-                    backgroundColor: 'black',
-                    zIndex: 20,
-                    transform: 'translateX(-50%)'
-                  }}></div>
-                  
-                  {/* Masking Overlay for Tunnel Effect */}
-                  <div style={{
-                    position: 'absolute',
-                    left: '50%',
-                    top: '0',
-                    bottom: '0',
-                    width: '10px',
-                    backgroundColor: 'transparent',
-                    zIndex: 15,
-                    transform: 'translateX(-50%)',
-                    pointerEvents: 'none'
-                  }}></div>
-                  
-                  {/* Scrolling Product Thumbnails Container */}
-                  <div style={{ 
-                    overflowX: 'hidden',
-                    width: '100%',
-                    position: 'relative',
-                    maxWidth: '100%'
-                  }}>
-                    <div 
-                      style={{ 
-                        display: 'flex', 
-                        gap: '0',
-                        transform: `translateX(${recentlyViewedScroll}px) translateY(-15px)`,
-                        transition: 'none',
-                        width: 'calc(200% - 20px)'
-                      }}
-                    >
-                {/* Product 1 */}
-                {recentlyViewedItems[0] && recentlyViewedItems[0].name && (
+              {/* Product Thumbnails Container with Static Vertical Line */}
+              <div style={{ flex: '1', position: 'relative' }}>
+                {/* Single Center Line with Masking */}
+                <div style={{
+                  position: 'absolute',
+                  left: '50%',
+                  top: '0',
+                  bottom: '0',
+                  width: '1px',
+                  backgroundColor: 'black',
+                  zIndex: 20,
+                  transform: 'translateX(-50%)'
+                }}></div>
+                
+                {/* Masking Overlay for Tunnel Effect */}
+                <div style={{
+                  position: 'absolute',
+                  left: '50%',
+                  top: '0',
+                  bottom: '0',
+                  width: '10px',
+                  backgroundColor: 'transparent',
+                  zIndex: 15,
+                  transform: 'translateX(-50%)',
+                  pointerEvents: 'none'
+                }}></div>
+                
+                {/* Scrolling Product Thumbnails Container */}
+                <div style={{ 
+                  overflowX: 'hidden',
+                  width: '100%',
+                  position: 'relative',
+                  maxWidth: '100%'
+                }}>
+                  <div 
+                    style={{ 
+                      display: 'flex', 
+                      gap: '0',
+                      transform: `translateX(${recentlyViewedScroll}px) translateY(-15px)`,
+                      transition: 'none',
+                      width: 'calc(200% - 20px)'
+                    }}
+                  >
+                {/* Product 1 - BEACH WAVE */}
                 <div 
-                  onClick={() => navigate(recentlyViewedItems[0]?.route || '/')}
+                  onClick={() => navigate('/wavy/soft-wave')}
                   style={{ 
                     padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
                     textAlign: 'center',
@@ -2116,8 +2167,8 @@ function BlancoSelection() {
                   }}
                 >
                   <img
-                    src={is3DView ? (recentlyViewedItems[0]?.image3D || recentlyViewedItems[0]?.image) : (recentlyViewedItems[0]?.image || '/assets/NOIR/noir-thumb.png')}
-                    alt={recentlyViewedItems[0]?.name || 'Product'}
+                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/wave-thumb.png"}
+                    alt="SOFT WAVE"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -2134,7 +2185,7 @@ function BlancoSelection() {
                     fontWeight: '500',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    {recentlyViewedItems[0]?.name || ''}
+                    SOFT WAVE
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2146,7 +2197,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    {recentlyViewedItems[0]?.hairOrigin || '24" RAW'}
+                    24" RAW INDONESIAN
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2158,7 +2209,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}
-                  dangerouslySetInnerHTML={formatPrice(recentlyViewedItems[0]?.price || 0)}
+                  dangerouslySetInnerHTML={formatPrice(760)}
                   />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
@@ -2176,12 +2227,10 @@ function BlancoSelection() {
                     ))}
                   </div>
                 </div>
-                )}
                 
-                {/* Product 2 */}
-                {recentlyViewedItems[1] && recentlyViewedItems[1].name && (
+                {/* Product 2 - SOFT CURL */}
                 <div 
-                  onClick={() => navigate(recentlyViewedItems[1]?.route || '/')}
+                  onClick={() => navigate('/curly/soft-curl')}
                   style={{ 
                     padding: '10px 10px 4px 10px',
                     textAlign: 'center',
@@ -2190,8 +2239,8 @@ function BlancoSelection() {
                   }}
                 >
                   <img
-                    src={is3DView ? (recentlyViewedItems[1]?.image3D || recentlyViewedItems[1]?.image) : (recentlyViewedItems[1]?.image || '/assets/NOIR/noir-thumb.png')}
-                    alt={recentlyViewedItems[1]?.name || 'Product'}
+                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/curl-thumb.png"}
+                    alt="SOFT CURL"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -2208,7 +2257,7 @@ function BlancoSelection() {
                     fontWeight: '500',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    {recentlyViewedItems[1]?.name || ''}
+                    SOFT CURL
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2220,7 +2269,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    {recentlyViewedItems[1]?.hairOrigin || '24" RAW'}
+                    24" RAW VIETNAMESE
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2232,7 +2281,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}
-                  dangerouslySetInnerHTML={formatPrice(recentlyViewedItems[1]?.price || 0)}
+                  dangerouslySetInnerHTML={formatPrice(780)}
                   />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
@@ -2250,12 +2299,10 @@ function BlancoSelection() {
                     ))}
                   </div>
                 </div>
-                )}
                 
-                {/* Product 3 */}
-                {recentlyViewedItems[2] && recentlyViewedItems[2].name && (
+                {/* Product 3 - NOIR */}
                 <div 
-                  onClick={() => navigate(recentlyViewedItems[2]?.route || '/')}
+                  onClick={() => navigate('/straight/noir')}
                   style={{ 
                     padding: '10px 10px 4px 10px',
                     textAlign: 'center',
@@ -2264,8 +2311,8 @@ function BlancoSelection() {
                   }}
                 >
                   <img
-                    src={is3DView ? (recentlyViewedItems[2]?.image3D || recentlyViewedItems[2]?.image) : (recentlyViewedItems[2]?.image || '/assets/NOIR/noir-thumb.png')}
-                    alt={recentlyViewedItems[2]?.name || 'Product'}
+                    src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
+                    alt="NOIR"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -2282,7 +2329,7 @@ function BlancoSelection() {
                     fontWeight: '500',
                     transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}>
-                    {recentlyViewedItems[2]?.name || ''}
+                    NOIR
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2294,7 +2341,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}>
-                    {recentlyViewedItems[2]?.hairOrigin || '24" RAW'}
+                    24" RAW CAMBODIAN
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2306,7 +2353,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}
-                  dangerouslySetInnerHTML={formatPrice(recentlyViewedItems[2]?.price || 0)}
+                  dangerouslySetInnerHTML={formatPrice(740)}
                   />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10.5px)' : undefined }}>
                     {[...Array(5)].map((_, index) => (
@@ -2324,12 +2371,10 @@ function BlancoSelection() {
                     ))}
                   </div>
                 </div>
-                )}
                 
-                {/* Product 4 */}
-                {recentlyViewedItems[3] && recentlyViewedItems[3].name && (
+                {/* Product 4 - BLANCO */}
                 <div 
-                  onClick={() => navigate(recentlyViewedItems[3]?.route || '/')}
+                  onClick={() => navigate('/straight/blanco')}
                   style={{ 
                     padding: '10px 10px 4px 10px',
                     textAlign: 'center',
@@ -2338,8 +2383,8 @@ function BlancoSelection() {
                   }}
                 >
                   <img
-                    src={is3DView ? (recentlyViewedItems[3]?.image3D || recentlyViewedItems[3]?.image) : (recentlyViewedItems[3]?.image || '/assets/NOIR/noir-thumb.png')}
-                    alt={recentlyViewedItems[3]?.name || 'Product'}
+                    src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
+                    alt="BLANCO"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -2356,7 +2401,7 @@ function BlancoSelection() {
                     fontWeight: '500',
                     transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}>
-                    {recentlyViewedItems[3]?.name || ''}
+                    BLANCO
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2368,7 +2413,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}>
-                    {recentlyViewedItems[3]?.hairOrigin || '24" RAW'}
+                    24" RAW RUSSIAN
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2379,8 +2424,18 @@ function BlancoSelection() {
                     fontWeight: '500',
                     lineHeight: '0.84',
                     transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
+                  }}>
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '12px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84'
                   }}
-                  dangerouslySetInnerHTML={formatPrice(recentlyViewedItems[3]?.price || 0)}
+                  dangerouslySetInnerHTML={formatPrice(820)}
                   />
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)' }}>
                     {[...Array(5)].map((_, index) => (
@@ -2398,35 +2453,31 @@ function BlancoSelection() {
                     ))}
                   </div>
                 </div>
-                )}
                   </div>
                 </div>
               </div>
-              
-              {/* Right Arrow */}
-              <button 
-                onClick={handleRecentlyViewedRightArrow}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  cursor: 'pointer',
-                  padding: '5px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                  minHeight: '50px',
-                  transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                }}>
-                <img
-                  src="/assets/NOIR/right-facing-arrow.svg"
-                  alt="Right Arrow"
+                
+                <button 
+                  onClick={handleRecentlyViewedRightArrow}
                   style={{ 
-                    width: '14px', 
-                    height: '14px'
-                  }}
-                />
-              </button>
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    padding: '5px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                    minHeight: '50px',
+                    transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
+                  }}>
+                  <img
+                    src="/assets/NOIR/right-facing-arrow.svg"
+                    alt="Right Arrow"
+                    style={{ width: '14px', height: '14px' }}
+                  />
+                </button>
+              </div>
             </div>
           </div>
         </div>

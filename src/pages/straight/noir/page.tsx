@@ -1787,8 +1787,8 @@ function NoirSelection() {
               NOIR
             </span>
           </p>
-          <div className="gap-5 flex absolute" style={{ right: '17px' }}>
-            <div>
+          <div className="gap-5 flex absolute" style={{ right: showMobileMenu ? '14px' : '17px' }}>
+            <div style={{ transform: showMobileMenu ? 'translateY(0.7px)' : 'none' }}>
               <DynamicCartIcon count={cartCount} width={22} height={19} />
             </div>
             <img
