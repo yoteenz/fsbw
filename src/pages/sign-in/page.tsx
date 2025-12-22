@@ -450,11 +450,11 @@ function SignInPage() {
             </div>
           ) : (
             <>
-              /* SIGN IN CONTENT */
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '24px', paddingTop: '20px' }}>
+              {/* SIGN IN CONTENT */}
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0' }}>
                 {/* SIGN IN TO YOUR ACCOUNT CARD */}
                 <div
-                  className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+                  className="border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm"
                   style={{ 
                     borderWidth: '1.3px', 
                     minWidth: '100%', 
@@ -466,32 +466,16 @@ function SignInPage() {
                     willChange: 'backdrop-filter'
                   }}
                 >
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <p
-                      style={{
-                        fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                        color: '#000000',
-                        fontSize: '28px',
-                        lineHeight: '1.1',
-                        margin: '0',
-                        textTransform: 'uppercase'
-                      }}
+                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
+                    <button
+                      className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
+                      style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
                     >
                       SIGN IN TO YOUR ACCOUNT
-                    </p>
-                    <p
-                      style={{
-                        fontFamily: '"Futura PT Book"',
-                        color: '#EB1C24',
-                        fontSize: '10px',
-                        margin: '0',
-                        textTransform: 'uppercase',
-                        fontWeight: '500'
-                      }}
-                    >
-                      WELCOME BACK!
-                    </p>
-                    
+                    </button>
+                  </div>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
                     {/* Email Input */}
                     <div style={{ marginTop: '8px' }}>
                       <label
@@ -587,8 +571,8 @@ function SignInPage() {
                           onClick={() => setRememberMe(!rememberMe)}
                           style={{
                             fontFamily: '"Futura PT Book"',
-                            fontSize: '11px',
-                            color: '#000000',
+                            fontSize: '10px',
+                            color: '#EB1C24',
                             textTransform: 'uppercase',
                             cursor: 'pointer',
                             margin: '0'
@@ -601,7 +585,7 @@ function SignInPage() {
                         type="button"
                         style={{
                           fontFamily: '"Futura PT Book"',
-                          fontSize: '11px',
+                          fontSize: '10px',
                           color: '#EB1C24',
                           background: 'none',
                           border: 'none',
@@ -618,8 +602,7 @@ function SignInPage() {
               </div>
 
             {/* SIGN IN BUTTON - Outside card */}
-            {!showMobileMenu && (
-              <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
+            <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                 <button
                   type="button"
                   onClick={() => {
@@ -647,12 +630,11 @@ function SignInPage() {
                   SIGN IN
                 </button>
               </div>
-            )}
 
             {/* CREATE AN ACCOUNT CARD */}
-            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '24px', paddingTop: '20px' }}>
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0' }}>
                 <div
-                  className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+                  className="border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm"
                   style={{ 
                     borderWidth: '1.3px', 
                     minWidth: '100%', 
@@ -664,32 +646,16 @@ function SignInPage() {
                     willChange: 'backdrop-filter'
                   }}
                 >
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <p
-                      style={{
-                        fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                        color: '#000000',
-                        fontSize: '28px',
-                        lineHeight: '1.1',
-                        margin: '0',
-                        textTransform: 'uppercase'
-                      }}
+                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
+                    <button
+                      className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
+                      style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
                     >
                       CREATE AN ACCOUNT
-                    </p>
-                    <p
-                      style={{
-                        fontFamily: '"Futura PT Book"',
-                        color: '#EB1C24',
-                        fontSize: '10px',
-                        margin: '0',
-                        textTransform: 'uppercase',
-                        fontWeight: '500'
-                      }}
-                    >
-                      ACCESS YOUR ORDER HISTORY
-                    </p>
+                    </button>
+                  </div>
 
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
                     {/* Form Fields */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
                     <div>
@@ -1066,11 +1032,9 @@ function SignInPage() {
                 </div>
               </div>
             </div>
-            </div>
 
             {/* SIGN UP BUTTON - Outside card */}
-            {!showMobileMenu && (
-              <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
+            <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                 <button
                   type="button"
                   onClick={() => {
@@ -1123,7 +1087,6 @@ function SignInPage() {
                   SIGN UP
                 </button>
               </div>
-            )}
             </>
           )}
         </div>
