@@ -74,7 +74,6 @@ function CheckoutPage() {
 
   // Payment processing state
   const [processingPayment, setProcessingPayment] = useState(false);
-  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   // Currency state
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -675,7 +674,6 @@ function CheckoutPage() {
     if (processingPayment) return; // Prevent multiple clicks
     
     setProcessingPayment(true);
-    setPaymentError(null);
     
     try {
       const paymentData = preparePaymentData();
@@ -700,13 +698,11 @@ function CheckoutPage() {
           });
         }
       } else {
-        setPaymentError(result.error || 'Payment initialization failed');
         setShowValidationModal(true);
         setValidationMessage(result.error || 'Payment initialization failed. Please try again.');
       }
     } catch (error) {
       console.error('Payment error:', error);
-      setPaymentError(error instanceof Error ? error.message : 'An unexpected error occurred');
       setShowValidationModal(true);
       setValidationMessage(error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.');
     } finally {
