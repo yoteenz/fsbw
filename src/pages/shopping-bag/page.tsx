@@ -888,7 +888,7 @@ function ShoppingBagPage() {
                        return (
                          <div
                            key={itemId}
-                           className="flex items-start justify-start space-x-3"
+                           className={`flex items-start justify-start space-x-3 ${index < cartItems.length - 1 ? 'border-b border-gray-200' : ''}`}
                            style={{
                              minHeight: '80px',
                              paddingTop: '20px',
@@ -1380,7 +1380,7 @@ function ShoppingBagPage() {
                   return (
                     <div
                       key={itemId}
-                      className="flex items-start justify-start space-x-3"
+                      className={`flex items-start justify-start space-x-3 ${index < savedForLater.length - 1 ? 'border-b border-gray-200' : ''}`}
                       style={{
                         minHeight: '80px',
                         paddingTop: '20px',

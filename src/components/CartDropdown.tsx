@@ -725,8 +725,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             </div>
           ) : (
               <div className="space-y-3">
-                {cartItems.map((item) => (
-                  <div key={item.id} className="flex items-center justify-start space-x-3 pt-1 pb-4 min-h-[80px]">
+                {cartItems.map((item, index) => (
+                  <div key={item.id} className={`flex items-center justify-start space-x-3 pt-1 pb-4 min-h-[80px] ${index < cartItems.length - 1 ? 'border-b border-gray-200' : ''}`}>
                     {/* Thumbnail Container */}
                     <div className="flex flex-col items-center">
                       {/* Item Image */}

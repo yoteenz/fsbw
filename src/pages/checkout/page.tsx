@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
+import { handlePaymentOption, PaymentProvider, PaymentData } from '../../utils/paymentHandlers';
 
 function CheckoutPage() {
   const navigate = useNavigate();
@@ -70,6 +71,10 @@ function CheckoutPage() {
   // Validation modals
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [validationMessage, setValidationMessage] = useState('');
+
+  // Payment processing state
+  const [processingPayment, setProcessingPayment] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   // Currency state
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -636,6 +641,79 @@ function CheckoutPage() {
   const tipAmount = tipPercentage !== null ? Math.round(orderAmount * (tipPercentage / 100)) : (customTipApplied ? customTipAmount : 0);
   const subtotal = orderAmount + taxesProcessing + shippingHandling + rushProcessing + protectionFee - discount + tipAmount;
 
+  // Prepare payment data for payment handlers
+  const preparePaymentData = (): PaymentData => {
+    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+    const convertedOrderAmount = orderAmount * currency.rate;
+    const convertedTaxes = taxesProcessing * currency.rate;
+    const convertedShipping = shippingHandling * currency.rate;
+    const convertedDiscount = discount * currency.rate;
+    const convertedTip = tipAmount * currency.rate;
+    const convertedRush = rushProcessing * currency.rate;
+    const convertedProtection = protectionFee * currency.rate;
+    
+    const totalAmount = convertedOrderAmount + convertedTaxes + convertedShipping - convertedDiscount + convertedTip + convertedRush + convertedProtection;
+    
+    return {
+      amount: totalAmount,
+      currency: selectedCurrency,
+      items: cartItems.map(item => ({
+        name: item.name || 'Product',
+        quantity: item.quantity || 1,
+        price: (item.price || 0) * currency.rate
+      })),
+      customer: {
+        email: email || undefined,
+        firstName: firstName || undefined,
+        lastName: lastName || undefined
+      }
+    };
+  };
+
+  // Handle payment option click
+  const handlePaymentClick = async (provider: PaymentProvider) => {
+    if (processingPayment) return; // Prevent multiple clicks
+    
+    setProcessingPayment(true);
+    setPaymentError(null);
+    
+    try {
+      const paymentData = preparePaymentData();
+      const result = await handlePaymentOption(provider, paymentData);
+      
+      if (result.success) {
+        if (result.redirectUrl) {
+          // Redirect to payment provider's checkout page
+          window.location.href = result.redirectUrl;
+        } else if (result.transactionId) {
+          // Payment completed successfully (e.g., Apple Pay, Google Pay)
+          // Navigate to confirmation page
+          navigate('/checkout/confirm', {
+            state: {
+              orderNumber: `#${Math.floor(Math.random() * 1000)}`,
+              orderDate: new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-'),
+              orderTotal: paymentData.amount,
+              transactionId: result.transactionId,
+              paymentMethod: provider,
+              cartItems: cartItems,
+            }
+          });
+        }
+      } else {
+        setPaymentError(result.error || 'Payment initialization failed');
+        setShowValidationModal(true);
+        setValidationMessage(result.error || 'Payment initialization failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      setPaymentError(error instanceof Error ? error.message : 'An unexpected error occurred');
+      setShowValidationModal(true);
+      setValidationMessage(error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.');
+    } finally {
+      setProcessingPayment(false);
+    }
+  };
+
   return (
     <>
       <style>{`
@@ -1142,7 +1220,7 @@ function CheckoutPage() {
                           return (
                             <div
                               key={itemId}
-                              className="flex items-center justify-start space-x-3"
+                              className={`flex items-center justify-start space-x-3 ${index < cartItems.length - 1 ? 'border-b border-gray-200' : ''}`}
                               style={{
                                 minHeight: '80px',
                                 paddingTop: '8px',
@@ -1629,7 +1707,7 @@ function CheckoutPage() {
                           handleApplyDiscountCode();
                         }
                       }}
-                      style={{
+                          style={{
                         flex: 1,
                         height: '36px',
                         padding: '8px',
@@ -1663,10 +1741,10 @@ function CheckoutPage() {
                         style={{ width: '10.4px', height: '10.4px', position: 'absolute', objectFit: 'contain' }}
                       />
                     </button>
-                  </div>
+                      </div>
                   {discountCodeError && (
-                    <p
-                      style={{
+                        <p
+                          style={{
                         fontFamily: '"Futura PT Medium"',
                         fontSize: '9px',
                         color: '#EB1C24',
@@ -1677,49 +1755,194 @@ function CheckoutPage() {
                       {discountCodeError}
                     </p>
                   )}
-                </div>
+                    </div>
 
                 {/* OTHER PAYMENT OPTIONS SECTION */}
                 <div style={{ marginTop: '7px', marginBottom: '8px' }}>
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Book"',
-                      fontSize: '10px',
-                      color: '#000000',
-                      margin: '0 0 8px 0',
-                      textTransform: 'uppercase'
+                  <h2 
+                    style={{ 
+                      fontFamily: '"Futura PT Medium"',
+                            fontSize: '12px',
+                      color: '#EB1C24',
+                      margin: '0 0 12px 0',
+                      textTransform: 'uppercase',
+                      fontWeight: '500'
                     }}
                   >
-                    OTHER PAYMENT OPTIONS:
-                  </p>
-                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    EXPRESS PAYMENT OPTIONS:
+                  </h2>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
                     <button
+                      onClick={() => handlePaymentClick('SHOP_PAY')}
+                      disabled={processingPayment}
                       style={{
+                        width: '100%',
+                        height: '36px',
                         padding: '10px 20px',
                         border: '1.3px solid #000000',
-                        backgroundColor: '#FFFFFF',
+                        backgroundColor: processingPayment ? '#f0f0f0' : '#FFFFFF',
                         fontFamily: '"Futura PT Book"',
                         fontSize: '11px',
-                        cursor: 'pointer',
-                        textTransform: 'uppercase'
+                        cursor: processingPayment ? 'not-allowed' : 'pointer',
+                        textTransform: 'uppercase',
+                        boxSizing: 'border-box',
+                        opacity: processingPayment ? 0.6 : 1
                       }}
                     >
-                      PAYPAL
+                      {processingPayment ? 'PROCESSING...' : 'SHOP PAY'}
                     </button>
                     <button
+                      onClick={() => handlePaymentClick('APPLE_PAY')}
+                      disabled={processingPayment}
                       style={{
+                        width: '100%',
+                        height: '36px',
                         padding: '10px 20px',
                         border: '1.3px solid #000000',
-                        backgroundColor: '#FFFFFF',
+                        backgroundColor: processingPayment ? '#f0f0f0' : '#FFFFFF',
                         fontFamily: '"Futura PT Book"',
                         fontSize: '11px',
-                        cursor: 'pointer',
-                        textTransform: 'uppercase'
+                        cursor: processingPayment ? 'not-allowed' : 'pointer',
+                        textTransform: 'uppercase',
+                        boxSizing: 'border-box',
+                        opacity: processingPayment ? 0.6 : 1
                       }}
                     >
-                      EXPRESS CHECKOUT
+                      {processingPayment ? 'PROCESSING...' : 'APPLE PAY'}
+                    </button>
+                    <button
+                      onClick={() => handlePaymentClick('GOOGLE_PAY')}
+                      disabled={processingPayment}
+                      style={{
+                        width: '100%',
+                        height: '36px',
+                        padding: '10px 20px',
+                        border: '1.3px solid #000000',
+                        backgroundColor: processingPayment ? '#f0f0f0' : '#FFFFFF',
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '11px',
+                        cursor: processingPayment ? 'not-allowed' : 'pointer',
+                        textTransform: 'uppercase',
+                        boxSizing: 'border-box',
+                        opacity: processingPayment ? 0.6 : 1
+                      }}
+                    >
+                      {processingPayment ? 'PROCESSING...' : 'GOOGLE PAY'}
+                    </button>
+                    <button
+                      onClick={() => handlePaymentClick('PAYPAL')}
+                      disabled={processingPayment}
+                      style={{
+                        width: '100%',
+                        height: '36px',
+                        padding: '10px 20px',
+                        border: '1.3px solid #000000',
+                        backgroundColor: processingPayment ? '#f0f0f0' : '#FFFFFF',
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '11px',
+                        cursor: processingPayment ? 'not-allowed' : 'pointer',
+                        textTransform: 'uppercase',
+                        boxSizing: 'border-box',
+                        opacity: processingPayment ? 0.6 : 1
+                      }}
+                    >
+                      {processingPayment ? 'PROCESSING...' : 'PAYPAL'}
                     </button>
                       </div>
+                    </div>
+
+                {/* PAYMENT PLANS SECTION */}
+                <div style={{ marginTop: '20px', marginBottom: '8px' }}>
+                  <h2 
+                    style={{ 
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '12px',
+                      color: '#EB1C24',
+                      margin: '0 0 12px 0',
+                      textTransform: 'uppercase',
+                      fontWeight: '500'
+                    }}
+                  >
+                    PAYMENT PLAN OPTIONS:
+                  </h2>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+                    <button
+                      onClick={() => handlePaymentClick('KLARNA')}
+                      disabled={processingPayment}
+                      style={{
+                        width: '100%',
+                        height: '36px',
+                        padding: '10px 20px',
+                        border: '1.3px solid #000000',
+                        backgroundColor: processingPayment ? '#f0f0f0' : '#FFFFFF',
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '11px',
+                        cursor: processingPayment ? 'not-allowed' : 'pointer',
+                        textTransform: 'uppercase',
+                        boxSizing: 'border-box',
+                        opacity: processingPayment ? 0.6 : 1
+                      }}
+                    >
+                      {processingPayment ? 'PROCESSING...' : 'KLARNA'}
+                    </button>
+                    <button
+                      onClick={() => handlePaymentClick('AFTERPAY')}
+                      disabled={processingPayment}
+                      style={{
+                        width: '100%',
+                        height: '36px',
+                        padding: '10px 20px',
+                        border: '1.3px solid #000000',
+                        backgroundColor: processingPayment ? '#f0f0f0' : '#FFFFFF',
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '11px',
+                        cursor: processingPayment ? 'not-allowed' : 'pointer',
+                        textTransform: 'uppercase',
+                        boxSizing: 'border-box',
+                        opacity: processingPayment ? 0.6 : 1
+                      }}
+                    >
+                      {processingPayment ? 'PROCESSING...' : 'AFTERPAY'}
+                    </button>
+                    <button
+                      onClick={() => handlePaymentClick('AFFIRM')}
+                      disabled={processingPayment}
+                      style={{
+                        width: '100%',
+                        height: '36px',
+                        padding: '10px 20px',
+                        border: '1.3px solid #000000',
+                        backgroundColor: processingPayment ? '#f0f0f0' : '#FFFFFF',
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '11px',
+                        cursor: processingPayment ? 'not-allowed' : 'pointer',
+                        textTransform: 'uppercase',
+                        boxSizing: 'border-box',
+                        opacity: processingPayment ? 0.6 : 1
+                      }}
+                    >
+                      {processingPayment ? 'PROCESSING...' : 'AFFIRM'}
+                    </button>
+                    <button
+                      onClick={() => handlePaymentClick('PAY_IN_4')}
+                      disabled={processingPayment}
+                      style={{
+                        width: '100%',
+                        height: '36px',
+                        padding: '10px 20px',
+                        border: '1.3px solid #000000',
+                        backgroundColor: processingPayment ? '#f0f0f0' : '#FFFFFF',
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '11px',
+                        cursor: processingPayment ? 'not-allowed' : 'pointer',
+                        textTransform: 'uppercase',
+                        boxSizing: 'border-box',
+                        opacity: processingPayment ? 0.6 : 1
+                      }}
+                    >
+                      {processingPayment ? 'PROCESSING...' : 'PAY IN 4'}
+                    </button>
+                  </div>
                     </div>
 
                 {/* SHIPPING ADDRESS SECTION */}
