@@ -7,7 +7,7 @@ function CheckoutConfirmPage() {
   const location = useLocation();
   
   const [cartItems, setCartItems] = useState<any[]>([]);
-  const [cartCount, setCartCount] = useState(() => {
+  const [cartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
     } catch (e) {
@@ -15,8 +15,6 @@ function CheckoutConfirmPage() {
     }
   });
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState('SHOP');
-  const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useState(false);
   
   // Order data - get from location state or generate
@@ -177,7 +175,7 @@ function CheckoutConfirmPage() {
         ? '6-8 WEEKS (UP TO 10 WEEKS FOR CUSTOMIZED UNITS)'
         : '6-8 WEEKS';
       
-      setOrderData(prev => ({
+      setOrderData((prev: any) => ({
         ...prev,
         orderNumber: prev.orderNumber || `#${Math.floor(Math.random() * 1000)}`,
         orderDate: prev.orderDate || new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-'),
@@ -211,7 +209,7 @@ function CheckoutConfirmPage() {
         ? '6-8 WEEKS (UP TO 10 WEEKS FOR CUSTOMIZED UNITS)'
         : '6-8 WEEKS';
       
-      setOrderData(prev => ({
+      setOrderData((prev: any) => ({
         ...prev,
         processingTime: processingTime
       }));
@@ -625,22 +623,6 @@ function CheckoutConfirmPage() {
 
   const handleMobileMenuToggle = () => {
     setShowMobileMenu(!showMobileMenu);
-  };
-
-  const handleMobileMenuTabClick = (tab: string) => {
-    setMobileMenuActiveTab(tab);
-  };
-
-  const handleMobileMenuItemToggle = (item: string) => {
-    setMobileMenuExpandedItems(prev => 
-      prev.includes(item) 
-        ? prev.filter(i => i !== item)
-        : [...prev, item]
-    );
-  };
-
-  const handleMobileMenuSignInToggle = () => {
-    setIsSignedIn(!isSignedIn);
   };
 
   return (
