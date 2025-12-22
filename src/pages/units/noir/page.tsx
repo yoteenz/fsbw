@@ -3415,7 +3415,8 @@ function NoirSelection() {
           >
             CUSTOMIZE IN BUILD-A-WIG
           </button>
-      </div>
+        </div>
+        </div>
 
         {/* SIMILAR PRODUCTS SECTION */}
         <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
@@ -4198,7 +4199,6 @@ function NoirSelection() {
             </div>
           </div>
         </div>
-          </div>
         </div>
       </div>
     </div>
