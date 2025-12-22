@@ -570,22 +570,6 @@ function OrdersPage() {
     setShowMobileMenu(false);
   };
 
-  const _handleMobileMenuTabClick = (tab: string) => {
-    setMobileMenuActiveTab(tab);
-  };
-
-  const _handleMobileMenuItemToggle = (item: string) => {
-    setMobileMenuExpandedItems(prev => 
-      prev.includes(item) 
-        ? prev.filter(i => i !== item)
-        : [...prev, item]
-    );
-  };
-
-  const _handleMobileMenuSignInToggle = () => {
-    setIsSignedIn(!isSignedIn);
-  };
-
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
       {/* Marble Background */}

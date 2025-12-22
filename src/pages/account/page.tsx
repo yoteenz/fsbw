@@ -154,10 +154,6 @@ function AccountPage() {
     setShowMobileMenu(!showMobileMenu);
   };
 
-  const _handleCloseMobileMenu = () => {
-    setShowMobileMenu(false);
-  };
-
   const handleMobileMenuTabClick = (tab: string) => {
     setMobileMenuActiveTab(tab);
   };
@@ -414,7 +410,6 @@ function AccountPage() {
       const img = imageRef.current;
       const imgWidth = img.naturalWidth;
       const imgHeight = img.naturalHeight;
-      const _containerSize = 200;
       const displayImageSize = 300;
       
       // Calculate cover scale

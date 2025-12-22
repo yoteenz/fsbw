@@ -419,10 +419,6 @@ function ShoppingBagPage() {
     setShowMobileMenu(!showMobileMenu);
   };
 
-  const _handleCloseMobileMenu = () => {
-    setShowMobileMenu(false);
-  };
-
   const handleMobileMenuTabClick = (tab: string) => {
     setMobileMenuActiveTab(tab);
   };

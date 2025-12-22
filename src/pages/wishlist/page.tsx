@@ -262,10 +262,6 @@ function WishlistSelection() {
     setShowMobileMenu(!showMobileMenu);
   };
 
-  const _handleCloseMobileMenu = () => {
-    setShowMobileMenu(false);
-  };
-
   const handleMobileMenuTabClick = (tab: string) => {
     setMobileMenuActiveTab(tab);
   };
