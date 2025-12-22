@@ -735,7 +735,8 @@ function BlancoSelection() {
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
-              willChange: 'backdrop-filter'
+              willChange: 'backdrop-filter',
+              paddingBottom: '34px'
             }}
           >
             {/* WIG PREVIEW */}
@@ -1407,7 +1408,7 @@ function BlancoSelection() {
                 </div>
 
                 {/* Tab Content */}
-                <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px', paddingBottom: '34px' }}>
+                <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px' }}>
                   {activeTab === 'DETAILS' && (
                     <>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>

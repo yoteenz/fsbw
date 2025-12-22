@@ -894,7 +894,6 @@ function ShoppingBagPage() {
                              minHeight: '80px',
                              paddingTop: '20px',
                              paddingBottom: '20px',
-                             borderBottom: isLastItem ? 'none' : '1px solid #e5e7eb',
                              width: '100%',
                              flexShrink: 0
                            }}
@@ -1045,7 +1044,7 @@ function ShoppingBagPage() {
                                     }
                                   }
                                   const defaultColor = item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
-                                  if (itemColor && itemColor !== defaultColor) items.push({ type: 'color', value: itemColor, fullName: itemColor });
+                                  if (itemColor && itemColor !== defaultColor) items.push({ type: 'color', value: itemColor, fullName: `${itemColor} color` });
                                   if (item.hairline && item.hairline !== 'NATURAL') items.push({ type: 'hairline', value: item.hairline, fullName: `${item.hairline} hairline` });
                                   
                                   const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
@@ -1388,7 +1387,6 @@ function ShoppingBagPage() {
                         minHeight: '80px',
                         paddingTop: '20px',
                         paddingBottom: '20px',
-                        borderBottom: isLastItem ? 'none' : '1px solid #e5e7eb',
                         width: '100%',
                         flexShrink: 0
                       }}
@@ -1534,7 +1532,7 @@ function ShoppingBagPage() {
                                  }
                                }
                                const defaultColor = item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
-                               if (itemColor && itemColor !== defaultColor) items.push({ type: 'color', value: itemColor, fullName: itemColor });
+                               if (itemColor && itemColor !== defaultColor) items.push({ type: 'color', value: itemColor, fullName: `${itemColor} color` });
                                if (item.hairline && item.hairline !== 'NATURAL') items.push({ type: 'hairline', value: item.hairline, fullName: `${item.hairline} hairline` });
                                const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
                                if (item.styling && item.styling !== 'NONE' && hairStylingOptions.includes(item.styling) && item.partSelection) {

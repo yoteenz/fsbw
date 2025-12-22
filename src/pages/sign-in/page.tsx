@@ -34,11 +34,74 @@ function SignInPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
   const [facebook, setFacebook] = useState('');
   const [instagram, setInstagram] = useState('');
   const [youtube, setYoutube] = useState('');
   const [tiktok, setTiktok] = useState('');
   const [twitter, setTwitter] = useState('');
+  const [facebookFocused, setFacebookFocused] = useState(false);
+  const [instagramFocused, setInstagramFocused] = useState(false);
+  const [youtubeFocused, setYoutubeFocused] = useState(false);
+  const [tiktokFocused, setTiktokFocused] = useState(false);
+  const [twitterFocused, setTwitterFocused] = useState(false);
+
+  // Format birthday as MM/DD/YYYY
+  const formatBirthday = (value: string): string => {
+    // Remove all non-numeric characters
+    const numbers = value.replace(/\D/g, '');
+    
+    // Limit to 8 digits (MMDDYYYY)
+    const limited = numbers.slice(0, 8);
+    
+    // Format as MM/DD/YYYY
+    if (limited.length <= 2) {
+      return limited;
+    } else if (limited.length <= 4) {
+      return `${limited.slice(0, 2)}/${limited.slice(2)}`;
+    } else {
+      return `${limited.slice(0, 2)}/${limited.slice(2, 4)}/${limited.slice(4)}`;
+    }
+  };
+
+  // Format phone number as (XXX) XXX-XXXX
+  const formatPhoneNumber = (value: string): string => {
+    // Remove all non-numeric characters
+    const numbers = value.replace(/\D/g, '');
+    
+    // Limit to 10 digits
+    const limited = numbers.slice(0, 10);
+    
+    // Format as (XXX) XXX-XXXX
+    if (limited.length === 0) {
+      return '';
+    } else if (limited.length <= 3) {
+      return `(${limited}`;
+    } else if (limited.length <= 6) {
+      return `(${limited.slice(0, 3)}) ${limited.slice(3)}`;
+    } else {
+      return `(${limited.slice(0, 3)}) ${limited.slice(3, 6)}-${limited.slice(6)}`;
+    }
+  };
+
+  // Password validation checks
+  const hasUppercase = (pwd: string) => /[A-Z]/.test(pwd);
+  const hasLowercase = (pwd: string) => /[a-z]/.test(pwd);
+  const hasNumber = (pwd: string) => /[0-9]/.test(pwd);
+
+  // Format social media usernames with @ prefix only
+  const formatSocialUsername = (value: string): string => {
+    // If empty, return empty string
+    if (!value) return '';
+    
+    // Remove any existing @ symbols and platform names, then add @ prefix
+    let cleaned = value.replace(/@/g, '');
+    // Remove common platform names if they appear at the start
+    cleaned = cleaned.replace(/^(facebook|instagram|youtube|tiktok|twitter)/i, '');
+    
+    return '@' + cleaned;
+  };
 
   // Listen for cart count changes
   useEffect(() => {
@@ -425,27 +488,6 @@ function SignInPage() {
                     {isSignedIn ? 'SIGN OUT' : 'SIGN IN'}
                   </span>
                 </div>
-
-                {/* Social Media Icons - Fixed at bottom */}
-                <div className="flex justify-center" style={{ marginBottom: '0' }}>
-                  <div className="flex" style={{ gap: '19px' }}>
-                    <img
-                      src="/assets/instagram-icon.svg"
-                      alt="Instagram"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                    <img
-                      src="/assets/twitter-icon.svg"
-                      alt="Twitter"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                    <img
-                      src="/assets/facebook-icon.svg"
-                      alt="Facebook"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                  </div>
-                </div>
               </div>
             </div>
           ) : (
@@ -543,13 +585,13 @@ function SignInPage() {
                     </div>
 
                     {/* Remember Me and Forgot Password */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '8px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '3px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <div
                           onClick={() => setRememberMe(!rememberMe)}
                           style={{
-                            width: '16px',
-                            height: '16px',
+                            width: '12.8px',
+                            height: '12.8px',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
@@ -563,7 +605,7 @@ function SignInPage() {
                             <img 
                               src="/assets/checkbox.svg" 
                               alt="checked" 
-                              style={{ width: '16px', height: '16px', position: 'absolute' }}
+                              style={{ width: '12.8px', height: '12.8px', position: 'absolute' }}
                             />
                           )}
                         </div>
@@ -734,9 +776,10 @@ function SignInPage() {
                         BIRTHDAY<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
                       </label>
                       <input
-                        type="text"
+                        type="tel"
                         value={birthday}
-                        onChange={(e) => setBirthday(e.target.value)}
+                        onChange={(e) => setBirthday(formatBirthday(e.target.value))}
+                        maxLength={10}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -767,7 +810,8 @@ function SignInPage() {
                       <input
                         type="tel"
                         value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        onChange={(e) => setPhoneNumber(formatPhoneNumber(e.target.value))}
+                        maxLength={14}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -830,6 +874,8 @@ function SignInPage() {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        onFocus={() => setPasswordFocused(true)}
+                        onBlur={() => setPasswordFocused(false)}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -843,6 +889,44 @@ function SignInPage() {
                           outline: 'none'
                         }}
                       />
+                      {/* Password Requirements */}
+                      {(passwordFocused || password.length > 0) && (
+                      <div style={{ marginTop: '4px' }}>
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '8px',
+                            color: hasUppercase(password) ? '#808080' : '#EB1C24',
+                            margin: '0 0 2px 3px',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          PASSWORD MUST CONTAIN UPPERCASE LETTERS.
+                        </p>
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '8px',
+                            color: hasLowercase(password) ? '#808080' : '#EB1C24',
+                            margin: '0 0 2px 3px',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          PASSWORD MUST CONTAIN LOWERCASE LETTERS.
+                        </p>
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '8px',
+                            color: hasNumber(password) ? '#808080' : '#EB1C24',
+                            margin: '0 0 0 3px',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          PASSWORD MUST CONTAIN NUMBERS.
+                        </p>
+                      </div>
+                      )}
                     </div>
                     <div>
                       <label
@@ -861,6 +945,8 @@ function SignInPage() {
                         type="password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
+                        onFocus={() => setConfirmPasswordFocused(true)}
+                        onBlur={() => setConfirmPasswordFocused(false)}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -874,12 +960,60 @@ function SignInPage() {
                           outline: 'none'
                         }}
                       />
+                      {/* Confirm Password Requirements */}
+                      {(confirmPasswordFocused || confirmPassword.length > 0) && (
+                      <div style={{ marginTop: '4px' }}>
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '8px',
+                            color: hasUppercase(confirmPassword) ? '#808080' : '#EB1C24',
+                            margin: '0 0 2px 3px',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          PASSWORD MUST CONTAIN UPPERCASE LETTERS.
+                        </p>
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '8px',
+                            color: hasLowercase(confirmPassword) ? '#808080' : '#EB1C24',
+                            margin: '0 0 2px 3px',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          PASSWORD MUST CONTAIN LOWERCASE LETTERS.
+                        </p>
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '8px',
+                            color: hasNumber(confirmPassword) ? '#808080' : '#EB1C24',
+                            margin: '0 0 0 3px',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          PASSWORD MUST CONTAIN NUMBERS.
+                        </p>
+                      </div>
+                      )}
                     </div>
                     <input
                       type="text"
-                      placeholder="FACEBOOK.COM/"
+                      placeholder={facebookFocused || facebook ? "@USERNAME" : "@FACEBOOK"}
                       value={facebook}
-                      onChange={(e) => setFacebook(e.target.value)}
+                      onChange={(e) => {
+                        const formatted = formatSocialUsername(e.target.value);
+                        setFacebook(formatted);
+                      }}
+                      onFocus={() => setFacebookFocused(true)}
+                      onBlur={() => {
+                        setFacebookFocused(false);
+                        if (!facebook) {
+                          setFacebook('');
+                        }
+                      }}
                       style={{
                         width: '100%',
                         height: '36px',
@@ -890,14 +1024,25 @@ function SignInPage() {
                         backgroundColor: 'rgba(255, 255, 255, 0.8)',
                         boxSizing: 'border-box',
                         borderRadius: '0',
-                        outline: 'none'
+                        outline: 'none',
+                        marginTop: '16px'
                       }}
                     />
                     <input
                       type="text"
-                      placeholder="@INSTAGRAM"
+                      placeholder={instagramFocused || instagram ? "@USERNAME" : "@INSTAGRAM"}
                       value={instagram}
-                      onChange={(e) => setInstagram(e.target.value)}
+                      onChange={(e) => {
+                        const formatted = formatSocialUsername(e.target.value);
+                        setInstagram(formatted);
+                      }}
+                      onFocus={() => setInstagramFocused(true)}
+                      onBlur={() => {
+                        setInstagramFocused(false);
+                        if (!instagram) {
+                          setInstagram('');
+                        }
+                      }}
                       style={{
                         width: '100%',
                         height: '36px',
@@ -913,9 +1058,19 @@ function SignInPage() {
                     />
                     <input
                       type="text"
-                      placeholder="@YOUTUBE"
+                      placeholder={youtubeFocused || youtube ? "@USERNAME" : "@YOUTUBE"}
                       value={youtube}
-                      onChange={(e) => setYoutube(e.target.value)}
+                      onChange={(e) => {
+                        const formatted = formatSocialUsername(e.target.value);
+                        setYoutube(formatted);
+                      }}
+                      onFocus={() => setYoutubeFocused(true)}
+                      onBlur={() => {
+                        setYoutubeFocused(false);
+                        if (!youtube) {
+                          setYoutube('');
+                        }
+                      }}
                       style={{
                         width: '100%',
                         height: '36px',
@@ -931,9 +1086,19 @@ function SignInPage() {
                     />
                     <input
                       type="text"
-                      placeholder="@TIKTOK"
+                      placeholder={tiktokFocused || tiktok ? "@USERNAME" : "@TIKTOK"}
                       value={tiktok}
-                      onChange={(e) => setTiktok(e.target.value)}
+                      onChange={(e) => {
+                        const formatted = formatSocialUsername(e.target.value);
+                        setTiktok(formatted);
+                      }}
+                      onFocus={() => setTiktokFocused(true)}
+                      onBlur={() => {
+                        setTiktokFocused(false);
+                        if (!tiktok) {
+                          setTiktok('');
+                        }
+                      }}
                       style={{
                         width: '100%',
                         height: '36px',
@@ -949,9 +1114,19 @@ function SignInPage() {
                     />
                     <input
                       type="text"
-                      placeholder="@TWITTER"
+                      placeholder={twitterFocused || twitter ? "@USERNAME" : "@TWITTER"}
                       value={twitter}
-                      onChange={(e) => setTwitter(e.target.value)}
+                      onChange={(e) => {
+                        const formatted = formatSocialUsername(e.target.value);
+                        setTwitter(formatted);
+                      }}
+                      onFocus={() => setTwitterFocused(true)}
+                      onBlur={() => {
+                        setTwitterFocused(false);
+                        if (!twitter) {
+                          setTwitter('');
+                        }
+                      }}
                       style={{
                         width: '100%',
                         height: '36px',
@@ -1009,25 +1184,6 @@ function SignInPage() {
                       <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '16px', fontWeight: '500' }}>G</span>
                       <span>SIGN UP WITH GOOGLE ACCOUNT</span>
                     </button>
-                  </div>
-
-                  {/* Social Media Icons */}
-                  <div className="flex justify-center" style={{ marginTop: '24px', gap: '19px' }}>
-                    <img
-                      src="/assets/instagram-icon.svg"
-                      alt="Instagram"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                    <img
-                      src="/assets/twitter-icon.svg"
-                      alt="Twitter"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                    <img
-                      src="/assets/facebook-icon.svg"
-                      alt="Facebook"
-                      style={{ width: '20px', height: '20px' }}
-                    />
                   </div>
                 </div>
               </div>

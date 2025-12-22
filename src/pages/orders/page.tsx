@@ -497,6 +497,7 @@ function OrdersPage() {
 
 
   // Auto-archive delivered and canceled orders after 24 hours
+  // If there are no active orders (excluding delivered), archive all delivered orders immediately
   useEffect(() => {
     const checkAndArchive = () => {
       const now = Date.now();
@@ -506,12 +507,16 @@ function OrdersPage() {
         const toArchive: Order[] = [];
         const toKeep: Order[] = [];
 
+        // Check if there are any non-delivered active orders
+        const hasNonDeliveredOrders = prevActive.some(order => order.status !== 'DELIVERED');
+
         prevActive.forEach(order => {
-          // Archive DELIVERED orders after 24 hours
+          // Archive DELIVERED orders after 24 hours OR immediately if no other active orders
           if (order.status === 'DELIVERED' && order.deliveredAt) {
             const timeSinceDelivered = now - order.deliveredAt;
-            if (timeSinceDelivered >= twentyFourHours) {
-              // Move to archived after 24 hours
+            // Archive immediately if no other active orders, otherwise wait 24 hours
+            if (!hasNonDeliveredOrders || timeSinceDelivered >= twentyFourHours) {
+              // Move to archived
               toArchive.push(order);
             } else {
               toKeep.push(order);
@@ -719,6 +724,23 @@ function OrdersPage() {
                  {/* Body */}
                  <div className="flex-1 flex flex-col overflow-hidden mt-2">
                    {/* Mannequin Thumbnails with order context - stacked vertically, left aligned */}
+                   {activeOrders.length === 0 ? (
+                     <div className="flex flex-col justify-center items-center my-2 flex-shrink-0" style={{ minHeight: '200px' }}>
+                       <p
+                         style={{
+                           fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                           fontSize: '12px',
+                           color: '#909090',
+                           margin: 0,
+                           textTransform: 'uppercase',
+                           textAlign: 'center',
+                           lineHeight: '1.4'
+                         }}
+                       >
+                         YOU HAVE NO ACTIVE ORDERS.<br />LET'S GO SHOPPING!
+                       </p>
+                     </div>
+                   ) : (
                    <div className="flex flex-col justify-start items-start gap-4 my-2 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '265px', scrollBehavior: 'smooth' }}>
                      {activeOrders.map((order) => (
                        <div key={order.id} className="flex items-center gap-3" style={{ flexShrink: 0 }}>
@@ -799,9 +821,11 @@ function OrdersPage() {
                        </div>
                      ))}
                    </div>
+                   )}
                  </div>
 
                 {/* Scrolling Order Information - Bottom of card */}
+                {activeOrders.length > 0 && (
                 <div className="overflow-hidden mt-auto pt-2">
                   {/* Gray line separator */}
                   <div className="border-t border-gray-200" style={{ paddingTop: '2px', marginTop: '1px' }}></div>
@@ -815,22 +839,26 @@ function OrdersPage() {
                       const fortyEightHours = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
                       
                       // Get all orders to display: active orders + archived orders delivered within 48 hours
+                      // Only show archived delivered orders if there are active orders
                       const ordersToDisplay: Order[] = [];
+                      const hasNonDeliveredActiveOrders = activeOrders.some(order => order.status !== 'DELIVERED');
                       
                       // Add active orders
                       activeOrders.forEach(order => {
                         ordersToDisplay.push(order);
                       });
                       
-                      // Add archived orders that were delivered within 48 hours
-                      pastOrders.forEach(order => {
-                        if (order.status === 'DELIVERED' && order.deliveredAt) {
-                          const timeSinceDelivered = now - order.deliveredAt;
-                          if (timeSinceDelivered < fortyEightHours) {
-                            ordersToDisplay.push(order);
+                      // Add archived orders that were delivered within 48 hours (only if there are active orders)
+                      if (hasNonDeliveredActiveOrders) {
+                        pastOrders.forEach(order => {
+                          if (order.status === 'DELIVERED' && order.deliveredAt) {
+                            const timeSinceDelivered = now - order.deliveredAt;
+                            if (timeSinceDelivered < fortyEightHours) {
+                              ordersToDisplay.push(order);
+                            }
                           }
-                        }
-                      });
+                        });
+                      }
                       
                       return ordersToDisplay.map((order, _index) => {
                         // For delivered orders, only show "DELIVERED" status, hide all other statuses
@@ -890,6 +918,7 @@ function OrdersPage() {
                     })()}
                   </div>
                 </div>
+                )}
               </div>
 
               {/* Past Orders Card */}

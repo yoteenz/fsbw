@@ -1716,30 +1716,26 @@ function NoirSelection() {
   }, []);
 
   return (
-    <>
+    <div className="min-h-screen" style={{ position: 'relative' }}>
       {showLoading && <LoadingScreen />}
       
-      <div className="min-h-screen" style={{
-        position: 'relative'
-      }}>
-        {/* Fixed Background Layer */}
-        <div 
-          className="fixed inset-0 -z-10"
-          style={{
-            backgroundImage: `url('/assets/Marble Floor.jpg')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center calc(50% + 25px)',
-            backgroundRepeat: 'no-repeat',
-            backgroundAttachment: 'fixed'
-          }}
-        ></div>
-        
-        {/* Scrollable Content */}
-        <div className="relative z-10">
-          {/* MAIN CONTENT */}
-          <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible' }}>
-        {/* HEADER */}
-        <div
+      {/* Marble Floor Background */}
+      <div 
+        className="fixed inset-0 -z-10"
+        style={{
+          backgroundImage: `url('/assets/Marble Floor.jpg')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center calc(50% + 25px)',
+          backgroundRepeat: 'no-repeat',
+          backgroundAttachment: 'fixed'
+        }}
+      />
+      
+      {/* Scrollable Content */}
+      <div className="relative z-10">
+        <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible' }}>
+          {/* HEADER */}
+          <div
           className="border-solid border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm relative"
           style={{ border: '1.3px solid black' }}
         >
@@ -2094,9 +2090,9 @@ function NoirSelection() {
           </div>
         )}
 
-        {/* MAIN BUILD AREA */}
-        <div
-          className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+          {/* MAIN BUILD AREA */}
+          <div
+            className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
           style={{ 
             borderWidth: '1.3px', 
             minWidth: '100%', 
@@ -2773,11 +2769,12 @@ function NoirSelection() {
                 product shots
               </div>
             </div>
+          </div>
 
-            {/* Tabs Section */}
-            <div className="mt-6" style={{ transform: 'translateY(-35px)' }}>
-              {/* Tab Navigation */}
-              <div className="flex justify-center">
+          {/* Tabs Section */}
+          <div className="mt-6" style={{ transform: 'translateY(-20px)' }}>
+            {/* Tab Navigation */}
+            <div className="flex justify-center">
                 <button
                   onClick={() => handleTabClick('DETAILS')}
                   className={`px-2 py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
@@ -2813,10 +2810,10 @@ function NoirSelection() {
                 >
                   REVIEWS
                 </button>
-              </div>
+            </div>
 
-              {/* Tab Content */}
-              <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px', paddingBottom: '34px' }}>
+            {/* Tab Content */}
+            <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px', paddingBottom: '34px' }}>
                 {activeTab === 'DETAILS' && (
                   <>
                     <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
@@ -3260,26 +3257,22 @@ function NoirSelection() {
             </div>
           </div>
 
-          </div>
-
-        </div>
-
-        {/* ADD TO BAG BUTTON */}
-        <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
-          <button
-            onClick={handleAddToBag}
-            disabled={addToBagState === 'adding'}
-            className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
-              addToBagState === 'adding' ? 'bg-white cursor-not-allowed' : 
-              addToBagState === 'added' ? 'bg-white cursor-pointer' : 'bg-white cursor-pointer hover:bg-gray-50'
-            }`}
-            style={{ 
-              borderWidth: '1.3px', 
-              color: '#EB1C24',
-              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-              backgroundColor: '#FFFFFF'
-            }}
-          >
+          {/* ADD TO BAG BUTTON */}
+          <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
+            <button
+              onClick={handleAddToBag}
+              disabled={addToBagState === 'adding'}
+              className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
+                addToBagState === 'adding' ? 'bg-white cursor-not-allowed' : 
+                addToBagState === 'added' ? 'bg-white cursor-pointer' : 'bg-white cursor-pointer hover:bg-gray-50'
+              }`}
+              style={{ 
+                borderWidth: '1.3px', 
+                color: '#EB1C24',
+                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                backgroundColor: '#FFFFFF'
+              }}
+            >
             {addToBagState === 'idle' && 'ADD TO BAG'}
             {addToBagState === 'adding' && 'ADDING...'}
             {addToBagState === 'added' && (
@@ -3289,11 +3282,11 @@ function NoirSelection() {
               </span>
             )}
           </button>
-        </div>
+          </div>
 
-        {/* CUSTOMIZE IN BUILD-A-WIG BUTTON */}
-        <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
-          <button
+          {/* CUSTOMIZE IN BUILD-A-WIG BUTTON */}
+          <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
+            <button
             onClick={() => {
               // Store the selected cap size in localStorage for customize page
               // Save to both selectedCapSize and customizeSelectedCapSize for consistency
@@ -3371,8 +3364,9 @@ function NoirSelection() {
             }}
           >
             CUSTOMIZE IN BUILD-A-WIG
-          </button>
-      </div>
+            </button>
+          </div>
+        </div>
 
         {/* SIMILAR PRODUCTS SECTION */}
         <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
@@ -4207,10 +4201,9 @@ function NoirSelection() {
             </div>
           </div>
         </div>
-      </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

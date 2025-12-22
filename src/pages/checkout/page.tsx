@@ -19,7 +19,7 @@ function CheckoutPage() {
   const [isSignedIn, setIsSignedIn] = useState(false);
 
   // Form state
-  const [sameAsBilling, setSameAsBilling] = useState(true);
+  const [sameAsBilling, setSameAsBilling] = useState(false);
   const [subscribeNewsletter, setSubscribeNewsletter] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [showTermsRequiredModal, setShowTermsRequiredModal] = useState(false);
@@ -29,6 +29,7 @@ function CheckoutPage() {
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedState, setSelectedState] = useState('');
   const [zipCode, setZipCode] = useState('');
+  const [zipCodeError, setZipCodeError] = useState('');
   const [shippingCalculated, setShippingCalculated] = useState(false);
   const [selectedShippingMethod, setSelectedShippingMethod] = useState<{carrier: string, speed: string, cost: number} | null>(null);
   
@@ -45,10 +46,26 @@ function CheckoutPage() {
   const [cardNumber, setCardNumber] = useState('');
   const [expirationDate, setExpirationDate] = useState('');
   const [cvv, setCvv] = useState('');
+  const [billingFirstName, setBillingFirstName] = useState('');
+  const [billingLastName, setBillingLastName] = useState('');
   const [billingAddress, setBillingAddress] = useState('');
+  const [billingAptSuite, setBillingAptSuite] = useState('');
   const [billingCity, setBillingCity] = useState('');
   const [billingState, setBillingState] = useState('');
   const [billingZip, setBillingZip] = useState('');
+  
+  // Discount code state
+  const [discountCode, setDiscountCode] = useState('');
+  const [discountCodeDisplay, setDiscountCodeDisplay] = useState('');
+  const [discountCodeError, setDiscountCodeError] = useState('');
+  const [appliedDiscount, setAppliedDiscount] = useState(0);
+  const [isDiscountCodeFocused, setIsDiscountCodeFocused] = useState(false);
+  
+  // Tip state - store percentage (0-100) or custom dollar amount (negative values indicate custom dollar amount)
+  const [tipPercentage, setTipPercentage] = useState<number | null>(null);
+  const [customTipAmount, setCustomTipAmount] = useState(0);
+  const [customTipApplied, setCustomTipApplied] = useState(false);
+  const [customTipDisplay, setCustomTipDisplay] = useState('');
   
   // Validation modals
   const [showValidationModal, setShowValidationModal] = useState(false);
@@ -324,6 +341,27 @@ function CheckoutPage() {
     localStorage.setItem('selectedCurrency', selectedCurrency);
   }, [selectedCurrency]);
 
+  // Auto-populate billing address from shipping address when checkbox is checked
+  useEffect(() => {
+    if (sameAsBilling) {
+      setBillingFirstName(firstName);
+      setBillingLastName(lastName);
+      setBillingAddress(shippingAddress);
+      setBillingCity(city);
+      setBillingState(state);
+      setBillingZip(zip);
+    } else {
+      // Clear billing fields when unchecked
+      setBillingFirstName('');
+      setBillingLastName('');
+      setBillingAddress('');
+      setBillingCity('');
+      setBillingState('');
+      setBillingZip('');
+      setBillingAptSuite('');
+    }
+  }, [sameAsBilling, firstName, lastName, shippingAddress, city, state, zip]);
+
   useEffect(() => {
     const handleCurrencyChange = () => {
       const savedCurrency = localStorage.getItem('selectedCurrency');
@@ -385,6 +423,134 @@ function CheckoutPage() {
     };
   }, [currencyRates, selectedCurrency]);
 
+  // Format expiration date as MM/YY
+  const formatExpirationDate = (value: string) => {
+    // Remove all non-numeric characters
+    const numbers = value.replace(/\D/g, '');
+    
+    // Limit to 4 digits (MMYY)
+    const limited = numbers.slice(0, 4);
+    
+    // Add slash after 2 digits
+    if (limited.length >= 2) {
+      return limited.slice(0, 2) + '/' + limited.slice(2);
+    }
+    
+    return limited;
+  };
+
+  // Format CVV to max 3 digits
+  const formatCVV = (value: string) => {
+    // Remove all non-numeric characters and limit to 3 digits
+    return value.replace(/\D/g, '').slice(0, 3);
+  };
+
+  // Check if country uses alphanumeric postal codes
+  const usesAlphanumericPostalCode = (country: string): boolean => {
+    // Countries that use alphanumeric postal codes
+    const alphanumericCountries = ['GB', 'CA', 'OTHER'];
+    return alphanumericCountries.includes(country);
+  };
+
+  // Validate zip code against state (for US)
+  const validateZipCodeForState = (zip: string, state: string, country: string): boolean => {
+    if (country !== 'US' || !state || !zip) return true; // Skip validation for non-US or missing data
+    
+    const zipNum = parseInt(zip, 10);
+    if (isNaN(zipNum)) return false;
+    
+    // Basic zip code range validation for US states
+    // This is a simplified validation - in production, you'd use a comprehensive zip code database
+    const stateZipRanges: { [key: string]: { min: number, max: number } } = {
+      'AL': { min: 35000, max: 36999 },
+      'AK': { min: 99500, max: 99999 },
+      'AZ': { min: 85000, max: 86999 },
+      'AR': { min: 71600, max: 72999 },
+      'CA': { min: 90000, max: 96999 },
+      'CO': { min: 80000, max: 81999 },
+      'CT': { min: 6000, max: 6999 },
+      'DE': { min: 19700, max: 19999 },
+      'FL': { min: 32000, max: 34999 },
+      'GA': { min: 30000, max: 31999 },
+      'HI': { min: 96700, max: 96999 },
+      'ID': { min: 83200, max: 83999 },
+      'IL': { min: 60000, max: 62999 },
+      'IN': { min: 46000, max: 47999 },
+      'IA': { min: 50000, max: 52999 },
+      'KS': { min: 66000, max: 67999 },
+      'KY': { min: 40000, max: 42999 },
+      'LA': { min: 70000, max: 71999 },
+      'ME': { min: 3900, max: 4999 },
+      'MD': { min: 20600, max: 21999 },
+      'MA': { min: 1000, max: 2799 },
+      'MI': { min: 48000, max: 49999 },
+      'MN': { min: 55000, max: 56999 },
+      'MS': { min: 38600, max: 39999 },
+      'MO': { min: 63000, max: 65999 },
+      'MT': { min: 59000, max: 59999 },
+      'NE': { min: 68000, max: 69999 },
+      'NV': { min: 88900, max: 89999 },
+      'NH': { min: 3000, max: 3899 },
+      'NJ': { min: 7000, max: 8999 },
+      'NM': { min: 87000, max: 88999 },
+      'NY': { min: 10000, max: 14999 },
+      'NC': { min: 27000, max: 28999 },
+      'ND': { min: 58000, max: 58999 },
+      'OH': { min: 43000, max: 45999 },
+      'OK': { min: 73000, max: 74999 },
+      'OR': { min: 97000, max: 97999 },
+      'PA': { min: 15000, max: 19999 },
+      'RI': { min: 2800, max: 2999 },
+      'SC': { min: 29000, max: 29999 },
+      'SD': { min: 57000, max: 57999 },
+      'TN': { min: 37000, max: 38999 },
+      'TX': { min: 75000, max: 79999 },
+      'UT': { min: 84000, max: 84999 },
+      'VT': { min: 5000, max: 5999 },
+      'VA': { min: 22000, max: 24699 },
+      'WA': { min: 98000, max: 99999 },
+      'WV': { min: 24700, max: 26999 },
+      'WI': { min: 53000, max: 54999 },
+      'WY': { min: 82000, max: 83999 },
+    };
+    
+    const range = stateZipRanges[state];
+    if (!range) return true; // If state not in list, assume valid
+    
+    return zipNum >= range.min && zipNum <= range.max;
+  };
+
+  // Format zip code based on country
+  const formatZipCode = (value: string, country: string) => {
+    if (usesAlphanumericPostalCode(country)) {
+      // Allow alphanumeric characters, remove spaces and convert to uppercase
+      // UK format: SW1A 1AA, M1 1AA, etc. (up to 8 characters)
+      // Canada format: A1A 1A1 (6 characters)
+      const alphanumeric = value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+      if (country === 'GB') {
+        return alphanumeric.slice(0, 8); // UK postal codes can be up to 7-8 characters
+      } else if (country === 'CA') {
+        return alphanumeric.slice(0, 6); // Canada postal codes are 6 characters
+      } else {
+        return alphanumeric.slice(0, 10); // Other countries, allow up to 10
+      }
+    } else {
+      // Numeric-only postal codes
+      const numbers = value.replace(/\D/g, '');
+      
+      // US zip codes are 5 digits
+      if (country === 'US') {
+        return numbers.slice(0, 5);
+      }
+      // Australia uses 4 digits
+      else if (country === 'AU') {
+        return numbers.slice(0, 4);
+      }
+      // For other numeric countries, allow up to 10 digits
+      return numbers.slice(0, 10);
+    }
+  };
+
   const handleMobileMenuToggle = () => {
     setShowMobileMenu(!showMobileMenu);
   };
@@ -413,19 +579,20 @@ function CheckoutPage() {
     const isDomestic = selectedCountry === 'US';
     
     if (isDomestic) {
-      // Domestic options: USPS, UPS, FedEx with standard or express
+      // Domestic options: UPS, USPS, FedEx with standard or express
       return [
-        { carrier: 'USPS', speed: 'standard', cost: 60, label: 'USPS DOMESTIC STANDARD $60' },
-        { carrier: 'USPS', speed: 'express', cost: 80, label: 'USPS DOMESTIC EXPRESS $80' },
-        { carrier: 'UPS', speed: 'standard', cost: 60, label: 'UPS DOMESTIC STANDARD $60' },
-        { carrier: 'UPS', speed: 'express', cost: 80, label: 'UPS DOMESTIC EXPRESS $80' },
-        { carrier: 'FedEx', speed: 'standard', cost: 60, label: 'FEDEX DOMESTIC STANDARD $60' },
-        { carrier: 'FedEx', speed: 'express', cost: 80, label: 'FEDEX DOMESTIC EXPRESS $80' },
+        { carrier: 'UPS', speed: 'standard', cost: 60, label: 'UPS DOMESTIC STANDARD +$60' },
+        { carrier: 'UPS', speed: 'express', cost: 80, label: 'UPS DOMESTIC EXPRESS +$80' },
+        { carrier: 'USPS', speed: 'standard', cost: 60, label: 'USPS DOMESTIC STANDARD +$60' },
+        { carrier: 'USPS', speed: 'express', cost: 80, label: 'USPS DOMESTIC EXPRESS +$80' },
+        { carrier: 'FedEx', speed: 'standard', cost: 60, label: 'FEDEX DOMESTIC STANDARD +$60' },
+        { carrier: 'FedEx', speed: 'express', cost: 80, label: 'FEDEX DOMESTIC EXPRESS +$80' },
       ];
     } else {
-      // International options: DHL only with standard
+      // International options: DHL with standard and express
       return [
-        { carrier: 'DHL', speed: 'standard', cost: 100, label: 'DHL INTERNATIONAL STANDARD $100' },
+        { carrier: 'DHL', speed: 'standard', cost: 100, label: 'DHL INTERNATIONAL STANDARD +$100' },
+        { carrier: 'DHL', speed: 'express', cost: 140, label: 'DHL INTERNATIONAL EXPRESS +$140' },
       ];
     }
   };
@@ -443,10 +610,45 @@ function CheckoutPage() {
   };
   const shippingHandling = getShippingCost();
   
-  const discount = 0;
+  // Discount code validation function
+  const validateDiscountCode = (code: string): number => {
+    // Define valid discount codes and their discount amounts
+    // You can expand this list with actual discount codes
+    const validCodes: { [key: string]: number } = {
+      'WELCOME10': 10,
+      'SAVE20': 20,
+      'FIRST25': 25,
+      // Add more valid codes here
+    };
+    
+    const upperCode = code.trim().toUpperCase();
+    return validCodes[upperCode] || 0;
+  };
+  
+  const handleApplyDiscountCode = () => {
+    if (!discountCode.trim()) {
+      setDiscountCodeError('');
+      setAppliedDiscount(0);
+      return;
+    }
+    
+    const discountAmount = validateDiscountCode(discountCode);
+    
+    if (discountAmount > 0) {
+      setAppliedDiscount(discountAmount);
+      setDiscountCodeError('');
+    } else {
+      setAppliedDiscount(0);
+      setDiscountCodeError('SORRY, THIS CODE IS INVALID.');
+    }
+  };
+  
+  const discount = appliedDiscount;
   const rushProcessing = selectedProcessing === 'rush' ? 100 : 0;
   const protectionFee = packageProtection ? 5 : 0;
-  const subtotal = orderAmount + taxesProcessing + shippingHandling + rushProcessing + protectionFee - discount;
+  // Calculate tip amount: if percentage is set, use that; otherwise use custom dollar amount (only if applied)
+  const tipAmount = tipPercentage !== null ? Math.round(orderAmount * (tipPercentage / 100)) : (customTipApplied ? customTipAmount : 0);
+  const subtotal = orderAmount + taxesProcessing + shippingHandling + rushProcessing + protectionFee - discount + tipAmount;
 
   return (
     <>
@@ -463,12 +665,62 @@ function CheckoutPage() {
           font-weight: 500 !important;
           color: #909090 !important;
           text-transform: uppercase !important;
+          background-color: #FFFFFF !important;
+        }
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+          -webkit-box-shadow: 0 0 0 30px #FFFFFF inset !important;
+          -webkit-text-fill-color: #909090 !important;
+          box-shadow: 0 0 0 30px #FFFFFF inset !important;
+          background-color: #FFFFFF !important;
         }
         label span[style*="#EB1C24"] {
           color: #EB1C24 !important;
         }
         label span {
           color: #EB1C24 !important;
+        }
+        .delivery-price {
+          color: #000000 !important;
+        }
+        .discount-code-input {
+          font-family: "Futura PT Medium", "Futura PT", Futura, Inter, sans-serif !important;
+          font-weight: 500 !important;
+          color: #EB1C24 !important;
+        }
+        .custom-tip-input {
+          font-family: "Futura PT Medium", "Futura PT", Futura, Inter, sans-serif !important;
+          font-weight: 500 !important;
+          color: #EB1C24 !important;
+          font-size: 11px !important;
+        }
+        .shipping-calculator-input,
+        .shipping-calculator-select {
+          font-family: "Futura PT Demi", "Futura PT", Futura, Inter, sans-serif !important;
+          font-weight: 500 !important;
+          color: #909090 !important;
+        }
+        .shipping-calculator-input::placeholder {
+          font-family: "Futura PT Demi", "Futura PT", Futura, Inter, sans-serif !important;
+          font-weight: 500 !important;
+          color: #909090 !important;
+        }
+        .shipping-calculator-select {
+          appearance: none !important;
+          -webkit-appearance: none !important;
+          -moz-appearance: none !important;
+          background-image: url('/assets/dropdown.svg') !important;
+          background-repeat: no-repeat !important;
+          background-position: right 8px center !important;
+          background-size: 7.2px !important;
+          padding-right: 28px !important;
+        }
+        .shipping-calculator-select option {
+          font-family: "Futura PT Demi", "Futura PT", Futura, Inter, sans-serif !important;
+          font-weight: 500 !important;
+          color: #909090 !important;
         }
       `}</style>
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -827,45 +1079,25 @@ function CheckoutPage() {
                   <span
                     className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
                     style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '17px' }}
-                    dangerouslySetInnerHTML={formatPriceWithoutCurrency(orderAmount)}
                   >
+                    {cartItems.length}
                   </span>
                 </div>
 
                 {/* SHOPPING BAG CARD */}
                 {cartItems.length > 0 && (
                   <div
-                    className="border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm"
+                    className="flex flex-col"
                     style={{ 
-                      borderWidth: '1.3px', 
                       minWidth: '100%', 
                       maxWidth: 'none', 
-                      backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                      backdropFilter: 'blur(10px)',
-                      WebkitBackdropFilter: 'blur(10px)',
-                      willChange: 'backdrop-filter'
+                      marginTop: '-10px'
                     }}
                   >
-                    {/* Shopping Bag Header */}
-                    <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
-                      <button
-                        className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
-                        style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
-                      >
-                        SHOPPING BAG
-                      </button>
-                    <span 
-                        className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
-                        style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '17px' }}
-                      >
-                        {cartItems.length}
-                      </span>
-                    </div>
-
                     {/* Body */}
-                    <div className="flex-1 flex flex-col overflow-hidden mt-2">
+                    <div className="flex-1 flex flex-col overflow-hidden">
                       {/* Cart Items - scrollable */}
-                      <div className="flex flex-col justify-start items-start gap-0 my-2 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '265px', scrollBehavior: 'smooth', width: '100%' }}>
+                      <div className="flex flex-col justify-start items-start gap-0 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '265px', scrollBehavior: 'smooth', width: '100%' }}>
                         {cartItems.map((item, index) => {
                           const itemId = item.id || `cart-item-${index}`;
                           const itemName = item.name || 'NOIR';
@@ -917,7 +1149,6 @@ function CheckoutPage() {
                           const itemHairOrigin = getHairOrigin(item.name);
                           const itemPrice = item.price || 580;
                           const itemQuantity = item.quantity ?? 0;
-                          const isLastItem = index === cartItems.length - 1;
 
                           return (
                             <div
@@ -927,13 +1158,12 @@ function CheckoutPage() {
                                 minHeight: '80px',
                                 paddingTop: '8px',
                                 paddingBottom: '8px',
-                                borderBottom: isLastItem ? 'none' : '1px solid #e5e7eb',
                                 width: '100%',
                                 flexShrink: 0
                               }}
                             >
                               {/* Thumbnail Container */}
-                              <div className="flex flex-col items-center" style={{ flexShrink: 0, width: '88px' }}>
+                              <div className="flex items-center justify-center" style={{ flexShrink: 0, width: '88px' }}>
                                 <div 
                                   className="flex items-center justify-center"
                                   style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
@@ -945,23 +1175,6 @@ function CheckoutPage() {
                                     style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
                                   />
                                 </div>
-                                
-                                {/* EDIT IN BUILD-A-WIG text - Only show for units, not gift cards */}
-                                {!(item.name === 'GIFT CARD' || item.type === 'gift-card') && (
-                                  <p 
-                                    className="font-bold text-center"
-                      style={{ 
-                        fontFamily: '"Futura PT Book"',
-                                      color: '#EB1C24',
-                                      textTransform: 'uppercase',
-                                      fontSize: '8px',
-                                      marginTop: '6px',
-                                      lineHeight: '1.1'
-                                    }}
-                                  >
-                                    EDIT IN BUILD-A-WIG
-                                  </p>
-                                )}
                               </div>
 
                               {/* Item Details */}
@@ -1327,8 +1540,8 @@ function CheckoutPage() {
                     <div className="overflow-hidden mt-auto pt-2">
                       {/* Loyalty Points Text */}
                       <div style={{ 
-                        marginTop: '20px', 
-                        marginBottom: '12px',
+                        marginTop: '10px', 
+                        marginBottom: '0',
                         textAlign: 'center'
                       }}>
                         <p style={{
@@ -1358,34 +1571,167 @@ function CheckoutPage() {
                           )}
                         </p>
                       </div>
-                      <div style={{ 
-                        paddingTop: '20px', 
-                        borderTop: '1.3px solid #000',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center'
-                      }}>
-                        <p style={{
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '12px',
-                          fontWeight: '600',
-                          margin: '0'
-                        }}>
-                          SUBTOTAL:
-                        </p>
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '12px',
-                            fontWeight: '600',
-                            margin: '0'
-                          }}
-                          dangerouslySetInnerHTML={formatPrice(orderAmount)}
-                        />
-                      </div>
                     </div>
                   </div>
                 )}
+
+                {/* BLACK LINE SEPARATOR */}
+                <div>
+                      <div style={{ 
+                    paddingTop: '0', 
+                    paddingBottom: '1px',
+                        borderTop: '1.3px solid #000',
+                    marginTop: '-8px'
+                  }}>
+                  </div>
+                </div>
+
+                {/* DISCOUNT CODE SECTION */}
+                <div style={{ marginBottom: '-9px', marginTop: '-4px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '0' }}>
+                    <input
+                      type="text"
+                      className="discount-code-input"
+                      placeholder="DISCOUNT CODE OR GIFT CARD"
+                      value={isDiscountCodeFocused ? discountCode : discountCodeDisplay || discountCode}
+                      onChange={(e) => {
+                        let rawValue = e.target.value;
+                        
+                        // Check if input is purely numeric (for gift card amounts)
+                        const numericValue = rawValue.replace(/[$€£¥₹,.\s]/g, '');
+                        const isNumeric = /^\d+$/.test(numericValue) && numericValue.length > 0;
+                        
+                        if (isNumeric) {
+                          // Format as dollar amount
+                          const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+                          const symbol = currency ? currency.symbol.replace('&#36;', '$').replace('&euro;', '€').replace('&pound;', '£').replace('&yen;', '¥').replace('&#8377;', '₹') : '$';
+                          const formatted = symbol + numericValue + '.00';
+                          setDiscountCodeDisplay(formatted);
+                          setDiscountCode(numericValue);
+                        } else {
+                          // Text code - no formatting
+                          setDiscountCode(rawValue);
+                          setDiscountCodeDisplay(rawValue);
+                        }
+                        
+                        setDiscountCodeError('');
+                        setAppliedDiscount(0);
+                      }}
+                      onFocus={() => {
+                        setIsDiscountCodeFocused(true);
+                        // Show raw value when focused for easier editing
+                        if (discountCode && /^\d+$/.test(discountCode)) {
+                          setDiscountCodeDisplay(discountCode);
+                        }
+                      }}
+                      onBlur={() => {
+                        setIsDiscountCodeFocused(false);
+                        // Format numeric values on blur
+                        if (discountCode && /^\d+$/.test(discountCode)) {
+                          const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+                          const symbol = currency ? currency.symbol.replace('&#36;', '$').replace('&euro;', '€').replace('&pound;', '£').replace('&yen;', '¥').replace('&#8377;', '₹') : '$';
+                          setDiscountCodeDisplay(symbol + discountCode + '.00');
+                        } else {
+                          setDiscountCodeDisplay(discountCode);
+                        }
+                      }}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          handleApplyDiscountCode();
+                        }
+                      }}
+                      style={{
+                        flex: 1,
+                        height: '36px',
+                        padding: '8px',
+                        border: '1.3px solid #000000',
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '10px',
+                        color: '#EB1C24',
+                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                        boxSizing: 'border-box',
+                        borderRadius: '0'
+                      }}
+                    />
+                    <button
+                      onClick={handleApplyDiscountCode}
+                      style={{
+                        width: '36px',
+                        height: '36px',
+                        border: '1.3px solid #000000',
+                        backgroundColor: '#FFFFFF',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        position: 'relative',
+                        flexShrink: 0
+                      }}
+                    >
+                      <img 
+                        src="/assets/discount-check.svg" 
+                        alt="apply discount" 
+                        style={{ width: '10.4px', height: '10.4px', position: 'absolute', objectFit: 'contain' }}
+                      />
+                    </button>
+                  </div>
+                  {discountCodeError && (
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '9px',
+                        color: '#EB1C24',
+                        margin: '4px 0 0 3px',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      {discountCodeError}
+                    </p>
+                  )}
+                </div>
+
+                {/* OTHER PAYMENT OPTIONS SECTION */}
+                <div style={{ marginTop: '7px', marginBottom: '8px' }}>
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Book"',
+                      fontSize: '10px',
+                      color: '#000000',
+                      margin: '0 0 8px 0',
+                      textTransform: 'uppercase'
+                    }}
+                  >
+                    OTHER PAYMENT OPTIONS:
+                  </p>
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    <button
+                      style={{
+                        padding: '10px 20px',
+                        border: '1.3px solid #000000',
+                        backgroundColor: '#FFFFFF',
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '11px',
+                        cursor: 'pointer',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      PAYPAL
+                    </button>
+                    <button
+                      style={{
+                        padding: '10px 20px',
+                        border: '1.3px solid #000000',
+                        backgroundColor: '#FFFFFF',
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '11px',
+                        cursor: 'pointer',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      EXPRESS CHECKOUT
+                    </button>
+                      </div>
+                    </div>
 
                 {/* SHIPPING ADDRESS SECTION */}
                 <div>
@@ -1418,7 +1764,6 @@ function CheckoutPage() {
                       </label>
                       <input
                         type="text"
-                          placeholder="ENTER FIRST NAME"
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
                         style={{
@@ -1428,7 +1773,8 @@ function CheckoutPage() {
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          backgroundColor: '#FFFFFF',
+                          color: '#909090',
                             boxSizing: 'border-box',
                             borderRadius: '0'
                         }}
@@ -1449,7 +1795,6 @@ function CheckoutPage() {
                       </label>
                       <input
                         type="text"
-                          placeholder="ENTER LAST NAME"
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
                         style={{
@@ -1459,7 +1804,8 @@ function CheckoutPage() {
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          backgroundColor: '#FFFFFF',
+                          color: '#909090',
                             boxSizing: 'border-box',
                             borderRadius: '0'
                           }}
@@ -1481,7 +1827,6 @@ function CheckoutPage() {
                       </label>
                       <input
                         type="text"
-                        placeholder="ENTER SHIPPING ADDRESS"
                         value={shippingAddress}
                         onChange={(e) => setShippingAddress(e.target.value)}
                         style={{
@@ -1491,7 +1836,8 @@ function CheckoutPage() {
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          backgroundColor: '#FFFFFF',
+                          color: '#909090',
                           boxSizing: 'border-box',
                           borderRadius: '0'
                         }}
@@ -1512,7 +1858,6 @@ function CheckoutPage() {
                       </label>
                       <input
                         type="text"
-                        placeholder="ENTER APARTMENT, SUITE OR UNIT NUMBER"
                         style={{
                           width: '100%',
                           height: '36px',
@@ -1520,7 +1865,8 @@ function CheckoutPage() {
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          backgroundColor: '#FFFFFF',
+                          color: '#909090',
                           boxSizing: 'border-box',
                           borderRadius: '0'
                         }}
@@ -1542,7 +1888,6 @@ function CheckoutPage() {
                       </label>
                       <input
                         type="text"
-                          placeholder="ENTER CITY"
                           value={city}
                           onChange={(e) => setCity(e.target.value)}
                         style={{
@@ -1552,7 +1897,8 @@ function CheckoutPage() {
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          backgroundColor: '#FFFFFF',
+                          color: '#909090',
                             boxSizing: 'border-box',
                             borderRadius: '0'
                         }}
@@ -1573,7 +1919,6 @@ function CheckoutPage() {
                         </label>
                         <input
                           type="text"
-                          placeholder="ENTER STATE"
                           value={state}
                           onChange={(e) => setState(e.target.value)}
                           style={{
@@ -1583,7 +1928,8 @@ function CheckoutPage() {
                             border: '1.3px solid #000000',
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            backgroundColor: '#FFFFFF',
+                            color: '#909090',
                             boxSizing: 'border-box',
                             borderRadius: '0'
                           }}
@@ -1604,7 +1950,6 @@ function CheckoutPage() {
                         </label>
                         <input
                           type="text"
-                          placeholder="ENTER ZIP CODE"
                           value={zip}
                           onChange={(e) => setZip(e.target.value)}
                           style={{
@@ -1614,7 +1959,8 @@ function CheckoutPage() {
                             border: '1.3px solid #000000',
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            backgroundColor: '#FFFFFF',
+                            color: '#909090',
                             boxSizing: 'border-box',
                             borderRadius: '0'
                           }}
@@ -1636,7 +1982,6 @@ function CheckoutPage() {
                       </label>
                       <input
                         type="tel"
-                        placeholder="ENTER MOBILE NUMBER"
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value)}
                         style={{
@@ -1646,7 +1991,8 @@ function CheckoutPage() {
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          backgroundColor: '#FFFFFF',
+                          color: '#909090',
                           boxSizing: 'border-box',
                           borderRadius: '0'
                         }}
@@ -1667,7 +2013,6 @@ function CheckoutPage() {
                       </label>
                       <input
                         type="email"
-                        placeholder="ENTER EMAIL ADDRESS"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         style={{
@@ -1677,7 +2022,8 @@ function CheckoutPage() {
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          backgroundColor: '#FFFFFF',
+                          color: '#909090',
                           boxSizing: 'border-box',
                           borderRadius: '0'
                         }}
@@ -1721,6 +2067,259 @@ function CheckoutPage() {
                   </div>
                 </div>
 
+                {/* BILLING ADDRESS SECTION */}
+                <div>
+                  <h2 
+                    style={{ 
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '12px',
+                      color: '#EB1C24',
+                      margin: '0 0 12px 0',
+                      textTransform: 'uppercase',
+                      fontWeight: '500'
+                    }}
+                  >
+                    BILLING ADDRESS:
+                  </h2>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div>
+                      <label 
+                        style={{ 
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#000000',
+                          display: 'block',
+                          marginBottom: '4px',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                            FIRST NAME<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                      </label>
+                      <input
+                        type="text"
+                          value={billingFirstName}
+                          onChange={(e) => setBillingFirstName(e.target.value)}
+                          disabled={sameAsBilling}
+                        style={{
+                          width: '100%',
+                          height: '36px',
+                          padding: '8px',
+                          border: '1.3px solid #000000',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '11px',
+                            backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
+                            color: '#909090',
+                          boxSizing: 'border-box',
+                            borderRadius: '0',
+                            cursor: sameAsBilling ? 'not-allowed' : 'text'
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label 
+                        style={{ 
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#000000',
+                          display: 'block',
+                          marginBottom: '4px',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                            LAST NAME<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                      </label>
+                      <input
+                        type="text"
+                          value={billingLastName}
+                          onChange={(e) => setBillingLastName(e.target.value)}
+                          disabled={sameAsBilling}
+                        style={{
+                          width: '100%',
+                          height: '36px',
+                          padding: '8px',
+                          border: '1.3px solid #000000',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '11px',
+                            backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
+                            color: '#909090',
+                          boxSizing: 'border-box',
+                            borderRadius: '0',
+                            cursor: sameAsBilling ? 'not-allowed' : 'text'
+                        }}
+                      />
+                    </div>
+                    </div>
+                      <div>
+                        <label 
+                          style={{ 
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '10px',
+                            color: '#000000',
+                            display: 'block',
+                            marginBottom: '4px',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                        BILLING ADDRESS<span style={{ color: '#EB1C24' }}>*</span>
+                        </label>
+                        <input
+                          type="text"
+                        value={billingAddress}
+                        onChange={(e) => setBillingAddress(e.target.value)}
+                        disabled={sameAsBilling}
+                          style={{
+                            width: '100%',
+                          height: '36px',
+                            padding: '8px',
+                            border: '1.3px solid #000000',
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '11px',
+                          backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
+                          color: '#909090',
+                          boxSizing: 'border-box',
+                          borderRadius: '0',
+                          cursor: sameAsBilling ? 'not-allowed' : 'text'
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label 
+                          style={{ 
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '10px',
+                            color: '#000000',
+                            display: 'block',
+                            marginBottom: '4px',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                        APT OR SUITE
+                        </label>
+                        <input
+                          type="text"
+                        value={billingAptSuite}
+                        onChange={(e) => setBillingAptSuite(e.target.value)}
+                        disabled={sameAsBilling}
+                          style={{
+                            width: '100%',
+                          height: '36px',
+                            padding: '8px',
+                            border: '1.3px solid #000000',
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '11px',
+                          backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
+                          color: '#909090',
+                          boxSizing: 'border-box',
+                          borderRadius: '0',
+                          cursor: sameAsBilling ? 'not-allowed' : 'text'
+                          }}
+                        />
+                      </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                        <div>
+                          <label 
+                            style={{ 
+                              fontFamily: '"Futura PT Book"',
+                              fontSize: '10px',
+                              color: '#000000',
+                              display: 'block',
+                              marginBottom: '4px',
+                              textTransform: 'uppercase'
+                            }}
+                          >
+                            CITY<span style={{ color: '#EB1C24' }}>*</span>
+                          </label>
+                          <input
+                            type="text"
+                          value={billingCity}
+                          onChange={(e) => setBillingCity(e.target.value)}
+                          disabled={sameAsBilling}
+                            style={{
+                              width: '100%',
+                              height: '36px',
+                              padding: '8px',
+                              border: '1.3px solid #000000',
+                              fontFamily: '"Futura PT Book"',
+                              fontSize: '11px',
+                            backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
+                            color: '#909090',
+                              boxSizing: 'border-box',
+                            borderRadius: '0',
+                            cursor: sameAsBilling ? 'not-allowed' : 'text'
+                            }}
+                          />
+                    </div>
+                        <div>
+                          <label 
+                            style={{ 
+                              fontFamily: '"Futura PT Book"',
+                              fontSize: '10px',
+                              color: '#000000',
+                              display: 'block',
+                              marginBottom: '4px',
+                              textTransform: 'uppercase'
+                            }}
+                          >
+                            STATE<span style={{ color: '#EB1C24' }}>*</span>
+                          </label>
+                          <input
+                            type="text"
+                              value={billingState}
+                              onChange={(e) => setBillingState(e.target.value)}
+                              disabled={sameAsBilling}
+                            style={{
+                              width: '100%',
+                              height: '36px',
+                              padding: '8px',
+                              border: '1.3px solid #000000',
+                              fontFamily: '"Futura PT Book"',
+                              fontSize: '11px',
+                                backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
+                                color: '#909090',
+                              boxSizing: 'border-box',
+                                borderRadius: '0',
+                                cursor: sameAsBilling ? 'not-allowed' : 'text'
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <label 
+                            style={{ 
+                              fontFamily: '"Futura PT Book"',
+                              fontSize: '10px',
+                              color: '#000000',
+                              display: 'block',
+                              marginBottom: '4px',
+                              textTransform: 'uppercase'
+                            }}
+                          >
+                          ZIP<span style={{ color: '#EB1C24' }}>*</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={billingZip}
+                            onChange={(e) => setBillingZip(e.target.value)}
+                            disabled={sameAsBilling}
+                            style={{
+                              width: '100%',
+                                height: '36px',
+                              padding: '8px',
+                              border: '1.3px solid #000000',
+                              fontFamily: '"Futura PT Book"',
+                              fontSize: '11px',
+                              backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
+                              color: '#909090',
+                                boxSizing: 'border-box',
+                              borderRadius: '0',
+                              cursor: sameAsBilling ? 'not-allowed' : 'text'
+                              }}
+                            />
+                          </div>
+                    </div>
+                  </div>
+                </div>
+
                 {/* PAYMENT SECTION */}
                 <div>
                   <h2 
@@ -1736,104 +2335,103 @@ function CheckoutPage() {
                     PAYMENT:
                   </h2>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <div>
-                      <label 
-                        style={{ 
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '10px',
-                          color: '#000000',
-                          display: 'block',
-                          marginBottom: '4px',
-                          textTransform: 'uppercase'
-                        }}
-                      >
+                          <div>
+                            <label 
+                              style={{ 
+                                fontFamily: '"Futura PT Book"',
+                                fontSize: '10px',
+                                color: '#000000',
+                                display: 'block',
+                                marginBottom: '4px',
+                                textTransform: 'uppercase'
+                              }}
+                            >
                         CARDHOLDER<span style={{ color: '#EB1C24' }}>*</span>
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="ENTER NAME ON CARD"
+                            </label>
+                            <input
+                              type="text"
                         value={cardholder}
                         onChange={(e) => setCardholder(e.target.value)}
-                        style={{
-                          width: '100%',
-                          height: '36px',
-                          padding: '8px',
-                          border: '1.3px solid #000000',
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          boxSizing: 'border-box',
-                          borderRadius: '0'
-                        }}
-                      />
-                    </div>
-                    <div>
+                              style={{
+                                width: '100%',
+                                height: '36px',
+                                padding: '8px',
+                                border: '1.3px solid #000000',
+                                fontFamily: '"Futura PT Book"',
+                                fontSize: '11px',
+                                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                boxSizing: 'border-box',
+                                borderRadius: '0'
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <label 
+                              style={{ 
+                                fontFamily: '"Futura PT Book"',
+                                fontSize: '10px',
+                                color: '#000000',
+                                display: 'block',
+                                marginBottom: '4px',
+                                textTransform: 'uppercase'
+                              }}
+                            >
+                        CARD NUMBER<span style={{ color: '#EB1C24' }}>*</span>
+                            </label>
+                            <input
+                              type="text"
+                        value={cardNumber}
+                        onChange={(e) => setCardNumber(e.target.value)}
+                              style={{
+                                width: '100%',
+                                height: '36px',
+                                padding: '8px',
+                                border: '1.3px solid #000000',
+                                fontFamily: '"Futura PT Book"',
+                                fontSize: '11px',
+                                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                boxSizing: 'border-box',
+                                borderRadius: '0'
+                              }}
+                            />
+                          </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                <div>
                       <label 
                         style={{ 
                           fontFamily: '"Futura PT Book"',
                           fontSize: '10px',
                           color: '#000000',
-                          display: 'block',
-                          marginBottom: '4px',
+                            display: 'block',
+                            marginBottom: '4px',
                           textTransform: 'uppercase'
                         }}
                       >
-                        CARD NUMBER<span style={{ color: '#EB1C24' }}>*</span>
+                          EXPIRATION DATE<span style={{ color: '#EB1C24' }}>*</span>
                       </label>
                       <input
-                        type="text"
-                        placeholder="ENTER CREDIT OR DEBIT CARD NUMBER"
-                        value={cardNumber}
-                        onChange={(e) => setCardNumber(e.target.value)}
-                        style={{
-                          width: '100%',
-                          height: '36px',
-                          padding: '8px',
-                          border: '1.3px solid #000000',
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          boxSizing: 'border-box',
-                          borderRadius: '0'
-                        }}
-                      />
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                      <div>
-                        <label 
-                          style={{ 
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '10px',
-                            color: '#000000',
-                            display: 'block',
-                            marginBottom: '4px',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          EXPIRATION DATE<span style={{ color: '#EB1C24' }}>*</span>
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="MM/YY"
+                          type="tel"
                           value={expirationDate}
-                          onChange={(e) => setExpirationDate(e.target.value)}
+                          onChange={(e) => setExpirationDate(formatExpirationDate(e.target.value))}
                           style={{
                             width: '100%',
-                            padding: '8px',
+                          height: '36px',
+                          padding: '8px',
                             border: '1.3px solid #000000',
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                            borderRadius: '0'
-                          }}
-                        />
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box',
+                          borderRadius: '0'
+                        }}
+                      />
                       </div>
-                      <div>
-                        <label 
-                          style={{ 
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '10px',
-                            color: '#000000',
+                <div>
+                      <label 
+                        style={{ 
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#000000',
                             display: 'block',
                             marginBottom: '4px',
                             textTransform: 'uppercase'
@@ -1842,210 +2440,234 @@ function CheckoutPage() {
                           CVV<span style={{ color: '#EB1C24' }}>*</span>
                         </label>
                         <input
-                          type="text"
-                          placeholder="123"
+                          type="tel"
                           value={cvv}
-                          onChange={(e) => setCvv(e.target.value)}
+                          onChange={(e) => setCvv(formatCVV(e.target.value))}
                           style={{
                             width: '100%',
+                            height: '36px',
                             padding: '8px',
                             border: '1.3px solid #000000',
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
                             backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            boxSizing: 'border-box',
                             borderRadius: '0'
                           }}
                         />
                       </div>
-                    </div>
-                    {!sameAsBilling && (
-                      <>
-                        <div>
-                          <label 
-                            style={{ 
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '10px',
-                              color: '#000000',
-                              display: 'block',
-                              marginBottom: '4px',
-                              textTransform: 'uppercase'
-                            }}
-                          >
-                            BILLING ADDRESS<span style={{ color: '#EB1C24' }}>*</span>
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="ENTER CARD'S BILLING ADDRESS"
-                            value={billingAddress}
-                            onChange={(e) => setBillingAddress(e.target.value)}
-                            style={{
-                              width: '100%',
-                              height: '36px',
-                              padding: '8px',
-                              border: '1.3px solid #000000',
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '11px',
-                              backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                              boxSizing: 'border-box',
-                              borderRadius: '0'
-                            }}
-                          />
-                        </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-                        <div>
-                          <label 
-                            style={{ 
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '10px',
-                              color: '#000000',
-                              display: 'block',
-                              marginBottom: '4px',
-                              textTransform: 'uppercase'
-                            }}
-                          >
-                              CITY<span style={{ color: '#EB1C24' }}>*</span>
-                          </label>
-                          <input
-                            type="text"
-                              placeholder="ENTER CITY"
-                              value={billingCity}
-                              onChange={(e) => setBillingCity(e.target.value)}
-                            style={{
-                              width: '100%',
-                                height: '36px',
-                              padding: '8px',
-                              border: '1.3px solid #000000',
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '11px',
-                                backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                                boxSizing: 'border-box',
-                                borderRadius: '0'
-                              }}
-                            />
-                          </div>
-                          <div>
-                            <label 
-                              style={{ 
-                                fontFamily: '"Futura PT Book"',
-                                fontSize: '10px',
-                                color: '#000000',
-                                display: 'block',
-                                marginBottom: '4px',
-                                textTransform: 'uppercase'
-                              }}
-                            >
-                              STATE<span style={{ color: '#EB1C24' }}>*</span>
-                            </label>
-                            <input
-                              type="text"
-                              placeholder="ENTER STATE"
-                              value={billingState}
-                              onChange={(e) => setBillingState(e.target.value)}
-                              style={{
-                                width: '100%',
-                                height: '36px',
-                                padding: '8px',
-                                border: '1.3px solid #000000',
-                                fontFamily: '"Futura PT Book"',
-                                fontSize: '11px',
-                                backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                                boxSizing: 'border-box',
-                                borderRadius: '0'
-                              }}
-                            />
-                          </div>
-                          <div>
-                            <label 
-                              style={{ 
-                                fontFamily: '"Futura PT Book"',
-                                fontSize: '10px',
-                                color: '#000000',
-                                display: 'block',
-                                marginBottom: '4px',
-                                textTransform: 'uppercase'
-                              }}
-                            >
-                              ZIP<span style={{ color: '#EB1C24' }}>*</span>
-                            </label>
-                            <input
-                              type="text"
-                              placeholder="ENTER ZIP CODE"
-                              value={billingZip}
-                              onChange={(e) => setBillingZip(e.target.value)}
-                              style={{
-                                width: '100%',
-                                height: '36px',
-                                padding: '8px',
-                                border: '1.3px solid #000000',
-                                fontFamily: '"Futura PT Book"',
-                                fontSize: '11px',
-                                backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                                boxSizing: 'border-box',
-                                borderRadius: '0'
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </>
-                    )}
-                    <div style={{ marginTop: '8px' }}>
-                      <p 
+                      <div>
+                      <label 
                         style={{ 
                           fontFamily: '"Futura PT Book"',
                           fontSize: '10px',
                           color: '#000000',
-                          margin: '0 0 8px 0',
-                          textTransform: 'uppercase'
-                        }}
-                      >
-                        OTHER PAYMENT OPTIONS:
-                      </p>
-                      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                        <button
-                          style={{
-                            padding: '10px 20px',
-                            border: '1.3px solid #000000',
-                            backgroundColor: '#FFFFFF',
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '11px',
-                            cursor: 'pointer',
+                            display: 'block',
+                            marginBottom: '4px',
                             textTransform: 'uppercase'
                           }}
                         >
-                          PAYPAL
-                        </button>
-                        <button
-                          style={{
-                            padding: '10px 20px',
-                            border: '1.3px solid #000000',
-                            backgroundColor: '#FFFFFF',
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '11px',
-                            cursor: 'pointer',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          EXPRESS CHECKOUT
-                        </button>
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                          BILLING ZIP<span style={{ color: '#EB1C24' }}>*</span>
+                      </label>
                       <input
                         type="text"
-                        placeholder="REFERRAL CODE, GIFT CARD OR DISCOUNT CODE"
+                          value={billingZip}
+                          onChange={(e) => setBillingZip(e.target.value)}
+                          disabled={sameAsBilling}
                         style={{
-                          flex: 1,
+                            width: '100%',
                           height: '36px',
                           padding: '8px',
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
+                            backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
+                            color: '#909090',
+                            boxSizing: 'border-box',
+                            borderRadius: '0',
+                            cursor: sameAsBilling ? 'not-allowed' : 'text'
+                          }}
+                        />
+                    </div>
+                  </div>
+                  </div>
+                </div>
+
+                {/* SHIPPING CALCULATOR SECTION */}
+                <div>
+                  <h2 
+                      style={{ 
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '12px',
+                      color: '#EB1C24',
+                      margin: '0 0 12px 0',
+                        textTransform: 'uppercase',
+                        fontWeight: '500'
+                      }}
+                    >
+                    SHIPPING CALCULATOR:
+                  </h2>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {/* First line: Country, State, Zip */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div style={{ flex: selectedCountry === 'US' ? '1.5' : '1.8', minWidth: 0 }}>
+                      <select
+                        className="shipping-calculator-select"
+                        value={selectedCountry}
+                        onChange={(e) => {
+                          setSelectedCountry(e.target.value);
+                          setSelectedState('');
+                          setZipCode('');
+                          setShippingCalculated(false);
+                          setSelectedShippingMethod(null);
+                        }}
+                        style={{
+                          width: '100%',
+                          height: '36px',
+                          padding: '8px',
+                          border: '1.3px solid #000000',
+                          fontFamily: '"Futura PT Demi"',
+                          fontSize: '11px',
+                          color: '#909090',
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box',
+                          borderRadius: '0'
+                        }}
+                      >
+                        <option value="">COUNTRY</option>
+                        <option value="US">UNITED STATES</option>
+                        <option value="CA">CANADA</option>
+                        <option value="GB">UNITED KINGDOM</option>
+                        <option value="AU">AUSTRALIA</option>
+                        <option value="OTHER">OTHER</option>
+                      </select>
+                      </div>
+                      {selectedCountry === 'US' && (
+                        <div style={{ flex: '0.8', minWidth: 0 }}>
+                      <select
+                        className="shipping-calculator-select"
+                          value={selectedState}
+                          onChange={(e) => {
+                            setSelectedState(e.target.value);
+                            setShippingCalculated(false);
+                            setSelectedShippingMethod(null);
+                            setZipCodeError(''); // Clear error when state changes (validation happens on submit)
+                          }}
+                        style={{
+                          width: '100%',
+                            height: '36px',
+                          padding: '8px',
+                          border: '1.3px solid #000000',
+                          fontFamily: '"Futura PT Demi"',
+                          fontSize: '11px',
+                          color: '#909090',
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            boxSizing: 'border-box',
+                            borderRadius: '0'
+                          }}
+                        >
+                          <option value="">STATE</option>
+                          <option value="AL">AL</option>
+                          <option value="AK">AK</option>
+                          <option value="AZ">AZ</option>
+                          <option value="AR">AR</option>
+                          <option value="CA">CA</option>
+                          <option value="CO">CO</option>
+                          <option value="CT">CT</option>
+                          <option value="DE">DE</option>
+                          <option value="FL">FL</option>
+                          <option value="GA">GA</option>
+                          <option value="HI">HI</option>
+                          <option value="ID">ID</option>
+                          <option value="IL">IL</option>
+                          <option value="IN">IN</option>
+                          <option value="IA">IA</option>
+                          <option value="KS">KS</option>
+                          <option value="KY">KY</option>
+                          <option value="LA">LA</option>
+                          <option value="ME">ME</option>
+                          <option value="MD">MD</option>
+                          <option value="MA">MA</option>
+                          <option value="MI">MI</option>
+                          <option value="MN">MN</option>
+                          <option value="MS">MS</option>
+                          <option value="MO">MO</option>
+                          <option value="MT">MT</option>
+                          <option value="NE">NE</option>
+                          <option value="NV">NV</option>
+                          <option value="NH">NH</option>
+                          <option value="NJ">NJ</option>
+                          <option value="NM">NM</option>
+                          <option value="NY">NY</option>
+                          <option value="NC">NC</option>
+                          <option value="ND">ND</option>
+                          <option value="OH">OH</option>
+                          <option value="OK">OK</option>
+                          <option value="OR">OR</option>
+                          <option value="PA">PA</option>
+                          <option value="RI">RI</option>
+                          <option value="SC">SC</option>
+                          <option value="SD">SD</option>
+                          <option value="TN">TN</option>
+                          <option value="TX">TX</option>
+                          <option value="UT">UT</option>
+                          <option value="VT">VT</option>
+                          <option value="VA">VA</option>
+                          <option value="WA">WA</option>
+                          <option value="WV">WV</option>
+                          <option value="WI">WI</option>
+                          <option value="WY">WY</option>
+                      </select>
+                        </div>
+                      )}
+                      <div style={{ flex: '0.8', minWidth: 0 }}>
+                        <input
+                          type={usesAlphanumericPostalCode(selectedCountry) ? "text" : "tel"}
+                          className="shipping-calculator-input"
+                          placeholder="ZIP"
+                          value={zipCode}
+                          onChange={(e) => {
+                            const formatted = formatZipCode(e.target.value, selectedCountry);
+                            setZipCode(formatted);
+                            setShippingCalculated(false);
+                            setSelectedShippingMethod(null);
+                            setZipCodeError(''); // Clear error while typing
+                          }}
+                          style={{
+                            width: '100%',
+                            height: '36px',
+                            padding: '8px',
+                            border: '1.3px solid #000000',
+                            fontFamily: '"Futura PT Demi"',
+                            fontSize: '11px',
+                            color: '#909090',
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
                           boxSizing: 'border-box',
                           borderRadius: '0'
                         }}
                       />
+                      </div>
                       <button
+                        onClick={() => {
+                          if (selectedCountry && zipCode) {
+                            // Validate zip code when checkmark is clicked
+                            if (selectedCountry === 'US' && selectedState) {
+                              if (!validateZipCodeForState(zipCode, selectedState, selectedCountry)) {
+                                setZipCodeError('SORRY, THIS ZIP CODE DOES NOT MATCH.');
+                                setShippingCalculated(false);
+                                setSelectedShippingMethod(null);
+                                return;
+                              } else {
+                                setZipCodeError('');
+                              }
+                            }
+                            
+                            // Only toggle if no error
+                            if (!zipCodeError) {
+                              setShippingCalculated(!shippingCalculated);
+                            }
+                          }
+                        }}
                         style={{
                           width: '36px',
                           height: '36px',
@@ -2061,12 +2683,96 @@ function CheckoutPage() {
                       >
                         <img 
                           src="/assets/discount-check.svg" 
-                          alt="apply discount" 
-                          style={{ width: '16px', height: '16px', position: 'absolute', objectFit: 'contain' }}
+                            alt="calculate shipping" 
+                            style={{ 
+                              width: '10.4px', 
+                              height: '10.4px', 
+                              position: 'absolute', 
+                              objectFit: 'contain',
+                              filter: 'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)'
+                            }}
                         />
                       </button>
                     </div>
+                    {zipCodeError && (
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '9px',
+                          color: '#EB1C24',
+                          margin: '-3px 0 0 3px',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        {zipCodeError}
+                      </p>
+                    )}
                   </div>
+                  
+                  {/* SHIPPING METHOD SELECTION */}
+                  {shippingCalculated && availableShippingOptions.length > 0 && !zipCodeError && (
+                    <div style={{ marginTop: '26px', marginBottom: '5px' }}>
+                      <h2 
+                        style={{ 
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '12px',
+                          color: '#EB1C24',
+                          margin: '0 0 12px 0',
+                          textTransform: 'uppercase',
+                          fontWeight: '500'
+                        }}
+                      >
+                        CHOOSE A CARRIER:
+                      </h2>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {availableShippingOptions.map((option, index) => {
+                          const isSelected = selectedShippingMethod?.carrier === option.carrier && 
+                                           selectedShippingMethod?.speed === option.speed;
+                          return (
+                            <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <div
+                                onClick={() => setSelectedShippingMethod({
+                                  carrier: option.carrier,
+                                  speed: option.speed,
+                                  cost: option.cost
+                                })}
+                                style={{
+                                  width: '16px',
+                                  height: '16px',
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  border: '1.3px solid #000000',
+                                  backgroundColor: 'transparent',
+                                  position: 'relative'
+                                }}
+                              >
+                                {isSelected && (
+                                  <img 
+                                    src="/assets/checkbox.svg" 
+                                    alt="checked" 
+                                    style={{ width: '16px', height: '16px', position: 'absolute' }}
+                                  />
+                                )}
+                              </div>
+                              <label 
+                                style={{ 
+                                  fontFamily: '"Futura PT Book"',
+                                  fontSize: '10px',
+                                  color: '#000000',
+                                  cursor: 'pointer',
+                                  textTransform: 'uppercase'
+                                }}
+                              >
+                                {option.label}
+                              </label>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* DELIVERY METHOD SECTION */}
@@ -2169,7 +2875,7 @@ function CheckoutPage() {
                           textTransform: 'uppercase'
                         }}
                       >
-                          4-6 WEEKS RUSH PROCESSING $100
+                          4-6 WEEKS RUSH PROCESSING <span className="delivery-price" dangerouslySetInnerHTML={formatPrice(100)}></span>
                         </label>
                         <label 
                           style={{ 
@@ -2217,232 +2923,163 @@ function CheckoutPage() {
                           textTransform: 'uppercase'
                         }}
                       >
-                        PACKAGE PROTECTION +$5
+                        PACKAGE PROTECTION +<span className="delivery-price" dangerouslySetInnerHTML={formatPrice(5)}></span>
                       </label>
                     </div>
                   </div>
-                  <div style={{ marginTop: '16px', border: '1.3px solid #000000', padding: '12px' }}>
-                    <p 
-                      style={{ 
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '10px',
-                        color: '#000000',
-                        margin: '0 0 8px 0',
-                        textTransform: 'uppercase',
-                        fontWeight: '500'
-                      }}
-                    >
-                      SHIPPING CALCULATOR
-                    </p>
+                </div>
+
+                {/* TIPPING SECTION */}
+                <div style={{ marginTop: '4px', marginBottom: '4px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      <select
-                        value={selectedCountry}
-                        onChange={(e) => {
-                          setSelectedCountry(e.target.value);
-                          setSelectedState('');
-                          setZipCode('');
-                          setShippingCalculated(false);
-                          setSelectedShippingMethod(null);
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'nowrap', width: '100%' }}>
+                      {[10, 15, 25, 30, 50].map((percentage) => (
+                        <button
+                          key={percentage}
+                          onClick={() => {
+                            if (tipPercentage === percentage) {
+                              setTipPercentage(null);
+                            } else {
+                              setTipPercentage(percentage);
+                              setCustomTipAmount(0);
+                            }
                         }}
                         style={{
-                          width: '100%',
-                          height: '36px',
-                          padding: '8px',
+                            flex: 1,
+                            padding: '8px 0',
                           border: '1.3px solid #000000',
+                            backgroundColor: '#FFFFFF',
+                            color: tipPercentage === percentage ? '#EB1C24' : '#000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          boxSizing: 'border-box',
-                          borderRadius: '0'
-                        }}
-                      >
-                        <option value="">COUNTRY</option>
-                        <option value="US">UNITED STATES</option>
-                        <option value="CA">CANADA</option>
-                        <option value="GB">UNITED KINGDOM</option>
-                        <option value="AU">AUSTRALIA</option>
-                        <option value="OTHER">OTHER</option>
-                      </select>
-                      {selectedCountry === 'US' && (
-                      <select
-                          value={selectedState}
-                          onChange={(e) => {
-                            setSelectedState(e.target.value);
-                            setShippingCalculated(false);
-                            setSelectedShippingMethod(null);
-                          }}
-                        style={{
-                          width: '100%',
-                            height: '36px',
-                          padding: '8px',
-                          border: '1.3px solid #000000',
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                            boxSizing: 'border-box',
-                            borderRadius: '0'
+                            cursor: 'pointer',
+                            textTransform: 'uppercase',
+                            fontWeight: tipPercentage === percentage ? '600' : '400'
                           }}
                         >
-                          <option value="">STATE</option>
-                          <option value="AL">ALABAMA</option>
-                          <option value="AK">ALASKA</option>
-                          <option value="AZ">ARIZONA</option>
-                          <option value="AR">ARKANSAS</option>
-                          <option value="CA">CALIFORNIA</option>
-                          <option value="CO">COLORADO</option>
-                          <option value="CT">CONNECTICUT</option>
-                          <option value="DE">DELAWARE</option>
-                          <option value="FL">FLORIDA</option>
-                          <option value="GA">GEORGIA</option>
-                          <option value="HI">HAWAII</option>
-                          <option value="ID">IDAHO</option>
-                          <option value="IL">ILLINOIS</option>
-                          <option value="IN">INDIANA</option>
-                          <option value="IA">IOWA</option>
-                          <option value="KS">KANSAS</option>
-                          <option value="KY">KENTUCKY</option>
-                          <option value="LA">LOUISIANA</option>
-                          <option value="ME">MAINE</option>
-                          <option value="MD">MARYLAND</option>
-                          <option value="MA">MASSACHUSETTS</option>
-                          <option value="MI">MICHIGAN</option>
-                          <option value="MN">MINNESOTA</option>
-                          <option value="MS">MISSISSIPPI</option>
-                          <option value="MO">MISSOURI</option>
-                          <option value="MT">MONTANA</option>
-                          <option value="NE">NEBRASKA</option>
-                          <option value="NV">NEVADA</option>
-                          <option value="NH">NEW HAMPSHIRE</option>
-                          <option value="NJ">NEW JERSEY</option>
-                          <option value="NM">NEW MEXICO</option>
-                          <option value="NY">NEW YORK</option>
-                          <option value="NC">NORTH CAROLINA</option>
-                          <option value="ND">NORTH DAKOTA</option>
-                          <option value="OH">OHIO</option>
-                          <option value="OK">OKLAHOMA</option>
-                          <option value="OR">OREGON</option>
-                          <option value="PA">PENNSYLVANIA</option>
-                          <option value="RI">RHODE ISLAND</option>
-                          <option value="SC">SOUTH CAROLINA</option>
-                          <option value="SD">SOUTH DAKOTA</option>
-                          <option value="TN">TENNESSEE</option>
-                          <option value="TX">TEXAS</option>
-                          <option value="UT">UTAH</option>
-                          <option value="VT">VERMONT</option>
-                          <option value="VA">VIRGINIA</option>
-                          <option value="WA">WASHINGTON</option>
-                          <option value="WV">WEST VIRGINIA</option>
-                          <option value="WI">WISCONSIN</option>
-                          <option value="WY">WYOMING</option>
-                      </select>
-                      )}
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        <input
-                          type="text"
-                          placeholder="ZIP CODE"
-                          value={zipCode}
+                          {percentage}%
+                        </button>
+                      ))}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative', marginTop: '3px' }}>
+                      <input
+                        type="tel"
+                        className="custom-tip-input"
+                        placeholder="CUSTOM TIP AMOUNT (OPTIONAL)"
+                        value={customTipDisplay}
                           onChange={(e) => {
-                            setZipCode(e.target.value);
-                            setShippingCalculated(false);
-                            setSelectedShippingMethod(null);
+                          let rawValue = e.target.value;
+                          
+                          // Remove currency symbol (handle all possible symbols)
+                          rawValue = rawValue.replace(/[$€£¥₹]/g, '');
+                          
+                          // Remove any decimal point and everything after it
+                          if (rawValue.includes('.')) {
+                            rawValue = rawValue.split('.')[0];
+                          }
+                          
+                          // Extract only digits
+                          const numericValue = rawValue.replace(/[^0-9]/g, '');
+                          
+                          // Update display value (raw numeric value)
+                          setCustomTipDisplay(numericValue);
+                          
+                          // Set the numeric value
+                          const newAmount = numericValue === '' ? 0 : parseInt(numericValue, 10);
+                          setCustomTipAmount(newAmount);
+                          
+                          if (numericValue) {
+                            setTipPercentage(null);
+                            setCustomTipApplied(false);
+                          } else {
+                            setCustomTipApplied(false);
+                          }
+                        }}
+                        onBlur={() => {
+                          // Format the display value when user leaves the field
+                          if (customTipAmount > 0) {
+                            const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+                            if (!currency) {
+                              setCustomTipDisplay('$' + customTipAmount.toString() + '.00');
+                            } else {
+                              const symbol = currency.symbol.replace('&#36;', '$').replace('&euro;', '€').replace('&pound;', '£').replace('&yen;', '¥').replace('&#8377;', '₹');
+                              setCustomTipDisplay(symbol + customTipAmount.toString() + '.00');
+                            }
+                          } else {
+                            setCustomTipDisplay('');
+                          }
+                        }}
+                        onFocus={() => {
+                          // Show raw numeric value when focused for easier editing
+                          if (customTipAmount > 0) {
+                            setCustomTipDisplay(customTipAmount.toString());
+                          }
                           }}
                           style={{
                             flex: 1,
+                          height: '36px',
                             padding: '8px',
                             border: '1.3px solid #000000',
-                            fontFamily: '"Futura PT Book"',
+                          fontFamily: '"Futura PT Medium"',
                             fontSize: '11px',
+                          color: '#EB1C24',
                             backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box',
                             borderRadius: '0'
                           }}
                         />
+                      {customTipAmount > 0 && (
                         <button
                           onClick={() => {
-                            if (selectedCountry && zipCode) {
-                              setShippingCalculated(true);
+                            if (customTipApplied) {
+                              // Remove tip: clear amount and reset applied state
+                              setCustomTipAmount(0);
+                              setCustomTipDisplay('');
+                              setCustomTipApplied(false);
+                            } else {
+                              // Apply tip: set applied state to true and format display
+                              setCustomTipApplied(true);
+                              setTipPercentage(null);
+                              // Format the display value with currency symbol and .00
+                              const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+                              if (!currency) {
+                                setCustomTipDisplay('$' + customTipAmount.toString() + '.00');
+                              } else {
+                                const symbol = currency.symbol.replace('&#36;', '$').replace('&euro;', '€').replace('&pound;', '£').replace('&yen;', '¥').replace('&#8377;', '₹');
+                                setCustomTipDisplay(symbol + customTipAmount.toString() + '.00');
+                              }
                             }
                           }}
                           style={{
-                            padding: '8px 20px',
+                            width: '36px',
+                            height: '36px',
                             border: '1.3px solid #000000',
                             backgroundColor: '#FFFFFF',
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '11px',
-                            cursor: 'pointer',
-                            textTransform: 'uppercase',
-                            color: '#EB1C24'
-                          }}
-                        >
-                          CALCULATE
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* SHIPPING METHOD SELECTION */}
-                  {shippingCalculated && availableShippingOptions.length > 0 && (
-                    <div style={{ marginTop: '16px', border: '1.3px solid #000000', padding: '12px' }}>
-                      <p 
-                        style={{ 
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '10px',
-                          color: '#000000',
-                          margin: '0 0 8px 0',
-                          textTransform: 'uppercase',
-                          fontWeight: '500'
-                        }}
-                      >
-                        SHIPPING METHOD
-                      </p>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        {availableShippingOptions.map((option, index) => {
-                          const isSelected = selectedShippingMethod?.carrier === option.carrier && 
-                                           selectedShippingMethod?.speed === option.speed;
-                          return (
-                            <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <div
-                                onClick={() => setSelectedShippingMethod({
-                                  carrier: option.carrier,
-                                  speed: option.speed,
-                                  cost: option.cost
-                                })}
-                                style={{
-                                  width: '16px',
-                                  height: '16px',
                                   cursor: 'pointer',
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
-                                  border: '1.3px solid #000000',
-                                  backgroundColor: 'transparent',
-                                  position: 'relative'
-                                }}
-                              >
-                                {isSelected && (
-                                  <img 
-                                    src="/assets/checkbox.svg" 
-                                    alt="checked" 
-                                    style={{ width: '16px', height: '16px', position: 'absolute' }}
-                                  />
+                            position: 'relative',
+                            flexShrink: 0
+                          }}
+                        >
+                          {customTipApplied ? (
+                            <img 
+                              src="/assets/close-icon.svg" 
+                              alt="remove tip" 
+                              style={{ width: '16px', height: '16px', position: 'absolute', objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)' }}
+                            />
+                          ) : (
+                            <img 
+                              src="/assets/discount-check.svg" 
+                              alt="apply tip" 
+                              style={{ width: '10.4px', height: '10.4px', position: 'absolute', objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)' }}
+                            />
+                          )}
+                        </button>
                                 )}
                               </div>
-                              <label 
-                                style={{ 
-                                  fontFamily: '"Futura PT Book"',
-                                  fontSize: '10px',
-                                  color: '#000000',
-                                  cursor: 'pointer',
-                                  textTransform: 'uppercase'
-                                }}
-                              >
-                                {option.label}
-                              </label>
                             </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 {/* ORDER SUMMARY (COST BREAKDOWN) */}
@@ -2494,17 +3131,27 @@ function CheckoutPage() {
                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(protectionFee)}></span>
                       </div>
                     )}
+                    {tipAmount > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
+                          TIP AMOUNT:
+                        </span>
+                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(tipAmount)}></span>
+                      </div>
+                    )}
+                    {discount > 0 && (
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
                         DISCOUNT:
                       </span>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(discount)}></span>
                     </div>
+                    )}
                     <div style={{ borderTop: '1.3px solid #000000', marginTop: '8px', paddingTop: '8px', display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '14px', color: '#000000', fontWeight: '500' }}>
-                        TOTAL
+                      <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#000000', fontWeight: '500' }}>
+                        SUBTOTAL
                       </span>
-                      <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '14px', color: '#000000', fontWeight: '500' }} dangerouslySetInnerHTML={formatPrice(subtotal)}></span>
+                      <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#000000', fontWeight: '500' }} dangerouslySetInnerHTML={formatPrice(subtotal)}></span>
                     </div>
                   </div>
                 </div>
@@ -2524,7 +3171,6 @@ function CheckoutPage() {
                     ORDER NOTES:
                   </h2>
                   <textarea
-                    placeholder="ENTER FRONT TO NAPE MEASUREMENT, STYLING PREFERENCES, SKIN TONE SHADE OR ANYTHING SPECIFIC YOU THINK WE SHOULD KNOW ABOUT THIS ORDER."
                     rows={6}
                     style={{
                       width: '100%',
@@ -2540,7 +3186,7 @@ function CheckoutPage() {
                 </div>
 
                 {/* CHECKBOXES AND SUBMIT BUTTON */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '-4px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div
                       onClick={() => setSubscribeNewsletter(!subscribeNewsletter)}
@@ -2882,7 +3528,7 @@ function CheckoutPage() {
       onClose={() => setShowTermsRequiredModal(false)}
       onConfirm={() => setShowTermsRequiredModal(false)}
       title="TERMS & CONDITIONS REQUIRED"
-      message="you must agree to the terms & conditions to finalize purchase."
+      message=" YOU MUST AGREE TO THE TERMS TO FINALIZE THIS PURCHASE."
       confirmText="OK"
       cancelText="CLOSE"
       messageTextTransform="uppercase"

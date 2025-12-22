@@ -1007,12 +1007,12 @@ function AccountPage() {
                 {/* Navigation Options */}
                 {[
                   { title: 'ORDERS', subtitle: '2 ACTIVE ORDERS', route: '/account/orders' },
-                  { title: 'SHIPPING ADDRESS', subtitle: '2 ADDRESSES ON FILE', route: null },
-                  { title: 'PAYMENT METHOD', subtitle: '2 CARDS ON FILE', route: null },
+                  { title: 'NOTIFICATIONS', subtitle: 'NEWSLETTER + ALERTS', route: null },
                   { title: 'MEMBERSHIP', subtitle: 'SUBSCRIPTIONS + REWARDS PROGRAM', route: null },
                   { title: 'AFFILIATE', subtitle: 'SUBMIT PHOTOS + VIDEOS FOR POINTS', route: null },
                   { title: 'REVIEWS', subtitle: '4 TOTAL REVIEWS', route: null },
-                  { title: 'NOTIFICATIONS', subtitle: 'NEWSLETTER + ALERTS', route: null },
+                  { title: 'SHIPPING ADDRESS', subtitle: '2 ADDRESSES ON FILE', route: null },
+                  { title: 'PAYMENT METHOD', subtitle: '2 CARDS ON FILE', route: null },
                   { title: 'SETTINGS', subtitle: 'PASSWORD + NOTIFICATIONS', route: null }
                 ].map((item, index) => (
                   <div
