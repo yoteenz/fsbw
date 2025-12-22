@@ -682,6 +682,9 @@ function CheckoutPage() {
           color: #EB1C24 !important;
           font-size: 11px !important;
         }
+        .custom-tip-input::placeholder {
+          font-size: 10px !important;
+        }
         .shipping-calculator-input,
         .shipping-calculator-select {
           font-family: "Futura PT Demi", "Futura PT", Futura, Inter, sans-serif !important;
