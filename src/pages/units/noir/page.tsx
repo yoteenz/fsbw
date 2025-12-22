@@ -1941,20 +1941,20 @@ function NoirSelection() {
           </div>
         </div>
 
-        {/* MAIN BUILD AREA */}
-        <div
-          className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
-          style={{ 
-            borderWidth: '1.3px', 
-            minWidth: '100%', 
-            maxWidth: 'none', 
-            overflow: 'visible',
-            backgroundColor: 'rgba(255, 255, 255, 0.6)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            willChange: 'backdrop-filter',
-            minHeight: showMobileMenu ? '500px' : 'auto'
-          }}
+          {/* MAIN BUILD AREA */}
+          <div
+            className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+            style={{ 
+              borderWidth: '1.3px', 
+              minWidth: '100%', 
+              maxWidth: 'none', 
+              overflow: 'visible',
+              backgroundColor: 'rgba(255, 255, 255, 0.6)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              willChange: 'backdrop-filter',
+              minHeight: showMobileMenu ? '500px' : 'auto'
+            }}
         >
           {showMobileMenu ? (
             /* MENU CONTENT */
@@ -3353,9 +3353,9 @@ function NoirSelection() {
           </button>
         </div>
 
-        {/* CUSTOMIZE IN BUILD-A-WIG BUTTON */}
-        <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
-          <button
+          {/* CUSTOMIZE IN BUILD-A-WIG BUTTON */}
+          <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
+            <button
             onClick={() => {
               // Store the selected cap size in localStorage for customize page
               // Use selectedCapSize (not customizeSelectedCapSize) so build-a-wig page can load it
@@ -3413,10 +3413,10 @@ function NoirSelection() {
               fontFamily: '"Futura PT Medium"'
             }}
           >
-            CUSTOMIZE IN BUILD-A-WIG
-          </button>
-        </div>
-        </div>
+              CUSTOMIZE IN BUILD-A-WIG
+            </button>
+          </div>
+          </div>
 
         {/* SIMILAR PRODUCTS SECTION */}
         <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
@@ -4199,6 +4199,7 @@ function NoirSelection() {
             </div>
           </div>
         </div>
+          </div>
         </div>
       </div>
     </div>
