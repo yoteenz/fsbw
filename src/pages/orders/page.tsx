@@ -29,9 +29,6 @@ function OrdersPage() {
     }
   });
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [_mobileMenuActiveTab, setMobileMenuActiveTab] = useState('SHOP');
-  const [_mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
-  const [isSignedIn, setIsSignedIn] = useState(false);
 
   // Currency state - load from localStorage on mount
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
