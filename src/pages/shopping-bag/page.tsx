@@ -885,7 +885,6 @@ function ShoppingBagPage() {
                       const itemPrice = item.price || 580;
                       const itemQuantity = item.quantity ?? 1;
 
-                       const isLastItem = index === cartItems.length - 1;
                        return (
                          <div
                            key={itemId}
@@ -1377,7 +1376,6 @@ function ShoppingBagPage() {
                   const itemHairOrigin = getHairOrigin(itemName);
                   const itemPrice = item.price || 580;
                   const itemQuantity = item.quantity ?? 0;
-                  const isLastItem = index === savedForLater.length - 1;
 
                   return (
                     <div

@@ -35,6 +35,7 @@ const OrdersPage = lazy(() => import('./pages/orders/page'));
 const SignInPage = lazy(() => import('./pages/sign-in/page'));
 const ShoppingBagPage = lazy(() => import('./pages/shopping-bag/page'));
 const CheckoutPage = lazy(() => import('./pages/checkout/page'));
+const CheckoutConfirmPage = lazy(() => import('./pages/checkout/confirm/page'));
 const StraightUnitsPage = lazy(() => import('./pages/units/straight/page'));
 const WavyUnitsPage = lazy(() => import('./pages/units/wavy/page'));
 const CurlyUnitsPage = lazy(() => import('./pages/units/curly/page'));
@@ -415,6 +416,11 @@ function App() {
         <Route path="/checkout" element={
           <Suspense fallback={<LoadingScreen />}>
             <CheckoutPage />
+          </Suspense>
+        } />
+        <Route path="/checkout/confirm" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <CheckoutConfirmPage />
           </Suspense>
         } />
       </Routes>

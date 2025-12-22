@@ -408,20 +408,6 @@ function CheckoutPage() {
     };
   }, [currencyRates, selectedCurrency]);
 
-  const formatPriceWithoutCurrency = React.useCallback((price: number) => {
-    if (!price || isNaN(price)) {
-      const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
-      return { __html: currency.symbol + '0' };
-    }
-    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
-    const convertedPrice = price * currency.rate;
-    return {
-      __html: currency.symbol + convertedPrice.toLocaleString('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      })
-    };
-  }, [currencyRates, selectedCurrency]);
 
   // Format expiration date as MM/YY
   const formatExpirationDate = (value: string) => {
@@ -730,7 +716,7 @@ function CheckoutPage() {
         style={{
           backgroundImage: `url('/assets/Marble Floor.jpg')`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center calc(50% + 25px)',
+          backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           backgroundAttachment: 'fixed'
         }}
@@ -3363,8 +3349,69 @@ function CheckoutPage() {
                     }
                   }
                   
-                      // Handle checkout submission
-                  console.log('Confirm order');
+                  // Calculate points earned (if signed in)
+                  const pointsEarned = isSignedIn ? Math.round(subtotal - taxesProcessing - shippingHandling - discount) : 0;
+                  
+                  // Determine tier (simplified - you may want to get this from user data)
+                  const tier = pointsEarned >= 5000 ? 'RED' : pointsEarned >= 2000 ? 'GOLD' : 'SILVER';
+                  
+                  // Generate order number
+                  const orderNumber = `#${Math.floor(Math.random() * 1000)}`;
+                  
+                  // Format order date
+                  const orderDate = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-');
+                  
+                  // Get payment method display
+                  const paymentMethodDisplay = cardNumber.length >= 4 
+                    ? `${cardNumber.slice(0, 4).replace(/\d/g, 'X')} ENDING IN ${cardNumber.slice(-4)}`
+                    : 'CARD ENDING IN XXXX';
+                  
+                  // Get shipping method display
+                  const shippingMethodDisplay = selectedShippingMethod 
+                    ? (() => {
+                        const options = calculateShippingOptions();
+                        const option = options.find(opt => 
+                          opt.carrier === selectedShippingMethod.carrier && 
+                          opt.speed === selectedShippingMethod.speed &&
+                          opt.cost === selectedShippingMethod.cost
+                        );
+                        return option?.label || `${selectedShippingMethod.carrier} ${selectedShippingMethod.speed.toUpperCase()}`;
+                      })()
+                    : 'STANDARD SHIPPING';
+                  
+                  // Calculate processing time based on selected processing and customizations
+                  let processingTimeText = '';
+                  if (selectedProcessing === 'rush') {
+                    processingTimeText = '4 TO 6 WEEKS';
+                  } else {
+                    const hasCustomizations = hasColorStylingOrAddOns;
+                    processingTimeText = hasCustomizations 
+                      ? '6 TO 8 WEEKS (UP TO 10 WEEKS FOR CUSTOMIZED UNITS)'
+                      : '6 TO 8 WEEKS';
+                  }
+                  
+                  // Navigate to confirmation page with order data
+                  navigate('/checkout/confirm', {
+                    state: {
+                      orderNumber,
+                      orderDate,
+                      orderTotal: subtotal,
+                      shippingMethod: shippingMethodDisplay,
+                      processingTime: processingTimeText,
+                      firstName,
+                      lastName,
+                      shippingAddress,
+                      city,
+                      state,
+                      zip,
+                      country: selectedCountry || 'US',
+                      paymentMethod: paymentMethodDisplay,
+                      email,
+                      pointsEarned,
+                      tier: isSignedIn ? tier : '',
+                      cartItems: cartItems
+                    }
+                  });
                     }}
                 className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                     style={{
