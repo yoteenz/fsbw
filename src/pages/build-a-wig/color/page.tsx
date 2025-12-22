@@ -376,6 +376,7 @@ function ColorSelection() {
 
   // Check if we're in blanco route (both customize and edit modes)
   const isBlancoRoute = location.pathname.includes('/blanco/customize') || location.pathname.includes('/blanco/edit');
+  
 
   // Color options with accurate hex codes from reference
   // For blanco routes (both customize and edit), only show 3 colors: Golden, Platinum, Ash
@@ -1287,7 +1288,7 @@ function ColorSelection() {
                   style={{ 
                     top: 'calc(50% - 10.601px + 18px)',
                     '--hero-width': '282px',
-                    '--hero-height': '387px'
+                    '--hero-height': '387px',
                   } as React.CSSProperties}
                 />
                 </div>
@@ -1328,7 +1329,8 @@ function ColorSelection() {
                         className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 thumbnail-mannequin-img"
                         style={{ 
                           '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
-                          ...(index === 0 && { left: 'calc(50% - 6px)' })
+                          top: 'calc(50% - 6.1px + 7.2px)',
+                          ...(index === 0 && { left: 'calc(50% - 6px)' }),
                         } as React.CSSProperties}
                       />
                       </div>

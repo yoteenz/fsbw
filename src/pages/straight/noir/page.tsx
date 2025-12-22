@@ -712,6 +712,7 @@ function NoirSelection() {
 
   const current3DImages = get3DViewImages();
 
+
   // Density options with correct pricing structure
   const densityOptions: DensityOption[] = [
     {
