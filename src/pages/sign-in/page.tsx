@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
+import ConfirmationModal from '../../components/ConfirmationModal';
 
 function SignInPage() {
   const navigate = useNavigate();
@@ -20,6 +21,10 @@ function SignInPage() {
   const [signInEmail, setSignInEmail] = useState('');
   const [signInPassword, setSignInPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+
+  // Validation modals
+  const [showValidationModal, setShowValidationModal] = useState(false);
+  const [validationMessage, setValidationMessage] = useState('');
 
   // Create Account form state
   const [firstName, setFirstName] = useState('');
@@ -84,6 +89,22 @@ function SignInPage() {
   };
 
   return (
+    <>
+      <style>{`
+        input::placeholder,
+        textarea::placeholder {
+          font-family: "Futura PT Demi", "Futura PT", Futura, Inter, sans-serif !important;
+          font-weight: 500;
+          color: #909090 !important;
+        }
+        input,
+        textarea {
+          font-family: "Futura PT Demi", "Futura PT", Futura, Inter, sans-serif !important;
+          font-weight: 500 !important;
+          color: #909090 !important;
+          text-transform: uppercase !important;
+        }
+      `}</style>
     <div className="min-h-screen" style={{ position: 'relative' }}>
       {/* Marble Background */}
       <div 
@@ -205,23 +226,22 @@ function SignInPage() {
             </div>
           </div>
 
-          {/* MAIN CARD */}
-          <div
-            className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
-            style={{ 
-              borderWidth: '1.3px', 
-              minWidth: '100%', 
-              maxWidth: 'none', 
-              overflow: 'visible',
-              backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-              willChange: 'backdrop-filter',
-              minHeight: showMobileMenu ? '560px' : 'auto'
-            }}
-          >
-            {showMobileMenu ? (
-              /* MENU CONTENT */
+          {showMobileMenu ? (
+            /* MENU CONTENT */
+            <div
+              className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+              style={{ 
+                borderWidth: '1.3px', 
+                minWidth: '100%', 
+                maxWidth: 'none', 
+                overflow: 'visible',
+                backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                willChange: 'backdrop-filter',
+                minHeight: '560px'
+              }}
+            >
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
                 {/* Navigation Links */}
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
@@ -427,125 +447,161 @@ function SignInPage() {
                   </div>
                 </div>
               </div>
-            ) : (
+            </div>
+          ) : (
+            <>
               /* SIGN IN CONTENT */
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '32px', paddingTop: '20px' }}>
-                {/* SIGN IN TO YOUR ACCOUNT SECTION */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <p
-                    style={{
-                      fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                      color: '#000000',
-                      fontSize: '28px',
-                      lineHeight: '1.1',
-                      margin: '0',
-                      textTransform: 'uppercase'
-                    }}
-                  >
-                    SIGN IN TO YOUR ACCOUNT
-                  </p>
-                  <p
-                    style={{
-                      fontFamily: '"Futura PT Book"',
-                      color: '#EB1C24',
-                      fontSize: '10px',
-                      margin: '0',
-                      textTransform: 'uppercase',
-                      fontWeight: '500'
-                    }}
-                  >
-                    WELCOME BACK!
-                  </p>
-                  
-                  {/* Email Input */}
-                  <div style={{ marginTop: '8px' }}>
-                    <input
-                      type="email"
-                      placeholder="EMAIL ADDRESS*"
-                      value={signInEmail}
-                      onChange={(e) => setSignInEmail(e.target.value)}
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '24px', paddingTop: '20px' }}>
+                {/* SIGN IN TO YOUR ACCOUNT CARD */}
+                <div
+                  className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+                  style={{ 
+                    borderWidth: '1.3px', 
+                    minWidth: '100%', 
+                    maxWidth: 'none', 
+                    overflow: 'visible',
+                    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                    backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)',
+                    willChange: 'backdrop-filter'
+                  }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <p
                       style={{
-                        width: '100%',
-                        padding: '10px',
-                        border: '1.3px solid #000',
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '12px',
-                        backgroundColor: 'transparent',
-                        textTransform: 'uppercase',
-                        outline: 'none'
+                        fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                        color: '#000000',
+                        fontSize: '28px',
+                        lineHeight: '1.1',
+                        margin: '0',
+                        textTransform: 'uppercase'
                       }}
-                    />
-                  </div>
-
-                  {/* Password Input */}
-                  <div>
-                    <input
-                      type="password"
-                      placeholder="PASSWORD*"
-                      value={signInPassword}
-                      onChange={(e) => setSignInPassword(e.target.value)}
+                    >
+                      SIGN IN TO YOUR ACCOUNT
+                    </p>
+                    <p
                       style={{
-                        width: '100%',
-                        padding: '10px',
-                        border: '1.3px solid #000',
                         fontFamily: '"Futura PT Book"',
-                        fontSize: '12px',
-                        backgroundColor: 'transparent',
+                        color: '#EB1C24',
+                        fontSize: '10px',
+                        margin: '0',
                         textTransform: 'uppercase',
-                        outline: 'none'
+                        fontWeight: '500'
                       }}
-                    />
-                  </div>
-
-                  {/* Remember Me and Sign In/Forgot Password */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '8px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <input
-                        type="checkbox"
-                        id="rememberMe"
-                        checked={rememberMe}
-                        onChange={(e) => setRememberMe(e.target.checked)}
-                        style={{
-                          width: '16px',
-                          height: '16px',
-                          cursor: 'pointer'
-                        }}
-                      />
+                    >
+                      WELCOME BACK!
+                    </p>
+                    
+                    {/* Email Input */}
+                    <div style={{ marginTop: '8px' }}>
                       <label
-                        htmlFor="rememberMe"
                         style={{
                           fontFamily: '"Futura PT Book"',
-                          fontSize: '12px',
+                          fontSize: '10px',
                           color: '#000000',
-                          textTransform: 'uppercase',
-                          cursor: 'pointer',
-                          margin: '0'
-                        }}
-                      >
-                        REMEMBER ME
-                      </label>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                      <button
-                        type="button"
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '12px',
-                          color: '#000000',
-                          background: 'none',
-                          border: 'none',
-                          cursor: 'pointer',
-                          padding: '0',
+                          display: 'block',
+                          marginBottom: '4px',
                           textTransform: 'uppercase'
                         }}
                       >
-                        SIGN IN
-                      </button>
+                        EMAIL ADDRESS<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                      </label>
+                      <input
+                        type="email"
+                        value={signInEmail}
+                        onChange={(e) => setSignInEmail(e.target.value)}
+                        style={{
+                          width: '100%',
+                          height: '36px',
+                          padding: '8px',
+                          border: '1.3px solid #000000',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '11px',
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box',
+                          borderRadius: '0',
+                          outline: 'none'
+                        }}
+                      />
+                    </div>
+
+                    {/* Password Input */}
+                    <div>
+                      <label
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#000000',
+                          display: 'block',
+                          marginBottom: '4px',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        PASSWORD<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                      </label>
+                      <input
+                        type="password"
+                        value={signInPassword}
+                        onChange={(e) => setSignInPassword(e.target.value)}
+                        style={{
+                          width: '100%',
+                          height: '36px',
+                          padding: '8px',
+                          border: '1.3px solid #000000',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '11px',
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box',
+                          borderRadius: '0',
+                          outline: 'none'
+                        }}
+                      />
+                    </div>
+
+                    {/* Remember Me and Forgot Password */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div
+                          onClick={() => setRememberMe(!rememberMe)}
+                          style={{
+                            width: '16px',
+                            height: '16px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            border: '1.3px solid #000000',
+                            backgroundColor: 'transparent',
+                            position: 'relative'
+                          }}
+                        >
+                          {rememberMe && (
+                            <img 
+                              src="/assets/checkbox.svg" 
+                              alt="checked" 
+                              style={{ width: '16px', height: '16px', position: 'absolute' }}
+                            />
+                          )}
+                        </div>
+                        <label
+                          onClick={() => setRememberMe(!rememberMe)}
+                          style={{
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '11px',
+                            color: '#000000',
+                            textTransform: 'uppercase',
+                            cursor: 'pointer',
+                            margin: '0'
+                          }}
+                        >
+                          REMEMBER ME
+                        </label>
+                      </div>
                       <button
                         type="button"
                         style={{
                           fontFamily: '"Futura PT Book"',
-                          fontSize: '12px',
+                          fontSize: '11px',
                           color: '#EB1C24',
                           background: 'none',
                           border: 'none',
@@ -559,148 +615,300 @@ function SignInPage() {
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* CREATE AN ACCOUNT SECTION */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '24px' }}>
-                  <p
-                    style={{
-                      fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                      color: '#000000',
-                      fontSize: '28px',
-                      lineHeight: '1.1',
-                      margin: '0',
-                      textTransform: 'uppercase'
-                    }}
-                  >
-                    CREATE AN ACCOUNT
-                  </p>
-                  <p
-                    style={{
-                      fontFamily: '"Futura PT Book"',
-                      color: '#EB1C24',
-                      fontSize: '10px',
-                      margin: '0',
-                      textTransform: 'uppercase',
-                      fontWeight: '500'
-                    }}
-                  >
-                    ACCESS YOUR ORDER HISTORY
-                  </p>
+            {/* SIGN IN BUTTON - Outside card */}
+            {!showMobileMenu && (
+              <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!signInEmail.trim()) {
+                      setValidationMessage('EMAIL ADDRESS IS REQUIRED.');
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    if (!signInPassword.trim()) {
+                      setValidationMessage('PASSWORD IS REQUIRED.');
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    console.log('Sign in');
+                  }}
+                  className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                  style={{
+                    borderWidth: '1.3px', 
+                    color: '#EB1C24',
+                    fontFamily: '"Futura PT Medium"',
+                    backgroundColor: '#FFFFFF',
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  SIGN IN
+                </button>
+              </div>
+            )}
 
-                  {/* Form Fields */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
-                    <input
-                      type="text"
-                      placeholder="FIRST NAME*"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
+            {/* CREATE AN ACCOUNT CARD */}
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '24px', paddingTop: '20px' }}>
+                <div
+                  className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+                  style={{ 
+                    borderWidth: '1.3px', 
+                    minWidth: '100%', 
+                    maxWidth: 'none', 
+                    overflow: 'visible',
+                    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                    backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)',
+                    willChange: 'backdrop-filter'
+                  }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <p
                       style={{
-                        width: '100%',
-                        padding: '10px',
-                        border: '1.3px solid #000',
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '12px',
-                        backgroundColor: 'transparent',
-                        textTransform: 'uppercase',
-                        outline: 'none'
+                        fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                        color: '#000000',
+                        fontSize: '28px',
+                        lineHeight: '1.1',
+                        margin: '0',
+                        textTransform: 'uppercase'
                       }}
-                    />
-                    <input
-                      type="text"
-                      placeholder="LAST NAME*"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
+                    >
+                      CREATE AN ACCOUNT
+                    </p>
+                    <p
                       style={{
-                        width: '100%',
-                        padding: '10px',
-                        border: '1.3px solid #000',
                         fontFamily: '"Futura PT Book"',
-                        fontSize: '12px',
-                        backgroundColor: 'transparent',
+                        color: '#EB1C24',
+                        fontSize: '10px',
+                        margin: '0',
                         textTransform: 'uppercase',
-                        outline: 'none'
+                        fontWeight: '500'
                       }}
-                    />
-                    <input
-                      type="text"
-                      placeholder="BIRTHDAY*"
-                      value={birthday}
-                      onChange={(e) => setBirthday(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '10px',
-                        border: '1.3px solid #000',
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '12px',
-                        backgroundColor: 'transparent',
-                        textTransform: 'uppercase',
-                        outline: 'none'
-                      }}
-                    />
-                    <input
-                      type="tel"
-                      placeholder="PHONE NUMBER*"
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '10px',
-                        border: '1.3px solid #000',
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '12px',
-                        backgroundColor: 'transparent',
-                        textTransform: 'uppercase',
-                        outline: 'none'
-                      }}
-                    />
-                    <input
-                      type="email"
-                      placeholder="EMAIL ADDRESS*"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '10px',
-                        border: '1.3px solid #000',
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '12px',
-                        backgroundColor: 'transparent',
-                        textTransform: 'uppercase',
-                        outline: 'none'
-                      }}
-                    />
-                    <input
-                      type="password"
-                      placeholder="PASSWORD*"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '10px',
-                        border: '1.3px solid #000',
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '12px',
-                        backgroundColor: 'transparent',
-                        textTransform: 'uppercase',
-                        outline: 'none'
-                      }}
-                    />
-                    <input
-                      type="password"
-                      placeholder="CONFIRM PASSWORD*"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '10px',
-                        border: '1.3px solid #000',
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '12px',
-                        backgroundColor: 'transparent',
-                        textTransform: 'uppercase',
-                        outline: 'none'
-                      }}
-                    />
+                    >
+                      ACCESS YOUR ORDER HISTORY
+                    </p>
+
+                    {/* Form Fields */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
+                    <div>
+                      <label
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#000000',
+                          display: 'block',
+                          marginBottom: '4px',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        FIRST NAME<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        style={{
+                          width: '100%',
+                          height: '36px',
+                          padding: '8px',
+                          border: '1.3px solid #000000',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '11px',
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box',
+                          borderRadius: '0',
+                          outline: 'none'
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#000000',
+                          display: 'block',
+                          marginBottom: '4px',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        LAST NAME<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        style={{
+                          width: '100%',
+                          height: '36px',
+                          padding: '8px',
+                          border: '1.3px solid #000000',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '11px',
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box',
+                          borderRadius: '0',
+                          outline: 'none'
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#000000',
+                          display: 'block',
+                          marginBottom: '4px',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        BIRTHDAY<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={birthday}
+                        onChange={(e) => setBirthday(e.target.value)}
+                        style={{
+                          width: '100%',
+                          height: '36px',
+                          padding: '8px',
+                          border: '1.3px solid #000000',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '11px',
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box',
+                          borderRadius: '0',
+                          outline: 'none'
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#000000',
+                          display: 'block',
+                          marginBottom: '4px',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        PHONE NUMBER<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                      </label>
+                      <input
+                        type="tel"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        style={{
+                          width: '100%',
+                          height: '36px',
+                          padding: '8px',
+                          border: '1.3px solid #000000',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '11px',
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box',
+                          borderRadius: '0',
+                          outline: 'none'
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#000000',
+                          display: 'block',
+                          marginBottom: '4px',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        EMAIL ADDRESS<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                      </label>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        style={{
+                          width: '100%',
+                          height: '36px',
+                          padding: '8px',
+                          border: '1.3px solid #000000',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '11px',
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box',
+                          borderRadius: '0',
+                          outline: 'none'
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#000000',
+                          display: 'block',
+                          marginBottom: '4px',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        PASSWORD<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                      </label>
+                      <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        style={{
+                          width: '100%',
+                          height: '36px',
+                          padding: '8px',
+                          border: '1.3px solid #000000',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '11px',
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box',
+                          borderRadius: '0',
+                          outline: 'none'
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#000000',
+                          display: 'block',
+                          marginBottom: '4px',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        CONFIRM PASSWORD<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                      </label>
+                      <input
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        style={{
+                          width: '100%',
+                          height: '36px',
+                          padding: '8px',
+                          border: '1.3px solid #000000',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '11px',
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          boxSizing: 'border-box',
+                          borderRadius: '0',
+                          outline: 'none'
+                        }}
+                      />
+                    </div>
                     <input
                       type="text"
                       placeholder="FACEBOOK.COM/"
@@ -708,12 +916,14 @@ function SignInPage() {
                       onChange={(e) => setFacebook(e.target.value)}
                       style={{
                         width: '100%',
-                        padding: '10px',
-                        border: '1.3px solid #000',
+                        height: '36px',
+                        padding: '8px',
+                        border: '1.3px solid #000000',
                         fontFamily: '"Futura PT Book"',
-                        fontSize: '12px',
-                        backgroundColor: 'transparent',
-                        textTransform: 'uppercase',
+                        fontSize: '11px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                        boxSizing: 'border-box',
+                        borderRadius: '0',
                         outline: 'none'
                       }}
                     />
@@ -724,12 +934,14 @@ function SignInPage() {
                       onChange={(e) => setInstagram(e.target.value)}
                       style={{
                         width: '100%',
-                        padding: '10px',
-                        border: '1.3px solid #000',
+                        height: '36px',
+                        padding: '8px',
+                        border: '1.3px solid #000000',
                         fontFamily: '"Futura PT Book"',
-                        fontSize: '12px',
-                        backgroundColor: 'transparent',
-                        textTransform: 'uppercase',
+                        fontSize: '11px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                        boxSizing: 'border-box',
+                        borderRadius: '0',
                         outline: 'none'
                       }}
                     />
@@ -740,12 +952,14 @@ function SignInPage() {
                       onChange={(e) => setYoutube(e.target.value)}
                       style={{
                         width: '100%',
-                        padding: '10px',
-                        border: '1.3px solid #000',
+                        height: '36px',
+                        padding: '8px',
+                        border: '1.3px solid #000000',
                         fontFamily: '"Futura PT Book"',
-                        fontSize: '12px',
-                        backgroundColor: 'transparent',
-                        textTransform: 'uppercase',
+                        fontSize: '11px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                        boxSizing: 'border-box',
+                        borderRadius: '0',
                         outline: 'none'
                       }}
                     />
@@ -756,12 +970,14 @@ function SignInPage() {
                       onChange={(e) => setTiktok(e.target.value)}
                       style={{
                         width: '100%',
-                        padding: '10px',
-                        border: '1.3px solid #000',
+                        height: '36px',
+                        padding: '8px',
+                        border: '1.3px solid #000000',
                         fontFamily: '"Futura PT Book"',
-                        fontSize: '12px',
-                        backgroundColor: 'transparent',
-                        textTransform: 'uppercase',
+                        fontSize: '11px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                        boxSizing: 'border-box',
+                        borderRadius: '0',
                         outline: 'none'
                       }}
                     />
@@ -772,35 +988,18 @@ function SignInPage() {
                       onChange={(e) => setTwitter(e.target.value)}
                       style={{
                         width: '100%',
-                        padding: '10px',
-                        border: '1.3px solid #000',
+                        height: '36px',
+                        padding: '8px',
+                        border: '1.3px solid #000000',
                         fontFamily: '"Futura PT Book"',
-                        fontSize: '12px',
-                        backgroundColor: 'transparent',
-                        textTransform: 'uppercase',
+                        fontSize: '11px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                        boxSizing: 'border-box',
+                        borderRadius: '0',
                         outline: 'none'
                       }}
                     />
                   </div>
-
-                  {/* Sign Up Button */}
-                  <button
-                    type="button"
-                    style={{
-                      fontFamily: '"Futura PT Book"',
-                      fontSize: '12px',
-                      color: '#EB1C24',
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: '0',
-                      textTransform: 'uppercase',
-                      textAlign: 'left',
-                      marginTop: '8px'
-                    }}
-                  >
-                    SIGN UP
-                  </button>
 
                   {/* Social Sign Up Buttons */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
@@ -866,11 +1065,83 @@ function SignInPage() {
                   </div>
                 </div>
               </div>
+            </div>
+            </div>
+
+            {/* SIGN UP BUTTON - Outside card */}
+            {!showMobileMenu && (
+              <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!firstName.trim()) {
+                      setValidationMessage('FIRST NAME IS REQUIRED.');
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    if (!lastName.trim()) {
+                      setValidationMessage('LAST NAME IS REQUIRED.');
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    if (!birthday.trim()) {
+                      setValidationMessage('BIRTHDAY IS REQUIRED.');
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    if (!phoneNumber.trim()) {
+                      setValidationMessage('PHONE NUMBER IS REQUIRED.');
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    if (!email.trim()) {
+                      setValidationMessage('EMAIL ADDRESS IS REQUIRED.');
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    if (!password.trim()) {
+                      setValidationMessage('PASSWORD IS REQUIRED.');
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    if (!confirmPassword.trim()) {
+                      setValidationMessage('CONFIRM PASSWORD IS REQUIRED.');
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    console.log('Sign up');
+                  }}
+                  className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                  style={{
+                    borderWidth: '1.3px', 
+                    color: '#EB1C24',
+                    fontFamily: '"Futura PT Medium"',
+                    backgroundColor: '#FFFFFF',
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  SIGN UP
+                </button>
+              </div>
             )}
-          </div>
+            </>
+          )}
         </div>
       </div>
     </div>
+    
+    {/* Validation Modal */}
+    <ConfirmationModal
+      isOpen={showValidationModal}
+      onClose={() => setShowValidationModal(false)}
+      onConfirm={() => setShowValidationModal(false)}
+      title="INPUT FIELD REQUIRED"
+      message={validationMessage}
+      confirmText="OK"
+      cancelText="CLOSE"
+      messageTextTransform="uppercase"
+    />
+    </>
   );
 }
 

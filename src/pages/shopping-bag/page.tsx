@@ -887,7 +887,7 @@ function ShoppingBagPage() {
                       const itemLength = item.length || '24"';
                       const itemHairOrigin = getHairOrigin(itemName);
                       const itemPrice = item.price || 580;
-                      const itemQuantity = item.quantity ?? 0;
+                      const itemQuantity = item.quantity ?? 1;
 
                        const isLastItem = index === cartItems.length - 1;
                        return (
@@ -958,7 +958,7 @@ function ShoppingBagPage() {
                           </div>
 
                           {/* Item Details - Matching cart dropdown */}
-                          <div className="flex-1 min-w-0 flex flex-col" style={{ marginLeft: '18px', paddingTop: '6px' }}>
+                          <div className="flex-1 min-w-0 flex flex-col relative" style={{ marginLeft: '18px', paddingTop: '6px' }}>
                             <p 
                               className="font-medium truncate cart-product-name"
                               style={{ 
@@ -1452,7 +1452,7 @@ function ShoppingBagPage() {
                       </div>
 
                       {/* Product Details */}
-                      <div className="flex-1 min-w-0 flex flex-col" style={{ marginLeft: '18px', paddingTop: '6px' }}>
+                      <div className="flex-1 min-w-0 flex flex-col relative" style={{ marginLeft: '18px', paddingTop: '6px' }}>
                          <p 
                            className="font-medium truncate cart-product-name"
                            style={{ 

@@ -89,7 +89,7 @@ function SoftWaveSelection() {
           quantity: quantity,
           image: '/assets/NOIR/wave-thumb.png',
           length: localStorage.getItem('selectedLength') || '24"',
-          hairOrigin: 'INDONESIAN',
+          hairOrigin: 'INDIAN',
           capSize: selectedCustomCap || selectedFlexibleCap || 'M',
           density: localStorage.getItem('selectedDensity') || '200%',
           lace: localStorage.getItem('selectedLace') || '13X6',
@@ -974,7 +974,7 @@ function SoftWaveSelection() {
                 marginTop: '-8px'
               }}
             >
-              24" RAW INDONESIAN
+              24" RAW INDIAN
             </p>
 
             {/* PRICE */}
@@ -1419,11 +1419,11 @@ function SoftWaveSelection() {
                 </div>
 
                 {/* Tab Content */}
-                <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px' }}>
+                <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px', paddingBottom: '34px' }}>
                   {activeTab === 'DETAILS' && (
                     <>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        13X6 ULTRA THIN HD FILM LACE, RAW INDONESIAN WAVY 200% DENSITY.
+                        13X6 ULTRA THIN HD FILM LACE, RAW INDIAN WAVY 200% DENSITY.
                       </p>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         HANDMADE UNIT MEASURING 24 INCHES IN LENGTH, OFF BLACK HAIR COLOR.
@@ -1888,7 +1888,7 @@ function SoftWaveSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    24" RAW INDONESIAN
+                    24" RAW INDIAN
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2235,7 +2235,7 @@ function SoftWaveSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    24" RAW INDONESIAN
+                    24" RAW INDIAN
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
