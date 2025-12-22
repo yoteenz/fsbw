@@ -15,7 +15,7 @@ function AccountPage() {
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState('SHOP');
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useState(false);
-  const [membershipType, setMembershipType] = useState<'BASIC' | 'PREMIUM'>('BASIC'); // Will be set dynamically later
+  const [membershipType, _setMembershipType] = useState<'BASIC' | 'PREMIUM'>('BASIC'); // Will be set dynamically later
   const [profileImage, setProfileImage] = useState(() => {
     // Load from localStorage on mount
     if (typeof window !== 'undefined') {
@@ -154,7 +154,7 @@ function AccountPage() {
     setShowMobileMenu(!showMobileMenu);
   };
 
-  const handleCloseMobileMenu = () => {
+  const _handleCloseMobileMenu = () => {
     setShowMobileMenu(false);
   };
 
@@ -414,7 +414,7 @@ function AccountPage() {
       const img = imageRef.current;
       const imgWidth = img.naturalWidth;
       const imgHeight = img.naturalHeight;
-      const containerSize = 200;
+      const _containerSize = 200;
       const displayImageSize = 300;
       
       // Calculate cover scale

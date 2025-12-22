@@ -6,22 +6,22 @@ import ThumbBox from '../../../../components/ThumbBox';
 import DynamicCartIcon from '../../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../../components/base/LoadingScreen';
 
-interface DensityOption {
-  id: string;
-  name: string;
-  percentage: string;
-  description: string;
-  price: number;
-  image: string;
-}
+// interface DensityOption {
+//   id: string;
+//   name: string;
+//   percentage: string;
+//   description: string;
+//   price: number;
+//   image: string;
+// }
 
 function NoirSelection() {
   const navigate = useNavigate();
   
   // Fix for window.REACT_APP_NAVIGATE - use navigate hook instead
-  const [selectedDensity, setSelectedDensity] = useState(() => {
-    return localStorage.getItem('selectedDensity') || '200%';
-  });
+  // const [selectedDensity, setSelectedDensity] = useState(() => {
+  //   return localStorage.getItem('selectedDensity') || '200%';
+  // });
   const [selectedCustomCap, setSelectedCustomCap] = useState('M');
   const [selectedFlexibleCap, setSelectedFlexibleCap] = useState('');
   const [showLoading, setShowLoading] = useState(true);
@@ -39,14 +39,14 @@ function NoirSelection() {
   const [startX, setStartX] = useState(0);
   const [startScrollPosition, setStartScrollPosition] = useState(0);
   const [activeTab, setActiveTab] = useState('DETAILS');
-  const [similarProductsScroll, setSimilarProductsScroll] = useState(0);
-  const [recentlyViewedScroll, setRecentlyViewedScroll] = useState(0);
-  const [isSimilarProductsDragging, setIsSimilarProductsDragging] = useState(false);
-  const [isRecentlyViewedDragging, setIsRecentlyViewedDragging] = useState(false);
-  const [similarProductsStartX, setSimilarProductsStartX] = useState(0);
-  const [recentlyViewedStartX, setRecentlyViewedStartX] = useState(0);
-  const [similarProductsStartScroll, setSimilarProductsStartScroll] = useState(0);
-  const [recentlyViewedStartScroll, setRecentlyViewedStartScroll] = useState(0);
+  // const [similarProductsScroll, setSimilarProductsScroll] = useState(0);
+  // const [recentlyViewedScroll, setRecentlyViewedScroll] = useState(0);
+  // const [isSimilarProductsDragging, setIsSimilarProductsDragging] = useState(false);
+  // const [isRecentlyViewedDragging, setIsRecentlyViewedDragging] = useState(false);
+  // const [similarProductsStartX, setSimilarProductsStartX] = useState(0);
+  // const [recentlyViewedStartX, setRecentlyViewedStartX] = useState(0);
+  // const [similarProductsStartScroll, setSimilarProductsStartScroll] = useState(0);
+  // const [recentlyViewedStartScroll, setRecentlyViewedStartScroll] = useState(0);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState('SHOP');
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);

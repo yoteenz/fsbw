@@ -29,8 +29,8 @@ function OrdersPage() {
     }
   });
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState('SHOP');
-  const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
+  const [_mobileMenuActiveTab, setMobileMenuActiveTab] = useState('SHOP');
+  const [_mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useState(false);
 
   // Currency state - load from localStorage on mount
@@ -454,7 +454,7 @@ function OrdersPage() {
   }, [activeOrders, pastOrders]);
 
   // State for forcing re-render to update countdown
-  const [countdownTick, setCountdownTick] = useState(0);
+  const [_countdownTick, setCountdownTick] = useState(0);
 
   // Update countdown display every second
   useEffect(() => {
@@ -570,11 +570,11 @@ function OrdersPage() {
     setShowMobileMenu(false);
   };
 
-  const handleMobileMenuTabClick = (tab: string) => {
+  const _handleMobileMenuTabClick = (tab: string) => {
     setMobileMenuActiveTab(tab);
   };
 
-  const handleMobileMenuItemToggle = (item: string) => {
+  const _handleMobileMenuItemToggle = (item: string) => {
     setMobileMenuExpandedItems(prev => 
       prev.includes(item) 
         ? prev.filter(i => i !== item)
@@ -582,7 +582,7 @@ function OrdersPage() {
     );
   };
 
-  const handleMobileMenuSignInToggle = () => {
+  const _handleMobileMenuSignInToggle = () => {
     setIsSignedIn(!isSignedIn);
   };
 
@@ -851,7 +851,7 @@ function OrdersPage() {
                         }
                       });
                       
-                      return ordersToDisplay.map((order, index) => {
+                      return ordersToDisplay.map((order, _index) => {
                         // For delivered orders, only show "DELIVERED" status, hide all other statuses
                         if (order.status === 'DELIVERED') {
                           return (
@@ -1018,7 +1018,7 @@ function OrdersPage() {
                     className="overflow-x-auto scrollbar-hide whitespace-nowrap"
                     style={{ scrollBehavior: 'auto' }}
                   >
-                      {pastOrders.map((order, index) => (
+                      {pastOrders.map((order, _index) => (
                         order.reviewInfo && (
                           <span key={`${order.id}-review`} className="text-[9px] text-left font-futura uppercase" style={{ fontWeight: '500', marginRight: '10px' }}>
                             <span style={{ color: '#000000', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>

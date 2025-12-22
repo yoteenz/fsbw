@@ -20,7 +20,7 @@ function ShoppingBagPage() {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [deleteItemConfirm, setDeleteItemConfirm] = useState<{ itemId: string; type: 'cart' | 'saved'; previousQuantity?: number } | null>(null);
-  const deleteTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const deleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Currency state - load from localStorage on mount
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -419,7 +419,7 @@ function ShoppingBagPage() {
     setShowMobileMenu(!showMobileMenu);
   };
 
-  const handleCloseMobileMenu = () => {
+  const _handleCloseMobileMenu = () => {
     setShowMobileMenu(false);
   };
 

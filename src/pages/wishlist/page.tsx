@@ -262,7 +262,7 @@ function WishlistSelection() {
     setShowMobileMenu(!showMobileMenu);
   };
 
-  const handleCloseMobileMenu = () => {
+  const _handleCloseMobileMenu = () => {
     setShowMobileMenu(false);
   };
 

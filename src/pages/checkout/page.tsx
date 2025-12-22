@@ -389,9 +389,6 @@ function CheckoutPage() {
     setShowMobileMenu(!showMobileMenu);
   };
 
-  const handleCloseMobileMenu = () => {
-    setShowMobileMenu(false);
-  };
 
   const handleMobileMenuTabClick = (tab: string) => {
     setMobileMenuActiveTab(tab);
