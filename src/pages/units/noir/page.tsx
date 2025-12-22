@@ -1955,7 +1955,7 @@ function NoirSelection() {
               willChange: 'backdrop-filter',
               minHeight: showMobileMenu ? '500px' : 'auto'
             }}
-        >
+          >
           {showMobileMenu ? (
             /* MENU CONTENT */
             <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '450px', position: 'relative' }}>
@@ -3418,9 +3418,9 @@ function NoirSelection() {
           </div>
           </div>
 
-        {/* SIMILAR PRODUCTS SECTION */}
-        <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
-          <div style={{ 
+          {/* SIMILAR PRODUCTS SECTION */}
+          <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
+            <div style={{
             border: '1.3px solid black', 
             backgroundColor: 'rgba(255, 255, 255, 0.6)', 
             backdropFilter: 'blur(10px)',
@@ -3807,11 +3807,11 @@ function NoirSelection() {
               </button>
             </div>
           </div>
-        </div>
+          </div>
 
-        {/* RECENTLY VIEWED SECTION */}
-        <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
-          <div style={{ 
+          {/* RECENTLY VIEWED SECTION */}
+          <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
+            <div style={{ 
             border: '1.3px solid black', 
             backgroundColor: 'rgba(255, 255, 255, 0.6)', 
             backdropFilter: 'blur(10px)',
@@ -4198,7 +4198,7 @@ function NoirSelection() {
               </button>
             </div>
           </div>
-        </div>
+          </div>
           </div>
         </div>
       </div>
