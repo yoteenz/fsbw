@@ -319,9 +319,29 @@ function SoftWaveSelection() {
   const [activeTab, setActiveTab] = useState('DETAILS');
   const [similarProductsScroll, setSimilarProductsScroll] = useState(0);
   const [recentlyViewedScroll, setRecentlyViewedScroll] = useState(0);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState('SHOP');
+  const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   const handleBack = () => {
     navigate(-1);
+  };
+
+  const handleMobileMenuToggle = () => {
+    setShowMobileMenu(!showMobileMenu);
+  };
+
+  const handleMobileMenuTabClick = (tab: string) => {
+    setMobileMenuActiveTab(tab);
+  };
+
+  const handleMobileMenuItemToggle = (item: string) => {
+    setMobileMenuExpandedItems(prev => 
+      prev.includes(item) 
+        ? prev.filter(i => i !== item)
+        : [...prev, item]
+    );
   };
 
   const handleCustomCapSelect = (capSize: string) => {
@@ -681,42 +701,87 @@ function SoftWaveSelection() {
             style={{ border: '1.3px solid black' }}
           >
             <div className="flex gap-5 absolute left-4">
-              <button 
-                onClick={handleBack} 
-                className="cursor-pointer"
-                style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
-              >
-                <img
-                  alt="Back"
-                  width="21"
-                  height="15"
-                  src="/assets/back-button.svg"
-                />
-              </button>
-              <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                <img
-                  alt="Search icon"
-                  width="16"
-                  height="15"
-                  src="/assets/search-icon.svg"
-                />
-              </button>
+              {showMobileMenu ? (
+                <>
+                  <button className="cursor-pointer" style={{ transform: 'translateX(0px)' }}>
+                    <img
+                      alt="Account icon"
+                      width="16"
+                      height="16"
+                      src="/assets/NOIR/account-icon.svg"
+                    />
+                  </button>
+                  <button 
+                    onClick={() => navigate('/wishlist')} 
+                    className="cursor-pointer"
+                    style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
+                  >
+                    <img
+                      alt="Wishlist"
+                      width="19"
+                      height="19"
+                      src="/assets/wishlist-heart.svg"
+                    />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button 
+                    onClick={handleBack} 
+                    className="cursor-pointer"
+                    style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
+                  >
+                    <img
+                      alt="Back"
+                      width="21"
+                      height="15"
+                      src="/assets/back-button.svg"
+                    />
+                  </button>
+                  <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                    <img
+                      alt="Search icon"
+                      width="16"
+                      height="15"
+                      src="/assets/search-icon.svg"
+                    />
+                  </button>
+                </>
+              )}
             </div>
             <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
-              <span 
-                style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                onClick={() => navigate('/units/wavy')}
-              >
-                WAVY &gt;
-              </span>{' '}
-              <span
-                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
-              >
-                SOFT WAVE
-              </span>
+              {showMobileMenu ? (
+                <>
+                  <span 
+                    style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                    onClick={() => navigate('/build-a-wig')}
+                  >
+                    HOME &gt;
+                  </span>{' '}
+                  <span
+                    style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
+                  >
+                    MENU
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span 
+                    style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                    onClick={() => navigate('/units/wavy')}
+                  >
+                    WAVY &gt;
+                  </span>{' '}
+                  <span
+                    style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
+                  >
+                    SOFT WAVE
+                  </span>
+                </>
+              )}
             </p>
-            <div className="gap-5 flex absolute" style={{ right: '17px' }}>
-              <div>
+            <div className="gap-5 flex absolute" style={{ right: showMobileMenu ? '14px' : '17px' }}>
+              <div style={{ transform: showMobileMenu ? 'translateY(0.7px)' : 'none' }}>
                 <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
               <svg
@@ -726,6 +791,7 @@ function SoftWaveSelection() {
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
                 className="cursor-pointer"
+                onClick={handleMobileMenuToggle}
                 style={{ marginTop: '2px' }}
               >
                 <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
@@ -733,6 +799,206 @@ function SoftWaveSelection() {
             </div>
           </div>
 
+          {showMobileMenu ? (
+            /* MENU CONTENT */
+            <div
+              className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+              style={{ 
+                borderWidth: '1.3px', 
+                minWidth: '100%', 
+                maxWidth: 'none', 
+                overflow: 'visible',
+                backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                minHeight: '560px'
+              }}
+            >
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+                {/* Navigation Links */}
+                <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
+                  <button
+                    onClick={() => handleMobileMenuTabClick('SHOP')}
+                    style={{ 
+                      fontFamily: mobileMenuActiveTab === 'SHOP' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                      fontSize: '14px',
+                      color: mobileMenuActiveTab === 'SHOP' ? '#EB1C24' : 'black',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      borderBottom: mobileMenuActiveTab === 'SHOP' ? '2px solid #EB1C24' : 'none',
+                      paddingBottom: '4px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    SHOP
+                  </button>
+                  <button
+                    onClick={() => handleMobileMenuTabClick('TOOLS')}
+                    style={{ 
+                      fontFamily: mobileMenuActiveTab === 'TOOLS' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                      fontSize: '14px',
+                      color: mobileMenuActiveTab === 'TOOLS' ? '#EB1C24' : 'black',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      borderBottom: mobileMenuActiveTab === 'TOOLS' ? '2px solid #EB1C24' : 'none',
+                      paddingBottom: '4px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    TOOLS
+                  </button>
+                  <button
+                    onClick={() => handleMobileMenuTabClick('BRAND')}
+                    style={{ 
+                      fontFamily: mobileMenuActiveTab === 'BRAND' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                      fontSize: '14px',
+                      color: mobileMenuActiveTab === 'BRAND' ? '#EB1C24' : 'black',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      borderBottom: mobileMenuActiveTab === 'BRAND' ? '2px solid #EB1C24' : 'none',
+                      paddingBottom: '4px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    BRAND
+                  </button>
+                </div>
+
+                {/* Menu Items - Fixed height with scroll if needed */}
+                <div style={{ flex: '1', overflowY: 'auto', marginBottom: '20px', minHeight: '0' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
+                    {mobileMenuActiveTab === 'TOOLS' ? (
+                      ['GIFT CARD'].map((item, index) => (
+                        <div 
+                          key={index} 
+                          className="flex items-center justify-between cursor-pointer"
+                          onClick={() => navigate('/tools/gift-card')}
+                        >
+                          <span style={{ 
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '14px',
+                            color: 'black',
+                            fontWeight: '500',
+                            textTransform: 'uppercase'
+                          }}>
+                            {item}
+                          </span>
+                        </div>
+                      ))
+                    ) : mobileMenuActiveTab === 'BRAND' ? (
+                      ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
+                        <div key={index} className="flex items-center justify-between">
+                          <span style={{ 
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '14px',
+                            color: 'black',
+                            fontWeight: '500',
+                            textTransform: 'uppercase'
+                          }}>
+                            {item}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      // SHOP tab with dropdown functionality
+                      [
+                        { label: 'UNITS', hasArrow: true, isExpandable: true, subItems: ['STRAIGHT', 'WAVY', 'CURLY'] },
+                        { label: 'BOOKING', hasArrow: true, isExpandable: true, subItems: ['APPOINTMENT', 'CONSULTATION'] },
+                        { label: 'BUILD-A-WIG', hasArrow: false },
+                        { label: 'ORDER AUTHORIZATION FORM', hasArrow: false }
+                      ].map((item, index) => (
+                        <div key={index}>
+                          <div 
+                            className="flex items-center justify-between cursor-pointer"
+                            style={{ alignItems: 'center' }}
+                            onClick={() => {
+                              if (item.isExpandable) {
+                                if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
+                                  navigate('/products/units');
+                                } else {
+                                  handleMobileMenuItemToggle(item.label);
+                                }
+                              }
+                            }}
+                          >
+                            <span style={{ 
+                              fontFamily: '"Futura PT Book"',
+                              fontSize: '14px',
+                              color: 'black',
+                              fontWeight: '500',
+                              textTransform: 'uppercase'
+                            }}>
+                              {item.label}
+                            </span>
+                            {item.hasArrow && (
+                              <img
+                                src="/assets/NOIR/closed-arrow.svg"
+                                alt="Arrow"
+                                style={{ 
+                                  width: '16px', 
+                                  height: '16px',
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px)`,
+                                  display: 'flex',
+                                  alignItems: 'center'
+                                }}
+                              />
+                            )}
+                          </div>
+                          {item.isExpandable && mobileMenuExpandedItems.includes(item.label) && item.subItems && (
+                            <div className="ml-4 mt-2 space-y-2">
+                              {item.subItems.map((subItem, subIndex) => (
+                                <div 
+                                  key={subIndex} 
+                                  className="flex items-center cursor-pointer"
+                                  onClick={() => {
+                                    if (subItem === 'WAVY') {
+                                      navigate('/units/wavy');
+                                    }
+                                  }}
+                                >
+                                  <span style={{ 
+                                    fontFamily: '"Futura PT Book"',
+                                    fontSize: '14px',
+                                    color: '#EB1C24',
+                                    fontWeight: '500',
+                                    textTransform: 'uppercase'
+                                  }}>
+                                    {subItem}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                {/* Sign In/Out - Fixed at bottom */}
+                <div className="flex justify-center" style={{ marginBottom: '20px', marginTop: 'auto' }}>
+                  <span 
+                    onClick={() => setIsSignedIn(!isSignedIn)}
+                    style={{ 
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '14px',
+                      color: '#EB1C24',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {isSignedIn ? 'SIGN OUT' : 'SIGN IN'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
           {/* MAIN BUILD AREA */}
           <div
             className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
@@ -2516,6 +2782,8 @@ function SoftWaveSelection() {
             </div>
           </div>
         </div>
+            </>
+          )}
         </div>
       </div>
     </div>

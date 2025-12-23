@@ -15,6 +15,12 @@ function ProductsUnitsPage() {
     }
   });
 
+  // Mobile menu state
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState('SHOP');
+  const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+
   // Currency state - load from localStorage on mount
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
     if (typeof window !== 'undefined') {
@@ -137,6 +143,22 @@ function ProductsUnitsPage() {
       window.removeEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
     };
   }, [currencyRates]);
+
+  const handleMobileMenuToggle = () => {
+    setShowMobileMenu(!showMobileMenu);
+  };
+
+  const handleMobileMenuTabClick = (tab: string) => {
+    setMobileMenuActiveTab(tab);
+  };
+
+  const handleMobileMenuItemToggle = (item: string) => {
+    setMobileMenuExpandedItems(prev => 
+      prev.includes(item) 
+        ? prev.filter(i => i !== item)
+        : [...prev, item]
+    );
+  };
 
   // Format price with currency
   const formatPrice = React.useCallback((price: number): { __html: string } => {
@@ -660,46 +682,91 @@ function ProductsUnitsPage() {
           >
             {/* Left side buttons */}
             <div className="flex gap-5 absolute left-4">
-              <button 
-                onClick={() => navigate('/home/products')} 
-                className="cursor-pointer"
-                style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
-              >
-                <img
-                  alt="Back"
-                  width="21"
-                  height="15"
-                  src="/assets/back-button.svg"
-                />
-              </button>
-              <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                <img
-                  alt="Search icon"
-                  width="16"
-                  height="15"
-                  src="/assets/search-icon.svg"
-                />
-              </button>
+              {showMobileMenu ? (
+                <>
+                  <button className="cursor-pointer" style={{ transform: 'translateX(0px)' }}>
+                    <img
+                      alt="Account icon"
+                      width="16"
+                      height="16"
+                      src="/assets/NOIR/account-icon.svg"
+                    />
+                  </button>
+                  <button 
+                    onClick={() => navigate('/wishlist')} 
+                    className="cursor-pointer"
+                    style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
+                  >
+                    <img
+                      alt="Wishlist"
+                      width="19"
+                      height="19"
+                      src="/assets/wishlist-heart.svg"
+                    />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button 
+                    onClick={() => navigate('/home/products')} 
+                    className="cursor-pointer"
+                    style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
+                  >
+                    <img
+                      alt="Back"
+                      width="21"
+                      height="15"
+                      src="/assets/back-button.svg"
+                    />
+                  </button>
+                  <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                    <img
+                      alt="Search icon"
+                      width="16"
+                      height="15"
+                      src="/assets/search-icon.svg"
+                    />
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Text in the middle */}
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"' }}>
-              <span 
-                style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                onClick={() => navigate('/home/products')}
-              >
-                PRODUCTS &gt;
-              </span>{' '}
-              <span
-                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
-              >
-                UNITS
-              </span>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
+              {showMobileMenu ? (
+                <>
+                  <span 
+                    style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                    onClick={() => navigate('/build-a-wig')}
+                  >
+                    HOME &gt;
+                  </span>{' '}
+                  <span
+                    style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
+                  >
+                    MENU
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span 
+                    style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                    onClick={() => navigate('/home/products')}
+                  >
+                    PRODUCTS &gt;
+                  </span>{' '}
+                  <span
+                    style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
+                  >
+                    UNITS
+                  </span>
+                </>
+              )}
             </p>
 
             {/* Right side icons */}
-            <div className="gap-5 flex absolute" style={{ right: '17px' }}>
-              <div>
+            <div className="gap-5 flex absolute" style={{ right: showMobileMenu ? '14px' : '17px' }}>
+              <div style={{ transform: showMobileMenu ? 'translateY(0.7px)' : 'none' }}>
                 <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
               <svg
@@ -709,6 +776,7 @@ function ProductsUnitsPage() {
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
                 className="cursor-pointer"
+                onClick={handleMobileMenuToggle}
                 style={{ marginTop: '2px' }}
               >
                 <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
@@ -724,6 +792,8 @@ function ProductsUnitsPage() {
 
           {/* CURLY CONTAINER */}
           {renderProductContainer('curly', 'CURLY')}
+            </>
+          )}
         </div>
       </div>
     </div>
