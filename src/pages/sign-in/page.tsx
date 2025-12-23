@@ -16,6 +16,7 @@ function SignInPage() {
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState('SHOP');
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const [emailError, setEmailError] = useState('');
 
   // Sign In form state
   const [signInEmail, setSignInEmail] = useState('');
