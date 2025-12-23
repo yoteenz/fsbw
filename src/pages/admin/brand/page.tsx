@@ -19,10 +19,11 @@ export default function AdminBrand() {
       <div 
         className="fixed inset-0 -z-10"
         style={{
-          backgroundImage: `url('https://www.dropbox.com/scl/fi/u4m42t2levejhysa3mnby/Marble-Floor.jpg?rlkey=j87posj7qo7fed7v6vihe09kr&st=uzmjl2p3&dl=1')`,
-          backgroundSize: '500% auto',
-          backgroundPosition: 'right 140%',
-          backgroundRepeat: 'repeat-y'
+          backgroundImage: `url('/assets/marble-half.png')`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'repeat',
+          backgroundAttachment: 'fixed'
         }}
       ></div>
       

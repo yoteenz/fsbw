@@ -546,10 +546,10 @@ function AccountPage() {
       <div 
         className="fixed inset-0 -z-10"
         style={{
-          backgroundImage: `url('/assets/marble-view.png')`,
+          backgroundImage: `url('/assets/marble-half.png')`,
           backgroundSize: 'contain',
           backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+          backgroundRepeat: 'repeat',
           backgroundAttachment: 'fixed'
         }}
       />
@@ -678,9 +678,6 @@ function AccountPage() {
                   maxWidth: 'none', 
                   overflow: 'visible',
                   backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                  backdropFilter: 'blur(10px)',
-                  WebkitBackdropFilter: 'blur(10px)',
-                  willChange: 'backdrop-filter',
                   minHeight: '560px'
                 }}
               >
@@ -906,7 +903,6 @@ function AccountPage() {
                     gap: '16px',
                     alignItems: 'center',
                     backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                    backdropFilter: 'blur(10px)',
                     WebkitBackdropFilter: 'blur(10px)'
                   }}
                 >
@@ -1072,8 +1068,6 @@ function AccountPage() {
                       borderWidth: '1.3px',
                       padding: '13px 20px',
                       backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                      backdropFilter: 'blur(10px)',
-                      WebkitBackdropFilter: 'blur(10px)',
                       boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                     }}
                   >

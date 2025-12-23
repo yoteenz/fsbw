@@ -190,10 +190,10 @@ function SignInPage() {
       <div 
         className="fixed inset-0 -z-10"
         style={{
-          backgroundImage: `url('/assets/marble-view.png')`,
+          backgroundImage: `url('/assets/marble-half.png')`,
           backgroundSize: 'contain',
           backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+          backgroundRepeat: 'repeat',
           backgroundAttachment: 'fixed'
         }}
       />

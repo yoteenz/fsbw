@@ -843,10 +843,10 @@ function ColorSelection() {
         <div 
           className="fixed inset-0 -z-10"
           style={{
-            backgroundImage: `url('/assets/Marble Floor.jpg')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center calc(50% + 25px)',
-            backgroundRepeat: 'no-repeat',
+            backgroundImage: `url('/assets/marble-half.png')`,
+            backgroundSize: 'contain',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'repeat',
             backgroundAttachment: 'fixed'
           }}
         ></div>
@@ -1234,7 +1234,7 @@ function ColorSelection() {
                     backgroundImage: `url('/assets/leaf-brick.png')`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat',
+                    backgroundRepeat: 'repeat',
                     overflow: 'visible'
                   }}
                 >

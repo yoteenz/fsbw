@@ -648,10 +648,10 @@ function CheckoutConfirmPage() {
         <div 
           className="fixed inset-0 -z-10"
           style={{
-            backgroundImage: `url('/assets/Marble Floor.jpg')`,
-            backgroundSize: 'cover',
+            backgroundImage: `url('/assets/marble-half.png')`,
+            backgroundSize: 'contain',
             backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
+            backgroundRepeat: 'repeat',
             backgroundAttachment: 'fixed'
           }}
         />
@@ -742,7 +742,7 @@ function CheckoutConfirmPage() {
                     <span
                       style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
                     >
-                      PLACED
+                      SUMMARY
                     </span>
                   </>
                 )}
@@ -1024,14 +1024,6 @@ function CheckoutConfirmPage() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
-                      ORDER NUMBER
-                    </span>
-                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
-                      {orderData.orderNumber}
-                    </span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                       ORDER DATE
                     </span>
                     <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
@@ -1043,6 +1035,14 @@ function CheckoutConfirmPage() {
                       ORDER TOTAL
                     </span>
                     <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }} dangerouslySetInnerHTML={formatPrice(orderData.orderTotal || 0)} />
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                      ORDER NUMBER
+                    </span>
+                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                      {orderData.orderNumber}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1064,9 +1064,21 @@ function CheckoutConfirmPage() {
                   </h2>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                    {orderData.firstName || 'ASHLEY'} {orderData.lastName || 'EVANS'}
+                  </p>
+                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                    {orderData.shippingAddress || '3374 E SHELBY DR APT #106'}
+                  </p>
+                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                    {orderData.city || 'MEMPHIS'}, {orderData.state || 'TN'} {orderData.zip || '38035'}
+                  </p>
+                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                    {orderData.country || 'UNITED STATES'}
+                  </p>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
-                      PROCESSING TIME
+                      PROCESSING TIMELINE
                     </span>
                     <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
                       {orderData.processingTime || '6-8 WEEKS'}
@@ -1104,18 +1116,6 @@ function CheckoutConfirmPage() {
                       </div>
                     );
                   })()}
-                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                    {orderData.firstName || 'ASHLEY'} {orderData.lastName || 'EVANS'}
-                  </p>
-                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                    {orderData.shippingAddress || '3374 E SHELBY DR APT #106'}
-                  </p>
-                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                    {orderData.city || 'MEMPHIS'}, {orderData.state || 'TN'} {orderData.zip || '38035'}
-                  </p>
-                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                    {orderData.country || 'UNITED STATES'}
-                  </p>
                 </div>
               </div>
 

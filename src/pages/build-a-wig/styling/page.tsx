@@ -732,9 +732,9 @@ export default function StylingSelectionPage() {
         <div 
           className="fixed inset-0 -z-10"
       style={{
-        backgroundImage: `url('/assets/Marble Floor.jpg')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center calc(50% + 25px)',
+        backgroundImage: `url('/assets/marble-half.png')`,
+        backgroundSize: 'contain',
+        backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         backgroundAttachment: 'fixed'
       }}
@@ -864,7 +864,7 @@ export default function StylingSelectionPage() {
                   backgroundImage: `url('/assets/leaf-brick.png')`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
-                  backgroundRepeat: 'no-repeat',
+                  backgroundRepeat: 'repeat',
                   overflow: 'visible'
                 }}
               >
@@ -1100,7 +1100,7 @@ export default function StylingSelectionPage() {
           <div 
             className="fixed inset-0 w-full h-full"
             style={{
-              backgroundImage: 'url("/assets/Marble Floor.jpg")',
+              backgroundImage: 'url("/assets/marble-view.png")',
               backgroundSize: '500%',
               backgroundPosition: 'center 60%',
               backgroundRepeat: 'no-repeat'
@@ -1120,9 +1120,6 @@ export default function StylingSelectionPage() {
                 height: 'calc(80% + 120px)',
                 padding: '20px',
                 backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-                willChange: 'backdrop-filter'
               }}
             >
               {/* Close Button */}

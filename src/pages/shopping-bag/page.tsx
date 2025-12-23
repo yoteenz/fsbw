@@ -444,10 +444,10 @@ function ShoppingBagPage() {
       <div 
         className="fixed inset-0 -z-10"
         style={{
-          backgroundImage: `url('/assets/Marble Floor.jpg')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center calc(50% + 25px)',
-          backgroundRepeat: 'no-repeat',
+          backgroundImage: `url('/assets/marble-half.png')`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'repeat',
           backgroundAttachment: 'fixed'
         }}
       />
@@ -572,9 +572,6 @@ function ShoppingBagPage() {
               minWidth: '100%', 
               maxWidth: 'none', 
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-              willChange: 'backdrop-filter',
               minHeight: showMobileMenu ? '560px' : '360px'
             }}
           >
@@ -1309,7 +1306,6 @@ function ShoppingBagPage() {
                 minWidth: '100%', 
                 maxWidth: 'none', 
                 backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                backdropFilter: 'blur(10px)',
                 WebkitBackdropFilter: 'blur(10px)',
                 willChange: 'backdrop-filter',
                 marginTop: '10px'

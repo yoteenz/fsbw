@@ -127,10 +127,11 @@ export default function AdminDashboard() {
         <div 
           className="fixed inset-0 -z-10"
           style={{
-            backgroundImage: `url('/assets/Marble Floor.jpg')`,
-            backgroundSize: '500% auto',
-            backgroundPosition: 'right 140%',
-            backgroundRepeat: 'repeat-y'
+            backgroundImage: `url('/assets/marble-half.png')`,
+            backgroundSize: 'contain',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'repeat',
+            backgroundAttachment: 'fixed'
           }}
         ></div>
         <div className="bg-white/60 backdrop-blur-sm border border-black px-6 py-4" style={{ borderWidth: '1.4px' }}>
@@ -149,10 +150,11 @@ export default function AdminDashboard() {
         <div 
           className="fixed inset-0 -z-10"
           style={{
-            backgroundImage: `url('/assets/Marble Floor.jpg')`,
-            backgroundSize: '500% auto',
-            backgroundPosition: 'right 140%',
-            backgroundRepeat: 'repeat-y'
+            backgroundImage: `url('/assets/marble-half.png')`,
+            backgroundSize: 'contain',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'repeat',
+            backgroundAttachment: 'fixed'
           }}
         ></div>
         <div className="bg-white/60 backdrop-blur-sm border border-red-500 px-6 py-4" style={{ borderWidth: '1.4px' }}>
@@ -342,10 +344,11 @@ export default function AdminDashboard() {
       <div 
         className="fixed inset-0 -z-10"
         style={{
-          backgroundImage: `url('https://www.dropbox.com/scl/fi/u4m42t2levejhysa3mnby/Marble-Floor.jpg?rlkey=j87posj7qo7fed7v6vihe09kr&st=uzmjl2p3&dl=1')`,
-          backgroundSize: '500% auto',
-          backgroundPosition: 'right 140%',
-          backgroundRepeat: 'repeat-y'
+          backgroundImage: `url('/assets/marble-half.png')`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'repeat',
+          backgroundAttachment: 'fixed'
         }}
       ></div>
       

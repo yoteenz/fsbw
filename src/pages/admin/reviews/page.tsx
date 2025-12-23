@@ -43,10 +43,11 @@ export default function AdminReviews() {
       <div 
         className="fixed inset-0 -z-10"
         style={{
-          backgroundImage: `url('/assets/Marble Floor.jpg')`,
-          backgroundSize: '500% auto',
-          backgroundPosition: 'right 140%',
-          backgroundRepeat: 'repeat-y'
+          backgroundImage: `url('/assets/marble-half.png')`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'repeat',
+          backgroundAttachment: 'fixed'
         }}
       ></div>
       

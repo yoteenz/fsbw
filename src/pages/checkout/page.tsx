@@ -686,7 +686,7 @@ function CheckoutPage() {
         } else if (result.transactionId) {
           // Payment completed successfully (e.g., Apple Pay, Google Pay)
           // Navigate to confirmation page
-          navigate('/checkout/confirm', {
+          navigate('/checkout/summary', {
             state: {
               orderNumber: `#${Math.floor(Math.random() * 1000)}`,
               orderDate: new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-'),
@@ -791,10 +791,10 @@ function CheckoutPage() {
       <div 
         className="fixed inset-0 -z-10"
         style={{
-          backgroundImage: `url('/assets/Marble Floor.jpg')`,
-          backgroundSize: 'cover',
+          backgroundImage: `url('/assets/marble-half.png')`,
+          backgroundSize: 'contain',
           backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+          backgroundRepeat: 'repeat',
           backgroundAttachment: 'fixed'
         }}
       />
@@ -920,9 +920,6 @@ function CheckoutPage() {
               maxWidth: 'none', 
               overflow: 'visible',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-              willChange: 'backdrop-filter',
               minHeight: showMobileMenu ? '560px' : 'auto'
             }}
           >
@@ -3621,7 +3618,7 @@ function CheckoutPage() {
                   }
                   
                   // Navigate to confirmation page with order data
-                  navigate('/checkout/confirm', {
+                  navigate('/checkout/summary', {
                     state: {
                       orderNumber,
                       orderDate,

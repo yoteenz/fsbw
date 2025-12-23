@@ -418,7 +418,7 @@ function App() {
             <CheckoutPage />
           </Suspense>
         } />
-        <Route path="/checkout/confirm" element={
+        <Route path="/checkout/summary" element={
           <Suspense fallback={<LoadingScreen />}>
             <CheckoutConfirmPage />
           </Suspense>

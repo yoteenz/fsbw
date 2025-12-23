@@ -683,10 +683,10 @@ function SoftCurlSelection() {
       <div 
         className="fixed inset-0 -z-10"
         style={{
-          backgroundImage: `url('/assets/Marble Floor.jpg')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center calc(50% + 25px)',
-          backgroundRepeat: 'no-repeat',
+          backgroundImage: `url('/assets/marble-half.png')`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'repeat',
           backgroundAttachment: 'fixed'
         }}
       />
@@ -807,9 +807,6 @@ function SoftCurlSelection() {
               maxWidth: 'none', 
               overflow: 'visible',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-              willChange: 'backdrop-filter',
               paddingBottom: '34px',
               minHeight: showMobileMenu ? '500px' : 'auto'
             }}
@@ -1120,7 +1117,7 @@ function SoftCurlSelection() {
                       width: '200px',
                       height: '290px',
                       backgroundImage: `url('/assets/${is3DView ? current3DImages.hero : 'NOIR/leaf-brick.png'}')`,
-                      backgroundRepeat: 'no-repeat',
+                      backgroundRepeat: 'repeat',
                       overflow: 'visible'
                     }}
                   >
@@ -1961,10 +1958,11 @@ function SoftCurlSelection() {
 
         {/* SIMILAR PRODUCTS SECTION */}
         <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
-          <div style={{ 
+          <div 
+            className="backdrop-blur-sm"
+            style={{ 
             border: '1.3px solid black', 
-            backgroundColor: 'rgba(255, 255, 255, 0.6)', 
-            backdropFilter: 'blur(10px)',
+            backgroundColor: 'rgba(255, 255, 255, 0.6)',
             padding: '0px',
             maxWidth: '100%',
             margin: '0 auto'
@@ -2380,10 +2378,11 @@ function SoftCurlSelection() {
 
         {/* RECENTLY VIEWED SECTION */}
         <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
-          <div style={{ 
+          <div 
+            className="backdrop-blur-sm"
+            style={{ 
             border: '1.3px solid black', 
-            backgroundColor: 'rgba(255, 255, 255, 0.6)', 
-            backdropFilter: 'blur(10px)',
+            backgroundColor: 'rgba(255, 255, 255, 0.6)',
             padding: '0px',
             maxWidth: '100%',
             margin: '0 auto'

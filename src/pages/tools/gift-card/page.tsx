@@ -216,10 +216,10 @@ function GiftCardPage() {
       <div 
         className="fixed inset-0 -z-10"
         style={{
-          backgroundImage: `url('/assets/Marble Floor.jpg')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center calc(50% + 25px)',
-          backgroundRepeat: 'no-repeat',
+          backgroundImage: `url('/assets/marble-half.png')`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'repeat',
           backgroundAttachment: 'fixed'
         }}
       ></div>
@@ -294,9 +294,6 @@ function GiftCardPage() {
               maxWidth: 'none', 
               overflow: 'visible',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-              willChange: 'backdrop-filter',
               paddingBottom: '0px'
             }}
           >
@@ -522,10 +519,11 @@ function GiftCardPage() {
 
           {/* SIMILAR PRODUCTS SECTION */}
           <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
-            <div style={{ 
+            <div 
+              className="backdrop-blur-sm"
+              style={{ 
               border: '1.3px solid black', 
-              backgroundColor: 'rgba(255, 255, 255, 0.6)', 
-              backdropFilter: 'blur(10px)',
+              backgroundColor: 'rgba(255, 255, 255, 0.6)',
               padding: '0px',
               maxWidth: '100%',
               margin: '0 auto'
@@ -927,10 +925,11 @@ function GiftCardPage() {
 
           {/* RECENTLY VIEWED SECTION */}
           <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
-            <div style={{ 
+            <div 
+              className="backdrop-blur-sm"
+              style={{ 
               border: '1.3px solid black', 
-              backgroundColor: 'rgba(255, 255, 255, 0.6)', 
-              backdropFilter: 'blur(10px)',
+              backgroundColor: 'rgba(255, 255, 255, 0.6)',
               padding: '0px',
               maxWidth: '100%',
               margin: '0 auto'
