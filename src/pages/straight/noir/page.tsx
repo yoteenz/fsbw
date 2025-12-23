@@ -50,6 +50,9 @@ function NoirSelection() {
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useState(false); // Track sign-in status
   
+  // Wishlist state
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  
   // Cart count state
   const [cartCount, setCartCount] = useState(() => {
     return parseInt(localStorage.getItem('cartCount') || '0');
@@ -189,6 +192,75 @@ function NoirSelection() {
     return lengthMatch && densityMatch && laceMatch && textureMatch && colorMatch && hairlineMatch && stylingMatch && addOnsMatch;
   };
 
+  // Check if NOIR is in wishlist on mount and when wishlist changes
+  useEffect(() => {
+    const checkWishlist = () => {
+      try {
+        const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
+        const isInList = wishlistItems.some((item: any) => item.name === 'NOIR');
+        setIsInWishlist(isInList);
+      } catch (e) {
+        setIsInWishlist(false);
+      }
+    };
+    
+    checkWishlist();
+    
+    // Listen for wishlist updates
+    const handleStorageChange = () => checkWishlist();
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('wishlistUpdated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('wishlistUpdated', handleStorageChange);
+    };
+  }, []);
+
+  // Toggle wishlist handler
+  const handleToggleWishlist = () => {
+    try {
+      const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
+      
+      // Calculate price based on cap size (same logic as getTotalPrice but inline)
+      const capSize = selectedCustomCap || selectedFlexibleCap || 'M';
+      const basePrice = (capSize === 'XXS/XS/S' || capSize === 'S/M/L') ? 780 : 740;
+      const totalPrice = basePrice;
+      
+      if (isInWishlist) {
+        // Remove from wishlist
+        const updatedItems = wishlistItems.filter((item: any) => item.name !== 'NOIR');
+        localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
+        setIsInWishlist(false);
+      } else {
+        // Add to wishlist
+        const noirItem = {
+          id: 'noir-unit',
+          name: 'NOIR',
+          price: totalPrice,
+          quantity: quantity,
+          image: '/assets/NOIR/noir-thumb.png',
+          length: localStorage.getItem('selectedLength') || '24"',
+          hairOrigin: 'CAMBODIAN',
+          capSize: selectedCustomCap || selectedFlexibleCap || 'M',
+          density: localStorage.getItem('selectedDensity') || '200%',
+          lace: localStorage.getItem('selectedLace') || '13X6',
+          texture: localStorage.getItem('selectedTexture') || 'SILKY',
+          color: localStorage.getItem('selectedColor') || 'OFF BLACK',
+          hairline: localStorage.getItem('selectedHairline') || 'NATURAL',
+          styling: localStorage.getItem('selectedStyling') || 'MIDDLE'
+        };
+        const updatedItems = [...wishlistItems, noirItem];
+        localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
+        setIsInWishlist(true);
+      }
+      
+      // Dispatch event to notify other components
+      window.dispatchEvent(new CustomEvent('wishlistUpdated'));
+    } catch (e) {
+      console.error('Error toggling wishlist:', e);
+    }
+  };
 
   // Update existing noir cart items to use new pricing
   useEffect(() => {
@@ -1788,14 +1860,18 @@ function NoirSelection() {
             <div style={{ transform: showMobileMenu ? 'translateY(0.7px)' : 'none' }}>
               <DynamicCartIcon count={cartCount} width={22} height={19} />
             </div>
-            <img
-              alt="Menu"
+            <svg
               width="17"
               height="18"
+              viewBox="0 0 16 14"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
               className="cursor-pointer"
-              src="/assets/menu-icon.svg"
               onClick={handleMobileMenuToggle}
-            />
+              style={{ marginTop: '2px' }}
+            >
+              <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
+            </svg>
           </div>
         </div>
 
@@ -2110,6 +2186,7 @@ function NoirSelection() {
             <div style={{ position: 'relative', width: '100%', marginBottom: '10px', transform: 'translateY(-31px)' }}>
               {/* ADD TO WISHLIST - Top Left */}
               <p 
+                onClick={handleToggleWishlist}
                 style={{ 
                   position: 'absolute', 
                   left: '8px', 
@@ -2118,10 +2195,12 @@ function NoirSelection() {
                   fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
                   fontSize: '10px',
                   fontWeight: '600',
-                  margin: '0'
+                  margin: '0',
+                  cursor: 'pointer',
+                  userSelect: 'none'
                 }}
               >
-                + ADD TO WISHLIST
+                {isInWishlist ? '- REMOVE FROM WISHLIST' : '+ ADD TO WISHLIST'}
               </p>
               
               {/* 2D VIEW/3D VIEW TOGGLE - Top Right */}

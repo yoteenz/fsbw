@@ -34,8 +34,7 @@ function SignInPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordFocused, setPasswordFocused] = useState(false);
-  const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
+  const [signUpAttempted, setSignUpAttempted] = useState(false);
   const [facebook, setFacebook] = useState('');
   const [instagram, setInstagram] = useState('');
   const [youtube, setYoutube] = useState('');
@@ -166,6 +165,19 @@ function SignInPage() {
           font-weight: 500 !important;
           color: #909090 !important;
           text-transform: uppercase !important;
+          background-color: #FFFFFF !important;
+        }
+        input[type="password"] {
+          text-transform: none !important;
+        }
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+          -webkit-box-shadow: 0 0 0 30px #FFFFFF inset !important;
+          -webkit-text-fill-color: #909090 !important;
+          box-shadow: 0 0 0 30px #FFFFFF inset !important;
+          background-color: #FFFFFF !important;
         }
       `}</style>
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -278,14 +290,18 @@ function SignInPage() {
               <div style={{ transform: showMobileMenu ? 'translateY(0.7px)' : 'none' }}>
                 <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
-              <img
-                alt="Menu"
+              <svg
                 width="17"
                 height="18"
+                viewBox="0 0 16 14"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
                 className="cursor-pointer"
-                src="/assets/menu-icon.svg"
                 onClick={handleMobileMenuToggle}
-              />
+                style={{ marginTop: '2px' }}
+              >
+                <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
+              </svg>
             </div>
           </div>
 
@@ -874,8 +890,6 @@ function SignInPage() {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        onFocus={() => setPasswordFocused(true)}
-                        onBlur={() => setPasswordFocused(false)}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -889,42 +903,48 @@ function SignInPage() {
                           outline: 'none'
                         }}
                       />
-                      {/* Password Requirements */}
-                      {(passwordFocused || password.length > 0) && (
+                      {/* Password Requirements - Only show when sign up is attempted and password doesn't meet requirements */}
+                      {signUpAttempted && (
                       <div style={{ marginTop: '4px' }}>
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '8px',
-                            color: hasUppercase(password) ? '#808080' : '#EB1C24',
-                            margin: '0 0 2px 3px',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          PASSWORD MUST CONTAIN UPPERCASE LETTERS.
-                        </p>
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '8px',
-                            color: hasLowercase(password) ? '#808080' : '#EB1C24',
-                            margin: '0 0 2px 3px',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          PASSWORD MUST CONTAIN LOWERCASE LETTERS.
-                        </p>
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '8px',
-                            color: hasNumber(password) ? '#808080' : '#EB1C24',
-                            margin: '0 0 0 3px',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          PASSWORD MUST CONTAIN NUMBERS.
-                        </p>
+                        {!hasUppercase(password) && (
+                          <p
+                            style={{
+                              fontFamily: '"Futura PT Medium"',
+                              fontSize: '8px',
+                              color: '#EB1C24',
+                              margin: '0 0 2px 3px',
+                              textTransform: 'uppercase'
+                            }}
+                          >
+                            PASSWORD MUST CONTAIN UPPERCASE LETTERS.
+                          </p>
+                        )}
+                        {!hasLowercase(password) && (
+                          <p
+                            style={{
+                              fontFamily: '"Futura PT Medium"',
+                              fontSize: '8px',
+                              color: '#EB1C24',
+                              margin: '0 0 2px 3px',
+                              textTransform: 'uppercase'
+                            }}
+                          >
+                            PASSWORD MUST CONTAIN LOWERCASE LETTERS.
+                          </p>
+                        )}
+                        {!hasNumber(password) && (
+                          <p
+                            style={{
+                              fontFamily: '"Futura PT Medium"',
+                              fontSize: '8px',
+                              color: '#EB1C24',
+                              margin: '0 0 0 3px',
+                              textTransform: 'uppercase'
+                            }}
+                          >
+                            PASSWORD MUST CONTAIN NUMBERS.
+                          </p>
+                        )}
                       </div>
                       )}
                     </div>
@@ -945,8 +965,6 @@ function SignInPage() {
                         type="password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        onFocus={() => setConfirmPasswordFocused(true)}
-                        onBlur={() => setConfirmPasswordFocused(false)}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -960,42 +978,48 @@ function SignInPage() {
                           outline: 'none'
                         }}
                       />
-                      {/* Confirm Password Requirements */}
-                      {(confirmPasswordFocused || confirmPassword.length > 0) && (
+                      {/* Confirm Password Requirements - Only show when sign up is attempted and password doesn't meet requirements */}
+                      {signUpAttempted && (
                       <div style={{ marginTop: '4px' }}>
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '8px',
-                            color: hasUppercase(confirmPassword) ? '#808080' : '#EB1C24',
-                            margin: '0 0 2px 3px',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          PASSWORD MUST CONTAIN UPPERCASE LETTERS.
-                        </p>
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '8px',
-                            color: hasLowercase(confirmPassword) ? '#808080' : '#EB1C24',
-                            margin: '0 0 2px 3px',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          PASSWORD MUST CONTAIN LOWERCASE LETTERS.
-                        </p>
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '8px',
-                            color: hasNumber(confirmPassword) ? '#808080' : '#EB1C24',
-                            margin: '0 0 0 3px',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          PASSWORD MUST CONTAIN NUMBERS.
-                        </p>
+                        {!hasUppercase(confirmPassword) && (
+                          <p
+                            style={{
+                              fontFamily: '"Futura PT Medium"',
+                              fontSize: '8px',
+                              color: '#EB1C24',
+                              margin: '0 0 2px 3px',
+                              textTransform: 'uppercase'
+                            }}
+                          >
+                            PASSWORD MUST CONTAIN UPPERCASE LETTERS.
+                          </p>
+                        )}
+                        {!hasLowercase(confirmPassword) && (
+                          <p
+                            style={{
+                              fontFamily: '"Futura PT Medium"',
+                              fontSize: '8px',
+                              color: '#EB1C24',
+                              margin: '0 0 2px 3px',
+                              textTransform: 'uppercase'
+                            }}
+                          >
+                            PASSWORD MUST CONTAIN LOWERCASE LETTERS.
+                          </p>
+                        )}
+                        {!hasNumber(confirmPassword) && (
+                          <p
+                            style={{
+                              fontFamily: '"Futura PT Medium"',
+                              fontSize: '8px',
+                              color: '#EB1C24',
+                              margin: '0 0 0 3px',
+                              textTransform: 'uppercase'
+                            }}
+                          >
+                            PASSWORD MUST CONTAIN NUMBERS.
+                          </p>
+                        )}
                       </div>
                       )}
                     </div>
@@ -1194,6 +1218,8 @@ function SignInPage() {
                 <button
                   type="button"
                   onClick={() => {
+                    setSignUpAttempted(true);
+                    
                     if (!firstName.trim()) {
                       setValidationMessage('FIRST NAME IS REQUIRED.');
                       setShowValidationModal(true);
@@ -1226,6 +1252,20 @@ function SignInPage() {
                     }
                     if (!confirmPassword.trim()) {
                       setValidationMessage('CONFIRM PASSWORD IS REQUIRED.');
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    // Check password requirements
+                    if (!hasUppercase(password) || !hasLowercase(password) || !hasNumber(password)) {
+                      // Error messages will show below the password fields
+                      return;
+                    }
+                    if (!hasUppercase(confirmPassword) || !hasLowercase(confirmPassword) || !hasNumber(confirmPassword)) {
+                      // Error messages will show below the confirm password fields
+                      return;
+                    }
+                    if (password !== confirmPassword) {
+                      setValidationMessage('PASSWORDS DO NOT MATCH.');
                       setShowValidationModal(true);
                       return;
                     }

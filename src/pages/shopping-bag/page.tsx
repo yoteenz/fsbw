@@ -549,14 +549,18 @@ function ShoppingBagPage() {
               <div style={{ transform: showMobileMenu ? 'translateY(0.7px)' : 'none' }}>
                 <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
-              <img
-                alt="Menu"
+              <svg
                 width="17"
                 height="18"
+                viewBox="0 0 16 14"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
                 className="cursor-pointer"
-                src="/assets/menu-icon.svg"
                 onClick={handleMobileMenuToggle}
-              />
+                style={{ marginTop: '2px' }}
+              >
+                <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
+              </svg>
             </div>
           </div>
 
@@ -888,21 +892,25 @@ function ShoppingBagPage() {
                        return (
                          <div
                            key={itemId}
-                           className={`flex items-start justify-start space-x-3 ${index < cartItems.length - 1 ? 'border-b border-gray-200' : ''}`}
+                           className={`flex items-center justify-start space-x-3 ${index < cartItems.length - 1 ? 'border-b border-black' : ''}`}
                            style={{
-                             minHeight: '80px',
-                             paddingTop: '20px',
-                             paddingBottom: '20px',
+                             height: '140px',
+                             paddingTop: '0',
+                             paddingBottom: '0',
                              width: '100%',
                              flexShrink: 0
                            }}
                          >
                           {/* Thumbnail Container - Matching cart dropdown */}
-                          <div className="flex flex-col items-center" style={{ flexShrink: 0, width: '88px', justifyContent: 'flex-start' }}>
+                          <div className="flex flex-col items-center justify-center" style={{ flexShrink: 0, width: '88px', height: '100%' }}>
                             {/* Item Image */}
                             <div 
                               className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-                              style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
+                              style={{ 
+                                width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', 
+                                height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px',
+                                marginTop: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '-7px' : '0'
+                              }}
                               onClick={() => {
                                 // Determine the correct product page route based on item name
                                 let productRoute = '/straight/noir';
@@ -941,7 +949,7 @@ function ShoppingBagPage() {
                                   color: '#EB1C24',
                                   textTransform: 'uppercase',
                                   fontSize: '8px',
-                                  marginTop: '6px',
+                                  marginTop: '4px',
                                   lineHeight: '1.1'
                                 }}
                                 onClick={() => handleEdit(item)}
@@ -952,7 +960,7 @@ function ShoppingBagPage() {
                           </div>
 
                           {/* Item Details - Matching cart dropdown */}
-                          <div className="flex-1 min-w-0 flex flex-col relative" style={{ marginLeft: '18px', paddingTop: '6px' }}>
+                          <div className="flex-1 min-w-0 flex flex-col relative" style={{ marginLeft: '18px', marginTop: '4px' }}>
                             <p 
                               className="font-medium truncate cart-product-name"
                               style={{ 
@@ -1380,21 +1388,25 @@ function ShoppingBagPage() {
                   return (
                     <div
                       key={itemId}
-                      className={`flex items-start justify-start space-x-3 ${index < savedForLater.length - 1 ? 'border-b border-gray-200' : ''}`}
+                      className={`flex items-center justify-start space-x-3 ${index < savedForLater.length - 1 ? 'border-b border-black' : ''}`}
                       style={{
-                        minHeight: '80px',
-                        paddingTop: '20px',
-                        paddingBottom: '20px',
+                        height: '140px',
+                        paddingTop: '0',
+                        paddingBottom: '0',
                         width: '100%',
                         flexShrink: 0
                       }}
                     >
                       {/* Thumbnail Container - Matching cart dropdown */}
-                      <div className="flex flex-col items-center" style={{ flexShrink: 0, width: '88px', justifyContent: 'flex-start' }}>
+                      <div className="flex flex-col items-center justify-center" style={{ flexShrink: 0, width: '88px', height: '100%' }}>
                         {/* Item Image */}
                         <div 
                           className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-                          style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
+                          style={{ 
+                            width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', 
+                            height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px',
+                            marginTop: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '-7px' : '0'
+                          }}
                           onClick={() => {
                             // Determine the correct product page route based on item name
                             let productRoute = '/straight/noir';
@@ -1444,7 +1456,7 @@ function ShoppingBagPage() {
                       </div>
 
                       {/* Product Details */}
-                      <div className="flex-1 min-w-0 flex flex-col relative" style={{ marginLeft: '18px', paddingTop: '6px' }}>
+                      <div className="flex-1 min-w-0 flex flex-col" style={{ marginLeft: '18px', marginTop: '4px' }}>
                          <p 
                            className="font-medium truncate cart-product-name"
                            style={{ 

@@ -726,13 +726,17 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
           ) : (
               <div className="space-y-3">
                 {cartItems.map((item, index) => (
-                  <div key={item.id} className={`flex items-center justify-start space-x-3 pt-1 pb-4 min-h-[80px] ${index < cartItems.length - 1 ? 'border-b border-gray-200' : ''}`}>
+                  <div key={item.id} className={`flex items-center justify-start space-x-3 ${index < cartItems.length - 1 ? 'border-b border-black' : ''}`} style={{ height: '140px', paddingTop: '0', paddingBottom: '0' }}>
                     {/* Thumbnail Container */}
-                    <div className="flex flex-col items-center">
+                    <div className="flex flex-col items-center justify-center" style={{ height: '100%' }}>
                       {/* Item Image */}
                       <div 
                         className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-                        style={{ width: '88px', height: '88px' }}
+                        style={{ 
+                          width: '88px', 
+                          height: '88px',
+                          marginTop: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '-7px' : '0'
+                        }}
                         onClick={() => {
                           // Determine the correct product page route based on item name
                           let productRoute = '/straight/noir'; // Default fallback
@@ -821,7 +825,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             color: '#EB1C24',
                             textTransform: 'uppercase',
                             fontSize: '8px',
-                            marginTop: '6px',
+                            marginTop: '4px',
                             lineHeight: '1.1'
                           }}
                           onClick={() => {
