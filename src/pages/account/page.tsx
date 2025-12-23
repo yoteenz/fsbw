@@ -14,7 +14,27 @@ function AccountPage() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState('SHOP');
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return localStorage.getItem('isSignedIn') === 'true';
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
+  });
+  const [userData, setUserData] = useState<any>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const currentUser = localStorage.getItem('currentUser');
+        return currentUser ? JSON.parse(currentUser) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  });
   const [membershipType, _setMembershipType] = useState<'BASIC' | 'PREMIUM'>('BASIC'); // Will be set dynamically later
   const [profileImage, setProfileImage] = useState(() => {
     // Load from localStorage on mount
@@ -121,6 +141,27 @@ function AccountPage() {
       maximumFractionDigits: 0
     }) + ' ' + selectedCurrency;
   }, [currencyRates, selectedCurrency]);
+
+  // Load user data on mount
+  useEffect(() => {
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      const signedIn = localStorage.getItem('isSignedIn') === 'true';
+      
+      if (currentUser && signedIn) {
+        const user = JSON.parse(currentUser);
+        setUserData(user);
+        setIsSignedIn(true);
+        
+        // Load profile image if available
+        if (user.profileImage) {
+          setProfileImage(user.profileImage);
+        }
+      }
+    } catch (e) {
+      console.error('Error loading user data:', e);
+    }
+  }, []);
 
   // Listen for cart count changes
   useEffect(() => {
@@ -505,9 +546,9 @@ function AccountPage() {
       <div 
         className="fixed inset-0 -z-10"
         style={{
-          backgroundImage: `url('/assets/Marble Floor.jpg')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center calc(50% + 25px)',
+          backgroundImage: `url('/assets/marble-view.png')`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           backgroundAttachment: 'fixed'
         }}
@@ -938,8 +979,8 @@ function AccountPage() {
                         textTransform: 'uppercase',
                         transform: 'translateY(3px)'
                       }}
-                    >
-                      KRISTIN WATSON
+                      >
+                      {userData ? `${userData.firstName.toUpperCase()} ${userData.lastName.toUpperCase()}` : 'KRISTIN WATSON'}
                     </p>
 
                     <p
@@ -953,7 +994,7 @@ function AccountPage() {
                         transform: 'translateY(-2px)'
                       }}
                     >
-                      BRUNO203@GMAIL.COM
+                      {userData ? userData.email.toUpperCase() : 'BRUNO203@GMAIL.COM'}
                     </p>
 
                     {(() => {

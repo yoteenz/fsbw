@@ -36,6 +36,9 @@ function SignInPage() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [signUpAttempted, setSignUpAttempted] = useState(false);
+  const [signInPasswordFocused, setSignInPasswordFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
   const [facebook, setFacebook] = useState('');
   const [instagram, setInstagram] = useState('');
   const [youtube, setYoutube] = useState('');
@@ -168,7 +171,8 @@ function SignInPage() {
           text-transform: uppercase !important;
           background-color: #FFFFFF !important;
         }
-        input[type="password"] {
+        input[type="password"],
+        input.password-field {
           text-transform: none !important;
         }
         input:-webkit-autofill,
@@ -186,9 +190,9 @@ function SignInPage() {
       <div 
         className="fixed inset-0 -z-10"
         style={{
-          backgroundImage: `url('/assets/Marble Floor.jpg')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center calc(50% + 25px)',
+          backgroundImage: `url('/assets/marble-view.png')`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           backgroundAttachment: 'fixed'
         }}
@@ -316,9 +320,6 @@ function SignInPage() {
                 maxWidth: 'none', 
                 overflow: 'visible',
                 backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-                willChange: 'backdrop-filter',
                 minHeight: '560px'
               }}
             >
@@ -511,20 +512,17 @@ function SignInPage() {
             <>
               {/* SIGN IN CONTENT */}
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0' }}>
-                {/* SIGN IN TO YOUR ACCOUNT CARD */}
-                <div
-                  className="border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm"
-                  style={{ 
-                    borderWidth: '1.3px', 
-                    minWidth: '100%', 
-                    maxWidth: 'none', 
-                    overflow: 'visible',
-                    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                    backdropFilter: 'blur(10px)',
-                    WebkitBackdropFilter: 'blur(10px)',
-                    willChange: 'backdrop-filter'
-                  }}
-                >
+              {/* SIGN IN TO YOUR ACCOUNT CARD */}
+              <div
+                className="border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm"
+                style={{ 
+                  borderWidth: '1.3px', 
+                  minWidth: '100%', 
+                  maxWidth: 'none', 
+                  overflow: 'visible',
+                  backgroundColor: 'rgba(255, 255, 255, 0.6)'
+                }}
+              >
                   <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
                     <button
                       className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
@@ -583,9 +581,12 @@ function SignInPage() {
                         PASSWORD<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
                       </label>
                       <input
-                        type="password"
+                        type={signInPasswordFocused ? "text" : "password"}
                         value={signInPassword}
                         onChange={(e) => setSignInPassword(e.target.value)}
+                        onFocus={() => setSignInPasswordFocused(true)}
+                        onBlur={() => setSignInPasswordFocused(false)}
+                        className="password-field"
                         style={{
                           width: '100%',
                           height: '36px',
@@ -596,7 +597,8 @@ function SignInPage() {
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
                           boxSizing: 'border-box',
                           borderRadius: '0',
-                          outline: 'none'
+                          outline: 'none',
+                          textTransform: 'none'
                         }}
                       />
                     </div>
@@ -699,10 +701,7 @@ function SignInPage() {
                     minWidth: '100%', 
                     maxWidth: 'none', 
                     overflow: 'visible',
-                    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                    backdropFilter: 'blur(10px)',
-                    WebkitBackdropFilter: 'blur(10px)',
-                    willChange: 'backdrop-filter'
+                    backgroundColor: 'rgba(255, 255, 255, 0.6)'
                   }}
                 >
                   <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
@@ -859,7 +858,10 @@ function SignInPage() {
                       <input
                         type="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          setEmailError(''); // Clear error when user types
+                        }}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -873,6 +875,19 @@ function SignInPage() {
                           outline: 'none'
                         }}
                       />
+                      {emailError && (
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '9px',
+                            color: '#EB1C24',
+                            margin: '4px 0 0 3px',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          {emailError}
+                        </p>
+                      )}
                     </div>
                     <div>
                       <label
@@ -888,9 +903,12 @@ function SignInPage() {
                         PASSWORD<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
                       </label>
                       <input
-                        type="password"
+                        type={passwordFocused ? "text" : "password"}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        onFocus={() => setPasswordFocused(true)}
+                        onBlur={() => setPasswordFocused(false)}
+                        className="password-field"
                         style={{
                           width: '100%',
                           height: '36px',
@@ -901,7 +919,8 @@ function SignInPage() {
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
                           boxSizing: 'border-box',
                           borderRadius: '0',
-                          outline: 'none'
+                          outline: 'none',
+                          textTransform: 'none'
                         }}
                       />
                       {/* Password Requirements - Only show when sign up is attempted and password doesn't meet requirements */}
@@ -963,9 +982,12 @@ function SignInPage() {
                         CONFIRM PASSWORD<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
                       </label>
                       <input
-                        type="password"
+                        type={confirmPasswordFocused ? "text" : "password"}
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
+                        onFocus={() => setConfirmPasswordFocused(true)}
+                        onBlur={() => setConfirmPasswordFocused(false)}
+                        className="password-field"
                         style={{
                           width: '100%',
                           height: '36px',
@@ -976,7 +998,8 @@ function SignInPage() {
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
                           boxSizing: 'border-box',
                           borderRadius: '0',
-                          outline: 'none'
+                          outline: 'none',
+                          textTransform: 'none'
                         }}
                       />
                       {/* Confirm Password Requirements - Only show when sign up is attempted and password doesn't meet requirements */}
@@ -1219,58 +1242,121 @@ function SignInPage() {
                 <button
                   type="button"
                   onClick={() => {
-                    setSignUpAttempted(true);
-                    
-                    if (!firstName.trim()) {
-                      setValidationMessage('FIRST NAME IS REQUIRED.');
+                    try {
+                      setSignUpAttempted(true);
+                      
+                      if (!firstName.trim()) {
+                        setValidationMessage('FIRST NAME IS REQUIRED.');
+                        setShowValidationModal(true);
+                        return;
+                      }
+                      if (!lastName.trim()) {
+                        setValidationMessage('LAST NAME IS REQUIRED.');
+                        setShowValidationModal(true);
+                        return;
+                      }
+                      if (!birthday.trim()) {
+                        setValidationMessage('BIRTHDAY IS REQUIRED.');
+                        setShowValidationModal(true);
+                        return;
+                      }
+                      if (!phoneNumber.trim()) {
+                        setValidationMessage('PHONE NUMBER IS REQUIRED.');
+                        setShowValidationModal(true);
+                        return;
+                      }
+                      if (!email.trim()) {
+                        setValidationMessage('EMAIL ADDRESS IS REQUIRED.');
+                        setShowValidationModal(true);
+                        return;
+                      }
+                      if (!password.trim()) {
+                        setValidationMessage('PASSWORD IS REQUIRED.');
+                        setShowValidationModal(true);
+                        return;
+                      }
+                      if (!confirmPassword.trim()) {
+                        setValidationMessage('CONFIRM PASSWORD IS REQUIRED.');
+                        setShowValidationModal(true);
+                        return;
+                      }
+                      // Check password requirements
+                      if (!hasUppercase(password) || !hasLowercase(password) || !hasNumber(password)) {
+                        // Error messages will show below the password fields
+                        return;
+                      }
+                      if (!hasUppercase(confirmPassword) || !hasLowercase(confirmPassword) || !hasNumber(confirmPassword)) {
+                        // Error messages will show below the confirm password fields
+                        return;
+                      }
+                      if (password !== confirmPassword) {
+                        setValidationMessage('PASSWORDS DO NOT MATCH.');
+                        setShowValidationModal(true);
+                        return;
+                      }
+                      
+                      // Check if email already exists
+                      const existingUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                      const emailExists = existingUsers.some((user: any) => user.email.toLowerCase() === email.toLowerCase().trim());
+                      
+                      if (emailExists) {
+                        setEmailError('THIS EMAIL ALREADY EXISTS.');
+                        return;
+                      }
+                      
+                      // Create user account
+                      const newUser = {
+                        id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                        firstName: firstName.trim(),
+                        lastName: lastName.trim(),
+                        email: email.trim().toLowerCase(),
+                        phoneNumber: phoneNumber.trim(),
+                        birthday: birthday.trim(),
+                        password: password, // In production, this should be hashed
+                        facebook: facebook.trim(),
+                        instagram: instagram.trim(),
+                        youtube: youtube.trim(),
+                        tiktok: tiktok.trim(),
+                        twitter: twitter.trim(),
+                        profileImage: '/assets/profile-thumb.png',
+                        membershipType: 'BASIC',
+                        createdAt: new Date().toISOString()
+                      };
+                      
+                      // Save user to registered users list
+                      const updatedUsers = [...existingUsers, newUser];
+                      localStorage.setItem('registeredUsers', JSON.stringify(updatedUsers));
+                      
+                      // Set current user session
+                      localStorage.setItem('currentUser', JSON.stringify(newUser));
+                      localStorage.setItem('isSignedIn', 'true');
+                      
+                      // Sign user in
+                      setIsSignedIn(true);
+                      
+                      // Clear form
+                      setFirstName('');
+                      setLastName('');
+                      setEmail('');
+                      setPhoneNumber('');
+                      setBirthday('');
+                      setPassword('');
+                      setConfirmPassword('');
+                      setFacebook('');
+                      setInstagram('');
+                      setYoutube('');
+                      setTiktok('');
+                      setTwitter('');
+                      setSignUpAttempted(false);
+                      setEmailError('');
+                      
+                      // Navigate to account page
+                      navigate('/account');
+                    } catch (error) {
+                      console.error('Error creating account:', error);
+                      setValidationMessage('AN ERROR OCCURRED. PLEASE TRY AGAIN.');
                       setShowValidationModal(true);
-                      return;
                     }
-                    if (!lastName.trim()) {
-                      setValidationMessage('LAST NAME IS REQUIRED.');
-                      setShowValidationModal(true);
-                      return;
-                    }
-                    if (!birthday.trim()) {
-                      setValidationMessage('BIRTHDAY IS REQUIRED.');
-                      setShowValidationModal(true);
-                      return;
-                    }
-                    if (!phoneNumber.trim()) {
-                      setValidationMessage('PHONE NUMBER IS REQUIRED.');
-                      setShowValidationModal(true);
-                      return;
-                    }
-                    if (!email.trim()) {
-                      setValidationMessage('EMAIL ADDRESS IS REQUIRED.');
-                      setShowValidationModal(true);
-                      return;
-                    }
-                    if (!password.trim()) {
-                      setValidationMessage('PASSWORD IS REQUIRED.');
-                      setShowValidationModal(true);
-                      return;
-                    }
-                    if (!confirmPassword.trim()) {
-                      setValidationMessage('CONFIRM PASSWORD IS REQUIRED.');
-                      setShowValidationModal(true);
-                      return;
-                    }
-                    // Check password requirements
-                    if (!hasUppercase(password) || !hasLowercase(password) || !hasNumber(password)) {
-                      // Error messages will show below the password fields
-                      return;
-                    }
-                    if (!hasUppercase(confirmPassword) || !hasLowercase(confirmPassword) || !hasNumber(confirmPassword)) {
-                      // Error messages will show below the confirm password fields
-                      return;
-                    }
-                    if (password !== confirmPassword) {
-                      setValidationMessage('PASSWORDS DO NOT MATCH.');
-                      setShowValidationModal(true);
-                      return;
-                    }
-                    console.log('Sign up');
                   }}
                   className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                   style={{

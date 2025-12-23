@@ -101,3 +101,4 @@ After generating images, place them in:
 - `/public/assets/` for the main images
 - Update the code to reference these new images based on selected color
 
+

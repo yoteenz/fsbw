@@ -65,3 +65,4 @@ After generating images, you'll need to update the code to:
 2. Dynamically load the appropriate image based on color selection
 3. Fall back to original images if color variant doesn't exist
 
+

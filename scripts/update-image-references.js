@@ -126,3 +126,4 @@ console.log(`Available: ${availableCount}`);
 console.log(`Missing: ${missingCount}`);
 console.log(`\nTotal needed: ${COLORS.length * HAIRLINES.length * VIEWS.length - (2 * HAIRLINES.length * VIEWS.length)} color variants`);
 
+
