@@ -4232,7 +4232,11 @@ export default function BuildAWigPage() {
   };
 
   const handleMobileMenuSignInToggle = () => {
-    setIsSignedIn(!isSignedIn);
+    if (isSignedIn) {
+      setIsSignedIn(!isSignedIn);
+    } else {
+      navigate('/sign-in');
+    }
   };
 
   // Update processing time text when localStorage changes (debounced for performance)
@@ -4653,9 +4657,9 @@ export default function BuildAWigPage() {
                           style={{ alignItems: 'center' }}
                           onClick={() => {
                             if (item.isExpandable) {
-                              // If UNITS is already expanded, navigate to products/units page
+                              // If UNITS is already expanded, navigate to shop/units page
                               if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                navigate('/products/units');
+                                navigate('/shop/units');
                               } else {
                                 // Otherwise, toggle expansion
                                 handleMobileMenuItemToggle(item.label);

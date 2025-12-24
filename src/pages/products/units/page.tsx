@@ -708,7 +708,7 @@ function ProductsUnitsPage() {
               ) : (
                 <>
                   <button 
-                    onClick={() => navigate('/home/products')} 
+                    onClick={() => navigate('/home/shop')} 
                     className="cursor-pointer"
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
                   >
@@ -751,9 +751,9 @@ function ProductsUnitsPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/home/products')}
+                    onClick={() => navigate('/home/shop')}
                   >
-                    PRODUCTS &gt;
+                    SHOP &gt;
                   </span>{' '}
                   <span
                     style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
@@ -784,6 +784,237 @@ function ProductsUnitsPage() {
             </div>
           </div>
 
+          {showMobileMenu ? (
+            /* MENU CONTENT */
+            <div
+              className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+              style={{ 
+                borderWidth: '1.3px', 
+                minWidth: '100%', 
+                maxWidth: 'none', 
+                overflow: 'visible',
+                backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                minHeight: '560px'
+              }}
+            >
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+                {/* Navigation Links */}
+                <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
+                  <button
+                    onClick={() => handleMobileMenuTabClick('SHOP')}
+                    style={{ 
+                      fontFamily: mobileMenuActiveTab === 'SHOP' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                      fontSize: '14px',
+                      color: mobileMenuActiveTab === 'SHOP' ? '#EB1C24' : 'black',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      borderBottom: mobileMenuActiveTab === 'SHOP' ? '2px solid #EB1C24' : 'none',
+                      paddingBottom: '4px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    SHOP
+                  </button>
+                  <button
+                    onClick={() => handleMobileMenuTabClick('TOOLS')}
+                    style={{ 
+                      fontFamily: mobileMenuActiveTab === 'TOOLS' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                      fontSize: '14px',
+                      color: mobileMenuActiveTab === 'TOOLS' ? '#EB1C24' : 'black',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      borderBottom: mobileMenuActiveTab === 'TOOLS' ? '2px solid #EB1C24' : 'none',
+                      paddingBottom: '4px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    TOOLS
+                  </button>
+                  <button
+                    onClick={() => handleMobileMenuTabClick('BRAND')}
+                    style={{ 
+                      fontFamily: mobileMenuActiveTab === 'BRAND' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                      fontSize: '14px',
+                      color: mobileMenuActiveTab === 'BRAND' ? '#EB1C24' : 'black',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      borderBottom: mobileMenuActiveTab === 'BRAND' ? '2px solid #EB1C24' : 'none',
+                      paddingBottom: '4px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    BRAND
+                  </button>
+                </div>
+
+                {/* Menu Items - Fixed height with scroll if needed */}
+                <div style={{ flex: '1', overflowY: 'auto', marginBottom: '20px', minHeight: '0' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
+                    {mobileMenuActiveTab === 'TOOLS' ? (
+                      ['GIFT CARD'].map((item, index) => (
+                        <div 
+                          key={index} 
+                          className="flex items-center justify-between cursor-pointer"
+                          onClick={() => navigate('/tools/gift-card')}
+                        >
+                          <span style={{ 
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '14px',
+                            color: 'black',
+                            fontWeight: '500',
+                            textTransform: 'uppercase'
+                          }}>
+                            {item}
+                          </span>
+                        </div>
+                      ))
+                    ) : mobileMenuActiveTab === 'BRAND' ? (
+                      ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
+                        <div key={index} className="flex items-center justify-between">
+                          <span style={{ 
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '14px',
+                            color: 'black',
+                            fontWeight: '500',
+                            textTransform: 'uppercase'
+                          }}>
+                            {item}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      // SHOP tab with dropdown functionality
+                      [
+                        { label: 'UNITS', hasArrow: true, isExpandable: true, subItems: ['STRAIGHT', 'WAVY', 'CURLY'] },
+                        { label: 'BOOKING', hasArrow: true, isExpandable: true, subItems: ['APPOINTMENT', 'CONSULTATION'] },
+                        { label: 'BUILD-A-WIG', hasArrow: false },
+                        { label: 'ORDER AUTHORIZATION FORM', hasArrow: false }
+                      ].map((item, index) => (
+                        <div key={index}>
+                          <div 
+                            className="flex items-center justify-between cursor-pointer"
+                            style={{ alignItems: 'center' }}
+                            onClick={() => {
+                              if (item.isExpandable) {
+                                if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
+                                  navigate('/shop/units');
+                                } else {
+                                  handleMobileMenuItemToggle(item.label);
+                                }
+                              }
+                            }}
+                          >
+                            <span style={{ 
+                              fontFamily: '"Futura PT Book"',
+                              fontSize: '14px',
+                              color: 'black',
+                              fontWeight: '500',
+                              textTransform: 'uppercase'
+                            }}>
+                              {item.label}
+                            </span>
+                            {item.hasArrow && (
+                              <img
+                                src="/assets/NOIR/closed-arrow.svg"
+                                alt="Arrow"
+                                style={{ 
+                                  width: '16px', 
+                                  height: '16px',
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px)`,
+                                  display: 'flex',
+                                  alignItems: 'center'
+                                }}
+                              />
+                            )}
+                          </div>
+                          {item.isExpandable && mobileMenuExpandedItems.includes(item.label) && item.subItems && (
+                            <div className="ml-4 mt-2 space-y-2">
+                              {item.subItems.map((subItem, subIndex) => (
+                                <div 
+                                  key={subIndex} 
+                                  className="flex items-center cursor-pointer"
+                                  onClick={() => {
+                                    if (subItem === 'STRAIGHT') {
+                                      navigate('/units/straight');
+                                    } else if (subItem === 'WAVY') {
+                                      navigate('/units/wavy');
+                                    } else if (subItem === 'CURLY') {
+                                      navigate('/units/curly');
+                                    }
+                                  }}
+                                >
+                                  <span style={{ 
+                                    fontFamily: '"Futura PT Book"',
+                                    fontSize: '14px',
+                                    color: '#EB1C24',
+                                    fontWeight: '500',
+                                    textTransform: 'uppercase'
+                                  }}>
+                                    {subItem}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                {/* Sign In/Out - Fixed at bottom */}
+                <div className="flex justify-center" style={{ marginBottom: '20px', marginTop: 'auto' }}>
+                  <span 
+                    onClick={() => {
+                      if (isSignedIn) {
+                        setIsSignedIn(!isSignedIn);
+                      } else {
+                        navigate('/sign-in');
+                      }
+                    }}
+                    style={{ 
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '14px',
+                      color: '#EB1C24',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {isSignedIn ? 'SIGN OUT' : 'SIGN IN'}
+                  </span>
+                </div>
+
+                {/* Social Media Icons - Fixed at bottom */}
+                <div className="flex justify-center" style={{ marginBottom: '0' }}>
+                  <div className="flex" style={{ gap: '19px' }}>
+                    <img
+                      src="/assets/instagram-icon.svg"
+                      alt="Instagram"
+                      style={{ width: '20px', height: '20px' }}
+                    />
+                    <img
+                      src="/assets/twitter-icon.svg"
+                      alt="Twitter"
+                      style={{ width: '20px', height: '20px' }}
+                    />
+                    <img
+                      src="/assets/facebook-icon.svg"
+                      alt="Facebook"
+                      style={{ width: '20px', height: '20px' }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
           {/* STRAIGHT CONTAINER */}
           {renderProductContainer('straight', 'STRAIGHT')}
 

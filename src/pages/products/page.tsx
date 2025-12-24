@@ -517,7 +517,7 @@ function ProductsPage() {
               <span
                 style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
               >
-                PRODUCTS
+                SHOP
               </span>
             </p>
 
@@ -559,7 +559,7 @@ function ProductsPage() {
               <div style={{ textAlign: 'center', marginBottom: '5px' }}>
                 <div style={{ width: '1px', height: '15px', backgroundColor: 'black', margin: '0 auto 8px auto' }}></div>
                 <h3 
-                  onClick={() => navigate('/products/units')}
+                  onClick={() => navigate('/shop/units')}
                   style={{ 
                     fontFamily: '"Futura PT Medium"',
                     fontSize: '13px',

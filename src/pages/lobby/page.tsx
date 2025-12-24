@@ -101,7 +101,7 @@ const LobbyPage: React.FC = () => {
           <img 
             src="/assets/neon-products.png" 
             alt="Products" 
-            onClick={() => navigate('/home/products')}
+            onClick={() => navigate('/home/shop')}
             className="w-auto cursor-pointer hover:opacity-80 transition-opacity"
             style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(4px)', height: '41px' }}
           />

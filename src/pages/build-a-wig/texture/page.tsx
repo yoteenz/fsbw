@@ -295,7 +295,11 @@ function TextureSelection() {
   };
 
   const handleMobileMenuSignInToggle = () => {
-    setIsSignedIn(!isSignedIn);
+    if (isSignedIn) {
+      setIsSignedIn(!isSignedIn);
+    } else {
+      navigate('/sign-in');
+    }
   };
 
   const handleConfirmSelection = () => {

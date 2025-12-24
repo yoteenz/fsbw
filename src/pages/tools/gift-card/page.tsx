@@ -278,26 +278,26 @@ function GiftCardPage() {
                 </>
               ) : (
                 <>
-                  <button 
-                    onClick={handleBack} 
-                    className="cursor-pointer"
-                    style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
-                  >
-                    <img
-                      alt="Back"
-                      width="21"
-                      height="15"
-                      src="/assets/back-button.svg"
-                    />
-                  </button>
-                  <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                    <img
-                      alt="Search icon"
-                      width="16"
-                      height="15"
-                      src="/assets/search-icon.svg"
-                    />
-                  </button>
+              <button 
+                onClick={handleBack} 
+                className="cursor-pointer"
+                style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
+              >
+                <img
+                  alt="Back"
+                  width="21"
+                  height="15"
+                  src="/assets/back-button.svg"
+                />
+              </button>
+              <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                <img
+                  alt="Search icon"
+                  width="16"
+                  height="15"
+                  src="/assets/search-icon.svg"
+                />
+              </button>
                 </>
               )}
             </div>
@@ -318,17 +318,17 @@ function GiftCardPage() {
                 </>
               ) : (
                 <>
-                  <span 
-                    style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/home/tools')}
-                  >
-                    TOOLS &gt;
-                  </span>{' '}
-                  <span
-                    style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
-                  >
-                    GIFT CARD
-                  </span>
+              <span 
+                style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                onClick={() => navigate('/home/tools')}
+              >
+                TOOLS &gt;
+              </span>{' '}
+              <span
+                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
+              >
+                GIFT CARD
+              </span>
                 </>
               )}
             </p>
@@ -470,7 +470,7 @@ function GiftCardPage() {
                             onClick={() => {
                               if (item.isExpandable) {
                                 if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                  navigate('/products/units');
+                                  navigate('/shop/units');
                                 } else {
                                   handleMobileMenuItemToggle(item.label);
                                 }
@@ -538,7 +538,13 @@ function GiftCardPage() {
                 {/* Sign In/Out - Fixed at bottom */}
                 <div className="flex justify-center" style={{ marginBottom: '20px', marginTop: 'auto' }}>
                   <span 
-                    onClick={() => setIsSignedIn(!isSignedIn)}
+                    onClick={() => {
+                      if (isSignedIn) {
+                        setIsSignedIn(!isSignedIn);
+                      } else {
+                        navigate('/sign-in');
+                      }
+                    }}
                     style={{ 
                       fontFamily: '"Futura PT Medium"',
                       fontSize: '14px',
@@ -550,6 +556,27 @@ function GiftCardPage() {
                   >
                     {isSignedIn ? 'SIGN OUT' : 'SIGN IN'}
                   </span>
+                </div>
+
+                {/* Social Media Icons - Fixed at bottom */}
+                <div className="flex justify-center" style={{ marginBottom: '0' }}>
+                  <div className="flex" style={{ gap: '19px' }}>
+                    <img
+                      src="/assets/instagram-icon.svg"
+                      alt="Instagram"
+                      style={{ width: '20px', height: '20px' }}
+                    />
+                    <img
+                      src="/assets/twitter-icon.svg"
+                      alt="Twitter"
+                      style={{ width: '20px', height: '20px' }}
+                    />
+                    <img
+                      src="/assets/facebook-icon.svg"
+                      alt="Facebook"
+                      style={{ width: '20px', height: '20px' }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

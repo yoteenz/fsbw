@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
+import ConfirmationModal from '../../components/ConfirmationModal';
 
 function AccountPage() {
   const navigate = useNavigate();
@@ -51,6 +52,8 @@ function AccountPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showCropModal, setShowCropModal] = useState(false);
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [showEnlargedImage, setShowEnlargedImage] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [cropPosition, setCropPosition] = useState({ x: 0, y: 0 });
   const [cropScale, setCropScale] = useState(1);
@@ -208,7 +211,23 @@ function AccountPage() {
   };
 
   const handleMobileMenuSignInToggle = () => {
-    setIsSignedIn(!isSignedIn);
+    if (isSignedIn) {
+      setIsSignedIn(!isSignedIn);
+    } else {
+      // Navigate to sign-in page (will default to account page after sign-in)
+      navigate('/sign-in');
+    }
+  };
+
+  const handleSignOut = () => {
+    setIsSignedIn(false);
+    localStorage.setItem('isSignedIn', 'false');
+    localStorage.removeItem('currentUser');
+    // Dispatch custom event to update other pages in same tab
+    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    setShowSignOutConfirm(false);
+    // Navigate to home or sign-in page
+    navigate('/sign-in');
   };
 
   const handleChangePhotoClick = () => {
@@ -786,9 +805,9 @@ function AccountPage() {
                             style={{ alignItems: 'center' }}
                             onClick={() => {
                               if (item.isExpandable) {
-                                // If UNITS is already expanded, navigate to products/units page
+                                // If UNITS is already expanded, navigate to shop/units page
                                 if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                  navigate('/products/units');
+                                  navigate('/shop/units');
                                 } else {
                                   // Otherwise, toggle expansion
                                   handleMobileMenuItemToggle(item.label);
@@ -908,7 +927,10 @@ function AccountPage() {
                 >
                   {/* Profile Picture */}
                   <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                    <div style={{ width: '100px', height: '100px', position: 'relative' }}>
+                    <div 
+                      style={{ width: '100px', height: '100px', position: 'relative', cursor: 'pointer' }}
+                      onClick={() => setShowEnlargedImage(true)}
+                    >
                       <img
                         src={profileImage}
                         alt="Profile"
@@ -968,7 +990,7 @@ function AccountPage() {
                       style={{
                         fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                         color: '#000000',
-                        fontSize: '22px',
+                        fontSize: '18px',
                         lineHeight: '1.1',
                         margin: '0',
                         marginTop: '4px',
@@ -1101,9 +1123,40 @@ function AccountPage() {
                 ))}
               </div>
             )}
+
+            {/* SIGN OUT BUTTON - Only show when menu is closed */}
+            {!showMobileMenu && (
+              <div className="px-0 md:px-0" style={{ marginTop: '18px', marginBottom: '20px' }}>
+                <button
+                  onClick={() => setShowSignOutConfirm(true)}
+                  className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                  style={{ 
+                    borderWidth: '1.3px', 
+                    color: '#EB1C24',
+                    fontFamily: '"Futura PT Medium"',
+                    backgroundColor: '#FFFFFF'
+                  }}
+                  type="button"
+                >
+                  SIGN OUT
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Sign Out Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showSignOutConfirm}
+        onClose={() => setShowSignOutConfirm(false)}
+        onConfirm={handleSignOut}
+        title="SIGN OUT"
+        message="ARE YOU SURE YOU WANT TO SIGN OUT?"
+        confirmText="CONFIRM"
+        cancelText="CANCEL"
+        dataAttribute="sign-out-confirm"
+      />
 
       {/* Reset Photo Confirmation Modal */}
       {showResetConfirm && (
@@ -1348,6 +1401,69 @@ function AccountPage() {
                 APPROVE
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Enlarged Profile Image Modal */}
+      {showEnlargedImage && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(255, 255, 255, 0.6)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)'
+          }}
+          onClick={() => setShowEnlargedImage(false)}
+        >
+          <div
+            style={{
+              position: 'relative',
+              maxWidth: '90%',
+              maxHeight: '90%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={profileImage}
+              alt="Profile"
+              style={{
+                maxWidth: '100%',
+                maxHeight: '100%',
+                objectFit: 'contain',
+                borderRadius: '50%',
+                border: '1.3px solid #000'
+              }}
+            />
+            <button
+              onClick={() => setShowEnlargedImage(false)}
+              style={{
+                position: 'absolute',
+                top: '-40px',
+                right: '0',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontFamily: '"Futura PT Medium"',
+                color: '#000',
+                textTransform: 'uppercase',
+                padding: '8px'
+              }}
+            >
+              CLOSE
+            </button>
           </div>
         </div>
       )}

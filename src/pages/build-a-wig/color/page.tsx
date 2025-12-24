@@ -369,7 +369,11 @@ function ColorSelection() {
   };
 
   const handleMobileMenuSignInToggle = () => {
-    setIsSignedIn(!isSignedIn);
+    if (isSignedIn) {
+      setIsSignedIn(!isSignedIn);
+    } else {
+      navigate('/sign-in');
+    }
   };
 
   const wigViews = getWigViews();
@@ -1118,9 +1122,9 @@ function ColorSelection() {
                             style={{ alignItems: 'center' }}
                             onClick={() => {
                               if (item.isExpandable) {
-                                // If UNITS is already expanded, navigate to products/units page
+                                // If UNITS is already expanded, navigate to shop/units page
                                 if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                  navigate('/products/units');
+                                  navigate('/shop/units');
                                 } else {
                                   // Otherwise, toggle expansion
                                   handleMobileMenuItemToggle(item.label);

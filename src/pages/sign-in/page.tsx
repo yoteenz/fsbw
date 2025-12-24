@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 
 function SignInPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [cartCount, setCartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
@@ -151,7 +152,8 @@ function SignInPage() {
   };
 
   const handleMobileMenuSignInToggle = () => {
-    setIsSignedIn(!isSignedIn);
+    // Already on sign-in page, do nothing (or could scroll to form)
+    // The sign-in button on the page will handle authentication
   };
 
   return (
@@ -429,7 +431,7 @@ function SignInPage() {
                             onClick={() => {
                               if (item.isExpandable) {
                                 if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                  navigate('/products/units');
+                                  navigate('/shop/units');
                                 } else {
                                   handleMobileMenuItemToggle(item.label);
                                 }
@@ -677,7 +679,47 @@ function SignInPage() {
                       setShowValidationModal(true);
                       return;
                     }
-                    console.log('Sign in');
+                    // Validate credentials against registered users
+                    try {
+                      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                      const user = registeredUsers.find((u: any) => 
+                        u.email.toLowerCase() === signInEmail.toLowerCase().trim() && 
+                        u.password === signInPassword.trim()
+                      );
+                      
+                      if (user) {
+                        // Authentication successful
+                        localStorage.setItem('currentUser', JSON.stringify(user));
+                        localStorage.setItem('isSignedIn', 'true');
+                        setIsSignedIn(true);
+                        
+                        // Dispatch event to update other pages
+                        window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+                        
+                        // Clear form
+                        setSignInEmail('');
+                        setSignInPassword('');
+                        
+                        // Determine where to route based on URL parameter or default to account
+                        const searchParams = new URLSearchParams(location.search);
+                        const returnTo = searchParams.get('returnTo');
+                        
+                        if (returnTo === 'checkout') {
+                          navigate('/checkout');
+                        } else {
+                          // Default to account page (menu)
+                          navigate('/account');
+                        }
+                      } else {
+                        // Invalid credentials
+                        setValidationMessage('INVALID EMAIL OR PASSWORD.');
+                        setShowValidationModal(true);
+                      }
+                    } catch (error) {
+                      console.error('Error signing in:', error);
+                      setValidationMessage('AN ERROR OCCURRED. PLEASE TRY AGAIN.');
+                      setShowValidationModal(true);
+                    }
                   }}
                   className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                   style={{

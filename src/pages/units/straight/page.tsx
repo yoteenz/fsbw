@@ -376,26 +376,26 @@ function StraightUnitsPage() {
                 </>
               ) : (
                 <>
-                  <button 
-                    onClick={() => navigate(-1)} 
-                    className="cursor-pointer"
-                    style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
-                  >
-                    <img
-                      alt="Back"
-                      width="21"
-                      height="15"
-                      src="/assets/back-button.svg"
-                    />
-                  </button>
-                  <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                    <img
-                      alt="Search icon"
-                      width="16"
-                      height="15"
-                      src="/assets/search-icon.svg"
-                    />
-                  </button>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="cursor-pointer"
+                style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
+              >
+                <img
+                  alt="Back"
+                  width="21"
+                  height="15"
+                  src="/assets/back-button.svg"
+                />
+              </button>
+              <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                <img
+                  alt="Search icon"
+                  width="16"
+                  height="15"
+                  src="/assets/search-icon.svg"
+                />
+              </button>
                 </>
               )}
             </div>
@@ -420,15 +420,15 @@ function StraightUnitsPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/products/units')}
+                    onClick={() => navigate('/shop/units')}
                   >
-                    UNITS &gt;
+                    SHOP &gt;
                   </span>{' '}
-                  <span
-                    style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
-                  >
-                    STRAIGHT
-                  </span>
+              <span
+                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
+              >
+                STRAIGHT
+              </span>
                 </>
               )}
             </p>
@@ -572,7 +572,7 @@ function StraightUnitsPage() {
                             onClick={() => {
                               if (item.isExpandable) {
                                 if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                  navigate('/products/units');
+                                  navigate('/shop/units');
                                 } else {
                                   handleMobileMenuItemToggle(item.label);
                                 }
@@ -652,6 +652,27 @@ function StraightUnitsPage() {
                   >
                     {isSignedIn ? 'SIGN OUT' : 'SIGN IN'}
                   </span>
+                </div>
+
+                {/* Social Media Icons - Fixed at bottom */}
+                <div className="flex justify-center" style={{ marginBottom: '0' }}>
+                  <div className="flex" style={{ gap: '19px' }}>
+                    <img
+                      src="/assets/instagram-icon.svg"
+                      alt="Instagram"
+                      style={{ width: '20px', height: '20px' }}
+                    />
+                    <img
+                      src="/assets/twitter-icon.svg"
+                      alt="Twitter"
+                      style={{ width: '20px', height: '20px' }}
+                    />
+                    <img
+                      src="/assets/facebook-icon.svg"
+                      alt="Facebook"
+                      style={{ width: '20px', height: '20px' }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

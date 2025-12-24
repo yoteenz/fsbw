@@ -347,7 +347,11 @@ export default function StylingSelectionPage() {
   };
 
   const handleMobileMenuSignInToggle = () => {
-    setIsSignedIn(!isSignedIn);
+    if (isSignedIn) {
+      setIsSignedIn(!isSignedIn);
+    } else {
+      navigate('/sign-in');
+    }
   };
 
   const getTotalStylingPrice = () => {

@@ -363,12 +363,12 @@ function App() {
             <CurlyUnitsPage />
           </Suspense>
         } />
-        <Route path="/products/units" element={
+        <Route path="/shop/units" element={
           <Suspense fallback={<LoadingScreen />}>
             <ProductsUnitsPage />
           </Suspense>
         } />
-        <Route path="/home/products" element={
+        <Route path="/home/shop" element={
           <Suspense fallback={<LoadingScreen />}>
             <ProductsPage />
           </Suspense>

@@ -432,7 +432,11 @@ function ShoppingBagPage() {
   };
 
   const handleMobileMenuSignInToggle = () => {
-    setIsSignedIn(!isSignedIn);
+    if (isSignedIn) {
+      setIsSignedIn(!isSignedIn);
+    } else {
+      navigate('/sign-in');
+    }
   };
 
   // Calculate subtotal
@@ -683,7 +687,7 @@ function ShoppingBagPage() {
                             onClick={() => {
                               if (item.isExpandable) {
                                 if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                  navigate('/products/units');
+                                  navigate('/shop/units');
                                 } else {
                                   handleMobileMenuItemToggle(item.label);
                                 }

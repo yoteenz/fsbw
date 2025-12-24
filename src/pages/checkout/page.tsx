@@ -559,7 +559,12 @@ function CheckoutPage() {
   };
 
   const handleMobileMenuSignInToggle = () => {
-    setIsSignedIn(!isSignedIn);
+    if (isSignedIn) {
+      setIsSignedIn(!isSignedIn);
+    } else {
+      // Navigate to sign-in page with returnTo parameter
+      navigate('/sign-in?returnTo=checkout');
+    }
   };
 
   // Calculate available shipping options based on address
@@ -1030,7 +1035,7 @@ function CheckoutPage() {
                             onClick={() => {
                               if (item.isExpandable) {
                                 if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                  navigate('/products/units');
+                                  navigate('/shop/units');
                                 } else {
                                   handleMobileMenuItemToggle(item.label);
                                 }
@@ -1626,7 +1631,7 @@ function CheckoutPage() {
                           ) : (
                             <>
                               <span 
-                                onClick={() => navigate('/sign-in')}
+                                onClick={() => navigate('/sign-in?returnTo=checkout')}
                                 style={{ 
                                   color: '#EB1C24', 
                                   cursor: 'pointer'
