@@ -896,10 +896,6 @@ function NoirSelection() {
     setShowMobileMenu(!showMobileMenu);
   };
 
-  const handleCloseMobileMenu = () => {
-    setShowMobileMenu(false);
-  };
-
   const handleMobileMenuTabClick = (tab: string) => {
     setMobileMenuActiveTab(tab);
   };
@@ -2108,7 +2104,7 @@ function NoirSelection() {
                 {/* Sign In/Out - Fixed at bottom */}
                 <div className="flex justify-center" style={{ marginBottom: '20px', marginTop: 'auto' }}>
                   <span 
-                    onClick={() => setIsSignedIn(!isSignedIn)}
+                    onClick={handleMobileMenuSignInToggle}
                     style={{ 
                       fontFamily: '"Futura PT Medium"',
                       fontSize: '14px',
