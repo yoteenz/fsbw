@@ -1030,25 +1030,28 @@ function CheckoutPage() {
                       ].map((item, index) => (
                         <div key={index}>
                           <div 
-                            className="flex items-center justify-between cursor-pointer"
+                            className="flex items-center justify-between"
                             style={{ alignItems: 'center' }}
-                            onClick={() => {
-                              if (item.isExpandable) {
-                                if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                  navigate('/shop/units');
-                                } else {
-                                  handleMobileMenuItemToggle(item.label);
-                                }
-                              }
-                            }}
                           >
-                            <span style={{ 
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '14px',
-                              color: 'black',
-                              fontWeight: '500',
-                              textTransform: 'uppercase'
-                            }}>
+                            <span 
+                              style={{ 
+                                fontFamily: '"Futura PT Book"',
+                                fontSize: '14px',
+                                color: 'black',
+                                fontWeight: '500',
+                                textTransform: 'uppercase',
+                                cursor: 'pointer'
+                              }}
+                              onClick={() => {
+                                if (item.isExpandable) {
+                                  if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
+                                    navigate('/shop/units');
+                                  } else {
+                                    handleMobileMenuItemToggle(item.label);
+                                  }
+                                }
+                              }}
+                            >
                               {item.label}
                             </span>
                             {item.hasArrow && (
@@ -1060,7 +1063,14 @@ function CheckoutPage() {
                                   height: '16px',
                                   transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px)`,
                                   display: 'flex',
-                                  alignItems: 'center'
+                                  alignItems: 'center',
+                                  cursor: 'pointer'
+                                }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (item.isExpandable) {
+                                    handleMobileMenuItemToggle(item.label);
+                                  }
                                 }}
                               />
                             )}
@@ -3693,13 +3703,15 @@ function CheckoutPage() {
             width: '90%',
             maxHeight: '90vh',
             overflowY: 'auto',
+            overflowX: 'hidden',
             border: '1.3px solid black',
             borderRadius: '0',
             transform: 'translateY(-6px)',
-            backgroundImage: 'url(/assets/marble-popup.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center 60%',
-            backgroundRepeat: 'no-repeat'
+            backgroundImage: 'url(/assets/marble-tc.png)',
+            backgroundSize: '100% auto',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            boxSizing: 'border-box'
           }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -3717,7 +3729,7 @@ function CheckoutPage() {
           >
             TERMS OF SERVICE
           </h3>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', maxWidth: 'calc(100% - 6px)' }}>
             <p
               style={{
                 fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
@@ -3748,7 +3760,7 @@ function CheckoutPage() {
           >
             REFUND + RETURN POLICY
           </h3>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', maxWidth: 'calc(100% - 8px)' }}>
             <p
               style={{
                 fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
@@ -3760,7 +3772,8 @@ function CheckoutPage() {
                 margin: 0
               }}
             >
-              ALL SALES ARE FINAL. WE ARE UNABLE TO OFFER REFUNDS, RETURNS OR EXCHANGES DUE TO SANITARY REASONS & THE HIGH APPEAL OF OUR PRODUCTS. PLEASE NOTE: FRONTAL SLAYER RESERVES THE RIGHT TO REFUSE ALL REFUNDS, RETURNS AND EXCHANGES. IF THERE IS AN ISSUE WITH YOUR ORDER, PLEASE REACH OUT TO CONTACT@FRONTALSLAYER.COM IMMEDIATELY. ALL INQUIRIES SHOULD RECEIVE A RESPONSE WITHIN 72 HOURS. CONTACT US IF YOUR ITEM IS DEFECTIVE OR YOU RECEIVED THE WRONG ITEM. WE WILL INVESTIGATE THE ISSUE THOROUGHLY AND CORRECT YOUR SHIPMENT OR ISSUE STORE CREDIT IF THE ITEM IS NO LONGER IN STOCK.
+              ALL SALES ARE FINAL. WE ARE UNABLE TO OFFER REFUNDS, RETURNS OR EXCHANGES DUE TO SANITARY REASONS & THE HIGH APPEAL OF OUR PRODUCTS. FRONTAL SLAYER RESERVES THE RIGHT TO REFUSE ALL REFUNDS, RETURNS AND EXCHANGES. IF THERE IS AN ISSUE WITH YOUR ORDER, PLEASE REACH OUT TO CONTACT@FRONTALSLAYER.COM<br />
+              IMMEDIATELY. ALL INQUIRIES SHOULD RECEIVE A RESPONSE WITHIN 72 HOURS. CONTACT US IF YOUR ITEM IS DEFECTIVE OR YOU RECEIVED THE WRONG ITEM. WE WILL INVESTIGATE THE ISSUE THOROUGHLY AND CORRECT YOUR SHIPMENT OR ISSUE STORE CREDIT IF THE ITEM IS NO LONGER IN STOCK.
             </p>
           </div>
 

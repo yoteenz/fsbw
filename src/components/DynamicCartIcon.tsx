@@ -70,7 +70,7 @@ export default function DynamicCartIcon({ count, size = 23, width, height, class
               // The red circle is typically in the bottom-right area of the bag icon
               top: '60%',
               left: '70%',
-              transform: 'translate(calc(-50% + 0px), calc(-50% + 3.5px))',
+              transform: 'translate(calc(-50% + 0px), calc(-50% + 4.5px))',
               textShadow: 'none',
               lineHeight: '1',
               width: '12px',

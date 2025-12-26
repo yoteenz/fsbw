@@ -54,6 +54,72 @@ function CheckoutConfirmPage() {
   const [startX, setStartX] = useState(0);
   const [startScrollPosition, setStartScrollPosition] = useState(0);
 
+  // Helper function to get ordinal suffix (ST, ND, RD, TH)
+  const getOrdinalSuffix = (day: number): string => {
+    if (day >= 11 && day <= 13) {
+      return 'TH';
+    }
+    const lastDigit = day % 10;
+    switch (lastDigit) {
+      case 1: return 'ST';
+      case 2: return 'ND';
+      case 3: return 'RD';
+      default: return 'TH';
+    }
+  };
+
+  // Helper function to calculate processing timeline date range
+  const calculateProcessingTimeline = (orderDateStr: string, processingTime: string): string => {
+    try {
+      // Parse order date (MM-DD-YYYY format)
+      const [month, day, year] = orderDateStr.split('-').map(Number);
+      const orderDate = new Date(year, month - 1, day);
+      
+      // Determine weeks based on processing time
+      let minWeeks = 6;
+      let maxWeeks = 8;
+      
+      if (processingTime && processingTime.includes('4')) {
+        // Rush processing: 4-6 weeks
+        minWeeks = 4;
+        maxWeeks = 6;
+      } else if (processingTime && processingTime.includes('10')) {
+        // Customized units: up to 10 weeks
+        minWeeks = 6;
+        maxWeeks = 10;
+      }
+      
+      // Calculate dates
+      const minDate = new Date(orderDate);
+      minDate.setDate(minDate.getDate() + (minWeeks * 7));
+      
+      const maxDate = new Date(orderDate);
+      maxDate.setDate(maxDate.getDate() + (maxWeeks * 7));
+      
+      // Format month names
+      const monthNames = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 
+                          'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
+      
+      const minMonth = monthNames[minDate.getMonth()];
+      const maxMonth = monthNames[maxDate.getMonth()];
+      const minDay = minDate.getDate();
+      const maxDay = maxDate.getDate();
+      
+      const minSuffix = getOrdinalSuffix(minDay);
+      const maxSuffix = getOrdinalSuffix(maxDay);
+      
+      // If same month, format as "MONTH DAYTH - DAYTH", otherwise "MONTH DAYTH - MONTH DAYTH"
+      if (minMonth === maxMonth) {
+        return `${minMonth} ${minDay}${minSuffix} - ${maxDay}${maxSuffix}`;
+      } else {
+        return `${minMonth} ${minDay}${minSuffix} - ${maxMonth} ${maxDay}${maxSuffix}`;
+      }
+    } catch (e) {
+      // Fallback to original format if parsing fails
+      return processingTime || '6-8 WEEKS';
+    }
+  };
+
   // Currency state
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
     if (typeof window !== 'undefined') {
@@ -789,7 +855,7 @@ function CheckoutConfirmPage() {
                 </h1>
                 <span
                   className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
-                  style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '17px' }}
+                  style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '15px' }}
                 >
                   {cartItems.length}
                 </span>
@@ -1081,7 +1147,7 @@ function CheckoutConfirmPage() {
                       PROCESSING TIMELINE
                     </span>
                     <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
-                      {orderData.processingTime || '6-8 WEEKS'}
+                      {orderData.orderDate ? calculateProcessingTimeline(orderData.orderDate, orderData.processingTime || '6-8 WEEKS') : (orderData.processingTime || '6-8 WEEKS')}
                     </span>
                   </div>
                   {(() => {
@@ -1154,10 +1220,18 @@ function CheckoutConfirmPage() {
                   })()}
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
-                      EMAIL ADDRESS
+                      CONFIRMATION EMAIL
                     </span>
                     <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
                       {orderData.email || 'ASHLEYEVANS@GMAIL.COM'}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                      CONFIRMATION NUMBER
+                    </span>
+                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                      #{orderData.confirmationNumber || String(Math.floor(10000000 + Math.random() * 90000000))}
                     </span>
                   </div>
                 </div>

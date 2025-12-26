@@ -17,6 +17,7 @@ interface Order {
   deliveredAt?: number; // Timestamp when order was delivered (for 48-hour archive logic)
   placedAt?: number; // Timestamp when order was placed (for 24-hour authorization countdown)
   canceledAt?: number; // Timestamp when order was canceled (for 24-hour archive logic)
+  orderFormSigned?: boolean; // Whether the order form has been signed
 }
 
 function OrdersPage() {
@@ -159,10 +160,24 @@ function OrdersPage() {
       trackingCarrier: undefined
     },
     {
+      id: '10',
+      orderNumber: 'ORDER #244',
+      date: getDateDaysAgo(1), // 1 day ago
+      status: 'PLACED',
+      productName: 'SOFT WAVE',
+      productImage: getProductImage('SOFT WAVE'),
+      total: 980,
+      items: 1,
+      trackingNumber: undefined,
+      trackingCarrier: undefined,
+      placedAt: getTimestampHoursAgo(3), // Placed 3 hours ago
+      orderFormSigned: true // Order form has been signed
+    },
+    {
       id: '3',
       orderNumber: 'ORDER #241',
       date: getDateDaysAgo(8), // 8 days ago
-      status: 'PROCESSING',
+      status: 'PREPARING',
       productName: 'NOIR',
       productImage: getProductImage('NOIR'),
       total: 2220,
@@ -181,6 +196,18 @@ function OrdersPage() {
       items: 2,
       trackingNumber: '9400136106023046913338',
       trackingCarrier: 'DHL'
+    },
+    {
+      id: '11',
+      orderNumber: 'ORDER #245',
+      date: getDateDaysAgo(6), // 6 days ago
+      status: 'SHIPPED',
+      productName: 'SOFT CURL',
+      productImage: getProductImage('SOFT CURL'),
+      total: 1200,
+      items: 1,
+      trackingNumber: undefined,
+      trackingCarrier: undefined
     },
     {
       id: '8',
@@ -470,7 +497,8 @@ function OrdersPage() {
 
       setActiveOrders(prevActive => {
         return prevActive.map(order => {
-          if (order.status === 'PLACED' && order.placedAt) {
+          // Only auto-cancel PLACED orders that haven't been signed
+          if (order.status === 'PLACED' && order.placedAt && !order.orderFormSigned) {
             const timeSincePlaced = now - order.placedAt;
             if (timeSincePlaced >= twentyFourHours) {
               // Cancel order and issue refund
@@ -800,11 +828,16 @@ function OrdersPage() {
                                fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'CANCELED') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
                              }}>{order.status}</span>
                            </p>
-                           {order.status === 'PLACED' && order.placedAt && (
+                           {order.status === 'PLACED' && order.placedAt && !order.orderFormSigned && (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2' }}>
                                <span style={{ color: '#000000' }}>CLICK </span>
                                <span style={{ color: '#EB1C24' }}>HERE</span>
                                <span style={{ color: '#000000' }}> TO SIGN ORDER FORM</span>
+                             </p>
+                           )}
+                           {order.status === 'PLACED' && order.orderFormSigned && (
+                             <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
+                               ORDER FORM IN REVIEW
                              </p>
                            )}
                            {order.trackingNumber ? (
@@ -816,6 +849,16 @@ function OrdersPage() {
                                  TRACK VIA {order.trackingCarrier}
                                </p>
                              </div>
+                           ) : order.status === 'CONFIRMED' ? (
+                             <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
+                               PROCESSING YOUR ORDER
+                             </p>
+                           ) : order.status === 'PREPARING' ? (
+                             <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2' }}>
+                               <span style={{ color: '#000000' }}>CLICK </span>
+                               <span style={{ color: '#EB1C24' }}>HERE</span>
+                               <span style={{ color: '#000000' }}> TO TRACK ORDER STATUS</span>
+                             </p>
                            ) : order.status !== 'PLACED' && order.status !== 'CANCELED' ? (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
                                TRACKING LOADING
@@ -878,7 +921,20 @@ function OrdersPage() {
                             </span>
                           );
                         }
-                        // For PLACED orders, show countdown in scrolling text
+                        // For PLACED orders with signed form, show "ORDER FORM IN REVIEW"
+                        if (order.status === 'PLACED' && order.orderFormSigned) {
+                          return (
+                            <span key={order.id} className="text-[9px] text-left font-futura uppercase" style={{ fontWeight: '500', marginRight: '10px' }}>
+                              <span className="text-black" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
+                                {order.orderNumber}:{' '}
+                              </span>
+                              <span style={{ color: '#000000', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
+                                ORDER FORM IN REVIEW
+                              </span>
+                            </span>
+                          );
+                        }
+                        // For PLACED orders without signed form, show countdown in scrolling text
                         if (order.status === 'PLACED' && order.placedAt) {
                           return (
                             <span key={order.id} className="text-[9px] text-left font-futura uppercase" style={{ fontWeight: '500', marginRight: '10px' }}>
@@ -914,7 +970,7 @@ function OrdersPage() {
                               color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED') ? '#EB1C24' : '#909090',
                               fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
                             }}>
-                              {order.status}
+                              {order.status === 'PLACED' && order.orderFormSigned ? 'ORDER FORM IN REVIEW' : order.status}
                             </span>
                           </span>
                         );
@@ -1001,6 +1057,11 @@ function OrdersPage() {
                                fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'CANCELED') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
                              }}>{order.status}</span>
                            </p>
+                           {order.status === 'PLACED' && order.orderFormSigned && (
+                             <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
+                               ORDER FORM IN REVIEW
+                             </p>
+                           )}
                            {order.trackingNumber ? (
                              <div>
                                <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10.5px', color: '#000000', margin: 0, lineHeight: '1.2', transform: 'translateY(-1px)' }}>
@@ -1010,6 +1071,16 @@ function OrdersPage() {
                                  TRACK VIA {order.trackingCarrier}
                                </p>
                              </div>
+                           ) : order.status === 'CONFIRMED' ? (
+                             <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
+                               PROCESSING YOUR ORDER
+                             </p>
+                           ) : order.status === 'PREPARING' ? (
+                             <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2' }}>
+                               <span style={{ color: '#000000' }}>CLICK </span>
+                               <span style={{ color: '#EB1C24' }}>HERE</span>
+                               <span style={{ color: '#000000' }}> TO TRACK ORDER STATUS</span>
+                             </p>
                            ) : order.status !== 'PLACED' && order.status !== 'CANCELED' ? (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
                                TRACKING LOADING

@@ -426,25 +426,28 @@ function SignInPage() {
                       ].map((item, index) => (
                         <div key={index}>
                           <div 
-                            className="flex items-center justify-between cursor-pointer"
+                            className="flex items-center justify-between"
                             style={{ alignItems: 'center' }}
-                            onClick={() => {
-                              if (item.isExpandable) {
-                                if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                  navigate('/shop/units');
-                                } else {
-                                  handleMobileMenuItemToggle(item.label);
-                                }
-                              }
-                            }}
                           >
-                            <span style={{ 
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '14px',
-                              color: 'black',
-                              fontWeight: '500',
-                              textTransform: 'uppercase'
-                            }}>
+                            <span 
+                              style={{ 
+                                fontFamily: '"Futura PT Book"',
+                                fontSize: '14px',
+                                color: 'black',
+                                fontWeight: '500',
+                                textTransform: 'uppercase',
+                                cursor: 'pointer'
+                              }}
+                              onClick={() => {
+                                if (item.isExpandable) {
+                                  if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
+                                    navigate('/shop/units');
+                                  } else {
+                                    handleMobileMenuItemToggle(item.label);
+                                  }
+                                }
+                              }}
+                            >
                               {item.label}
                             </span>
                             {item.hasArrow && (
@@ -456,7 +459,14 @@ function SignInPage() {
                                   height: '16px',
                                   transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px)`,
                                   display: 'flex',
-                                  alignItems: 'center'
+                                  alignItems: 'center',
+                                  cursor: 'pointer'
+                                }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (item.isExpandable) {
+                                    handleMobileMenuItemToggle(item.label);
+                                  }
                                 }}
                               />
                             )}
