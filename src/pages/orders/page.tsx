@@ -30,6 +30,27 @@ function OrdersPage() {
     }
   });
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  
+  // Get current user data
+  const [currentUser, setCurrentUser] = useState<any>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const user = localStorage.getItem('currentUser');
+        return user ? JSON.parse(user) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  });
+  
+  // Helper function to check if current user is Kristin Watson (mock account)
+  const isKristinWatson = () => {
+    const user = currentUser;
+    const signedIn = typeof window !== 'undefined' ? localStorage.getItem('isSignedIn') === 'true' : false;
+    // Show mock orders only for Kristin Watson (bruno203@gmail.com) or when not signed in (default mock state)
+    return user?.email?.toLowerCase() === 'bruno203@gmail.com' || (!user && !signedIn);
+  };
 
   // Currency state - load from localStorage on mount
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -132,8 +153,8 @@ function OrdersPage() {
     return Math.max(0, twentyFourHours - elapsed);
   };
 
-  // Sample order data
-  const [activeOrders, setActiveOrders] = useState<Order[]>([
+  // Mock order data (only for Kristin Watson)
+  const mockActiveOrders: Order[] = [
     {
       id: '1',
       orderNumber: 'ORDER #237',
@@ -237,9 +258,9 @@ function OrdersPage() {
       placedAt: getTimestampHoursAgo(52), // Placed 52 hours ago (expired)
       canceledAt: getTimestampHoursAgo(18) // Canceled 18 hours ago (still in active, not archived yet)
     }
-  ]);
+  ];
 
-  const [pastOrders, setPastOrders] = useState<Order[]>([
+  const mockPastOrders: Order[] = [
     {
       id: '10',
       orderNumber: 'ORDER #236',
@@ -320,11 +341,86 @@ function OrdersPage() {
       trackingNumber: '9400136106023046913326',
       trackingCarrier: 'FEDEX'
     }
-  ]);
+  ];
+
+  // Helper function to get user's actual orders from localStorage
+  const getUserOrders = (): { activeOrders: Order[], pastOrders: Order[] } => {
+    if (typeof window === 'undefined' || !currentUser) {
+      return { activeOrders: [], pastOrders: [] };
+    }
+
+    try {
+      const userOrdersKey = `userOrders_${currentUser.email}`;
+      const storedOrders = localStorage.getItem(userOrdersKey);
+      if (storedOrders) {
+        const orders = JSON.parse(storedOrders);
+        return {
+          activeOrders: orders.activeOrders || [],
+          pastOrders: orders.pastOrders || []
+        };
+      }
+    } catch (e) {
+      console.error('Error loading user orders:', e);
+    }
+
+    return { activeOrders: [], pastOrders: [] };
+  };
+
+  // Get orders based on user - only show mock orders for Kristin Watson, otherwise show user's actual orders
+  const getUserOrdersData = () => {
+    if (isKristinWatson()) {
+      return {
+        activeOrders: mockActiveOrders,
+        pastOrders: mockPastOrders
+      };
+    } else {
+      return getUserOrders();
+    }
+  };
+
+  const [activeOrders, setActiveOrders] = useState<Order[]>(() => {
+    return getUserOrdersData().activeOrders;
+  });
+
+  const [pastOrders, setPastOrders] = useState<Order[]>(() => {
+    return getUserOrdersData().pastOrders;
+  });
 
   // Refs for auto-scrolling
   const activeOrdersRef = useRef<HTMLDivElement>(null);
   const pastOrdersReviewRef = useRef<HTMLDivElement>(null);
+
+  // Update orders when user changes
+  useEffect(() => {
+    const updateUser = () => {
+      try {
+        const user = localStorage.getItem('currentUser');
+        const parsedUser = user ? JSON.parse(user) : null;
+        setCurrentUser(parsedUser);
+        
+        // Update orders based on current user
+        const ordersData = getUserOrdersData();
+        setActiveOrders(ordersData.activeOrders);
+        setPastOrders(ordersData.pastOrders);
+      } catch (e) {
+        console.error('Error updating user:', e);
+      }
+    };
+
+    // Initial update
+    updateUser();
+
+    // Listen for sign in/out events
+    window.addEventListener('signInStateChanged', updateUser);
+    window.addEventListener('storage', updateUser);
+    window.addEventListener('focus', updateUser);
+
+    return () => {
+      window.removeEventListener('signInStateChanged', updateUser);
+      window.removeEventListener('storage', updateUser);
+      window.removeEventListener('focus', updateUser);
+    };
+  }, []);
 
   // Listen for cart count changes
   useEffect(() => {

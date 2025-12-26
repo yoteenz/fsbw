@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
+import ConfirmationModal from '../../../components/ConfirmationModal';
 
 function GiftCardPage() {
   const navigate = useNavigate();
@@ -24,7 +25,17 @@ function GiftCardPage() {
     return 'SHOP';
   });
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return localStorage.getItem('isSignedIn') === 'true';
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
+  });
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
 
   // Currency state
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -175,6 +186,41 @@ function GiftCardPage() {
     }
   }, [showMobileMenu, location.pathname]);
 
+  // Check sign-in status on mount and listen for changes
+  useEffect(() => {
+    const checkSignInStatus = () => {
+      try {
+        const signedIn = localStorage.getItem('isSignedIn') === 'true';
+        setIsSignedIn(signedIn);
+      } catch (e) {
+        setIsSignedIn(false);
+      }
+    };
+
+    // Check on mount
+    checkSignInStatus();
+
+    // Listen for storage changes (when user signs in/out in another tab)
+    const handleStorageChange = () => {
+      checkSignInStatus();
+    };
+
+    // Listen for sign-in state changes from sign-in page
+    const handleSignInStateChange = () => {
+      checkSignInStatus();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('focus', handleStorageChange);
+    window.addEventListener('signInStateChanged', handleSignInStateChange as EventListener);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('focus', handleStorageChange);
+      window.removeEventListener('signInStateChanged', handleSignInStateChange as EventListener);
+    };
+  }, []);
+
   const handleMobileMenuToggle = () => {
     setShowMobileMenu(!showMobileMenu);
   };
@@ -189,6 +235,26 @@ function GiftCardPage() {
         ? prev.filter(i => i !== item)
         : [...prev, item]
     );
+  };
+
+  const handleMobileMenuSignInToggle = () => {
+    if (isSignedIn) {
+      // Show confirmation modal when signing out
+      setShowSignOutConfirm(true);
+    } else {
+      navigate('/sign-in');
+    }
+  };
+
+  const handleSignOut = () => {
+    setIsSignedIn(false);
+    localStorage.setItem('isSignedIn', 'false');
+    localStorage.removeItem('currentUser');
+    // Dispatch custom event to update other pages in same tab
+    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    setShowSignOutConfirm(false);
+    // Close mobile menu
+    setShowMobileMenu(false);
   };
 
   const handleBalanceSelect = (balance: number) => {
@@ -411,9 +477,11 @@ function GiftCardPage() {
                       fontWeight: '500',
                       textTransform: 'uppercase',
                       borderBottom: mobileMenuActiveTab === 'SHOP' ? '2px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
                       paddingBottom: '4px',
                       background: 'none',
-                      border: 'none',
                       cursor: 'pointer'
                     }}
                   >
@@ -428,9 +496,11 @@ function GiftCardPage() {
                       fontWeight: '500',
                       textTransform: 'uppercase',
                       borderBottom: mobileMenuActiveTab === 'TOOLS' ? '2px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
                       paddingBottom: '4px',
                       background: 'none',
-                      border: 'none',
                       cursor: 'pointer'
                     }}
                   >
@@ -445,9 +515,11 @@ function GiftCardPage() {
                       fontWeight: '500',
                       textTransform: 'uppercase',
                       borderBottom: mobileMenuActiveTab === 'BRAND' ? '2px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
                       paddingBottom: '4px',
                       background: 'none',
-                      border: 'none',
                       cursor: 'pointer'
                     }}
                   >
@@ -470,7 +542,8 @@ function GiftCardPage() {
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
-                            textTransform: 'uppercase'
+                            textTransform: 'uppercase',
+                            transform: 'translateX(7px)'
                           }}>
                             {item}
                           </span>
@@ -484,7 +557,8 @@ function GiftCardPage() {
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
-                            textTransform: 'uppercase'
+                            textTransform: 'uppercase',
+                            transform: 'translateX(7px)'
                           }}>
                             {item}
                           </span>
@@ -510,18 +584,19 @@ function GiftCardPage() {
                                 color: 'black',
                                 fontWeight: '500',
                                 textTransform: 'uppercase',
-                                cursor: 'pointer'
+                                cursor: 'pointer',
+                                transform: 'translateX(7px)'
                               }}
-                              onClick={() => {
-                                if (item.isExpandable) {
-                                  if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                    navigate('/shop/units');
-                                  } else {
-                                    handleMobileMenuItemToggle(item.label);
-                                  }
+                            onClick={() => {
+                              if (item.isExpandable) {
+                                if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
+                                  navigate('/shop/units');
+                                } else {
+                                  handleMobileMenuItemToggle(item.label);
                                 }
-                              }}
-                            >
+                              }
+                            }}
+                          >
                               {item.label}
                             </span>
                             {item.hasArrow && (
@@ -531,7 +606,7 @@ function GiftCardPage() {
                                 style={{ 
                                   width: '16px', 
                                   height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px)`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px) translateX(-5px)`,
                                   display: 'flex',
                                   alignItems: 'center',
                                   cursor: 'pointer'
@@ -583,13 +658,7 @@ function GiftCardPage() {
                 {/* Sign In/Out - Fixed at bottom */}
                 <div className="flex justify-center" style={{ marginBottom: '20px', marginTop: 'auto' }}>
                   <span 
-                    onClick={() => {
-                      if (isSignedIn) {
-                        setIsSignedIn(!isSignedIn);
-                      } else {
-                        navigate('/sign-in');
-                      }
-                    }}
+                    onClick={handleMobileMenuSignInToggle}
                     style={{ 
                       fontFamily: '"Futura PT Medium"',
                       fontSize: '14px',
@@ -1666,6 +1735,18 @@ function GiftCardPage() {
           )}
         </div>
       </div>
+
+      {/* Sign Out Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showSignOutConfirm}
+        onClose={() => setShowSignOutConfirm(false)}
+        onConfirm={handleSignOut}
+        title="SIGN OUT"
+        message="ARE YOU SURE YOU WANT TO SIGN OUT?"
+        confirmText="CONFIRM"
+        cancelText="CANCEL"
+        dataAttribute="sign-out-confirm"
+      />
     </div>
   );
 }

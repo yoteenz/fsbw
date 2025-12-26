@@ -247,7 +247,8 @@ function AccountPage() {
 
   const handleMobileMenuSignInToggle = () => {
     if (isSignedIn) {
-      setIsSignedIn(!isSignedIn);
+      // Show confirmation modal when signing out
+      setShowSignOutConfirm(true);
     } else {
       // Navigate to sign-in page (will default to account page after sign-in)
       navigate('/sign-in');
@@ -261,6 +262,8 @@ function AccountPage() {
     // Dispatch custom event to update other pages in same tab
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
     setShowSignOutConfirm(false);
+    // Close mobile menu
+    setShowMobileMenu(false);
     // Navigate to home or sign-in page
     navigate('/sign-in');
   };
@@ -747,9 +750,11 @@ function AccountPage() {
                       fontWeight: '500',
                       textTransform: 'uppercase',
                       borderBottom: mobileMenuActiveTab === 'SHOP' ? '2px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
                       paddingBottom: '4px',
                       background: 'none',
-                      border: 'none',
                       cursor: 'pointer'
                     }}
                   >
@@ -764,9 +769,11 @@ function AccountPage() {
                       fontWeight: '500',
                       textTransform: 'uppercase',
                       borderBottom: mobileMenuActiveTab === 'TOOLS' ? '2px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
                       paddingBottom: '4px',
                       background: 'none',
-                      border: 'none',
                       cursor: 'pointer'
                     }}
                   >
@@ -781,9 +788,11 @@ function AccountPage() {
                       fontWeight: '500',
                       textTransform: 'uppercase',
                       borderBottom: mobileMenuActiveTab === 'BRAND' ? '2px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
                       paddingBottom: '4px',
                       background: 'none',
-                      border: 'none',
                       cursor: 'pointer'
                     }}
                   >
@@ -806,7 +815,8 @@ function AccountPage() {
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
-                            textTransform: 'uppercase'
+                            textTransform: 'uppercase',
+                            transform: 'translateX(7px)'
                           }}>
                             {item}
                           </span>
@@ -820,7 +830,8 @@ function AccountPage() {
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
-                            textTransform: 'uppercase'
+                            textTransform: 'uppercase',
+                            transform: 'translateX(7px)'
                           }}>
                             {item}
                           </span>
@@ -846,7 +857,8 @@ function AccountPage() {
                                 color: 'black',
                                 fontWeight: '500',
                                 textTransform: 'uppercase',
-                                cursor: 'pointer'
+                                cursor: 'pointer',
+                                transform: 'translateX(7px)'
                               }}
                               onClick={() => {
                                 if (item.isExpandable) {
@@ -869,7 +881,7 @@ function AccountPage() {
                                 style={{ 
                                   width: '16px', 
                                   height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px)`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px) translateX(-5px)`,
                                   display: 'flex',
                                   alignItems: 'center',
                                   cursor: 'pointer'
@@ -1114,13 +1126,46 @@ function AccountPage() {
 
                 {/* Navigation Options */}
                 {[
-                  { title: 'ORDERS', subtitle: '2 ACTIVE ORDERS', route: '/account/orders' },
+                  { 
+                    title: 'ORDERS', 
+                    subtitle: (() => {
+                      // Get active orders count for current user
+                      if (userData) {
+                        try {
+                          const userOrdersKey = `userOrders_${userData.email}`;
+                          const storedOrders = localStorage.getItem(userOrdersKey);
+                          if (storedOrders) {
+                            const orders = JSON.parse(storedOrders);
+                            const activeCount = (orders.activeOrders || []).length;
+                            return activeCount > 0 ? `${activeCount} ACTIVE ORDER${activeCount !== 1 ? 'S' : ''}` : '0 ACTIVE ORDERS';
+                          }
+                        } catch (e) {
+                          console.error('Error loading order count:', e);
+                        }
+                      }
+                      // Default for signed in users: 0, for mock user or not signed in: show mock data
+                      return userData?.email?.toLowerCase() === 'bruno203@gmail.com' || !userData ? '2 ACTIVE ORDERS' : '0 ACTIVE ORDERS';
+                    })(), 
+                    route: '/account/orders' 
+                  },
                   { title: 'NOTIFICATIONS', subtitle: 'NEWSLETTER + ALERTS', route: null },
                   { title: 'MEMBERSHIP', subtitle: 'SUBSCRIPTIONS + REWARDS PROGRAM', route: null },
                   { title: 'AFFILIATE', subtitle: 'SUBMIT PHOTOS + VIDEOS FOR POINTS', route: null },
-                  { title: 'REVIEWS', subtitle: '4 TOTAL REVIEWS', route: null },
-                  { title: 'SHIPPING ADDRESS', subtitle: '2 ADDRESSES ON FILE', route: null },
-                  { title: 'PAYMENT METHOD', subtitle: '2 CARDS ON FILE', route: null },
+                  { 
+                    title: 'REVIEWS', 
+                    subtitle: userData && userData.email?.toLowerCase() !== 'bruno203@gmail.com' ? '0 TOTAL REVIEWS' : '4 TOTAL REVIEWS', 
+                    route: null 
+                  },
+                  { 
+                    title: 'SHIPPING ADDRESS', 
+                    subtitle: userData && userData.email?.toLowerCase() !== 'bruno203@gmail.com' ? '0 ADDRESSES ON FILE' : '2 ADDRESSES ON FILE', 
+                    route: null 
+                  },
+                  { 
+                    title: 'PAYMENT METHOD', 
+                    subtitle: userData && userData.email?.toLowerCase() !== 'bruno203@gmail.com' ? '0 CARDS ON FILE' : '2 CARDS ON FILE', 
+                    route: null 
+                  },
                   { title: 'SETTINGS', subtitle: 'PASSWORD + NOTIFICATIONS', route: null }
                 ].map((item, index) => (
                   <div

@@ -102,3 +102,5 @@ After generating images, place them in:
 - Update the code to reference these new images based on selected color
 
 
+
+

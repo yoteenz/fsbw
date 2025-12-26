@@ -15,7 +15,26 @@ function CheckoutConfirmPage() {
     }
   });
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
+    const pathname = window.location.pathname;
+    if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
+      return 'TOOLS';
+    } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
+      return 'BRAND';
+    }
+    return 'SHOP';
+  });
+  const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
+  const [isSignedIn, setIsSignedIn] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return localStorage.getItem('isSignedIn') === 'true';
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
+  });
   
   // Order data - get from location state or generate
   const [orderData, setOrderData] = useState(() => {
@@ -207,6 +226,17 @@ function CheckoutConfirmPage() {
     // Check localStorage or session for sign-in status
     const signedIn = localStorage.getItem('isSignedIn') === 'true';
     setIsSignedIn(signedIn);
+    
+    // Listen for sign-in state changes
+    const handleSignInStateChange = (event: CustomEvent) => {
+      setIsSignedIn(event.detail === 'true');
+    };
+    
+    window.addEventListener('signInStateChanged', handleSignInStateChange as EventListener);
+    
+    return () => {
+      window.removeEventListener('signInStateChanged', handleSignInStateChange as EventListener);
+    };
     
     // If no order data from location state, populate with mock data
     if (!location.state) {
@@ -687,8 +717,60 @@ function CheckoutConfirmPage() {
     return text;
   };
 
+  // Update active tab based on current route
+  useEffect(() => {
+    const pathname = location.pathname;
+    if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
+      setMobileMenuActiveTab('TOOLS');
+    } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
+      setMobileMenuActiveTab('BRAND');
+    } else {
+      setMobileMenuActiveTab('SHOP');
+    }
+  }, [location.pathname]);
+
+  // Ensure active tab is set correctly when menu opens
+  useEffect(() => {
+    if (showMobileMenu) {
+      const pathname = location.pathname;
+      if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
+        setMobileMenuActiveTab('TOOLS');
+      } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
+        setMobileMenuActiveTab('BRAND');
+      } else {
+        setMobileMenuActiveTab('SHOP');
+      }
+    }
+  }, [showMobileMenu, location.pathname]);
+
   const handleMobileMenuToggle = () => {
     setShowMobileMenu(!showMobileMenu);
+  };
+
+  const handleMobileMenuTabClick = (tab: string) => {
+    setMobileMenuActiveTab(tab);
+  };
+
+  const handleMobileMenuItemToggle = (item: string) => {
+    setMobileMenuExpandedItems(prev => 
+      prev.includes(item) 
+        ? prev.filter(i => i !== item)
+        : [...prev, item]
+    );
+  };
+
+  const handleMobileMenuSignInToggle = () => {
+    if (isSignedIn) {
+      // Show confirmation modal when signing out
+      setIsSignedIn(false);
+      localStorage.setItem('isSignedIn', 'false');
+      localStorage.removeItem('currentUser');
+      window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+      setShowMobileMenu(false);
+      navigate('/sign-in');
+    } else {
+      navigate('/sign-in');
+    }
   };
 
   return (
@@ -834,11 +916,271 @@ function CheckoutConfirmPage() {
               </div>
             </div>
 
-            {/* MAIN CARD */}
+            {/* CONTENT */}
             <div
-              className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
-              style={{ borderWidth: '1.3px' }}
+              className="flex flex-col w-full"
+              style={{ 
+                minWidth: '100%', 
+                maxWidth: 'none', 
+                overflow: 'visible',
+                minHeight: showMobileMenu ? '560px' : 'auto',
+                paddingBottom: showMobileMenu ? '1rem' : '0'
+              }}
             >
+            {showMobileMenu ? (
+              /* MENU CONTENT */
+              <div
+                className="border border-black flex flex-col pt-6 pb-4 px-5 bg-white/60 backdrop-blur-sm w-full"
+                style={{ 
+                  borderWidth: '1.3px', 
+                  minWidth: '100%', 
+                  maxWidth: 'none', 
+                  overflow: 'visible',
+                  backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                  minHeight: '560px'
+                }}
+              >
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+                {/* Navigation Links */}
+                <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
+                  <button
+                    onClick={() => handleMobileMenuTabClick('SHOP')}
+                    style={{ 
+                      fontFamily: mobileMenuActiveTab === 'SHOP' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                      fontSize: '14px',
+                      color: mobileMenuActiveTab === 'SHOP' ? '#EB1C24' : 'black',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      borderBottom: mobileMenuActiveTab === 'SHOP' ? '2px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
+                      paddingBottom: '4px',
+                      background: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    SHOP
+                  </button>
+                  <button
+                    onClick={() => handleMobileMenuTabClick('TOOLS')}
+                    style={{ 
+                      fontFamily: mobileMenuActiveTab === 'TOOLS' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                      fontSize: '14px',
+                      color: mobileMenuActiveTab === 'TOOLS' ? '#EB1C24' : 'black',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      borderBottom: mobileMenuActiveTab === 'TOOLS' ? '2px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
+                      paddingBottom: '4px',
+                      background: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    TOOLS
+                  </button>
+                  <button
+                    onClick={() => handleMobileMenuTabClick('BRAND')}
+                    style={{ 
+                      fontFamily: mobileMenuActiveTab === 'BRAND' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                      fontSize: '14px',
+                      color: mobileMenuActiveTab === 'BRAND' ? '#EB1C24' : 'black',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      borderBottom: mobileMenuActiveTab === 'BRAND' ? '2px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
+                      paddingBottom: '4px',
+                      background: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    BRAND
+                  </button>
+                </div>
+
+                {/* Menu Items - Fixed height with scroll if needed */}
+                <div style={{ flex: '1', overflowY: 'auto', marginBottom: '20px', minHeight: '0' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
+                    {mobileMenuActiveTab === 'TOOLS' ? (
+                      ['GIFT CARD'].map((item, index) => (
+                        <div 
+                          key={index} 
+                          className="flex items-center justify-between cursor-pointer"
+                          onClick={() => navigate('/tools/gift-card')}
+                        >
+                          <span style={{ 
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '14px',
+                            color: 'black',
+                            fontWeight: '500',
+                            textTransform: 'uppercase',
+                            transform: 'translateX(7px)'
+                          }}>
+                            {item}
+                          </span>
+                        </div>
+                      ))
+                    ) : mobileMenuActiveTab === 'BRAND' ? (
+                      ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
+                        <div key={index} className="flex items-center justify-between">
+                          <span style={{ 
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '14px',
+                            color: 'black',
+                            fontWeight: '500',
+                            textTransform: 'uppercase',
+                            transform: 'translateX(7px)'
+                          }}>
+                            {item}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      // SHOP tab with dropdown functionality
+                      [
+                        { label: 'UNITS', hasArrow: true, isExpandable: true, subItems: ['STRAIGHT', 'WAVY', 'CURLY'] },
+                        { label: 'BOOKING', hasArrow: true, isExpandable: true, subItems: ['APPOINTMENT', 'CONSULTATION'] },
+                        { label: 'BUILD-A-WIG', hasArrow: false },
+                        { label: 'ORDER AUTHORIZATION FORM', hasArrow: false }
+                      ].map((item, index) => (
+                        <div key={index}>
+                          <div 
+                            className="flex items-center justify-between"
+                            style={{ alignItems: 'center' }}
+                          >
+                            <span 
+                              style={{ 
+                                fontFamily: '"Futura PT Book"',
+                                fontSize: '14px',
+                                color: 'black',
+                                fontWeight: '500',
+                                textTransform: 'uppercase',
+                                cursor: 'pointer',
+                                transform: 'translateX(7px)'
+                              }}
+                              onClick={() => {
+                                if (item.isExpandable) {
+                                  // If UNITS is already expanded, navigate to shop/units page
+                                  if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
+                                    navigate('/shop/units');
+                                  } else {
+                                    // Otherwise, toggle expansion
+                                    handleMobileMenuItemToggle(item.label);
+                                  }
+                                }
+                              }}
+                            >
+                              {item.label}
+                            </span>
+                            {item.hasArrow && (
+                              <img
+                                src="/assets/NOIR/closed-arrow.svg"
+                                alt="Arrow"
+                                style={{ 
+                                  width: '16px', 
+                                  height: '16px',
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px) translateX(-5px)`,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  cursor: 'pointer'
+                                }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (item.isExpandable) {
+                                    handleMobileMenuItemToggle(item.label);
+                                  }
+                                }}
+                              />
+                            )}
+                          </div>
+                          {item.isExpandable && mobileMenuExpandedItems.includes(item.label) && item.subItems && (
+                            <div className="ml-4 mt-2 space-y-2">
+                              {item.subItems.map((subItem, subIndex) => (
+                                <div 
+                                  key={subIndex} 
+                                  className="flex items-center cursor-pointer"
+                                  onClick={() => {
+                                    if (subItem === 'STRAIGHT') {
+                                      navigate('/units/straight');
+                                    }
+                                  }}
+                                >
+                                  <span style={{ 
+                                    fontFamily: '"Futura PT Book"',
+                                    fontSize: '14px',
+                                    color: '#EB1C24',
+                                    fontWeight: '500',
+                                    textTransform: 'uppercase'
+                                  }}>
+                                    {subItem}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                {/* Sign In/Out - Fixed at bottom */}
+                <div className="flex justify-center" style={{ marginBottom: '20px', marginTop: 'auto' }}>
+                  <span 
+                    onClick={handleMobileMenuSignInToggle}
+                    style={{ 
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '14px',
+                      color: '#EB1C24',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {isSignedIn ? 'SIGN OUT' : 'SIGN IN'}
+                  </span>
+                </div>
+
+                {/* Social Media Icons - Fixed at bottom */}
+                <div className="flex justify-center" style={{ marginBottom: '0' }}>
+                  <div className="flex" style={{ gap: '19px' }}>
+                    <img
+                      src="/assets/instagram-icon.svg"
+                      alt="Instagram"
+                      style={{ width: '20px', height: '20px' }}
+                    />
+                    <img
+                      src="/assets/twitter-icon.svg"
+                      alt="Twitter"
+                      style={{ width: '20px', height: '20px' }}
+                    />
+                    <img
+                      src="/assets/facebook-icon.svg"
+                      alt="Facebook"
+                      style={{ width: '20px', height: '20px' }}
+                    />
+                  </div>
+                </div>
+                </div>
+              </div>
+            ) : (
+              /* REGULAR CONTENT */
+              <>
+              {/* MAIN CARD */}
+              <div
+                className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+                style={{ 
+                  borderWidth: '1.3px',
+                  minWidth: '100%', 
+                  maxWidth: 'none', 
+                  overflow: 'visible',
+                  backgroundColor: 'rgba(255, 255, 255, 0.6)'
+                }}
+              >
               {/* CONGRATS Header */}
               <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                 <h1
@@ -1026,6 +1368,13 @@ function CheckoutConfirmPage() {
                 </div>
               </div>
 
+              {/* Border line above Order Processing Message */}
+              <div style={{ 
+                borderTop: '1.3px solid #000',
+                marginTop: '-8px'
+              }}>
+              </div>
+
               {/* Order Processing Message */}
               <p
                 style={{
@@ -1039,8 +1388,11 @@ function CheckoutConfirmPage() {
                   fontWeight: '600'
                 }}
               >
-                YOUR ORDER IS BEING PROCESSED BUT YOU'RE NOT FINISHED YET.<br/>YOU STILL NEED TO COMPLETE & SIGN AN ORDER AUTHORIZATION FORM WITHIN 24 HOURS TO COMPLETE THIS PURCHASE OR YOUR ORDER WILL BE AUTOMATICALLY CANCELED & REFUNDED.
+                YOUR ORDER IS BEING PROCESSED BUT YOU'RE NOT FINISHED YET.<br/>YOU STILL NEED TO <span style={{ color: '#EB1C24' }}>COMPLETE + SIGN</span> AN ORDER AUTHORIZATION FORM WITHIN 24 HOURS TO COMPLETE THIS PURCHASE OR YOUR ORDER WILL BE AUTOMATICALLY <span style={{ color: '#EB1C24' }}>CANCELED + REFUNDED</span>.
               </p>
+              </div>
+              </>
+            )}
             </div>
 
             {/* Sign Order Form Button - Outside main card */}
@@ -1066,11 +1418,12 @@ function CheckoutConfirmPage() {
               </div>
             )}
 
-            {/* ORDER SUMMARY CARD */}
-            <div
-              className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
-              style={{ borderWidth: '1.3px' }}
-            >
+            {/* ORDER SUMMARY CARD - Only show when menu is closed */}
+            {!showMobileMenu && (
+              <div
+                className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+                style={{ borderWidth: '1.3px' }}
+              >
               {/* ORDER SUMMARY */}
               <div style={{ marginBottom: '55px' }}>
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
@@ -1281,7 +1634,8 @@ function CheckoutConfirmPage() {
                   </div>
                 </div>
               )}
-            </div>
+              </div>
+            )}
 
             {/* Navigation Buttons */}
             {!showMobileMenu && (

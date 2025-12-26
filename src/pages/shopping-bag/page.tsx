@@ -26,7 +26,17 @@ function ShoppingBagPage() {
     return 'SHOP';
   });
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return localStorage.getItem('isSignedIn') === 'true';
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
+  });
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [deleteItemConfirm, setDeleteItemConfirm] = useState<{ itemId: string; type: 'cart' | 'saved'; previousQuantity?: number } | null>(null);
   const deleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -450,6 +460,41 @@ function ShoppingBagPage() {
     }
   }, [showMobileMenu, location.pathname]);
 
+  // Check sign-in status on mount and listen for changes
+  useEffect(() => {
+    const checkSignInStatus = () => {
+      try {
+        const signedIn = localStorage.getItem('isSignedIn') === 'true';
+        setIsSignedIn(signedIn);
+      } catch (e) {
+        setIsSignedIn(false);
+      }
+    };
+
+    // Check on mount
+    checkSignInStatus();
+
+    // Listen for storage changes (when user signs in/out in another tab)
+    const handleStorageChange = () => {
+      checkSignInStatus();
+    };
+
+    // Listen for sign-in state changes from sign-in page
+    const handleSignInStateChange = () => {
+      checkSignInStatus();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('focus', handleStorageChange);
+    window.addEventListener('signInStateChanged', handleSignInStateChange as EventListener);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('focus', handleStorageChange);
+      window.removeEventListener('signInStateChanged', handleSignInStateChange as EventListener);
+    };
+  }, []);
+
   const handleMobileMenuToggle = () => {
     setShowMobileMenu(!showMobileMenu);
   };
@@ -468,10 +513,22 @@ function ShoppingBagPage() {
 
   const handleMobileMenuSignInToggle = () => {
     if (isSignedIn) {
-      setIsSignedIn(!isSignedIn);
+      // Show confirmation modal when signing out
+      setShowSignOutConfirm(true);
     } else {
       navigate('/sign-in');
     }
+  };
+
+  const handleSignOut = () => {
+    setIsSignedIn(false);
+    localStorage.setItem('isSignedIn', 'false');
+    localStorage.removeItem('currentUser');
+    // Dispatch custom event to update other pages in same tab
+    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    setShowSignOutConfirm(false);
+    // Close mobile menu
+    setShowMobileMenu(false);
   };
 
   // Calculate subtotal
@@ -628,9 +685,11 @@ function ShoppingBagPage() {
                       fontWeight: '500',
                       textTransform: 'uppercase',
                       borderBottom: mobileMenuActiveTab === 'SHOP' ? '2px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
                       paddingBottom: '4px',
                       background: 'none',
-                      border: 'none',
                       cursor: 'pointer'
                     }}
                   >
@@ -645,9 +704,11 @@ function ShoppingBagPage() {
                       fontWeight: '500',
                       textTransform: 'uppercase',
                       borderBottom: mobileMenuActiveTab === 'TOOLS' ? '2px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
                       paddingBottom: '4px',
                       background: 'none',
-                      border: 'none',
                       cursor: 'pointer'
                     }}
                   >
@@ -662,9 +723,11 @@ function ShoppingBagPage() {
                       fontWeight: '500',
                       textTransform: 'uppercase',
                       borderBottom: mobileMenuActiveTab === 'BRAND' ? '2px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
                       paddingBottom: '4px',
                       background: 'none',
-                      border: 'none',
                       cursor: 'pointer'
                     }}
                   >
@@ -687,7 +750,8 @@ function ShoppingBagPage() {
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
-                            textTransform: 'uppercase'
+                            textTransform: 'uppercase',
+                            transform: 'translateX(7px)'
                           }}>
                             {item}
                           </span>
@@ -701,7 +765,8 @@ function ShoppingBagPage() {
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
-                            textTransform: 'uppercase'
+                            textTransform: 'uppercase',
+                            transform: 'translateX(7px)'
                           }}>
                             {item}
                           </span>
@@ -727,7 +792,8 @@ function ShoppingBagPage() {
                                 color: 'black',
                                 fontWeight: '500',
                                 textTransform: 'uppercase',
-                                cursor: 'pointer'
+                                cursor: 'pointer',
+                                transform: 'translateX(7px)'
                               }}
                               onClick={() => {
                                 if (item.isExpandable) {
@@ -748,7 +814,7 @@ function ShoppingBagPage() {
                                 style={{ 
                                   width: '16px', 
                                   height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px)`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px) translateX(-5px)`,
                                   display: 'flex',
                                   alignItems: 'center',
                                   cursor: 'pointer'
@@ -1888,6 +1954,18 @@ function ShoppingBagPage() {
             confirmText="CONFIRM"
             cancelText="CANCEL"
             dataAttribute="delete-item-confirm"
+          />
+
+          {/* Sign Out Confirmation Modal */}
+          <ConfirmationModal
+            isOpen={showSignOutConfirm}
+            onClose={() => setShowSignOutConfirm(false)}
+            onConfirm={handleSignOut}
+            title="SIGN OUT"
+            message="ARE YOU SURE YOU WANT TO SIGN OUT?"
+            confirmText="CONFIRM"
+            cancelText="CANCEL"
+            dataAttribute="sign-out-confirm"
           />
         </div>
       </div>

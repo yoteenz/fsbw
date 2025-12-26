@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
+import ConfirmationModal from '../../../components/ConfirmationModal';
 
 interface TextureOption {
   id: string;
@@ -60,9 +61,18 @@ function TextureSelection() {
   
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState('SHOP');
+  const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
+    const pathname = window.location.pathname;
+    if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
+      return 'TOOLS';
+    } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
+      return 'BRAND';
+    }
+    return 'SHOP';
+  });
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   
   // Cart count state
   const [cartCount, setCartCount] = useState(() => {
@@ -273,6 +283,32 @@ function TextureSelection() {
     navigate(returnRoute);
   };
 
+  // Update active tab based on current route
+  useEffect(() => {
+    const pathname = location.pathname;
+    if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
+      setMobileMenuActiveTab('TOOLS');
+    } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
+      setMobileMenuActiveTab('BRAND');
+    } else {
+      setMobileMenuActiveTab('SHOP');
+    }
+  }, [location.pathname]);
+
+  // Ensure active tab is set correctly when menu opens
+  useEffect(() => {
+    if (showMobileMenu) {
+      const pathname = location.pathname;
+      if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
+        setMobileMenuActiveTab('TOOLS');
+      } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
+        setMobileMenuActiveTab('BRAND');
+      } else {
+        setMobileMenuActiveTab('SHOP');
+      }
+    }
+  }, [showMobileMenu, location.pathname]);
+
   // Mobile menu handlers
   const handleMobileMenuToggle = () => {
     setShowMobileMenu(!showMobileMenu);
@@ -296,10 +332,22 @@ function TextureSelection() {
 
   const handleMobileMenuSignInToggle = () => {
     if (isSignedIn) {
-      setIsSignedIn(!isSignedIn);
+      // Show confirmation modal when signing out
+      setShowSignOutConfirm(true);
     } else {
       navigate('/sign-in');
     }
+  };
+
+  const handleSignOut = () => {
+    setIsSignedIn(false);
+    localStorage.setItem('isSignedIn', 'false');
+    localStorage.removeItem('currentUser');
+    // Dispatch custom event to update other pages in same tab
+    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    setShowSignOutConfirm(false);
+    // Close mobile menu
+    setShowMobileMenu(false);
   };
 
   const handleConfirmSelection = () => {
@@ -902,9 +950,11 @@ function TextureSelection() {
                     fontWeight: '500',
                     textTransform: 'uppercase',
                     borderBottom: mobileMenuActiveTab === 'SHOP' ? '2px solid #EB1C24' : 'none',
+                    borderTop: 'none',
+                    borderLeft: 'none',
+                    borderRight: 'none',
                     paddingBottom: '4px',
                     background: 'none',
-                    border: 'none',
                     cursor: 'pointer'
                   }}
                 >
@@ -919,9 +969,11 @@ function TextureSelection() {
                     fontWeight: '500',
                     textTransform: 'uppercase',
                     borderBottom: mobileMenuActiveTab === 'TOOLS' ? '2px solid #EB1C24' : 'none',
+                    borderTop: 'none',
+                    borderLeft: 'none',
+                    borderRight: 'none',
                     paddingBottom: '4px',
                     background: 'none',
-                    border: 'none',
                     cursor: 'pointer'
                   }}
                 >
@@ -936,9 +988,11 @@ function TextureSelection() {
                     fontWeight: '500',
                     textTransform: 'uppercase',
                     borderBottom: mobileMenuActiveTab === 'BRAND' ? '2px solid #EB1C24' : 'none',
+                    borderTop: 'none',
+                    borderLeft: 'none',
+                    borderRight: 'none',
                     paddingBottom: '4px',
                     background: 'none',
-                    border: 'none',
                     cursor: 'pointer'
                   }}
                 >
@@ -957,7 +1011,8 @@ function TextureSelection() {
                           fontSize: '14px',
                           color: 'black',
                           fontWeight: '500',
-                          textTransform: 'uppercase'
+                          textTransform: 'uppercase',
+                          transform: 'translateX(7px)'
                         }}>
                           {item}
                         </span>
@@ -971,7 +1026,8 @@ function TextureSelection() {
                           fontSize: '14px',
                           color: 'black',
                           fontWeight: '500',
-                          textTransform: 'uppercase'
+                          textTransform: 'uppercase',
+                          transform: 'translateX(7px)'
                         }}>
                           {item}
                         </span>
@@ -997,7 +1053,8 @@ function TextureSelection() {
                               color: 'black',
                               fontWeight: '500',
                               textTransform: 'uppercase',
-                              cursor: 'pointer'
+                              cursor: 'pointer',
+                              transform: 'translateX(7px)'
                             }}
                             onClick={() => {
                               if (item.isExpandable) {
@@ -1018,7 +1075,7 @@ function TextureSelection() {
                               style={{ 
                                 width: '16px', 
                                 height: '16px',
-                                transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px)`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px) translateX(-5px)`,
                                 display: 'flex',
                                 alignItems: 'center',
                                 cursor: 'pointer'
@@ -1096,6 +1153,18 @@ function TextureSelection() {
             </div>
           </div>
         )}
+
+      {/* Sign Out Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showSignOutConfirm}
+        onClose={() => setShowSignOutConfirm(false)}
+        onConfirm={handleSignOut}
+        title="SIGN OUT"
+        message="ARE YOU SURE YOU WANT TO SIGN OUT?"
+        confirmText="CONFIRM"
+        cancelText="CANCEL"
+        dataAttribute="sign-out-confirm"
+      />
     </>
   );
 }

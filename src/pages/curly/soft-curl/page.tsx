@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
+import ConfirmationModal from '../../../components/ConfirmationModal';
 
 function SoftCurlSelection() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [selectedCustomCap, setSelectedCustomCap] = useState('M');
   const [selectedFlexibleCap, setSelectedFlexibleCap] = useState('');
@@ -320,9 +322,88 @@ function SoftCurlSelection() {
   const [similarProductsScroll, setSimilarProductsScroll] = useState(0);
   const [recentlyViewedScroll, setRecentlyViewedScroll] = useState(0);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState('SHOP');
+  const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
+    const pathname = window.location.pathname;
+    if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
+      return 'TOOLS';
+    } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
+      return 'BRAND';
+    }
+    return 'SHOP';
+  });
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return localStorage.getItem('isSignedIn') === 'true';
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
+  });
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+
+  // Update active tab based on current route
+  useEffect(() => {
+    const pathname = location.pathname;
+    if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
+      setMobileMenuActiveTab('TOOLS');
+    } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
+      setMobileMenuActiveTab('BRAND');
+    } else {
+      setMobileMenuActiveTab('SHOP');
+    }
+  }, [location.pathname]);
+
+  // Ensure active tab is set correctly when menu opens
+  useEffect(() => {
+    if (showMobileMenu) {
+      const pathname = location.pathname;
+      if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
+        setMobileMenuActiveTab('TOOLS');
+      } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
+        setMobileMenuActiveTab('BRAND');
+      } else {
+        setMobileMenuActiveTab('SHOP');
+      }
+    }
+  }, [showMobileMenu, location.pathname]);
+
+  // Check sign-in status on mount and listen for changes
+  useEffect(() => {
+    const checkSignInStatus = () => {
+      try {
+        const signedIn = localStorage.getItem('isSignedIn') === 'true';
+        setIsSignedIn(signedIn);
+      } catch (e) {
+        setIsSignedIn(false);
+      }
+    };
+
+    // Check on mount
+    checkSignInStatus();
+
+    // Listen for storage changes (when user signs in/out in another tab)
+    const handleStorageChange = () => {
+      checkSignInStatus();
+    };
+
+    // Listen for sign-in state changes from sign-in page
+    const handleSignInStateChange = () => {
+      checkSignInStatus();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('focus', handleStorageChange);
+    window.addEventListener('signInStateChanged', handleSignInStateChange as EventListener);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('focus', handleStorageChange);
+      window.removeEventListener('signInStateChanged', handleSignInStateChange as EventListener);
+    };
+  }, []);
 
   const handleBack = () => {
     navigate(-1);
@@ -346,10 +427,22 @@ function SoftCurlSelection() {
 
   const handleMobileMenuSignInToggle = () => {
     if (isSignedIn) {
-      setIsSignedIn(!isSignedIn);
+      // Show confirmation modal when signing out
+      setShowSignOutConfirm(true);
     } else {
       navigate('/sign-in');
     }
+  };
+
+  const handleSignOut = () => {
+    setIsSignedIn(false);
+    localStorage.setItem('isSignedIn', 'false');
+    localStorage.removeItem('currentUser');
+    // Dispatch custom event to update other pages in same tab
+    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    setShowSignOutConfirm(false);
+    // Close mobile menu
+    setShowMobileMenu(false);
   };
 
   const handleCustomCapSelect = (capSize: string) => {
@@ -829,9 +922,11 @@ function SoftCurlSelection() {
                       fontWeight: '500',
                       textTransform: 'uppercase',
                       borderBottom: mobileMenuActiveTab === 'SHOP' ? '2px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
                       paddingBottom: '4px',
                       background: 'none',
-                      border: 'none',
                       cursor: 'pointer'
                     }}
                   >
@@ -846,9 +941,11 @@ function SoftCurlSelection() {
                       fontWeight: '500',
                       textTransform: 'uppercase',
                       borderBottom: mobileMenuActiveTab === 'TOOLS' ? '2px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
                       paddingBottom: '4px',
                       background: 'none',
-                      border: 'none',
                       cursor: 'pointer'
                     }}
                   >
@@ -863,9 +960,11 @@ function SoftCurlSelection() {
                       fontWeight: '500',
                       textTransform: 'uppercase',
                       borderBottom: mobileMenuActiveTab === 'BRAND' ? '2px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
                       paddingBottom: '4px',
                       background: 'none',
-                      border: 'none',
                       cursor: 'pointer'
                     }}
                   >
@@ -888,7 +987,8 @@ function SoftCurlSelection() {
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
-                            textTransform: 'uppercase'
+                            textTransform: 'uppercase',
+                            transform: 'translateX(7px)'
                           }}>
                             {item}
                           </span>
@@ -902,7 +1002,8 @@ function SoftCurlSelection() {
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
-                            textTransform: 'uppercase'
+                            textTransform: 'uppercase',
+                            transform: 'translateX(7px)'
                           }}>
                             {item}
                           </span>
@@ -928,7 +1029,8 @@ function SoftCurlSelection() {
                                 color: 'black',
                                 fontWeight: '500',
                                 textTransform: 'uppercase',
-                                cursor: 'pointer'
+                                cursor: 'pointer',
+                                transform: 'translateX(7px)'
                               }}
                               onClick={() => {
                                 if (item.isExpandable) {
@@ -951,7 +1053,7 @@ function SoftCurlSelection() {
                                 style={{ 
                                   width: '16px', 
                                   height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px)`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px) translateX(-5px)`,
                                   display: 'flex',
                                   alignItems: 'center',
                                   cursor: 'pointer'
@@ -2813,6 +2915,18 @@ function SoftCurlSelection() {
             )}
           </div>
       </div>
+
+      {/* Sign Out Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showSignOutConfirm}
+        onClose={() => setShowSignOutConfirm(false)}
+        onConfirm={handleSignOut}
+        title="SIGN OUT"
+        message="ARE YOU SURE YOU WANT TO SIGN OUT?"
+        confirmText="CONFIRM"
+        cancelText="CANCEL"
+        dataAttribute="sign-out-confirm"
+      />
     </div>
   );
 }

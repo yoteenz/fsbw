@@ -371,9 +371,11 @@ function SignInPage() {
                       fontWeight: '500',
                       textTransform: 'uppercase',
                       borderBottom: mobileMenuActiveTab === 'SHOP' ? '2px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
                       paddingBottom: '4px',
                       background: 'none',
-                      border: 'none',
                       cursor: 'pointer'
                     }}
                   >
@@ -388,9 +390,11 @@ function SignInPage() {
                       fontWeight: '500',
                       textTransform: 'uppercase',
                       borderBottom: mobileMenuActiveTab === 'TOOLS' ? '2px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
                       paddingBottom: '4px',
                       background: 'none',
-                      border: 'none',
                       cursor: 'pointer'
                     }}
                   >
@@ -405,9 +409,11 @@ function SignInPage() {
                       fontWeight: '500',
                       textTransform: 'uppercase',
                       borderBottom: mobileMenuActiveTab === 'BRAND' ? '2px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
                       paddingBottom: '4px',
                       background: 'none',
-                      border: 'none',
                       cursor: 'pointer'
                     }}
                   >
@@ -430,7 +436,8 @@ function SignInPage() {
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
-                            textTransform: 'uppercase'
+                            textTransform: 'uppercase',
+                            transform: 'translateX(7px)'
                           }}>
                             {item}
                           </span>
@@ -444,7 +451,8 @@ function SignInPage() {
                             fontSize: '14px',
                             color: 'black',
                             fontWeight: '500',
-                            textTransform: 'uppercase'
+                            textTransform: 'uppercase',
+                            transform: 'translateX(7px)'
                           }}>
                             {item}
                           </span>
@@ -470,18 +478,19 @@ function SignInPage() {
                                 color: 'black',
                                 fontWeight: '500',
                                 textTransform: 'uppercase',
-                                cursor: 'pointer'
+                                cursor: 'pointer',
+                                transform: 'translateX(7px)'
                               }}
                               onClick={() => {
-                                if (item.isExpandable) {
-                                  if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                    navigate('/shop/units');
-                                  } else {
-                                    handleMobileMenuItemToggle(item.label);
-                                  }
+                              if (item.isExpandable) {
+                                if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
+                                  navigate('/shop/units');
+                                } else {
+                                  handleMobileMenuItemToggle(item.label);
                                 }
-                              }}
-                            >
+                              }
+                            }}
+                          >
                               {item.label}
                             </span>
                             {item.hasArrow && (
@@ -491,7 +500,7 @@ function SignInPage() {
                                 style={{ 
                                   width: '16px', 
                                   height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px)`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px) translateX(-5px)`,
                                   display: 'flex',
                                   alignItems: 'center',
                                   cursor: 'pointer'
