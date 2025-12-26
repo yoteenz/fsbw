@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import type { MouseEvent } from 'react';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 
 function ProductsUnitsPage() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Cart count state
   const [cartCount, setCartCount] = useState(() => {
@@ -17,7 +18,15 @@ function ProductsUnitsPage() {
 
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState('SHOP');
+  const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
+    const pathname = window.location.pathname;
+    if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
+      return 'TOOLS';
+    } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
+      return 'BRAND';
+    }
+    return 'SHOP';
+  });
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useState(false);
 
@@ -143,6 +152,32 @@ function ProductsUnitsPage() {
       window.removeEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
     };
   }, [currencyRates]);
+
+  // Update active tab based on current route
+  useEffect(() => {
+    const pathname = location.pathname;
+    if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
+      setMobileMenuActiveTab('TOOLS');
+    } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
+      setMobileMenuActiveTab('BRAND');
+    } else {
+      setMobileMenuActiveTab('SHOP');
+    }
+  }, [location.pathname]);
+
+  // Ensure active tab is set correctly when menu opens
+  useEffect(() => {
+    if (showMobileMenu) {
+      const pathname = location.pathname;
+      if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
+        setMobileMenuActiveTab('TOOLS');
+      } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
+        setMobileMenuActiveTab('BRAND');
+      } else {
+        setMobileMenuActiveTab('SHOP');
+      }
+    }
+  }, [showMobileMenu, location.pathname]);
 
   const handleMobileMenuToggle = () => {
     setShowMobileMenu(!showMobileMenu);

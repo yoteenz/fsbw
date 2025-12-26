@@ -63,14 +63,14 @@ export default function DynamicCartIcon({ count, size = 23, width, height, class
           <div 
             className="absolute text-white flex items-center justify-center"
             style={{
-              fontSize: Math.max(8, Math.min(iconWidth, iconHeight) * 0.3) + 2,
+              fontSize: Math.max(8, Math.min(iconWidth, iconHeight) * 0.3) + 1,
               fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
               fontWeight: '400',
               // Position the text in the center of the red circle on the bag icon
               // The red circle is typically in the bottom-right area of the bag icon
               top: '60%',
               left: '70%',
-              transform: 'translate(calc(-50% + 0px), calc(-50% + 4.5px))',
+              transform: 'translate(calc(-50% + 0px), calc(-50% + 4px))',
               textShadow: 'none',
               lineHeight: '1',
               width: '12px',
