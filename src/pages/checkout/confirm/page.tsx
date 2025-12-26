@@ -1584,7 +1584,7 @@ function CheckoutConfirmPage() {
                       CONFIRMATION NUMBER
                     </span>
                     <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
-                      #{orderData.confirmationNumber || String(Math.floor(10000000 + Math.random() * 90000000))}
+                      #{orderData.confirmationNumber || String(Math.floor(100000 + Math.random() * 900000))}
                     </span>
                   </div>
                 </div>
