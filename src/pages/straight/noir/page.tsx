@@ -2265,6 +2265,7 @@ function NoirSelection() {
             maxWidth: 'none', 
             overflow: 'visible',
             backgroundColor: 'rgba(255, 255, 255, 0.6)',
+            paddingBottom: '34px'
           }}
         >
           {/* WIG PREVIEW */}
@@ -2979,7 +2980,7 @@ function NoirSelection() {
             </div>
 
             {/* Tab Content */}
-            <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px', paddingBottom: '34px' }}>
+            <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px' }}>
                 {activeTab === 'DETAILS' && (
                   <>
                     <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
@@ -3422,9 +3423,10 @@ function NoirSelection() {
               </div>
             </div>
           </div>
+        </div>
 
-          {/* ADD TO BAG BUTTON */}
-          <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
+        {/* ADD TO BAG BUTTON */}
+        <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
             <button
               onClick={handleAddToBag}
               disabled={addToBagState === 'adding'}
@@ -3448,10 +3450,10 @@ function NoirSelection() {
               </span>
             )}
           </button>
-          </div>
+        </div>
 
-          {/* CUSTOMIZE IN BUILD-A-WIG BUTTON */}
-          <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
+        {/* CUSTOMIZE IN BUILD-A-WIG BUTTON */}
+        <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
             <button
             onClick={() => {
               // Store the selected cap size in localStorage for customize page
@@ -3531,9 +3533,9 @@ function NoirSelection() {
           >
             CUSTOMIZE IN BUILD-A-WIG
             </button>
-          </div>
         </div>
 
+        <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible' }}>
         {/* SIMILAR PRODUCTS SECTION */}
         <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
           <div 
@@ -4368,6 +4370,7 @@ function NoirSelection() {
               </button>
             </div>
           </div>
+        </div>
         </div>
             </>
           )}

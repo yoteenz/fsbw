@@ -1362,7 +1362,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               fontSize: '8px',
                               color: '#EB1C24',
                               textTransform: 'uppercase',
-                              marginTop: '6px',
+                              marginTop: '7px',
                               cursor: 'pointer'
                             }}
                             onClick={(e) => {
