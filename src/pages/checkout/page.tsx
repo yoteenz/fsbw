@@ -1736,7 +1736,7 @@ function CheckoutPage() {
                         }}>
                           {isSignedIn ? (
                             <>
-                              YOU'RE EARNING ${(orderAmount - taxesProcessing - shippingHandling - discount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} POINTS WITH THIS ORDER.
+                              YOU'RE EARNING ${orderAmount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} POINTS WITH THIS ORDER.
                             </>
                           ) : (
                             <>
@@ -3692,7 +3692,7 @@ function CheckoutPage() {
                   }
                   
                   // Calculate points earned (if signed in)
-                  const pointsEarned = isSignedIn ? Math.round(subtotal - taxesProcessing - shippingHandling - discount) : 0;
+                  const pointsEarned = isSignedIn ? Math.round(orderAmount) : 0;
                   
                   // Determine tier (simplified - you may want to get this from user data)
                   const tier = pointsEarned >= 5000 ? 'RED' : pointsEarned >= 2000 ? 'GOLD' : 'SILVER';
