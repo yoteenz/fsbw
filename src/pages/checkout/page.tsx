@@ -39,6 +39,10 @@ function CheckoutPage() {
 
   // Form state
   const [sameAsBilling, setSameAsBilling] = useState(false);
+  const [useDefaultMethod, setUseDefaultMethod] = useState(false);
+  const [savePaymentMethod, setSavePaymentMethod] = useState(false);
+  const [useDefaultPaymentMethod, setUseDefaultPaymentMethod] = useState(false);
+  const [savePaymentMethodCard, setSavePaymentMethodCard] = useState(false);
   const [subscribeNewsletter, setSubscribeNewsletter] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [showTermsRequiredModal, setShowTermsRequiredModal] = useState(false);
@@ -93,6 +97,12 @@ function CheckoutPage() {
 
   // Payment processing state
   const [processingPayment, setProcessingPayment] = useState(false);
+
+  // Horizontal scroll state for products
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [startScrollPosition, setStartScrollPosition] = useState(0);
 
   // Currency state
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -420,6 +430,86 @@ function CheckoutPage() {
     }
   }, [sameAsBilling, firstName, lastName, shippingAddress, city, state, zip]);
 
+  // Auto-populate shipping address from default method when checkbox is checked
+  useEffect(() => {
+    if (useDefaultMethod && isSignedIn) {
+      try {
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+          const user = JSON.parse(currentUser);
+          // Check if user has a default address saved
+          const defaultAddress = user.defaultAddress || user.shippingAddress;
+          if (defaultAddress) {
+            setFirstName(defaultAddress.firstName || '');
+            setLastName(defaultAddress.lastName || '');
+            setShippingAddress(defaultAddress.address || '');
+            setCity(defaultAddress.city || '');
+            setState(defaultAddress.state || '');
+            setZip(defaultAddress.zip || '');
+            setPhoneNumber(defaultAddress.phoneNumber || user.phoneNumber || '');
+            setEmail(defaultAddress.email || user.email || '');
+          } else if (user.firstName && user.lastName) {
+            // Fallback to user's basic info if no default address
+            setFirstName(user.firstName || '');
+            setLastName(user.lastName || '');
+            setEmail(user.email || '');
+            setPhoneNumber(user.phoneNumber || '');
+          }
+        }
+      } catch (error) {
+        console.error('Error loading default address:', error);
+      }
+    } else if (!useDefaultMethod) {
+      // Clear fields when checkbox is unchecked
+      setFirstName('');
+      setLastName('');
+      setShippingAddress('');
+      setCity('');
+      setState('');
+      setZip('');
+      setPhoneNumber('');
+      setEmail('');
+    }
+  }, [useDefaultMethod, isSignedIn]);
+
+  // Save payment method when checkbox is checked and form is submitted
+  useEffect(() => {
+    if (savePaymentMethod && isSignedIn && firstName && lastName && shippingAddress && city && state && zip) {
+      // This will be saved when the order is placed
+      // For now, we just track the state
+    }
+  }, [savePaymentMethod, isSignedIn, firstName, lastName, shippingAddress, city, state, zip]);
+
+  // Auto-populate payment fields from default payment method when checkbox is checked
+  useEffect(() => {
+    if (useDefaultPaymentMethod && isSignedIn) {
+      try {
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+          const user = JSON.parse(currentUser);
+          // Check if user has a default payment method saved
+          const defaultPayment = user.defaultPaymentMethod;
+          if (defaultPayment) {
+            setCardholder(defaultPayment.cardholder || '');
+            // Only show last 4 digits, but we'll need to handle this differently
+            // For now, we'll just set the cardholder name
+            setExpirationDate(defaultPayment.expirationDate || '');
+            setBillingZip(defaultPayment.billingZip || '');
+          }
+        }
+      } catch (error) {
+        console.error('Error loading default payment method:', error);
+      }
+    } else if (!useDefaultPaymentMethod) {
+      // Clear payment fields when checkbox is unchecked
+      setCardholder('');
+      setCardNumber('');
+      setExpirationDate('');
+      setCvv('');
+      setBillingZip('');
+    }
+  }, [useDefaultPaymentMethod, isSignedIn]);
+
   useEffect(() => {
     const handleCurrencyChange = () => {
       const savedCurrency = localStorage.getItem('selectedCurrency');
@@ -645,6 +735,59 @@ function CheckoutPage() {
       // Navigate to sign-in page with returnTo parameter
       navigate('/sign-in?returnTo=checkout');
     }
+  };
+
+  // Horizontal scroll handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setStartX(e.clientX);
+    setStartScrollPosition(scrollPosition);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const currentX = e.clientX;
+    const diff = currentX - startX;
+    const newPosition = startScrollPosition + diff;
+    
+    // Calculate max scroll based on actual item width (150px) + gap (20px)
+    const itemWidth = 150;
+    const gap = 20;
+    const totalItemWidth = itemWidth + gap;
+    const maxScroll = 0;
+    const minScroll = -(cartItems.length - 1) * totalItemWidth;
+    setScrollPosition(Math.max(minScroll, Math.min(maxScroll, newPosition)));
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    setStartX(e.touches[0].clientX);
+    setStartScrollPosition(scrollPosition);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const currentX = e.touches[0].clientX;
+    const diff = currentX - startX;
+    const newPosition = startScrollPosition + diff;
+    
+    // Calculate max scroll based on actual item width (150px) + gap (20px)
+    const itemWidth = 150;
+    const gap = 20;
+    const totalItemWidth = itemWidth + gap;
+    const maxScroll = 0;
+    const minScroll = -(cartItems.length - 1) * totalItemWidth;
+    setScrollPosition(Math.max(minScroll, Math.min(maxScroll, newPosition)));
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
   };
 
   const handleSignOut = () => {
@@ -1275,9 +1418,34 @@ function CheckoutPage() {
                   >
                     {/* Body */}
                     <div className="flex-1 flex flex-col overflow-hidden">
-                      {/* Cart Items - scrollable */}
-                      <div className="flex flex-col justify-start items-start gap-0 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '265px', scrollBehavior: 'smooth', width: '100%' }}>
-                        {cartItems.map((item, index) => {
+                      {/* Cart Items - horizontal scrollable */}
+                      <div 
+                        className="relative overflow-hidden"
+                        style={{ 
+                          height: '180px',
+                          cursor: isDragging ? 'grabbing' : 'grab',
+                          userSelect: 'none'
+                        }}
+                        onMouseDown={handleMouseDown}
+                        onMouseMove={handleMouseMove}
+                        onMouseUp={handleMouseUp}
+                        onMouseLeave={handleMouseUp}
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd}
+                      >
+                        <div
+                          className="flex"
+                          style={{
+                            transform: `translateX(${scrollPosition}px)`,
+                            transition: 'none',
+                            gap: '20px',
+                            height: '100%',
+                            alignItems: 'center',
+                            willChange: 'transform'
+                          }}
+                        >
+                          {cartItems.map((item, index) => {
                           const itemId = item.id || `cart-item-${index}`;
                           const itemName = item.name || 'NOIR';
                           
@@ -1332,392 +1500,266 @@ function CheckoutPage() {
                           return (
                             <div
                               key={itemId}
-                              className={`flex items-center justify-start space-x-3 ${index < cartItems.length - 1 ? 'border-b border-black' : ''}`}
+                              className="flex-shrink-0"
                               style={{
-                                height: '140px',
-                                paddingTop: '0',
-                                paddingBottom: '0',
-                                width: '100%',
-                                flexShrink: 0
+                                width: '150px',
+                                height: '150px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '8px'
                               }}
                             >
-                              {/* Thumbnail Container */}
-                              <div className="flex flex-col items-center justify-center" style={{ flexShrink: 0, width: '88px', height: '100%' }}>
-                                <div 
-                                  className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-                                  style={{ 
-                                    width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', 
-                                    height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px',
-                                    marginTop: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '-7px' : '0'
-                                  }}
-                                >
-                                  <img
-                                    src={itemImage}
-                                    alt={itemName}
-                                    className="object-cover rounded"
-                                    style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
-                                  />
-                                </div>
-                              </div>
-
-                              {/* Item Details */}
-                              <div className="flex-1 min-w-0 flex flex-col" style={{ marginLeft: '18px', marginTop: '4px' }}>
-                                <p 
-                                  className="font-medium truncate cart-product-name"
-                                  style={{ 
-                                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                        color: '#000000',
-                                    textTransform: 'uppercase',
-                                    fontSize: (() => {
-                                      if (item.name === 'SOFT CURL' || item.name === 'SOFT WAVE') {
-                                        return '18px'; // Decreased by 2px for SOFT CURL, SOFT WAVE
-                                      }
-                                      return '23px'; // 23px for NOIR, BLANCO, GIFT CARD, OCEAN CURL, BEACH WAVE
-                                    })(),
-                                    lineHeight: '1.1',
-                                    margin: '0'
-                                  }}
-                                >
-                                  {itemName.replace(/WIG/gi, '').trim()}
-                                </p>
-                                <p 
-                                  className="font-bold"
-                                  style={{ 
-                                    fontFamily: '"Futura PT Book"',
-                                    color: '#EB1C24',
-                                    textTransform: 'uppercase',
-                                    fontSize: '9px',
-                                    marginTop: (() => {
-                                      // Check if there's detail text (specifications)
-                                      const hasSpecs = (item.density && item.density !== '200%') || 
-                                                     (item.lace && item.lace !== '13X6') || 
-                                                     (item.texture && item.texture !== 'SILKY') || 
-                                                     (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
-                                                     (item.hairline && item.hairline !== 'NATURAL') || 
-                                                     (item.styling && item.styling !== 'NONE') || 
-                                                     (item.addOns && item.addOns.length > 0) ||
-                                                     (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
-                                                     (item.length && item.length !== '24"');
-                                      // Gift cards and BLANCO with no detail text should have reduced spacing
-                                      const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
-                                      const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
-                                      if (isGiftCard) return '-3px'; // Gift cards moved down 1px
-                                      if (isBlancoNoSpecs) return '-4px';
-                                      return '-3px';
-                                    })(),
-                                    transform: 'translateY(6px)',
-                                    lineHeight: '1.1',
-                                    marginBottom: '0'
-                                  }}
-                                >
-                                  {(() => {
-                                    if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
-                                      return 'DIGITAL ONLY';
+                              <img
+                                src={itemImage}
+                                alt={itemName}
+                                style={{
+                                  width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '53px' : '100px',
+                                  height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '53px' : '100px',
+                                  objectFit: 'contain'
+                                }}
+                                draggable={false}
+                              />
+                              <p
+                                style={{
+                                  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                  fontSize: (() => {
+                                    if (item.name === 'SOFT CURL' || item.name === 'SOFT WAVE') {
+                                      return '12px';
                                     }
-                                    return `${itemLength} RAW ${itemHairOrigin}`;
-                                  })()}
-                                </p>
-                                <p 
-                                  className="font-bold"
-                                  style={{ 
-                                    fontFamily: '"Futura PT Book"',
-                                    color: '#000000',
-                                    textTransform: 'uppercase',
-                                    fontSize: '9px',
-                                    marginTop: '8px',
-                                    marginRight: '20px',
-                                    lineHeight: '1.44',
-                                    wordBreak: 'break-word',
-                                    maxWidth: 'calc(100% - 20px)'
-                                  }}
-                                  dangerouslySetInnerHTML={{
-                                    __html: (() => {
-                                      // Build text with non-breaking spaces within comma sections
-                                      let text = '';
-                                      
-                                      // Build array of items to determine what comes after each
-                                      const items = [];
-                                      // Add cap size if it's a flexible cap (XXS/XS/S or S/M/L)
-                                      if (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) {
-                                        items.push({ type: 'capSize', value: item.capSize, fullName: 'FLEX CAP' });
+                                    return '15px';
+                                  })(),
+                                  fontWeight: '400',
+                                  color: '#000000',
+                                  margin: '4px 0 0 0',
+                                  lineHeight: '1.1',
+                                  textTransform: 'uppercase'
+                                }}
+                              >
+                                {itemName.replace(/WIG/gi, '').trim()}
+                              </p>
+                              <p
+                                style={{
+                                  fontFamily: '"Futura PT Book"',
+                                  fontSize: '7px',
+                                  color: '#EB1C24',
+                                  marginTop: (() => {
+                                    const hasSpecs = (item.density && item.density !== '200%') || 
+                                                   (item.lace && item.lace !== '13X6') || 
+                                                   (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
+                                                   (item.hairline && item.hairline !== 'NATURAL') || 
+                                                   (item.styling && item.styling !== 'NONE') || 
+                                                   (item.addOns && item.addOns.length > 0) ||
+                                                   (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
+                                                   (item.length && item.length !== '24"');
+                                    const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+                                    const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
+                                    if (isGiftCard) return '-2px';
+                                    if (isBlancoNoSpecs) return '-2px';
+                                    return '-2px';
+                                  })(),
+                                  transform: 'translateY(3px)',
+                                  lineHeight: '1.1',
+                                  marginBottom: '0',
+                                  textTransform: 'uppercase'
+                                }}
+                              >
+                                {(() => {
+                                  if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
+                                    return 'DIGITAL ONLY';
+                                  }
+                                  return `${itemLength} RAW ${itemHairOrigin}`;
+                                })()}
+                              </p>
+                                {(() => {
+                                  const getDetailText = (item: any): string => {
+                                    let text = '';
+                                    const items: any[] = [];
+                                    
+                                    if (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) {
+                                      items.push({ type: 'capSize', value: item.capSize });
+                                    }
+                                    if (item.length && item.length !== '24"') {
+                                      items.push({ type: 'length', value: item.length });
+                                    }
+                                    if (item.density && item.density !== '200%') items.push({ type: 'density', value: item.density });
+                                    if (item.lace && item.lace !== '13X6') items.push({ type: 'lace', value: item.lace });
+                                    
+                                    let itemColor = item.color;
+                                    if (item.name === 'BLANCO') {
+                                      const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+                                      if (!itemColor || !validBlancoColors.includes(itemColor)) {
+                                        itemColor = 'PLATINUM';
                                       }
-                                      // Add length if it's not the default 24"
-                                      if (item.length && item.length !== '24"') {
-                                        items.push({ type: 'length', value: item.length, fullName: item.length });
+                                    }
+                                    const defaultColor = item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
+                                    if (itemColor && itemColor !== defaultColor) items.push({ type: 'color', value: itemColor });
+                                    if (item.hairline && item.hairline !== 'NATURAL') items.push({ type: 'hairline', value: item.hairline });
+                                    
+                                    const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
+                                    if (item.styling && item.styling !== 'NONE' && hairStylingOptions.includes(item.styling) && item.partSelection) {
+                                      items.push({ type: 'styling', value: item.styling, partSelection: item.partSelection });
+                                    }
+                                    
+                                    if (item.addOns && item.addOns.length > 0) items.push({ type: 'addOns', value: item.addOns });
+                                    
+                                    const customizableItems = items.filter(item => item.type !== 'density' && item.type !== 'lace');
+                                    const useFullNames = customizableItems.length === 1;
+                                    
+                                    const formatPriceDisplay = (price: number): string => {
+                                      if (price === 0 || price === null || price === undefined || isNaN(price)) {
+                                        return '';
                                       }
-                                      if (item.density && item.density !== '200%') items.push({ type: 'density', value: item.density, fullName: `${item.density} density` });
-                                      if (item.lace && item.lace !== '13X6') items.push({ type: 'lace', value: item.lace, fullName: `${item.lace} lace` });
-                                      // Texture detail removed - no longer showing curly/wavy texture in cart
-                                      // For BLANCO, default color is PLATINUM; for others, default is OFF BLACK
-                                      // CRITICAL: Validate BLANCO colors - if item.color is invalid for BLANCO, use PLATINUM
-                                      let itemColor = item.color;
-                                      if (item.name === 'BLANCO') {
-                                        const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
-                                        if (!itemColor || !validBlancoColors.includes(itemColor)) {
-                                          itemColor = 'PLATINUM'; // Default to PLATINUM for invalid/missing BLANCO colors
-                                        }
-                                      }
-                                      const defaultColor = item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
-                                      if (itemColor && itemColor !== defaultColor) items.push({ type: 'color', value: itemColor, fullName: itemColor });
-                                      if (item.hairline && item.hairline !== 'NATURAL') items.push({ type: 'hairline', value: item.hairline, fullName: `${item.hairline} hairline` });
-                                      
-                                      // Only show styling if it's a valid styling option (BANGS, CRIMPS, etc.), not a part selection (MIDDLE, LEFT, RIGHT)
-                                      const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
-                                      // @ts-expect-error - Variable kept for code clarity/documentation
-                                      const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
-                                      if (item.styling && item.styling !== 'NONE' && hairStylingOptions.includes(item.styling) && item.partSelection) {
-                                        items.push({ type: 'styling', value: item.styling, partSelection: item.partSelection, fullName: item.styling });
-                                      }
-                                      
-                                      if (item.addOns && item.addOns.length > 0) items.push({ type: 'addOns', value: item.addOns, fullName: item.addOns });
-                                      
-                                      // Use full names if only 1 customizable item (excluding density and lace)
-                                      const customizableItems = items.filter(item => item.type !== 'density' && item.type !== 'lace');
-                                      const useFullNames = customizableItems.length === 1;
-                                      
-                                      // Helper function to format price with red color and currency conversion
-                                      // CRITICAL: This function must not be optimized away in production builds
-                                      const formatPriceDisplay = (price: number): string => {
-                                        // Explicitly check for zero to prevent optimization issues
-                                        if (price === 0 || price === null || price === undefined || isNaN(price)) {
-                                          return '';
-                                        }
-                                        // Get currency info
-                                        const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
-                                        // Convert price to selected currency
-                                        const convertedPrice = price * currency.rate;
-                                        // Show negative sign for negative prices, positive sign for positive prices
-                                        const sign = price > 0 ? '+' : '-';
-                                        // Format the converted price
-                                        const priceStr = Math.abs(convertedPrice).toLocaleString('en-US', {
-                                          minimumFractionDigits: 0,
-                                          maximumFractionDigits: 0
-                                        });
-                                        // Explicitly construct the HTML string to prevent minification issues
-                                        return ' <span style="color: #000000;">' + sign + currency.symbol + priceStr + '</span>';
-                                      };
-                                      
-                                      // Build text with each item on its own line and prices in red
-                                      items.forEach((itemData) => {
-                                        // Add line break before each item except the first
-                                        if (text) {
-                                          text += '<br/>';
-                                        }
-                                        
-                                        if (itemData.type === 'capSize') {
-                                          // Cap Size: show "FLEX CAP" with price +$40
-                                          const price = 40; // Flexible caps cost $40 extra
-                                          const priceDisplay = formatPriceDisplay(price);
-                                          text += `FLEX CAP${priceDisplay}`;
-                                        } else if (itemData.type === 'length') {
-                                          // Length: show difference from 24" base with ADDED/REMOVED and price
-                                          const lengthValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
-                                          const lengthNum = parseInt(lengthValue.replace('"', ''));
-                                          const baseLength = 24;
-                                          const difference = lengthNum - baseLength;
-                                          
-                                          // Get length price from item or calculate it
-                                          const lengthPrices: { [key: string]: number } = {
-                                            '16"': -50,
-                                            '18"': -25,
-                                            '20"': -10,
-                                            '22"': -5,
-                                            '24"': 0,
-                                            '26"': 50,
-                                            '28"': 100,
-                                            '30"': 150,
-                                            '32"': 200,
-                                            '34"': 250,
-                                            '36"': 300,
-                                            '40"': 400
-                                          };
-                                          const price = lengthPrices[lengthValue] || 0;
-                                          const priceDisplay = formatPriceDisplay(price);
-                                          
-                                          if (difference > 0) {
-                                            // Longer than base: "-X" ADDED (+$Y)"
-                                            text += `${Math.abs(difference)}" ADDED${priceDisplay}`;
-                                          } else if (difference < 0) {
-                                            // Shorter than base: "-X" REMOVED (-$Y)"
-                                            text += `${Math.abs(difference)}" REMOVED${priceDisplay}`;
-                                          }
-                                        } else if (itemData.type === 'density') {
-                                          // Density: show percentage value followed by "DENSITY" in all caps with price
-                                          // formatPriceDisplay already includes the sign in the price part
-                                          const densityValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
-                                          const price = _getDensityPrice(densityValue);
-                                          const priceDisplay = formatPriceDisplay(price);
-                                          const displayValue = `${densityValue} DENSITY${priceDisplay}`;
-                                          text += displayValue.toUpperCase();
-                                        } else if (itemData.type === 'lace') {
-                                          // Lace: show value followed by "LACE" in all caps with price
-                                          // formatPriceDisplay already includes the sign in the price part
-                                          const laceValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
-                                          const price = _getLacePrice(laceValue);
-                                          const priceDisplay = formatPriceDisplay(price);
-                                          const displayValue = `${laceValue} LACE${priceDisplay}`;
-                                          text += displayValue.toUpperCase();
-                                        } else if (itemData.type === 'texture') {
-                                          // Texture: show value followed by "TEXTURE" in all caps with price
-                                          const textureValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
-                                          const price = 0; // Texture prices not used in current implementation
-                                          const priceDisplay = formatPriceDisplay(price);
-                                          const displayValue = `${textureValue} TEXTURE${priceDisplay}`;
-                                          text += displayValue.toUpperCase();
-                                        } else if (itemData.type === 'color') {
-                                          // Color: show value followed by "COLOR" in all caps with price
-                                          // CRITICAL: Include length and product name to calculate correct price
-                                          const colorValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
-                                          const itemLength = item.length || '24"';
-                                          const price = _getColorPrice(colorValue, itemLength, item.name);
-                                          const priceDisplay = formatPriceDisplay(price);
-                                          const displayValue = `${colorValue} COLOR${priceDisplay}`;
-                                          text += displayValue.toUpperCase();
-                                        } else if (itemData.type === 'hairline') {
-                                          // Hairline: show value followed by "HAIRLINE" in all caps with price
-                                          let displayValue;
-                                          const hairlineValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
-                                          const hairlineUpper = hairlineValue.toUpperCase();
-                                          const price = _getHairlinePrice(hairlineValue);
-                                          const priceDisplay = formatPriceDisplay(price);
-                                          
-                                          if (hairlineUpper.includes('LAGOS') && hairlineUpper.includes('PEAK')) {
-                                            displayValue = `LAGOS + PEAK HAIRLINE${priceDisplay}`;
-                                          } else {
-                                            displayValue = `${hairlineValue} HAIRLINE${priceDisplay}`;
-                                          }
-                                          text += displayValue.toUpperCase();
-                                        } else if (itemData.type === 'styling') {
-                                          const stylingValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
-                                          const price = _getStylingPrice(stylingValue);
-                                          const priceDisplay = formatPriceDisplay(price);
-                                          
-                                          if (useFullNames) {
-                                            // For single item, show full styling name with price
-                                            const displayValue = itemData.fullName;
-                                            const displayText = typeof displayValue === 'string' ? displayValue : String(displayValue);
-                                            text += displayText.toUpperCase() + priceDisplay;
-                                          } else {
-                                            // For multiple items, show abbreviated with part selection
-                                            let partAbbrev = '';
-                                            switch (itemData.partSelection) {
-                                              case 'LEFT':
-                                                partAbbrev = '(L)';
-                                                break;
-                                              case 'RIGHT':
-                                                partAbbrev = '(R)';
-                                                break;
-                                              case 'MIDDLE':
-                                              default:
-                                                partAbbrev = '(M)';
-                                                break;
-                                            }
-                                            text += partAbbrev;
-                                          
-                                            // Use non-breaking spaces within styling section and connect to part selection
-                                            if (typeof itemData.value === 'string') {
-                                              const stylingText = itemData.value.toUpperCase().replace(/ /g, '\u00A0');
-                                              text += '\u00A0' + stylingText + priceDisplay;
-                                            }
-                                          }
-                                        } else if (itemData.type === 'addOns') {
-                                          const itemLace = item.lace || '13X6';
-                                          
-                                          // Show each add-on on its own line with its price immediately after it
-                                          if (Array.isArray(itemData.value)) {
-                                            itemData.value.forEach((addOn: string, addOnIndex: number) => {
-                                              // Use non-breaking spaces within add-on section
-                                              const addOnPrice = _getAddOnsPrice([addOn], itemLace);
-                                              const addOnPriceDisplay = formatPriceDisplay(addOnPrice);
-                                              // Replace "BLEACH" with "BLEACH KNOTS" for display
-                                              const addOnText = addOn.toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/ /g, '\u00A0');
-                                              // Add line break before each add-on except the first (each on its own line)
-                                              if (addOnIndex > 0) {
-                                                text += '<br/>';
-                                              }
-                                              text += addOnText + addOnPriceDisplay;
-                                            });
-                                          } else {
-                                            // Handle single string case
-                                            const addOnPrice = _getAddOnsPrice([String(itemData.value)], itemLace);
-                                            const addOnPriceDisplay = formatPriceDisplay(addOnPrice);
-                                            // Replace "BLEACH" with "BLEACH KNOTS" for display
-                                            const addOnText = String(itemData.value).toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/ /g, '\u00A0');
-                                            text += addOnText + addOnPriceDisplay;
-                                          }
-                                        }
+                                      const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
+                                      const convertedPrice = price * currency.rate;
+                                      const sign = price > 0 ? '+' : '-';
+                                      const priceStr = Math.abs(convertedPrice).toLocaleString('en-US', {
+                                        minimumFractionDigits: 0,
+                                        maximumFractionDigits: 0
                                       });
+                                      return ' <span style="color: #000000;">' + sign + currency.symbol + priceStr + '</span>';
+                                    };
+                                    
+                                    items.forEach((itemData, idx) => {
+                                      if (idx > 0) text += '<br/>';
                                       
-                                      return text;
-                                    })()
-                                  }}
-                                />
-                                {item.capSize && (
-                                  <p 
-                                    className="font-semibold"
-                                    style={{ 
-                                      fontFamily: '"Futura PT Medium"',
-                                      color: '#808080',
-                                      textTransform: 'uppercase',
-                                      fontSize: '10px',
-                                      marginTop: (() => {
-                                        const hasSpecs = (item.density && item.density !== '200%') || 
-                                                       (item.lace && item.lace !== '13X6') || 
-                                                       (item.texture && item.texture !== 'SILKY') || 
-                                                       (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
-                                                       (item.hairline && item.hairline !== 'NATURAL') || 
-                                                       (item.styling && item.styling !== 'NONE') || 
-                                                       (item.addOns && item.addOns.length > 0) ||
-                                                       (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
-                                                       (item.length && item.length !== '24"');
-                                        const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
-                                        const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
-                                        const isBlanco = item.name === 'BLANCO';
-                                        let baseMargin = hasSpecs && !isGiftCard && !isBlancoNoSpecs ? '4px' : '1px';
-                                        if (isBlanco) {
-                                          const numValue = parseInt(baseMargin);
-                                          return `${Math.max(0, numValue - 3)}px`;
+                                      if (itemData.type === 'capSize') {
+                                        const price = 40;
+                                        const priceDisplay = formatPriceDisplay(price);
+                                        text += `FLEX CAP${priceDisplay}`;
+                                      } else if (itemData.type === 'length') {
+                                        const lengthValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
+                                        const lengthNum = parseInt(lengthValue.replace('"', ''));
+                                        const baseLength = 24;
+                                        const difference = lengthNum - baseLength;
+                                        const lengthPrices: { [key: string]: number } = {
+                                          '16"': -50, '18"': -25, '20"': -10, '22"': -5, '24"': 0,
+                                          '26"': 50, '28"': 100, '30"': 150, '32"': 200, '34"': 250, '36"': 300, '40"': 400
+                                        };
+                                        const price = lengthPrices[lengthValue] || 0;
+                                        const priceDisplay = formatPriceDisplay(price);
+                                        if (difference > 0) {
+                                          text += `${Math.abs(difference)}" ADDED${priceDisplay}`;
+                                        } else if (difference < 0) {
+                                          text += `${Math.abs(difference)}" REMOVED${priceDisplay}`;
                                         }
-                                        return baseMargin;
-                                      })(),
-                                      lineHeight: '1.1',
-                                      marginBottom: '0'
-                                    }}
-                                  >
-                                    CAP SIZE: {item.capSize}
-                                  </p>
-                                )}
+                                      } else if (itemData.type === 'density') {
+                                        const densityValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
+                                        const price = _getDensityPrice(densityValue);
+                                        const priceDisplay = formatPriceDisplay(price);
+                                        text += `${densityValue} DENSITY${priceDisplay}`.toUpperCase();
+                                      } else if (itemData.type === 'lace') {
+                                        const laceValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
+                                        const price = _getLacePrice(laceValue);
+                                        const priceDisplay = formatPriceDisplay(price);
+                                        text += `${laceValue} LACE${priceDisplay}`.toUpperCase();
+                                      } else if (itemData.type === 'color') {
+                                        const colorValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
+                                        const itemLength = item.length || '24"';
+                                        const price = _getColorPrice(colorValue, itemLength, item.name);
+                                        const priceDisplay = formatPriceDisplay(price);
+                                        text += `${colorValue} COLOR${priceDisplay}`.toUpperCase();
+                                      } else if (itemData.type === 'hairline') {
+                                        const hairlineValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
+                                        const hairlineUpper = hairlineValue.toUpperCase();
+                                        const price = _getHairlinePrice(hairlineValue);
+                                        const priceDisplay = formatPriceDisplay(price);
+                                        if (hairlineUpper.includes('LAGOS') && hairlineUpper.includes('PEAK')) {
+                                          text += `LAGOS + PEAK HAIRLINE${priceDisplay}`;
+                                        } else {
+                                          text += `${hairlineValue} HAIRLINE${priceDisplay}`.toUpperCase();
+                                        }
+                                      } else if (itemData.type === 'styling') {
+                                        const stylingValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
+                                        const price = _getStylingPrice(stylingValue);
+                                        const priceDisplay = formatPriceDisplay(price);
+                                        if (useFullNames) {
+                                          text += stylingValue.toUpperCase() + priceDisplay;
+                                        } else {
+                                          let partAbbrev = '';
+                                          switch (itemData.partSelection) {
+                                            case 'LEFT': partAbbrev = '(L)'; break;
+                                            case 'RIGHT': partAbbrev = '(R)'; break;
+                                            default: partAbbrev = '(M)'; break;
+                                          }
+                                          text += partAbbrev;
+                                          if (typeof itemData.value === 'string') {
+                                            const stylingText = itemData.value.toUpperCase().replace(/ /g, '\u00A0');
+                                            text += '\u00A0' + stylingText + priceDisplay;
+                                          }
+                                        }
+                                      } else if (itemData.type === 'addOns') {
+                                        const itemLace = item.lace || '13X6';
+                                        if (Array.isArray(itemData.value)) {
+                                          itemData.value.forEach((addOn: string, addOnIndex: number) => {
+                                            const addOnPrice = _getAddOnsPrice([addOn], itemLace);
+                                            const addOnPriceDisplay = formatPriceDisplay(addOnPrice);
+                                            const addOnText = addOn.toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/ /g, '\u00A0');
+                                            if (addOnIndex > 0) text += '<br/>';
+                                            text += addOnText + addOnPriceDisplay;
+                                          });
+                                        } else {
+                                          const addOnPrice = _getAddOnsPrice([String(itemData.value)], itemLace);
+                                          const addOnPriceDisplay = formatPriceDisplay(addOnPrice);
+                                          const addOnText = String(itemData.value).toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/ /g, '\u00A0');
+                                          text += addOnText + addOnPriceDisplay;
+                                        }
+                                      }
+                                    });
+                                    
+                                    return text;
+                                  };
+                                  
+                                  const detailText = getDetailText(item);
+                                  if (!detailText) return null;
+                                  
+                                  return (
+                                    <p
+                                      className="font-bold"
+                                      style={{
+                                        fontFamily: '"Futura PT Book"',
+                                        color: '#000000',
+                                        textTransform: 'uppercase',
+                                        fontSize: '7px',
+                                        marginTop: '1px',
+                                        marginRight: '10px',
+                                        lineHeight: '1.44',
+                                        marginBottom: '0',
+                                        wordBreak: 'break-word',
+                                        maxWidth: 'calc(100% - 10px)'
+                                      }}
+                                      dangerouslySetInnerHTML={{ __html: detailText }}
+                                    />
+                                  );
+                                })()}
                                 <p
                                   style={{
                                     fontFamily: '"Futura PT Book"',
-                                    color: '#000000',
-                                    fontSize: '12px',
-                                    marginTop: item.name === 'BLANCO' ? '0px' : '2px',
-                                    marginBottom: '12px',
-                                    marginLeft: '0',
-                                    marginRight: '0',
-                                    fontWeight: '600'
+                                    fontSize: '7px',
+                                    color: '#909090',
+                                    margin: '4px 0 0 0',
+                                    textTransform: 'uppercase'
                                   }}
                                   dangerouslySetInnerHTML={formatPrice(itemPrice)}
                                 />
-                                <div className="absolute" style={{ right: '8px', top: '0', bottom: '0', display: 'flex', alignItems: 'center' }}>
-                                  <span
-                                    style={{
-                                      fontFamily: '"Futura PT Medium"',
-                                      fontSize: '9px',
-                                      color: '#000000',
-                                      textTransform: 'uppercase'
-                                    }}
-                                  >
-                                    QTY: {itemQuantity}
-                    </span>
-                                </div>
-                              </div>
+                                <span
+                                  style={{
+                                    fontFamily: '"Futura PT Medium"',
+                                    fontSize: '7px',
+                                    color: '#000000',
+                                    textTransform: 'uppercase',
+                                    marginTop: '4px'
+                                  }}
+                                >
+                                  QTY: {itemQuantity}
+                                </span>
                             </div>
                           );
                         })}
-                  </div>
-                </div>
+                        </div>
+                      </div>
+                    </div>
 
                     {/* Subtotal */}
                     <div className="overflow-hidden mt-auto pt-2">
@@ -1736,7 +1778,7 @@ function CheckoutPage() {
                         }}>
                           {isSignedIn ? (
                             <>
-                              YOU'RE EARNING ${orderAmount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} POINTS WITH THIS ORDER.
+                              YOU'RE EARNING <span style={{ color: '#EB1C24' }}>${orderAmount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span> LOYALTY POINTS WITH THIS ORDER.
                             </>
                           ) : (
                             <>
@@ -2357,40 +2399,79 @@ function CheckoutPage() {
                         }}
                       />
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-                      <div
-                        onClick={() => setSameAsBilling(!sameAsBilling)}
-                        style={{
-                          width: '16px',
-                          height: '16px',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          border: '1.3px solid #000000',
-                          backgroundColor: 'transparent',
-                          position: 'relative'
-                        }}
-                      >
-                        {sameAsBilling && (
-                          <img 
-                            src="/assets/checkbox.svg" 
-                            alt="checked" 
-                            style={{ width: '16px', height: '16px', position: 'absolute' }}
-                          />
-                        )}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '1px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div
+                          onClick={() => setUseDefaultMethod(!useDefaultMethod)}
+                          style={{
+                            width: '16px',
+                            height: '16px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            border: '1.3px solid #000000',
+                            backgroundColor: 'transparent',
+                            position: 'relative'
+                          }}
+                        >
+                          {useDefaultMethod && (
+                            <img 
+                              src="/assets/checkbox.svg" 
+                              alt="checked" 
+                              style={{ width: '16px', height: '16px', position: 'absolute' }}
+                            />
+                          )}
+                        </div>
+                        <label 
+                          onClick={() => setUseDefaultMethod(!useDefaultMethod)}
+                          style={{ 
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '10px',
+                            color: '#000000',
+                            cursor: 'pointer',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          USE DEFAULT ADDRESS
+                        </label>
                       </div>
-                      <label 
-                        style={{ 
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '10px',
-                          color: '#000000',
-                          cursor: 'pointer',
-                          textTransform: 'uppercase'
-                        }}
-                      >
-                        SAME AS BILLING ADDRESS
-                      </label>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div
+                          onClick={() => setSavePaymentMethod(!savePaymentMethod)}
+                          style={{
+                            width: '16px',
+                            height: '16px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            border: '1.3px solid #000000',
+                            backgroundColor: 'transparent',
+                            position: 'relative'
+                          }}
+                        >
+                          {savePaymentMethod && (
+                            <img 
+                              src="/assets/checkbox.svg" 
+                              alt="checked" 
+                              style={{ width: '16px', height: '16px', position: 'absolute' }}
+                            />
+                          )}
+                        </div>
+                        <label 
+                          onClick={() => setSavePaymentMethod(!savePaymentMethod)}
+                          style={{ 
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '10px',
+                            color: '#000000',
+                            cursor: 'pointer',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          SAVE SHIPPING ADDRESS
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -2641,10 +2722,46 @@ function CheckoutPage() {
                                 boxSizing: 'border-box',
                               borderRadius: '0',
                               cursor: sameAsBilling ? 'not-allowed' : 'text'
-                              }}
-                            />
-                          </div>
+                          }}
+                        />
                     </div>
+                  </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px' }}>
+                    <div
+                      onClick={() => setSameAsBilling(!sameAsBilling)}
+                      style={{
+                        width: '16px',
+                        height: '16px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: '1.3px solid #000000',
+                        backgroundColor: 'transparent',
+                        position: 'relative'
+                      }}
+                    >
+                      {sameAsBilling && (
+                        <img 
+                          src="/assets/checkbox.svg" 
+                          alt="checked" 
+                          style={{ width: '16px', height: '16px', position: 'absolute' }}
+                        />
+                      )}
+                    </div>
+                    <label 
+                      onClick={() => setSameAsBilling(!sameAsBilling)}
+                      style={{ 
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '10px',
+                        color: '#000000',
+                        cursor: 'pointer',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      SAME AS SHIPPING ADDRESS
+                    </label>
                   </div>
                 </div>
 
@@ -2818,6 +2935,80 @@ function CheckoutPage() {
                         />
                     </div>
                   </div>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div
+                        onClick={() => setUseDefaultPaymentMethod(!useDefaultPaymentMethod)}
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          border: '1.3px solid #000000',
+                          backgroundColor: 'transparent',
+                          position: 'relative'
+                        }}
+                      >
+                        {useDefaultPaymentMethod && (
+                          <img 
+                            src="/assets/checkbox.svg" 
+                            alt="checked" 
+                            style={{ width: '16px', height: '16px', position: 'absolute' }}
+                          />
+                        )}
+                      </div>
+                      <label 
+                        onClick={() => setUseDefaultPaymentMethod(!useDefaultPaymentMethod)}
+                        style={{ 
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#000000',
+                          cursor: 'pointer',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        USE DEFAULT PAYMENT
+                      </label>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div
+                        onClick={() => setSavePaymentMethodCard(!savePaymentMethodCard)}
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          border: '1.3px solid #000000',
+                          backgroundColor: 'transparent',
+                          position: 'relative'
+                        }}
+                      >
+                        {savePaymentMethodCard && (
+                          <img 
+                            src="/assets/checkbox.svg" 
+                            alt="checked" 
+                            style={{ width: '16px', height: '16px', position: 'absolute' }}
+                          />
+                        )}
+                      </div>
+                      <label 
+                        onClick={() => setSavePaymentMethodCard(!savePaymentMethodCard)}
+                        style={{ 
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#000000',
+                          cursor: 'pointer',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        SAVE PAYMENT METHOD
+                      </label>
+                    </div>
                   </div>
                 </div>
 
@@ -3730,6 +3921,85 @@ function CheckoutPage() {
                     processingTimeText = hasCustomizations 
                       ? '6 TO 8 WEEKS (UP TO 10 WEEKS FOR CUSTOMIZED UNITS)'
                       : '6 TO 8 WEEKS';
+                  }
+                  
+                  // Save payment method/address if checkbox is checked
+                  if (savePaymentMethod && isSignedIn) {
+                    try {
+                      const currentUser = localStorage.getItem('currentUser');
+                      if (currentUser) {
+                        const user = JSON.parse(currentUser);
+                        const addressToSave = {
+                          firstName: firstName.trim(),
+                          lastName: lastName.trim(),
+                          address: shippingAddress.trim(),
+                          city: city.trim(),
+                          state: state.trim(),
+                          zip: zip.trim(),
+                          phoneNumber: phoneNumber.trim(),
+                          email: email.trim(),
+                          country: selectedCountry || 'US',
+                          isDefault: !user.defaultAddress, // Set as default if no default exists
+                          savedAt: new Date().toISOString()
+                        };
+                        
+                        // Update user with saved address
+                        const updatedUser = {
+                          ...user,
+                          defaultAddress: !user.defaultAddress ? addressToSave : user.defaultAddress,
+                          savedAddresses: user.savedAddresses ? [...user.savedAddresses, addressToSave] : [addressToSave]
+                        };
+                        
+                        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                        
+                        // Also update in registered users list
+                        const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                        const userIndex = registeredUsers.findIndex((u: any) => u.email === user.email);
+                        if (userIndex !== -1) {
+                          registeredUsers[userIndex] = updatedUser;
+                          localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                        }
+                      }
+                    } catch (error) {
+                      console.error('Error saving address:', error);
+                    }
+                  }
+                  
+                  // Save payment method if checkbox is checked
+                  if (savePaymentMethodCard && isSignedIn) {
+                    try {
+                      const currentUser = localStorage.getItem('currentUser');
+                      if (currentUser) {
+                        const user = JSON.parse(currentUser);
+                        const paymentMethodToSave = {
+                          cardholder: cardholder.trim(),
+                          cardNumber: cardNumber.slice(-4), // Only save last 4 digits for security
+                          expirationDate: expirationDate.trim(),
+                          billingZip: billingZip.trim(),
+                          isDefault: !user.defaultPaymentMethod, // Set as default if no default exists
+                          savedAt: new Date().toISOString()
+                        };
+                        
+                        // Update user with saved payment method
+                        const updatedUser = {
+                          ...user,
+                          defaultPaymentMethod: !user.defaultPaymentMethod ? paymentMethodToSave : user.defaultPaymentMethod,
+                          savedPaymentMethods: user.savedPaymentMethods ? [...user.savedPaymentMethods, paymentMethodToSave] : [paymentMethodToSave]
+                        };
+                        
+                        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                        
+                        // Also update in registered users list
+                        const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                        const userIndex = registeredUsers.findIndex((u: any) => u.email === user.email);
+                        if (userIndex !== -1) {
+                          registeredUsers[userIndex] = updatedUser;
+                          localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                        }
+                      }
+                    } catch (error) {
+                      console.error('Error saving payment method:', error);
+                    }
                   }
                   
                   // Navigate to confirmation page with order data

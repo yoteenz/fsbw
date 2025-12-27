@@ -14,6 +14,14 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [viewingDetailsFor, setViewingDetailsFor] = useState<string | null>(null);
+
+  // Reset viewing details when dropdown closes
+  useEffect(() => {
+    if (!isOpen) {
+      setViewingDetailsFor(null);
+    }
+  }, [isOpen]);
   
   // Currency state - load from localStorage on mount
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -725,8 +733,18 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             </div>
           ) : (
               <div className="space-y-3">
-                {cartItems.map((item, index) => (
-                  <div key={item.id} className={`flex items-center justify-start space-x-3 ${index < cartItems.length - 1 ? 'border-b border-black' : ''}`} style={{ height: '140px', paddingTop: '0', paddingBottom: '0' }}>
+                {(() => {
+                  const itemsToShow = viewingDetailsFor 
+                    ? cartItems.filter(item => item.id === viewingDetailsFor) 
+                    : cartItems;
+                  
+                  // If no items to show, return early
+                  if (itemsToShow.length === 0) {
+                    return null;
+                  }
+                  
+                  return itemsToShow.map((item, index) => (
+                    <div key={item.id} className={`flex items-center justify-start space-x-3 ${index < itemsToShow.length - 1 ? 'border-b border-black' : ''}`} style={{ height: '140px', paddingTop: '0', paddingBottom: '0' }}>
                     {/* Thumbnail Container */}
                     <div className="flex flex-col items-center justify-center" style={{ height: '100%' }}>
                       {/* Item Image */}
@@ -993,20 +1011,21 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           return `${item.length || '24"'} RAW ${getHairOrigin(item.name)}`;
                         })()}
                       </p>
-                      <p 
-                        className="font-bold"
-                        style={{ 
-                          fontFamily: '"Futura PT Book"',
-                          color: '#000000',
-                          textTransform: 'uppercase',
-                          fontSize: '9px',
-                          marginTop: '1px',
-                          marginRight: '20px',
-                          lineHeight: '1.44',
-                          wordBreak: 'break-word',
-                          maxWidth: 'calc(100% - 20px)'
-                        }}
-                        dangerouslySetInnerHTML={{
+                      {viewingDetailsFor === item.id && (
+                        <p 
+                          className="font-bold"
+                          style={{ 
+                            fontFamily: '"Futura PT Book"',
+                            color: '#000000',
+                            textTransform: 'uppercase',
+                            fontSize: '9px',
+                            marginTop: '1px',
+                            marginRight: '20px',
+                            lineHeight: '1.44',
+                            wordBreak: 'break-word',
+                            maxWidth: 'calc(100% - 20px)'
+                          }}
+                          dangerouslySetInnerHTML={{
                           __html: (() => {
                           // Build text with non-breaking spaces within comma sections
                           let text = '';
@@ -1227,7 +1246,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           return text;
                           })()
                         }}
-                      />
+                        />
+                      )}
                       {item.capSize && (
                     <p 
                       className="font-semibold"
@@ -1277,8 +1297,19 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                   </div>
                   
                   {/* Remove Button */}
-                    <div className="flex items-center flex-shrink-0">
-                    <button
+                    <div className="flex flex-col items-center flex-shrink-0" style={{ transform: 'translateX(-8px)', width: '80px', alignItems: 'center' }}>
+                      <span
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '8px',
+                          color: '#000000',
+                          textTransform: 'uppercase',
+                          marginBottom: '6px'
+                        }}
+                      >
+                        QTY: {item.quantity ?? 1}
+                      </span>
+                      <button
                         onClick={() => removeItem(item.id)}
                         className="px-2 py-1 text-red-500 bg-white hover:bg-gray-50 flex items-center justify-center cursor-pointer"
                         style={{ 
@@ -1290,15 +1321,67 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           outline: 'none',
                           display: 'flex',
                           alignItems: 'center',
-                          justifyContent: 'center',
-                          transform: 'translateX(-12px)'
+                          justifyContent: 'center'
                         }}
                       >
                         <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '11px' }}>×</span>
-                    </button>
-                  </div>
+                      </button>
+                      {(() => {
+                        // Check if item has specifications (sub page selections)
+                        // Only show VIEW DETAILS if item has actual customizations beyond defaults
+                        const hasFlexCap = item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L');
+                        const hasCustomLength = item.length && item.length !== '24"';
+                        // BLANCO default density is 250%, others default to 200%
+                        const defaultDensity = item.name === 'BLANCO' ? '250%' : '200%';
+                        const hasCustomDensity = item.density && item.density !== defaultDensity;
+                        const hasCustomLace = item.lace && item.lace !== '13X6';
+                        const hasCustomTexture = item.texture && item.texture !== 'SILKY';
+                        const defaultColor = item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
+                        const hasCustomColor = item.color && item.color !== defaultColor;
+                        const hasCustomHairline = item.hairline && item.hairline !== 'NATURAL';
+                        // Styling is only valid if it's a valid styling option AND has partSelection
+                        const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
+                        const hasCustomStyling = item.styling && item.styling !== 'NONE' && 
+                                                 hairStylingOptions.includes(item.styling) && 
+                                                 item.partSelection;
+                        const hasAddOns = Array.isArray(item.addOns) && item.addOns.length > 0;
+                        
+                        const hasSpecs = hasFlexCap || hasCustomLength || hasCustomDensity || hasCustomLace || 
+                                        hasCustomTexture || hasCustomColor || hasCustomHairline || 
+                                        hasCustomStyling || hasAddOns;
+                        
+                        if (!hasSpecs) {
+                          // Add spacer to maintain consistent height and alignment
+                          return <div style={{ height: '20px', marginTop: '6px' }}></div>;
+                        }
+                        
+                        return (
+                          <span
+                            style={{
+                              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                              fontSize: '8px',
+                              color: '#EB1C24',
+                              textTransform: 'uppercase',
+                              marginTop: '6px',
+                              cursor: 'pointer'
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (viewingDetailsFor === item.id) {
+                                setViewingDetailsFor(null);
+                              } else {
+                                setViewingDetailsFor(item.id);
+                              }
+                            }}
+                          >
+                            {viewingDetailsFor === item.id ? 'CLOSE DETAILS' : 'VIEW DETAILS'}
+                          </span>
+                        );
+                      })()}
+                    </div>
                 </div>
-              ))}
+                  ));
+                })()}
             </div>
           )}
         </div>

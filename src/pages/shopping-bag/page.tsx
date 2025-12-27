@@ -1127,83 +1127,6 @@ function ShoppingBagPage() {
                                 return `${itemLength} RAW ${itemHairOrigin}`;
                               })()}
                             </p>
-                            <p 
-                              className="font-bold"
-                              style={{ 
-                                fontFamily: '"Futura PT Book"',
-                                color: '#000000',
-                                textTransform: 'uppercase',
-                                fontSize: '9px',
-                                marginTop: '8px',
-                                marginRight: '20px',
-                                lineHeight: '1.44',
-                                wordBreak: 'break-word',
-                                maxWidth: 'calc(100% - 20px)'
-                              }}
-                              dangerouslySetInnerHTML={{
-                                __html: (() => {
-                                  // Build text with customization details (same logic as cart dropdown)
-                                  let text = '';
-                                  
-                                  const items = [];
-                                  if (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) {
-                                    items.push({ type: 'capSize', value: item.capSize, fullName: 'FLEX CAP' });
-                                  }
-                                  if (item.length && item.length !== '24"') {
-                                    items.push({ type: 'length', value: item.length, fullName: item.length });
-                                  }
-                                  if (item.density && item.density !== '200%') items.push({ type: 'density', value: item.density, fullName: `${item.density} density` });
-                                  if (item.lace && item.lace !== '13X6') items.push({ type: 'lace', value: item.lace, fullName: `${item.lace} lace` });
-                                  
-                                  let itemColor = item.color;
-                                  if (item.name === 'BLANCO') {
-                                    const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
-                                    if (!itemColor || !validBlancoColors.includes(itemColor)) {
-                                      itemColor = 'PLATINUM';
-                                    }
-                                  }
-                                  const defaultColor = item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
-                                  if (itemColor && itemColor !== defaultColor) items.push({ type: 'color', value: itemColor, fullName: `${itemColor} color` });
-                                  if (item.hairline && item.hairline !== 'NATURAL') items.push({ type: 'hairline', value: item.hairline, fullName: `${item.hairline} hairline` });
-                                  
-                                  const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
-                                  if (item.styling && item.styling !== 'NONE' && hairStylingOptions.includes(item.styling) && item.partSelection) {
-                                    items.push({ type: 'styling', value: item.styling, partSelection: item.partSelection, fullName: item.styling });
-                                  }
-                                  
-                                  if (item.addOns && item.addOns.length > 0) items.push({ type: 'addOns', value: item.addOns, fullName: item.addOns });
-                                  
-                                  // Build text with each item on its own line
-                                  items.forEach((itemData, idx) => {
-                                    if (idx > 0) {
-                                      text += '<br/>';
-                                    }
-                                    
-                                    // Handle addOns specially - each addOn on its own line
-                                    if (itemData.type === 'addOns') {
-                                      if (Array.isArray(itemData.value)) {
-                                        itemData.value.forEach((addOn: string, addOnIndex: number) => {
-                                          if (addOnIndex > 0) {
-                                            text += '<br/>';
-                                          }
-                                          // Replace "BLEACH" with "BLEACH KNOTS" and "PLUCK" with "PLUCK KNOTS" for display
-                                          const addOnText = addOn.toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/PLUCK/g, 'PLUCK KNOTS');
-                                          text += addOnText;
-                                        });
-                                      } else {
-                                        // Handle single string case
-                                        const addOnText = String(itemData.value).toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/PLUCK/g, 'PLUCK KNOTS');
-                                        text += addOnText;
-                                      }
-                                    } else {
-                                      text += itemData.fullName;
-                                    }
-                                  });
-                                  
-                                  return text || '';
-                                })()
-                              }}
-                            />
                             {item.capSize && (
                               <p 
                                 className="font-semibold"
@@ -1567,7 +1490,7 @@ function ShoppingBagPage() {
                       </div>
 
                       {/* Product Details */}
-                      <div className="flex-1 min-w-0 flex flex-col" style={{ marginLeft: '18px', marginTop: '4px' }}>
+                      <div className="flex-1 min-w-0 flex flex-col" style={{ marginLeft: '18px', marginTop: '4px', position: 'relative' }}>
                          <p 
                            className="font-medium truncate cart-product-name"
                            style={{ 
@@ -1622,73 +1545,7 @@ function ShoppingBagPage() {
                              return `${itemLength} RAW ${itemHairOrigin}`;
                            })()}
                          </p>
-                         <p 
-                           className="font-bold"
-                           style={{ 
-                             fontFamily: '"Futura PT Book"',
-                             color: '#000000',
-                             textTransform: 'uppercase',
-                             fontSize: '9px',
-                             marginTop: '8px',
-                             marginRight: '20px',
-                             lineHeight: '1.44',
-                             wordBreak: 'break-word',
-                             maxWidth: 'calc(100% - 20px)'
-                           }}
-                           dangerouslySetInnerHTML={{
-                             __html: (() => {
-                               let text = '';
-                               const items = [];
-                               if (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) {
-                                 items.push({ type: 'capSize', value: item.capSize, fullName: 'FLEX CAP' });
-                               }
-                               // Length is already shown in the red text above, so don't duplicate it here
-                               if (item.density && item.density !== '200%') items.push({ type: 'density', value: item.density, fullName: `${item.density} density` });
-                               if (item.lace && item.lace !== '13X6') items.push({ type: 'lace', value: item.lace, fullName: `${item.lace} lace` });
-                               let itemColor = item.color;
-                               if (item.name === 'BLANCO') {
-                                 const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
-                                 if (!itemColor || !validBlancoColors.includes(itemColor)) {
-                                   itemColor = 'PLATINUM';
-                                 }
-                               }
-                               const defaultColor = item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
-                               if (itemColor && itemColor !== defaultColor) items.push({ type: 'color', value: itemColor, fullName: `${itemColor} color` });
-                               if (item.hairline && item.hairline !== 'NATURAL') items.push({ type: 'hairline', value: item.hairline, fullName: `${item.hairline} hairline` });
-                               const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
-                               if (item.styling && item.styling !== 'NONE' && hairStylingOptions.includes(item.styling) && item.partSelection) {
-                                 items.push({ type: 'styling', value: item.styling, partSelection: item.partSelection, fullName: item.styling });
-                               }
-                               if (item.addOns && item.addOns.length > 0) items.push({ type: 'addOns', value: item.addOns, fullName: item.addOns });
-                               items.forEach((itemData, idx) => {
-                                 if (idx > 0) {
-                                   text += '<br/>';
-                                 }
-                                 
-                                 // Handle addOns specially - each addOn on its own line
-                                 if (itemData.type === 'addOns') {
-                                   if (Array.isArray(itemData.value)) {
-                                     itemData.value.forEach((addOn: string, addOnIndex: number) => {
-                                       if (addOnIndex > 0) {
-                                         text += '<br/>';
-                                       }
-                                       // Replace "BLEACH" with "BLEACH KNOTS" and "PLUCK" with "PLUCK KNOTS" for display
-                                       const addOnText = addOn.toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/PLUCK/g, 'PLUCK KNOTS');
-                                       text += addOnText;
-                                     });
-                                   } else {
-                                     // Handle single string case
-                                     const addOnText = String(itemData.value).toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/PLUCK/g, 'PLUCK KNOTS');
-                                     text += addOnText;
-                                   }
-                                 } else {
-                                   text += itemData.fullName;
-                                 }
-                               });
-                               return text || '';
-                             })()
-                           }}
-                         />
+                         {/* Removed black detail text for symmetry */}
                          {item.capSize && (
                            <p 
                              className="font-semibold"
