@@ -2938,10 +2938,10 @@ function NoirSelection() {
             </div>
           </div>
 
-          {/* Tabs Section */}
-          <div className="mt-6" style={{ transform: 'translateY(-20px)' }}>
-            {/* Tab Navigation */}
-            <div className="flex justify-center">
+              {/* Tabs Section */}
+              <div className="mt-6" style={{ transform: 'translateY(-66px)' }}>
+                {/* Tab Navigation */}
+                <div className="flex justify-center">
                 <button
                   onClick={() => handleTabClick('DETAILS')}
                   className={`px-2 py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
@@ -2977,10 +2977,10 @@ function NoirSelection() {
                 >
                   REVIEWS
                 </button>
-            </div>
+                </div>
 
-            {/* Tab Content */}
-            <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px' }}>
+                {/* Tab Content */}
+                <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px' }}>
                 {activeTab === 'DETAILS' && (
                   <>
                     <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
@@ -3535,16 +3535,17 @@ function NoirSelection() {
             </button>
         </div>
 
-        <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible' }}>
+        <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible', paddingTop: '0px' }}>
         {/* SIMILAR PRODUCTS SECTION */}
-        <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
+        <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', minWidth: '100%', maxWidth: 'none', marginLeft: '-16px', marginRight: '-16px', width: 'calc(100% + 32px)' }}>
           <div 
             className="backdrop-blur-sm"
             style={{ 
             border: '1.3px solid black', 
             backgroundColor: 'rgba(255, 255, 255, 0.6)',
             padding: '0px',
-            maxWidth: '100%',
+            minWidth: '100%',
+            maxWidth: 'none',
             margin: '0 auto'
           }}>
             {/* Header */}
@@ -3953,14 +3954,15 @@ function NoirSelection() {
         </div>
 
         {/* RECENTLY VIEWED SECTION */}
-        <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
+        <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)', minWidth: '100%', maxWidth: 'none', marginLeft: '-16px', marginRight: '-16px', width: 'calc(100% + 32px)' }}>
           <div 
             className="backdrop-blur-sm"
             style={{ 
             border: '1.3px solid black', 
             backgroundColor: 'rgba(255, 255, 255, 0.6)',
             padding: '0px',
-            maxWidth: '100%',
+            minWidth: '100%',
+            maxWidth: 'none',
             margin: '0 auto'
           }}>
             {/* Header */}
