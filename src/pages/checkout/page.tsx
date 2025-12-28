@@ -1339,11 +1339,11 @@ function CheckoutPage() {
                             
                             // For NOIR, check hairline to use appropriate front image
                             if (productName.toUpperCase() === 'NOIR') {
-                              const hairline = item.hairline || 'NATURAL';
-                              const hairlineUpper = hairline.toUpperCase();
-                              const hasPeak = hairlineUpper.includes('PEAK');
-                              const hasLagos = hairlineUpper.includes('LAGOS');
-                              
+                            const hairline = item.hairline || 'NATURAL';
+                            const hairlineUpper = hairline.toUpperCase();
+                            const hasPeak = hairlineUpper.includes('PEAK');
+                            const hasLagos = hairlineUpper.includes('LAGOS');
+                            
                               if (hasPeak) {
                                 return '/assets/peak front.png';
                               } else if (hasLagos) {
