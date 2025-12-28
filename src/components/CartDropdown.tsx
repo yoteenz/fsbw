@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { CartItem } from '../types/cart';
-import ConfirmationModal from './ConfirmationModal';
 
 interface CartDropdownProps {
   isOpen: boolean;
