@@ -387,21 +387,22 @@ function CheckoutConfirmPage() {
       return '/assets/gift-card asset.png';
     }
     
-    const hairline = item.hairline || 'NATURAL';
-    const hairlineUpper = hairline.toUpperCase();
-    const hasPeak = hairlineUpper.includes('PEAK');
-    const hasLagos = hairlineUpper.includes('LAGOS');
+    // Map products to 2D front images
+    const productName = item.name || 'NOIR';
     
-    if (item.name === 'NOIR') {
-      if (hasPeak) {
-        return '/assets/noir-peak-thumb.png';
-      } else if (hasLagos) {
-        return '/assets/noir-lagos-thumb.png';
-      }
-      return item.image || '/assets/NOIR/noir-thumb.png';
+    if (productName === 'BLANCO') {
+      return '/assets/2D BLANCO FRONT.png';
+    } else if (productName === 'SOFT WAVE' || productName === 'BEACH WAVE') {
+      return '/assets/2D WAVY FRONT.png';
+    } else if (productName === 'SOFT CURL' || productName === 'OCEAN CURL') {
+      return '/assets/2D CURLY FRONT.png';
+    } else if (productName === 'NOIR') {
+      // NOIR is straight, use BLANCO front image
+      return '/assets/2D BLANCO FRONT.png';
     }
     
-    return item.image || '/assets/NOIR/noir-thumb.png';
+    // Default fallback
+    return '/assets/2D BLANCO FRONT.png';
   };
 
   const getHairOrigin = (productName: string) => {
@@ -1314,43 +1315,8 @@ function CheckoutConfirmPage() {
                         </p>
                         {(() => {
                           const detailText = getDetailText(item);
-                          if (!detailText) return null;
-                          
-                          const hasSpecs = (item.density && item.density !== '200%') || 
-                                           (item.lace && item.lace !== '13X6') || 
-                                           (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
-                                           (item.hairline && item.hairline !== 'NATURAL') || 
-                                           (item.styling && item.styling !== 'NONE') || 
-                                           (item.addOns && item.addOns.length > 0) ||
-                                           (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
-                                           (item.length && item.length !== '24"');
-                          const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
-                          const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
-                          const isBlanco = item.name === 'BLANCO';
-                          let baseMargin = hasSpecs && !isGiftCard && !isBlancoNoSpecs ? '4px' : '1px';
-                          if (isBlanco) {
-                            const numValue = parseInt(baseMargin);
-                            baseMargin = `${Math.max(0, numValue - 3)}px`;
-                          }
-                          
-                          return (
-                            <p
-                              className="font-bold"
-                              style={{
-                                fontFamily: '"Futura PT Book"',
-                                color: '#000000',
-                                textTransform: 'uppercase',
-                                fontSize: '7px',
-                                marginTop: '1px',
-                                marginRight: '10px',
-                                lineHeight: '1.44',
-                                marginBottom: '0',
-                                wordBreak: 'break-word',
-                                maxWidth: 'calc(100% - 10px)'
-                              }}
-                              dangerouslySetInnerHTML={{ __html: detailText }}
-                            />
-                          );
+                          // Black detail text removed
+                          return null;
                         })()}
                         <p
                           style={{
@@ -1497,7 +1463,7 @@ function CheckoutConfirmPage() {
                   </p>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
-                      PROCESSING TIMELINE
+                      COMPLETION DEADLINE
                     </span>
                     <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
                       {orderData.orderDate ? calculateProcessingTimeline(orderData.orderDate, orderData.processingTime || '6-8 WEEKS') : (orderData.processingTime || '6-8 WEEKS')}
@@ -1610,7 +1576,7 @@ function CheckoutConfirmPage() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                        YOU EARNED {(orderData.pointsEarned || 1290).toLocaleString()} LOYALTY POINTS!
+                        YOU EARNED <span style={{ color: '#EB1C24' }}>{(orderData.pointsEarned || 1290).toLocaleString()}</span> LOYALTY POINTS!
                       </p>
                       <span style={{ 
                         fontFamily: (() => {

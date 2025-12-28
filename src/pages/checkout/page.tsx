@@ -1449,27 +1449,28 @@ function CheckoutPage() {
                           const itemId = item.id || `cart-item-${index}`;
                           const itemName = item.name || 'NOIR';
                           
-                          // Get the correct image based on product name and hairline
+                          // Get the correct 2D front image based on product name
                           const getItemImage = () => {
                             if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
                               return '/assets/gift-card asset.png';
                             }
                             
-                            const hairline = item.hairline || 'NATURAL';
-                            const hairlineUpper = hairline.toUpperCase();
-                            const hasPeak = hairlineUpper.includes('PEAK');
-                            const hasLagos = hairlineUpper.includes('LAGOS');
+                            // Map products to 2D front images
+                            const productName = item.name || 'NOIR';
                             
-                            if (item.name === 'NOIR') {
-                              if (hasPeak) {
-                                return '/assets/noir-peak-thumb.png';
-                              } else if (hasLagos) {
-                                return '/assets/noir-lagos-thumb.png';
-                              }
-                              return item.image || '/assets/NOIR/noir-thumb.png';
+                            if (productName === 'BLANCO') {
+                              return '/assets/2D BLANCO FRONT.png';
+                            } else if (productName === 'SOFT WAVE' || productName === 'BEACH WAVE') {
+                              return '/assets/2D WAVY FRONT.png';
+                            } else if (productName === 'SOFT CURL' || productName === 'OCEAN CURL') {
+                              return '/assets/2D CURLY FRONT.png';
+                            } else if (productName === 'NOIR') {
+                              // NOIR is straight, use BLANCO front image
+                              return '/assets/2D BLANCO FRONT.png';
                             }
                             
-                            return item.image || '/assets/NOIR/noir-thumb.png';
+                            // Default fallback
+                            return '/assets/2D BLANCO FRONT.png';
                           };
                           const itemImage = getItemImage();
                           
@@ -1712,26 +1713,8 @@ function CheckoutPage() {
                                   };
                                   
                                   const detailText = getDetailText(item);
-                                  if (!detailText) return null;
-                                  
-                                  return (
-                                    <p
-                                      className="font-bold"
-                                      style={{
-                                        fontFamily: '"Futura PT Book"',
-                                        color: '#000000',
-                                        textTransform: 'uppercase',
-                                        fontSize: '7px',
-                                        marginTop: '1px',
-                                        marginRight: '10px',
-                                        lineHeight: '1.44',
-                                        marginBottom: '0',
-                                        wordBreak: 'break-word',
-                                        maxWidth: 'calc(100% - 10px)'
-                                      }}
-                                      dangerouslySetInnerHTML={{ __html: detailText }}
-                                    />
-                                  );
+                                  // Black detail text removed
+                                  return null;
                                 })()}
                                 <p
                                   style={{
