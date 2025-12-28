@@ -1712,7 +1712,6 @@ function CheckoutPage() {
                                     return text;
                                   };
                                   
-                                  const detailText = getDetailText(item);
                                   // Black detail text removed
                                   return null;
                                 })()}

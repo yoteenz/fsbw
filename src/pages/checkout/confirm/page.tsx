@@ -1314,7 +1314,6 @@ function CheckoutConfirmPage() {
                           })()}
                         </p>
                         {(() => {
-                          const detailText = getDetailText(item);
                           // Black detail text removed
                           return null;
                         })()}
