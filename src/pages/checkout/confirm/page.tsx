@@ -244,7 +244,23 @@ function CheckoutConfirmPage() {
       const calculatedTotal = cartItems.length > 0 
         ? cartItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0)
         : 1290;
-      const taxesProcessing = calculatedTotal * 0.10;
+      
+      // Calculate taxable amount (exclude gift cards and digital items)
+      const taxableAmount = cartItems.length > 0
+        ? cartItems.reduce((sum, item) => {
+            // Skip gift cards and digital items
+            const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+            const isDigital = item.type === 'digital';
+            
+            if (isGiftCard || isDigital) {
+              return sum; // Don't add to taxable amount
+            }
+            
+            return sum + (item.price || 0) * (item.quantity || 1);
+          }, 0)
+        : 1290; // Default taxable amount if cart is empty
+      
+      const taxesProcessing = taxableAmount * 0.10;
       const shippingHandling = 60; // Standard shipping
       const subtotal = calculatedTotal + taxesProcessing + shippingHandling;
       const pointsEarned = Math.round(calculatedTotal);
@@ -387,22 +403,36 @@ function CheckoutConfirmPage() {
       return '/assets/gift-card asset.png';
     }
     
-    // Map products to 2D front images
     const productName = item.name || 'NOIR';
     
-    if (productName === 'BLANCO') {
-      return '/assets/2D BLANCO FRONT.png';
-    } else if (productName === 'SOFT WAVE' || productName === 'BEACH WAVE') {
-      return '/assets/2D WAVY FRONT.png';
-    } else if (productName === 'SOFT CURL' || productName === 'OCEAN CURL') {
-      return '/assets/2D CURLY FRONT.png';
-    } else if (productName === 'NOIR') {
-      // NOIR is straight, use BLANCO front image
-      return '/assets/2D BLANCO FRONT.png';
+    // For NOIR, check hairline to use appropriate front image
+    if (productName.toUpperCase() === 'NOIR') {
+      const hairline = item.hairline || 'NATURAL';
+      const hairlineUpper = hairline.toUpperCase();
+      const hasPeak = hairlineUpper.includes('PEAK');
+      const hasLagos = hairlineUpper.includes('LAGOS');
+      
+      if (hasPeak) {
+        return '/assets/peak front.png';
+      } else if (hasLagos) {
+        return '/assets/lagos front.png';
+      }
+      // Default to natural front image
+      return '/assets/natural front.png';
     }
     
-    // Default fallback
-    return '/assets/2D BLANCO FRONT.png';
+    switch (productName.toUpperCase()) {
+      case 'BLANCO':
+        return '/assets/2D BLANCO FRONT.png';
+      case 'SOFT WAVE':
+      case 'BEACH WAVE':
+        return '/assets/2D WAVY FRONT.png';
+      case 'SOFT CURL':
+      case 'OCEAN CURL':
+        return '/assets/2D CURLY FRONT.png';
+      default:
+        return '/assets/natural front.png';
+    }
   };
 
   const getHairOrigin = (productName: string) => {

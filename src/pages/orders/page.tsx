@@ -1077,7 +1077,8 @@ function OrdersPage() {
                 )}
               </div>
 
-              {/* Past Orders Card */}
+              {/* Past Orders Card - Only show when there are archived orders */}
+              {pastOrders.length > 0 && (
               <div className="bg-white/60 backdrop-blur-sm border border-black p-4 min-h-[360px] flex flex-col overflow-hidden shadow-lg transition-all duration-300 ease-out" style={{ borderWidth: '1.3px' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
@@ -1214,6 +1215,7 @@ function OrdersPage() {
                   </div>
                 </div>
               </div>
+              )}
             </div>
           </div>
         </div>

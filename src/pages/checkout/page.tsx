@@ -279,6 +279,23 @@ function CheckoutPage() {
     }
   }, [sameAsBilling, firstName, lastName, shippingAddress, city, state, zip]);
 
+  // Auto-populate email from signed-in user's account
+  useEffect(() => {
+    if (isSignedIn && !email) {
+      try {
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+          const user = JSON.parse(currentUser);
+          if (user.email) {
+            setEmail(user.email);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading user email:', error);
+      }
+    }
+  }, [isSignedIn]);
+
   // Auto-populate shipping address from default method when checkbox is checked
   useEffect(() => {
     if (useDefaultMethod && isSignedIn) {
@@ -296,12 +313,12 @@ function CheckoutPage() {
             setState(defaultAddress.state || '');
             setZip(defaultAddress.zip || '');
             setPhoneNumber(defaultAddress.phoneNumber || user.phoneNumber || '');
-            setEmail(defaultAddress.email || user.email || '');
+            setEmail(defaultAddress.email || user.email || email);
           } else if (user.firstName && user.lastName) {
             // Fallback to user's basic info if no default address
             setFirstName(user.firstName || '');
             setLastName(user.lastName || '');
-            setEmail(user.email || '');
+            setEmail(user.email || email);
             setPhoneNumber(user.phoneNumber || '');
           }
         }
@@ -309,7 +326,7 @@ function CheckoutPage() {
         console.error('Error loading default address:', error);
       }
     } else if (!useDefaultMethod) {
-      // Clear fields when checkbox is unchecked
+      // Clear fields when checkbox is unchecked (but keep email if user is signed in)
       setFirstName('');
       setLastName('');
       setShippingAddress('');
@@ -317,9 +334,9 @@ function CheckoutPage() {
       setState('');
       setZip('');
       setPhoneNumber('');
-      setEmail('');
+      // Don't clear email - it should remain from signed-in user
     }
-  }, [useDefaultMethod, isSignedIn]);
+  }, [useDefaultMethod, isSignedIn, email]);
 
   // Save payment method when checkbox is checked and form is submitted
   useEffect(() => {
@@ -679,7 +696,21 @@ function CheckoutPage() {
 
   // Calculate order totals
   const orderAmount = cartItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
-  const taxesProcessing = orderAmount * 0.10; // 10% sales tax on order amount (excluding shipping & discounts)
+  
+  // Calculate taxable amount (exclude gift cards and digital items)
+  const taxableAmount = cartItems.reduce((sum, item) => {
+    // Skip gift cards and digital items
+    const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+    const isDigital = item.type === 'digital';
+    
+    if (isGiftCard || isDigital) {
+      return sum; // Don't add to taxable amount
+    }
+    
+    return sum + (item.price || 0) * (item.quantity || 1);
+  }, 0);
+  
+  const taxesProcessing = taxableAmount * 0.10; // 10% sales tax on taxable amount only (excluding gift cards, digital items, shipping & discounts)
   
   // Calculate shipping based on selected method
   const getShippingCost = () => {
@@ -1298,28 +1329,42 @@ function CheckoutPage() {
                           const itemId = item.id || `cart-item-${index}`;
                           const itemName = item.name || 'NOIR';
                           
-                          // Get the correct 2D front image based on product name
+                          // Get the correct thumbnail based on product name and hairline (same logic as account/orders page)
                           const getItemImage = () => {
                             if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
                               return '/assets/gift-card asset.png';
                             }
                             
-                            // Map products to 2D front images
                             const productName = item.name || 'NOIR';
                             
-                            if (productName === 'BLANCO') {
-                              return '/assets/2D BLANCO FRONT.png';
-                            } else if (productName === 'SOFT WAVE' || productName === 'BEACH WAVE') {
-                              return '/assets/2D WAVY FRONT.png';
-                            } else if (productName === 'SOFT CURL' || productName === 'OCEAN CURL') {
-                              return '/assets/2D CURLY FRONT.png';
-                            } else if (productName === 'NOIR') {
-                              // NOIR is straight, use BLANCO front image
-                              return '/assets/2D BLANCO FRONT.png';
+                            // For NOIR, check hairline to use appropriate front image
+                            if (productName.toUpperCase() === 'NOIR') {
+                              const hairline = item.hairline || 'NATURAL';
+                              const hairlineUpper = hairline.toUpperCase();
+                              const hasPeak = hairlineUpper.includes('PEAK');
+                              const hasLagos = hairlineUpper.includes('LAGOS');
+                              
+                              if (hasPeak) {
+                                return '/assets/peak front.png';
+                              } else if (hasLagos) {
+                                return '/assets/lagos front.png';
+                              }
+                              // Default to natural front image
+                              return '/assets/natural front.png';
                             }
                             
-                            // Default fallback
-                            return '/assets/2D BLANCO FRONT.png';
+                            switch (productName.toUpperCase()) {
+                              case 'BLANCO':
+                                return '/assets/2D BLANCO FRONT.png';
+                              case 'SOFT WAVE':
+                              case 'BEACH WAVE':
+                                return '/assets/2D WAVY FRONT.png';
+                              case 'SOFT CURL':
+                              case 'OCEAN CURL':
+                                return '/assets/2D CURLY FRONT.png';
+                              default:
+                                return '/assets/natural front.png';
+                            }
                           };
                           const itemImage = getItemImage();
                           
@@ -3123,7 +3168,7 @@ function CheckoutPage() {
                 <div style={{ marginTop: '4px', marginBottom: '4px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <div style={{ display: 'flex', gap: '8px', flexWrap: 'nowrap', width: '100%' }}>
-                      {[10, 15, 25, 30, 50].map((percentage) => (
+                      {[10, 15, 20, 25, 30].map((percentage) => (
                         <button
                           key={percentage}
                           onClick={() => {
@@ -3135,7 +3180,8 @@ function CheckoutPage() {
                             }
                         }}
                         style={{
-                            flex: 1,
+                            flex: '1 1 0',
+                            minWidth: 0,
                             padding: '8px 0',
                           border: '1.3px solid #000000',
                             backgroundColor: '#FFFFFF',
@@ -3144,7 +3190,8 @@ function CheckoutPage() {
                           fontSize: '11px',
                             cursor: 'pointer',
                             textTransform: 'uppercase',
-                            fontWeight: tipPercentage === percentage ? '600' : '400'
+                            fontWeight: tipPercentage === percentage ? '600' : '400',
+                            textAlign: 'center'
                           }}
                         >
                           {percentage}%

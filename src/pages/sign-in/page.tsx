@@ -905,7 +905,7 @@ function SignInPage() {
                           textTransform: 'uppercase'
                         }}
                       >
-                        BIRTHDAY<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                        DATE OF BIRTH<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
                       </label>
                       <input
                         type="tel"

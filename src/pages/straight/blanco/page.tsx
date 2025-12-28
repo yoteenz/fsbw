@@ -65,13 +65,13 @@ function BlancoSelection() {
     // These are only used if user goes to build-a-wig page from blanco
     localStorage.setItem('selectedLength', '24"');
     localStorage.setItem('selectedLengthPrice', '0');
-    localStorage.setItem('selectedDensity', '200%');
+    localStorage.setItem('selectedDensity', '250%'); // BLANCO default is 250%
     localStorage.setItem('selectedDensityPrice', '0');
     localStorage.setItem('selectedLace', '13X6');
     localStorage.setItem('selectedLacePrice', '0');
     localStorage.setItem('selectedTexture', 'SILKY');
     localStorage.setItem('selectedTexturePrice', '0');
-    localStorage.setItem('selectedColor', 'OFF BLACK');
+    localStorage.setItem('selectedColor', 'PLATINUM'); // BLANCO default is PLATINUM
     localStorage.setItem('selectedColorPrice', '0');
     localStorage.setItem('selectedHairline', 'NATURAL');
     localStorage.setItem('selectedHairlinePrice', '0');
@@ -97,10 +97,10 @@ function BlancoSelection() {
     // Get current default configuration values
     const currentCapSize = selectedCustomCap || selectedFlexibleCap || 'M';
     const DEFAULT_LENGTH = '24"';
-    const DEFAULT_DENSITY = '200%';
+    const DEFAULT_DENSITY = '250%'; // BLANCO default is 250%
     const DEFAULT_LACE = '13X6';
     const DEFAULT_TEXTURE = 'SILKY';
-    const DEFAULT_COLOR = 'OFF BLACK';
+    const DEFAULT_COLOR = 'PLATINUM'; // BLANCO default is PLATINUM
     const DEFAULT_HAIRLINE = 'NATURAL';
     const DEFAULT_STYLING = 'NONE';
     const DEFAULT_ADDONS = '';
@@ -694,13 +694,13 @@ function BlancoSelection() {
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // CRITICAL: Read customization values from localStorage (or use defaults)
+      // CRITICAL: Read customization values from localStorage (or use BLANCO defaults)
       // This ensures that if user made selections in build-a-wig, they're included
       const defaultLength = localStorage.getItem('selectedLength') || '24"';
-      const defaultDensity = localStorage.getItem('selectedDensity') || '200%';
+      const defaultDensity = localStorage.getItem('selectedDensity') || '250%'; // BLANCO default is 250%
       const defaultLace = localStorage.getItem('selectedLace') || '13X6';
       const defaultTexture = localStorage.getItem('selectedTexture') || 'SILKY';
-      const defaultColor = localStorage.getItem('selectedColor') || 'OFF BLACK';
+      const defaultColor = localStorage.getItem('selectedColor') || 'PLATINUM'; // BLANCO default is PLATINUM
       const defaultHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
       const defaultStyling = localStorage.getItem('selectedStyling') || 'NONE';
       const defaultAddOns: string[] = JSON.parse(localStorage.getItem('selectedAddOns') || '[]');
@@ -1986,6 +1986,36 @@ function BlancoSelection() {
           <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
             <button
               onClick={() => {
+                // Check if item is in the bag (default configuration)
+                if (addToBagState === 'added') {
+                  // Item is in bag - enter edit mode
+                  try {
+                    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+                    
+                    // Find the matching cart item with default configuration
+                    let matchingItem: any = null;
+                    for (const item of cartItems) {
+                      if (matchesDefaultConfiguration(item)) {
+                        matchingItem = item;
+                        break;
+                      }
+                    }
+                    
+                    if (matchingItem) {
+                      // Set up edit mode
+                      localStorage.setItem('editingCartItem', JSON.stringify(matchingItem));
+                      localStorage.setItem('editingCartItemId', matchingItem.id);
+                      
+                      // Navigate to edit mode
+                      navigate('/build-a-wig/blanco/edit');
+                      return;
+                    }
+                  } catch (e) {
+                    console.error('Error setting up edit mode:', e);
+                  }
+                }
+                
+                // Item is NOT in bag - enter customize mode
                 // Store the selected cap size in localStorage for customize page
                 // Save to both selectedCapSize and customizeSelectedCapSize for consistency
                 const capSizeToSave = selectedCustomCap || selectedFlexibleCap;

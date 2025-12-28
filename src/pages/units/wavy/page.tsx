@@ -523,7 +523,7 @@ function WavyUnitsPage() {
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
                     onClick={() => navigate('/shop/units')}
                   >
-                    SHOP &gt;
+                    UNITS &gt;
                   </span>{' '}
               <span
                 style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}

@@ -2064,8 +2064,7 @@ function NoirSelection() {
                       borderRight: 'none',
                       paddingBottom: '4px',
                       background: 'none',
-                      cursor: 'pointer',
-                      marginLeft: mobileMenuActiveTab === 'TOOLS' ? '0' : '-4px'
+                      cursor: 'pointer'
                     }}
                   >
                     TOOLS
@@ -2084,8 +2083,7 @@ function NoirSelection() {
                       borderRight: 'none',
                       paddingBottom: '4px',
                       background: 'none',
-                      cursor: 'pointer',
-                      marginLeft: mobileMenuActiveTab === 'BRAND' ? '0' : '-4px'
+                      cursor: 'pointer'
                     }}
                   >
                     BRAND
@@ -2149,6 +2147,7 @@ function NoirSelection() {
                                 color: 'black',
                                 fontWeight: '500',
                                 textTransform: 'uppercase',
+                                transform: 'translateX(7px)',
                                 cursor: 'pointer'
                               }}
                               onClick={() => {
@@ -3456,6 +3455,36 @@ function NoirSelection() {
         <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
             <button
             onClick={() => {
+                // Check if item is in the bag (default configuration)
+                if (addToBagState === 'added') {
+                  // Item is in bag - enter edit mode
+                  try {
+                    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+                    
+                    // Find the matching cart item with default configuration
+                    let matchingItem: any = null;
+                    for (const item of cartItems) {
+                      if (matchesDefaultConfiguration(item)) {
+                        matchingItem = item;
+                        break;
+                      }
+                    }
+                  
+                  if (matchingItem) {
+                    // Set up edit mode
+                    localStorage.setItem('editingCartItem', JSON.stringify(matchingItem));
+                    localStorage.setItem('editingCartItemId', matchingItem.id);
+                    
+                    // Navigate to edit mode
+                    navigate('/build-a-wig/noir/edit');
+                    return;
+                  }
+                } catch (e) {
+                  console.error('Error setting up edit mode:', e);
+                }
+              }
+              
+              // Item is NOT in bag - enter customize mode
               // Store the selected cap size in localStorage for customize page
               // Save to both selectedCapSize and customizeSelectedCapSize for consistency
               const capSizeToSave = selectedCustomCap || selectedFlexibleCap;

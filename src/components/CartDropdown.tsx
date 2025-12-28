@@ -36,7 +36,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     return 'USD';
   });
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
-  const [showEmptyBagConfirm, setShowEmptyBagConfirm] = useState(false);
 
   // Currency exchange rates
   const currencyRates = useMemo(() => ({
@@ -600,18 +599,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: updatedItems, count: newCount } }));
   };
 
-  const emptyBag = () => {
-    setCartItems([]);
-    localStorage.setItem('cartItems', JSON.stringify([]));
-    localStorage.setItem('cartCount', '0');
-    
-    // Dispatch both events to ensure all components are notified
-    window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: 0 }));
-    window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: [], count: 0 } }));
-    
-    setShowEmptyBagConfirm(false);
-    onClose();
-  };
 
   // updateQuantity function removed - not currently used
 
@@ -640,7 +627,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
       // Don't close if clicking inside cart dropdown, currency modal, confirmation modals, or cart icon
       if (!target.closest('[data-dropdown-content]') && 
           !target.closest('[data-currency-modal]') &&
-          !target.closest('[data-attribute="empty-bag-confirm"]') &&
           !target.closest('[data-cart-icon]')) {
         onClose();
       }
@@ -1329,7 +1315,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                       {(() => {
                         // Check if item has specifications (sub page selections)
                         // Only show VIEW DETAILS if item has actual customizations beyond defaults
-                        const hasFlexCap = item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L');
+                        // For BLANCO, flex cap options (XXS/XS/S, S/M/L) are default options, not customizations
+                        const isBlanco = item.name === 'BLANCO';
+                        const hasFlexCap = !isBlanco && item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L');
                         const hasCustomLength = item.length && item.length !== '24"';
                         // BLANCO default density is 250%, others default to 200%
                         const defaultDensity = item.name === 'BLANCO' ? '250%' : '200%';
@@ -1410,23 +1398,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             )}
             
             <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-              {/* EMPTY BAG button - only show when cart has items */}
-              {cartItems.length > 0 && (
-                <button
-                  onClick={() => setShowEmptyBagConfirm(true)}
-                  className="py-2 px-3 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
-                  style={{ 
-                    borderWidth: '1.3px',
-                    fontSize: '11px',
-                    fontFamily: '"Futura PT Medium"',
-                    color: '#EB1C24',
-                    textTransform: 'uppercase'
-                  }}
-                >
-                  EMPTY BAG
-                </button>
-              )}
-              
               {/* VIEW BAG and CHECKOUT buttons - only show when cart has items */}
               {cartItems.length > 0 && (
                 <>
@@ -1461,18 +1432,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
               )}
             </div>
           </div>
-
-        {/* Empty Bag Confirmation Modal */}
-        <ConfirmationModal
-          isOpen={showEmptyBagConfirm}
-          onClose={() => setShowEmptyBagConfirm(false)}
-          onConfirm={emptyBag}
-          title="EMPTY SHOPPING BAG?"
-          message="ARE YOU SURE YOU WANT TO REMOVE ALL ITEMS?"
-          confirmText="CONFIRM"
-          cancelText="CANCEL"
-          dataAttribute="empty-bag-confirm"
-        />
 
         {/* Currency Modal */}
         {showCurrencyModal && (
