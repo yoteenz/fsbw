@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { CartItem } from '../types/cart';
+import ConfirmationModal from './ConfirmationModal';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -35,6 +36,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     return 'USD';
   });
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
+  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
+  const [itemToRemove, setItemToRemove] = useState<string | null>(null);
 
   // Currency exchange rates
   const currencyRates = useMemo(() => ({
@@ -584,8 +587,15 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
 
   // No need to recalculate prices - use the actual prices stored when items were added
 
-  const removeItem = (itemId: string) => {
-    const updatedItems = cartItems.filter(item => item.id !== itemId);
+  const handleRemoveItemClick = (itemId: string) => {
+    setItemToRemove(itemId);
+    setShowRemoveConfirm(true);
+  };
+
+  const confirmRemoveItem = () => {
+    if (!itemToRemove) return;
+    
+    const updatedItems = cartItems.filter(item => item.id !== itemToRemove);
     setCartItems(updatedItems);
     localStorage.setItem('cartItems', JSON.stringify(updatedItems));
     
@@ -596,6 +606,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     // Dispatch both events to ensure all components are notified
     window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
     window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: updatedItems, count: newCount } }));
+    
+    // Reset state
+    setShowRemoveConfirm(false);
+    setItemToRemove(null);
   };
 
 
@@ -626,7 +640,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
       // Don't close if clicking inside cart dropdown, currency modal, confirmation modals, or cart icon
       if (!target.closest('[data-dropdown-content]') && 
           !target.closest('[data-currency-modal]') &&
-          !target.closest('[data-cart-icon]')) {
+          !target.closest('[data-cart-icon]') &&
+          !target.closest('[data-attribute="remove-confirm"]')) {
         onClose();
       }
     };
@@ -641,9 +656,14 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
 
   const dropdownContent = (
     <div 
-      className="fixed inset-0 pointer-events-none" 
+      className="fixed inset-0 pointer-events-auto" 
       style={{ 
         zIndex: 999999999
+      }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
       }}
     >
       <div className="absolute left-4 right-4 pointer-events-auto" style={{ top: '86px' }}>
@@ -815,7 +835,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           })()}
                           alt={item.name}
                           className="object-cover rounded"
-                          style={{ width: '88px', height: '88px' }}
+                          style={{ 
+                            width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '108px' : '88px',
+                            height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '108px' : '88px'
+                          }}
                         />
                       </div>
                       
@@ -945,10 +968,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           color: '#000000',
                           textTransform: 'uppercase',
                           fontSize: (() => {
-                            if (item.name === 'BLANCO' || item.name === 'SOFT CURL' || item.name === 'SOFT WAVE') {
-                              return '18px'; // Decreased by 2px for BLANCO, SOFT CURL, SOFT WAVE
+                            if (item.name === 'NOIR') {
+                              return '22px';
                             }
-                            return '21px'; // Increased by 1px for NOIR
+                            return '21px';
                           })(),
                           lineHeight: '1.1',
                           transform: 'translateY(-9px)'
@@ -980,7 +1003,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               case 'NOIR':
                                 return 'CAMBODIAN';
                               case 'BLANCO':
-                                return 'CAMBODIAN'; // or 'RUSSIAN' if needed
+                                return 'RUSSIAN';
                               case 'SOFT CURL':
                                 return 'VIETNAMESE';
                               case 'OCEAN CURL':
@@ -1250,7 +1273,18 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                                              (item.hairline && item.hairline !== 'NATURAL') || 
                                              (item.styling && item.styling !== 'NONE') || 
                                              (item.addOns && item.addOns.length > 0);
-                              return hasSpecs ? '2px' : '0px';
+                              const baseMargin = hasSpecs ? '2px' : '0px';
+                              // Add 2px for SOFT WAVE and SOFT CURL only
+                              if (item.name === 'SOFT WAVE' || item.name === 'SOFT CURL') {
+                                const numValue = parseInt(baseMargin);
+                                return `${numValue + 2}px`;
+                              }
+                              // Add 2px for OCEAN CURL only
+                              if (item.name === 'OCEAN CURL') {
+                                const numValue = parseInt(baseMargin);
+                                return `${numValue + 2}px`;
+                              }
+                              return baseMargin;
                             })(),
                             lineHeight: '1.1'
                           }}
@@ -1259,12 +1293,12 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         </p>
                       )}
                       <p 
-                        className="font-bold"
                         style={{ 
-                          fontFamily: '"Futura PT Medium"',
+                          fontFamily: '"Futura PT Book"',
                           color: '#000000',
                           textTransform: 'uppercase',
-                          fontSize: '13px',
+                          fontSize: '12px',
+                          fontWeight: '600',
                           marginTop: (() => {
                             // Check if there's black detail text (specifications)
                             const hasSpecs = (item.density && item.density !== '200%') || 
@@ -1295,7 +1329,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         QTY: {item.quantity ?? 1}
                       </span>
                       <button
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => handleRemoveItemClick(item.id)}
                         className="px-2 py-1 text-red-500 bg-white hover:bg-gray-50 flex items-center justify-center cursor-pointer"
                         style={{ 
                           border: '1.3px solid black',
@@ -1382,15 +1416,15 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             {cartItems.length > 0 && (
               <div className="flex items-center justify-center mb-3" style={{ paddingTop: '8px' }}>
                 <span 
-                    className="font-bold"
                   style={{ 
                     fontSize: '12px',
-                    fontFamily: '"Futura PT Medium"',
-                      color: '#000000',
-                      textTransform: 'uppercase'
+                    fontFamily: '"Futura PT Book"',
+                    fontWeight: '600',
+                    color: '#000000',
+                    textTransform: 'uppercase'
                   }}
                   dangerouslySetInnerHTML={{
-                    __html: `TOTAL DUE: ${formatPrice(getTotalPrice()).__html}`
+                    __html: `<span style="font-weight: 600; font-family: 'Futura PT Book', sans-serif;">TOTAL DUE: ${formatPrice(getTotalPrice()).__html}</span>`
                   }}
                 />
               </div>
@@ -1566,5 +1600,26 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   );
 
   // Use portal to render outside normal DOM hierarchy
-  return createPortal(dropdownContent, document.body);
+  return (
+    <>
+      {createPortal(dropdownContent, document.body)}
+      {createPortal(
+        <ConfirmationModal
+          isOpen={showRemoveConfirm}
+          onClose={() => {
+            setShowRemoveConfirm(false);
+            setItemToRemove(null);
+          }}
+          onConfirm={confirmRemoveItem}
+          title="DISCARD ITEM?"
+          message="ARE YOU SURE YOU WANT TO REMOVE THIS ITEM?"
+          confirmText="CONFIRM"
+          cancelText="CANCEL"
+          messageTextTransform="uppercase"
+          dataAttribute="remove-confirm"
+        />,
+        document.body
+      )}
+    </>
+  );
 }

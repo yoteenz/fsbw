@@ -1080,13 +1080,13 @@ function ShoppingBagPage() {
                                 color: '#000000',
                                 textTransform: 'uppercase',
                                 fontSize: (() => {
-                                  if (item.name === 'SOFT CURL' || item.name === 'SOFT WAVE') {
-                                    return '18px'; // Decreased by 2px for SOFT CURL, SOFT WAVE
+                                  if (item.name === 'NOIR') {
+                                    return '22px';
                                   }
-                                  return '23px'; // 23px for NOIR, BLANCO, GIFT CARD, OCEAN CURL, BEACH WAVE
+                                  return '21px';
                                 })(),
                                 lineHeight: '1.1',
-                                margin: '0'
+                                transform: 'translateY(-9px)'
                               }}
                             >
                               {itemName.replace(/WIG/gi, '').trim()}
@@ -1098,25 +1098,8 @@ function ShoppingBagPage() {
                                 color: '#EB1C24',
                                 textTransform: 'uppercase',
                                 fontSize: '9px',
-                                marginTop: (() => {
-                                  // Check if there's detail text (specifications)
-                                  const hasSpecs = (item.density && item.density !== '200%') || 
-                                                 (item.lace && item.lace !== '13X6') || 
-                                                 (item.texture && item.texture !== 'SILKY') || 
-                                                 (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
-                                                 (item.hairline && item.hairline !== 'NATURAL') || 
-                                                 (item.styling && item.styling !== 'NONE') || 
-                                                 (item.addOns && item.addOns.length > 0) ||
-                                                 (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
-                                                 (item.length && item.length !== '24"');
-                                  // Gift cards and BLANCO with no detail text should have reduced spacing
-                                  const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
-                                  const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
-                                  if (isGiftCard) return '-3px'; // Gift cards moved down 1px
-                                  if (isBlancoNoSpecs) return '-4px';
-                                  return '-3px';
-                                })(),
-                                transform: 'translateY(6px)',
+                                marginTop: '-5px',
+                                transform: 'translateY(-1px)',
                                 lineHeight: '1.1'
                               }}
                             >
@@ -1144,17 +1127,20 @@ function ShoppingBagPage() {
                                                    (item.hairline && item.hairline !== 'NATURAL') || 
                                                    (item.styling && item.styling !== 'NONE') || 
                                                    (item.addOns && item.addOns.length > 0);
-                                    const isBlanco = item.name === 'BLANCO';
-                                    let baseMargin = hasSpecs ? '4px' : '2px';
-                                    // Move BLANCO cap size up by 3px total (2px + 1px)
-                                    if (isBlanco) {
+                                    const baseMargin = hasSpecs ? '2px' : '0px';
+                                    // Add 2px for SOFT WAVE and SOFT CURL only
+                                    if (item.name === 'SOFT WAVE' || item.name === 'SOFT CURL') {
                                       const numValue = parseInt(baseMargin);
-                                      return `${Math.max(0, numValue - 3)}px`;
+                                      return `${numValue + 2}px`;
+                                    }
+                                    // Add 2px for OCEAN CURL only
+                                    if (item.name === 'OCEAN CURL') {
+                                      const numValue = parseInt(baseMargin);
+                                      return `${numValue + 2}px`;
                                     }
                                     return baseMargin;
                                   })(),
-                                  lineHeight: '1.1',
-                                  marginBottom: '0'
+                                  lineHeight: '1.1'
                                 }}
                               >
                                 CAP SIZE: {item.capSize}
@@ -1400,7 +1386,7 @@ function ShoppingBagPage() {
                       case 'NOIR':
                         return 'CAMBODIAN';
                       case 'BLANCO':
-                        return 'CAMBODIAN';
+                        return 'RUSSIAN';
                       case 'SOFT CURL':
                         return 'VIETNAMESE';
                       case 'OCEAN CURL':
@@ -1498,13 +1484,13 @@ function ShoppingBagPage() {
                              color: '#000000',
                              textTransform: 'uppercase',
                              fontSize: (() => {
-                               if (item.name === 'SOFT CURL' || item.name === 'SOFT WAVE') {
-                                 return '18px'; // Decreased by 2px for SOFT CURL, SOFT WAVE
+                               if (item.name === 'NOIR') {
+                                 return '22px';
                                }
-                               return '23px'; // 23px for NOIR, BLANCO, GIFT CARD, OCEAN CURL, BEACH WAVE
+                               return '21px';
                              })(),
                              lineHeight: '1.1',
-                             margin: '0'
+                             transform: 'translateY(-9px)'
                            }}
                          >
                            {itemName.replace(/WIG/gi, '').trim()}
@@ -1516,25 +1502,8 @@ function ShoppingBagPage() {
                              color: '#EB1C24',
                              textTransform: 'uppercase',
                              fontSize: '9px',
-                             marginTop: (() => {
-                               // Check if there's detail text (specifications)
-                               const hasSpecs = (item.density && item.density !== '200%') || 
-                                              (item.lace && item.lace !== '13X6') || 
-                                              (item.texture && item.texture !== 'SILKY') || 
-                                              (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
-                                              (item.hairline && item.hairline !== 'NATURAL') || 
-                                              (item.styling && item.styling !== 'NONE') || 
-                                              (item.addOns && item.addOns.length > 0) ||
-                                              (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
-                                              (item.length && item.length !== '24"');
-                               // Gift cards and BLANCO with no detail text should have reduced spacing
-                               const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
-                               const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
-                               if (isGiftCard) return '-3px'; // Gift cards moved down 1px
-                               if (isBlancoNoSpecs) return '-4px';
-                               return '-3px';
-                             })(),
-                             transform: 'translateY(6px)',
+                             marginTop: '-5px',
+                             transform: 'translateY(-1px)',
                              lineHeight: '1.1'
                            }}
                          >
@@ -1563,17 +1532,20 @@ function ShoppingBagPage() {
                                                 (item.hairline && item.hairline !== 'NATURAL') || 
                                                 (item.styling && item.styling !== 'NONE') || 
                                                 (item.addOns && item.addOns.length > 0);
-                                 const isBlanco = item.name === 'BLANCO';
-                                 let baseMargin = hasSpecs ? '4px' : '2px';
-                                 // Move BLANCO cap size up by 3px total (2px + 1px)
-                                 if (isBlanco) {
+                                 const baseMargin = hasSpecs ? '2px' : '0px';
+                                 // Add 2px for SOFT WAVE and SOFT CURL only
+                                 if (item.name === 'SOFT WAVE' || item.name === 'SOFT CURL') {
                                    const numValue = parseInt(baseMargin);
-                                   return `${Math.max(0, numValue - 3)}px`;
+                                   return `${numValue + 2}px`;
+                                 }
+                                 // Add 2px for OCEAN CURL only
+                                 if (item.name === 'OCEAN CURL') {
+                                   const numValue = parseInt(baseMargin);
+                                   return `${numValue + 2}px`;
                                  }
                                  return baseMargin;
                                })(),
-                               lineHeight: '1.1',
-                               marginBottom: '0'
+                               lineHeight: '1.1'
                              }}
                            >
                              CAP SIZE: {item.capSize}

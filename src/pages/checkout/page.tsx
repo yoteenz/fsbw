@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
@@ -94,6 +94,26 @@ function CheckoutPage() {
   // Validation modals
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [validationMessage, setValidationMessage] = useState('');
+  const [fieldToFocus, setFieldToFocus] = useState<string | null>(null);
+  const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
+  
+  // Refs for input fields
+  const firstNameRef = useRef<HTMLInputElement>(null);
+  const lastNameRef = useRef<HTMLInputElement>(null);
+  const shippingAddressRef = useRef<HTMLInputElement>(null);
+  const cityRef = useRef<HTMLInputElement>(null);
+  const stateRef = useRef<HTMLInputElement>(null);
+  const zipRef = useRef<HTMLInputElement>(null);
+  const phoneNumberRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const cardholderRef = useRef<HTMLInputElement>(null);
+  const cardNumberRef = useRef<HTMLInputElement>(null);
+  const expirationDateRef = useRef<HTMLInputElement>(null);
+  const cvvRef = useRef<HTMLInputElement>(null);
+  const billingAddressRef = useRef<HTMLInputElement>(null);
+  const billingCityRef = useRef<HTMLInputElement>(null);
+  const billingStateRef = useRef<HTMLInputElement>(null);
+  const billingZipRef = useRef<HTMLInputElement>(null);
 
   // Payment processing state
   const [processingPayment, setProcessingPayment] = useState(false);
@@ -103,6 +123,7 @@ function CheckoutPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [startScrollPosition, setStartScrollPosition] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Currency state
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -617,12 +638,23 @@ function CheckoutPage() {
     const diff = currentX - startX;
     const newPosition = startScrollPosition + diff;
     
-    // Calculate max scroll based on actual item width (150px) + gap (20px)
-    const itemWidth = 150;
+    // Calculate scroll limits
     const gap = 20;
-    const totalItemWidth = itemWidth + gap;
+    const paddingRight = 10;
+    const containerWidth = scrollContainerRef.current?.offsetWidth || window.innerWidth - 32; // Account for page padding
+    
+    // Calculate total content width
+    let totalContentWidth = paddingRight; // Start with padding
+    cartItems.forEach((item, index) => {
+      const itemWidth = (item.name === 'GIFT CARD' || item.type === 'gift-card') ? 165 : 150;
+      totalContentWidth += itemWidth;
+      if (index < cartItems.length - 1) {
+        totalContentWidth += gap;
+      }
+    });
+    
     const maxScroll = 0;
-    const minScroll = -(cartItems.length - 1) * totalItemWidth;
+    const minScroll = -(totalContentWidth - containerWidth);
     setScrollPosition(Math.max(minScroll, Math.min(maxScroll, newPosition)));
   };
 
@@ -643,12 +675,23 @@ function CheckoutPage() {
     const diff = currentX - startX;
     const newPosition = startScrollPosition + diff;
     
-    // Calculate max scroll based on actual item width (150px) + gap (20px)
-    const itemWidth = 150;
+    // Calculate scroll limits
     const gap = 20;
-    const totalItemWidth = itemWidth + gap;
+    const paddingRight = 10;
+    const containerWidth = scrollContainerRef.current?.offsetWidth || window.innerWidth - 32; // Account for page padding
+    
+    // Calculate total content width
+    let totalContentWidth = paddingRight; // Start with padding
+    cartItems.forEach((item, index) => {
+      const itemWidth = (item.name === 'GIFT CARD' || item.type === 'gift-card') ? 165 : 150;
+      totalContentWidth += itemWidth;
+      if (index < cartItems.length - 1) {
+        totalContentWidth += gap;
+      }
+    });
+    
     const maxScroll = 0;
-    const minScroll = -(cartItems.length - 1) * totalItemWidth;
+    const minScroll = -(totalContentWidth - containerWidth);
     setScrollPosition(Math.max(minScroll, Math.min(maxScroll, newPosition)));
   };
 
@@ -845,6 +888,11 @@ function CheckoutPage() {
           color: #909090 !important;
           text-transform: uppercase !important;
           background-color: #FFFFFF !important;
+        }
+        input:focus,
+        textarea:focus {
+          outline: none !important;
+          box-shadow: none !important;
         }
         input:-webkit-autofill,
         input:-webkit-autofill:hover,
@@ -1271,7 +1319,7 @@ function CheckoutPage() {
               /* CHECKOUT CONTENT */
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 {/* ORDER SUMMARY HEADER */}
-                <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '-1px', marginTop: '-12px' }}>
                   <button
                     className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
                     style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
@@ -1280,7 +1328,7 @@ function CheckoutPage() {
                   </button>
                   <span
                     className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
-                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '17px' }}
+                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '15px' }}
                   >
                     {cartItems.length}
                   </span>
@@ -1300,6 +1348,7 @@ function CheckoutPage() {
                     <div className="flex-1 flex flex-col overflow-hidden">
                       {/* Cart Items - horizontal scrollable */}
                       <div 
+                        ref={scrollContainerRef}
                         className="relative overflow-hidden"
                         style={{ 
                           height: '180px',
@@ -1322,7 +1371,8 @@ function CheckoutPage() {
                             gap: '20px',
                             height: '100%',
                             alignItems: 'center',
-                            willChange: 'transform'
+                            willChange: 'transform',
+                            paddingRight: '10px'
                           }}
                         >
                           {cartItems.map((item, index) => {
@@ -1373,7 +1423,7 @@ function CheckoutPage() {
                               case 'NOIR':
                                 return 'CAMBODIAN';
                               case 'BLANCO':
-                                return 'CAMBODIAN';
+                                return 'RUSSIAN';
                               case 'SOFT CURL':
                                 return 'VIETNAMESE';
                               case 'OCEAN CURL':
@@ -1390,36 +1440,58 @@ function CheckoutPage() {
                           const itemLength = item.length || '24"';
                           const itemHairOrigin = getHairOrigin(item.name);
                           const itemPrice = item.price || 580;
-                          const itemQuantity = item.quantity ?? 0;
 
                           return (
                             <div
                               key={itemId}
                               className="flex-shrink-0"
                               style={{
-                                width: '150px',
+                                width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '165px' : '150px',
                                 height: '150px',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                padding: '8px'
+                                paddingTop: '8px',
+                                paddingRight: '8px',
+                                paddingBottom: '8px',
+                                paddingLeft: '8px'
                               }}
                             >
                               <img
                                 src={itemImage}
                                 alt={itemName}
                                 style={{
-                                  width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '53px' : '100px',
-                                  height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '53px' : '100px',
+                                  width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '165px' : '120px',
+                                  height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '165px' : '120px',
                                   objectFit: 'contain'
                                 }}
                                 draggable={false}
                               />
+                              <div
+                                style={{
+                                  transform: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? 'translateY(-25px)' : 'none'
+                                }}
+                              >
                               <p
                                 style={{
-                                  fontFamily: '"Futura PT Book"',
-                                  fontSize: '7px',
+                                  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                    fontSize: '16.8px',
+                                  color: '#000000',
+                                    marginTop: '4px',
+                                    marginBottom: '0',
+                                    textTransform: 'uppercase',
+                                    textAlign: 'center',
+                                    lineHeight: '1.2',
+                                    transform: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? 'translateY(-1px)' : 'none'
+                                  }}
+                                >
+                                  {itemName}
+                              </p>
+                              <p
+                                style={{
+                                    fontFamily: '"Futura PT Medium"',
+                                    fontSize: '8px',
                                   color: '#EB1C24',
                                   marginTop: (() => {
                                     const hasSpecs = (item.density && item.density !== '200%') || 
@@ -1439,7 +1511,8 @@ function CheckoutPage() {
                                   transform: 'translateY(3px)',
                                   lineHeight: '1.1',
                                   marginBottom: '0',
-                                  textTransform: 'uppercase'
+                                    textTransform: 'uppercase',
+                                    textAlign: 'center'
                                 }}
                               >
                                 {(() => {
@@ -1449,27 +1522,34 @@ function CheckoutPage() {
                                   return `${itemLength} RAW ${itemHairOrigin}`;
                                 })()}
                               </p>
+                                {!(item.name === 'GIFT CARD' || item.type === 'gift-card') && item.capSize && (
+                                  <p
+                                      style={{
+                                      fontFamily: '"Futura PT Demi"',
+                                      fontSize: '9px',
+                                      color: '#909090',
+                                      margin: '7px 0 0 0',
+                                        textTransform: 'uppercase',
+                                      lineHeight: '1.1',
+                                      textAlign: 'center'
+                                    }}
+                                  >
+                                    CAP SIZE: {item.capSize}
+                                  </p>
+                                )}
                                 <p
                                   style={{
-                                    fontFamily: '"Futura PT Book"',
-                                    fontSize: '7px',
-                                    color: '#909090',
-                                    margin: '4px 0 0 0',
-                                    textTransform: 'uppercase'
+                                    fontFamily: '"Futura PT Medium"',
+                                    fontSize: '10px',
+                                    fontWeight: '500',
+                                    color: '#000000',
+                                    margin: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '4px 0 0 0' : '1px 0 0 0',
+                                    textTransform: 'uppercase',
+                                    textAlign: 'center'
                                   }}
                                   dangerouslySetInnerHTML={formatPrice(itemPrice)}
                                 />
-                                <span
-                                  style={{
-                                    fontFamily: '"Futura PT Medium"',
-                                    fontSize: '7px',
-                                    color: '#000000',
-                                    textTransform: 'uppercase',
-                                    marginTop: '4px'
-                                  }}
-                                >
-                                  QTY: {itemQuantity}
-                                </span>
+                              </div>
                             </div>
                           );
                         })}
@@ -1632,7 +1712,7 @@ function CheckoutPage() {
                     </div>
 
                 {/* OTHER PAYMENT OPTIONS SECTION */}
-                <div style={{ marginTop: '7px', marginBottom: '8px' }}>
+                <div style={{ marginTop: '9px', marginBottom: '8px' }}>
                   <h2 
                     style={{ 
                       fontFamily: '"Futura PT Medium"',
@@ -1726,7 +1806,7 @@ function CheckoutPage() {
                     </div>
 
                 {/* PAYMENT PLANS SECTION */}
-                <div style={{ marginTop: '20px', marginBottom: '8px' }}>
+                <div style={{ marginTop: '-6px', marginBottom: '8px' }}>
                   <h2 
                     style={{ 
                       fontFamily: '"Futura PT Medium"',
@@ -1820,7 +1900,7 @@ function CheckoutPage() {
                     </div>
 
                 {/* SHIPPING ADDRESS SECTION */}
-                <div>
+                <div style={{ marginTop: '-2px' }}>
                   <h2 
                     style={{ 
                       fontFamily: '"Futura PT Medium"',
@@ -1849,20 +1929,31 @@ function CheckoutPage() {
                           FIRST NAME<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
                       </label>
                       <input
+                        ref={firstNameRef}
                         type="text"
                           value={firstName}
-                          onChange={(e) => setFirstName(e.target.value)}
+                          onChange={(e) => {
+                            setFirstName(e.target.value);
+                            if (e.target.value.trim()) {
+                              setInvalidFields(prev => {
+                                const next = new Set(prev);
+                                next.delete('firstName');
+                                return next;
+                              });
+                            }
+                          }}
                         style={{
                           width: '100%',
                             height: '36px',
                           padding: '8px',
-                          border: '1.3px solid #000000',
+                          border: `1.3px solid ${invalidFields.has('firstName') ? '#EB1C24' : '#000000'}`,
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
                           color: '#909090',
                             boxSizing: 'border-box',
-                            borderRadius: '0'
+                            borderRadius: '0',
+                          outline: 'none'
                         }}
                       />
                     </div>
@@ -1880,20 +1971,31 @@ function CheckoutPage() {
                           LAST NAME<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
                       </label>
                       <input
+                        ref={lastNameRef}
                         type="text"
                           value={lastName}
-                          onChange={(e) => setLastName(e.target.value)}
+                          onChange={(e) => {
+                            setLastName(e.target.value);
+                            if (e.target.value.trim()) {
+                              setInvalidFields(prev => {
+                                const next = new Set(prev);
+                                next.delete('lastName');
+                                return next;
+                              });
+                            }
+                          }}
                         style={{
                           width: '100%',
                             height: '36px',
                           padding: '8px',
-                          border: '1.3px solid #000000',
+                          border: `1.3px solid ${invalidFields.has('lastName') ? '#EB1C24' : '#000000'}`,
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
                           color: '#909090',
                             boxSizing: 'border-box',
-                            borderRadius: '0'
+                            borderRadius: '0',
+                          outline: 'none'
                           }}
                         />
                       </div>
@@ -1912,20 +2014,31 @@ function CheckoutPage() {
                         SHIPPING ADDRESS<span style={{ color: '#EB1C24' }}>*</span>
                       </label>
                       <input
+                        ref={shippingAddressRef}
                         type="text"
                         value={shippingAddress}
-                        onChange={(e) => setShippingAddress(e.target.value)}
+                        onChange={(e) => {
+                          setShippingAddress(e.target.value);
+                          if (e.target.value.trim()) {
+                            setInvalidFields(prev => {
+                              const next = new Set(prev);
+                              next.delete('shippingAddress');
+                              return next;
+                            });
+                          }
+                        }}
                         style={{
                           width: '100%',
                           height: '36px',
                           padding: '8px',
-                          border: '1.3px solid #000000',
+                          border: `1.3px solid ${invalidFields.has('shippingAddress') ? '#EB1C24' : '#000000'}`,
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
                           color: '#909090',
                           boxSizing: 'border-box',
-                          borderRadius: '0'
+                          borderRadius: '0',
+                          outline: 'none'
                         }}
                       />
                     </div>
@@ -1973,20 +2086,31 @@ function CheckoutPage() {
                           CITY<span style={{ color: '#EB1C24' }}>*</span>
                       </label>
                       <input
+                        ref={cityRef}
                         type="text"
                           value={city}
-                          onChange={(e) => setCity(e.target.value)}
+                          onChange={(e) => {
+                            setCity(e.target.value);
+                            if (e.target.value.trim()) {
+                              setInvalidFields(prev => {
+                                const next = new Set(prev);
+                                next.delete('city');
+                                return next;
+                              });
+                            }
+                          }}
                         style={{
                           width: '100%',
                             height: '36px',
                           padding: '8px',
-                          border: '1.3px solid #000000',
+                          border: `1.3px solid ${invalidFields.has('city') ? '#EB1C24' : '#000000'}`,
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
                           color: '#909090',
                             boxSizing: 'border-box',
-                            borderRadius: '0'
+                            borderRadius: '0',
+                          outline: 'none'
                         }}
                       />
                     </div>
@@ -2004,20 +2128,31 @@ function CheckoutPage() {
                           STATE<span style={{ color: '#EB1C24' }}>*</span>
                         </label>
                         <input
+                          ref={stateRef}
                           type="text"
                           value={state}
-                          onChange={(e) => setState(e.target.value)}
+                          onChange={(e) => {
+                            setState(e.target.value);
+                            if (e.target.value.trim()) {
+                              setInvalidFields(prev => {
+                                const next = new Set(prev);
+                                next.delete('state');
+                                return next;
+                              });
+                            }
+                          }}
                           style={{
                             width: '100%',
                             height: '36px',
                             padding: '8px',
-                            border: '1.3px solid #000000',
+                            border: `1.3px solid ${invalidFields.has('state') ? '#EB1C24' : '#000000'}`,
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
                             backgroundColor: '#FFFFFF',
                             color: '#909090',
                             boxSizing: 'border-box',
-                            borderRadius: '0'
+                            borderRadius: '0',
+                            outline: 'none'
                           }}
                         />
                       </div>
@@ -2035,20 +2170,31 @@ function CheckoutPage() {
                           ZIP<span style={{ color: '#EB1C24' }}>*</span>
                         </label>
                         <input
+                          ref={zipRef}
                           type="text"
                           value={zip}
-                          onChange={(e) => setZip(e.target.value)}
+                          onChange={(e) => {
+                            setZip(e.target.value);
+                            if (e.target.value.trim()) {
+                              setInvalidFields(prev => {
+                                const next = new Set(prev);
+                                next.delete('zip');
+                                return next;
+                              });
+                            }
+                          }}
                           style={{
                             width: '100%',
                             height: '36px',
                             padding: '8px',
-                            border: '1.3px solid #000000',
+                            border: `1.3px solid ${invalidFields.has('zip') ? '#EB1C24' : '#000000'}`,
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
                             backgroundColor: '#FFFFFF',
                             color: '#909090',
                             boxSizing: 'border-box',
-                            borderRadius: '0'
+                            borderRadius: '0',
+                            outline: 'none'
                           }}
                         />
                       </div>
@@ -2067,20 +2213,31 @@ function CheckoutPage() {
                         PHONE NUMBER<span style={{ color: '#EB1C24' }}>*</span>
                       </label>
                       <input
+                        ref={phoneNumberRef}
                         type="tel"
                         value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        onChange={(e) => {
+                          setPhoneNumber(e.target.value);
+                          if (e.target.value.trim()) {
+                            setInvalidFields(prev => {
+                              const next = new Set(prev);
+                              next.delete('phoneNumber');
+                              return next;
+                            });
+                          }
+                        }}
                         style={{
                           width: '100%',
                           height: '36px',
                           padding: '8px',
-                          border: '1.3px solid #000000',
+                          border: `1.3px solid ${invalidFields.has('phoneNumber') ? '#EB1C24' : '#000000'}`,
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
                           color: '#909090',
                           boxSizing: 'border-box',
-                          borderRadius: '0'
+                          borderRadius: '0',
+                          outline: 'none'
                         }}
                       />
                     </div>
@@ -2098,20 +2255,31 @@ function CheckoutPage() {
                         EMAIL<span style={{ color: '#EB1C24' }}>*</span>
                       </label>
                       <input
+                        ref={emailRef}
                         type="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          if (e.target.value.trim()) {
+                            setInvalidFields(prev => {
+                              const next = new Set(prev);
+                              next.delete('email');
+                              return next;
+                            });
+                          }
+                        }}
                         style={{
                           width: '100%',
                           height: '36px',
                           padding: '8px',
-                          border: '1.3px solid #000000',
+                          border: `1.3px solid ${invalidFields.has('email') ? '#EB1C24' : '#000000'}`,
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
                           color: '#909090',
                           boxSizing: 'border-box',
-                          borderRadius: '0'
+                          borderRadius: '0',
+                          outline: 'none'
                         }}
                       />
                     </div>
@@ -2289,22 +2457,33 @@ function CheckoutPage() {
                         BILLING ADDRESS<span style={{ color: '#EB1C24' }}>*</span>
                         </label>
                         <input
+                          ref={billingAddressRef}
                           type="text"
                         value={billingAddress}
-                        onChange={(e) => setBillingAddress(e.target.value)}
+                        onChange={(e) => {
+                          setBillingAddress(e.target.value);
+                          if (e.target.value.trim()) {
+                            setInvalidFields(prev => {
+                              const next = new Set(prev);
+                              next.delete('billingAddress');
+                              return next;
+                            });
+                          }
+                        }}
                         disabled={sameAsBilling}
                           style={{
                             width: '100%',
                           height: '36px',
                             padding: '8px',
-                            border: '1.3px solid #000000',
+                            border: `1.3px solid ${invalidFields.has('billingAddress') ? '#EB1C24' : '#000000'}`,
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
                           backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
                           color: '#909090',
                           boxSizing: 'border-box',
                           borderRadius: '0',
-                          cursor: sameAsBilling ? 'not-allowed' : 'text'
+                          cursor: sameAsBilling ? 'not-allowed' : 'text',
+                          outline: 'none'
                           }}
                         />
                       </div>
@@ -2356,22 +2535,33 @@ function CheckoutPage() {
                             CITY<span style={{ color: '#EB1C24' }}>*</span>
                           </label>
                           <input
+                            ref={billingCityRef}
                             type="text"
                           value={billingCity}
-                          onChange={(e) => setBillingCity(e.target.value)}
+                          onChange={(e) => {
+                            setBillingCity(e.target.value);
+                            if (e.target.value.trim()) {
+                              setInvalidFields(prev => {
+                                const next = new Set(prev);
+                                next.delete('billingCity');
+                                return next;
+                              });
+                            }
+                          }}
                           disabled={sameAsBilling}
                             style={{
                               width: '100%',
                               height: '36px',
                               padding: '8px',
-                              border: '1.3px solid #000000',
+                              border: `1.3px solid ${invalidFields.has('billingCity') ? '#EB1C24' : '#000000'}`,
                               fontFamily: '"Futura PT Book"',
                               fontSize: '11px',
                             backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
                             color: '#909090',
                               boxSizing: 'border-box',
                             borderRadius: '0',
-                            cursor: sameAsBilling ? 'not-allowed' : 'text'
+                            cursor: sameAsBilling ? 'not-allowed' : 'text',
+                            outline: 'none'
                             }}
                           />
                     </div>
@@ -2389,22 +2579,33 @@ function CheckoutPage() {
                             STATE<span style={{ color: '#EB1C24' }}>*</span>
                           </label>
                           <input
+                            ref={billingStateRef}
                             type="text"
                               value={billingState}
-                              onChange={(e) => setBillingState(e.target.value)}
+                              onChange={(e) => {
+                                setBillingState(e.target.value);
+                                if (e.target.value.trim()) {
+                                  setInvalidFields(prev => {
+                                    const next = new Set(prev);
+                                    next.delete('billingState');
+                                    return next;
+                                  });
+                                }
+                              }}
                               disabled={sameAsBilling}
                             style={{
                               width: '100%',
                               height: '36px',
                               padding: '8px',
-                              border: '1.3px solid #000000',
+                              border: `1.3px solid ${invalidFields.has('billingState') ? '#EB1C24' : '#000000'}`,
                               fontFamily: '"Futura PT Book"',
                               fontSize: '11px',
                                 backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
                                 color: '#909090',
                               boxSizing: 'border-box',
                                 borderRadius: '0',
-                                cursor: sameAsBilling ? 'not-allowed' : 'text'
+                                cursor: sameAsBilling ? 'not-allowed' : 'text',
+                                outline: 'none'
                             }}
                           />
                         </div>
@@ -2422,22 +2623,33 @@ function CheckoutPage() {
                           ZIP<span style={{ color: '#EB1C24' }}>*</span>
                           </label>
                           <input
+                            ref={billingZipRef}
                             type="text"
                             value={billingZip}
-                            onChange={(e) => setBillingZip(e.target.value)}
+                            onChange={(e) => {
+                              setBillingZip(e.target.value);
+                              if (e.target.value.trim()) {
+                                setInvalidFields(prev => {
+                                  const next = new Set(prev);
+                                  next.delete('billingZip');
+                                  return next;
+                                });
+                              }
+                            }}
                             disabled={sameAsBilling}
                             style={{
                               width: '100%',
                                 height: '36px',
                               padding: '8px',
-                              border: '1.3px solid #000000',
+                              border: `1.3px solid ${invalidFields.has('billingZip') ? '#EB1C24' : '#000000'}`,
                               fontFamily: '"Futura PT Book"',
                               fontSize: '11px',
                               backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
                               color: '#909090',
                                 boxSizing: 'border-box',
                               borderRadius: '0',
-                              cursor: sameAsBilling ? 'not-allowed' : 'text'
+                              cursor: sameAsBilling ? 'not-allowed' : 'text',
+                              outline: 'none'
                           }}
                         />
                     </div>
@@ -2510,19 +2722,30 @@ function CheckoutPage() {
                         CARDHOLDER<span style={{ color: '#EB1C24' }}>*</span>
                             </label>
                             <input
+                              ref={cardholderRef}
                               type="text"
                         value={cardholder}
-                        onChange={(e) => setCardholder(e.target.value)}
+                        onChange={(e) => {
+                          setCardholder(e.target.value);
+                          if (e.target.value.trim()) {
+                            setInvalidFields(prev => {
+                              const next = new Set(prev);
+                              next.delete('cardholder');
+                              return next;
+                            });
+                          }
+                        }}
                               style={{
                                 width: '100%',
                                 height: '36px',
                                 padding: '8px',
-                                border: '1.3px solid #000000',
+                                border: `1.3px solid ${invalidFields.has('cardholder') ? '#EB1C24' : '#000000'}`,
                                 fontFamily: '"Futura PT Book"',
                                 fontSize: '11px',
                                 backgroundColor: 'rgba(255, 255, 255, 0.8)',
                                 boxSizing: 'border-box',
-                                borderRadius: '0'
+                                borderRadius: '0',
+                                outline: 'none'
                               }}
                             />
                           </div>
@@ -2540,19 +2763,30 @@ function CheckoutPage() {
                         CARD NUMBER<span style={{ color: '#EB1C24' }}>*</span>
                             </label>
                             <input
+                              ref={cardNumberRef}
                               type="text"
                         value={cardNumber}
-                        onChange={(e) => setCardNumber(e.target.value)}
+                        onChange={(e) => {
+                          setCardNumber(e.target.value);
+                          if (e.target.value.trim()) {
+                            setInvalidFields(prev => {
+                              const next = new Set(prev);
+                              next.delete('cardNumber');
+                              return next;
+                            });
+                          }
+                        }}
                               style={{
                                 width: '100%',
                                 height: '36px',
                                 padding: '8px',
-                                border: '1.3px solid #000000',
+                                border: `1.3px solid ${invalidFields.has('cardNumber') ? '#EB1C24' : '#000000'}`,
                                 fontFamily: '"Futura PT Book"',
                                 fontSize: '11px',
                                 backgroundColor: 'rgba(255, 255, 255, 0.8)',
                                 boxSizing: 'border-box',
-                                borderRadius: '0'
+                                borderRadius: '0',
+                                outline: 'none'
                               }}
                             />
                           </div>
@@ -2571,19 +2805,30 @@ function CheckoutPage() {
                           EXPIRATION DATE<span style={{ color: '#EB1C24' }}>*</span>
                       </label>
                       <input
+                          ref={expirationDateRef}
                           type="tel"
                           value={expirationDate}
-                          onChange={(e) => setExpirationDate(formatExpirationDate(e.target.value))}
+                          onChange={(e) => {
+                            setExpirationDate(formatExpirationDate(e.target.value));
+                            if (formatExpirationDate(e.target.value).trim()) {
+                              setInvalidFields(prev => {
+                                const next = new Set(prev);
+                                next.delete('expirationDate');
+                                return next;
+                              });
+                            }
+                          }}
                           style={{
                             width: '100%',
                           height: '36px',
                           padding: '8px',
-                            border: '1.3px solid #000000',
+                            border: `1.3px solid ${invalidFields.has('expirationDate') ? '#EB1C24' : '#000000'}`,
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
                           boxSizing: 'border-box',
-                          borderRadius: '0'
+                          borderRadius: '0',
+                          outline: 'none'
                         }}
                       />
                       </div>
@@ -2601,19 +2846,30 @@ function CheckoutPage() {
                           CVV<span style={{ color: '#EB1C24' }}>*</span>
                         </label>
                         <input
+                          ref={cvvRef}
                           type="tel"
                           value={cvv}
-                          onChange={(e) => setCvv(formatCVV(e.target.value))}
+                          onChange={(e) => {
+                            setCvv(formatCVV(e.target.value));
+                            if (formatCVV(e.target.value).trim()) {
+                              setInvalidFields(prev => {
+                                const next = new Set(prev);
+                                next.delete('cvv');
+                                return next;
+                              });
+                            }
+                          }}
                           style={{
                             width: '100%',
                             height: '36px',
                             padding: '8px',
-                            border: '1.3px solid #000000',
+                            border: `1.3px solid ${invalidFields.has('cvv') ? '#EB1C24' : '#000000'}`,
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
                             backgroundColor: 'rgba(255, 255, 255, 0.8)',
                             boxSizing: 'border-box',
-                            borderRadius: '0'
+                            borderRadius: '0',
+                            outline: 'none'
                           }}
                         />
                       </div>
@@ -2631,6 +2887,7 @@ function CheckoutPage() {
                           BILLING ZIP<span style={{ color: '#EB1C24' }}>*</span>
                       </label>
                       <input
+                        ref={billingZipRef}
                         type="text"
                           value={billingZip}
                           onChange={(e) => setBillingZip(e.target.value)}
@@ -3459,7 +3716,7 @@ function CheckoutPage() {
                       SUBSCRIBE TO EMAIL NEWSLETTER
                     </label>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                     <div
                       onClick={() => setAgreeToTerms(!agreeToTerms)}
                       style={{
@@ -3510,94 +3767,126 @@ function CheckoutPage() {
             <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                   <button
                     onClick={() => {
-                  // Check if terms are agreed to
-                  if (!agreeToTerms) {
-                    setShowTermsRequiredModal(true);
-                    return;
-                  }
-                  
                   // Validate required fields
                   if (!firstName.trim()) {
                     setValidationMessage('FIRST NAME IS REQUIRED.');
+                    setFieldToFocus('firstName');
+                    setInvalidFields(prev => new Set(prev).add('firstName'));
                     setShowValidationModal(true);
                     return;
                   }
                   if (!lastName.trim()) {
                     setValidationMessage('LAST NAME IS REQUIRED.');
+                    setFieldToFocus('lastName');
+                    setInvalidFields(prev => new Set(prev).add('lastName'));
                     setShowValidationModal(true);
                     return;
                   }
                   if (!shippingAddress.trim()) {
                     setValidationMessage('SHIPPING ADDRESS IS REQUIRED.');
+                    setFieldToFocus('shippingAddress');
+                    setInvalidFields(prev => new Set(prev).add('shippingAddress'));
                     setShowValidationModal(true);
                     return;
                   }
                   if (!city.trim()) {
                     setValidationMessage('CITY IS REQUIRED.');
+                    setFieldToFocus('city');
+                    setInvalidFields(prev => new Set(prev).add('city'));
                     setShowValidationModal(true);
                     return;
                   }
                   if (!state.trim()) {
                     setValidationMessage('STATE IS REQUIRED.');
+                    setFieldToFocus('state');
+                    setInvalidFields(prev => new Set(prev).add('state'));
                     setShowValidationModal(true);
                     return;
                   }
                   if (!zip.trim()) {
                     setValidationMessage('ZIP CODE IS REQUIRED.');
+                    setFieldToFocus('zip');
+                    setInvalidFields(prev => new Set(prev).add('zip'));
                     setShowValidationModal(true);
                     return;
                   }
                   if (!phoneNumber.trim()) {
                     setValidationMessage('PHONE NUMBER IS REQUIRED.');
+                    setFieldToFocus('phoneNumber');
+                    setInvalidFields(prev => new Set(prev).add('phoneNumber'));
                     setShowValidationModal(true);
                     return;
                   }
                   if (!email.trim()) {
                     setValidationMessage('EMAIL IS REQUIRED.');
+                    setFieldToFocus('email');
+                    setInvalidFields(prev => new Set(prev).add('email'));
                     setShowValidationModal(true);
                     return;
                   }
                   if (!cardholder.trim()) {
                     setValidationMessage('CARDHOLDER NAME IS REQUIRED.');
+                    setFieldToFocus('cardholder');
+                    setInvalidFields(prev => new Set(prev).add('cardholder'));
                     setShowValidationModal(true);
                     return;
                   }
                   if (!cardNumber.trim()) {
                     setValidationMessage('CARD NUMBER IS REQUIRED.');
+                    setFieldToFocus('cardNumber');
+                    setInvalidFields(prev => new Set(prev).add('cardNumber'));
                     setShowValidationModal(true);
                     return;
                   }
                   if (!expirationDate.trim()) {
                     setValidationMessage('EXPIRATION DATE IS REQUIRED.');
+                    setFieldToFocus('expirationDate');
+                    setInvalidFields(prev => new Set(prev).add('expirationDate'));
                     setShowValidationModal(true);
                     return;
                   }
                   if (!cvv.trim()) {
                     setValidationMessage('CVV IS REQUIRED.');
+                    setFieldToFocus('cvv');
+                    setInvalidFields(prev => new Set(prev).add('cvv'));
                     setShowValidationModal(true);
                     return;
                   }
                   if (!sameAsBilling) {
                     if (!billingAddress.trim()) {
                       setValidationMessage('BILLING ADDRESS IS REQUIRED.');
+                      setFieldToFocus('billingAddress');
+                      setInvalidFields(prev => new Set(prev).add('billingAddress'));
                       setShowValidationModal(true);
                       return;
                     }
                     if (!billingCity.trim()) {
                       setValidationMessage('BILLING CITY IS REQUIRED.');
+                      setFieldToFocus('billingCity');
+                      setInvalidFields(prev => new Set(prev).add('billingCity'));
                       setShowValidationModal(true);
                       return;
                     }
                     if (!billingState.trim()) {
                       setValidationMessage('BILLING STATE IS REQUIRED.');
+                      setFieldToFocus('billingState');
+                      setInvalidFields(prev => new Set(prev).add('billingState'));
                       setShowValidationModal(true);
                       return;
                     }
                     if (!billingZip.trim()) {
                       setValidationMessage('BILLING ZIP CODE IS REQUIRED.');
+                      setFieldToFocus('billingZip');
+                      setInvalidFields(prev => new Set(prev).add('billingZip'));
                       setShowValidationModal(true);
                       return;
                     }
+                  }
+                  
+                  // Check if terms are agreed to (check last, after all other validations)
+                  if (!agreeToTerms) {
+                    setShowTermsRequiredModal(true);
+                    return;
                   }
                   
                   // Calculate points earned (if signed in)
@@ -3860,7 +4149,7 @@ function CheckoutPage() {
                 margin: 0
               }}
             >
-              ALL SALES ARE FINAL. WE ARE UNABLE TO OFFER REFUNDS, RETURNS OR EXCHANGES DUE TO SANITARY REASONS & THE HIGH APPEAL OF OUR PRODUCTS. FRONTAL SLAYER RESERVES THE RIGHT TO REFUSE ALL REFUNDS, RETURNS AND EXCHANGES. IF THERE IS AN ISSUE WITH YOUR ORDER, PLEASE REACH OUT TO CONTACT@FRONTALSLAYER.COM<br />
+              ALL SALES ARE FINAL. WE ARE UNABLE TO OFFER REFUNDS, RETURNS OR EXCHANGES DUE TO SANITARY REASONS & THE BESPOKE NATURE OF OUR PRODUCTS. FRONTAL SLAYER RESERVES THE RIGHT TO REFUSE ALL REFUNDS, RETURNS AND EXCHANGES. IF THERE IS AN ISSUE WITH YOUR ORDER, PLEASE REACH OUT TO <span style={{ color: '#EB1C24' }}>CONTACT@FRONTALSLAYER.COM</span><br />
               IMMEDIATELY. ALL INQUIRIES SHOULD RECEIVE A RESPONSE WITHIN 72 HOURS. CONTACT US IF YOUR ITEM IS DEFECTIVE OR YOU RECEIVED THE WRONG ITEM. WE WILL INVESTIGATE THE ISSUE THOROUGHLY AND CORRECT YOUR SHIPMENT OR ISSUE STORE CREDIT IF THE ITEM IS NO LONGER IN STOCK.
             </p>
           </div>
@@ -3907,7 +4196,7 @@ function CheckoutPage() {
       isOpen={showTermsRequiredModal}
       onClose={() => setShowTermsRequiredModal(false)}
       onConfirm={() => setShowTermsRequiredModal(false)}
-      title="TERMS & CONDITIONS REQUIRED"
+      title="AGREE TO TERMS + CONDITIONS"
       message=" YOU MUST AGREE TO THE TERMS TO FINALIZE THIS PURCHASE."
       confirmText="OK"
       cancelText="CLOSE"
@@ -3917,9 +4206,69 @@ function CheckoutPage() {
     {/* Validation Modal */}
     <ConfirmationModal
       isOpen={showValidationModal}
-      onClose={() => setShowValidationModal(false)}
-      onConfirm={() => setShowValidationModal(false)}
-      title="INPUT FIELD REQUIRED"
+      onClose={() => {
+        setShowValidationModal(false);
+        // Focus the field after modal closes
+        setTimeout(() => {
+          if (fieldToFocus) {
+            const refMap: { [key: string]: React.RefObject<HTMLInputElement> } = {
+              firstName: firstNameRef,
+              lastName: lastNameRef,
+              shippingAddress: shippingAddressRef,
+              city: cityRef,
+              state: stateRef,
+              zip: zipRef,
+              phoneNumber: phoneNumberRef,
+              email: emailRef,
+              cardholder: cardholderRef,
+              cardNumber: cardNumberRef,
+              expirationDate: expirationDateRef,
+              cvv: cvvRef,
+              billingAddress: billingAddressRef,
+              billingCity: billingCityRef,
+              billingState: billingStateRef,
+              billingZip: billingZipRef
+            };
+            const ref = refMap[fieldToFocus];
+            if (ref?.current) {
+              ref.current.focus();
+            }
+            setFieldToFocus(null);
+          }
+        }, 100);
+      }}
+      onConfirm={() => {
+        setShowValidationModal(false);
+        // Focus the field after modal closes
+        setTimeout(() => {
+          if (fieldToFocus) {
+            const refMap: { [key: string]: React.RefObject<HTMLInputElement> } = {
+              firstName: firstNameRef,
+              lastName: lastNameRef,
+              shippingAddress: shippingAddressRef,
+              city: cityRef,
+              state: stateRef,
+              zip: zipRef,
+              phoneNumber: phoneNumberRef,
+              email: emailRef,
+              cardholder: cardholderRef,
+              cardNumber: cardNumberRef,
+              expirationDate: expirationDateRef,
+              cvv: cvvRef,
+              billingAddress: billingAddressRef,
+              billingCity: billingCityRef,
+              billingState: billingStateRef,
+              billingZip: billingZipRef
+            };
+            const ref = refMap[fieldToFocus];
+            if (ref?.current) {
+              ref.current.focus();
+            }
+            setFieldToFocus(null);
+          }
+        }, 100);
+      }}
+      title="MISSING INPUT FIELD"
       message={validationMessage}
       confirmText="OK"
       cancelText="CLOSE"

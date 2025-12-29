@@ -1209,10 +1209,10 @@ function ProductsPage() {
                 )}
               </div>
             </div>
-              </div>
-            )}
           </div>
+            )}
         </div>
+      </div>
       </div>
 
       {/* Sign Out Confirmation Modal */}

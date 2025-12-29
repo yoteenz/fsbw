@@ -33,7 +33,7 @@ export default function ConfirmationModal({
         left: '0',
         right: '0',
         bottom: '0',
-        zIndex: 999999999,
+        zIndex: 9999999999,
         backgroundColor: 'rgba(0, 0, 0, 0.7)',
         backdropFilter: 'blur(3px)',
         WebkitBackdropFilter: 'blur(3px)',
