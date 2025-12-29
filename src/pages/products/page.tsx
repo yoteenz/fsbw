@@ -833,6 +833,8 @@ function ProductsPage() {
                                     // Otherwise, toggle expansion
                                     handleMobileMenuItemToggle(item.label);
                                   }
+                                } else if (item.label === 'ORDER AUTHORIZATION FORM') {
+                                  navigate('/shop/order-form');
                                 }
                               }}
                             >

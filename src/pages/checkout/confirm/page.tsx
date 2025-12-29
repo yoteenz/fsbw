@@ -54,8 +54,16 @@ function CheckoutConfirmPage() {
     localStorage.setItem('lastOrderNumber', nextOrderNumber.toString());
     const orderNumber = `#${String(nextOrderNumber).padStart(3, '0')}`;
     
-    // Generate random 6-digit confirmation number and tie it to order number
-    const confirmationNumber = String(Math.floor(100000 + Math.random() * 900000));
+    // Generate random 6-character alphanumeric confirmation number and tie it to order number
+    const generateConfirmationNumber = () => {
+      const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      let result = '';
+      for (let i = 0; i < 6; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return result;
+    };
+    const confirmationNumber = generateConfirmationNumber();
     const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
     orderConfirmations[orderNumber] = confirmationNumber;
     localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
@@ -311,8 +319,16 @@ function CheckoutConfirmPage() {
           localStorage.setItem('lastOrderNumber', nextOrderNumber.toString());
           orderNum = `#${String(nextOrderNumber).padStart(3, '0')}`;
           
-          // Generate random 6-digit confirmation number and tie it to order number
-          confirmNum = String(Math.floor(100000 + Math.random() * 900000));
+          // Generate random 6-character alphanumeric confirmation number and tie it to order number
+          const generateConfirmationNumber = () => {
+            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let result = '';
+            for (let i = 0; i < 6; i++) {
+              result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+          };
+          confirmNum = generateConfirmationNumber();
           const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
           orderConfirmations[orderNum] = confirmNum;
           localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
@@ -322,7 +338,15 @@ function CheckoutConfirmPage() {
           confirmNum = orderConfirmations[orderNum];
           if (!confirmNum) {
             // Generate if not found in storage
-            confirmNum = String(Math.floor(100000 + Math.random() * 900000));
+            const generateConfirmationNumber = () => {
+              const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+              let result = '';
+              for (let i = 0; i < 6; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+              }
+              return result;
+            };
+            confirmNum = generateConfirmationNumber();
             orderConfirmations[orderNum] = confirmNum;
             localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
           }
@@ -871,6 +895,8 @@ function CheckoutConfirmPage() {
                                     // Otherwise, toggle expansion
                                     handleMobileMenuItemToggle(item.label);
                                   }
+                                } else if (item.label === 'ORDER AUTHORIZATION FORM') {
+                                  navigate('/shop/order-form');
                                 }
                               }}
                             >
@@ -1190,8 +1216,19 @@ function CheckoutConfirmPage() {
               <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                 <button
                   onClick={() => {
-                    // Handle sign order form
-                    console.log('Sign order form');
+                    navigate('/shop/order-form', {
+                      state: {
+                        orderDate: orderData.orderDate,
+                        firstName: orderData.firstName,
+                        lastName: orderData.lastName,
+                        email: orderData.email,
+                        shippingAddress: orderData.shippingAddress,
+                        city: orderData.city,
+                        state: orderData.state,
+                        zip: orderData.zip,
+                        country: orderData.country
+                      }
+                    });
                   }}
                   className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                   style={{
@@ -1384,7 +1421,15 @@ function CheckoutConfirmPage() {
                           }
                         }
                         // Generate new confirmation number if not found
-                        const confirmationNumber = String(Math.floor(100000 + Math.random() * 900000));
+                        const generateConfirmationNumber = () => {
+                          const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                          let result = '';
+                          for (let i = 0; i < 6; i++) {
+                            result += chars.charAt(Math.floor(Math.random() * chars.length));
+                          }
+                          return result;
+                        };
+                        const confirmationNumber = generateConfirmationNumber();
                         if (orderData.orderNumber) {
                           const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
                           orderConfirmations[orderData.orderNumber] = confirmationNumber;

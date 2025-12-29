@@ -854,8 +854,16 @@ function CheckoutPage() {
           localStorage.setItem('lastOrderNumber', nextOrderNumber.toString());
           const orderNumber = `#${String(nextOrderNumber).padStart(3, '0')}`;
           
-          // Generate random 6-digit confirmation number and tie it to order number
-          const confirmationNumber = String(Math.floor(100000 + Math.random() * 900000));
+          // Generate random 6-character alphanumeric confirmation number and tie it to order number
+          const generateConfirmationNumber = () => {
+            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let result = '';
+            for (let i = 0; i < 6; i++) {
+              result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+          };
+          const confirmationNumber = generateConfirmationNumber();
           const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
           orderConfirmations[orderNumber] = confirmationNumber;
           localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
@@ -1233,6 +1241,8 @@ function CheckoutPage() {
                                   } else {
                                     handleMobileMenuItemToggle(item.label);
                                   }
+                                } else if (item.label === 'ORDER AUTHORIZATION FORM') {
+                                  navigate('/shop/order-form');
                                 }
                               }}
                             >
@@ -3914,8 +3924,16 @@ function CheckoutPage() {
                   localStorage.setItem('lastOrderNumber', nextOrderNumber.toString());
                   const orderNumber = `#${String(nextOrderNumber).padStart(3, '0')}`;
                   
-                  // Generate random 6-digit confirmation number and tie it to order number
-                  const confirmationNumber = String(Math.floor(100000 + Math.random() * 900000));
+                  // Generate random 6-character alphanumeric confirmation number and tie it to order number
+                  const generateConfirmationNumber = () => {
+                    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                    let result = '';
+                    for (let i = 0; i < 6; i++) {
+                      result += chars.charAt(Math.floor(Math.random() * chars.length));
+                    }
+                    return result;
+                  };
+                  const confirmationNumber = generateConfirmationNumber();
                   const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
                   orderConfirmations[orderNumber] = confirmationNumber;
                   localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));

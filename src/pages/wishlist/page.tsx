@@ -637,17 +637,19 @@ function WishlistSelection() {
                                 cursor: 'pointer',
                                 transform: 'translateX(7px)'
                               }}
-                            onClick={() => {
-                              if (item.isExpandable) {
-                                // If UNITS is already expanded, navigate to shop/units page
-                                if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                  navigate('/shop/units');
-                                } else {
-                                  // Otherwise, toggle expansion
-                                  handleMobileMenuItemToggle(item.label);
+                              onClick={() => {
+                                if (item.isExpandable) {
+                                  // If UNITS is already expanded, navigate to shop/units page
+                                  if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
+                                    navigate('/shop/units');
+                                  } else {
+                                    // Otherwise, toggle expansion
+                                    handleMobileMenuItemToggle(item.label);
+                                  }
+                                } else if (item.label === 'ORDER AUTHORIZATION FORM') {
+                                  navigate('/shop/order-form');
                                 }
-                              }
-                            }}
+                              }}
                           >
                               {item.label}
                             </span>

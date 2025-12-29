@@ -43,6 +43,7 @@ const ProductsPage = lazy(() => import('./pages/products/page'));
 const ProductsUnitsPage = lazy(() => import('./pages/products/units/page'));
 const ToolsPage = lazy(() => import('./pages/tools/page'));
 const GiftCardPage = lazy(() => import('./pages/tools/gift-card/page'));
+const OrderFormPage = lazy(() => import('./pages/shop/order-form/page'));
 
 // Error Boundary to catch component errors
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null }> {
@@ -366,6 +367,11 @@ function App() {
         <Route path="/shop/units" element={
           <Suspense fallback={<LoadingScreen />}>
             <ProductsUnitsPage />
+          </Suspense>
+        } />
+        <Route path="/shop/order-form" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <OrderFormPage />
           </Suspense>
         } />
         <Route path="/home/shop" element={
