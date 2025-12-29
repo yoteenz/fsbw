@@ -848,9 +848,22 @@ function CheckoutPage() {
         } else if (result.transactionId) {
           // Payment completed successfully (e.g., Apple Pay, Google Pay)
           // Navigate to confirmation page
+          // Get and increment order number
+          const lastOrderNumber = parseInt(localStorage.getItem('lastOrderNumber') || '0', 10);
+          const nextOrderNumber = lastOrderNumber + 1;
+          localStorage.setItem('lastOrderNumber', nextOrderNumber.toString());
+          const orderNumber = `#${String(nextOrderNumber).padStart(3, '0')}`;
+          
+          // Generate random 6-digit confirmation number and tie it to order number
+          const confirmationNumber = String(Math.floor(100000 + Math.random() * 900000));
+          const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
+          orderConfirmations[orderNumber] = confirmationNumber;
+          localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
+          
           navigate('/checkout/summary', {
             state: {
-              orderNumber: `#${Math.floor(Math.random() * 1000)}`,
+              orderNumber: orderNumber,
+              confirmationNumber: confirmationNumber,
               orderDate: new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-'),
               orderTotal: paymentData.amount,
               transactionId: result.transactionId,
@@ -3895,8 +3908,17 @@ function CheckoutPage() {
                   // Determine tier (simplified - you may want to get this from user data)
                   const tier = pointsEarned >= 5000 ? 'RED' : pointsEarned >= 2000 ? 'GOLD' : 'SILVER';
                   
-                  // Generate order number
-                  const orderNumber = `#${Math.floor(Math.random() * 1000)}`;
+                  // Get and increment order number
+                  const lastOrderNumber = parseInt(localStorage.getItem('lastOrderNumber') || '0', 10);
+                  const nextOrderNumber = lastOrderNumber + 1;
+                  localStorage.setItem('lastOrderNumber', nextOrderNumber.toString());
+                  const orderNumber = `#${String(nextOrderNumber).padStart(3, '0')}`;
+                  
+                  // Generate random 6-digit confirmation number and tie it to order number
+                  const confirmationNumber = String(Math.floor(100000 + Math.random() * 900000));
+                  const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
+                  orderConfirmations[orderNumber] = confirmationNumber;
+                  localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
                   
                   // Format order date
                   const orderDate = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-');
@@ -4149,8 +4171,8 @@ function CheckoutPage() {
                 margin: 0
               }}
             >
-              ALL SALES ARE FINAL. WE ARE UNABLE TO OFFER REFUNDS, RETURNS OR EXCHANGES DUE TO SANITARY REASONS & THE BESPOKE NATURE OF OUR PRODUCTS. FRONTAL SLAYER RESERVES THE RIGHT TO REFUSE ALL REFUNDS, RETURNS AND EXCHANGES. IF THERE IS AN ISSUE WITH YOUR ORDER, PLEASE REACH OUT TO <span style={{ color: '#EB1C24' }}>CONTACT@FRONTALSLAYER.COM</span><br />
-              IMMEDIATELY. ALL INQUIRIES SHOULD RECEIVE A RESPONSE WITHIN 72 HOURS. CONTACT US IF YOUR ITEM IS DEFECTIVE OR YOU RECEIVED THE WRONG ITEM. WE WILL INVESTIGATE THE ISSUE THOROUGHLY AND CORRECT YOUR SHIPMENT OR ISSUE STORE CREDIT IF THE ITEM IS NO LONGER IN STOCK.
+              ALL SALES ARE FINAL. WE ARE UNABLE TO OFFER REFUNDS, RETURNS OR EXCHANGES DUE TO THE BESPOKE NATURE OF OUR PRODUCTS & FOR SANITARY REASONS. FRONTAL SLAYER RESERVES THE RIGHT TO REFUSE ALL REFUNDS, RETURNS AND EXCHANGES. IF THERE IS AN ISSUE WITH YOUR ORDER, PLEASE REACH OUT TO <span style={{ color: '#EB1C24' }}>CONTACT@FRONTALSLAYER.COM</span><br />
+              ALL INQUIRIES SHOULD RECEIVE A RESPONSE WITHIN 72 HOURS. CONTACT US IF YOUR ITEM IS DEFECTIVE OR YOU RECEIVED THE WRONG ITEM. WE WILL INVESTIGATE ALL CONCERNS THOROUGHLY AND CORRECT YOUR SHIPMENT OR ISSUE STORE CREDIT IF THE ITEM IS NO LONGER IN STOCK.
             </p>
           </div>
 

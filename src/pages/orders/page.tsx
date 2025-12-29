@@ -1532,7 +1532,7 @@ function OrdersPage() {
                 </div>
               </div>
               )}
-              </div>
+            </div>
             )}
           </div>
         </div>
@@ -1548,7 +1548,7 @@ function OrdersPage() {
         confirmText="SIGN OUT"
         cancelText="CANCEL"
       />
-    </div>
+      </div>
   );
 }
 

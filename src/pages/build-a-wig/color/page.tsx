@@ -38,6 +38,12 @@ function ColorSelection() {
             return 'PLATINUM';
           }
         }
+        // For non-BLANCO routes, validate that color is not a BLANCO-only color
+        const blancoOnlyColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+        if (blancoOnlyColors.includes(editSelectedColor)) {
+          // PLATINUM/GOLDEN/ASH is not valid for non-BLANCO products, default to OFF BLACK
+          return 'OFF BLACK';
+        }
         return editSelectedColor;
       }
       // Fallback to editingCartItem
@@ -56,6 +62,12 @@ function ColorSelection() {
                 return 'PLATINUM';
               }
             }
+            // For non-BLANCO items, validate that color is not a BLANCO-only color
+            const blancoOnlyColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+            if (blancoOnlyColors.includes(item.color)) {
+              // PLATINUM/GOLDEN/ASH is not valid for non-BLANCO products, default to OFF BLACK
+              return 'OFF BLACK';
+            }
             return item.color;
           }
           // No color in item - use default based on product
@@ -70,12 +82,30 @@ function ColorSelection() {
       if (isBlancoRoute) {
         return 'PLATINUM';
       }
+      // For non-BLANCO routes in edit mode, default to OFF BLACK
+      return 'OFF BLACK';
     }
     
     // CRITICAL: Check customizeSelected* keys when in customize mode
     if (isOnCustomizeRoute) {
       const customizeSelectedColor = localStorage.getItem('customizeSelectedColor');
       if (customizeSelectedColor) {
+        // For BLANCO routes, validate color is a valid BLANCO color
+        if (isBlancoRoute) {
+          const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+          if (validBlancoColors.includes(customizeSelectedColor)) {
+            return customizeSelectedColor;
+          } else {
+            // Invalid color for BLANCO, default to PLATINUM
+            return 'PLATINUM';
+          }
+        }
+        // For non-BLANCO routes, validate that color is not a BLANCO-only color
+        const blancoOnlyColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+        if (blancoOnlyColors.includes(customizeSelectedColor)) {
+          // PLATINUM/GOLDEN/ASH is not valid for non-BLANCO products, default to OFF BLACK
+          return 'OFF BLACK';
+        }
         return customizeSelectedColor;
       }
     }
@@ -83,9 +113,28 @@ function ColorSelection() {
     // Main mode: use selected* keys
     // For blanco routes (both customize and edit), default to PLATINUM
     if (isBlancoRoute) {
-      return localStorage.getItem('selectedColor') || 'PLATINUM';
+      const selectedColor = localStorage.getItem('selectedColor');
+      if (selectedColor) {
+        const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+        if (validBlancoColors.includes(selectedColor)) {
+          return selectedColor;
+        }
+        // Invalid color for BLANCO, default to PLATINUM
+        return 'PLATINUM';
+      }
+      return 'PLATINUM';
     }
-    return localStorage.getItem('selectedColor') || 'OFF BLACK';
+    // For non-BLANCO routes, validate selectedColor is not a BLANCO-only color
+    const selectedColor = localStorage.getItem('selectedColor');
+    if (selectedColor) {
+      const blancoOnlyColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+      if (blancoOnlyColors.includes(selectedColor)) {
+        // PLATINUM/GOLDEN/ASH is not valid for non-BLANCO products, default to OFF BLACK
+        return 'OFF BLACK';
+      }
+      return selectedColor;
+    }
+    return 'OFF BLACK';
   });
   
   // CRITICAL: Reload selection when navigating to this page

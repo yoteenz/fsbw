@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 
@@ -48,8 +48,21 @@ function CheckoutConfirmPage() {
     const mockShippingHandling = 60;
     const mockOrderTotal = mockBaseTotal + mockTaxesProcessing + mockShippingHandling;
     
+    // Get and increment order number
+    const lastOrderNumber = parseInt(localStorage.getItem('lastOrderNumber') || '0', 10);
+    const nextOrderNumber = lastOrderNumber + 1;
+    localStorage.setItem('lastOrderNumber', nextOrderNumber.toString());
+    const orderNumber = `#${String(nextOrderNumber).padStart(3, '0')}`;
+    
+    // Generate random 6-digit confirmation number and tie it to order number
+    const confirmationNumber = String(Math.floor(100000 + Math.random() * 900000));
+    const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
+    orderConfirmations[orderNumber] = confirmationNumber;
+    localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
+    
     return {
-      orderNumber: `#${Math.floor(Math.random() * 1000)}`,
+      orderNumber: orderNumber,
+      confirmationNumber: confirmationNumber,
       orderDate: new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-'),
       orderTotal: mockOrderTotal,
       shippingMethod: '',
@@ -72,6 +85,7 @@ function CheckoutConfirmPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [startScrollPosition, setStartScrollPosition] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Helper function to get ordinal suffix (ST, ND, RD, TH)
   const getOrdinalSuffix = (day: number): string => {
@@ -287,9 +301,36 @@ function CheckoutConfirmPage() {
         ? '6-8 WEEKS (UP TO 10 WEEKS FOR CUSTOMIZED UNITS)'
         : '6-8 WEEKS';
       
+      // Get and increment order number if not already set
+      let orderNum = prev.orderNumber;
+      let confirmNum = prev.confirmationNumber;
+      if (!orderNum) {
+        const lastOrderNumber = parseInt(localStorage.getItem('lastOrderNumber') || '0', 10);
+        const nextOrderNumber = lastOrderNumber + 1;
+        localStorage.setItem('lastOrderNumber', nextOrderNumber.toString());
+        orderNum = `#${String(nextOrderNumber).padStart(3, '0')}`;
+        
+        // Generate random 6-digit confirmation number and tie it to order number
+        confirmNum = String(Math.floor(100000 + Math.random() * 900000));
+        const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
+        orderConfirmations[orderNum] = confirmNum;
+        localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
+      } else if (!confirmNum) {
+        // If order number exists but confirmation number doesn't, retrieve or generate it
+        const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
+        confirmNum = orderConfirmations[orderNum];
+        if (!confirmNum) {
+          // Generate if not found in storage
+          confirmNum = String(Math.floor(100000 + Math.random() * 900000));
+          orderConfirmations[orderNum] = confirmNum;
+          localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
+        }
+      }
+      
       setOrderData((prev: any) => ({
         ...prev,
-        orderNumber: prev.orderNumber || `#${Math.floor(Math.random() * 1000)}`,
+        orderNumber: orderNum,
+        confirmationNumber: confirmNum,
         orderDate: prev.orderDate || new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-'),
         orderTotal: prev.orderTotal && prev.orderTotal > 0 ? prev.orderTotal : subtotal,
         shippingMethod: prev.shippingMethod || 'UPS DOMESTIC STANDARD +$60',
@@ -342,12 +383,21 @@ function CheckoutConfirmPage() {
     const diff = currentX - startX;
     const newPosition = startScrollPosition + diff;
     
-    // Calculate max scroll based on actual item width (150px) + gap (20px)
-    const itemWidth = 150;
+    // Calculate scroll limits dynamically based on container and item widths
+    const containerWidth = scrollContainerRef.current?.offsetWidth || 0;
+    const itemWidth = 150; // Regular item width
+    const giftCardWidth = 165; // Gift card width
     const gap = 20;
-    const totalItemWidth = itemWidth + gap;
+    const paddingRight = 10;
+    
+    // Calculate total content width
+    const totalContentWidth = cartItems.reduce((sum, item) => {
+      const width = (item.name === 'GIFT CARD' || item.type === 'gift-card') ? giftCardWidth : itemWidth;
+      return sum + width + gap;
+    }, 0) + paddingRight - gap; // Subtract last gap, add padding
+    
     const maxScroll = 0;
-    const minScroll = -(cartItems.length - 1) * totalItemWidth;
+    const minScroll = containerWidth - totalContentWidth;
     setScrollPosition(Math.max(minScroll, Math.min(maxScroll, newPosition)));
   };
 
@@ -368,12 +418,21 @@ function CheckoutConfirmPage() {
     const diff = currentX - startX;
     const newPosition = startScrollPosition + diff;
     
-    // Calculate max scroll based on actual item width (150px) + gap (20px)
-    const itemWidth = 150;
+    // Calculate scroll limits dynamically based on container and item widths
+    const containerWidth = scrollContainerRef.current?.offsetWidth || 0;
+    const itemWidth = 150; // Regular item width
+    const giftCardWidth = 165; // Gift card width
     const gap = 20;
-    const totalItemWidth = itemWidth + gap;
+    const paddingRight = 10;
+    
+    // Calculate total content width
+    const totalContentWidth = cartItems.reduce((sum, item) => {
+      const width = (item.name === 'GIFT CARD' || item.type === 'gift-card') ? giftCardWidth : itemWidth;
+      return sum + width + gap;
+    }, 0) + paddingRight - gap; // Subtract last gap, add padding
+    
     const maxScroll = 0;
-    const minScroll = -(cartItems.length - 1) * totalItemWidth;
+    const minScroll = containerWidth - totalContentWidth;
     setScrollPosition(Math.max(minScroll, Math.min(maxScroll, newPosition)));
   };
 
@@ -440,7 +499,7 @@ function CheckoutConfirmPage() {
       case 'NOIR':
         return 'CAMBODIAN';
       case 'BLANCO':
-        return 'CAMBODIAN';
+        return 'RUSSIAN';
       case 'SOFT CURL':
         return 'VIETNAMESE';
       case 'OCEAN CURL':
@@ -921,7 +980,7 @@ function CheckoutConfirmPage() {
                 }}
               >
               {/* CONGRATS Header */}
-              <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+              <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-10px' }}>
                 <h1
                   style={{
                     fontFamily: '"Futura PT Medium"',
@@ -944,6 +1003,7 @@ function CheckoutConfirmPage() {
 
               {/* Products Horizontal Scroll */}
               <div 
+                ref={scrollContainerRef}
                 className="relative overflow-hidden mb-6"
                 style={{ 
                   height: '180px',
@@ -966,7 +1026,8 @@ function CheckoutConfirmPage() {
                     gap: '20px',
                     height: '100%',
                     alignItems: 'center',
-                    willChange: 'transform'
+                    willChange: 'transform',
+                    paddingRight: '10px'
                   }}
                 >
                   {cartItems.map((item, index) => {
@@ -981,29 +1042,52 @@ function CheckoutConfirmPage() {
                         key={index}
                         className="flex-shrink-0"
                         style={{
-                          width: '150px',
+                          width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '165px' : '150px',
                           height: '150px',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          padding: '8px'
+                          paddingTop: '8px',
+                          paddingRight: '8px',
+                          paddingBottom: '8px',
+                          paddingLeft: '8px'
                         }}
                       >
                         <img
                           src={itemImage}
                           alt={itemName}
                           style={{
-                            width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '53px' : '100px',
-                            height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '53px' : '100px',
+                            width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '165px' : '120px',
+                            height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '165px' : '120px',
                             objectFit: 'contain'
                           }}
                           draggable={false}
                         />
+                        <div
+                          style={{
+                            transform: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? 'translateY(-25px)' : 'none'
+                          }}
+                        >
                         <p
                           style={{
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '7px',
+                            fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                            fontSize: '16.8px',
+                            color: '#000000',
+                            marginTop: '4px',
+                            marginBottom: '0',
+                            textTransform: 'uppercase',
+                            textAlign: 'center',
+                            lineHeight: '1.2',
+                            transform: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? 'translateY(-1px)' : 'none'
+                          }}
+                        >
+                          {itemName}
+                        </p>
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '8px',
                             color: '#EB1C24',
                             marginTop: (() => {
                               const hasSpecs = (item.density && item.density !== '200%') || 
@@ -1023,7 +1107,8 @@ function CheckoutConfirmPage() {
                             transform: 'translateY(3px)',
                             lineHeight: '1.1',
                             marginBottom: '0',
-                            textTransform: 'uppercase'
+                            textTransform: 'uppercase',
+                            textAlign: 'center'
                           }}
                         >
                           {(() => {
@@ -1033,16 +1118,34 @@ function CheckoutConfirmPage() {
                             return `${itemLength} RAW ${itemHairOrigin}`;
                           })()}
                         </p>
+                        {!(item.name === 'GIFT CARD' || item.type === 'gift-card') && item.capSize && (
+                          <p
+                              style={{
+                              fontFamily: '"Futura PT Demi"',
+                              fontSize: '9px',
+                              color: '#909090',
+                              margin: '7px 0 0 0',
+                                textTransform: 'uppercase',
+                              lineHeight: '1.1',
+                              textAlign: 'center'
+                            }}
+                          >
+                            CAP SIZE: {item.capSize}
+                          </p>
+                        )}
                         <p
                           style={{
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '7px',
-                            color: '#909090',
-                            margin: '4px 0 0 0',
-                            textTransform: 'uppercase'
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '10px',
+                            fontWeight: '500',
+                            color: '#000000',
+                            margin: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '4px 0 0 0' : '1px 0 0 0',
+                            textTransform: 'uppercase',
+                            textAlign: 'center'
                           }}
                           dangerouslySetInnerHTML={formatPrice(itemPrice)}
                         />
+                        </div>
                       </div>
                     );
                   })}
@@ -1050,10 +1153,14 @@ function CheckoutConfirmPage() {
               </div>
 
               {/* Border line above Order Processing Message */}
+              <div>
               <div style={{ 
+                  paddingTop: '0',
+                  paddingBottom: '1px',
                 borderTop: '1.3px solid #000',
-                marginTop: '-8px'
+                  marginTop: '-6px'
               }}>
+                </div>
               </div>
 
               {/* Order Processing Message */}
@@ -1062,14 +1169,14 @@ function CheckoutConfirmPage() {
                   fontFamily: '"Futura PT Book"',
                   fontSize: '10px',
                   color: '#000000',
-                  margin: '16px 0 0 0',
+                  margin: '13px 0 0 0',
                   textTransform: 'uppercase',
                   lineHeight: '1.4',
                   textAlign: 'center',
                   fontWeight: '600'
                 }}
               >
-                YOUR ORDER IS BEING PROCESSED BUT YOU'RE NOT FINISHED YET.<br/>YOU STILL NEED TO <span style={{ color: '#EB1C24' }}>COMPLETE + SIGN</span> AN ORDER AUTHORIZATION FORM WITHIN 24 HOURS TO COMPLETE THIS PURCHASE OR YOUR ORDER WILL BE AUTOMATICALLY <span style={{ color: '#EB1C24' }}>CANCELED + REFUNDED</span>.
+                YOUR ORDER IS BEING PROCESSED BUT YOU'RE NOT FINISHED YET.<br/>YOU STILL NEED TO <span style={{ color: '#EB1C24' }}>COMPLETE + SIGN</span> AN ORDER FORM WITHIN 24 HOURS OR YOUR ORDER WILL BE <span style={{ color: '#EB1C24' }}>CANCELED + REFUNDED</span>.
               </p>
               </div>
               </>
@@ -1178,7 +1285,7 @@ function CheckoutConfirmPage() {
                   </p>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
-                      COMPLETION DEADLINE
+                      COMPLETION TIMELINE
                     </span>
                     <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
                       {orderData.orderDate ? calculateProcessingTimeline(orderData.orderDate, orderData.processingTime || '6-8 WEEKS') : (orderData.processingTime || '6-8 WEEKS')}
@@ -1265,7 +1372,24 @@ function CheckoutConfirmPage() {
                       CONFIRMATION NUMBER
                     </span>
                     <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
-                      #{orderData.confirmationNumber || String(Math.floor(100000 + Math.random() * 900000))}
+                      #{orderData.confirmationNumber || (() => {
+                        // Retrieve confirmation number from localStorage if order number exists
+                        if (orderData.orderNumber) {
+                          const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
+                          const storedConfirmation = orderConfirmations[orderData.orderNumber];
+                          if (storedConfirmation) {
+                            return storedConfirmation;
+                          }
+                        }
+                        // Generate new confirmation number if not found
+                        const confirmationNumber = String(Math.floor(100000 + Math.random() * 900000));
+                        if (orderData.orderNumber) {
+                          const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
+                          orderConfirmations[orderData.orderNumber] = confirmationNumber;
+                          localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
+                        }
+                        return confirmationNumber;
+                      })()}
                     </span>
                   </div>
                 </div>
@@ -1291,7 +1415,7 @@ function CheckoutConfirmPage() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                        YOU EARNED <span style={{ color: '#EB1C24' }}>{(orderData.pointsEarned || 1290).toLocaleString()}</span> LOYALTY POINTS!
+                        YOU EARNED <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{(orderData.pointsEarned || 1290).toLocaleString()}</span> LOYALTY POINTS!
                       </p>
                       <span style={{ 
                         fontFamily: (() => {
