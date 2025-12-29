@@ -1244,26 +1244,30 @@ function OrdersPage() {
                            </p>
                            {order.status === 'PLACED' && order.placedAt && !order.orderFormSigned && (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2', cursor: 'pointer' }} onClick={() => {
-                               // Get customer info from current user if signed in
-                               let customerData: any = {};
-                               if (currentUser) {
-                                 customerData = {
-                                   orderDate: order.date,
-                                   firstName: currentUser.firstName || '',
-                                   lastName: currentUser.lastName || '',
-                                   email: currentUser.email || '',
-                                   shippingAddress: currentUser.defaultAddress?.address || currentUser.shippingAddress?.address || '',
-                                   city: currentUser.defaultAddress?.city || currentUser.shippingAddress?.city || '',
-                                   state: currentUser.defaultAddress?.state || currentUser.shippingAddress?.state || '',
-                                   zip: currentUser.defaultAddress?.zip || currentUser.shippingAddress?.zip || '',
-                                   country: currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES'
-                                 };
-                               } else {
-                                 customerData = {
-                                   orderDate: order.date
-                                 };
-                               }
-                               navigate('/shop/order-form', { state: customerData });
+                              // Get customer info from current user if signed in
+                              let customerData: any = {};
+                              // Strip "ORDER " prefix from order number if present
+                              const orderNumber = order.orderNumber.replace(/^ORDER\s+/i, '');
+                              if (currentUser) {
+                                customerData = {
+                                  orderNumber: orderNumber,
+                                  orderDate: order.date,
+                                  firstName: currentUser.firstName || '',
+                                  lastName: currentUser.lastName || '',
+                                  email: currentUser.email || '',
+                                  shippingAddress: currentUser.defaultAddress?.address || currentUser.shippingAddress?.address || '',
+                                  city: currentUser.defaultAddress?.city || currentUser.shippingAddress?.city || '',
+                                  state: currentUser.defaultAddress?.state || currentUser.shippingAddress?.state || '',
+                                  zip: currentUser.defaultAddress?.zip || currentUser.shippingAddress?.zip || '',
+                                  country: currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES'
+                                };
+                              } else {
+                                customerData = {
+                                  orderNumber: orderNumber,
+                                  orderDate: order.date
+                                };
+                              }
+                              navigate('/shop/order-form', { state: customerData });
                              }}>
                                <span style={{ color: '#000000' }}>CLICK </span>
                                <span style={{ color: '#EB1C24' }}>HERE</span>

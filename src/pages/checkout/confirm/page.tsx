@@ -1218,6 +1218,7 @@ function CheckoutConfirmPage() {
                   onClick={() => {
                     navigate('/shop/order-form', {
                       state: {
+                        orderNumber: orderData.orderNumber,
                         orderDate: orderData.orderDate,
                         firstName: orderData.firstName,
                         lastName: orderData.lastName,

@@ -27,6 +27,10 @@ function OrderFormPage() {
     return false;
   });
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [showValidationModal, setShowValidationModal] = useState(false);
+  const [validationMessage, setValidationMessage] = useState('');
+  const [fieldToFocus, setFieldToFocus] = useState<string | null>(null);
+  const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
   const [authorizedPurchase, setAuthorizedPurchase] = useState(false);
   const [billingShippingMatch, setBillingShippingMatch] = useState(false);
   const [photoIdFile, setPhotoIdFile] = useState<File | null>(null);
@@ -38,12 +42,34 @@ function OrderFormPage() {
   const photoIdInputRef = useRef<HTMLInputElement>(null);
   const lastFourDigitsInputRef = useRef<HTMLInputElement>(null);
   const signatureCanvasRef = useRef<HTMLCanvasElement>(null);
+  
+  // Refs for input fields
+  const firstNameRef = useRef<HTMLInputElement>(null);
+  const lastNameRef = useRef<HTMLInputElement>(null);
+  const orderNumberRef = useRef<HTMLInputElement>(null);
+  const orderDateRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const phoneRef = useRef<HTMLInputElement>(null);
+  const addressRef = useRef<HTMLInputElement>(null);
+  const cityRef = useRef<HTMLInputElement>(null);
+  const stateRef = useRef<HTMLInputElement>(null);
+  const zipRef = useRef<HTMLInputElement>(null);
+  const countryRef = useRef<HTMLInputElement>(null);
+  const billingAddressRef = useRef<HTMLInputElement>(null);
+  const billingCityRef = useRef<HTMLInputElement>(null);
+  const billingStateRef = useRef<HTMLInputElement>(null);
+  const billingZipRef = useRef<HTMLInputElement>(null);
+  const billingCountryRef = useRef<HTMLInputElement>(null);
+  const cardholderNameRef = useRef<HTMLInputElement>(null);
+  const cardNumberRef = useRef<HTMLInputElement>(null);
+  const expirationDateRef = useRef<HTMLInputElement>(null);
+  const cvvRef = useRef<HTMLInputElement>(null);
 
   // Form state - initialize with data from location.state if available
   const [formData, setFormData] = useState(() => {
     const stateData = location.state as any;
     return {
-      orderNumber: '',
+      orderNumber: stateData?.orderNumber || '',
       orderDate: stateData?.orderDate || '',
       firstName: stateData?.firstName || '',
       lastName: stateData?.lastName || '',
@@ -183,6 +209,14 @@ function OrderFormPage() {
       ...prev,
       [name]: value
     }));
+    // Remove from invalidFields when field is filled
+    if (value.trim()) {
+      setInvalidFields(prev => {
+        const next = new Set(prev);
+        next.delete(name);
+        return next;
+      });
+    }
   };
 
   const handleOrderDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -337,25 +371,171 @@ function OrderFormPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validate fields in sequence
+    if (!formData.firstName.trim()) {
+      setValidationMessage('FIRST NAME IS REQUIRED.');
+      setFieldToFocus('firstName');
+      setInvalidFields(prev => new Set(prev).add('firstName'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.lastName.trim()) {
+      setValidationMessage('LAST NAME IS REQUIRED.');
+      setFieldToFocus('lastName');
+      setInvalidFields(prev => new Set(prev).add('lastName'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.orderNumber.trim()) {
+      setValidationMessage('ORDER NUMBER IS REQUIRED.');
+      setFieldToFocus('orderNumber');
+      setInvalidFields(prev => new Set(prev).add('orderNumber'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.orderDate.trim() || formData.orderDate === '--/--/----') {
+      setValidationMessage('ORDER DATE IS REQUIRED.');
+      setFieldToFocus('orderDate');
+      setInvalidFields(prev => new Set(prev).add('orderDate'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.email.trim()) {
+      setValidationMessage('CONFIRMATION EMAIL IS REQUIRED.');
+      setFieldToFocus('email');
+      setInvalidFields(prev => new Set(prev).add('email'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.phone.trim()) {
+      setValidationMessage('PHONE NUMBER IS REQUIRED.');
+      setFieldToFocus('phone');
+      setInvalidFields(prev => new Set(prev).add('phone'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.address.trim()) {
+      setValidationMessage('ADDRESS IS REQUIRED.');
+      setFieldToFocus('address');
+      setInvalidFields(prev => new Set(prev).add('address'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.city.trim()) {
+      setValidationMessage('CITY IS REQUIRED.');
+      setFieldToFocus('city');
+      setInvalidFields(prev => new Set(prev).add('city'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.state.trim()) {
+      setValidationMessage('STATE IS REQUIRED.');
+      setFieldToFocus('state');
+      setInvalidFields(prev => new Set(prev).add('state'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.zip.trim()) {
+      setValidationMessage('ZIP CODE IS REQUIRED.');
+      setFieldToFocus('zip');
+      setInvalidFields(prev => new Set(prev).add('zip'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.country.trim()) {
+      setValidationMessage('COUNTRY IS REQUIRED.');
+      setFieldToFocus('country');
+      setInvalidFields(prev => new Set(prev).add('country'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.billingAddress.trim()) {
+      setValidationMessage('BILLING ADDRESS IS REQUIRED.');
+      setFieldToFocus('billingAddress');
+      setInvalidFields(prev => new Set(prev).add('billingAddress'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.billingCity.trim()) {
+      setValidationMessage('BILLING CITY IS REQUIRED.');
+      setFieldToFocus('billingCity');
+      setInvalidFields(prev => new Set(prev).add('billingCity'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.billingState.trim()) {
+      setValidationMessage('BILLING STATE IS REQUIRED.');
+      setFieldToFocus('billingState');
+      setInvalidFields(prev => new Set(prev).add('billingState'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.billingZip.trim()) {
+      setValidationMessage('BILLING ZIP CODE IS REQUIRED.');
+      setFieldToFocus('billingZip');
+      setInvalidFields(prev => new Set(prev).add('billingZip'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.billingCountry.trim()) {
+      setValidationMessage('BILLING COUNTRY IS REQUIRED.');
+      setFieldToFocus('billingCountry');
+      setInvalidFields(prev => new Set(prev).add('billingCountry'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.cardholderName.trim()) {
+      setValidationMessage('CARDHOLDER NAME IS REQUIRED.');
+      setFieldToFocus('cardholderName');
+      setInvalidFields(prev => new Set(prev).add('cardholderName'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.cardNumber.trim()) {
+      setValidationMessage('CARD NUMBER IS REQUIRED.');
+      setFieldToFocus('cardNumber');
+      setInvalidFields(prev => new Set(prev).add('cardNumber'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.expirationDate.trim()) {
+      setValidationMessage('EXPIRATION DATE IS REQUIRED.');
+      setFieldToFocus('expirationDate');
+      setInvalidFields(prev => new Set(prev).add('expirationDate'));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!formData.cvv.trim()) {
+      setValidationMessage('CVV IS REQUIRED.');
+      setFieldToFocus('cvv');
+      setInvalidFields(prev => new Set(prev).add('cvv'));
+      setShowValidationModal(true);
+      return;
+    }
+    
     // Validate required checkboxes
     if (!authorizedPurchase) {
-      alert('Please confirm that you have authorized this purchase.');
+      setValidationMessage('PLEASE CONFIRM THAT YOU HAVE AUTHORIZED THIS PURCHASE ON THE DATE LISTED ABOVE.');
+      setShowValidationModal(true);
       return;
     }
     if (!billingShippingMatch) {
-      alert('Please confirm that the billing/shipping address belongs to the cardholder.');
+      setValidationMessage('PLEASE CONFIRM THAT THE BILLING/SHIPPING ADDRESS BELONGS TO THE CARDHOLDER.');
+      setShowValidationModal(true);
       return;
     }
     
     // Validate required photo ID file
     if (!photoIdFile) {
-      alert('Please upload a photo ID showing the cardholder name/address.');
+      setValidationMessage('PLEASE UPLOAD A PHOTO ID SHOWING THE CARDHOLDER NAME/ADDRESS.');
+      setShowValidationModal(true);
       return;
     }
     
     // Validate signature
     if (isSignatureEmpty()) {
-      alert('Please sign the form to confirm your order.');
+      setValidationMessage('PLEASE SIGN THE FORM TO CONFIRM YOUR ORDER.');
+      setShowValidationModal(true);
       return;
     }
     
@@ -851,13 +1031,14 @@ function OrderFormPage() {
                         type="text"
                         id="firstName"
                         name="firstName"
+                        ref={firstNameRef}
                         value={formData.firstName}
                         onChange={handleInputChange}
                         style={{
                           width: '100%',
                           height: '36px',
                           padding: '8px',
-                          border: '1.3px solid #000000',
+                          border: `1.3px solid ${invalidFields.has('firstName') ? '#EB1C24' : '#000000'}`,
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
@@ -886,13 +1067,14 @@ function OrderFormPage() {
                         type="text"
                         id="lastName"
                         name="lastName"
+                        ref={lastNameRef}
                         value={formData.lastName}
                         onChange={handleInputChange}
                         style={{
                           width: '100%',
                           height: '36px',
                           padding: '8px',
-                          border: '1.3px solid #000000',
+                          border: `1.3px solid ${invalidFields.has('lastName') ? '#EB1C24' : '#000000'}`,
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
@@ -924,13 +1106,14 @@ function OrderFormPage() {
                         type="text"
                         id="orderNumber"
                         name="orderNumber"
+                        ref={orderNumberRef}
                         value={formData.orderNumber}
                         onChange={handleInputChange}
                         style={{
                           width: '100%',
                           height: '36px',
                           padding: '8px',
-                          border: '1.3px solid #000000',
+                          border: `1.3px solid ${invalidFields.has('orderNumber') ? '#EB1C24' : '#000000'}`,
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
@@ -959,6 +1142,7 @@ function OrderFormPage() {
                         type="tel"
                         id="orderDate"
                         name="orderDate"
+                        ref={orderDateRef}
                         value={formData.orderDate}
                         onChange={handleOrderDateChange}
                         placeholder="MM/DD/YYYY"
@@ -966,7 +1150,7 @@ function OrderFormPage() {
                           width: '100%',
                           height: '36px',
                           padding: '8px',
-                          border: '1.3px solid #000000',
+                          border: `1.3px solid ${invalidFields.has('orderDate') ? '#EB1C24' : '#000000'}`,
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
@@ -997,13 +1181,14 @@ function OrderFormPage() {
                       type="email"
                       id="email"
                       name="email"
+                      ref={emailRef}
                       value={formData.email}
                       onChange={handleInputChange}
                       style={{
                         width: '100%',
                         height: '36px',
                         padding: '8px',
-                        border: '1.3px solid #000000',
+                        border: `1.3px solid ${invalidFields.has('email') ? '#EB1C24' : '#000000'}`,
                         fontFamily: '"Futura PT Book"',
                         fontSize: '11px',
                         backgroundColor: '#FFFFFF',
@@ -1288,7 +1473,7 @@ function OrderFormPage() {
                           display: 'block'
                         }}
                       >
-                        IF THE ADDRESS ON YOUR PHOTO ID DIFFERS, PROVIDE THE REASON WHY BELOW. IF NO REASON IS PROVIDED, YOUR ORDER MAY BE SUBJECT TO CANCELLATION.
+                        IF THE ADDRESS ON YOUR PHOTO ID DIFFERS, PROVIDE THE REASON WHY BELOW. IF NO REASON IS PROVIDED YOUR ORDER MAY BE SUBJECT TO CANCELLATION.
                       </label>
                       <textarea
                         id="addressDifferenceReason"
@@ -1400,6 +1585,84 @@ function OrderFormPage() {
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="sign-out-confirm"
+      />
+      
+      {/* Validation Modal */}
+      <ConfirmationModal
+        isOpen={showValidationModal}
+        onClose={() => {
+          setShowValidationModal(false);
+          // Focus the field after modal closes
+          setTimeout(() => {
+            if (fieldToFocus) {
+              const refMap: { [key: string]: React.RefObject<HTMLInputElement> } = {
+                firstName: firstNameRef,
+                lastName: lastNameRef,
+                orderNumber: orderNumberRef,
+                orderDate: orderDateRef,
+                email: emailRef,
+                phone: phoneRef,
+                address: addressRef,
+                city: cityRef,
+                state: stateRef,
+                zip: zipRef,
+                country: countryRef,
+                billingAddress: billingAddressRef,
+                billingCity: billingCityRef,
+                billingState: billingStateRef,
+                billingZip: billingZipRef,
+                billingCountry: billingCountryRef,
+                cardholderName: cardholderNameRef,
+                cardNumber: cardNumberRef,
+                expirationDate: expirationDateRef,
+                cvv: cvvRef
+              };
+              const ref = refMap[fieldToFocus];
+              if (ref?.current) {
+                ref.current.focus();
+              }
+            }
+          }, 100);
+        }}
+        onConfirm={() => {
+          setShowValidationModal(false);
+          // Focus the field after modal closes
+          setTimeout(() => {
+            if (fieldToFocus) {
+              const refMap: { [key: string]: React.RefObject<HTMLInputElement> } = {
+                firstName: firstNameRef,
+                lastName: lastNameRef,
+                orderNumber: orderNumberRef,
+                orderDate: orderDateRef,
+                email: emailRef,
+                phone: phoneRef,
+                address: addressRef,
+                city: cityRef,
+                state: stateRef,
+                zip: zipRef,
+                country: countryRef,
+                billingAddress: billingAddressRef,
+                billingCity: billingCityRef,
+                billingState: billingStateRef,
+                billingZip: billingZipRef,
+                billingCountry: billingCountryRef,
+                cardholderName: cardholderNameRef,
+                cardNumber: cardNumberRef,
+                expirationDate: expirationDateRef,
+                cvv: cvvRef
+              };
+              const ref = refMap[fieldToFocus];
+              if (ref?.current) {
+                ref.current.focus();
+              }
+            }
+          }, 100);
+        }}
+        title="INPUT FIELD REQUIRED"
+        message={validationMessage}
+        confirmText="OK"
+        cancelText="CLOSE"
+        messageTextTransform="uppercase"
       />
       </div>
     </>
