@@ -1204,7 +1204,8 @@ export default function StylingSelectionPage() {
                 <img
                   src="/assets/NOIR/account-icon.svg"
                   alt="Account"
-                  style={{ width: '21px', height: '21px', transform: 'translateY(4px)' }}
+                  onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/account' : '/sign-in')}
+                  style={{ width: '21px', height: '21px', transform: 'translateY(4px)', cursor: 'pointer' }}
                 />
                 {isSignedIn ? (
                   <img
@@ -1363,6 +1364,8 @@ export default function StylingSelectionPage() {
                                 } else {
                                   handleMobileMenuItemToggle(item.label);
                                 }
+                              } else if (item.label === 'ORDER AUTHORIZATION FORM') {
+                                navigate('/shop/order-form');
                               }
                             }}
                           >
@@ -1375,7 +1378,7 @@ export default function StylingSelectionPage() {
                               style={{ 
                                 width: '16px', 
                                 height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px) translateX(-5px)`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-5px) translateY(-4px) rotate(90deg)' : 'translateX(-5px) translateY(-4px) rotate(0deg)'}`,
                                 display: 'flex',
                                 alignItems: 'center',
                                 cursor: 'pointer'
@@ -1392,7 +1395,19 @@ export default function StylingSelectionPage() {
                         {item.isExpandable && mobileMenuExpandedItems.includes(item.label) && item.subItems && (
                           <div className="ml-4 mt-2 space-y-2">
                             {item.subItems.map((subItem, subIndex) => (
-                              <div key={subIndex} className="flex items-center">
+                              <div 
+                                key={subIndex} 
+                                className="flex items-center cursor-pointer"
+                                onClick={() => {
+                                  if (subItem === 'STRAIGHT') {
+                                    navigate('/units/straight');
+                                  } else if (subItem === 'WAVY') {
+                                    navigate('/units/wavy');
+                                  } else if (subItem === 'CURLY') {
+                                    navigate('/units/curly');
+                                  }
+                                }}
+                              >
                                 <span style={{ 
                                   fontFamily: '"Futura PT Book"',
                                   fontSize: '14px',

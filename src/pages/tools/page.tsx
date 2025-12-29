@@ -501,8 +501,8 @@ function ToolsPage() {
             </p>
 
             {/* Right side icons */}
-            <div className="gap-5 flex absolute" style={{ right: showMobileMenu ? '14px' : '17px' }}>
-              <div style={{ transform: showMobileMenu ? 'translateY(0.7px)' : 'none' }}>
+            <div className="gap-5 flex absolute" style={{ right: '17px' }}>
+              <div>
                 <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
               <svg
@@ -662,6 +662,8 @@ function ToolsPage() {
                                   } else {
                                     handleMobileMenuItemToggle(item.label);
                                   }
+                                } else if (item.label === 'ORDER AUTHORIZATION FORM') {
+                                  navigate('/shop/order-form');
                                 }
                               }}
                             >
@@ -674,7 +676,7 @@ function ToolsPage() {
                                 style={{ 
                                   width: '16px', 
                                   height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px) translateX(-5px)`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-5px) translateY(-4px) rotate(90deg)' : 'translateX(-5px) translateY(-4px) rotate(0deg)'}`,
                                   display: 'flex',
                                   alignItems: 'center',
                                   cursor: 'pointer'

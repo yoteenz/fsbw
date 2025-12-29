@@ -579,7 +579,11 @@ function ProductsPage() {
             <div className="flex gap-5 absolute left-4">
               {showMobileMenu ? (
                 <>
-                  <button className="cursor-pointer" style={{ transform: 'translateX(0px)' }}>
+                  <button 
+                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    className="cursor-pointer" 
+                    style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
+                  >
                     <img
                       alt="Account icon"
                       width="16"
@@ -588,15 +592,15 @@ function ProductsPage() {
                     />
                   </button>
                   <button 
-                    onClick={() => navigate('/wishlist')} 
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
                     className="cursor-pointer"
                     style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                   >
                     <img
                       alt="Wishlist"
-                      width="19"
-                      height="19"
-                      src="/assets/wishlist-heart.svg"
+                      width="17"
+                      height="17"
+                      src={isSignedIn ? '/assets/NOIR/account-wishlist.svg' : '/assets/wishlist-heart.svg'}
                     />
                   </button>
                 </>
@@ -660,8 +664,8 @@ function ProductsPage() {
             </p>
 
             {/* Right side icons */}
-            <div className="gap-5 flex absolute" style={{ right: showMobileMenu ? '14px' : '17px' }}>
-              <div style={{ transform: showMobileMenu ? 'translateY(0.7px)' : 'none' }}>
+            <div className="gap-5 flex absolute" style={{ right: '17px' }}>
+              <div>
                 <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
               <svg
@@ -812,7 +816,14 @@ function ProductsPage() {
                         <div key={index}>
                           <div 
                             className="flex items-center justify-between"
-                            style={{ alignItems: 'center' }}
+                            style={{ alignItems: 'center', cursor: item.label === 'ORDER AUTHORIZATION FORM' ? 'pointer' : 'default' }}
+                            onClick={() => {
+                              if (!item.isExpandable && item.label === 'ORDER AUTHORIZATION FORM') {
+                                navigate('/shop/order-form');
+                              } else if (!item.isExpandable && item.label === 'BUILD-A-WIG') {
+                                navigate('/build-a-wig');
+                              }
+                            }}
                           >
                             <span 
                               style={{ 
@@ -835,6 +846,8 @@ function ProductsPage() {
                                   }
                                 } else if (item.label === 'ORDER AUTHORIZATION FORM') {
                                   navigate('/shop/order-form');
+                                } else if (item.label === 'BUILD-A-WIG') {
+                                  navigate('/build-a-wig');
                                 }
                               }}
                             >
@@ -847,7 +860,7 @@ function ProductsPage() {
                                 style={{ 
                                   width: '16px', 
                                   height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px) translateX(-5px)`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-5px) translateY(-4px) rotate(90deg)' : 'translateX(-5px) translateY(-4px) rotate(0deg)'}`,
                                   display: 'flex',
                                   alignItems: 'center',
                                   cursor: 'pointer'
@@ -870,6 +883,10 @@ function ProductsPage() {
                                   onClick={() => {
                                     if (subItem === 'STRAIGHT') {
                                       navigate('/units/straight');
+                                    } else if (subItem === 'WAVY') {
+                                      navigate('/units/wavy');
+                                    } else if (subItem === 'CURLY') {
+                                      navigate('/units/curly');
                                     }
                                   }}
                                 >

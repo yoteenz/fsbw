@@ -911,7 +911,11 @@ function DensitySelection() {
           <div className="flex gap-5 absolute left-4">
             {showMobileMenu ? (
               <>
-                <button className="cursor-pointer" style={{ transform: 'translateX(0px)' }}>
+                <button 
+                  onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/account' : '/sign-in')}
+                  className="cursor-pointer" 
+                  style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
+                >
                   <img
                     alt="Account icon"
                     width="16"
@@ -920,15 +924,15 @@ function DensitySelection() {
                   />
                 </button>
                 <button 
-                  onClick={() => navigate('/wishlist')} 
+                  onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/wishlist' : '/sign-in')} 
                   className="cursor-pointer"
-                  style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
+                  style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(0px)' }}
                 >
                   <img
                     alt="Wishlist"
-                    width="19"
-                    height="19"
-                    src="/assets/wishlist-heart.svg"
+                    width="18"
+                    height="18"
+                    src={localStorage.getItem('isSignedIn') === 'true' ? '/assets/NOIR/account-wishlist.svg' : '/assets/wishlist-heart.svg'}
                   />
                 </button>
               </>
@@ -1018,8 +1022,8 @@ function DensitySelection() {
                 </>
               )}
           </p>
-          <div className="gap-5 flex absolute" style={{ right: showMobileMenu ? '14px' : '17px' }}>
-            <div style={{ transform: showMobileMenu ? 'translateY(0.7px)' : 'none' }}>
+          <div className="gap-5 flex absolute" style={{ right: '17px' }}>
+            <div>
               <DynamicCartIcon count={cartCount} width={22} height={19} />
             </div>
             <svg
@@ -1192,6 +1196,8 @@ function DensitySelection() {
                                   // Otherwise, toggle expansion
                                   handleMobileMenuItemToggle(item.label);
                                 }
+                              } else if (item.label === 'ORDER AUTHORIZATION FORM') {
+                                navigate('/shop/order-form');
                               }
                             }}
                           >
@@ -1204,7 +1210,7 @@ function DensitySelection() {
                               style={{ 
                                 width: '16px', 
                                 height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px) translateX(-5px)`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-5px) translateY(-4px) rotate(90deg)' : 'translateX(-5px) translateY(-4px) rotate(0deg)'}`,
                                 display: 'flex',
                                 alignItems: 'center',
                                 cursor: 'pointer'
@@ -1227,6 +1233,10 @@ function DensitySelection() {
                                 onClick={() => {
                                   if (subItem === 'STRAIGHT') {
                                     navigate('/units/straight');
+                                  } else if (subItem === 'WAVY') {
+                                    navigate('/units/wavy');
+                                  } else if (subItem === 'CURLY') {
+                                    navigate('/units/curly');
                                   }
                                 }}
                               >

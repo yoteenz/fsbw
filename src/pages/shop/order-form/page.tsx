@@ -33,6 +33,7 @@ function OrderFormPage() {
   const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
   const [authorizedPurchase, setAuthorizedPurchase] = useState(false);
   const [billingShippingMatch, setBillingShippingMatch] = useState(false);
+  const [bySigningAgreement, setBySigningAgreement] = useState(false);
   const [photoIdFile, setPhotoIdFile] = useState<File | null>(null);
   const [lastFourDigitsFile, setLastFourDigitsFile] = useState<File | null>(null);
   const [photoIdPreview, setPhotoIdPreview] = useState<string | null>(null);
@@ -524,6 +525,11 @@ function OrderFormPage() {
       setShowValidationModal(true);
       return;
     }
+    if (!bySigningAgreement) {
+      setValidationMessage('PLEASE CONFIRM THE AGREEMENT BY CHECKING THE "BY SIGNING" CHECKBOX.');
+      setShowValidationModal(true);
+      return;
+    }
     
     // Validate required photo ID file
     if (!photoIdFile) {
@@ -601,7 +607,11 @@ function OrderFormPage() {
             <div className="flex gap-5 absolute left-4">
               {showMobileMenu ? (
                 <>
-                  <button className="cursor-pointer" style={{ transform: 'translateX(0px)' }}>
+                  <button 
+                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    className="cursor-pointer" 
+                    style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
+                  >
                     <img
                       alt="Account icon"
                       width="16"
@@ -610,15 +620,15 @@ function OrderFormPage() {
                     />
                   </button>
                   <button 
-                    onClick={() => navigate('/wishlist')} 
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
                     className="cursor-pointer"
-                    style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
+                    style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(0px)' }}
                   >
                     <img
                       alt="Wishlist"
-                      width="19"
-                      height="19"
-                      src="/assets/wishlist-heart.svg"
+                      width="18"
+                      height="18"
+                      src={isSignedIn ? '/assets/NOIR/account-wishlist.svg' : '/assets/wishlist-heart.svg'}
                     />
                   </button>
                 </>
@@ -682,8 +692,8 @@ function OrderFormPage() {
             </p>
 
             {/* Right side icons */}
-            <div className="gap-5 flex absolute" style={{ right: showMobileMenu ? '14px' : '17px' }}>
-              <div style={{ transform: showMobileMenu ? 'translateY(0.7px)' : 'none' }}>
+            <div className="gap-5 flex absolute" style={{ right: '17px' }}>
+              <div>
                 <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
               <svg
@@ -857,7 +867,7 @@ function OrderFormPage() {
                                 style={{ 
                                   width: '16px', 
                                   height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'rotate(90deg)' : 'rotate(0deg)'} translateY(-4px) translateX(-5px)`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-5px) translateY(-4px) rotate(90deg)' : 'translateX(-5px) translateY(-4px) rotate(0deg)'}`,
                                   display: 'flex',
                                   alignItems: 'center',
                                   cursor: 'pointer'
@@ -880,6 +890,10 @@ function OrderFormPage() {
                                   onClick={() => {
                                     if (subItem === 'STRAIGHT') {
                                       navigate('/units/straight');
+                                    } else if (subItem === 'WAVY') {
+                                      navigate('/units/wavy');
+                                    } else if (subItem === 'CURLY') {
+                                      navigate('/units/curly');
                                     }
                                   }}
                                 >
@@ -968,7 +982,7 @@ function OrderFormPage() {
                     lineHeight: '1.8',
                     margin: '18px 0 20px 0',
                     textAlign: 'center',
-                    maxWidth: 'calc(100% - 30px)',
+                    maxWidth: 'calc(100% - 24px)',
                     marginLeft: 'auto',
                     marginRight: 'auto'
                   }}
@@ -985,12 +999,12 @@ function OrderFormPage() {
                     lineHeight: '1.8',
                     margin: '0 0 20px 0',
                     textAlign: 'center',
-                    maxWidth: 'calc(100% - 30px)',
+                    maxWidth: 'calc(100% - 26px)',
                     marginLeft: 'auto',
                     marginRight: 'auto'
                   }}
                 >
-                  YOUR ORDER WILL NOT BE PROCESSED OR SHIPPED UNTIL THIS FORM IS COMPLETED & SUBMITTED. IF THIS FORM IS NOT FILLED OUT WITHIN 24 HOURS OF PURCHASE, YOUR ORDER WILL BE REFUNDED & CANCELLED. IF YOU HAVE ANY INQUIRIES OR CONCERNS, PLEASE REACH OUT TO <span style={{ color: '#EB1C24' }}>CONTACT@FRONTALSLAYER.COM</span>
+                  YOUR ORDER WILL NOT BE PROCESSED OR SHIPPED UNTIL THIS FORM IS COMPLETED & SUBMITTED. IF THIS FORM IS NOT FILLED OUT WITHIN 24 HOURS OF PURCHASE, YOUR ORDER WILL BE REFUNDED & CANCELLED. IF YOU HAVE ANY INQUIRIES, SUGGESTIONS OR CONCERNS PLEASE REACH OUT TO <span style={{ color: '#EB1C24', fontWeight: '600' }}>CONTACT@FRONTALSLAYER.COM</span>
                 </p>
 
                 {/* Paragraph 3 */}
@@ -1002,12 +1016,12 @@ function OrderFormPage() {
                     lineHeight: '1.8',
                     margin: '0 0 30px 0',
                     textAlign: 'center',
-                    maxWidth: 'calc(100% - 30px)',
+                    maxWidth: 'calc(100% - 26px)',
                     marginLeft: 'auto',
                     marginRight: 'auto'
                   }}
                 >
-                  THIS DOCUMENT WILL BE RECORDED & A COPY WILL BE SENT TO YOU UPON REQUEST. THANK YOU SO MUCH FOR SHOPPING WITH US!
+                  THIS DOCUMENT WILL BE RECORDED & A COPY WILL BE SENT TO YOU UPON REQUEST. AS ALWAYS, YOUR BUSINESS IS GREATLY APPRECIATED. THANK YOU SO MUCH FOR SHOPPING WITH US!
                 </p>
 
                 {/* Form Inputs */}
@@ -1145,7 +1159,6 @@ function OrderFormPage() {
                         ref={orderDateRef}
                         value={formData.orderDate}
                         onChange={handleOrderDateChange}
-                        placeholder="MM/DD/YYYY"
                         style={{
                           width: '100%',
                           height: '36px',
@@ -1407,7 +1420,8 @@ function OrderFormPage() {
                           onClick={() => lastFourDigitsInputRef.current?.click()}
                           style={{
                             width: '100%',
-                            height: '36px',
+                            minHeight: '36px',
+                            height: lastFourDigitsPreview ? 'auto' : '36px',
                             padding: '8px',
                             border: '1.3px solid #000000',
                             fontFamily: '"Futura PT Book"',
@@ -1417,11 +1431,11 @@ function OrderFormPage() {
                             boxSizing: 'border-box',
                             borderRadius: '0',
                             cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
                             textTransform: 'uppercase',
                             position: 'relative',
-                            overflow: 'hidden'
+                            overflow: lastFourDigitsPreview ? 'visible' : 'hidden',
+                            display: lastFourDigitsPreview ? 'block' : 'flex',
+                            alignItems: lastFourDigitsPreview ? 'normal' : 'center'
                           }}
                         >
                           {lastFourDigitsPreview ? (
@@ -1430,11 +1444,10 @@ function OrderFormPage() {
                               alt="Last 4 digits preview" 
                               style={{
                                 width: '100%',
-                                height: '100%',
+                                height: 'auto',
                                 objectFit: 'contain',
-                                position: 'absolute',
-                                top: 0,
-                                left: 0
+                                objectPosition: 'left center',
+                                display: 'block'
                               }}
                             />
                           ) : (
@@ -1498,19 +1511,47 @@ function OrderFormPage() {
 
                     {/* Signature Section */}
                     <div style={{ marginTop: '13px', marginBottom: '-6px' }}>
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '11px',
-                          color: '#000000',
-                          textTransform: 'uppercase',
-                          marginTop: '-10px',
-                          marginBottom: '12px',
-                          display: 'block'
-                        }}
-                      >
-                        BY SIGNING + SUBMITTING THIS FORM, YOU AGREE THAT ALL SALES ARE FINAL AND THE INFORMATION SUBMITTED HAS BEEN VERIFIED AND IS ACCURATE. YOU ARE CONFIRMING YOUR ORDER.<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
-                      </p>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '12px' }}>
+                        <div
+                          onClick={() => setBySigningAgreement(!bySigningAgreement)}
+                          style={{
+                            width: '16px',
+                            height: '16px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            border: '1.3px solid #000000',
+                            backgroundColor: 'transparent',
+                            position: 'relative',
+                            flexShrink: 0,
+                            marginTop: '2px'
+                          }}
+                        >
+                          {bySigningAgreement && (
+                            <img 
+                              src="/assets/checkbox.svg" 
+                              alt="checked" 
+                              style={{ width: '16px', height: '16px', position: 'absolute' }}
+                            />
+                          )}
+                        </div>
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '11px',
+                            color: '#000000',
+                            textTransform: 'uppercase',
+                            margin: '0',
+                            display: 'block',
+                            cursor: 'pointer',
+                            lineHeight: '1.3'
+                          }}
+                          onClick={() => setBySigningAgreement(!bySigningAgreement)}
+                        >
+                          BY SIGNING + SUBMITTING THIS FORM, YOU AGREE THAT ALL SALES ARE FINAL AND THE INFORMATION SUBMITTED HAS BEEN VERIFIED AND IS ACCURATE. YOU ARE CONFIRMING YOUR ORDER AND YOU HAVE AUTHORIZED THIS PURCHASE.<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                        </p>
+                      </div>
                       <div style={{ position: 'relative' }}>
                         <canvas
                           ref={signatureCanvasRef}
