@@ -333,21 +333,22 @@ function CheckoutConfirmPage() {
           orderNumber: orderNum,
           confirmationNumber: confirmNum,
           orderDate: prev.orderDate || new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-'),
-        orderTotal: prev.orderTotal && prev.orderTotal > 0 ? prev.orderTotal : subtotal,
-        shippingMethod: prev.shippingMethod || 'UPS DOMESTIC STANDARD +$60',
-        processingTime: prev.processingTime || processingTime,
-        firstName: prev.firstName || 'ASHLEY',
-        lastName: prev.lastName || 'EVANS',
-        shippingAddress: prev.shippingAddress || '3374 E SHELBY DR APT #106',
-        city: prev.city || 'MEMPHIS',
-        state: prev.state || 'TN',
-        zip: prev.zip || '38035',
-        country: prev.country || 'UNITED STATES',
-        paymentMethod: prev.paymentMethod || 'VISA MASTERCARD ENDING IN 8065',
-        email: prev.email || 'ASHLEYEVANS@GMAIL.COM',
-        pointsEarned: prev.pointsEarned || (pointsEarned > 0 ? pointsEarned : 1290), // Ensure points are shown
-        tier: prev.tier || tier
-      }));
+          orderTotal: prev.orderTotal && prev.orderTotal > 0 ? prev.orderTotal : subtotal,
+          shippingMethod: prev.shippingMethod || 'UPS DOMESTIC STANDARD +$60',
+          processingTime: prev.processingTime || processingTime,
+          firstName: prev.firstName || 'ASHLEY',
+          lastName: prev.lastName || 'EVANS',
+          shippingAddress: prev.shippingAddress || '3374 E SHELBY DR APT #106',
+          city: prev.city || 'MEMPHIS',
+          state: prev.state || 'TN',
+          zip: prev.zip || '38035',
+          country: prev.country || 'UNITED STATES',
+          paymentMethod: prev.paymentMethod || 'VISA MASTERCARD ENDING IN 8065',
+          email: prev.email || 'ASHLEYEVANS@GMAIL.COM',
+          pointsEarned: prev.pointsEarned || (pointsEarned > 0 ? pointsEarned : 1290), // Ensure points are shown
+          tier: prev.tier || tier
+        };
+      });
     } else if (location.state && !location.state.processingTime) {
       // If signed in with location state but no processing time, add it
       const hasCustomizations = cartItems.length > 0 && cartItems.some(item => {
