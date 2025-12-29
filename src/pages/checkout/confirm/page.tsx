@@ -301,37 +301,38 @@ function CheckoutConfirmPage() {
         ? '6-8 WEEKS (UP TO 10 WEEKS FOR CUSTOMIZED UNITS)'
         : '6-8 WEEKS';
       
-      // Get and increment order number if not already set
-      let orderNum = prev.orderNumber;
-      let confirmNum = prev.confirmationNumber;
-      if (!orderNum) {
-        const lastOrderNumber = parseInt(localStorage.getItem('lastOrderNumber') || '0', 10);
-        const nextOrderNumber = lastOrderNumber + 1;
-        localStorage.setItem('lastOrderNumber', nextOrderNumber.toString());
-        orderNum = `#${String(nextOrderNumber).padStart(3, '0')}`;
-        
-        // Generate random 6-digit confirmation number and tie it to order number
-        confirmNum = String(Math.floor(100000 + Math.random() * 900000));
-        const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
-        orderConfirmations[orderNum] = confirmNum;
-        localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
-      } else if (!confirmNum) {
-        // If order number exists but confirmation number doesn't, retrieve or generate it
-        const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
-        confirmNum = orderConfirmations[orderNum];
-        if (!confirmNum) {
-          // Generate if not found in storage
+      setOrderData((prev: any) => {
+        // Get and increment order number if not already set
+        let orderNum = prev.orderNumber;
+        let confirmNum = prev.confirmationNumber;
+        if (!orderNum) {
+          const lastOrderNumber = parseInt(localStorage.getItem('lastOrderNumber') || '0', 10);
+          const nextOrderNumber = lastOrderNumber + 1;
+          localStorage.setItem('lastOrderNumber', nextOrderNumber.toString());
+          orderNum = `#${String(nextOrderNumber).padStart(3, '0')}`;
+          
+          // Generate random 6-digit confirmation number and tie it to order number
           confirmNum = String(Math.floor(100000 + Math.random() * 900000));
+          const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
           orderConfirmations[orderNum] = confirmNum;
           localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
+        } else if (!confirmNum) {
+          // If order number exists but confirmation number doesn't, retrieve or generate it
+          const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
+          confirmNum = orderConfirmations[orderNum];
+          if (!confirmNum) {
+            // Generate if not found in storage
+            confirmNum = String(Math.floor(100000 + Math.random() * 900000));
+            orderConfirmations[orderNum] = confirmNum;
+            localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
+          }
         }
-      }
-      
-      setOrderData((prev: any) => ({
-        ...prev,
-        orderNumber: orderNum,
-        confirmationNumber: confirmNum,
-        orderDate: prev.orderDate || new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-'),
+        
+        return {
+          ...prev,
+          orderNumber: orderNum,
+          confirmationNumber: confirmNum,
+          orderDate: prev.orderDate || new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-'),
         orderTotal: prev.orderTotal && prev.orderTotal > 0 ? prev.orderTotal : subtotal,
         shippingMethod: prev.shippingMethod || 'UPS DOMESTIC STANDARD +$60',
         processingTime: prev.processingTime || processingTime,
