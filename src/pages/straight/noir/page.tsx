@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 // @ts-expect-error - Import kept for potential future use
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -242,14 +243,25 @@ function NoirSelection() {
     const checkSignInStatus = () => {
       try {
         const signedIn = localStorage.getItem('isSignedIn') === 'true';
-        setIsSignedIn(signedIn);
+        setIsSignedIn(prev => {
+          // Only update if value has changed to prevent unnecessary re-renders
+          if (prev !== signedIn) {
+            return signedIn;
+          }
+          return prev;
+        });
       } catch (e) {
-        setIsSignedIn(false);
+        setIsSignedIn(prev => {
+          if (prev !== false) {
+            return false;
+          }
+          return prev;
+        });
       }
     };
 
-    // Check on mount
-    checkSignInStatus();
+    // Skip initial check since useState already reads from localStorage
+    // Only set up listeners for future changes
 
     // Listen for storage changes (when user signs in/out in another tab)
     const handleStorageChange = () => {
@@ -1923,13 +1935,13 @@ function NoirSelection() {
                 <button 
                   onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
                   className="cursor-pointer"
-                  style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(-4px)' }}
+                  style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                 >
                   <img
                     alt="Wishlist"
                     width="18"
                     height="18"
-                    src={isSignedIn ? '/assets/NOIR/account-wishlist.svg' : '/assets/wishlist-heart.svg'}
+                    src={typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true' ? '/assets/wishlist-account.svg' : '/assets/wishlist-heart.svg'}
                   />
                 </button>
               </>
@@ -2460,68 +2472,52 @@ function NoirSelection() {
               </div>
             </div>
 
-            {/* CHART MODAL OVERLAY */}
-            {showChartModal && (
+            {/* CHART MODAL - Rendered via Portal */}
+            {showChartModal && createPortal(
               <div 
                 style={{
-                  position: 'absolute',
-                  top: '0',
-                  left: '0',
-                  right: '0',
-                  bottom: '0',
-                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                  position: 'fixed',
+                  inset: '0',
+                  backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                  backdropFilter: 'blur(3px)',
+                  WebkitBackdropFilter: 'blur(3px)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  zIndex: '1000',
-                  borderRadius: '8px'
+                  zIndex: 10000,
+                  margin: '0',
+                  padding: '0'
                 }}
                 onClick={handleCloseChart}
               >
                 <div 
                   style={{
                     position: 'relative',
-                    maxWidth: '90%',
-                    maxHeight: '90%',
+                    maxWidth: '90vw',
+                    maxHeight: '90vh',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    margin: 'auto'
                   }}
                   onClick={(e) => e.stopPropagation()}
                 >
                   <img
-                    src="/assets/NOIR/chart.png"
+                    src="/assets/cap-chart.svg"
                     alt="Enlarged Cap Size Chart"
                     style={{ 
                       maxWidth: '100%',
                       maxHeight: '100%',
+                      width: '100%',
+                      height: '100%',
                       objectFit: 'contain',
-                      borderRadius: '4px'
+                      borderRadius: '0',
+                      transform: 'scale(1.05)'
                     }}
                   />
-                  <button
-                    onClick={handleCloseChart}
-                    style={{
-                      position: 'absolute',
-                      top: '-10px',
-                      right: '-10px',
-                      backgroundColor: 'white',
-                      border: '2px solid black',
-                      borderRadius: '50%',
-                      width: '30px',
-                      height: '30px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      fontSize: '16px',
-                      fontWeight: 'bold'
-                    }}
-                  >
-                    ×
-                  </button>
                 </div>
-              </div>
+              </div>,
+              document.body
             )}
 
             {/* DISCLAIMER TEXT */}

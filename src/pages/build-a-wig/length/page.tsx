@@ -715,13 +715,13 @@ function LengthSelection() {
                 <button 
                   onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/wishlist' : '/sign-in')} 
                   className="cursor-pointer"
-                  style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(0px)' }}
+                  style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                 >
                   <img
                     alt="Wishlist"
                     width="18"
                     height="18"
-                    src={localStorage.getItem('isSignedIn') === 'true' ? '/assets/NOIR/account-wishlist.svg' : '/assets/wishlist-heart.svg'}
+                    src={typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true' ? '/assets/wishlist-account.svg' : '/assets/wishlist-heart.svg'}
                   />
                 </button>
               </>
@@ -739,16 +739,12 @@ function LengthSelection() {
                 src="/assets/back-button.svg"
               />
             </button>
-            <button 
-              onClick={() => navigate('/wishlist')} 
-              className="cursor-pointer"
-              style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
-            >
+            <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
               <img
-                alt="Wishlist"
-                width="19"
-                height="19"
-                src="/assets/wishlist-heart.svg"
+                alt="Search icon"
+                width="16"
+                height="15"
+                src="/assets/search-icon.svg"
               />
             </button>
               </>

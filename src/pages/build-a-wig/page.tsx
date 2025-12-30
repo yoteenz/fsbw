@@ -395,7 +395,17 @@ export default function BuildAWigPage() {
     // Calculate density price
     // CRITICAL: Include negative prices for discounts (130%, 150%, 180%) to match sub-page prices
     // These negative prices must be stored correctly so they persist when navigating away
-    const densityPrices: { [key: string]: number } = {
+    // Blanco edit/customize mode has different pricing
+    const densityPrices: { [key: string]: number } = isBlancoRoute ? {
+      '130%': -80, // $80 discount
+      '150%': -60, // $60 discount
+      '180%': -40, // $40 discount
+      '200%': -20, // $20 discount
+      '250%': 0,   // Default - included in base price
+      '300%': 160, // $160 more than default
+      '350%': 240, // $240 more than default
+      '400%': 320  // $320 more than default
+    } : {
       '130%': -60, // $60 discount
       '150%': -40, // $40 discount
       '180%': -20, // $20 discount
@@ -3366,6 +3376,8 @@ export default function BuildAWigPage() {
               console.log('[FLEX_CAP_DEBUG] GET_PRICE - FIX: localStorage has 0 for flexible cap, using calculated 40');
               return calculatedValue;
             }
+            // For default cap sizes (non-flexible), always use localStorage value (should be 0)
+            // This ensures default cap sizes are recognized correctly
             console.log('[FLEX_CAP_DEBUG] GET_PRICE - Using primary value:', parsedValue);
             return parsedValue;
           } else if (fallbackValue !== null && fallbackValue !== undefined && fallbackValue !== '' && !isNaN(parseFloat(fallbackValue))) {
@@ -3375,6 +3387,7 @@ export default function BuildAWigPage() {
               console.log('[FLEX_CAP_DEBUG] GET_PRICE - FIX: localStorage has 0 for flexible cap (fallback), using calculated 40');
               return calculatedValue;
             }
+            // For default cap sizes (non-flexible), always use localStorage value (should be 0)
             console.log('[FLEX_CAP_DEBUG] GET_PRICE - Using fallback value:', parsedValue);
             return parsedValue;
           } else {
@@ -4265,14 +4278,25 @@ export default function BuildAWigPage() {
     const checkSignInStatus = () => {
       try {
         const signedIn = localStorage.getItem('isSignedIn') === 'true';
-        setIsSignedIn(signedIn);
+        setIsSignedIn(prev => {
+          // Only update if value has changed to prevent unnecessary re-renders
+          if (prev !== signedIn) {
+            return signedIn;
+          }
+          return prev;
+        });
       } catch (e) {
-        setIsSignedIn(false);
+        setIsSignedIn(prev => {
+          if (prev !== false) {
+            return false;
+          }
+          return prev;
+        });
       }
     };
 
-    // Check on mount
-    checkSignInStatus();
+    // Skip initial check since useState already reads from localStorage
+    // Only set up listeners for future changes
 
     // Listen for storage changes (when user signs in/out in another tab)
     const handleStorageChange = () => {
@@ -4482,13 +4506,13 @@ export default function BuildAWigPage() {
                   <button 
                     onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
                     className="cursor-pointer"
-                    style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(0px)' }}
+                    style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                   >
                     <img
                       alt="Wishlist"
                       width="18"
                       height="18"
-                      src={isSignedIn ? '/assets/NOIR/account-wishlist.svg' : '/assets/wishlist-heart.svg'}
+                      src={typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true' ? '/assets/wishlist-account.svg' : '/assets/wishlist-heart.svg'}
                     />
                   </button>
                 </>
@@ -4506,16 +4530,12 @@ export default function BuildAWigPage() {
                   src="/assets/back-button.svg"
                 />
               </button>
-              <button 
-                onClick={() => navigate('/wishlist')} 
-                className="cursor-pointer"
-                style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
-              >
+              <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
                 <img
-                  alt="Wishlist"
-                  width="19"
-                  height="19"
-                  src="/assets/wishlist-heart.svg"
+                  alt="Search icon"
+                  width="16"
+                  height="15"
+                  src="/assets/search-icon.svg"
                 />
               </button>
                 </>

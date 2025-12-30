@@ -128,13 +128,25 @@ function OrderFormPage() {
     const checkSignInStatus = () => {
       try {
         const signedIn = localStorage.getItem('isSignedIn') === 'true';
-        setIsSignedIn(signedIn);
+        setIsSignedIn(prev => {
+          // Only update if value has changed to prevent unnecessary re-renders
+          if (prev !== signedIn) {
+            return signedIn;
+          }
+          return prev;
+        });
       } catch (e) {
-        setIsSignedIn(false);
+        setIsSignedIn(prev => {
+          if (prev !== false) {
+            return false;
+          }
+          return prev;
+        });
       }
     };
 
-    checkSignInStatus();
+    // Skip initial check since useState already reads from localStorage
+    // Only set up listeners for future changes
 
     const handleStorageChange = () => {
       checkSignInStatus();
@@ -622,13 +634,13 @@ function OrderFormPage() {
                   <button 
                     onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
                     className="cursor-pointer"
-                    style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(0px)' }}
+                    style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                   >
                     <img
                       alt="Wishlist"
                       width="18"
                       height="18"
-                      src={isSignedIn ? '/assets/NOIR/account-wishlist.svg' : '/assets/wishlist-heart.svg'}
+                      src={typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true' ? '/assets/wishlist-account.svg' : '/assets/wishlist-heart.svg'}
                     />
                   </button>
                 </>

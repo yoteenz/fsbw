@@ -131,13 +131,44 @@ function DensitySelection() {
   const isBlancoRoute = location.pathname.includes('/blanco/customize') || location.pathname.includes('/blanco/edit');
   const densityImage = isBlancoRoute ? '/assets/density-blanco.png' : '/assets/density.png';
   
+  // Define prices based on route - blanco edit/customize has different pricing
+  const getDensityPrice = (densityId: string): number => {
+    if (isBlancoRoute) {
+      // Blanco edit/customize mode prices
+      const blancoPrices: { [key: string]: number } = {
+        '130%': -80,
+        '150%': -60,
+        '180%': -40,
+        '200%': -20,
+        '250%': 0,
+        '300%': 160,
+        '350%': 240,
+        '400%': 320
+      };
+      return blancoPrices[densityId] || 0;
+    } else {
+      // Default prices for other routes
+      const defaultPrices: { [key: string]: number } = {
+        '130%': -60,
+        '150%': -40,
+        '180%': -20,
+        '200%': 0,
+        '250%': 80,
+        '300%': 160,
+        '350%': 240,
+        '400%': 320
+      };
+      return defaultPrices[densityId] || 0;
+    }
+  };
+  
   const densityOptions: DensityOption[] = [
     {
       id: '130%',
       name: '130%',
       percentage: '130%',
       description: '130% EQUIVALENT TO 1 BUNDLE FOR LENGTHS OVER 16"',
-      price: -60, // $60 cheaper than default
+      price: getDensityPrice('130%'),
       image: densityImage
     },
     {
@@ -145,7 +176,7 @@ function DensitySelection() {
       name: '150%',
       percentage: '150%',
       description: '150% EQUIVALENT TO 1-2 BUNDLES FOR LENGTHS OVER 16"',
-      price: -40, // $40 cheaper than default
+      price: getDensityPrice('150%'),
       image: densityImage
     },
     {
@@ -153,7 +184,7 @@ function DensitySelection() {
       name: '180%',
       percentage: '180%',
       description: '180% EQUIVALENT TO 2 BUNDLES FOR LENGTHS OVER 18"',
-      price: -20, // $20 cheaper than default
+      price: getDensityPrice('180%'),
       image: densityImage
     },
     {
@@ -161,7 +192,7 @@ function DensitySelection() {
       name: '200%',
       percentage: '200%',
       description: '200% EQUIVALENT TO 2-3 BUNDLES FOR LENGTHS OVER 22"',
-      price: 0, // Default option - included in base price
+      price: getDensityPrice('200%'),
       image: densityImage
     },
     {
@@ -169,7 +200,7 @@ function DensitySelection() {
       name: '250%',
       percentage: '250%',
       description: '250% EQUIVALENT TO 3 BUNDLES FOR LENGTHS OVER 26"',
-      price: 80, // $80 more than default
+      price: getDensityPrice('250%'),
       image: densityImage
     },
     {
@@ -177,7 +208,7 @@ function DensitySelection() {
       name: '300%',
       percentage: '300%',
       description: '300% EQUIVALENT TO 3-4 BUNDLES FOR LENGTHS OVER 30"',
-      price: 160, // $160 more than default
+      price: getDensityPrice('300%'),
       image: densityImage
     },
     {
@@ -185,7 +216,7 @@ function DensitySelection() {
       name: '350%',
       percentage: '350%',
       description: '350% EQUIVALENT TO 4 BUNDLES FOR LENGTHS OVER 32"',
-      price: 240, // $240 more than default
+      price: getDensityPrice('350%'),
       image: densityImage
     },
     {
@@ -193,7 +224,7 @@ function DensitySelection() {
       name: '400%',
       percentage: '400%',
       description: '400% EQUIVALENT TO 4-5 BUNDLES FOR LENGTHS OVER 40"',
-      price: 320, // $320 more than default
+      price: getDensityPrice('400%'),
       image: densityImage
     }
   ];
@@ -926,13 +957,13 @@ function DensitySelection() {
                 <button 
                   onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/wishlist' : '/sign-in')} 
                   className="cursor-pointer"
-                  style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(0px)' }}
+                  style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                 >
                   <img
                     alt="Wishlist"
                     width="18"
                     height="18"
-                    src={localStorage.getItem('isSignedIn') === 'true' ? '/assets/NOIR/account-wishlist.svg' : '/assets/wishlist-heart.svg'}
+                    src={typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true' ? '/assets/wishlist-account.svg' : '/assets/wishlist-heart.svg'}
                   />
                 </button>
               </>
@@ -950,16 +981,12 @@ function DensitySelection() {
                 src="/assets/back-button.svg"
               />
             </button>
-            <button 
-              onClick={() => navigate('/wishlist')} 
-              className="cursor-pointer"
-              style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
-            >
+            <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
               <img
-                alt="Wishlist"
-                width="19"
-                height="19"
-                src="/assets/wishlist-heart.svg"
+                alt="Search icon"
+                width="16"
+                height="15"
+                src="/assets/search-icon.svg"
               />
             </button>
               </>

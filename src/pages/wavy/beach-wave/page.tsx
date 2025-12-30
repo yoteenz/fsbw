@@ -375,14 +375,25 @@ function BeachWaveSelection() {
     const checkSignInStatus = () => {
       try {
         const signedIn = localStorage.getItem('isSignedIn') === 'true';
-        setIsSignedIn(signedIn);
+        setIsSignedIn(prev => {
+          // Only update if value has changed to prevent unnecessary re-renders
+          if (prev !== signedIn) {
+            return signedIn;
+          }
+          return prev;
+        });
       } catch (e) {
-        setIsSignedIn(false);
+        setIsSignedIn(prev => {
+          if (prev !== false) {
+            return false;
+          }
+          return prev;
+        });
       }
     };
 
-    // Check on mount
-    checkSignInStatus();
+    // Skip initial check since useState already reads from localStorage
+    // Only set up listeners for future changes
 
     // Listen for storage changes (when user signs in/out in another tab)
     const handleStorageChange = () => {
@@ -819,13 +830,13 @@ function BeachWaveSelection() {
                   <button 
                     onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
                     className="cursor-pointer"
-                    style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(0px)' }}
+                    style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                   >
                     <img
                       alt="Wishlist"
-                      width="18"
-                      height="18"
-                      src={isSignedIn ? '/assets/NOIR/account-wishlist.svg' : '/assets/wishlist-heart.svg'}
+                      width="17"
+                      height="17"
+                      src={typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true' ? '/assets/wishlist-account.svg' : '/assets/wishlist-heart.svg'}
                     />
                   </button>
                 </>

@@ -261,13 +261,13 @@ function SignInPage() {
                   <button 
                     onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
                     className="cursor-pointer"
-                    style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
+                    style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                   >
                     <img
                       alt="Wishlist"
                       width="18"
                       height="18"
-                      src={isSignedIn ? '/assets/NOIR/account-wishlist.svg' : '/assets/wishlist-heart.svg'}
+                      src={typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true' ? '/assets/wishlist-account.svg' : '/assets/wishlist-heart.svg'}
                     />
                   </button>
                 </>

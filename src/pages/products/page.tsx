@@ -598,9 +598,9 @@ function ProductsPage() {
                   >
                     <img
                       alt="Wishlist"
-                      width="17"
-                      height="17"
-                      src={isSignedIn ? '/assets/NOIR/account-wishlist.svg' : '/assets/wishlist-heart.svg'}
+                      width="18"
+                      height="18"
+                      src={typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true' ? '/assets/wishlist-account.svg' : '/assets/wishlist-heart.svg'}
                     />
                   </button>
                 </>
