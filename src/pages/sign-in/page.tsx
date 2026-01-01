@@ -1445,7 +1445,7 @@ function SignInPage() {
                         tiktok: tiktok.trim(),
                         twitter: twitter.trim(),
                         profileImage: '/assets/profile-thumb.png',
-                        membershipType: 'BASIC',
+                        membershipType: 'STANDARD',
                         createdAt: new Date().toISOString()
                       };
                       

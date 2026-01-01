@@ -5067,10 +5067,10 @@ export default function BuildAWigPage() {
               SELECT ICONS BELOW
             </p>
 
-              {/* BASIC MEMBERSHIP OPTIONS */}
+              {/* STANDARD MEMBERSHIP OPTIONS */}
             <div className="flex flex-col gap-3 mt-4 mx-auto" style={{ marginBottom: '18px', transform: 'translateY(6px)' }}>
                 <p className="text-[9px] sm:text-sm md:text-base lg:text-lg font-medium text-black text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}>
-                BASIC MEMBERSHIP OPTIONS:
+                STANDARD MEMBERSHIP OPTIONS:
               </p>
                 <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6 mx-auto justify-evenly">
                 {/* CAP SIZE */}

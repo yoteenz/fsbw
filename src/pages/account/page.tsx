@@ -45,7 +45,7 @@ function AccountPage() {
     }
     return null;
   });
-  const [membershipType, _setMembershipType] = useState<'BASIC' | 'PREMIUM'>('BASIC'); // Will be set dynamically later
+  const [membershipType, _setMembershipType] = useState<'STANDARD' | 'PREMIUM'>('STANDARD'); // Will be set dynamically later
   const [profileImage, setProfileImage] = useState(() => {
     // Load from localStorage on mount
     if (typeof window !== 'undefined') {

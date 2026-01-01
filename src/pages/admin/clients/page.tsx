@@ -19,7 +19,7 @@ export default function AdminClients() {
       tiers: [
         { label: 'VIP', value: '23', color: 'text-red-500' },
         { label: 'PREM', value: '34', color: 'text-red-500' },
-        { label: 'BASIC', value: '32', color: 'text-gray-500' }
+        { label: 'STANDARD', value: '32', color: 'text-gray-500' }
       ]
     },
     {
@@ -40,7 +40,7 @@ export default function AdminClients() {
         { label: 'BLACK TIER', value: '8 clients', color: 'text-gray-500' },
         { label: 'VIP MEMBERS', value: '23 clients', color: 'text-red-500' },
         { label: 'PREMIUM', value: '34 clients', color: 'text-red-500' },
-        { label: 'BASIC', value: '32 clients', color: 'text-gray-500' }
+        { label: 'STANDARD', value: '32 clients', color: 'text-gray-500' }
       ],
       highlight: 'TIER DISTRIBUTION OPTIMAL - PREMIUM FOCUS'
     },

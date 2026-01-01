@@ -37,7 +37,7 @@ export default function AdminPending() {
       title: 'TIER UPGRADES',
       count: '23',
       items: [
-        { label: 'BASIC TO PREMIUM', value: '12', color: 'text-gray-500' },
+        { label: 'STANDARD TO PREMIUM', value: '12', color: 'text-gray-500' },
         { label: 'PREMIUM TO VIP', value: '8', color: 'text-red-500' },
         { label: 'VIP TO BLACK TIER', value: '3', color: 'text-red-500' },
         { label: 'PENDING PAYMENT', value: '5', color: 'text-gray-500' }

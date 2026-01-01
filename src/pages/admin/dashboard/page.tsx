@@ -43,7 +43,7 @@ const mockAPI = {
     clients: [
       { tier: 'Premium' }, { tier: 'Premium' }, { tier: 'Premium' },
       { tier: 'Standard' }, { tier: 'Standard' }, { tier: 'Standard' }, { tier: 'Standard' },
-      { tier: 'Basic' }, { tier: 'Basic' }, { tier: 'Basic' }, { tier: 'Basic' }, { tier: 'Basic' }
+      { tier: 'Standard' }, { tier: 'Standard' }, { tier: 'Standard' }, { tier: 'Standard' }, { tier: 'Standard' }
     ],
     bookings: [
       { status: 'Scheduled', appointment_date: '2025-01-24T10:00:00', service_name: 'Install', client_name: 'Sarah J.' },
@@ -229,7 +229,7 @@ export default function AdminDashboard() {
       count: stats.activeClients,
       items: [
         { label: 'EMAIL MARKETING', value: '1,247', color: 'text-gray-500' },
-        { label: 'BASIC MEMBERS', value: (clientTiers.Basic || 0).toString(), color: 'text-red-500' },
+        { label: 'STANDARD MEMBERS', value: (clientTiers.Standard || 0).toString(), color: 'text-red-500' },
         { label: 'PREMIUM MEMBERS', value: (clientTiers.Standard || 0).toString(), color: 'text-red-500' },
         { label: 'REFERRALS', value: stats.referralCount.toString(), color: 'text-gray-500' }
       ],
@@ -240,7 +240,7 @@ export default function AdminDashboard() {
       tiers: [
         { label: 'PREM', value: (clientTiers.Premium || 0).toString(), color: 'text-black' },
         { label: 'STD', value: (clientTiers.Standard || 0).toString(), color: 'text-red-500' },
-        { label: 'BASIC', value: (clientTiers.Basic || 0).toString(), color: 'text-gray-500' }
+        { label: 'STANDARD', value: (clientTiers.Standard || 0).toString(), color: 'text-gray-500' }
       ]
     },
 

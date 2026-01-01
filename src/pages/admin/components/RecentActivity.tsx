@@ -32,7 +32,7 @@ export default function RecentActivity({ onViewModeChange }: RecentActivityProps
       customer: {
         name: 'LISA SCOTT',
         location: 'ARLINGTON, VA TN USA',
-        tier: 'BASIC SILVER TIER',
+        tier: 'STANDARD SILVER TIER',
         paymentMethod: 'VISA MASTERCARD',
       },
       product: {

@@ -336,9 +336,9 @@ export default function StatsCard({ data, onCardClick }: StatsCardProps) {
                   }}
                 >
                   <span style={{ 
-                    color: tier.label === 'PREM' ? '#000000' : tier.label === 'STD' ? '#EB1C24' : tier.label === 'BASIC' ? '#909090' : '#909090' 
+                    color: tier.label === 'PREM' ? '#000000' : tier.label === 'STD' ? '#EB1C24' : tier.label === 'STANDARD' ? '#909090' : '#909090' 
                   }}>
-                    {tier.label === 'PREM' ? 'BLACK' : tier.label === 'STD' ? 'RED' : tier.label === 'BASIC' ? 'SILVER' : tier.label}:
+                    {tier.label === 'PREM' ? 'BLACK' : tier.label === 'STD' ? 'RED' : tier.label === 'STANDARD' ? 'SILVER' : tier.label}:
                   </span>
                   <span style={{ color: getColorValue(tier.color) }}> {tier.value}</span>
                 </span>
