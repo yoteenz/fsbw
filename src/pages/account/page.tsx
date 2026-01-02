@@ -1151,6 +1151,26 @@ function AccountPage() {
 
                 {/* Navigation Options */}
                 {[
+                  // CONCIERGE card - visible for black tier OR premium members (placed first)
+                  ...((() => {
+                    // Get tier from userData, check if it's BLACK
+                    const tier = userData?.tier || (() => {
+                      // Fallback: check if tier is stored elsewhere or calculate from points
+                      // For now, default to checking userData.tier
+                      return 'SILVER';
+                    })();
+                    const isBlackTier = tier === 'BLACK' || tier === 'BLACK TIER';
+                    // Check membership type from userData or state
+                    const userMembershipType = userData?.membershipType || membershipType;
+                    const isPremium = userMembershipType === 'PREMIUM' || userMembershipType === 'Premium';
+                    const showConcierge = isBlackTier || isPremium;
+                    
+                    return showConcierge ? [{
+                      title: 'CONCIERGE',
+                      subtitle: 'PRIORITY MESSAGES + BOOKING',
+                      route: '/account/concierge'
+                    }] : [];
+                  })()),
                   { 
                     title: 'ORDERS', 
                     subtitle: (() => {
@@ -1173,26 +1193,6 @@ function AccountPage() {
                     })(), 
                     route: '/account/orders' 
                   },
-                  // CONCIERGE card - visible for black tier OR premium members
-                  ...((() => {
-                    // Get tier from userData, check if it's BLACK
-                    const tier = userData?.tier || (() => {
-                      // Fallback: check if tier is stored elsewhere or calculate from points
-                      // For now, default to checking userData.tier
-                      return 'SILVER';
-                    })();
-                    const isBlackTier = tier === 'BLACK' || tier === 'BLACK TIER';
-                    // Check membership type from userData or state
-                    const userMembershipType = userData?.membershipType || membershipType;
-                    const isPremium = userMembershipType === 'PREMIUM' || userMembershipType === 'Premium';
-                    const showConcierge = isBlackTier || isPremium;
-                    
-                    return showConcierge ? [{
-                      title: 'CONCIERGE',
-                      subtitle: 'PRIORITY MESSAGES + BOOKING',
-                      route: '/account/concierge'
-                    }] : [];
-                  })()),
                   { title: 'NOTIFICATIONS', subtitle: 'NEWSLETTER + ALERTS', route: null },
                   { title: 'MEMBERSHIP', subtitle: 'SUBSCRIPTIONS + REWARDS PROGRAM', route: null },
                   { title: 'AFFILIATE', subtitle: 'SUBMIT PHOTOS + VIDEOS FOR POINTS', route: null },
@@ -1259,54 +1259,6 @@ function AccountPage() {
               </div>
             )}
 
-            {/* Temporary Upgrade to Premium Button - Only show when menu is closed */}
-            {!showMobileMenu && userData && userData.membershipType !== 'PREMIUM' && (
-              <div className="px-0 md:px-0" style={{ marginTop: '18px', marginBottom: '10px' }}>
-                <button
-                  onClick={() => {
-                    try {
-                      const currentUser = { ...userData };
-                      currentUser.membershipType = 'PREMIUM';
-                      setUserData(currentUser);
-                      localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                      
-                      // Also update in registeredUsers
-                      const registeredUsersStr = localStorage.getItem('registeredUsers');
-                      if (registeredUsersStr) {
-                        const registeredUsers = JSON.parse(registeredUsersStr);
-                        const userIndex = registeredUsers.findIndex((u: any) => 
-                          u.email?.toLowerCase() === currentUser.email?.toLowerCase()
-                        );
-                        if (userIndex !== -1) {
-                          registeredUsers[userIndex].membershipType = 'PREMIUM';
-                          localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
-                        }
-                      }
-                      
-                      // Update membership type state
-                      _setMembershipType('PREMIUM');
-                      
-                      alert('✅ Upgraded to PREMIUM! Please refresh the page to see CONCIERGE tab.');
-                    } catch (error) {
-                      console.error('Error upgrading:', error);
-                      alert('Error upgrading to premium. Please try again.');
-                    }
-                  }}
-                  className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                  style={{ 
-                    borderWidth: '1.3px', 
-                    color: '#EB1C24',
-                    fontFamily: '"Futura PT Medium"',
-                    backgroundColor: '#FFFFFF',
-                    textTransform: 'uppercase'
-                  }}
-                  type="button"
-                >
-                  UPGRADE TO PREMIUM (TEST)
-                </button>
-              </div>
-            )}
-            
             {/* SIGN OUT BUTTON - Only show when menu is closed */}
             {!showMobileMenu && (
               <div className="px-0 md:px-0" style={{ marginTop: '18px', marginBottom: '20px' }}>
