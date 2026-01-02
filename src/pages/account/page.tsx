@@ -1158,7 +1158,7 @@ function AccountPage() {
                     })(), 
                     route: '/account/orders' 
                   },
-                  // CONCIERGE card - only visible for black tier + premium members
+                  // CONCIERGE card - visible for black tier OR premium members
                   ...((() => {
                     // Get tier from userData, check if it's BLACK
                     const tier = userData?.tier || (() => {
@@ -1170,7 +1170,7 @@ function AccountPage() {
                     // Check membership type from userData or state
                     const userMembershipType = userData?.membershipType || membershipType;
                     const isPremium = userMembershipType === 'PREMIUM' || userMembershipType === 'Premium';
-                    const showConcierge = isBlackTier && isPremium;
+                    const showConcierge = isBlackTier || isPremium;
                     
                     return showConcierge ? [{
                       title: 'CONCIERGE',
