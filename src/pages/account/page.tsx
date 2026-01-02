@@ -1274,7 +1274,7 @@ function AccountPage() {
                       const registeredUsersStr = localStorage.getItem('registeredUsers');
                       if (registeredUsersStr) {
                         const registeredUsers = JSON.parse(registeredUsersStr);
-                        const userIndex = registeredUsers.findIndex(u => 
+                        const userIndex = registeredUsers.findIndex((u: any) => 
                           u.email?.toLowerCase() === currentUser.email?.toLowerCase()
                         );
                         if (userIndex !== -1) {
