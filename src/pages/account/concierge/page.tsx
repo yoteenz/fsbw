@@ -13,7 +13,7 @@ function ConciergePage() {
     }
   });
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [isSignedIn, setIsSignedIn] = useState(() => {
+  const [isSignedIn] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
         return localStorage.getItem('isSignedIn') === 'true';
