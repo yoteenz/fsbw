@@ -1781,25 +1781,6 @@ function CheckoutPage() {
                   </h2>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
                     <button
-                      onClick={() => handlePaymentClick('SHOP_PAY')}
-                      disabled={processingPayment}
-                      style={{
-                        width: '100%',
-                        height: '36px',
-                        padding: '10px 20px',
-                        border: '1.3px solid #000000',
-                        backgroundColor: processingPayment ? '#f0f0f0' : '#FFFFFF',
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '11px',
-                        cursor: processingPayment ? 'not-allowed' : 'pointer',
-                        textTransform: 'uppercase',
-                        boxSizing: 'border-box',
-                        opacity: processingPayment ? 0.6 : 1
-                      }}
-                    >
-                      {processingPayment ? 'PROCESSING...' : 'SHOP PAY'}
-                    </button>
-                    <button
                       onClick={() => handlePaymentClick('APPLE_PAY')}
                       disabled={processingPayment}
                       style={{
@@ -1817,6 +1798,25 @@ function CheckoutPage() {
                       }}
                     >
                       {processingPayment ? 'PROCESSING...' : 'APPLE PAY'}
+                    </button>
+                    <button
+                      onClick={() => handlePaymentClick('SHOP_PAY')}
+                      disabled={processingPayment}
+                      style={{
+                        width: '100%',
+                        height: '36px',
+                        padding: '10px 20px',
+                        border: '1.3px solid #000000',
+                        backgroundColor: processingPayment ? '#f0f0f0' : '#FFFFFF',
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '11px',
+                        cursor: processingPayment ? 'not-allowed' : 'pointer',
+                        textTransform: 'uppercase',
+                        boxSizing: 'border-box',
+                        opacity: processingPayment ? 0.6 : 1
+                      }}
+                    >
+                      {processingPayment ? 'PROCESSING...' : 'SHOP PAY'}
                     </button>
                     <button
                       onClick={() => handlePaymentClick('PAYPAL')}
@@ -1856,7 +1856,7 @@ function CheckoutPage() {
                   </h2>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
                     <button
-                      onClick={() => handlePaymentClick('KLARNA')}
+                      onClick={() => handlePaymentClick('AFFIRM')}
                       disabled={processingPayment}
                       style={{
                         width: '100%',
@@ -1872,7 +1872,7 @@ function CheckoutPage() {
                         opacity: processingPayment ? 0.6 : 1
                       }}
                     >
-                      {processingPayment ? 'PROCESSING...' : 'KLARNA'}
+                      {processingPayment ? 'PROCESSING...' : 'AFFIRM'}
                     </button>
                     <button
                       onClick={() => handlePaymentClick('AFTERPAY')}
@@ -1894,7 +1894,7 @@ function CheckoutPage() {
                       {processingPayment ? 'PROCESSING...' : 'AFTERPAY'}
                     </button>
                     <button
-                      onClick={() => handlePaymentClick('AFFIRM')}
+                      onClick={() => handlePaymentClick('KLARNA')}
                       disabled={processingPayment}
                       style={{
                         width: '100%',
@@ -1910,7 +1910,7 @@ function CheckoutPage() {
                         opacity: processingPayment ? 0.6 : 1
                       }}
                     >
-                      {processingPayment ? 'PROCESSING...' : 'AFFIRM'}
+                      {processingPayment ? 'PROCESSING...' : 'KLARNA'}
                     </button>
                   </div>
                     </div>

@@ -5070,7 +5070,7 @@ export default function BuildAWigPage() {
               {/* STANDARD OPTIONS */}
             <div className="flex flex-col gap-3 mt-4 mx-auto" style={{ marginBottom: '18px', transform: 'translateY(6px)' }}>
                 <p className="text-[9px] sm:text-sm md:text-base lg:text-lg font-medium text-black text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}>
-                STANDARD OPTIONS:
+                STANDARD MEMBERSHIP OPTIONS:
               </p>
                 <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6 mx-auto justify-evenly">
                 {/* CAP SIZE */}
@@ -5228,7 +5228,7 @@ export default function BuildAWigPage() {
               {/* PREMIUM OPTIONS */}
             <div className="flex flex-col gap-3 mx-auto mb-6" style={{ marginTop: '18px', transform: 'translateY(3px)' }}>
                 <p className="text-[9px] sm:text-sm md:text-base lg:text-lg font-medium text-black text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}>
-                PREMIUM OPTIONS:
+                PREMIUM MEMBERSHIP OPTIONS:
               </p>
                 <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6 mx-auto justify-evenly">
                 {/* LACE */}

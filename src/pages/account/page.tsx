@@ -1084,13 +1084,15 @@ function AccountPage() {
 
                     {(() => {
                       const tier = 'SILVER'; // Will be set dynamically later
-                      const rewardsText = `${membershipType} REWARDS MEMBER: ${tier} TIER`;
-                      const tierColor = tier === 'SILVER' ? '#909090' : tier === 'RED' ? '#EB1C24' : tier === 'BLACK' ? '#000000' : '#000000';
+                      const rewardsText = `${membershipType} REWARDS: ${tier} TIER`;
+                      // For STANDARD: always use gray regardless of tier
+                      // For PREMIUM: always use black
+                      const textColor = membershipType === 'PREMIUM' ? '#000000' : '#909090';
                       return (
                         <p
                           style={{
                             fontFamily: '"Futura PT Medium"',
-                            color: tierColor,
+                            color: textColor,
                             fontSize: '10px',
                             margin: '0',
                             textTransform: 'uppercase',
