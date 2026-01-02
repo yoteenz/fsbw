@@ -30,6 +30,7 @@ function SignInPage() {
   // Sign In form state
   const [signInEmail, setSignInEmail] = useState('');
   const [signInPassword, setSignInPassword] = useState('');
+  const [showSignInPassword, setShowSignInPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
   // Validation modals
@@ -44,6 +45,8 @@ function SignInPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [signUpAttempted, setSignUpAttempted] = useState(false);
   const [signInPasswordFocused, setSignInPasswordFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
@@ -666,27 +669,50 @@ function SignInPage() {
                       >
                         PASSWORD<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
                       </label>
-                      <input
-                        type={signInPasswordFocused ? "text" : "password"}
-                        value={signInPassword}
-                        onChange={(e) => setSignInPassword(e.target.value)}
-                        onFocus={() => setSignInPasswordFocused(true)}
-                        onBlur={() => setSignInPasswordFocused(false)}
-                        className="password-field"
-                        style={{
-                          width: '100%',
-                          height: '36px',
-                          padding: '8px',
-                          border: '1.3px solid #000000',
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          boxSizing: 'border-box',
-                          borderRadius: '0',
-                          outline: 'none',
-                          textTransform: 'none'
-                        }}
-                      />
+                      <div style={{ position: 'relative' }}>
+                        <input
+                          type={showSignInPassword ? "text" : "password"}
+                          value={signInPassword}
+                          onChange={(e) => setSignInPassword(e.target.value)}
+                          onFocus={() => setSignInPasswordFocused(true)}
+                          onBlur={() => setSignInPasswordFocused(false)}
+                          className="password-field"
+                          style={{
+                            width: '100%',
+                            height: '36px',
+                            padding: '8px',
+                            paddingRight: signInPasswordFocused ? '8px' : '120px',
+                            border: '1.3px solid #000000',
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '11px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            boxSizing: 'border-box',
+                            borderRadius: '0',
+                            outline: 'none',
+                            textTransform: 'none'
+                          }}
+                        />
+                        {!signInPasswordFocused && signInPassword && (
+                          <span
+                            onClick={() => setShowSignInPassword(!showSignInPassword)}
+                            style={{
+                              position: 'absolute',
+                              right: '8px',
+                              top: '50%',
+                              transform: 'translateY(-50%)',
+                              fontFamily: '"Futura PT Medium"',
+                              fontSize: '10px',
+                              color: '#EB1C24',
+                              cursor: 'pointer',
+                              textTransform: 'uppercase',
+                              fontWeight: '500',
+                              userSelect: 'none'
+                            }}
+                          >
+                            {showSignInPassword ? 'HIDE PASSWORD' : 'SHOW PASSWORD'}
+                          </span>
+                        )}
+                      </div>
                     </div>
 
                     {/* Remember Me and Forgot Password */}
@@ -1028,27 +1054,50 @@ function SignInPage() {
                       >
                         PASSWORD<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
                       </label>
-                      <input
-                        type={passwordFocused ? "text" : "password"}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        onFocus={() => setPasswordFocused(true)}
-                        onBlur={() => setPasswordFocused(false)}
-                        className="password-field"
-                        style={{
-                          width: '100%',
-                          height: '36px',
-                          padding: '8px',
-                          border: '1.3px solid #000000',
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          boxSizing: 'border-box',
-                          borderRadius: '0',
-                          outline: 'none',
-                          textTransform: 'none'
-                        }}
-                      />
+                      <div style={{ position: 'relative' }}>
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          onFocus={() => setPasswordFocused(true)}
+                          onBlur={() => setPasswordFocused(false)}
+                          className="password-field"
+                          style={{
+                            width: '100%',
+                            height: '36px',
+                            padding: '8px',
+                            paddingRight: passwordFocused ? '8px' : '120px',
+                            border: '1.3px solid #000000',
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '11px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            boxSizing: 'border-box',
+                            borderRadius: '0',
+                            outline: 'none',
+                            textTransform: 'none'
+                          }}
+                        />
+                        {!passwordFocused && password && (
+                          <span
+                            onClick={() => setShowPassword(!showPassword)}
+                            style={{
+                              position: 'absolute',
+                              right: '8px',
+                              top: '50%',
+                              transform: 'translateY(-50%)',
+                              fontFamily: '"Futura PT Medium"',
+                              fontSize: '10px',
+                              color: '#EB1C24',
+                              cursor: 'pointer',
+                              textTransform: 'uppercase',
+                              fontWeight: '500',
+                              userSelect: 'none'
+                            }}
+                          >
+                            {showPassword ? 'HIDE PASSWORD' : 'SHOW PASSWORD'}
+                          </span>
+                        )}
+                      </div>
                       {/* Password Requirements - Only show when sign up is attempted and password doesn't meet requirements */}
                       {signUpAttempted && (
                       <div style={{ marginTop: '4px' }}>
@@ -1107,27 +1156,50 @@ function SignInPage() {
                       >
                         CONFIRM PASSWORD<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
                       </label>
-                      <input
-                        type={confirmPasswordFocused ? "text" : "password"}
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        onFocus={() => setConfirmPasswordFocused(true)}
-                        onBlur={() => setConfirmPasswordFocused(false)}
-                        className="password-field"
-                        style={{
-                          width: '100%',
-                          height: '36px',
-                          padding: '8px',
-                          border: '1.3px solid #000000',
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          boxSizing: 'border-box',
-                          borderRadius: '0',
-                          outline: 'none',
-                          textTransform: 'none'
-                        }}
-                      />
+                      <div style={{ position: 'relative' }}>
+                        <input
+                          type={showConfirmPassword ? "text" : "password"}
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          onFocus={() => setConfirmPasswordFocused(true)}
+                          onBlur={() => setConfirmPasswordFocused(false)}
+                          className="password-field"
+                          style={{
+                            width: '100%',
+                            height: '36px',
+                            padding: '8px',
+                            paddingRight: confirmPasswordFocused ? '8px' : '120px',
+                            border: '1.3px solid #000000',
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '11px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            boxSizing: 'border-box',
+                            borderRadius: '0',
+                            outline: 'none',
+                            textTransform: 'none'
+                          }}
+                        />
+                        {!confirmPasswordFocused && confirmPassword && (
+                          <span
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            style={{
+                              position: 'absolute',
+                              right: '8px',
+                              top: '50%',
+                              transform: 'translateY(-50%)',
+                              fontFamily: '"Futura PT Medium"',
+                              fontSize: '10px',
+                              color: '#EB1C24',
+                              cursor: 'pointer',
+                              textTransform: 'uppercase',
+                              fontWeight: '500',
+                              userSelect: 'none'
+                            }}
+                          >
+                            {showConfirmPassword ? 'HIDE PASSWORD' : 'SHOW PASSWORD'}
+                          </span>
+                        )}
+                      </div>
                       {/* Confirm Password Requirements - Only show when sign up is attempted and password doesn't meet requirements */}
                       {signUpAttempted && (
                       <div style={{ marginTop: '4px' }}>

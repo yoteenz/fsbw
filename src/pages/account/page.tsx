@@ -169,6 +169,11 @@ function AccountPage() {
         if (user.profileImage) {
           setProfileImage(user.profileImage);
         }
+        
+        // Update membership type from user data
+        if (user.membershipType) {
+          _setMembershipType(user.membershipType.toUpperCase() === 'PREMIUM' ? 'PREMIUM' : 'STANDARD');
+        }
       }
     } catch (e) {
       console.error('Error loading user data:', e);
@@ -1084,15 +1089,18 @@ function AccountPage() {
 
                     {(() => {
                       const tier = 'SILVER'; // Will be set dynamically later
-                      const rewardsText = `${membershipType} REWARDS: ${tier} TIER`;
+                      // Get membership type from userData, fallback to state
+                      const userMembershipType = userData?.membershipType?.toUpperCase() || membershipType;
+                      const displayMembershipType = userMembershipType === 'PREMIUM' ? 'PREMIUM' : 'STANDARD';
                       // For STANDARD: always use gray regardless of tier
                       // For PREMIUM: always use black
-                      const textColor = membershipType === 'PREMIUM' ? '#000000' : '#909090';
+                      const membershipTextColor = displayMembershipType === 'PREMIUM' ? '#000000' : '#909090';
+                      // Tier color is independent: silver = gray, red = red, black = black
+                      const tierColor = tier === 'SILVER' ? '#909090' : tier === 'RED' ? '#EB1C24' : tier === 'BLACK' ? '#000000' : '#000000';
                       return (
                         <p
                           style={{
                             fontFamily: '"Futura PT Medium"',
-                            color: textColor,
                             fontSize: '10px',
                             margin: '0',
                             textTransform: 'uppercase',
@@ -1100,7 +1108,12 @@ function AccountPage() {
                             transform: 'translateY(-8px)'
                           }}
                         >
-                          {rewardsText}
+                          <span style={{ color: membershipTextColor }}>
+                            {displayMembershipType} REWARDS:
+                          </span>{' '}
+                          <span style={{ color: tierColor }}>
+                            {tier} TIER
+                          </span>
                         </p>
                       );
                     })()}
