@@ -1259,6 +1259,54 @@ function AccountPage() {
               </div>
             )}
 
+            {/* Temporary Upgrade to Premium Button - Only show when menu is closed */}
+            {!showMobileMenu && userData && userData.membershipType !== 'PREMIUM' && (
+              <div className="px-0 md:px-0" style={{ marginTop: '18px', marginBottom: '10px' }}>
+                <button
+                  onClick={() => {
+                    try {
+                      const currentUser = { ...userData };
+                      currentUser.membershipType = 'PREMIUM';
+                      setUserData(currentUser);
+                      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                      
+                      // Also update in registeredUsers
+                      const registeredUsersStr = localStorage.getItem('registeredUsers');
+                      if (registeredUsersStr) {
+                        const registeredUsers = JSON.parse(registeredUsersStr);
+                        const userIndex = registeredUsers.findIndex(u => 
+                          u.email?.toLowerCase() === currentUser.email?.toLowerCase()
+                        );
+                        if (userIndex !== -1) {
+                          registeredUsers[userIndex].membershipType = 'PREMIUM';
+                          localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                        }
+                      }
+                      
+                      // Update membership type state
+                      _setMembershipType('PREMIUM');
+                      
+                      alert('✅ Upgraded to PREMIUM! Please refresh the page to see CONCIERGE tab.');
+                    } catch (error) {
+                      console.error('Error upgrading:', error);
+                      alert('Error upgrading to premium. Please try again.');
+                    }
+                  }}
+                  className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                  style={{ 
+                    borderWidth: '1.3px', 
+                    color: '#EB1C24',
+                    fontFamily: '"Futura PT Medium"',
+                    backgroundColor: '#FFFFFF',
+                    textTransform: 'uppercase'
+                  }}
+                  type="button"
+                >
+                  UPGRADE TO PREMIUM (TEST)
+                </button>
+              </div>
+            )}
+            
             {/* SIGN OUT BUTTON - Only show when menu is closed */}
             {!showMobileMenu && (
               <div className="px-0 md:px-0" style={{ marginTop: '18px', marginBottom: '20px' }}>
