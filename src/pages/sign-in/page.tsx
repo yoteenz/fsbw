@@ -700,12 +700,11 @@ function SignInPage() {
                               right: '8px',
                               top: '50%',
                               transform: 'translateY(-50%)',
-                              fontFamily: '"Futura PT Medium"',
-                              fontSize: '10px',
+                              fontFamily: '"Futura PT Book"',
+                              fontSize: '9px',
                               color: '#EB1C24',
                               cursor: 'pointer',
                               textTransform: 'uppercase',
-                              fontWeight: '500',
                               userSelect: 'none'
                             }}
                           >
@@ -1085,12 +1084,11 @@ function SignInPage() {
                               right: '8px',
                               top: '50%',
                               transform: 'translateY(-50%)',
-                              fontFamily: '"Futura PT Medium"',
-                              fontSize: '10px',
+                              fontFamily: '"Futura PT Book"',
+                              fontSize: '9px',
                               color: '#EB1C24',
                               cursor: 'pointer',
                               textTransform: 'uppercase',
-                              fontWeight: '500',
                               userSelect: 'none'
                             }}
                           >
@@ -1187,12 +1185,11 @@ function SignInPage() {
                               right: '8px',
                               top: '50%',
                               transform: 'translateY(-50%)',
-                              fontFamily: '"Futura PT Medium"',
-                              fontSize: '10px',
+                              fontFamily: '"Futura PT Book"',
+                              fontSize: '9px',
                               color: '#EB1C24',
                               cursor: 'pointer',
                               textTransform: 'uppercase',
-                              fontWeight: '500',
                               userSelect: 'none'
                             }}
                           >
