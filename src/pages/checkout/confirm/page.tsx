@@ -1523,7 +1523,7 @@ function CheckoutConfirmPage() {
                       if (isSignedIn) {
                         navigate('/account/orders');
                       } else {
-                        navigate('/sign-in');
+                        navigate('/sign-in?returnTo=checkout/summary');
                       }
                     }}
                     className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"

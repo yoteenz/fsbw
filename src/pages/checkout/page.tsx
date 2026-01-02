@@ -728,20 +728,16 @@ function CheckoutPage() {
     const isDomestic = selectedCountry === 'US';
     
     if (isDomestic) {
-      // Domestic options: UPS, USPS, FedEx with standard or express
+      // Domestic options: standard or express
       return [
-        { carrier: 'UPS', speed: 'standard', cost: 60, label: 'UPS DOMESTIC STANDARD +$60' },
-        { carrier: 'UPS', speed: 'express', cost: 80, label: 'UPS DOMESTIC EXPRESS +$80' },
-        { carrier: 'USPS', speed: 'standard', cost: 60, label: 'USPS DOMESTIC STANDARD +$60' },
-        { carrier: 'USPS', speed: 'express', cost: 80, label: 'USPS DOMESTIC EXPRESS +$80' },
-        { carrier: 'FedEx', speed: 'standard', cost: 60, label: 'FEDEX DOMESTIC STANDARD +$60' },
-        { carrier: 'FedEx', speed: 'express', cost: 80, label: 'FEDEX DOMESTIC EXPRESS +$80' },
+        { carrier: 'DOMESTIC', speed: 'standard', cost: 60, label: 'DOMESTIC STANDARD +$60' },
+        { carrier: 'DOMESTIC', speed: 'express', cost: 80, label: 'DOMESTIC EXPRESS +$80' },
       ];
     } else {
-      // International options: DHL with standard and express
+      // International options: standard and express
       return [
-        { carrier: 'DHL', speed: 'standard', cost: 100, label: 'DHL INTERNATIONAL STANDARD +$100' },
-        { carrier: 'DHL', speed: 'express', cost: 140, label: 'DHL INTERNATIONAL EXPRESS +$140' },
+        { carrier: 'INTERNATIONAL', speed: 'standard', cost: 100, label: 'INTERNATIONAL STANDARD +$100' },
+        { carrier: 'INTERNATIONAL', speed: 'express', cost: 140, label: 'INTERNATIONAL EXPRESS +$140' },
       ];
     }
   };
@@ -846,6 +842,13 @@ function CheckoutPage() {
   const handlePaymentClick = async (provider: PaymentProvider) => {
     if (processingPayment) return; // Prevent multiple clicks
     
+    // Validate shipping method is selected
+    if (!selectedShippingMethod) {
+      setValidationMessage('SHIPPING METHOD IS REQUIRED.');
+      setShowValidationModal(true);
+      return;
+    }
+    
     setProcessingPayment(true);
     
     try {
@@ -857,7 +860,7 @@ function CheckoutPage() {
           // Redirect to payment provider's checkout page
           window.location.href = result.redirectUrl;
         } else if (result.transactionId) {
-          // Payment completed successfully (e.g., Apple Pay, Google Pay)
+          // Payment completed successfully (e.g., Apple Pay)
           // Navigate to confirmation page
           // Get and increment order number
           const lastOrderNumber = parseInt(localStorage.getItem('lastOrderNumber') || '0', 10);
@@ -1816,25 +1819,6 @@ function CheckoutPage() {
                       {processingPayment ? 'PROCESSING...' : 'APPLE PAY'}
                     </button>
                     <button
-                      onClick={() => handlePaymentClick('GOOGLE_PAY')}
-                      disabled={processingPayment}
-                      style={{
-                        width: '100%',
-                        height: '36px',
-                        padding: '10px 20px',
-                        border: '1.3px solid #000000',
-                        backgroundColor: processingPayment ? '#f0f0f0' : '#FFFFFF',
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '11px',
-                        cursor: processingPayment ? 'not-allowed' : 'pointer',
-                        textTransform: 'uppercase',
-                        boxSizing: 'border-box',
-                        opacity: processingPayment ? 0.6 : 1
-                      }}
-                    >
-                      {processingPayment ? 'PROCESSING...' : 'GOOGLE PAY'}
-                    </button>
-                    <button
                       onClick={() => handlePaymentClick('PAYPAL')}
                       disabled={processingPayment}
                       style={{
@@ -1927,25 +1911,6 @@ function CheckoutPage() {
                       }}
                     >
                       {processingPayment ? 'PROCESSING...' : 'AFFIRM'}
-                    </button>
-                    <button
-                      onClick={() => handlePaymentClick('PAY_IN_4')}
-                      disabled={processingPayment}
-                      style={{
-                        width: '100%',
-                        height: '36px',
-                        padding: '10px 20px',
-                        border: '1.3px solid #000000',
-                        backgroundColor: processingPayment ? '#f0f0f0' : '#FFFFFF',
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '11px',
-                        cursor: processingPayment ? 'not-allowed' : 'pointer',
-                        textTransform: 'uppercase',
-                        boxSizing: 'border-box',
-                        opacity: processingPayment ? 0.6 : 1
-                      }}
-                    >
-                      {processingPayment ? 'PROCESSING...' : 'PAY IN 4'}
                     </button>
                   </div>
                     </div>
@@ -3265,7 +3230,7 @@ function CheckoutPage() {
                           fontWeight: '500'
                         }}
                       >
-                        CHOOSE A CARRIER:
+                        CHOOSE SHIPPING METHOD:
                       </h2>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         {availableShippingOptions.map((option, index) => {
@@ -3932,6 +3897,13 @@ function CheckoutPage() {
                       setShowValidationModal(true);
                       return;
                     }
+                  }
+                  
+                  // Check if shipping method is selected
+                  if (!selectedShippingMethod) {
+                    setValidationMessage('SHIPPING METHOD IS REQUIRED.');
+                    setShowValidationModal(true);
+                    return;
                   }
                   
                   // Check if terms are agreed to (check last, after all other validations)

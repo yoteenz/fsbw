@@ -1498,7 +1498,7 @@ function OrderFormPage() {
                           display: 'block'
                         }}
                       >
-                        IF THE ADDRESS ON YOUR PHOTO ID DIFFERS, PROVIDE THE REASON WHY BELOW. IF NO REASON IS PROVIDED YOUR ORDER MAY BE SUBJECT TO CANCELLATION.
+                        IF THE ADDRESS ON YOUR PHOTO IDENTIFICATION DIFFERS…
                       </label>
                       <textarea
                         id="addressDifferenceReason"

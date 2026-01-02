@@ -31,6 +31,7 @@ const OceanCurlUnitPage = lazy(() => import('./pages/curly/ocean-curl/page'));
 const BeachWaveUnitPage = lazy(() => import('./pages/wavy/beach-wave/page'));
 const WishlistPage = lazy(() => import('./pages/wishlist/page'));
 const AccountPage = lazy(() => import('./pages/account/page'));
+const ConciergePage = lazy(() => import('./pages/account/concierge/page'));
 const OrdersPage = lazy(() => import('./pages/orders/page'));
 const SignInPage = lazy(() => import('./pages/sign-in/page'));
 const ShoppingBagPage = lazy(() => import('./pages/shopping-bag/page'));
@@ -402,6 +403,11 @@ function App() {
         <Route path="/account" element={
           <Suspense fallback={<LoadingScreen />}>
             <AccountPage />
+          </Suspense>
+        } />
+        <Route path="/account/concierge" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ConciergePage />
           </Suspense>
         } />
         <Route path="/account/orders" element={

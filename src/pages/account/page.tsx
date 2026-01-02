@@ -1158,6 +1158,26 @@ function AccountPage() {
                     })(), 
                     route: '/account/orders' 
                   },
+                  // CONCIERGE card - only visible for black tier + premium members
+                  ...((() => {
+                    // Get tier from userData, check if it's BLACK
+                    const tier = userData?.tier || (() => {
+                      // Fallback: check if tier is stored elsewhere or calculate from points
+                      // For now, default to checking userData.tier
+                      return 'SILVER';
+                    })();
+                    const isBlackTier = tier === 'BLACK' || tier === 'BLACK TIER';
+                    // Check membership type from userData or state
+                    const userMembershipType = userData?.membershipType || membershipType;
+                    const isPremium = userMembershipType === 'PREMIUM' || userMembershipType === 'Premium';
+                    const showConcierge = isBlackTier && isPremium;
+                    
+                    return showConcierge ? [{
+                      title: 'CONCIERGE',
+                      subtitle: 'PRIORITY MESSAGES + BOOKING',
+                      route: '/account/concierge'
+                    }] : [];
+                  })()),
                   { title: 'NOTIFICATIONS', subtitle: 'NEWSLETTER + ALERTS', route: null },
                   { title: 'MEMBERSHIP', subtitle: 'SUBSCRIPTIONS + REWARDS PROGRAM', route: null },
                   { title: 'AFFILIATE', subtitle: 'SUBMIT PHOTOS + VIDEOS FOR POINTS', route: null },
