@@ -1538,7 +1538,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     fontWeight: 'normal',
                   fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     color: '#000000',
-                    transform: 'translateX(-50%) translateY(1px)'
+                    transform: 'translateX(-50%) translateY(2px)'
                 }}
               >
                 SELECT CURRENCY
@@ -1591,7 +1591,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                 className="space-y-1 overflow-y-auto"
                   style={{ 
                     maxHeight: '35vh',
-                    paddingBottom: '20px'
+                    paddingBottom: '10px'
                   }}
             >
               {Object.entries(currencyRates).map(([code, currency]) => (
