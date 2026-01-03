@@ -1600,7 +1600,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     marginBottom: '6px'
                   }}
             >
-              {Object.entries(currencyRates).map(([code, currency]) => (
+              {Object.entries(currencyRates).map(([code, currency], index, array) => (
                 <button
                   key={code}
                     onClick={(e) => {
@@ -1612,15 +1612,18 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     // Dispatch custom event to notify other components in the same window
                     window.dispatchEvent(new CustomEvent('currencyChanged', { detail: code }));
                   }}
-                    className={`w-full p-2 text-left border border-black hover:bg-gray-50 transition-colors ${
+                    className={`w-full p-2 text-left border-t border-l border-r hover:bg-gray-50 transition-colors ${
                       selectedCurrency === code ? 'bg-gray-100' : 'bg-white'
-                  }`}
+                  } ${index === array.length - 1 ? 'border-b' : ''}`}
                   style={{ 
                     borderWidth: '1.3px',
+                    borderColor: '#000000',
+                    borderStyle: 'solid',
                       fontSize: '10px',
                       fontFamily: '"Futura PT Medium"',
                       color: '#000000',
-                    textTransform: 'uppercase'
+                    textTransform: 'uppercase',
+                    marginBottom: index < array.length - 1 ? '-1.3px' : '0'
                   }}
                 >
                   <div className="flex justify-between items-center">
