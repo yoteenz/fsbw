@@ -1514,7 +1514,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             }}
     >
       <div 
-              className="absolute bg-white border border-black p-2 shadow-lg"
+              className="absolute bg-white border border-black shadow-lg"
         style={{ 
           borderWidth: '1.3px',
           display: 'flex',
@@ -1524,7 +1524,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
           bottom: '14px',
           left: '12px',
           right: '12px',
-          pointerEvents: 'auto'
+          pointerEvents: 'auto',
+          paddingTop: '8px',
+          paddingLeft: '8px',
+          paddingRight: '8px',
+          paddingBottom: '0px'
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -1538,7 +1542,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     fontWeight: 'normal',
                   fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     color: '#000000',
-                    transform: 'translateX(-50%) translateY(2px)'
+                    transform: 'translateX(-50%) translateY(1px)'
                 }}
               >
                 SELECT CURRENCY
@@ -1588,10 +1592,12 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             
               {/* Currency Options */}
               <div 
-                className="space-y-1 overflow-y-auto"
+                className="space-y-1 overflow-y-auto flex-1"
                   style={{ 
-                    maxHeight: '35vh',
-                    paddingBottom: '10px'
+                    flex: '1 1 auto',
+                    minHeight: '0',
+                    maxHeight: 'calc(100% - 6px)',
+                    marginBottom: '6px'
                   }}
             >
               {Object.entries(currencyRates).map(([code, currency]) => (

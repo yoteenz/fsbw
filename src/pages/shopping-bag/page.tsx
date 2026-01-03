@@ -949,7 +949,7 @@ function ShoppingBagPage() {
                  {/* Body */}
                  <div className={`${cartItems.length > 1 ? 'flex-1' : ''} flex flex-col ${cartItems.length > 1 ? 'overflow-hidden' : ''}`} style={{ marginTop: '4.8px' }}>
                    {/* Cart Items - scrollable */}
-                   <div className={`flex flex-col justify-start items-start gap-0 flex-shrink-0 ${cartItems.length > 1 ? 'overflow-y-auto' : ''}`} style={{ maxHeight: cartItems.length > 1 ? '251px' : 'auto', scrollBehavior: 'smooth', width: '100%', marginTop: cartItems.length === 1 ? '4.8px' : '4.8px', marginBottom: cartItems.length > 1 ? '4.8px' : '0' }}>
+                   <div className={`flex flex-col justify-start items-start gap-0 flex-shrink-0 ${cartItems.length > 1 ? 'overflow-y-auto' : ''}`} style={{ maxHeight: cartItems.length > 1 ? (savedForLater.length > 0 ? '250px' : '382px') : 'auto', scrollBehavior: 'smooth', width: '100%', marginTop: cartItems.length === 1 ? '4.8px' : '4.8px', marginBottom: cartItems.length > 1 ? '4.8px' : '0' }}>
                      {cartItems.length === 0 ? (
                        <div style={{ 
                          textAlign: 'center', 
