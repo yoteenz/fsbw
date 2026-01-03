@@ -1911,7 +1911,7 @@ function NoirSelection() {
       
       {/* Scrollable Content */}
       <div className="relative z-10">
-        <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible' }}>
+        <div className="flex flex-col py-5 px-4 mx-auto" style={{ minWidth: '100%', maxWidth: '1200px', overflow: 'visible' }}>
           {/* HEADER */}
           <div
           className="border-solid border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm relative"
@@ -1941,7 +1941,7 @@ function NoirSelection() {
                     alt="Wishlist"
                     width="18"
                     height="18"
-                    src={typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true' ? '/assets/wishlist-account.svg' : '/assets/wishlist-heart.svg'}
+                    src="/assets/wishlist-heart.svg"
                   />
                 </button>
               </>

@@ -592,7 +592,7 @@ function ShoppingBagPage() {
                       alt="Wishlist"
                       width="18"
                       height="18"
-                      src={typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true' ? '/assets/wishlist-account.svg' : '/assets/wishlist-heart.svg'}
+                      src="/assets/wishlist-heart.svg"
                     />
                   </button>
                 </>
@@ -677,13 +677,13 @@ function ShoppingBagPage() {
 
           {/* MAIN BUILD AREA */}
           <div
-            className="border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm min-h-[360px] overflow-hidden"
+            className={`border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm overflow-hidden ${showMobileMenu || cartItems.length > 1 ? 'min-h-[360px]' : ''}`}
             style={{ 
               borderWidth: '1.3px', 
               minWidth: '100%', 
               maxWidth: 'none', 
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              minHeight: showMobileMenu ? '560px' : '360px'
+              minHeight: showMobileMenu ? '560px' : (cartItems.length > 1 ? '360px' : 'auto')
             }}
           >
             {showMobileMenu ? (
@@ -947,9 +947,9 @@ function ShoppingBagPage() {
                  </div>
 
                  {/* Body */}
-                 <div className="flex-1 flex flex-col overflow-hidden mt-2">
+                 <div className={`${cartItems.length > 1 ? 'flex-1' : ''} flex flex-col ${cartItems.length > 1 ? 'overflow-hidden' : ''}`} style={{ marginTop: '4.8px' }}>
                    {/* Cart Items - scrollable */}
-                   <div className="flex flex-col justify-start items-start gap-0 my-2 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '265px', scrollBehavior: 'smooth', width: '100%' }}>
+                   <div className={`flex flex-col justify-start items-start gap-0 flex-shrink-0 ${cartItems.length > 1 ? 'overflow-y-auto' : ''}`} style={{ maxHeight: cartItems.length > 1 ? '265px' : 'auto', scrollBehavior: 'smooth', width: '100%', marginTop: cartItems.length === 1 ? '4.8px' : '4.8px', marginBottom: cartItems.length > 1 ? '4.8px' : '0' }}>
                      {cartItems.length === 0 ? (
                        <div style={{ 
                          textAlign: 'center', 
@@ -1102,7 +1102,7 @@ function ShoppingBagPage() {
                           </div>
 
                           {/* Item Details - Matching cart dropdown */}
-                          <div className="flex-1 min-w-0 flex flex-col relative" style={{ marginLeft: '18px', marginTop: '4px' }}>
+                          <div className="flex-1 min-w-0 flex flex-col relative" style={{ marginLeft: '18px', marginTop: '2.4px' }}>
                             <p 
                               className="font-medium truncate cart-product-name"
                               style={{ 
@@ -1299,10 +1299,10 @@ function ShoppingBagPage() {
 
                  {/* Subtotal - Fixed at bottom */}
                  {cartItems.length > 0 && (
-                   <div className="overflow-hidden mt-auto pt-2">
+                   <div className={`overflow-hidden mt-auto ${cartItems.length === 1 ? '' : 'pt-1'}`}>
                      <div style={{ 
-                       marginTop: '20px', 
-                       paddingTop: '20px', 
+                       marginTop: cartItems.length === 1 ? '2px' : '5px', 
+                       paddingTop: cartItems.length === 1 ? '2px' : '5px', 
                        borderTop: '1.3px solid #000',
                        display: 'flex',
                        justifyContent: 'space-between',
@@ -1354,7 +1354,7 @@ function ShoppingBagPage() {
           {/* SAVED FOR LATER SECTION - Only show when menu is closed and there are saved items */}
           {!showMobileMenu && savedForLater.length > 0 && (
             <div
-              className="border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm min-h-[360px] overflow-hidden"
+              className={`border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm overflow-hidden ${savedForLater.length > 1 ? 'min-h-[360px]' : ''}`}
               style={{ 
                 borderWidth: '1.3px', 
                 minWidth: '100%', 
@@ -1362,7 +1362,8 @@ function ShoppingBagPage() {
                 backgroundColor: 'rgba(255, 255, 255, 0.6)',
                 WebkitBackdropFilter: 'blur(10px)',
                 willChange: 'backdrop-filter',
-                marginTop: '10px'
+                marginTop: '10px',
+                minHeight: savedForLater.length > 1 ? '360px' : 'auto'
               }}
             >
               {/* Saved For Later Header */}
@@ -1382,9 +1383,9 @@ function ShoppingBagPage() {
               </div>
 
               {/* Body */}
-              <div className="flex-1 flex flex-col overflow-hidden mt-2">
+              <div className={`${savedForLater.length > 1 ? 'flex-1' : ''} flex flex-col ${savedForLater.length > 1 ? 'overflow-hidden' : ''}`} style={{ marginTop: '4.8px' }}>
                 {/* Saved Items - scrollable */}
-                <div className="flex flex-col justify-start items-start gap-0 my-2 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '265px', scrollBehavior: 'smooth', width: '100%' }}>
+                <div className={`flex flex-col justify-start items-start gap-0 flex-shrink-0 ${savedForLater.length > 1 ? 'overflow-y-auto' : ''}`} style={{ maxHeight: savedForLater.length > 1 ? '265px' : 'auto', scrollBehavior: 'smooth', width: '100%', marginTop: '4.8px', marginBottom: savedForLater.length > 1 ? '4.8px' : '0' }}>
                   {savedForLater.map((item, index) => {
                   const itemId = item.id || `saved-item-${index}`;
                   const itemName = item.name || 'NOIR';
@@ -1506,7 +1507,7 @@ function ShoppingBagPage() {
                       </div>
 
                       {/* Product Details */}
-                      <div className="flex-1 min-w-0 flex flex-col" style={{ marginLeft: '18px', marginTop: '4px', position: 'relative' }}>
+                      <div className="flex-1 min-w-0 flex flex-col" style={{ marginLeft: '18px', marginTop: '2.4px', position: 'relative' }}>
                          <p 
                            className="font-medium truncate cart-product-name"
                            style={{ 
@@ -1702,10 +1703,10 @@ function ShoppingBagPage() {
 
               {/* Subtotal - Fixed at bottom */}
               {savedForLater.length > 0 && (
-                <div className="overflow-hidden mt-auto pt-2">
+                <div className={`overflow-hidden mt-auto ${savedForLater.length === 1 ? '' : 'pt-1'}`}>
                   <div style={{ 
-                    marginTop: '20px', 
-                    paddingTop: '20px', 
+                    marginTop: savedForLater.length === 1 ? '2px' : '5px', 
+                    paddingTop: savedForLater.length === 1 ? '4px' : '7px', 
                     borderTop: '1.3px solid #000',
                     display: 'flex',
                     justifyContent: 'space-between',

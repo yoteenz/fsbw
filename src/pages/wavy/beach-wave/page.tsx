@@ -836,7 +836,7 @@ function BeachWaveSelection() {
                       alt="Wishlist"
                       width="17"
                       height="17"
-                      src={typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true' ? '/assets/wishlist-account.svg' : '/assets/wishlist-heart.svg'}
+                      src="/assets/wishlist-heart.svg"
                     />
                   </button>
                 </>

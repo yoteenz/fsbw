@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
-import ConfirmationModal from '../../../components/ConfirmationModal';
 
-function ConciergePage() {
+function MembershipPage() {
   const navigate = useNavigate();
   const [cartCount, setCartCount] = useState(() => {
     try {
@@ -33,14 +32,77 @@ function ConciergePage() {
     }
     return false;
   });
+  const [userData, setUserData] = useState<any>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const currentUser = localStorage.getItem('currentUser');
+        return currentUser ? JSON.parse(currentUser) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  });
 
-  // Priority message state
-  const [priorityMessage, setPriorityMessage] = useState('');
-  const [specialRequest, setSpecialRequest] = useState('');
-  const [orderChangeRequest, setOrderChangeRequest] = useState('');
-  const [bookingRequest, setBookingRequest] = useState('');
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
+  // Generate referral code from user data with conflict checking
+  const generateReferralCode = (): string => {
+    // If user already has a referral code stored, use it
+    if (userData?.referralCode) {
+      return userData.referralCode;
+    }
+
+    if (!userData) {
+      return 'KA3047'; // Default/example code
+    }
+
+    // Get first initial of first name
+    const firstInitial = userData.firstName && userData.firstName.length > 0 
+      ? userData.firstName.charAt(0).toUpperCase() 
+      : 'K';
+
+    // Get first initial of last name
+    const lastInitial = userData.lastName && userData.lastName.length > 0 
+      ? userData.lastName.charAt(0).toUpperCase() 
+      : 'A';
+
+    // Extract day from birthday (format: MM/DD/YYYY)
+    let day = '30'; // Default
+    if (userData.birthday) {
+      const birthdayParts = userData.birthday.split('/');
+      if (birthdayParts.length >= 2) {
+        day = birthdayParts[1].padStart(2, '0'); // Ensure 2 digits
+      }
+    }
+
+    // Extract phone number digits
+    let phoneDigits = '2647'; // Default
+    if (userData.phoneNumber) {
+      // Remove all non-digit characters
+      phoneDigits = userData.phoneNumber.replace(/\D/g, '');
+    }
+
+    // Try primary code (last 2 digits)
+    let lastTwoDigits = phoneDigits.length >= 2 ? phoneDigits.slice(-2) : '47';
+    let primaryCode = `${firstInitial}${lastInitial}${day}${lastTwoDigits}`;
+
+    // Check if code already exists in registeredUsers
+    try {
+      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const codeExists = registeredUsers.some((user: any) => 
+        user.referralCode === primaryCode && user.email !== userData.email
+      );
+
+      // If code is taken, use alternative (2 digits before last 2)
+      if (codeExists && phoneDigits.length >= 4) {
+        const alternativeDigits = phoneDigits.slice(-4, -2); // 2 digits before last 2
+        return `${firstInitial}${lastInitial}${day}${alternativeDigits}`;
+      }
+    } catch (e) {
+      // If error checking, just return primary code
+    }
+
+    return primaryCode;
+  };
 
   // Listen for cart count changes
   useEffect(() => {
@@ -95,119 +157,6 @@ function ConciergePage() {
       navigate('/sign-in');
     } else {
       navigate('/sign-in');
-    }
-  };
-
-  const handleSubmitPriorityMessage = () => {
-    if (!priorityMessage.trim()) {
-      return;
-    }
-    
-    // Save to localStorage for admin dashboard
-    try {
-      const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
-      const messages = JSON.parse(localStorage.getItem('adminPriorityMessages') || '[]');
-      const newMessage = {
-        id: Date.now().toString(),
-        userId: userData.email || 'unknown',
-        userName: `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'Unknown User',
-        message: priorityMessage,
-        type: 'priority',
-        timestamp: new Date().toISOString(),
-        status: 'new'
-      };
-      messages.unshift(newMessage);
-      localStorage.setItem('adminPriorityMessages', JSON.stringify(messages));
-      
-      setPriorityMessage('');
-      setSuccessMessage('PRIORITY MESSAGE SUBMITTED SUCCESSFULLY');
-      setShowSuccessModal(true);
-    } catch (e) {
-      console.error('Error saving priority message:', e);
-    }
-  };
-
-  const handleSubmitSpecialRequest = () => {
-    if (!specialRequest.trim()) {
-      return;
-    }
-    
-    try {
-      const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
-      const requests = JSON.parse(localStorage.getItem('adminSpecialRequests') || '[]');
-      const newRequest = {
-        id: Date.now().toString(),
-        userId: userData.email || 'unknown',
-        userName: `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'Unknown User',
-        request: specialRequest,
-        type: 'special_request',
-        timestamp: new Date().toISOString(),
-        status: 'new'
-      };
-      requests.unshift(newRequest);
-      localStorage.setItem('adminSpecialRequests', JSON.stringify(requests));
-      
-      setSpecialRequest('');
-      setSuccessMessage('SPECIAL REQUEST SUBMITTED SUCCESSFULLY');
-      setShowSuccessModal(true);
-    } catch (e) {
-      console.error('Error saving special request:', e);
-    }
-  };
-
-  const handleSubmitOrderChange = () => {
-    if (!orderChangeRequest.trim()) {
-      return;
-    }
-    
-    try {
-      const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
-      const requests = JSON.parse(localStorage.getItem('adminOrderChanges') || '[]');
-      const newRequest = {
-        id: Date.now().toString(),
-        userId: userData.email || 'unknown',
-        userName: `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'Unknown User',
-        request: orderChangeRequest,
-        type: 'order_change',
-        timestamp: new Date().toISOString(),
-        status: 'new'
-      };
-      requests.unshift(newRequest);
-      localStorage.setItem('adminOrderChanges', JSON.stringify(requests));
-      
-      setOrderChangeRequest('');
-      setSuccessMessage('ORDER CHANGE REQUEST SUBMITTED SUCCESSFULLY');
-      setShowSuccessModal(true);
-    } catch (e) {
-      console.error('Error saving order change request:', e);
-    }
-  };
-
-  const handleSubmitBookingRequest = () => {
-    if (!bookingRequest.trim()) {
-      return;
-    }
-    
-    try {
-      const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
-      const bookings = JSON.parse(localStorage.getItem('adminPriorityBookings') || '[]');
-      const newBooking = {
-        id: Date.now().toString(),
-        userId: userData.email || 'unknown',
-        userName: `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'Unknown User',
-        request: bookingRequest,
-        type: 'priority_booking',
-        timestamp: new Date().toISOString(),
-        status: 'new'
-      };
-      bookings.unshift(newBooking);
-      localStorage.setItem('adminPriorityBookings', JSON.stringify(bookings));
-      
-      setBookingRequest('');
-      setSuccessMessage('PRIORITY BOOKING REQUEST SUBMITTED SUCCESSFULLY');
-      setShowSuccessModal(true);
-    } catch (e) {
-      console.error('Error saving booking request:', e);
     }
   };
 
@@ -307,7 +256,7 @@ function ConciergePage() {
                   <span
                     style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
                   >
-                    CONCIERGE
+                    MEMBERSHIP
                   </span>
                 </>
               )}
@@ -590,20 +539,17 @@ function ConciergePage() {
                 </div>
               </div>
             ) : (
-              /* CONCIERGE CONTENT */
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                {/* Priority Messages Section */}
-                <div
-                  className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2"
-                  style={{
-                    borderWidth: '1.3px',
-                    paddingTop: '20px',
-                    paddingLeft: '20px',
-                    paddingRight: '20px',
-                    paddingBottom: '16px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.6)'
-                  }}
-                >
+              /* MEMBERSHIP CONTENT */
+              <div
+                className="border border-black bg-white/60 backdrop-blur-sm w-full"
+                style={{
+                  borderWidth: '1.3px',
+                  padding: '20px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.6)'
+                }}
+              >
+                {/* REWARDS PROGRAM Section */}
+                <div style={{ marginBottom: '32px' }}>
                   <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
                     <h2
                       style={{
@@ -615,69 +561,114 @@ function ConciergePage() {
                         textTransform: 'uppercase'
                       }}
                     >
-                      PRIORITY MESSAGES
+                      REWARDS PROGRAM
                     </h2>
+                    <p
+                      style={{
+                        fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                        color: '#000000',
+                        fontSize: '12px',
+                        margin: '0',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      {generateReferralCode()}
+                    </p>
                   </div>
-                  <p
-                    style={{
-                      fontFamily: '"Futura PT Medium"',
-                      color: '#EB1C24',
-                      fontSize: '10px',
-                      margin: '0 0 16px 0',
-                      textTransform: 'uppercase',
-                      fontWeight: '500'
-                    }}
-                  >
-                    SEND PRIORITY MESSAGES TO ADMIN
-                  </p>
-                  <textarea
-                    value={priorityMessage}
-                    onChange={(e) => setPriorityMessage(e.target.value.toUpperCase())}
-                    placeholder="TYPE YOUR PRIORITY MESSAGE HERE..."
-                    rows={6}
-                    style={{
-                      width: '100%',
-                      padding: '12px',
-                      border: '1.3px solid #000000',
-                      fontFamily: '"Futura PT Book"',
-                      fontSize: '11px',
-                      resize: 'vertical',
-                      backgroundColor: '#FFFFFF',
-                      boxSizing: 'border-box',
-                      textTransform: 'uppercase'
-                    }}
-                  />
-                </div>
-                <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
-                  <button
-                    onClick={handleSubmitPriorityMessage}
-                    disabled={!priorityMessage.trim()}
-                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                    style={{
-                      borderWidth: '1.3px',
-                      color: '#EB1C24',
-                      fontFamily: '"Futura PT Medium"',
-                      backgroundColor: '#FFFFFF'
-                    }}
-                    type="button"
-                  >
-                    SUBMIT MESSAGE
-                  </button>
+                  
+                  <div style={{ marginBottom: '20px' }}>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        color: '#000000',
+                        fontSize: '11px',
+                        margin: '0 0 8px 0',
+                        textTransform: 'uppercase',
+                        fontWeight: '500'
+                      }}
+                    >
+                      BASIC MEMBERSHIP
+                    </p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                      <div style={{ flex: 1 }}>
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Book"',
+                            color: '#000000',
+                            fontSize: '10px',
+                            margin: '0 0 4px 0',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          CURRENT TIER: <span style={{ color: '#EB1C24' }}>SILVER</span>
+                        </p>
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Book"',
+                            color: '#000000',
+                            fontSize: '10px',
+                            margin: '0 0 4px 0',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          BENEFITS INCLUDE: WELCOME DISCOUNT, BIRTHDAY GIFT
+                        </p>
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Book"',
+                            color: '#EB1C24',
+                            fontSize: '10px',
+                            margin: '0 0 8px 0',
+                            textTransform: 'uppercase',
+                            cursor: 'pointer'
+                          }}
+                          onClick={() => {/* Navigate to rewards page */}}
+                        >
+                          VIEW REWARDS
+                        </p>
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Book"',
+                            color: '#000000',
+                            fontSize: '10px',
+                            margin: '0',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          NEXT TIER: <span style={{ color: '#EB1C24' }}>RED</span>
+                        </p>
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Book"',
+                            color: '#000000',
+                            fontSize: '10px',
+                            margin: '4px 0 0 0',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          EARN 2,500 MORE POINTS TO REACH
+                        </p>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            color: '#000000',
+                            fontSize: '14px',
+                            margin: '0',
+                            fontWeight: '500'
+                          }}
+                        >
+                          200 PTS
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Special Requests / Order Changes Section */}
-                <div
-                  className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2"
-                  style={{
-                    borderWidth: '1.3px',
-                    paddingTop: '20px',
-                    paddingLeft: '20px',
-                    paddingRight: '20px',
-                    paddingBottom: '16px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.6)'
-                  }}
-                >
-                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
+                {/* BECOME AN AFFILIATE Section */}
+                <div style={{ marginBottom: '32px' }}>
+                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
                     <h2
                       style={{
                         fontFamily: '"Futura PT Medium"',
@@ -688,180 +679,359 @@ function ConciergePage() {
                         textTransform: 'uppercase'
                       }}
                     >
-                      SPECIAL REQUESTS
+                      BECOME AN AFFILIATE
                     </h2>
                   </div>
+                  
+                  <div style={{ marginBottom: '12px' }}>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        color: '#EB1C24',
+                        fontSize: '10px',
+                        margin: '0 0 8px 0',
+                        textTransform: 'uppercase',
+                        fontWeight: '500'
+                      }}
+                    >
+                      PHOTO + VIDEO TAG:
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        color: '#000000',
+                        fontSize: '10px',
+                        margin: '0 0 12px 0',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      RECEIVE <span style={{ color: '#EB1C24' }}>200 PTS</span> PER PRODUCT WHEN YOU TAG US ON SOCIALS*
+                    </p>
+                  </div>
+
+                  <div style={{ marginBottom: '12px' }}>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        color: '#EB1C24',
+                        fontSize: '10px',
+                        margin: '0 0 8px 0',
+                        textTransform: 'uppercase',
+                        fontWeight: '500'
+                      }}
+                    >
+                      CONTENT REVIEW:
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        color: '#000000',
+                        fontSize: '10px',
+                        margin: '0 0 12px 0',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      RECEIVE <span style={{ color: '#EB1C24' }}>150 PTS</span> PER PRODUCT WHEN YOU SUBMIT A CONTENT REVIEW
+                    </p>
+                  </div>
+
+                  <div style={{ marginBottom: '16px' }}>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        color: '#EB1C24',
+                        fontSize: '10px',
+                        margin: '0 0 8px 0',
+                        textTransform: 'uppercase',
+                        fontWeight: '500'
+                      }}
+                    >
+                      REFERRALS:
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        color: '#000000',
+                        fontSize: '10px',
+                        margin: '0 0 12px 0',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      RECEIVE <span style={{ color: '#EB1C24' }}>100 PTS</span> EVERY TIME YOU REFER SOMEONE WITH YOUR 5% OFF CODE
+                    </p>
+                  </div>
+
+                  <div style={{ marginBottom: '12px' }}>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        color: '#000000',
+                        fontSize: '9px',
+                        margin: '0 0 4px 0',
+                        fontStyle: 'italic'
+                      }}
+                    >
+                      *TAG INCLUDES CONTENT VIA TWITTER, FACEBOOK, IG, TIKTOK + YOUTUBE, PER APPROVAL
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        color: '#000000',
+                        fontSize: '9px',
+                        margin: '0 0 12px 0',
+                        fontStyle: 'italic'
+                      }}
+                    >
+                      *VIDEO MUST BE AT LEAST 10-60 SECONDS IN DURATION, PER APPROVAL
+                    </p>
+                  </div>
+
                   <p
                     style={{
-                      fontFamily: '"Futura PT Medium"',
-                      color: '#EB1C24',
-                      fontSize: '10px',
-                      margin: '0 0 16px 0',
-                      textTransform: 'uppercase',
-                      fontWeight: '500'
+                      fontFamily: '"Futura PT Book"',
+                      color: '#000000',
+                      fontSize: '9px',
+                      margin: '0',
+                      textTransform: 'uppercase'
                     }}
                   >
-                    SUBMIT SPECIAL REQUESTS OR ORDER CHANGES
+                    SUBMIT ALL CONTENT VIA THE AFFILIATE TAB LOCATED UNDER YOUR ACCOUNT. YOU CAN SUBMIT AS MUCH CONTENT AS YOU WANT, WHICH MAY OR MAY NOT BE FEATURED. YOU WILL ONLY RECEIVE POINTS ONCE PER PRODUCT, FOR PHOTOS OR VIDEOS ON EACH PLATFORM.
                   </p>
-                  <textarea
-                    value={specialRequest}
-                    onChange={(e) => setSpecialRequest(e.target.value.toUpperCase())}
-                    placeholder="DESCRIBE YOUR SPECIAL REQUEST..."
-                    rows={4}
-                    style={{
-                      width: '100%',
-                      padding: '12px',
-                      border: '1.3px solid #000000',
-                      fontFamily: '"Futura PT Book"',
-                      fontSize: '11px',
-                      resize: 'vertical',
-                      backgroundColor: '#FFFFFF',
-                      boxSizing: 'border-box',
-                      marginBottom: '16px',
-                      textTransform: 'uppercase'
-                    }}
-                  />
-                  <textarea
-                    value={orderChangeRequest}
-                    onChange={(e) => setOrderChangeRequest(e.target.value.toUpperCase())}
-                    placeholder="DESCRIBE YOUR ORDER CHANGE REQUEST..."
-                    rows={4}
-                    style={{
-                      width: '100%',
-                      padding: '12px',
-                      border: '1.3px solid #000000',
-                      fontFamily: '"Futura PT Book"',
-                      fontSize: '11px',
-                      resize: 'vertical',
-                      backgroundColor: '#FFFFFF',
-                      boxSizing: 'border-box',
-                      textTransform: 'uppercase'
-                    }}
-                  />
-                </div>
-                <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px', display: 'flex', gap: '12px', transform: 'translateY(-2px)' }}>
-                  <button
-                    onClick={handleSubmitSpecialRequest}
-                    disabled={!specialRequest.trim()}
-                    className="border border-black font-futura flex-1 text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                    style={{
-                      borderWidth: '1.3px',
-                      color: '#EB1C24',
-                      fontFamily: '"Futura PT Medium"',
-                      backgroundColor: '#FFFFFF'
-                    }}
-                    type="button"
-                  >
-                    SUBMIT REQUEST
-                  </button>
-                  <button
-                    onClick={handleSubmitOrderChange}
-                    disabled={!orderChangeRequest.trim()}
-                    className="border border-black font-futura flex-1 text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                    style={{
-                      borderWidth: '1.3px',
-                      color: '#EB1C24',
-                      fontFamily: '"Futura PT Medium"',
-                      backgroundColor: '#FFFFFF'
-                    }}
-                    type="button"
-                  >
-                    SUBMIT CHANGE
-                  </button>
                 </div>
 
-                {/* Priority Booking Section */}
-                <div
-                  className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2"
-                  style={{
-                    borderWidth: '1.3px',
-                    paddingTop: '20px',
-                    paddingLeft: '20px',
-                    paddingRight: '20px',
-                    paddingBottom: '16px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.6)'
-                  }}
-                >
-                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
-                    <h2
-                      style={{
-                        fontFamily: '"Futura PT Medium"',
-                        color: '#EB1C24',
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        margin: '0',
-                        textTransform: 'uppercase'
-                      }}
-                    >
-                      PRIORITY BOOKING
-                    </h2>
-                  </div>
+                {/* UPGRADE YOUR BASIC MEMBERSHIP Section */}
+                <div style={{ marginBottom: '24px' }}>
                   <p
                     style={{
                       fontFamily: '"Futura PT Medium"',
                       color: '#EB1C24',
                       fontSize: '10px',
-                      margin: '0 0 16px 0',
+                      margin: '0 0 8px 0',
                       textTransform: 'uppercase',
                       fontWeight: '500'
                     }}
                   >
-                    REQUEST PRIORITY BOOKING APPOINTMENT
+                    UPGRADE YOUR BASIC MEMBERSHIP TO
                   </p>
-                  <textarea
-                    value={bookingRequest}
-                    onChange={(e) => setBookingRequest(e.target.value.toUpperCase())}
-                    placeholder="DESCRIBE YOUR BOOKING REQUEST, PREFERRED DATES, AND ANY SPECIAL REQUIREMENTS..."
-                    rows={6}
+                  <p
                     style={{
-                      width: '100%',
-                      padding: '12px',
-                      border: '1.3px solid #000000',
                       fontFamily: '"Futura PT Book"',
-                      fontSize: '11px',
-                      resize: 'vertical',
-                      backgroundColor: '#FFFFFF',
-                      boxSizing: 'border-box',
+                      color: '#000000',
+                      fontSize: '10px',
+                      margin: '0 0 20px 0',
                       textTransform: 'uppercase'
                     }}
-                  />
-                </div>
-                <div className="px-0 md:px-0" style={{ marginTop: '2px', transform: 'translateY(-2px)' }}>
-                  <button
-                    onClick={handleSubmitBookingRequest}
-                    disabled={!bookingRequest.trim()}
-                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                    style={{
-                      borderWidth: '1.3px',
-                      color: '#EB1C24',
-                      fontFamily: '"Futura PT Medium"',
-                      backgroundColor: '#FFFFFF'
-                    }}
-                    type="button"
                   >
-                    SUBMIT BOOKING REQUEST
-                  </button>
+                    UNLOCK THE FOLLOWING FEATURES PLUS MORE:
+                  </p>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {/* Feature 1 */}
+                    <div>
+                      <h3
+                        style={{
+                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                          color: '#000000',
+                          fontSize: '16px',
+                          margin: '0 0 4px 0',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        UNLIMITED ACCESS TO VIRTUAL 3D WIG GENERATOR
+                      </h3>
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          color: '#000000',
+                          fontSize: '10px',
+                          margin: '0',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        ADDITIONAL, MORE EXTENSIVE CUSTOMIZATION OPTIONS
+                      </p>
+                    </div>
+
+                    {/* Feature 2 */}
+                    <div>
+                      <h3
+                        style={{
+                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                          color: '#000000',
+                          fontSize: '16px',
+                          margin: '0 0 4px 0',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        ENTRY PASS TO MEMBERS ONLY LOUNGE
+                      </h3>
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          color: '#000000',
+                          fontSize: '10px',
+                          margin: '0',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        EARLY ACCESS TO SALES, NEW DROPS, RESTOCKS + BRAND RELATED CONTENT
+                      </p>
+                    </div>
+
+                    {/* Feature 3 */}
+                    <div>
+                      <h3
+                        style={{
+                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                          color: '#000000',
+                          fontSize: '16px',
+                          margin: '0 0 4px 0',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        FAST TRACK CUSTOMER SUPPORT
+                      </h3>
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          color: '#000000',
+                          fontSize: '10px',
+                          margin: '0',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        PRIORITIZED CUSTOMER SUPPORT WITH A SIGNIFICANTLY REDUCED RESPONSE TIME
+                      </p>
+                    </div>
+
+                    {/* Feature 4 */}
+                    <div>
+                      <h3
+                        style={{
+                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                          color: '#000000',
+                          fontSize: '16px',
+                          margin: '0 0 4px 0',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        PRIORITY BOOKING + ORDER PROCESSING
+                      </h3>
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          color: '#000000',
+                          fontSize: '10px',
+                          margin: '0',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        OPTION TO BOOK APPOINTMENTS IN ADVANCE, YOUR CUSTOM ORDERS GET HANDLED FIRST
+                      </p>
+                    </div>
+
+                    {/* Feature 5 */}
+                    <div>
+                      <h3
+                        style={{
+                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                          color: '#000000',
+                          fontSize: '16px',
+                          margin: '0 0 4px 0',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        SPECIAL GIFT WITH PURCHASE + FREE GIVEAWAYS
+                      </h3>
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          color: '#000000',
+                          fontSize: '10px',
+                          margin: '0',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        ELIGIBLE FOR A CHANCE TO WIN RANDOM DISCOUNTS, STYLING VOUCHERS + EXCLUSIVE ITEMS
+                      </p>
+                    </div>
+
+                    {/* Feature 6 */}
+                    <div>
+                      <h3
+                        style={{
+                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                          color: '#000000',
+                          fontSize: '16px',
+                          margin: '0 0 4px 0',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        REDUCED SHIPPING FEE
+                      </h3>
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          color: '#000000',
+                          fontSize: '10px',
+                          margin: '0',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        DISCOUNT APPLIED AUTOMATICALLY TO DOMESTIC + INTERNATIONAL ORDERS
+                      </p>
+                    </div>
+
+                    {/* Feature 7 */}
+                    <div>
+                      <h3
+                        style={{
+                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                          color: '#000000',
+                          fontSize: '16px',
+                          margin: '0 0 4px 0',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        DOUBLE YOUR POINTS
+                      </h3>
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          color: '#000000',
+                          fontSize: '10px',
+                          margin: '0',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        EARN 2X LOYALTY POINTS FOR EACH ORDER, UNLOCKING DISCOUNTS & REWARDS FASTER
+                      </p>
+                    </div>
+                  </div>
                 </div>
+
+                {/* UPGRADE SUBSCRIPTION Button */}
+                <button
+                  onClick={() => {/* Handle upgrade subscription */}}
+                  className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                  style={{ 
+                    borderWidth: '1.3px', 
+                    color: '#EB1C24',
+                    fontFamily: '"Futura PT Medium"',
+                    backgroundColor: '#FFFFFF'
+                  }}
+                  type="button"
+                >
+                  UPGRADE SUBSCRIPTION
+                </button>
               </div>
             )}
           </div>
         </div>
       </div>
-
-      {/* Success Modal */}
-      <ConfirmationModal
-        isOpen={showSuccessModal}
-        onClose={() => setShowSuccessModal(false)}
-        onConfirm={() => setShowSuccessModal(false)}
-        title="SUCCESS"
-        message={successMessage}
-        confirmText="OK"
-        cancelText=""
-        messageTextTransform="uppercase"
-      />
     </div>
   );
 }
 
-export default ConciergePage;
+export default MembershipPage;
 

@@ -32,6 +32,8 @@ const BeachWaveUnitPage = lazy(() => import('./pages/wavy/beach-wave/page'));
 const WishlistPage = lazy(() => import('./pages/wishlist/page'));
 const AccountPage = lazy(() => import('./pages/account/page'));
 const ConciergePage = lazy(() => import('./pages/account/concierge/page'));
+const MembershipPage = lazy(() => import('./pages/account/membership/page'));
+const NotificationsPage = lazy(() => import('./pages/account/notifications/page'));
 const OrdersPage = lazy(() => import('./pages/orders/page'));
 const SignInPage = lazy(() => import('./pages/sign-in/page'));
 const ShoppingBagPage = lazy(() => import('./pages/shopping-bag/page'));
@@ -408,6 +410,16 @@ function App() {
         <Route path="/account/concierge" element={
           <Suspense fallback={<LoadingScreen />}>
             <ConciergePage />
+          </Suspense>
+        } />
+        <Route path="/account/membership" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <MembershipPage />
+          </Suspense>
+        } />
+        <Route path="/account/alerts" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <NotificationsPage />
           </Suspense>
         } />
         <Route path="/account/orders" element={

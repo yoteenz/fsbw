@@ -649,7 +649,7 @@ function AccountPage() {
                       alt="Wishlist"
                       width="18"
                       height="18"
-                      src={typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true' ? '/assets/wishlist-account.svg' : '/assets/wishlist-heart.svg'}
+                      src="/assets/wishlist-heart.svg"
                     />
                   </button>
                 </>
@@ -1077,7 +1077,7 @@ function AccountPage() {
                       style={{
                         fontFamily: '"Futura PT Medium"',
                         color: '#EB1C24',
-                        fontSize: '11px',
+                        fontSize: '10px',
                         margin: '0',
                         textTransform: 'uppercase',
                         fontWeight: '500',
@@ -1126,7 +1126,7 @@ function AccountPage() {
                         margin: '0',
                         textTransform: 'uppercase',
                         fontWeight: '500',
-                        transform: 'translateY(5px)'
+                        transform: 'translateY(9px)'
                       }}
                     >
                       GIFT CARD BALANCE: {formatPrice(0)}
@@ -1141,7 +1141,7 @@ function AccountPage() {
                         textTransform: 'uppercase',
                         fontWeight: '500',
                         cursor: 'pointer',
-                        transform: 'translateY(-2px)'
+                        transform: 'translateY(2px)'
                       }}
                     >
                       LOAD GIFT CARD
@@ -1193,8 +1193,8 @@ function AccountPage() {
                     })(), 
                     route: '/account/orders' 
                   },
-                  { title: 'NOTIFICATIONS', subtitle: 'NEWSLETTER + ALERTS', route: null },
-                  { title: 'MEMBERSHIP', subtitle: 'SUBSCRIPTIONS + REWARDS PROGRAM', route: null },
+                  { title: 'ALERTS', subtitle: 'NEWSLETTER + NOTIFICATIONS', route: '/account/alerts' },
+                  { title: 'MEMBERSHIP', subtitle: 'SUBSCRIPTIONS + REWARDS PROGRAM', route: '/account/membership' },
                   { title: 'AFFILIATE', subtitle: 'SUBMIT PHOTOS + VIDEOS FOR POINTS', route: null },
                   { 
                     title: 'REVIEWS', 
@@ -1232,7 +1232,7 @@ function AccountPage() {
                       style={{
                         fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                         color: '#000000',
-                        fontSize: '22px',
+                        fontSize: '20px',
                         lineHeight: '1.2',
                         margin: '0 0 4px 0',
                         textTransform: 'uppercase',

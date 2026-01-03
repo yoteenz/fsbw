@@ -640,7 +640,7 @@ function OrderFormPage() {
                       alt="Wishlist"
                       width="18"
                       height="18"
-                      src={typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true' ? '/assets/wishlist-account.svg' : '/assets/wishlist-heart.svg'}
+                      src="/assets/wishlist-heart.svg"
                     />
                   </button>
                 </>

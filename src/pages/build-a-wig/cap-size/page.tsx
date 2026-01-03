@@ -1025,8 +1025,8 @@ function CapSizeSelection() {
         <div className="px-0 md:px-0 flex justify-center" style={{ marginTop: '2px', transform: 'translateY(0px)' }}>
           <button
             onClick={handleConfirmSelection}
-            className="border border-black font-futura text-center py-2 text-[12px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-            style={{ borderWidth: '1.3px', color: '#EB1C24', width: '358px' }}
+            className="border border-black font-futura w-full max-w-m text-center py-2 text-[12px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+            style={{ borderWidth: '1.3px', color: '#EB1C24' }}
           >
             CONFIRM SELECTION
           </button>

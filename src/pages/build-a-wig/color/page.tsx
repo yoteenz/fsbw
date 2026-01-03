@@ -887,6 +887,20 @@ function ColorSelection() {
   };
 
   const getSelectedPrice = () => {
+    const pathname = location.pathname;
+    const isOnEditRoute = pathname.includes('/edit');
+    const isOnCustomizeRoute = pathname.includes('/customize');
+    
+    // For edit and customize modes (excluding blanco routes)
+    if ((isOnEditRoute || isOnCustomizeRoute) && !isBlancoRoute) {
+      // OFF BLACK and PLATINUM are $0
+      if (selectedColor === 'OFF BLACK' || selectedColor === 'PLATINUM') {
+        return 0;
+      }
+      // All other colors are $120
+      return 120;
+    }
+    
     const selected = colorOptions.find(option => option.id === selectedColor);
     if (!selected) return 0;
     
@@ -985,7 +999,7 @@ function ColorSelection() {
                     alt="Wishlist"
                     width="18"
                     height="18"
-                    src={typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true' ? '/assets/wishlist-account.svg' : '/assets/wishlist-heart.svg'}
+                    src="/assets/wishlist-heart.svg"
                   />
                 </button>
               </>
@@ -1538,8 +1552,8 @@ function ColorSelection() {
         <div className="px-0 md:px-0 flex justify-center" style={{ marginTop: '2px', transform: 'translateY(0px)' }}>
           <button
             onClick={handleConfirmSelection}
-            className="border border-black font-futura text-center py-2 text-[12px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-            style={{ borderWidth: '1.3px', color: '#EB1C24', width: '358px' }}
+            className="border border-black font-futura w-full max-w-m text-center py-2 text-[12px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+            style={{ borderWidth: '1.3px', color: '#EB1C24' }}
           >
             CONFIRM SELECTION
           </button>

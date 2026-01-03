@@ -270,7 +270,7 @@ function SignInPage() {
                       alt="Wishlist"
                       width="18"
                       height="18"
-                      src={typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true' ? '/assets/wishlist-account.svg' : '/assets/wishlist-heart.svg'}
+                      src="/assets/wishlist-heart.svg"
                     />
                   </button>
                 </>
@@ -798,7 +798,29 @@ function SignInPage() {
                       
                       if (user) {
                         // Authentication successful
-                        localStorage.setItem('currentUser', JSON.stringify(user));
+                        // Create a copy to avoid mutating the original
+                        const userToSet = { ...user };
+                        
+                        // Check if there's an existing currentUser with updated membership type
+                        const existingCurrentUser = localStorage.getItem('currentUser');
+                        if (existingCurrentUser) {
+                          try {
+                            const existingUser = JSON.parse(existingCurrentUser);
+                            // If existing user has premium membership, preserve it
+                            if (existingUser.membershipType === 'PREMIUM' && user.email?.toLowerCase() === existingUser.email?.toLowerCase()) {
+                              userToSet.membershipType = 'PREMIUM';
+                              // Also update in registeredUsers to persist
+                              const userIndex = registeredUsers.findIndex((u: any) => u.email?.toLowerCase() === user.email?.toLowerCase());
+                              if (userIndex !== -1) {
+                                registeredUsers[userIndex].membershipType = 'PREMIUM';
+                                localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                              }
+                            }
+                          } catch (e) {
+                            // If parsing fails, just use the user from registeredUsers
+                          }
+                        }
+                        localStorage.setItem('currentUser', JSON.stringify(userToSet));
                         localStorage.setItem('isSignedIn', 'true');
                         setIsSignedIn(true);
                         
@@ -1499,6 +1521,59 @@ function SignInPage() {
                         return;
                       }
                       
+                      // Generate referral code with conflict checking
+                      const generateReferralCode = (firstName: string, lastName: string, birthday: string, phoneNumber: string): string => {
+                        // Get first initial of first name
+                        const firstInitial = firstName && firstName.length > 0 
+                          ? firstName.charAt(0).toUpperCase() 
+                          : 'K';
+
+                        // Get first initial of last name
+                        const lastInitial = lastName && lastName.length > 0 
+                          ? lastName.charAt(0).toUpperCase() 
+                          : 'A';
+
+                        // Extract day from birthday (format: MM/DD/YYYY)
+                        let day = '30'; // Default
+                        if (birthday) {
+                          const birthdayParts = birthday.split('/');
+                          if (birthdayParts.length >= 2) {
+                            day = birthdayParts[1].padStart(2, '0'); // Ensure 2 digits
+                          }
+                        }
+
+                        // Extract phone number digits
+                        let phoneDigits = '2647'; // Default
+                        if (phoneNumber) {
+                          // Remove all non-digit characters
+                          phoneDigits = phoneNumber.replace(/\D/g, '');
+                        }
+
+                        // Try primary code (last 2 digits)
+                        let lastTwoDigits = phoneDigits.length >= 2 ? phoneDigits.slice(-2) : '47';
+                        let primaryCode = `${firstInitial}${lastInitial}${day}${lastTwoDigits}`;
+
+                        // Check if code already exists in registeredUsers
+                        const codeExists = existingUsers.some((user: any) => 
+                          user.referralCode === primaryCode
+                        );
+
+                        // If code is taken, use alternative (2 digits before last 2)
+                        if (codeExists && phoneDigits.length >= 4) {
+                          const alternativeDigits = phoneDigits.slice(-4, -2); // 2 digits before last 2
+                          return `${firstInitial}${lastInitial}${day}${alternativeDigits}`;
+                        }
+
+                        return primaryCode;
+                      };
+
+                      const referralCode = generateReferralCode(
+                        firstName.trim(),
+                        lastName.trim(),
+                        birthday.trim(),
+                        phoneNumber.trim()
+                      );
+                      
                       // Create user account
                       const newUser = {
                         id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -1515,6 +1590,7 @@ function SignInPage() {
                         twitter: twitter.trim(),
                         profileImage: '/assets/profile-thumb.png',
                         membershipType: 'STANDARD',
+                        referralCode: referralCode,
                         createdAt: new Date().toISOString()
                       };
                       

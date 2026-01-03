@@ -11,10 +11,11 @@ export default defineConfig({
   },
   server: {
     port: 3001,
-    host: true, // This is equivalent to '0.0.0.0' but more reliable
+    host: '0.0.0.0', // Explicitly bind to all interfaces for mobile access
     open: false,
     strictPort: true, // Force port 3001, don't fall back to other ports
     hmr: {
+      host: 'localhost',
       clientPort: 3001,
     },
     // Ensure SPA routing works - all routes serve index.html
