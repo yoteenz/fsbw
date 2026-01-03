@@ -828,7 +828,7 @@ function LengthSelection() {
 
           {/* MAIN BUILD AREA */}
           <div
-            className="border border-black flex flex-col pt-6 pb-4 bg-white/60 backdrop-blur-sm"
+            className="border border-black flex flex-col pt-6 pb-4 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
             style={{ 
               borderWidth: '1.3px',
               paddingLeft: (() => {

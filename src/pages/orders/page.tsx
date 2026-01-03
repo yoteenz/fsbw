@@ -1183,7 +1183,7 @@ function OrdersPage() {
                        <p
                          style={{
                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                           fontSize: '12px',
+                           fontSize: '11px',
                            color: '#909090',
                            margin: 0,
                            textTransform: 'uppercase',

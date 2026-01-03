@@ -572,7 +572,7 @@ function StraightUnitsPage() {
           {showMobileMenu ? (
             /* MENU CONTENT */
             <div
-              className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+              className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
               style={{ 
                 borderWidth: '1.3px', 
                 minWidth: '100%', 
@@ -826,6 +826,7 @@ function StraightUnitsPage() {
             <>
           {/* PRODUCT CARDS GRID */}
           <div 
+            className="transition-all duration-300 ease-out"
             style={{ 
               width: '100%', 
               display: 'flex',

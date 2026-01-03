@@ -356,7 +356,7 @@ function SignInPage() {
           {showMobileMenu ? (
             /* MENU CONTENT */
             <div
-              className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+              className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
               style={{ 
                 borderWidth: '1.3px', 
                 minWidth: '100%', 
@@ -603,7 +603,7 @@ function SignInPage() {
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0' }}>
               {/* SIGN IN TO YOUR ACCOUNT CARD */}
               <div
-                className="border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm"
+                className="border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
                 style={{ 
                   borderWidth: '1.3px', 
                   minWidth: '100%', 
@@ -868,7 +868,7 @@ function SignInPage() {
             {/* CREATE AN ACCOUNT CARD */}
             <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0' }}>
                 <div
-                  className="border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm"
+                  className="border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
                   style={{ 
                     borderWidth: '1.3px', 
                     minWidth: '100%', 

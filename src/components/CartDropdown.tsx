@@ -716,11 +716,13 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
 
         {/* Cart Items */}
           <div 
-            className="px-3 py-2 overflow-y-auto flex-1"
+            className={`px-3 overflow-y-auto flex-1 ${cartItems.length > 1 ? '' : ''}`}
             style={{
-              maxHeight: '280px',
+              maxHeight: cartItems.length > 1 ? '245px' : 'auto',
               minHeight: '0',
-              overflowY: 'auto'
+              overflowY: cartItems.length > 1 ? 'auto' : 'visible',
+              marginTop: '4.8px',
+              marginBottom: cartItems.length > 1 ? '4.8px' : '0'
             }}
           >
           {cartItems.length === 0 ? (
@@ -749,17 +751,18 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                   }
                   
                   return itemsToShow.map((item, index) => (
-                    <div key={item.id} className={`flex items-center justify-start space-x-3 ${index < itemsToShow.length - 1 ? 'border-b border-black' : ''}`} style={{ height: '140px', paddingTop: '0', paddingBottom: '0' }}>
+                    <div key={item.id} className={`flex items-center justify-start space-x-3 ${index < itemsToShow.length - 1 ? 'border-b border-black' : ''}`} style={{ minHeight: '120px', height: viewingDetailsFor === item.id ? 'auto' : '120px', paddingTop: '0', paddingBottom: '0' }}>
                     {/* Thumbnail Container */}
                     <div className="flex flex-col items-center justify-center" style={{ height: '100%' }}>
-                      {/* Item Image */}
-                      <div 
-                        className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-                        style={{ 
-                          width: '88px', 
-                          height: '88px',
-                          marginTop: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '-7px' : '0'
-                        }}
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', transform: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? 'translateY(-8px)' : 'translateY(-8px)', position: 'relative' }}>
+                        {/* Item Image */}
+                        <div 
+                          className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+                          style={{ 
+                            width: '88px', 
+                            height: '88px',
+                            margin: '0'
+                          }}
                         onClick={() => {
                           // Determine the correct product page route based on item name
                           let productRoute = '/straight/noir'; // Default fallback
@@ -842,18 +845,19 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         />
                       </div>
                       
-                      {/* EDIT IN BUILD-A-WIG text - Only show for units, not gift cards */}
-                      {!(item.name === 'GIFT CARD' || item.type === 'gift-card') && (
-                        <p 
-                          className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
-                          style={{ 
-                            fontFamily: '"Futura PT Book"',
-                            color: '#EB1C24',
-                            textTransform: 'uppercase',
-                            fontSize: '8px',
-                            marginTop: '4px',
-                            lineHeight: '1.1'
-                          }}
+                        {/* EDIT IN BUILD-A-WIG text - Only show for units, not gift cards */}
+                        {!(item.name === 'GIFT CARD' || item.type === 'gift-card') && (
+                          <p 
+                            className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
+                            style={{ 
+                              fontFamily: '"Futura PT Book"',
+                              color: '#EB1C24',
+                              textTransform: 'uppercase',
+                              fontSize: '8px',
+                              marginTop: '4px',
+                              marginBottom: '0',
+                              lineHeight: '1.1'
+                            }}
                           onClick={() => {
                             console.log('Cart item being edited:', item);
                             
@@ -955,42 +959,61 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           }}
                         >
                           EDIT IN BUILD-A-WIG
-                        </p>
-                      )}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   
                     {/* Item Details */}
-                   <div className="flex-1 min-w-0 flex flex-col" style={{ marginLeft: '18px', marginTop: '4px' }}>
-                      <p 
-                        className="font-medium truncate cart-product-name"
-                        style={{ 
-                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                          color: '#000000',
-                          textTransform: 'uppercase',
-                          fontSize: (() => {
-                            if (item.name === 'NOIR') {
-                              return '22px';
-                            }
-                            return '21px';
-                          })(),
-                          lineHeight: '1.1',
-                          transform: 'translateY(-9px)'
-                        }}
-                      >
-                        {item.name.replace(/WIG/gi, '').trim()}
-                      </p>
-                      <p 
-                        className="font-bold"
-                        style={{ 
-                          fontFamily: '"Futura PT Book"',
-                          color: '#EB1C24',
-                          textTransform: 'uppercase',
-                          fontSize: '9px',
-                          marginTop: '-5px',
-                          transform: 'translateY(-1px)',
-                          lineHeight: '1.1'
-                        }}
-                      >
+                   <div className="flex-1 min-w-0 flex flex-col relative justify-center" style={{ marginLeft: '18px', height: viewingDetailsFor === item.id ? 'auto' : '100%', minHeight: viewingDetailsFor === item.id ? '120px' : '100%' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: viewingDetailsFor === item.id ? 'flex-start' : 'center', alignItems: 'flex-start', margin: '0', padding: '0', transform: 'translateY(-4px)', height: viewingDetailsFor === item.id ? 'auto' : '100%', position: viewingDetailsFor === item.id ? 'relative' : 'static', top: viewingDetailsFor === item.id ? (() => {
+                        // Count detail selections
+                        let detailCount = 0;
+                        if (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) detailCount++;
+                        if (item.length && item.length !== '24"') detailCount++;
+                        if (item.density && item.density !== '200%') detailCount++;
+                        if (item.lace && item.lace !== '13X6') detailCount++;
+                        const defaultColor = item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
+                        if (item.color && item.color !== defaultColor) detailCount++;
+                        if (item.hairline && item.hairline !== 'NATURAL') detailCount++;
+                        const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
+                        if (item.styling && item.styling !== 'NONE' && hairStylingOptions.includes(item.styling) && item.partSelection) detailCount++;
+                        if (item.addOns && item.addOns.length > 0) detailCount++;
+                        // Base 6px, add 4px for each detail after the first (detailCount - 1)
+                        return `${6 + (detailCount - 1) * 4}px`;
+                      })() : 'auto' }}>
+                        <p 
+                          className="font-medium truncate cart-product-name"
+                          style={{ 
+                            fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                            color: '#000000',
+                            textTransform: 'uppercase',
+                            fontSize: (() => {
+                              if (item.name === 'NOIR') {
+                                return '22px';
+                              }
+                              return '21px';
+                            })(),
+                            lineHeight: '1.1',
+                            margin: '0',
+                            marginTop: '0',
+                            paddingTop: '0'
+                          }}
+                        >
+                          {item.name.replace(/WIG/gi, '').trim()}
+                        </p>
+                        <p 
+                          className="font-bold"
+                          style={{ 
+                            fontFamily: '"Futura PT Book"',
+                            color: '#EB1C24',
+                            textTransform: 'uppercase',
+                            fontSize: '9px',
+                            marginTop: '2px',
+                            marginBottom: '0',
+                            lineHeight: '1.1'
+                          }}
+                        >
                         {(() => {
                           // Gift card shows "DIGITAL ONLY"
                           if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
@@ -1018,21 +1041,22 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           };
                           return `${item.length || '24"'} RAW ${getHairOrigin(item.name)}`;
                         })()}
-                      </p>
-                      {viewingDetailsFor === item.id && (
-                        <p 
-                          className="font-bold"
-                          style={{ 
-                            fontFamily: '"Futura PT Book"',
-                            color: '#000000',
-                            textTransform: 'uppercase',
-                            fontSize: '9px',
-                            marginTop: '1px',
-                            marginRight: '20px',
-                            lineHeight: '1.44',
-                            wordBreak: 'break-word',
-                            maxWidth: 'calc(100% - 20px)'
-                          }}
+                        </p>
+                        {viewingDetailsFor === item.id && (
+                          <p 
+                            className="font-bold"
+                            style={{ 
+                              fontFamily: '"Futura PT Book"',
+                              color: '#000000',
+                              textTransform: 'uppercase',
+                              fontSize: '9px',
+                              marginTop: '2px',
+                              marginBottom: '0',
+                              marginRight: '20px',
+                              lineHeight: '1.44',
+                              wordBreak: 'break-word',
+                              maxWidth: 'calc(100% - 20px)'
+                            }}
                           dangerouslySetInnerHTML={{
                           __html: (() => {
                           // Build text with non-breaking spaces within comma sections
@@ -1254,16 +1278,52 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           return text;
                           })()
                         }}
-                        />
-                      )}
-                      {item.capSize && (
-                    <p 
-                      className="font-semibold"
-                      style={{ 
-                        fontFamily: '"Futura PT Medium"',
-                            color: '#808080',
+                          />
+                        )}
+                        {item.capSize && (
+                          <p 
+                            className="font-semibold"
+                            style={{ 
+                              fontFamily: '"Futura PT Medium"',
+                              color: '#808080',
+                              textTransform: 'uppercase',
+                              fontSize: '10px',
+                              marginTop: (() => {
+                                // Check if there's black detail text (specifications)
+                                const hasSpecs = (item.density && item.density !== '200%') || 
+                                               (item.lace && item.lace !== '13X6') || 
+                                               (item.texture && item.texture !== 'SILKY') || 
+                                               (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
+                                               (item.hairline && item.hairline !== 'NATURAL') || 
+                                               (item.styling && item.styling !== 'NONE') || 
+                                               (item.addOns && item.addOns.length > 0);
+                                const baseMargin = hasSpecs ? '2px' : '0px';
+                                // Add 2px for SOFT WAVE and SOFT CURL only
+                                if (item.name === 'SOFT WAVE' || item.name === 'SOFT CURL') {
+                                  const numValue = parseInt(baseMargin);
+                                  return `${numValue + 2}px`;
+                                }
+                                // Add 2px for OCEAN CURL only
+                                if (item.name === 'OCEAN CURL') {
+                                  const numValue = parseInt(baseMargin);
+                                  return `${numValue + 2}px`;
+                                }
+                                return baseMargin;
+                              })(),
+                              marginBottom: '0',
+                              lineHeight: '1.1'
+                            }}
+                          >
+                            CAP SIZE: {item.capSize}
+                          </p>
+                        )}
+                        <p 
+                          style={{ 
+                            fontFamily: '"Futura PT Book"',
+                            color: '#000000',
                             textTransform: 'uppercase',
-                            fontSize: '10px',
+                            fontSize: '12px',
+                            fontWeight: '600',
                             marginTop: (() => {
                               // Check if there's black detail text (specifications)
                               const hasSpecs = (item.density && item.density !== '200%') || 
@@ -1273,47 +1333,16 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                                              (item.hairline && item.hairline !== 'NATURAL') || 
                                              (item.styling && item.styling !== 'NONE') || 
                                              (item.addOns && item.addOns.length > 0);
-                              const baseMargin = hasSpecs ? '2px' : '0px';
-                              // Add 2px for SOFT WAVE and SOFT CURL only
-                              if (item.name === 'SOFT WAVE' || item.name === 'SOFT CURL') {
-                                const numValue = parseInt(baseMargin);
-                                return `${numValue + 2}px`;
-                              }
-                              // Add 2px for OCEAN CURL only
-                              if (item.name === 'OCEAN CURL') {
-                                const numValue = parseInt(baseMargin);
-                                return `${numValue + 2}px`;
-                              }
-                              return baseMargin;
+                              return hasSpecs ? '2px' : '1px';
                             })(),
-                            lineHeight: '1.1'
+                            marginBottom: '0',
+                            marginLeft: '0',
+                            marginRight: '0'
                           }}
-                        >
-                          CAP SIZE: {item.capSize}
-                        </p>
-                      )}
-                      <p 
-                        style={{ 
-                          fontFamily: '"Futura PT Book"',
-                          color: '#000000',
-                          textTransform: 'uppercase',
-                          fontSize: '12px',
-                          fontWeight: '600',
-                          marginTop: (() => {
-                            // Check if there's black detail text (specifications)
-                            const hasSpecs = (item.density && item.density !== '200%') || 
-                                           (item.lace && item.lace !== '13X6') || 
-                                           (item.texture && item.texture !== 'SILKY') || 
-                                           (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
-                                           (item.hairline && item.hairline !== 'NATURAL') || 
-                                           (item.styling && item.styling !== 'NONE') || 
-                                           (item.addOns && item.addOns.length > 0);
-                            return hasSpecs ? '2px' : '1px';
-                          })()
-                        }}
-                        dangerouslySetInnerHTML={formatPrice(item.price)}
-                      />
-                  </div>
+                          dangerouslySetInnerHTML={formatPrice(item.price)}
+                        />
+                      </div>
+                    </div>
                   
                   {/* Remove Button */}
                     <div className="flex flex-col items-center flex-shrink-0" style={{ transform: 'translateX(-8px)', width: '80px', alignItems: 'center' }}>
@@ -1424,7 +1453,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     textTransform: 'uppercase'
                   }}
                   dangerouslySetInnerHTML={{
-                    __html: `<span style="font-weight: 600; font-family: 'Futura PT Book', sans-serif;">TOTAL DUE: ${formatPrice(getTotalPrice()).__html}</span>`
+                    __html: `<span style="font-weight: 600; font-family: 'Futura PT Book', sans-serif;">SUBTOTAL: ${formatPrice(getTotalPrice()).__html}</span>`
                   }}
                 />
               </div>

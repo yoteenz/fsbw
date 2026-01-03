@@ -32,7 +32,7 @@ function MembershipPage() {
     }
     return false;
   });
-  const [userData, setUserData] = useState<any>(() => {
+  const [userData] = useState<any>(() => {
     if (typeof window !== 'undefined') {
       try {
         const currentUser = localStorage.getItem('currentUser');
@@ -541,7 +541,7 @@ function MembershipPage() {
             ) : (
               /* MEMBERSHIP CONTENT */
               <div
-                className="border border-black bg-white/60 backdrop-blur-sm w-full"
+                className="border border-black bg-white/60 backdrop-blur-sm w-full transition-all duration-300 ease-out"
                 style={{
                   borderWidth: '1.3px',
                   padding: '20px',

@@ -758,7 +758,7 @@ function CheckoutConfirmPage() {
             {showMobileMenu ? (
               /* MENU CONTENT */
               <div
-                className="border border-black flex flex-col pt-6 pb-4 px-5 bg-white/60 backdrop-blur-sm w-full"
+                className="border border-black flex flex-col pt-6 pb-4 px-5 bg-white/60 backdrop-blur-sm w-full transition-all duration-300 ease-out"
                 style={{ 
                   borderWidth: '1.3px', 
                   minWidth: '100%', 
@@ -1006,7 +1006,7 @@ function CheckoutConfirmPage() {
               <>
               {/* MAIN CARD */}
               <div
-                className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+                className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
                 style={{ 
                   borderWidth: '1.3px',
                   minWidth: '100%', 
@@ -1257,7 +1257,7 @@ function CheckoutConfirmPage() {
             {/* ORDER SUMMARY CARD - Only show when menu is closed */}
             {!showMobileMenu && (
               <div
-                className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+                className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
                 style={{ borderWidth: '1.3px' }}
               >
               {/* ORDER SUMMARY */}

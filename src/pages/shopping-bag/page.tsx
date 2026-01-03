@@ -677,7 +677,7 @@ function ShoppingBagPage() {
 
           {/* MAIN BUILD AREA */}
           <div
-            className={`border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm overflow-hidden ${showMobileMenu || cartItems.length > 1 ? 'min-h-[360px]' : ''}`}
+            className={`border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm overflow-hidden transition-all duration-300 ease-out ${showMobileMenu || cartItems.length > 1 ? 'min-h-[360px]' : ''}`}
             style={{ 
               borderWidth: '1.3px', 
               minWidth: '100%', 
@@ -949,7 +949,7 @@ function ShoppingBagPage() {
                  {/* Body */}
                  <div className={`${cartItems.length > 1 ? 'flex-1' : ''} flex flex-col ${cartItems.length > 1 ? 'overflow-hidden' : ''}`} style={{ marginTop: '4.8px' }}>
                    {/* Cart Items - scrollable */}
-                   <div className={`flex flex-col justify-start items-start gap-0 flex-shrink-0 ${cartItems.length > 1 ? 'overflow-y-auto' : ''}`} style={{ maxHeight: cartItems.length > 1 ? '265px' : 'auto', scrollBehavior: 'smooth', width: '100%', marginTop: cartItems.length === 1 ? '4.8px' : '4.8px', marginBottom: cartItems.length > 1 ? '4.8px' : '0' }}>
+                   <div className={`flex flex-col justify-start items-start gap-0 flex-shrink-0 ${cartItems.length > 1 ? 'overflow-y-auto' : ''}`} style={{ maxHeight: cartItems.length > 1 ? '251px' : 'auto', scrollBehavior: 'smooth', width: '100%', marginTop: cartItems.length === 1 ? '4.8px' : '4.8px', marginBottom: cartItems.length > 1 ? '4.8px' : '0' }}>
                      {cartItems.length === 0 ? (
                        <div style={{ 
                          textAlign: 'center', 
@@ -1036,7 +1036,7 @@ function ShoppingBagPage() {
                            key={itemId}
                            className={`flex items-center justify-start space-x-3 ${index < cartItems.length - 1 ? 'border-b border-black' : ''}`}
                            style={{
-                             height: '140px',
+                             height: '130px',
                              paddingTop: '0',
                              paddingBottom: '0',
                              width: '100%',
@@ -1045,150 +1045,156 @@ function ShoppingBagPage() {
                          >
                           {/* Thumbnail Container - Matching cart dropdown */}
                           <div className="flex flex-col items-center justify-center" style={{ flexShrink: 0, width: '88px', height: '100%' }}>
-                            {/* Item Image */}
-                            <div 
-                              className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-                              style={{ 
-                                width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', 
-                                height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px',
-                                marginTop: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '-7px' : '0'
-                              }}
-                              onClick={() => {
-                                // Determine the correct product page route based on item name
-                                let productRoute = '/straight/noir';
-                                if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
-                                  productRoute = '/tools/gift-card';
-                                } else if (item.name === 'NOIR') {
-                                  productRoute = '/straight/noir';
-                                } else if (item.name === 'BLANCO') {
-                                  productRoute = '/straight/blanco';
-                                } else if (item.name === 'SOFT WAVE') {
-                                  productRoute = '/wavy/soft-wave';
-                                } else if (item.name === 'SOFT CURL') {
-                                  productRoute = '/curly/soft-curl';
-                                } else if (item.name === 'BEACH WAVE') {
-                                  productRoute = '/wavy/beach-wave';
-                                } else if (item.name === 'OCEAN CURL') {
-                                  productRoute = '/curly/ocean-curl';
-                                }
-                                navigate(productRoute);
-                              }}
-                            >
-                              <img
-                                src={itemImage}
-                                alt={itemName}
-                                className="object-cover rounded"
-                                style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
-                              />
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', transform: !(item.name === 'GIFT CARD' || item.type === 'gift-card') ? 'translateY(-4px)' : 'none' }}>
+                              {/* Item Image */}
+                              <div 
+                                className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+                                style={{ 
+                                  width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', 
+                                  height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px',
+                                  margin: '0'
+                                }}
+                                onClick={() => {
+                                  // Determine the correct product page route based on item name
+                                  let productRoute = '/straight/noir';
+                                  if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
+                                    productRoute = '/tools/gift-card';
+                                  } else if (item.name === 'NOIR') {
+                                    productRoute = '/straight/noir';
+                                  } else if (item.name === 'BLANCO') {
+                                    productRoute = '/straight/blanco';
+                                  } else if (item.name === 'SOFT WAVE') {
+                                    productRoute = '/wavy/soft-wave';
+                                  } else if (item.name === 'SOFT CURL') {
+                                    productRoute = '/curly/soft-curl';
+                                  } else if (item.name === 'BEACH WAVE') {
+                                    productRoute = '/wavy/beach-wave';
+                                  } else if (item.name === 'OCEAN CURL') {
+                                    productRoute = '/curly/ocean-curl';
+                                  }
+                                  navigate(productRoute);
+                                }}
+                              >
+                                <img
+                                  src={itemImage}
+                                  alt={itemName}
+                                  className="object-cover rounded"
+                                  style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
+                                />
+                              </div>
+                              
+                              {/* EDIT IN BUILD-A-WIG text - Only show for units, not gift cards */}
+                              {!(item.name === 'GIFT CARD' || item.type === 'gift-card') && (
+                                <p 
+                                  className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
+                                  style={{ 
+                                    fontFamily: '"Futura PT Book"',
+                                    color: '#EB1C24',
+                                    textTransform: 'uppercase',
+                                    fontSize: '8px',
+                                    marginTop: '4px',
+                                    marginBottom: '0',
+                                    lineHeight: '1.1'
+                                  }}
+                                  onClick={() => handleEdit(item)}
+                                >
+                                  EDIT IN BUILD-A-WIG
+                                </p>
+                              )}
                             </div>
-                            
-                            {/* EDIT IN BUILD-A-WIG text - Only show for units, not gift cards */}
-                            {!(item.name === 'GIFT CARD' || item.type === 'gift-card') && (
+                          </div>
+
+                          {/* Item Details - Matching cart dropdown */}
+                          <div className="flex-1 min-w-0 flex flex-col relative justify-center" style={{ marginLeft: '18px', height: '100%' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                               <p 
-                                className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
+                                className="font-medium truncate cart-product-name"
+                                style={{ 
+                                  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                  color: '#000000',
+                                  textTransform: 'uppercase',
+                                  fontSize: (() => {
+                                    if (item.name === 'NOIR') {
+                                      return '22px';
+                                    }
+                                    return '21px';
+                                  })(),
+                                  lineHeight: '1.1',
+                                  margin: '0'
+                                }}
+                              >
+                                {itemName.replace(/WIG/gi, '').trim()}
+                              </p>
+                              <p 
+                                className="font-bold"
                                 style={{ 
                                   fontFamily: '"Futura PT Book"',
                                   color: '#EB1C24',
                                   textTransform: 'uppercase',
-                                  fontSize: '8px',
-                                  marginTop: '4px',
+                                  fontSize: '9px',
+                                  marginTop: '2px',
+                                  marginBottom: '0',
                                   lineHeight: '1.1'
                                 }}
-                                onClick={() => handleEdit(item)}
                               >
-                                EDIT IN BUILD-A-WIG
-                              </p>
-                            )}
-                          </div>
-
-                          {/* Item Details - Matching cart dropdown */}
-                          <div className="flex-1 min-w-0 flex flex-col relative" style={{ marginLeft: '18px', marginTop: '2.4px' }}>
-                            <p 
-                              className="font-medium truncate cart-product-name"
-                              style={{ 
-                                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                                color: '#000000',
-                                textTransform: 'uppercase',
-                                fontSize: (() => {
-                                  if (item.name === 'NOIR') {
-                                    return '22px';
+                                {(() => {
+                                  if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
+                                    return 'DIGITAL ONLY';
                                   }
-                                  return '21px';
-                                })(),
-                                lineHeight: '1.1',
-                                transform: 'translateY(-9px)'
-                              }}
-                            >
-                              {itemName.replace(/WIG/gi, '').trim()}
-                            </p>
-                            <p 
-                              className="font-bold"
-                              style={{ 
-                                fontFamily: '"Futura PT Book"',
-                                color: '#EB1C24',
-                                textTransform: 'uppercase',
-                                fontSize: '9px',
-                                marginTop: '-5px',
-                                transform: 'translateY(-1px)',
-                                lineHeight: '1.1'
-                              }}
-                            >
-                              {(() => {
-                                if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
-                                  return 'DIGITAL ONLY';
-                                }
-                                return `${itemLength} RAW ${itemHairOrigin}`;
-                              })()}
-                            </p>
-                            {item.capSize && (
-                              <p 
-                                className="font-semibold"
-                                style={{ 
-                                  fontFamily: '"Futura PT Medium"',
-                                  color: '#808080',
-                                  textTransform: 'uppercase',
-                                  fontSize: '10px',
-                                  marginTop: (() => {
-                                    // Check if there's black detail text (specifications)
-                                    const hasSpecs = (item.density && item.density !== '200%') || 
-                                                   (item.lace && item.lace !== '13X6') || 
-                                                   (item.texture && item.texture !== 'SILKY') || 
-                                                   (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
-                                                   (item.hairline && item.hairline !== 'NATURAL') || 
-                                                   (item.styling && item.styling !== 'NONE') || 
-                                                   (item.addOns && item.addOns.length > 0);
-                                    const baseMargin = hasSpecs ? '2px' : '0px';
-                                    // Add 2px for SOFT WAVE and SOFT CURL only
-                                    if (item.name === 'SOFT WAVE' || item.name === 'SOFT CURL') {
-                                      const numValue = parseInt(baseMargin);
-                                      return `${numValue + 2}px`;
-                                    }
-                                    // Add 2px for OCEAN CURL only
-                                    if (item.name === 'OCEAN CURL') {
-                                      const numValue = parseInt(baseMargin);
-                                      return `${numValue + 2}px`;
-                                    }
-                                    return baseMargin;
-                                  })(),
-                                  lineHeight: '1.1'
-                                }}
-                              >
-                                CAP SIZE: {item.capSize}
+                                  return `${itemLength} RAW ${itemHairOrigin}`;
+                                })()}
                               </p>
-                            )}
-                            <p
-                              style={{
-                                fontFamily: '"Futura PT Book"',
-                                color: '#000000',
-                                fontSize: '12px',
-                                marginTop: item.name === 'BLANCO' ? '0px' : '2px',
-                                marginBottom: '12px',
-                                marginLeft: '0',
-                                marginRight: '0',
-                                fontWeight: '600'
-                              }}
-                              dangerouslySetInnerHTML={formatPrice(itemPrice)}
-                            />
+                              {item.capSize && (
+                                <p 
+                                  className="font-semibold"
+                                  style={{ 
+                                    fontFamily: '"Futura PT Medium"',
+                                    color: '#808080',
+                                    textTransform: 'uppercase',
+                                    fontSize: '10px',
+                                    marginTop: (() => {
+                                      // Check if there's black detail text (specifications)
+                                      const hasSpecs = (item.density && item.density !== '200%') || 
+                                                     (item.lace && item.lace !== '13X6') || 
+                                                     (item.texture && item.texture !== 'SILKY') || 
+                                                     (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
+                                                     (item.hairline && item.hairline !== 'NATURAL') || 
+                                                     (item.styling && item.styling !== 'NONE') || 
+                                                     (item.addOns && item.addOns.length > 0);
+                                      const baseMargin = hasSpecs ? '2px' : '0px';
+                                      // Add 2px for SOFT WAVE and SOFT CURL only
+                                      if (item.name === 'SOFT WAVE' || item.name === 'SOFT CURL') {
+                                        const numValue = parseInt(baseMargin);
+                                        return `${numValue + 2}px`;
+                                      }
+                                      // Add 2px for OCEAN CURL only
+                                      if (item.name === 'OCEAN CURL') {
+                                        const numValue = parseInt(baseMargin);
+                                        return `${numValue + 2}px`;
+                                      }
+                                      return baseMargin;
+                                    })(),
+                                    marginBottom: '0',
+                                    lineHeight: '1.1'
+                                  }}
+                                >
+                                  CAP SIZE: {item.capSize}
+                                </p>
+                              )}
+                              <p
+                                style={{
+                                  fontFamily: '"Futura PT Book"',
+                                  color: '#000000',
+                                  fontSize: '12px',
+                                  marginTop: item.name === 'BLANCO' ? '0px' : '2px',
+                                  marginBottom: '0',
+                                  marginLeft: '0',
+                                  marginRight: '0',
+                                  fontWeight: '600'
+                                }}
+                                dangerouslySetInnerHTML={formatPrice(itemPrice)}
+                              />
+                            </div>
 
                             {/* Quantity Counter with Save For Later */}
                             <div className="flex flex-col items-center justify-center absolute" style={{ right: '8px', top: '0', bottom: '0', marginLeft: 'auto' }}>
@@ -1354,7 +1360,7 @@ function ShoppingBagPage() {
           {/* SAVED FOR LATER SECTION - Only show when menu is closed and there are saved items */}
           {!showMobileMenu && savedForLater.length > 0 && (
             <div
-              className={`border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm overflow-hidden ${savedForLater.length > 1 ? 'min-h-[360px]' : ''}`}
+              className={`border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm overflow-hidden transition-all duration-300 ease-out ${savedForLater.length > 1 ? 'min-h-[360px]' : ''}`}
               style={{ 
                 borderWidth: '1.3px', 
                 minWidth: '100%', 
@@ -1385,7 +1391,7 @@ function ShoppingBagPage() {
               {/* Body */}
               <div className={`${savedForLater.length > 1 ? 'flex-1' : ''} flex flex-col ${savedForLater.length > 1 ? 'overflow-hidden' : ''}`} style={{ marginTop: '4.8px' }}>
                 {/* Saved Items - scrollable */}
-                <div className={`flex flex-col justify-start items-start gap-0 flex-shrink-0 ${savedForLater.length > 1 ? 'overflow-y-auto' : ''}`} style={{ maxHeight: savedForLater.length > 1 ? '265px' : 'auto', scrollBehavior: 'smooth', width: '100%', marginTop: '4.8px', marginBottom: savedForLater.length > 1 ? '4.8px' : '0' }}>
+                <div className={`flex flex-col justify-start items-start gap-0 flex-shrink-0 ${savedForLater.length > 1 ? 'overflow-y-auto' : ''}`} style={{ maxHeight: savedForLater.length > 1 ? '251px' : 'auto', scrollBehavior: 'smooth', width: '100%', marginTop: '4.8px', marginBottom: savedForLater.length > 1 ? '4.8px' : '0' }}>
                   {savedForLater.map((item, index) => {
                   const itemId = item.id || `saved-item-${index}`;
                   const itemName = item.name || 'NOIR';
@@ -1441,7 +1447,7 @@ function ShoppingBagPage() {
                       key={itemId}
                       className={`flex items-center justify-start space-x-3 ${index < savedForLater.length - 1 ? 'border-b border-black' : ''}`}
                       style={{
-                        height: '140px',
+                        height: '130px',
                         paddingTop: '0',
                         paddingBottom: '0',
                         width: '100%',
@@ -1450,151 +1456,157 @@ function ShoppingBagPage() {
                     >
                       {/* Thumbnail Container - Matching cart dropdown */}
                       <div className="flex flex-col items-center justify-center" style={{ flexShrink: 0, width: '88px', height: '100%' }}>
-                        {/* Item Image */}
-                        <div 
-                          className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-                          style={{ 
-                            width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', 
-                            height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px',
-                            marginTop: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '-7px' : '0'
-                          }}
-                          onClick={() => {
-                            // Determine the correct product page route based on item name
-                            let productRoute = '/straight/noir';
-                            if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
-                              productRoute = '/tools/gift-card';
-                            } else if (item.name === 'NOIR') {
-                              productRoute = '/straight/noir';
-                            } else if (item.name === 'BLANCO') {
-                              productRoute = '/straight/blanco';
-                            } else if (item.name === 'SOFT WAVE') {
-                              productRoute = '/wavy/soft-wave';
-                            } else if (item.name === 'SOFT CURL') {
-                              productRoute = '/curly/soft-curl';
-                            } else if (item.name === 'BEACH WAVE') {
-                              productRoute = '/wavy/beach-wave';
-                            } else if (item.name === 'OCEAN CURL') {
-                              productRoute = '/curly/ocean-curl';
-                            }
-                            navigate(productRoute);
-                          }}
-                        >
-                          <img
-                            src={itemImage}
-                            alt={itemName}
-                            className="object-cover rounded"
-                            style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
-                          />
-                        </div>
-                        
-                        {/* EDIT IN BUILD-A-WIG text - Only show for units, not gift cards */}
-                        {!(item.name === 'GIFT CARD' || item.type === 'gift-card') && (
-                          <p 
-                            className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', transform: !(item.name === 'GIFT CARD' || item.type === 'gift-card') ? 'translateY(-4px)' : 'none' }}>
+                          {/* Item Image */}
+                          <div 
+                            className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
                             style={{ 
-                              fontFamily: '"Futura PT Book"',
-                              color: '#EB1C24',
-                              textTransform: 'uppercase',
-                              fontSize: '8px',
-                              marginTop: '6px',
-                              lineHeight: '1.1'
+                              width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', 
+                              height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px',
+                              margin: '0'
                             }}
-                            onClick={() => handleEdit(item)}
+                            onClick={() => {
+                              // Determine the correct product page route based on item name
+                              let productRoute = '/straight/noir';
+                              if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
+                                productRoute = '/tools/gift-card';
+                              } else if (item.name === 'NOIR') {
+                                productRoute = '/straight/noir';
+                              } else if (item.name === 'BLANCO') {
+                                productRoute = '/straight/blanco';
+                              } else if (item.name === 'SOFT WAVE') {
+                                productRoute = '/wavy/soft-wave';
+                              } else if (item.name === 'SOFT CURL') {
+                                productRoute = '/curly/soft-curl';
+                              } else if (item.name === 'BEACH WAVE') {
+                                productRoute = '/wavy/beach-wave';
+                              } else if (item.name === 'OCEAN CURL') {
+                                productRoute = '/curly/ocean-curl';
+                              }
+                              navigate(productRoute);
+                            }}
                           >
-                            EDIT IN BUILD-A-WIG
-                          </p>
-                        )}
+                            <img
+                              src={itemImage}
+                              alt={itemName}
+                              className="object-cover rounded"
+                              style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
+                            />
+                          </div>
+                          
+                          {/* EDIT IN BUILD-A-WIG text - Only show for units, not gift cards */}
+                          {!(item.name === 'GIFT CARD' || item.type === 'gift-card') && (
+                            <p 
+                              className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
+                              style={{ 
+                                fontFamily: '"Futura PT Book"',
+                                color: '#EB1C24',
+                                textTransform: 'uppercase',
+                                fontSize: '8px',
+                                marginTop: '4px',
+                                marginBottom: '0',
+                                lineHeight: '1.1'
+                              }}
+                              onClick={() => handleEdit(item)}
+                            >
+                              EDIT IN BUILD-A-WIG
+                            </p>
+                          )}
+                        </div>
                       </div>
 
                       {/* Product Details */}
-                      <div className="flex-1 min-w-0 flex flex-col" style={{ marginLeft: '18px', marginTop: '2.4px', position: 'relative' }}>
-                         <p 
-                           className="font-medium truncate cart-product-name"
-                           style={{ 
-                             fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                             color: '#000000',
-                             textTransform: 'uppercase',
-                             fontSize: (() => {
-                               if (item.name === 'NOIR') {
-                                 return '22px';
-                               }
-                               return '21px';
-                             })(),
-                             lineHeight: '1.1',
-                             transform: 'translateY(-9px)'
-                           }}
-                         >
-                           {itemName.replace(/WIG/gi, '').trim()}
-                         </p>
-                         <p 
-                           className="font-bold"
-                           style={{ 
-                             fontFamily: '"Futura PT Book"',
-                             color: '#EB1C24',
-                             textTransform: 'uppercase',
-                             fontSize: '9px',
-                             marginTop: '-5px',
-                             transform: 'translateY(-1px)',
-                             lineHeight: '1.1'
-                           }}
-                         >
-                           {(() => {
-                             if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
-                               return 'DIGITAL ONLY';
-                             }
-                             return `${itemLength} RAW ${itemHairOrigin}`;
-                           })()}
-                         </p>
-                         {/* Removed black detail text for symmetry */}
-                         {item.capSize && (
+                      <div className="flex-1 min-w-0 flex flex-col justify-center" style={{ marginLeft: '18px', position: 'relative', height: '100%' }}>
+                         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                            <p 
-                             className="font-semibold"
+                             className="font-medium truncate cart-product-name"
                              style={{ 
-                               fontFamily: '"Futura PT Medium"',
-                               color: '#808080',
+                               fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                               color: '#000000',
                                textTransform: 'uppercase',
-                               fontSize: '10px',
-                               marginTop: (() => {
-                                 // Check if there's black detail text (specifications)
-                                 const hasSpecs = (item.density && item.density !== '200%') || 
-                                                (item.lace && item.lace !== '13X6') || 
-                                                (item.texture && item.texture !== 'SILKY') || 
-                                                (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
-                                                (item.hairline && item.hairline !== 'NATURAL') || 
-                                                (item.styling && item.styling !== 'NONE') || 
-                                                (item.addOns && item.addOns.length > 0);
-                                 const baseMargin = hasSpecs ? '2px' : '0px';
-                                 // Add 2px for SOFT WAVE and SOFT CURL only
-                                 if (item.name === 'SOFT WAVE' || item.name === 'SOFT CURL') {
-                                   const numValue = parseInt(baseMargin);
-                                   return `${numValue + 2}px`;
+                               fontSize: (() => {
+                                 if (item.name === 'NOIR') {
+                                   return '22px';
                                  }
-                                 // Add 2px for OCEAN CURL only
-                                 if (item.name === 'OCEAN CURL') {
-                                   const numValue = parseInt(baseMargin);
-                                   return `${numValue + 2}px`;
-                                 }
-                                 return baseMargin;
+                                 return '21px';
                                })(),
+                               lineHeight: '1.1',
+                               margin: '0'
+                             }}
+                           >
+                             {itemName.replace(/WIG/gi, '').trim()}
+                           </p>
+                           <p 
+                             className="font-bold"
+                             style={{ 
+                               fontFamily: '"Futura PT Book"',
+                               color: '#EB1C24',
+                               textTransform: 'uppercase',
+                               fontSize: '9px',
+                               marginTop: '2px',
+                               marginBottom: '0',
                                lineHeight: '1.1'
                              }}
                            >
-                             CAP SIZE: {item.capSize}
+                             {(() => {
+                               if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
+                                 return 'DIGITAL ONLY';
+                               }
+                               return `${itemLength} RAW ${itemHairOrigin}`;
+                             })()}
                            </p>
-                         )}
-                         <p
-                           style={{
-                             fontFamily: '"Futura PT Book"',
-                             color: '#000000',
-                             fontSize: '12px',
-                             marginTop: item.name === 'BLANCO' ? '0px' : '2px',
-                             marginBottom: '12px',
-                             marginLeft: '0',
-                             marginRight: '0',
-                             fontWeight: '600'
-                           }}
-                           dangerouslySetInnerHTML={formatPrice(itemPrice)}
-                         />
+                           {/* Removed black detail text for symmetry */}
+                           {item.capSize && (
+                             <p 
+                               className="font-semibold"
+                               style={{ 
+                                 fontFamily: '"Futura PT Medium"',
+                                 color: '#808080',
+                                 textTransform: 'uppercase',
+                                 fontSize: '10px',
+                                 marginTop: (() => {
+                                   // Check if there's black detail text (specifications)
+                                   const hasSpecs = (item.density && item.density !== '200%') || 
+                                                  (item.lace && item.lace !== '13X6') || 
+                                                  (item.texture && item.texture !== 'SILKY') || 
+                                                  (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
+                                                  (item.hairline && item.hairline !== 'NATURAL') || 
+                                                  (item.styling && item.styling !== 'NONE') || 
+                                                  (item.addOns && item.addOns.length > 0);
+                                   const baseMargin = hasSpecs ? '2px' : '0px';
+                                   // Add 2px for SOFT WAVE and SOFT CURL only
+                                   if (item.name === 'SOFT WAVE' || item.name === 'SOFT CURL') {
+                                     const numValue = parseInt(baseMargin);
+                                     return `${numValue + 2}px`;
+                                   }
+                                   // Add 2px for OCEAN CURL only
+                                   if (item.name === 'OCEAN CURL') {
+                                     const numValue = parseInt(baseMargin);
+                                     return `${numValue + 2}px`;
+                                   }
+                                   return baseMargin;
+                                 })(),
+                                 marginBottom: '0',
+                                 lineHeight: '1.1'
+                               }}
+                             >
+                               CAP SIZE: {item.capSize}
+                             </p>
+                           )}
+                           <p
+                             style={{
+                               fontFamily: '"Futura PT Book"',
+                               color: '#000000',
+                               fontSize: '12px',
+                               marginTop: item.name === 'BLANCO' ? '0px' : '2px',
+                               marginBottom: '0',
+                               marginLeft: '0',
+                               marginRight: '0',
+                               fontWeight: '600'
+                             }}
+                             dangerouslySetInnerHTML={formatPrice(itemPrice)}
+                           />
+                         </div>
 
                          {/* Quantity Counter */}
                          <div className="flex flex-col items-center justify-center absolute" style={{ right: '8px', top: '0', bottom: '0', marginLeft: 'auto' }}>

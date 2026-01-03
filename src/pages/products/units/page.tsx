@@ -474,8 +474,8 @@ function ProductsUnitsPage() {
     const handleRightArrow = texture === 'straight' ? handleStraightRightArrow : texture === 'wavy' ? handleWavyRightArrow : handleCurlyRightArrow;
     
     return (
-      <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', overflow: 'visible' }}>
-        <div style={{
+      <div className="px-0 md:px-0 transition-all duration-300 ease-out" style={{ marginTop: '20px', marginBottom: '20px', overflow: 'visible' }}>
+        <div className="transition-all duration-300 ease-out" style={{
           border: '1.3px solid black',
           backgroundColor: '#f5f5f5',
           backgroundImage: `url('/assets/marble-container.png')`,
@@ -903,7 +903,7 @@ function ProductsUnitsPage() {
           {showMobileMenu ? (
             /* MENU CONTENT */
             <div
-              className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm"
+              className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
               style={{ 
                 borderWidth: '1.3px', 
                 minWidth: '100%', 
@@ -1154,7 +1154,7 @@ function ProductsUnitsPage() {
               </div>
             </div>
           ) : (
-            <>
+            <div className="transition-all duration-300 ease-out">
           {/* STRAIGHT CONTAINER */}
           {renderProductContainer('straight', 'STRAIGHT')}
 
@@ -1163,7 +1163,7 @@ function ProductsUnitsPage() {
 
           {/* CURLY CONTAINER */}
           {renderProductContainer('curly', 'CURLY')}
-            </>
+            </div>
           )}
         </div>
       </div>

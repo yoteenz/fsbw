@@ -985,7 +985,7 @@ function AccountPage() {
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {/* Profile Information Section */}
                 <div
-                  className="border border-black bg-white/60 backdrop-blur-sm w-full"
+                  className="border border-black bg-white/60 backdrop-blur-sm w-full transition-all duration-300 ease-out"
                   style={{
                     borderWidth: '1.3px',
                     padding: '20px 20px',
@@ -1220,7 +1220,7 @@ function AccountPage() {
                         navigate(item.route);
                       }
                     }}
-                    className="border border-black bg-white/60 backdrop-blur-sm cursor-pointer w-full"
+                    className="border border-black bg-white/60 backdrop-blur-sm cursor-pointer w-full transition-all duration-300 ease-out"
                     style={{
                       borderWidth: '1.3px',
                       padding: '13px 20px',

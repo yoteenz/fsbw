@@ -696,7 +696,7 @@ function ProductsPage() {
             {showMobileMenu ? (
               /* MENU CONTENT */
               <div
-                className="border border-black flex flex-col pt-6 pb-4 px-5 bg-white/60 backdrop-blur-sm w-full"
+                className="border border-black flex flex-col pt-6 pb-4 px-5 bg-white/60 backdrop-blur-sm w-full transition-all duration-300 ease-out"
                 style={{ 
                   borderWidth: '1.3px', 
                   minWidth: '100%', 
@@ -950,8 +950,8 @@ function ProductsPage() {
               </div>
             ) : (
               /* SHOP CONTENT */
-          <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', overflow: 'visible' }}>
-            <div style={{ 
+          <div className="px-0 md:px-0 transition-all duration-300 ease-out" style={{ marginTop: '20px', marginBottom: '20px', overflow: 'visible' }}>
+            <div className="transition-all duration-300 ease-out" style={{ 
               border: '1.3px solid black', 
               backgroundColor: '#f5f5f5',
               backgroundImage: `url('/assets/marble-container.png')`,

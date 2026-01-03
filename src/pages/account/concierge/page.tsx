@@ -594,7 +594,7 @@ function ConciergePage() {
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '2px' }}>
                 {/* Priority Messages Section */}
                 <div
-                  className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2"
+                  className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
                   style={{
                     borderWidth: '1.3px',
                     paddingTop: '20px',
@@ -667,7 +667,7 @@ function ConciergePage() {
 
                 {/* Special Requests / Order Changes Section */}
                 <div
-                  className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2"
+                  className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
                   style={{
                     borderWidth: '1.3px',
                     paddingTop: '20px',
@@ -772,7 +772,7 @@ function ConciergePage() {
 
                 {/* Priority Booking Section */}
                 <div
-                  className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2"
+                  className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
                   style={{
                     borderWidth: '1.3px',
                     paddingTop: '20px',
