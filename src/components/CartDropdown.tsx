@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { CartItem } from '../types/cart';
@@ -753,7 +753,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                   return itemsToShow.map((item, index) => (
                     <div key={item.id} className={`flex items-center justify-start space-x-3 ${index < itemsToShow.length - 1 ? 'border-b border-black' : ''}`} style={{ minHeight: '120px', height: viewingDetailsFor === item.id ? 'auto' : '120px', paddingTop: '0', paddingBottom: '0' }}>
                     {/* Thumbnail Container */}
-                    <div className="flex flex-col items-center justify-center" style={{ height: '100%' }}>
+                    <div className="flex flex-col items-center justify-center" style={{ height: '120px', minHeight: '120px', alignSelf: 'flex-start' }}>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', transform: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? 'translateY(-8px)' : 'translateY(-8px)', position: 'relative' }}>
                         {/* Item Image */}
                         <div 
@@ -1209,7 +1209,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               const priceDisplay = formatPriceDisplay(price);
                               
                               if (hairlineUpper.includes('LAGOS') && hairlineUpper.includes('PEAK')) {
-                                displayValue = `LAGOS + PEAK HAIRLINE${priceDisplay}`;
+                                displayValue = `LAGOS + PEAK${priceDisplay}`;
                               } else {
                                 displayValue = `${hairlineValue} HAIRLINE${priceDisplay}`;
                               }
@@ -1256,8 +1256,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                                   // Use non-breaking spaces within add-on section
                                   const addOnPrice = _getAddOnsPrice([addOn], itemLace);
                                   const addOnPriceDisplay = formatPriceDisplay(addOnPrice);
-                                  // Replace "BLEACH" with "BLEACH KNOTS" for display
-                                  const addOnText = addOn.toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/ /g, '\u00A0');
+                                  // Replace "BLEACH" with "BLEACH KNOTS" and "PLUCK" with "PLUCK HAIRLINE" for display
+                                  const addOnText = addOn.toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/PLUCK/g, 'PLUCK HAIRLINE').replace(/ /g, '\u00A0');
                                   // Add line break before each add-on except the first (each on its own line)
                                   if (addOnIndex > 0) {
                                     text += '<br/>';
@@ -1268,8 +1268,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                                 // Handle single string case
                                 const addOnPrice = _getAddOnsPrice([String(itemData.value)], itemLace);
                                 const addOnPriceDisplay = formatPriceDisplay(addOnPrice);
-                                // Replace "BLEACH" with "BLEACH KNOTS" for display
-                                const addOnText = String(itemData.value).toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/ /g, '\u00A0');
+                                // Replace "BLEACH" with "BLEACH KNOTS" and "PLUCK" with "PLUCK HAIRLINE" for display
+                                const addOnText = String(itemData.value).toUpperCase().replace(/BLEACH/g, 'BLEACH KNOTS').replace(/PLUCK/g, 'PLUCK HAIRLINE').replace(/ /g, '\u00A0');
                                 text += addOnText + addOnPriceDisplay;
                               }
                             }
@@ -1517,13 +1517,13 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
               className="absolute bg-white border border-black p-2 shadow-lg"
         style={{ 
           borderWidth: '1.3px',
-                maxHeight: '50vh',
           display: 'flex',
           flexDirection: 'column',
           boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
                 top: '50px',
-          left: '16px',
-          right: '16px',
+          bottom: '14px',
+          left: '12px',
+          right: '12px',
           pointerEvents: 'auto'
         }}
         onClick={(e) => e.stopPropagation()}
@@ -1532,9 +1532,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
               <div className="flex justify-between items-center mb-2 relative">
                 <div className="flex-1"></div>
               <h3 
-                  className="font-bold uppercase absolute left-1/2 transform -translate-x-1/2"
+                  className="uppercase absolute left-1/2 transform -translate-x-1/2"
                 style={{ 
-                    fontSize: '15px',
+                    fontSize: '14px',
+                    fontWeight: 'normal',
                   fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     color: '#000000',
                     transform: 'translateX(-50%) translateY(1px)'
@@ -1547,19 +1548,28 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                       e.stopPropagation();
                       setShowCurrencyModal(false);
                     }}
-                    className="px-2 py-1 text-red-500 bg-white hover:bg-gray-50 flex items-center justify-center cursor-pointer"
                     style={{ 
-                      height: '25px',
-                      minHeight: '25px',
-                      maxHeight: '25px',
-                      boxSizing: 'border-box',
-                      outline: 'none',
+                      border: 'none',
+                      background: 'none',
+                      cursor: 'pointer',
+                      padding: 0,
+                      margin: 0,
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center'
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      transform: 'translate(-2px, 1px)'
                     }}
                   >
-                    <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '13px' }}>×</span>
+                    <img
+                      src="/assets/close-icon.svg"
+                      alt="Close"
+                      style={{
+                        width: '12.32px',
+                        height: '12.32px',
+                        filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                      }}
+                    />
               </button>
             </div>
             
@@ -1567,9 +1577,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
               <div 
                 className="text-center mb-1"
                 style={{ 
-                  fontSize: '8px',
+                  fontSize: '9px',
                   color: '#909090',
-              fontFamily: '"Futura PT Book"'
+                  fontFamily: '"Futura PT Book"',
+                  transform: 'translateY(-1px)'
                 }}
               >
                 SCROLL TO SEE MORE
