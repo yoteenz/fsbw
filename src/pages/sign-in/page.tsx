@@ -1591,6 +1591,8 @@ function SignInPage() {
                         profileImage: '/assets/profile-thumb.png',
                         membershipType: 'STANDARD',
                         referralCode: referralCode,
+                        giftCardBalance: 10, // Welcome gift card balance for new accounts
+                        unlockedDiscounts: ['signup'], // Track which discounts have been unlocked
                         createdAt: new Date().toISOString()
                       };
                       

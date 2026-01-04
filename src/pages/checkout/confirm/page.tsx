@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
+import ConfirmationModal from '../../../components/ConfirmationModal';
 
 function CheckoutConfirmPage() {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ function CheckoutConfirmPage() {
     return 'SHOP';
   });
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -586,14 +588,51 @@ function CheckoutConfirmPage() {
   const handleMobileMenuSignInToggle = () => {
     if (isSignedIn) {
       // Show confirmation modal when signing out
-      setIsSignedIn(false);
-      localStorage.setItem('isSignedIn', 'false');
-      localStorage.removeItem('currentUser');
-      window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
-      setShowMobileMenu(false);
-      navigate('/sign-in');
+      setShowSignOutConfirm(true);
     } else {
-      navigate('/sign-in');
+      navigate('/sign-in?returnTo=checkout/summary');
+    }
+  };
+
+  const handleSignOut = () => {
+    setIsSignedIn(false);
+    localStorage.setItem('isSignedIn', 'false');
+    localStorage.removeItem('currentUser');
+    // Dispatch custom event to update other pages in same tab
+    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    setShowSignOutConfirm(false);
+    // Close mobile menu
+    setShowMobileMenu(false);
+  };
+
+  // Check if user is a premium member
+  const isPremiumMember = (): boolean => {
+    if (!isSignedIn) return false;
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      if (currentUser) {
+        const user = JSON.parse(currentUser);
+        // Check if user has subscriptionTier (premium subscription)
+        if (user?.subscriptionTier) {
+          return true;
+        }
+        // Check if user has premium tier (RED, GOLD, BLACK)
+        if (user?.tier) {
+          const tier = user.tier.toUpperCase();
+          return tier === 'RED' || tier === 'GOLD' || tier === 'BLACK';
+        }
+      }
+    } catch (e) {
+      console.error('Error checking premium membership:', e);
+    }
+    return false;
+  };
+
+  const handleHomeClick = () => {
+    if (isPremiumMember()) {
+      navigate('/');
+    } else {
+      navigate('/home/shop');
     }
   };
 
@@ -1341,7 +1380,16 @@ function CheckoutConfirmPage() {
                   </div>
                   {(() => {
                     const shippingMethod = orderData.shippingMethod || 'UPS DOMESTIC STANDARD +$60';
-                    const methodName = shippingMethod.replace(/\s*\+?\$?\d+.*$/, '').trim();
+                    // Remove price first
+                    let methodName = shippingMethod.replace(/\s*\+?\$?\d+.*$/, '').trim();
+                    // Remove common carrier names (UPS, DHL, FedEx, USPS, etc.) - case insensitive
+                    methodName = methodName
+                      .replace(/^(UPS|DHL|FEDEX|USPS|FEDEX\s+EXPRESS|FEDEX\s+GROUND)\s+/i, '')
+                      .replace(/\s+(UPS|DHL|FEDEX|USPS)$/i, '')
+                      .trim();
+                    
+                    // Ensure proper formatting (all caps, no extra spaces)
+                    methodName = methodName.toUpperCase().replace(/\s+/g, ' ');
                     
                     // Determine shipping time based on method
                     const getShippingTime = (method: string): string => {
@@ -1350,8 +1398,6 @@ function CheckoutConfirmPage() {
                         return '1-2 BUSINESS DAYS';
                       } else if (methodUpper.includes('STANDARD') || methodUpper.includes('DOMESTIC')) {
                         return '3-5 BUSINESS DAYS';
-                      } else if (methodUpper.includes('DHL') && methodUpper.includes('INTERNATIONAL')) {
-                        return '5-10 BUSINESS DAYS';
                       } else if (methodUpper.includes('INTERNATIONAL')) {
                         return '7-14 BUSINESS DAYS';
                       }
@@ -1503,7 +1549,7 @@ function CheckoutConfirmPage() {
               <>
                 <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
                   <button
-                    onClick={() => navigate('/lobby')}
+                    onClick={handleHomeClick}
                     className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                     style={{
                       borderWidth: '1.3px',
@@ -1544,6 +1590,18 @@ function CheckoutConfirmPage() {
           </div>
         </div>
       </div>
+      
+      {/* Sign Out Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showSignOutConfirm}
+        onClose={() => setShowSignOutConfirm(false)}
+        onConfirm={handleSignOut}
+        title="SIGN OUT"
+        message="ARE YOU SURE YOU WANT TO SIGN OUT?"
+        confirmText="CONFIRM"
+        cancelText="CANCEL"
+        dataAttribute="sign-out-confirm"
+      />
     </>
   );
 }

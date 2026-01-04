@@ -68,10 +68,12 @@ function ShoppingBagPage() {
     MXN: { symbol: '&#36;', rate: 20.0, name: 'Mexican Peso' }
   }), []);
 
-  // Listen for cart count changes
+  // Listen for cart count changes and reload items
   useEffect(() => {
     const handleCartCountUpdate = (event: CustomEvent) => {
       setCartCount(event.detail);
+      loadCartItems();
+      loadSavedForLater();
     };
 
     const handleStorageChange = () => {
@@ -79,6 +81,7 @@ function ShoppingBagPage() {
         const newCartCount = parseInt(localStorage.getItem('cartCount') || '0', 10);
         setCartCount(newCartCount);
         loadCartItems();
+        loadSavedForLater();
       } catch (e) {
         setCartCount(0);
       }
@@ -130,6 +133,26 @@ function ShoppingBagPage() {
   useEffect(() => {
     loadCartItems();
     loadSavedForLater();
+  }, []);
+
+  // Sync cart items and saved items when localStorage changes (for real-time updates)
+  useEffect(() => {
+    const handleCartItemsChange = () => {
+      loadCartItems();
+    };
+
+    const handleSavedItemsChange = () => {
+      loadSavedForLater();
+    };
+
+    // Listen for custom events
+    window.addEventListener('cartItemsChanged', handleCartItemsChange);
+    window.addEventListener('savedItemsChanged', handleSavedItemsChange);
+
+    return () => {
+      window.removeEventListener('cartItemsChanged', handleCartItemsChange);
+      window.removeEventListener('savedItemsChanged', handleSavedItemsChange);
+    };
   }, []);
 
   // Load selected currency from localStorage on mount only
@@ -223,6 +246,7 @@ function ShoppingBagPage() {
       });
       setCartItems(newItems);
       localStorage.setItem('cartItems', JSON.stringify(newItems));
+      window.dispatchEvent(new CustomEvent('cartItemsChanged'));
       
       // Update cart count (treat 0 as 0, not 1)
       const newCount = newItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 0), 0);
@@ -276,6 +300,7 @@ function ShoppingBagPage() {
       const newItems = cartItems.filter(i => i.id !== itemId);
       setCartItems(newItems);
       localStorage.setItem('cartItems', JSON.stringify(newItems));
+      window.dispatchEvent(new CustomEvent('cartItemsChanged'));
       
       // Update cart count
       const newCount = newItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
@@ -294,11 +319,13 @@ function ShoppingBagPage() {
       const newCartItems = cartItems.filter(i => i.id !== item.id);
       setCartItems(newCartItems);
       localStorage.setItem('cartItems', JSON.stringify(newCartItems));
+      window.dispatchEvent(new CustomEvent('cartItemsChanged'));
       
       // Add to saved for later
       const newSavedForLater = [item, ...savedForLater];
       setSavedForLater(newSavedForLater);
       localStorage.setItem('savedForLater', JSON.stringify(newSavedForLater));
+      window.dispatchEvent(new CustomEvent('savedItemsChanged'));
       
       // Update cart count
       const newCount = newCartItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
@@ -317,11 +344,13 @@ function ShoppingBagPage() {
       const newSavedForLater = savedForLater.filter(i => i.id !== item.id);
       setSavedForLater(newSavedForLater);
       localStorage.setItem('savedForLater', JSON.stringify(newSavedForLater));
+      window.dispatchEvent(new CustomEvent('savedItemsChanged'));
       
       // Add to cart
       const newCartItems = [item, ...cartItems];
       setCartItems(newCartItems);
       localStorage.setItem('cartItems', JSON.stringify(newCartItems));
+      window.dispatchEvent(new CustomEvent('cartItemsChanged'));
       
       // Update cart count
       const newCount = newCartItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
@@ -339,6 +368,7 @@ function ShoppingBagPage() {
       const newSavedForLater = savedForLater.filter(i => i.id !== itemId);
       setSavedForLater(newSavedForLater);
       localStorage.setItem('savedForLater', JSON.stringify(newSavedForLater));
+      window.dispatchEvent(new CustomEvent('savedItemsChanged'));
     } catch (e) {
       console.error('Error removing from saved:', e);
     }
@@ -371,6 +401,7 @@ function ShoppingBagPage() {
       });
       setSavedForLater(newSavedForLater);
       localStorage.setItem('savedForLater', JSON.stringify(newSavedForLater));
+      window.dispatchEvent(new CustomEvent('savedItemsChanged'));
       
       // If quantity becomes 0, set timeout to show popup after 400ms
       if (newQty === 0) {
@@ -402,6 +433,7 @@ function ShoppingBagPage() {
     try {
       setSavedForLater([]);
       localStorage.setItem('savedForLater', JSON.stringify([]));
+      window.dispatchEvent(new CustomEvent('savedItemsChanged'));
       setShowClearConfirm(false);
     } catch (e) {
       console.error('Error clearing saved items:', e);
@@ -1799,6 +1831,7 @@ function ShoppingBagPage() {
                   });
                   setCartItems(newItems);
                   localStorage.setItem('cartItems', JSON.stringify(newItems));
+                  window.dispatchEvent(new CustomEvent('cartItemsChanged'));
                   
                   // Update cart count
                   const newCount = newItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 0), 0);
@@ -1815,6 +1848,7 @@ function ShoppingBagPage() {
                   });
                   setSavedForLater(newSavedForLater);
                   localStorage.setItem('savedForLater', JSON.stringify(newSavedForLater));
+                  window.dispatchEvent(new CustomEvent('savedItemsChanged'));
                 }
               }
               

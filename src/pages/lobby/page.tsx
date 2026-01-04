@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from '../../components/base/LoadingScreen';
+import ConfirmationModal from '../../components/ConfirmationModal';
 
 // Lobby Component
 const LobbyPage: React.FC = () => {
@@ -510,9 +511,53 @@ const LoungePage: React.FC = () => {
 // Main Lobby App Component with Slide Transition
 const LobbyApp: React.FC = () => {
   console.log('🎯 LOBBY PAGE LOADING - This should show when visiting root path');
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState<number>(0); // 0 = Lobby, 1 = Lounge
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
   const [showLoading, setShowLoading] = useState<boolean>(true);
+  const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
+
+  // Check if user is a premium member
+  const isPremiumMember = (): boolean => {
+    try {
+      const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
+      if (!isSignedIn) return false;
+      
+      const currentUser = localStorage.getItem('currentUser');
+      if (currentUser) {
+        const user = JSON.parse(currentUser);
+        // Check if user has subscriptionTier (premium subscription)
+        if (user?.subscriptionTier) {
+          return true;
+        }
+        // Check if user has premium tier (RED, GOLD, BLACK)
+        if (user?.tier) {
+          const tier = user.tier.toUpperCase();
+          return tier === 'RED' || tier === 'GOLD' || tier === 'BLACK';
+        }
+      }
+    } catch (e) {
+      console.error('Error checking premium membership:', e);
+    }
+    return false;
+  };
+
+  // Check membership on mount and show upgrade modal if not premium
+  useEffect(() => {
+    if (!isPremiumMember()) {
+      setShowUpgradeModal(true);
+    }
+  }, []);
+
+  const handleUpgrade = () => {
+    setShowUpgradeModal(false);
+    navigate('/account/membership');
+  };
+
+  const handleCancel = () => {
+    setShowUpgradeModal(false);
+    navigate('/home/shop');
+  };
 
   const pages = [<LobbyPage key="lobby" />, <LoungePage key="lounge" />];
 
@@ -582,42 +627,56 @@ const LobbyApp: React.FC = () => {
   }, []);
 
   return (
-    <div style={{ 
-      width: '100vw', 
-      height: '100vh',
-      overflowX: 'hidden',
-      overflowY: 'auto',
-      position: 'relative',
-      backgroundColor: 'transparent',
-      WebkitOverflowScrolling: 'touch',
-      scrollBehavior: 'auto'
-    }}>
-      {showLoading && <LoadingScreen />}
-      {/* Slide Container */}
-      <div 
-        style={{
-          display: 'flex',
-          width: `${pages.length * 100}vw`,
-          minHeight: '105vh',
-          transform: `translateX(-${currentPage * 100}vw)`,
-          transition: isTransitioning ? 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
-          willChange: isTransitioning ? 'transform' : 'auto'
-        }}
-      >
-        {pages.map((page, index) => (
-          <div
-            key={index}
-            style={{
-              width: '100vw',
-              flexShrink: 0,
-              minHeight: index === 0 ? '100vh' : '105vh'
-            }}
-          >
-            {page}
-          </div>
-        ))}
+    <>
+      <div style={{ 
+        width: '100vw', 
+        height: '100vh',
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        position: 'relative',
+        backgroundColor: 'transparent',
+        WebkitOverflowScrolling: 'touch',
+        scrollBehavior: 'auto'
+      }}>
+        {showLoading && <LoadingScreen />}
+        {/* Slide Container */}
+        <div 
+          style={{
+            display: 'flex',
+            width: `${pages.length * 100}vw`,
+            minHeight: '105vh',
+            transform: `translateX(-${currentPage * 100}vw)`,
+            transition: isTransitioning ? 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+            willChange: isTransitioning ? 'transform' : 'auto'
+          }}
+        >
+          {pages.map((page, index) => (
+            <div
+              key={index}
+              style={{
+                width: '100vw',
+                flexShrink: 0,
+                minHeight: index === 0 ? '100vh' : '105vh'
+              }}
+            >
+              {page}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+      
+      {/* Upgrade Subscription Modal */}
+      <ConfirmationModal
+        isOpen={showUpgradeModal}
+        onClose={handleCancel}
+        onConfirm={handleUpgrade}
+        title="UPGRADE YOUR SUBSCRIPTION?"
+        message="YOU MUST BE A PREMIUM MEMBER TO ACCESS THIS AREA."
+        confirmText="UPGRADE"
+        cancelText="CANCEL"
+        dataAttribute="upgrade-subscription-modal"
+      />
+    </>
   );
 };
 

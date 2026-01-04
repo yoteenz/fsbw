@@ -238,6 +238,61 @@ function AccountPage() {
     }
   }, [showMobileMenu, location.pathname]);
 
+  // Initialize Kateena's admin account with proper gift card balance and unlocked discounts
+  useEffect(() => {
+    if (userData) {
+      const isKateenaArmstrong = userData && (
+        (userData.firstName?.toLowerCase() === 'kateena' && userData.lastName?.toLowerCase() === 'armstrong') ||
+        userData.email?.toLowerCase().includes('kateena') ||
+        userData.email?.toLowerCase().includes('armstrong')
+      );
+
+      if (isKateenaArmstrong) {
+        try {
+          const currentUser = localStorage.getItem('currentUser');
+          if (currentUser) {
+            const user = JSON.parse(currentUser);
+            let needsUpdate = false;
+            const updatedUser = { ...user };
+
+            // Ensure gift card balance is $70 ($10 signup + $60 for 12 months premium)
+            const expectedBalance = 70;
+            if (!user.giftCardBalance || user.giftCardBalance < expectedBalance) {
+              updatedUser.giftCardBalance = expectedBalance;
+              needsUpdate = true;
+            }
+
+            // Ensure unlocked discounts include signup and 12months
+            const unlockedDiscounts = user.unlockedDiscounts || [];
+            if (!unlockedDiscounts.includes('signup')) {
+              updatedUser.unlockedDiscounts = [...unlockedDiscounts, 'signup'];
+              needsUpdate = true;
+            }
+            if (!unlockedDiscounts.includes('12months')) {
+              updatedUser.unlockedDiscounts = [...(updatedUser.unlockedDiscounts || unlockedDiscounts), '12months'];
+              needsUpdate = true;
+            }
+
+            if (needsUpdate) {
+              localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+              setUserData(updatedUser);
+
+              // Also update in registered users list
+              const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+              const userIndex = registeredUsers.findIndex((u: any) => u.email === user.email);
+              if (userIndex !== -1) {
+                registeredUsers[userIndex] = updatedUser;
+                localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+              }
+            }
+          }
+        } catch (e) {
+          console.error('Error initializing Kateena account:', e);
+        }
+      }
+    }
+  }, [userData]);
+
   // Update active orders count when user data or orders change
   useEffect(() => {
     const updateActiveOrdersCount = () => {
@@ -349,6 +404,34 @@ function AccountPage() {
   };
 
   // Helper function to get highest tier ever achieved
+  // Check if user is VIB (Very Important Buyer) - lifetime spending >= $10k
+  const isVIB = (): boolean => {
+    if (!userData?.email) return false;
+    
+    try {
+      const userOrdersKey = `userOrders_${userData.email}`;
+      const storedOrders = localStorage.getItem(userOrdersKey);
+      if (!storedOrders) return false;
+      
+      const orders = JSON.parse(storedOrders);
+      const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
+      
+      // Calculate total lifetime spending
+      let lifetimeSpending = 0;
+      allOrders.forEach((order: any) => {
+        if (order.total) {
+          lifetimeSpending += order.total || 0;
+        }
+      });
+      
+      // VIB status: lifetime spending >= $10,000
+      return lifetimeSpending >= 10000;
+    } catch (e) {
+      console.error('Error checking VIB status:', e);
+      return false;
+    }
+  };
+
   const getHighestTierEver = (): string | null => {
     if (!userData?.email) return null;
     
@@ -451,6 +534,11 @@ function AccountPage() {
         // If calculation fails, return Silver if they've unlocked it, otherwise null
         return highestTierEver === 'SILVER' ? 'SILVER' : null;
       }
+    }
+
+    // VIB (Very Important Buyers) always remain BLACK tier regardless of current period spending
+    if (isVIB()) {
+      return 'BLACK';
     }
 
     // Determine tier based on current period spending
@@ -1370,10 +1458,11 @@ function AccountPage() {
                         transform: 'translateY(9px)'
                       }}
                     >
-                      GIFT CARD BALANCE: {formatPrice(0)}
+                      GIFT CARD BALANCE: {formatPrice(userData?.giftCardBalance || 0)}
                     </p>
 
                     <p
+                      onClick={() => navigate('/account/load-card')}
                       style={{
                         fontFamily: '"Futura PT Medium"',
                         color: '#EB1C24',

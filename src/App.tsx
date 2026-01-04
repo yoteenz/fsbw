@@ -34,6 +34,7 @@ const AccountPage = lazy(() => import('./pages/account/page'));
 const ConciergePage = lazy(() => import('./pages/account/concierge/page'));
 const MembershipPage = lazy(() => import('./pages/account/membership/page'));
 const NotificationsPage = lazy(() => import('./pages/account/notifications/page'));
+const LoadCardPage = lazy(() => import('./pages/account/load-card/page'));
 const OrdersPage = lazy(() => import('./pages/orders/page'));
 const SignInPage = lazy(() => import('./pages/sign-in/page'));
 const ShoppingBagPage = lazy(() => import('./pages/shopping-bag/page'));
@@ -425,6 +426,11 @@ function App() {
         <Route path="/account/orders" element={
           <Suspense fallback={<LoadingScreen />}>
             <OrdersPage />
+          </Suspense>
+        } />
+        <Route path="/account/load-card" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <LoadCardPage />
           </Suspense>
         } />
         <Route path="/sign-in" element={
