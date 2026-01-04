@@ -21,6 +21,7 @@ function LoadCardPage() {
     }
     return 'SHOP';
   });
+  const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -78,6 +79,14 @@ function LoadCardPage() {
 
   const handleMobileMenuTabClick = (tab: string) => {
     setMobileMenuActiveTab(tab);
+  };
+
+  const handleMobileMenuItemToggle = (item: string) => {
+    setMobileMenuExpandedItems(prev =>
+      prev.includes(item) 
+        ? prev.filter(i => i !== item)
+        : [...prev, item]
+    );
   };
 
 
@@ -322,7 +331,154 @@ function LoadCardPage() {
                       BRAND
                     </button>
                   </div>
-                  {/* Menu items would go here - simplified for now */}
+
+                  {/* Menu Items - Fixed height with scroll if needed */}
+                  <div style={{ flex: '1', overflowY: 'auto', marginBottom: '20px', minHeight: '0' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
+                      {mobileMenuActiveTab === 'TOOLS' ? (
+                        ['GIFT CARD'].map((item, index) => (
+                          <div 
+                            key={index} 
+                            className="flex items-center justify-between cursor-pointer"
+                            onClick={() => navigate('/tools/gift-card')}
+                          >
+                            <span style={{ 
+                              fontFamily: '"Futura PT Book"',
+                              fontSize: '14px',
+                              color: 'black',
+                              fontWeight: '500',
+                              textTransform: 'uppercase',
+                              transform: 'translateX(7px)'
+                            }}>
+                              {item}
+                            </span>
+                          </div>
+                        ))
+                      ) : mobileMenuActiveTab === 'BRAND' ? (
+                        ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
+                          <div key={index} className="flex items-center justify-between">
+                            <span style={{ 
+                              fontFamily: '"Futura PT Book"',
+                              fontSize: '14px',
+                              color: 'black',
+                              fontWeight: '500',
+                              textTransform: 'uppercase',
+                              transform: 'translateX(7px)'
+                            }}>
+                              {item}
+                            </span>
+                          </div>
+                        ))
+                      ) : (
+                        // SHOP tab
+                        [
+                          { label: 'UNITS', hasArrow: true, isExpandable: true, subItems: ['STRAIGHT', 'WAVY', 'CURLY'] },
+                          { label: 'BOOKING', hasArrow: true, isExpandable: true, subItems: ['APPOINTMENT', 'CONSULTATION'] },
+                          { label: 'BUILD-A-WIG', hasArrow: false },
+                          { label: 'ORDER AUTHORIZATION FORM', hasArrow: false }
+                        ].map((item, index) => (
+                          <div key={index}>
+                            <div 
+                              className="flex items-center justify-between"
+                              style={{ alignItems: 'center' }}
+                            >
+                              <span 
+                                style={{
+                                  fontFamily: '"Futura PT Book"',
+                                  fontSize: '14px',
+                                  color: 'black',
+                                  fontWeight: '500',
+                                  textTransform: 'uppercase',
+                                  transform: 'translateX(7px)',
+                                  cursor: 'pointer'
+                                }}
+                                onClick={() => {
+                                  if (item.label === 'BUILD-A-WIG') {
+                                    navigate('/build-a-wig');
+                                  } else if (item.isExpandable) {
+                                    if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
+                                      navigate('/shop/units');
+                                    } else {
+                                      // Otherwise, toggle expansion
+                                      handleMobileMenuItemToggle(item.label);
+                                    }
+                                  } else if (item.label === 'ORDER AUTHORIZATION FORM') {
+                                    navigate('/shop/order-form');
+                                  }
+                                }}
+                              >
+                                {item.label}
+                              </span>
+                              {item.hasArrow && (
+                                <img
+                                  src="/assets/NOIR/closed-arrow.svg"
+                                  alt="Arrow"
+                                  style={{ 
+                                    width: '16px', 
+                                    height: '16px',
+                                    transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-5px) translateY(-4px) rotate(90deg)' : 'translateX(-5px) translateY(-4px) rotate(0deg)'}`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    cursor: 'pointer',
+                                    transition: 'transform 0.2s'
+                                  }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (item.isExpandable) {
+                                      if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
+                                        navigate('/shop/units');
+                                      } else {
+                                        handleMobileMenuItemToggle(item.label);
+                                      }
+                                    }
+                                  }}
+                                />
+                              )}
+                            </div>
+                            {item.isExpandable && mobileMenuExpandedItems.includes(item.label) && item.subItems && (
+                              <div style={{ marginLeft: '20px', marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                {item.subItems.map((subItem, subIndex) => (
+                                  <span
+                                    key={subIndex}
+                                    style={{
+                                      fontFamily: '"Futura PT Book"',
+                                      fontSize: '14px',
+                                      color: '#EB1C24',
+                                      fontWeight: '500',
+                                      textTransform: 'uppercase',
+                                      cursor: 'pointer'
+                                    }}
+                                    onClick={() => {
+                                      if (item.label === 'UNITS') {
+                                        if (subItem === 'STRAIGHT') {
+                                          navigate('/units/straight');
+                                        } else if (subItem === 'WAVY') {
+                                          navigate('/units/wavy');
+                                        } else if (subItem === 'CURLY') {
+                                          navigate('/units/curly');
+                                        }
+                                      } else if (item.label === 'BOOKING') {
+                                        // Handle booking navigation if needed
+                                        if (subItem === 'APPOINTMENT') {
+                                          // navigate('/booking/appointment');
+                                        } else if (subItem === 'CONSULTATION') {
+                                          // navigate('/booking/consultation');
+                                        }
+                                      }
+                                    }}
+                                  >
+                                    {subItem}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Sign In/Out - Fixed at bottom */}
                   <div className="flex justify-center" style={{ marginBottom: '20px', marginTop: 'auto' }}>
                     <span 
                       onClick={handleMobileMenuSignInToggle}
@@ -337,6 +493,27 @@ function LoadCardPage() {
                     >
                       {isSignedIn ? 'SIGN OUT' : 'SIGN IN'}
                     </span>
+                  </div>
+
+                  {/* Social Media Icons - Fixed at bottom */}
+                  <div className="flex justify-center" style={{ marginBottom: '0' }}>
+                    <div className="flex" style={{ gap: '19px' }}>
+                      <img
+                        src="/assets/instagram-icon.svg"
+                        alt="Instagram"
+                        style={{ width: '20px', height: '20px' }}
+                      />
+                      <img
+                        src="/assets/twitter-icon.svg"
+                        alt="Twitter"
+                        style={{ width: '20px', height: '20px' }}
+                      />
+                      <img
+                        src="/assets/facebook-icon.svg"
+                        alt="Facebook"
+                        style={{ width: '20px', height: '20px' }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

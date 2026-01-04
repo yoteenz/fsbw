@@ -1290,9 +1290,13 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               fontSize: '10px',
                               marginTop: (() => {
                                 // Check if there's black detail text (specifications)
+                                // Determine default texture based on product type
+                                const isWavyProduct = item.name === 'SOFT WAVE' || item.name === 'BEACH WAVE';
+                                const isCurlyProduct = item.name === 'SOFT CURL' || item.name === 'OCEAN CURL';
+                                const defaultTexture = isWavyProduct ? 'WAVY' : isCurlyProduct ? 'CURLY' : 'SILKY';
                                 const hasSpecs = (item.density && item.density !== '200%') || 
                                                (item.lace && item.lace !== '13X6') || 
-                                               (item.texture && item.texture !== 'SILKY') || 
+                                               (item.texture && item.texture !== defaultTexture) || 
                                                (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
                                                (item.hairline && item.hairline !== 'NATURAL') || 
                                                (item.styling && item.styling !== 'NONE') || 
@@ -1326,9 +1330,13 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             fontWeight: '600',
                             marginTop: (() => {
                               // Check if there's black detail text (specifications)
+                              // Determine default texture based on product type
+                              const isWavyProduct = item.name === 'SOFT WAVE' || item.name === 'BEACH WAVE';
+                              const isCurlyProduct = item.name === 'SOFT CURL' || item.name === 'OCEAN CURL';
+                              const defaultTexture = isWavyProduct ? 'WAVY' : isCurlyProduct ? 'CURLY' : 'SILKY';
                               const hasSpecs = (item.density && item.density !== '200%') || 
                                              (item.lace && item.lace !== '13X6') || 
-                                             (item.texture && item.texture !== 'SILKY') || 
+                                             (item.texture && item.texture !== defaultTexture) || 
                                              (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
                                              (item.hairline && item.hairline !== 'NATURAL') || 
                                              (item.styling && item.styling !== 'NONE') || 
@@ -1385,7 +1393,14 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         const defaultDensity = item.name === 'BLANCO' ? '250%' : '200%';
                         const hasCustomDensity = item.density && item.density !== defaultDensity;
                         const hasCustomLace = item.lace && item.lace !== '13X6';
-                        const hasCustomTexture = item.texture && item.texture !== 'SILKY';
+                        // Determine default texture based on product type
+                        // Straight products (NOIR, BLANCO) default to 'SILKY'
+                        // Wavy products (SOFT WAVE, BEACH WAVE) default to 'WAVY'
+                        // Curly products (SOFT CURL, OCEAN CURL) default to 'CURLY'
+                        const isWavyProduct = item.name === 'SOFT WAVE' || item.name === 'BEACH WAVE';
+                        const isCurlyProduct = item.name === 'SOFT CURL' || item.name === 'OCEAN CURL';
+                        const defaultTexture = isWavyProduct ? 'WAVY' : isCurlyProduct ? 'CURLY' : 'SILKY';
+                        const hasCustomTexture = item.texture && item.texture !== defaultTexture;
                         const defaultColor = item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
                         const hasCustomColor = item.color && item.color !== defaultColor;
                         const hasCustomHairline = item.hairline && item.hairline !== 'NATURAL';
