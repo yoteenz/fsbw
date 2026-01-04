@@ -1322,11 +1322,11 @@ function OrdersPage() {
                                  paddingRight: '10px'
                                }}
                              >
-                               {orderProducts.map((product, index) => (
-                                 <div
-                                   key={product.id}
-                                   className="flex-shrink-0"
-                                   style={{
+                              {orderProducts.map((product) => (
+                                <div
+                                  key={product.id}
+                                  className="flex-shrink-0"
+                                  style={{
                                      width: '150px',
                                      height: '150px',
                                      display: 'flex',
@@ -1831,11 +1831,11 @@ function OrdersPage() {
                                  paddingRight: '10px'
                                }}
                              >
-                               {orderProducts.map((product, index) => (
-                                 <div
-                                   key={product.id}
-                                   className="flex-shrink-0"
-                                   style={{
+                              {orderProducts.map((product) => (
+                                <div
+                                  key={product.id}
+                                  className="flex-shrink-0"
+                                  style={{
                                      width: '150px',
                                      height: '150px',
                                      display: 'flex',
