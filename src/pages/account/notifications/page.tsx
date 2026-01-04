@@ -591,7 +591,8 @@ function NotificationsPage() {
                         border: 'none',
                         background: 'none',
                         cursor: 'pointer',
-                        padding: 0
+                        padding: 0,
+                        transform: 'translateX(2px)'
                       }}
                     >
                       NEW
@@ -609,7 +610,8 @@ function NotificationsPage() {
                         border: 'none',
                         background: 'none',
                         cursor: 'pointer',
-                        padding: 0
+                        padding: 0,
+                        transform: 'translateX(-2px)'
                       }}
                     >
                       SEEN
@@ -858,8 +860,8 @@ function NotificationsPage() {
           setShowDeleteConfirm(false);
           setNotificationToDelete(null);
         }}
-        title="DELETE ALERT?"
-        message="ARE YOU SURE YOU WANT TO DELETE THIS ARCHIVED NOTIFICATION?"
+        title="REMOVE ALERT?"
+        message="ARE YOU SURE YOU WANT TO DELETE THIS NOTIFICATION?"
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="delete-notification-confirm"

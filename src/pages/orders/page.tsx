@@ -52,6 +52,7 @@ function OrdersPage() {
     return false;
   });
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
   
   // Get current user data
   const [currentUser, setCurrentUser] = useState<any>(() => {
@@ -72,6 +73,19 @@ function OrdersPage() {
     const signedIn = typeof window !== 'undefined' ? localStorage.getItem('isSignedIn') === 'true' : false;
     // Show mock orders only for Kristin Watson (bruno203@gmail.com) or when not signed in (default mock state)
     return user?.email?.toLowerCase() === 'bruno203@gmail.com' || (!user && !signedIn);
+  };
+
+  // Helper function to check if current user is Kateena Armstrong (mock account)
+  const isKateenaArmstrong = () => {
+    const user = currentUser;
+    if (!user) return false;
+    const firstName = user.firstName?.toLowerCase() || '';
+    const lastName = user.lastName?.toLowerCase() || '';
+    const email = user.email?.toLowerCase() || '';
+    // Check if user is Kateena Armstrong by name or email
+    return (firstName === 'kateena' && lastName === 'armstrong') || 
+           email.includes('kateena') || 
+           email.includes('armstrong');
   };
 
   // Currency state - load from localStorage on mount
@@ -388,12 +402,67 @@ function OrdersPage() {
     return { activeOrders: [], pastOrders: [] };
   };
 
-  // Get orders based on user - only show mock orders for Kristin Watson, otherwise show user's actual orders
+  // Mock order data for Kateena Armstrong (ORDER #344 tracking)
+  // ORDER #344 progression: Confirmed (1 week ago) -> Shipped (2 days ago) -> Delivered (yesterday)
+  const kateenaMockActiveOrders: Order[] = [
+    {
+      id: 'kateena-1',
+      orderNumber: 'ORDER #344',
+      date: getDateDaysAgo(7), // 1 week ago (confirmed)
+      status: 'DELIVERED',
+      productName: 'NOIR',
+      productImage: getProductImage('NOIR'),
+      total: 1640,
+      items: 2,
+      reviewInfo: 'REVIEW NEEDED',
+      trackingNumber: '9400136106023046913440',
+      trackingCarrier: 'DHL',
+      deliveredAt: getTimestampHoursAgo(24), // Delivered yesterday (24 hours ago)
+      placedAt: getTimestampHoursAgo(7 * 24) // Placed 1 week ago
+    },
+    {
+      id: 'kateena-2',
+      orderNumber: 'ORDER #345',
+      date: getDateDaysAgo(3), // 3 days ago
+      status: 'SHIPPED',
+      productName: 'BLANCO',
+      productImage: getProductImage('BLANCO'),
+      total: 820,
+      items: 1,
+      trackingNumber: '9400136106023046913441',
+      trackingCarrier: 'FEDEX',
+      placedAt: getTimestampHoursAgo(3 * 24) // Placed 3 days ago
+    },
+    {
+      id: 'kateena-3',
+      orderNumber: 'ORDER #346',
+      date: getDateDaysAgo(1), // 1 day ago
+      status: 'PREPARING',
+      productName: 'SOFT WAVE',
+      productImage: getProductImage('SOFT WAVE'),
+      total: 980,
+      items: 1,
+      trackingNumber: undefined,
+      trackingCarrier: undefined,
+      placedAt: getTimestampHoursAgo(24) // Placed 1 day ago
+    }
+  ];
+
+  const kateenaMockPastOrders: Order[] = [
+    // Past orders can be added here if needed
+  ];
+
+  // Get orders based on user - show mock orders for Kristin Watson or Kateena Armstrong, otherwise show user's actual orders
   const getUserOrdersData = () => {
     if (isKristinWatson()) {
       return {
         activeOrders: mockActiveOrders,
         pastOrders: mockPastOrders
+      };
+    } else if (isKateenaArmstrong()) {
+      return {
+        activeOrders: kateenaMockActiveOrders,
+        pastOrders: kateenaMockPastOrders
       };
     } else {
       return getUserOrders();
@@ -496,6 +565,11 @@ function OrdersPage() {
 
   // Auto-scroll effect for order lists (with manual scroll support)
   useEffect(() => {
+    // Only initialize scrolling when menu is closed and no order is expanded
+    if (showMobileMenu || expandedOrderId) {
+      return;
+    }
+
     const scrollElements = [
       { ref: activeOrdersRef, content: activeOrders.length > 0 ? 'active' : null },
       { ref: pastOrdersReviewRef, content: pastOrders.some(o => o.reviewInfo) ? 'pastReview' : null }
@@ -504,6 +578,7 @@ function OrdersPage() {
     const intervals: ReturnType<typeof setTimeout>[] = [];
     const manualScrollTimeouts: ReturnType<typeof setTimeout>[] = [];
     const isManuallyScrolling: { [key: string]: boolean } = {};
+    const eventListeners: Array<{ element: HTMLElement; event: string; handler: () => void }> = [];
 
     scrollElements.forEach(({ ref, content }) => {
       if (ref.current && content) {
@@ -550,6 +625,12 @@ function OrdersPage() {
             element.addEventListener('scroll', handleManualScroll);
             element.addEventListener('touchstart', handleManualScroll);
             element.addEventListener('mousedown', handleManualScroll);
+            
+            eventListeners.push(
+              { element, event: 'scroll', handler: handleManualScroll },
+              { element, event: 'touchstart', handler: handleManualScroll },
+              { element, event: 'mousedown', handler: handleManualScroll }
+            );
 
             const interval = setInterval(() => {
               // Don't auto-scroll if user is manually scrolling
@@ -592,8 +673,11 @@ function OrdersPage() {
     return () => {
       intervals.forEach(interval => clearInterval(interval));
       manualScrollTimeouts.forEach(timeout => clearTimeout(timeout));
+      eventListeners.forEach(({ element, event, handler }) => {
+        element.removeEventListener(event, handler);
+      });
     };
-  }, [activeOrders, pastOrders]);
+  }, [activeOrders, pastOrders, showMobileMenu, expandedOrderId]);
 
   // State for forcing re-render to update countdown
   const [_countdownTick, setCountdownTick] = useState(0);
@@ -1157,10 +1241,36 @@ function OrdersPage() {
             ) : (
               /* ORDERS CONTENT */
           <div className="flex flex-col gap-4 mb-5">
-            {/* Active Orders Card */}
+            {/* Active Orders Card - Hide when archived order is expanded */}
+            {!(expandedOrderId && pastOrders.find(o => o.id === expandedOrderId)) && (
             <div className="bg-white/60 backdrop-blur-sm border border-black p-4 min-h-[360px] flex flex-col overflow-hidden shadow-lg transition-all duration-300 ease-out" style={{ borderWidth: '1.3px' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
+                  {expandedOrderId ? (
+                    <>
+                      <button
+                        className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
+                        style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
+                      >
+                        {(activeOrders.find(o => o.id === expandedOrderId) || pastOrders.find(o => o.id === expandedOrderId))?.orderNumber || 'ORDER'}
+                      </button>
+                      <button
+                        onClick={() => setExpandedOrderId(null)}
+                        style={{ 
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          padding: '0',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '16.5px', color: '#EB1C24' }}>×</span>
+                      </button>
+                    </>
+                  ) : (
+                    <>
                   <button
                     className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
                     style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
@@ -1173,12 +1283,220 @@ function OrdersPage() {
                   >
                     {activeOrders.length}
                   </span>
+                    </>
+                  )}
                 </div>
 
                  {/* Body */}
                  <div className="flex-1 flex flex-col overflow-hidden mt-2">
-                   {/* Mannequin Thumbnails with order context - stacked vertically, left aligned */}
-                   {activeOrders.length === 0 ? (
+                   {expandedOrderId ? (
+                     // Expanded Order View
+                     (() => {
+                       const expandedOrder = activeOrders.find(o => o.id === expandedOrderId) || pastOrders.find(o => o.id === expandedOrderId);
+                       if (!expandedOrder) return null;
+                       
+                       // Create mock products array for horizontal scroll (based on order.items)
+                       const orderProducts = Array.from({ length: expandedOrder.items }, (_, i) => ({
+                         id: `${expandedOrder.id}-product-${i}`,
+                         name: expandedOrder.productName,
+                         image: expandedOrder.productImage,
+                         price: expandedOrder.total / expandedOrder.items
+                       }));
+                       
+                       return (
+                         <div className="flex flex-col gap-6" style={{ marginTop: '10px' }}>
+                           {/* Products Horizontal Scroll */}
+                           <div 
+                             className="relative overflow-x-auto"
+                             style={{ 
+                               height: '180px',
+                               marginBottom: '20px'
+                             }}
+                           >
+                             <div
+                               className="flex"
+                               style={{
+                                 gap: '20px',
+                                 height: '100%',
+                                 alignItems: 'center',
+                                 paddingRight: '10px'
+                               }}
+                             >
+                               {orderProducts.map((product, index) => (
+                                 <div
+                                   key={product.id}
+                                   className="flex-shrink-0"
+                                   style={{
+                                     width: '150px',
+                                     height: '150px',
+                                     display: 'flex',
+                                     flexDirection: 'column',
+                                     alignItems: 'center',
+                                     justifyContent: 'center',
+                                     padding: '8px'
+                                   }}
+                                 >
+                                   <img
+                                     src={product.image}
+                                     alt={product.name}
+                                     onClick={() => navigate(getProductRoute(product.name))}
+                                     style={{
+                                       width: '120px',
+                                       height: '120px',
+                                       objectFit: 'contain',
+                                       cursor: 'pointer'
+                                     }}
+                                   />
+                                   <p
+                                     style={{
+                                       fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                       fontSize: '16.8px',
+                                       color: '#000000',
+                                       marginTop: '4px',
+                                       marginBottom: '0',
+                                       textTransform: 'uppercase',
+                                       textAlign: 'center',
+                                       lineHeight: '1.2'
+                                     }}
+                                   >
+                                     {product.name}
+                                   </p>
+                                 </div>
+                               ))}
+                             </div>
+                           </div>
+                           
+                           {/* ORDER SUMMARY */}
+                           <div style={{ marginBottom: '20px' }}>
+                             <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                               <h2
+                                 style={{
+                                   fontFamily: '"Futura PT Medium"',
+                                   fontSize: '12px',
+                                   color: '#EB1C24',
+                                   fontWeight: '500',
+                                   textTransform: 'uppercase',
+                                   margin: '0'
+                                 }}
+                               >
+                                 ORDER SUMMARY
+                               </h2>
+                             </div>
+                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                 <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                   ORDER DATE
+                                 </span>
+                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                   {expandedOrder.date}
+                                 </span>
+                               </div>
+                               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                 <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                   ORDER TOTAL
+                                 </span>
+                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                   {formatPrice(expandedOrder.total)} {selectedCurrency}
+                                 </span>
+                               </div>
+                               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                 <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                   ORDER NUMBER
+                                 </span>
+                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                   {expandedOrder.orderNumber}
+                                 </span>
+                               </div>
+                             </div>
+                           </div>
+                           
+                           {/* SHIPPING */}
+                           {currentUser && (
+                             <div style={{ marginBottom: '20px' }}>
+                               <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                                 <h2
+                                   style={{
+                                     fontFamily: '"Futura PT Medium"',
+                                     fontSize: '12px',
+                                     color: '#EB1C24',
+                                     fontWeight: '500',
+                                     textTransform: 'uppercase',
+                                     margin: '0'
+                                   }}
+                                 >
+                                   SHIPPING
+                                 </h2>
+                               </div>
+                               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                   {currentUser.firstName || ''} {currentUser.lastName || ''}
+                                 </p>
+                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                   {currentUser.defaultAddress?.address || currentUser.shippingAddress?.address || ''}
+                                 </p>
+                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                   {currentUser.defaultAddress?.city || currentUser.shippingAddress?.city || ''}, {currentUser.defaultAddress?.state || currentUser.shippingAddress?.state || ''} {currentUser.defaultAddress?.zip || currentUser.shippingAddress?.zip || ''}
+                                 </p>
+                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                   {currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES'}
+                                 </p>
+                                 {expandedOrder.trackingNumber && (
+                                   <>
+                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                         TRACKING NUMBER
+                                       </span>
+                                       <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                         {expandedOrder.trackingNumber}
+                                       </span>
+                                     </div>
+                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                         CARRIER
+                                       </span>
+                                       <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                         {expandedOrder.trackingCarrier}
+                                       </span>
+                                     </div>
+                                   </>
+                                 )}
+                               </div>
+                             </div>
+                           )}
+                           
+                           {/* PAYMENT */}
+                           {currentUser && (
+                             <div style={{ marginBottom: '20px' }}>
+                               <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                                 <h2
+                                   style={{
+                                     fontFamily: '"Futura PT Medium"',
+                                     fontSize: '12px',
+                                     color: '#EB1C24',
+                                     fontWeight: '500',
+                                     textTransform: 'uppercase',
+                                     margin: '0'
+                                   }}
+                                 >
+                                   PAYMENT
+                                 </h2>
+                               </div>
+                               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                   <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                     CONFIRMATION EMAIL
+                                   </span>
+                                   <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                     {currentUser.email || ''}
+                                   </span>
+                                 </div>
+                               </div>
+                             </div>
+                           )}
+                         </div>
+                       );
+                     })()
+                   ) : activeOrders.length === 0 ? (
                      <div className="flex flex-col justify-center items-center my-2 flex-shrink-0" style={{ minHeight: '200px' }}>
                        <p
                          style={{
@@ -1201,7 +1519,7 @@ function OrdersPage() {
                          {/* Thumbnail */}
                          <div className="flex flex-col items-center" style={{ flexShrink: 0 }}>
                            <button
-                             onClick={() => navigate(getProductRoute(order.productName))}
+                             onClick={() => setExpandedOrderId(order.id === expandedOrderId ? null : order.id)}
                              style={{
                                background: 'none',
                                border: 'none',
@@ -1237,7 +1555,10 @@ function OrdersPage() {
                            <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '13px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
                              {order.date}
                            </p>
-                           <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#EB1C24', margin: 0, lineHeight: '1.2' }}>
+                           <p 
+                             onClick={() => setExpandedOrderId(order.id === expandedOrderId ? null : order.id)}
+                             style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#EB1C24', margin: 0, lineHeight: '1.2', cursor: 'pointer' }}
+                           >
                              {order.orderNumber}
                            </p>
                            <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#909090', margin: 0, lineHeight: '1.2' }}>
@@ -1319,7 +1640,7 @@ function OrdersPage() {
                  </div>
 
                 {/* Scrolling Order Information - Bottom of card */}
-                {activeOrders.length > 0 && (
+                {activeOrders.length > 0 && !expandedOrderId && (
                 <div className="overflow-hidden mt-auto pt-2">
                   {/* Gray line separator */}
                   <div className="border-t border-gray-200" style={{ paddingTop: '2px', marginTop: '1px' }}></div>
@@ -1427,36 +1748,271 @@ function OrdersPage() {
                 </div>
                 )}
               </div>
+            )}
 
               {/* Past Orders Card - Only show when there are archived orders */}
               {pastOrders.length > 0 && (
               <div className="bg-white/60 backdrop-blur-sm border border-black p-4 min-h-[360px] flex flex-col overflow-hidden shadow-lg transition-all duration-300 ease-out" style={{ borderWidth: '1.3px' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
-                  <button
-                    className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
-                    style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
-                  >
-                    ARCHIVED ORDERS
-                  </button>
-                  <span
-                    className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
-                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '17px' }}
-                  >
-                    {pastOrders.length}
-                  </span>
+                  {expandedOrderId && pastOrders.find(o => o.id === expandedOrderId) ? (
+                    <>
+                      <button
+                        className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
+                        style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
+                      >
+                        {pastOrders.find(o => o.id === expandedOrderId)?.orderNumber || 'ORDER'}
+                      </button>
+                      <button
+                        onClick={() => setExpandedOrderId(null)}
+                        style={{ 
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          padding: '0',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '16.5px', color: '#EB1C24' }}>×</span>
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
+                        style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
+                      >
+                        ARCHIVED ORDERS
+                      </button>
+                      <span
+                        className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
+                        style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '17px' }}
+                      >
+                        {pastOrders.length}
+                      </span>
+                    </>
+                  )}
                 </div>
 
                  {/* Body */}
                  <div className="flex-1 flex flex-col overflow-hidden mt-2">
-                   {/* Mannequin Thumbnails with order context - stacked vertically, left aligned */}
+                   {expandedOrderId && pastOrders.find(o => o.id === expandedOrderId) ? (
+                     // Expanded Order View for Archived Orders
+                     (() => {
+                       const expandedOrder = pastOrders.find(o => o.id === expandedOrderId);
+                       if (!expandedOrder) return null;
+                       
+                       // Create mock products array for horizontal scroll (based on order.items)
+                       const orderProducts = Array.from({ length: expandedOrder.items }, (_, i) => ({
+                         id: `${expandedOrder.id}-product-${i}`,
+                         name: expandedOrder.productName,
+                         image: expandedOrder.productImage,
+                         price: expandedOrder.total / expandedOrder.items
+                       }));
+                       
+                       return (
+                         <div className="flex flex-col gap-6" style={{ marginTop: '10px' }}>
+                           {/* Products Horizontal Scroll */}
+                           <div 
+                             className="relative overflow-x-auto"
+                             style={{ 
+                               height: '180px',
+                               marginBottom: '20px'
+                             }}
+                           >
+                             <div
+                               className="flex"
+                               style={{
+                                 gap: '20px',
+                                 height: '100%',
+                                 alignItems: 'center',
+                                 paddingRight: '10px'
+                               }}
+                             >
+                               {orderProducts.map((product, index) => (
+                                 <div
+                                   key={product.id}
+                                   className="flex-shrink-0"
+                                   style={{
+                                     width: '150px',
+                                     height: '150px',
+                                     display: 'flex',
+                                     flexDirection: 'column',
+                                     alignItems: 'center',
+                                     justifyContent: 'center',
+                                     padding: '8px'
+                                   }}
+                                 >
+                                   <img
+                                     src={product.image}
+                                     alt={product.name}
+                                     onClick={() => navigate(getProductRoute(product.name))}
+                                     style={{
+                                       width: '120px',
+                                       height: '120px',
+                                       objectFit: 'contain',
+                                       cursor: 'pointer'
+                                     }}
+                                   />
+                                   <p
+                                     style={{
+                                       fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                       fontSize: '16.8px',
+                                       color: '#000000',
+                                       marginTop: '4px',
+                                       marginBottom: '0',
+                                       textTransform: 'uppercase',
+                                       textAlign: 'center',
+                                       lineHeight: '1.2'
+                                     }}
+                                   >
+                                     {product.name}
+                                   </p>
+                                 </div>
+                               ))}
+                             </div>
+                           </div>
+                           
+                           {/* ORDER SUMMARY */}
+                           <div style={{ marginBottom: '20px' }}>
+                             <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                               <h2
+                                 style={{
+                                   fontFamily: '"Futura PT Medium"',
+                                   fontSize: '12px',
+                                   color: '#EB1C24',
+                                   fontWeight: '500',
+                                   textTransform: 'uppercase',
+                                   margin: '0'
+                                 }}
+                               >
+                                 ORDER SUMMARY
+                               </h2>
+                             </div>
+                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                 <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                   ORDER DATE
+                                 </span>
+                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                   {expandedOrder.date}
+                                 </span>
+                               </div>
+                               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                 <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                   ORDER TOTAL
+                                 </span>
+                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                   {formatPrice(expandedOrder.total)} {selectedCurrency}
+                                 </span>
+                               </div>
+                               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                 <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                   ORDER NUMBER
+                                 </span>
+                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                   {expandedOrder.orderNumber}
+                                 </span>
+                               </div>
+                             </div>
+                           </div>
+                           
+                           {/* SHIPPING */}
+                           {currentUser && (
+                             <div style={{ marginBottom: '20px' }}>
+                               <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                                 <h2
+                                   style={{
+                                     fontFamily: '"Futura PT Medium"',
+                                     fontSize: '12px',
+                                     color: '#EB1C24',
+                                     fontWeight: '500',
+                                     textTransform: 'uppercase',
+                                     margin: '0'
+                                   }}
+                                 >
+                                   SHIPPING
+                                 </h2>
+                               </div>
+                               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                   {currentUser.firstName || ''} {currentUser.lastName || ''}
+                                 </p>
+                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                   {currentUser.defaultAddress?.address || currentUser.shippingAddress?.address || ''}
+                                 </p>
+                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                   {currentUser.defaultAddress?.city || currentUser.shippingAddress?.city || ''}, {currentUser.defaultAddress?.state || currentUser.shippingAddress?.state || ''} {currentUser.defaultAddress?.zip || currentUser.shippingAddress?.zip || ''}
+                                 </p>
+                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                   {currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES'}
+                                 </p>
+                                 {expandedOrder.trackingNumber && (
+                                   <>
+                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                         TRACKING NUMBER
+                                       </span>
+                                       <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                         {expandedOrder.trackingNumber}
+                                       </span>
+                                     </div>
+                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                         CARRIER
+                                       </span>
+                                       <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                         {expandedOrder.trackingCarrier}
+                                       </span>
+                                     </div>
+                                   </>
+                                 )}
+                               </div>
+                             </div>
+                           )}
+                           
+                           {/* PAYMENT */}
+                           {currentUser && (
+                             <div style={{ marginBottom: '20px' }}>
+                               <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                                 <h2
+                                   style={{
+                                     fontFamily: '"Futura PT Medium"',
+                                     fontSize: '12px',
+                                     color: '#EB1C24',
+                                     fontWeight: '500',
+                                     textTransform: 'uppercase',
+                                     margin: '0'
+                                   }}
+                                 >
+                                   PAYMENT
+                                 </h2>
+                               </div>
+                               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                   <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                     CONFIRMATION EMAIL
+                                   </span>
+                                   <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                     {currentUser.email || ''}
+                                   </span>
+                                 </div>
+                               </div>
+                             </div>
+                           )}
+                         </div>
+                       );
+                     })()
+                   ) : (
                    <div className="flex flex-col justify-start items-start gap-4 my-2 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '265px', scrollBehavior: 'smooth' }}>
                      {pastOrders.map((order) => (
                        <div key={order.id} className="flex items-center gap-3" style={{ flexShrink: 0 }}>
                          {/* Thumbnail */}
                          <div className="flex flex-col items-center" style={{ flexShrink: 0 }}>
                            <button
-                             onClick={() => navigate(getProductRoute(order.productName))}
+                             onClick={() => setExpandedOrderId(order.id === expandedOrderId ? null : order.id)}
                              style={{
                                background: 'none',
                                border: 'none',
@@ -1492,7 +2048,10 @@ function OrdersPage() {
                            <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '13px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
                              {order.date}
                            </p>
-                           <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#EB1C24', margin: 0, lineHeight: '1.2' }}>
+                           <p 
+                             onClick={() => setExpandedOrderId(order.id === expandedOrderId ? null : order.id)}
+                             style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#EB1C24', margin: 0, lineHeight: '1.2', cursor: 'pointer' }}
+                           >
                              {order.orderNumber}
                            </p>
                            <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#909090', margin: 0, lineHeight: '1.2' }}>
@@ -1538,9 +2097,11 @@ function OrdersPage() {
                        </div>
                      ))}
                    </div>
+                   )}
                 </div>
 
                 {/* Scrolling Order Information - Bottom of card */}
+                {pastOrders.length > 0 && !expandedOrderId && (
                 <div className="overflow-hidden mt-auto pt-2">
                   {/* Gray line separator */}
                   <div className="border-t border-gray-200" style={{ paddingTop: '2px', marginTop: '1px' }}></div>
@@ -1565,6 +2126,7 @@ function OrdersPage() {
                       ))}
                   </div>
                 </div>
+                )}
               </div>
               )}
             </div>

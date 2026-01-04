@@ -45,6 +45,10 @@ function AccountPage() {
     }
     return null;
   });
+  const [activeOrdersCount, setActiveOrdersCount] = useState(() => {
+    // Will be calculated by getActiveOrdersCount
+    return 0;
+  });
   const [membershipType, _setMembershipType] = useState<'STANDARD' | 'PREMIUM'>('STANDARD'); // Will be set dynamically later
   const [profileImage, setProfileImage] = useState(() => {
     // Load from localStorage on mount
@@ -234,6 +238,30 @@ function AccountPage() {
     }
   }, [showMobileMenu, location.pathname]);
 
+  // Update active orders count when user data or orders change
+  useEffect(() => {
+    const updateActiveOrdersCount = () => {
+      const count = getActiveOrdersCount();
+      setActiveOrdersCount(count);
+    };
+
+    updateActiveOrdersCount();
+
+    // Listen for order updates
+    const handleStorageChange = () => {
+      updateActiveOrdersCount();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    // Also listen for custom events that might indicate order changes
+    window.addEventListener('ordersUpdated', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('ordersUpdated', handleStorageChange);
+    };
+  }, [userData]);
+
   const handleMobileMenuToggle = () => {
     setShowMobileMenu(!showMobileMenu);
   };
@@ -294,6 +322,211 @@ function AccountPage() {
       fileInputRef.current.value = '';
     }
     setShowResetConfirm(false);
+  };
+
+  // Helper function to get current 6-month period
+  const getCurrentPeriod = (): { start: Date; end: Date; periodName: string } => {
+    const now = new Date();
+    const currentMonth = now.getMonth(); // 0-11 (Jan = 0, Dec = 11)
+    const currentYear = now.getFullYear();
+    
+    // Jan-Jun (months 0-5) or Jul-Dec (months 6-11)
+    if (currentMonth < 6) {
+      // January to June
+      return {
+        start: new Date(currentYear, 0, 1), // Jan 1
+        end: new Date(currentYear, 5, 30), // Jun 30
+        periodName: 'Jan-Jun'
+      };
+    } else {
+      // July to December
+      return {
+        start: new Date(currentYear, 6, 1), // Jul 1
+        end: new Date(currentYear, 11, 31), // Dec 31
+        periodName: 'Jul-Dec'
+      };
+    }
+  };
+
+  // Helper function to get highest tier ever achieved
+  const getHighestTierEver = (): string | null => {
+    if (!userData?.email) return null;
+    
+    try {
+      const userOrdersKey = `userOrders_${userData.email}`;
+      const storedOrders = localStorage.getItem(userOrdersKey);
+      if (!storedOrders) return null;
+      
+      const orders = JSON.parse(storedOrders);
+      const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
+      
+      let highestTier: string | null = null;
+      const periods: { [key: string]: number } = {};
+      
+      // Calculate spending for all historical periods
+      allOrders.forEach((order: any) => {
+        if (order.date && order.total) {
+          // Parse date (format: MM-DD-YYYY)
+          const [month, day, year] = order.date.split('-').map(Number);
+          const orderDate = new Date(year, month - 1, day);
+          
+          // Determine which 6-month period this order belongs to
+          const orderMonth = orderDate.getMonth();
+          const orderYear = orderDate.getFullYear();
+          const periodKey = orderMonth < 6 
+            ? `${orderYear}-Jan-Jun` 
+            : `${orderYear}-Jul-Dec`;
+          
+          // Accumulate spending for this period
+          if (!periods[periodKey]) {
+            periods[periodKey] = 0;
+          }
+          periods[periodKey] += order.total || 0;
+        }
+      });
+      
+      // Check all periods to find highest tier ever achieved
+      Object.values(periods).forEach(spending => {
+        if (spending >= 4000 && (!highestTier || highestTier === 'SILVER' || highestTier === 'RED')) {
+          highestTier = 'BLACK';
+        } else if (spending >= 2000 && (!highestTier || highestTier === 'SILVER')) {
+          highestTier = 'RED';
+        } else if (spending >= 1000 && !highestTier) {
+          highestTier = 'SILVER';
+        }
+      });
+      
+      return highestTier;
+    } catch (e) {
+      console.error('Error getting highest tier:', e);
+      return null;
+    }
+  };
+
+  // Helper function to calculate tier based on 6-month spending
+  const calculateTier = (): string | null => {
+    const period = getCurrentPeriod();
+    let totalSpending = 0;
+    const highestTierEver = getHighestTierEver();
+
+    // Check for mock users first
+    const isKristinWatson = userData?.email?.toLowerCase() === 'bruno203@gmail.com' || !userData;
+    const isKateenaArmstrong = userData && (
+      (userData.firstName?.toLowerCase() === 'kateena' && userData.lastName?.toLowerCase() === 'armstrong') ||
+      userData.email?.toLowerCase().includes('kateena') ||
+      userData.email?.toLowerCase().includes('armstrong')
+    );
+
+    if (isKristinWatson || isKateenaArmstrong) {
+      // For mock users, you can set a mock spending amount
+      // For now, return null to show "MEMBER" text
+      return null;
+    }
+
+    // For real users, calculate from orders
+    if (userData?.email) {
+      try {
+        const userOrdersKey = `userOrders_${userData.email}`;
+        const storedOrders = localStorage.getItem(userOrdersKey);
+        if (storedOrders) {
+          const orders = JSON.parse(storedOrders);
+          const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
+          
+          // Calculate spending in current period
+          allOrders.forEach((order: any) => {
+            if (order.date) {
+              // Parse date (format: MM-DD-YYYY)
+              const [month, day, year] = order.date.split('-').map(Number);
+              const orderDate = new Date(year, month - 1, day);
+              
+              // Check if order is within current period
+              if (orderDate >= period.start && orderDate <= period.end) {
+                totalSpending += order.total || 0;
+              }
+            }
+          });
+        }
+      } catch (e) {
+        console.error('Error calculating tier:', e);
+        // If calculation fails, return Silver if they've unlocked it, otherwise null
+        return highestTierEver === 'SILVER' ? 'SILVER' : null;
+      }
+    }
+
+    // Determine tier based on current period spending
+    let currentTier: string | null = null;
+    if (totalSpending >= 4000) {
+      currentTier = 'BLACK';
+    } else if (totalSpending >= 2000) {
+      currentTier = 'RED';
+    } else if (totalSpending >= 1000) {
+      currentTier = 'SILVER';
+    }
+
+    // Tier retention logic:
+    // - Silver: Once unlocked, always stays at least Silver
+    // - Red: Can drop to Silver if current period < $2k
+    // - Black: Can drop to Red (if current >= $2k) or Silver (if current < $2k)
+    if (highestTierEver === 'SILVER') {
+      // Once Silver is unlocked, always at least Silver
+      return currentTier || 'SILVER';
+    } else if (highestTierEver === 'RED') {
+      // Red can drop to Silver if current period doesn't meet $2k
+      return currentTier || 'SILVER';
+    } else if (highestTierEver === 'BLACK') {
+      // Black can drop to Red (if current >= $2k) or Silver (if current < $2k)
+      if (currentTier) {
+        return currentTier;
+      } else {
+        // Didn't meet $4k, check if they meet $2k for Red
+        return totalSpending >= 2000 ? 'RED' : 'SILVER';
+      }
+    }
+
+    // No tier unlocked yet - need to meet current period threshold
+    return currentTier;
+  };
+
+  // Helper function to get active orders count (excluding DELIVERED status)
+  const getActiveOrdersCount = (): number => {
+    // Check for mock users first
+    const isKristinWatson = userData?.email?.toLowerCase() === 'bruno203@gmail.com' || !userData;
+    const isKateenaArmstrong = userData && (
+      (userData.firstName?.toLowerCase() === 'kateena' && userData.lastName?.toLowerCase() === 'armstrong') ||
+      userData.email?.toLowerCase().includes('kateena') ||
+      userData.email?.toLowerCase().includes('armstrong')
+    );
+
+    if (isKristinWatson) {
+      // Mock data for Kristin Watson: 2 active orders (excluding delivered)
+      // Based on mockActiveOrders in orders page, excluding DELIVERED status
+      return 2;
+    }
+
+    if (isKateenaArmstrong) {
+      // Mock data for Kateena Armstrong: 2 active orders (ORDER #345 SHIPPED, ORDER #346 PREPARING)
+      // ORDER #344 is DELIVERED, so it's excluded
+      return 2;
+    }
+
+    // For other users, get from localStorage
+    if (userData?.email) {
+      try {
+        const userOrdersKey = `userOrders_${userData.email}`;
+        const storedOrders = localStorage.getItem(userOrdersKey);
+        if (storedOrders) {
+          const orders = JSON.parse(storedOrders);
+          const activeOrders = orders.activeOrders || [];
+          // Filter out DELIVERED orders
+          const nonDeliveredOrders = activeOrders.filter((order: any) => order.status !== 'DELIVERED');
+          return nonDeliveredOrders.length;
+        }
+      } catch (e) {
+        console.error('Error loading order count:', e);
+      }
+    }
+
+    return 0;
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -1088,11 +1321,11 @@ function AccountPage() {
                     </p>
 
                     {(() => {
-                      const tier = 'SILVER'; // Will be set dynamically later
+                      const tier = calculateTier();
                       // Get membership type from userData, fallback to state
                       const userMembershipType = userData?.membershipType?.toUpperCase() || membershipType;
-                      const displayMembershipType = userMembershipType === 'PREMIUM' ? 'PREMIUM' : 'STANDARD';
-                      // For STANDARD: always use gray regardless of tier
+                      const displayMembershipType = userMembershipType === 'PREMIUM' ? 'PREMIUM' : 'BASIC';
+                      // For BASIC: always use gray regardless of tier
                       // For PREMIUM: always use black
                       const membershipTextColor = displayMembershipType === 'PREMIUM' ? '#000000' : '#909090';
                       // Tier color is independent: silver = gray, red = red, black = black
@@ -1108,12 +1341,20 @@ function AccountPage() {
                             transform: 'translateY(-8px)'
                           }}
                         >
-                          <span style={{ color: membershipTextColor }}>
-                            {displayMembershipType} REWARDS:
-                          </span>{' '}
-                          <span style={{ color: tierColor }}>
-                            {tier} TIER
-                          </span>
+                          {tier ? (
+                            <>
+                              <span style={{ color: membershipTextColor }}>
+                                {displayMembershipType} REWARDS:
+                              </span>{' '}
+                              <span style={{ color: tierColor }}>
+                                {tier} TIER
+                              </span>
+                            </>
+                          ) : (
+                            <span style={{ color: membershipTextColor }}>
+                              {displayMembershipType} REWARDS MEMBER
+                            </span>
+                          )}
                         </p>
                       );
                     })()}
@@ -1153,13 +1394,9 @@ function AccountPage() {
                 {[
                   // CONCIERGE card - visible for black tier OR premium members (placed first)
                   ...((() => {
-                    // Get tier from userData, check if it's BLACK
-                    const tier = userData?.tier || (() => {
-                      // Fallback: check if tier is stored elsewhere or calculate from points
-                      // For now, default to checking userData.tier
-                      return 'SILVER';
-                    })();
-                    const isBlackTier = tier === 'BLACK' || tier === 'BLACK TIER';
+                    // Calculate tier based on spending
+                    const tier = calculateTier();
+                    const isBlackTier = tier === 'BLACK';
                     // Check membership type from userData or state
                     const userMembershipType = userData?.membershipType || membershipType;
                     const isPremium = userMembershipType === 'PREMIUM' || userMembershipType === 'Premium';
@@ -1173,24 +1410,7 @@ function AccountPage() {
                   })()),
                   { 
                     title: 'ORDERS', 
-                    subtitle: (() => {
-                      // Get active orders count for current user
-                      if (userData) {
-                        try {
-                          const userOrdersKey = `userOrders_${userData.email}`;
-                          const storedOrders = localStorage.getItem(userOrdersKey);
-                          if (storedOrders) {
-                            const orders = JSON.parse(storedOrders);
-                            const activeCount = (orders.activeOrders || []).length;
-                            return activeCount > 0 ? `${activeCount} ACTIVE ORDER${activeCount !== 1 ? 'S' : ''}` : '0 ACTIVE ORDERS';
-                          }
-                        } catch (e) {
-                          console.error('Error loading order count:', e);
-                        }
-                      }
-                      // Default for signed in users: 0, for mock user or not signed in: show mock data
-                      return userData?.email?.toLowerCase() === 'bruno203@gmail.com' || !userData ? '2 ACTIVE ORDERS' : '0 ACTIVE ORDERS';
-                    })(), 
+                    subtitle: activeOrdersCount > 0 ? `${activeOrdersCount} ACTIVE ORDER${activeOrdersCount !== 1 ? 'S' : ''}` : '0 ACTIVE ORDERS', 
                     route: '/account/orders' 
                   },
                   { title: 'ALERTS', subtitle: 'NEWSLETTER + NOTIFICATIONS', route: '/account/alerts' },
@@ -1261,7 +1481,7 @@ function AccountPage() {
 
             {/* SIGN OUT BUTTON - Only show when menu is closed */}
             {!showMobileMenu && (
-              <div className="px-0 md:px-0" style={{ marginTop: '18px', marginBottom: '20px' }}>
+              <div className="px-0 md:px-0" style={{ marginTop: '16px', marginBottom: '20px' }}>
                 <button
                   onClick={() => setShowSignOutConfirm(true)}
                   className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
