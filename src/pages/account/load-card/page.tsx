@@ -21,7 +21,6 @@ function LoadCardPage() {
     }
     return 'SHOP';
   });
-  const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -81,13 +80,6 @@ function LoadCardPage() {
     setMobileMenuActiveTab(tab);
   };
 
-  const handleMobileMenuItemToggle = (item: string) => {
-    setMobileMenuExpandedItems(prev => 
-      prev.includes(item) 
-        ? prev.filter(i => i !== item)
-        : [...prev, item]
-    );
-  };
 
   const handleMobileMenuSignInToggle = () => {
     if (isSignedIn) {
