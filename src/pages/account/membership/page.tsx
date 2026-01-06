@@ -454,7 +454,7 @@ function MembershipPage() {
                   <span
                     style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
                   >
-                    MEMBERSHIP
+                    REWARDS
                   </span>
                 </>
               )}
