@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
@@ -43,6 +43,7 @@ function CheckoutPage() {
   const [savePaymentMethod, setSavePaymentMethod] = useState(false);
   const [useDefaultPaymentMethod, setUseDefaultPaymentMethod] = useState(false);
   const [savePaymentMethodCard, setSavePaymentMethodCard] = useState(false);
+  const [autoRenewMembership, setAutoRenewMembership] = useState(false);
   const [subscribeNewsletter, setSubscribeNewsletter] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [showTermsRequiredModal, setShowTermsRequiredModal] = useState(false);
@@ -55,7 +56,7 @@ function CheckoutPage() {
   const [zipCode, setZipCode] = useState('');
   const [zipCodeError, setZipCodeError] = useState('');
   const [shippingCalculated, setShippingCalculated] = useState(false);
-  const [selectedShippingMethod, setSelectedShippingMethod] = useState<{carrier: string, speed: string, cost: number} | null>(null);
+  const [selectedShippingMethod, setSelectedShippingMethod] = useState<{carrier: string, speed: string, cost: number, originalCost?: number} | null>(null);
   
   // Required form fields
   const [firstName, setFirstName] = useState('');
@@ -84,6 +85,10 @@ function CheckoutPage() {
   const [discountCodeError, setDiscountCodeError] = useState('');
   const [appliedDiscount, setAppliedDiscount] = useState(0);
   const [isDiscountCodeFocused, setIsDiscountCodeFocused] = useState(false);
+  
+  // Gift card balance state
+  const [giftCardBalance, setGiftCardBalance] = useState(0);
+  const [appliedGiftCardBalance, setAppliedGiftCardBalance] = useState(0);
   
   // Tip state - store percentage (0-100) or custom dollar amount (negative values indicate custom dollar amount)
   const [tipPercentage, setTipPercentage] = useState<number | null>(null);
@@ -139,7 +144,7 @@ function CheckoutPage() {
   });
 
   // Check if any product has color, styling, or add-ons (non-default values)
-  const hasColorStylingOrAddOns = React.useMemo(() => {
+  const hasColorStylingOrAddOns = useMemo(() => {
     return cartItems.some((item) => {
       // Skip gift cards
       if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
@@ -160,7 +165,7 @@ function CheckoutPage() {
     });
   }, [cartItems]);
   
-  const currencyRates = React.useMemo(() => ({
+  const currencyRates = useMemo(() => ({
     USD: { symbol: '&#36;', rate: 1.0, name: 'US Dollar' },
     EUR: { symbol: '&euro;', rate: 0.85, name: 'Euro' },
     GBP: { symbol: '&pound;', rate: 0.73, name: 'British Pound' },
@@ -174,25 +179,58 @@ function CheckoutPage() {
   }), []);
 
 
+  // Check if this is a subscription upgrade
+  const [isSubscriptionUpgrade, setIsSubscriptionUpgrade] = useState(false);
+
   // Load cart items from localStorage
   const loadCartItems = () => {
     try {
-      const stored = localStorage.getItem('cartItems');
-      if (stored) {
-        const items = JSON.parse(stored);
-        if (Array.isArray(items)) {
-          setCartItems(items);
+      // Check the route pathname to determine checkout type
+      const isUpgradeRoute = location.pathname === '/checkout/upgrade';
+      
+      if (isUpgradeRoute) {
+        // This is a subscription upgrade checkout
+        const subscriptionItem = localStorage.getItem('subscriptionUpgrade');
+        if (subscriptionItem) {
+          const item = JSON.parse(subscriptionItem);
+          // Clean up name if it has old format "PREMIUM MEMBERSHIP -"
+          if (item.name && item.name.includes('PREMIUM MEMBERSHIP -')) {
+            item.name = item.name.replace('PREMIUM MEMBERSHIP - ', '').trim();
+          }
+          setIsSubscriptionUpgrade(true);
+          setCartItems([item]);
+          return;
+        } else {
+          // No subscription item found, redirect to regular checkout
+          setIsSubscriptionUpgrade(false);
+          setCartItems([]);
+          return;
         }
+      } else {
+        // This is a regular checkout
+        const stored = localStorage.getItem('cartItems');
+        let regularCartItems: any[] = [];
+        if (stored) {
+          const items = JSON.parse(stored);
+          if (Array.isArray(items) && items.length > 0) {
+            regularCartItems = items;
+          }
+        }
+        
+        setIsSubscriptionUpgrade(false);
+        setCartItems(regularCartItems);
+        return;
       }
     } catch (e) {
       console.error('Error loading cart items:', e);
       setCartItems([]);
+      setIsSubscriptionUpgrade(false);
     }
   };
 
   useEffect(() => {
     loadCartItems();
-  }, []);
+  }, [location.pathname]);
 
   // Listen for cart count changes
   useEffect(() => {
@@ -310,6 +348,35 @@ function CheckoutPage() {
       setBillingAptSuite('');
     }
   }, [sameAsBilling, firstName, lastName, shippingAddress, city, state, zip]);
+
+  // Load and apply gift card balance (NOT for subscription upgrades)
+  useEffect(() => {
+    // Don't apply gift card to subscription upgrades
+    if (isSubscriptionUpgrade) {
+      setGiftCardBalance(0);
+      setAppliedGiftCardBalance(0);
+      return;
+    }
+    
+    if (isSignedIn) {
+      try {
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+          const user = JSON.parse(currentUser);
+          const balance = user.giftCardBalance || 0;
+          setGiftCardBalance(balance);
+          // Automatically apply gift card balance (will be capped at order total in calculation)
+          setAppliedGiftCardBalance(balance);
+        }
+      } catch (e) {
+        setGiftCardBalance(0);
+        setAppliedGiftCardBalance(0);
+      }
+    } else {
+      setGiftCardBalance(0);
+      setAppliedGiftCardBalance(0);
+    }
+  }, [isSignedIn, isSubscriptionUpgrade]);
 
   // Auto-populate email from signed-in user's account
   useEffect(() => {
@@ -439,7 +506,7 @@ function CheckoutPage() {
     };
   }, [currencyRates]);
 
-  const formatPrice = React.useCallback((price: number) => {
+  const formatPrice = useCallback((price: number) => {
     if (!price || isNaN(price)) {
       const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
       return { __html: currency.symbol + '0 ' + selectedCurrency };
@@ -721,28 +788,118 @@ function CheckoutPage() {
     setShowMobileMenu(false);
   };
 
-  // Calculate available shipping options based on address
+  // Get user's premium membership tier
+
+  const getPremiumTier = (): string | null => {
+    if (!isSignedIn) return null;
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      if (currentUser) {
+        const user = JSON.parse(currentUser);
+        // Check for subscriptionTier (3months, 6months, 12months) - for paid subscriptions
+        if (user.subscriptionTier) {
+          return user.subscriptionTier; // '3months', '6months', or '12months'
+        }
+        
+        // Check if this is Kateena Armstrong (admin account - 12 months premium without subscriptionTier)
+        const isKateenaArmstrong = user && (
+          (user.firstName?.toLowerCase() === 'kateena' && user.lastName?.toLowerCase() === 'armstrong') ||
+          user.email?.toLowerCase().includes('kateena') ||
+          user.email?.toLowerCase().includes('armstrong')
+        );
+        
+        // Only Kateena gets 12months tier without subscriptionTier (admin account)
+        // All other premium accounts must have a subscriptionTier from their purchase
+        if (isKateenaArmstrong && (user.membershipType === 'PREMIUM' || user.membershipType === 'Premium')) {
+          return '12months'; // Admin account gets 12 months premium benefits
+        }
+        
+        return null;
+      }
+    } catch (e) {
+      console.error('Error getting premium tier:', e);
+    }
+    return null;
+  };
+
+  // Calculate available shipping options based on address (shows original prices, discounts applied in order summary)
   const calculateShippingOptions = () => {
     if (!selectedCountry || !zipCode) return [];
     
     const isDomestic = selectedCountry === 'US';
     
     if (isDomestic) {
-      // Domestic options: standard or express
+      // Domestic options: standard or express (original prices)
       return [
-        { carrier: 'DOMESTIC', speed: 'standard', cost: 60, label: 'DOMESTIC STANDARD +$60' },
-        { carrier: 'DOMESTIC', speed: 'express', cost: 80, label: 'DOMESTIC EXPRESS +$80' },
+        { carrier: 'DOMESTIC', speed: 'standard', cost: 60, label: 'DOMESTIC STANDARD +$60', originalCost: 60 },
+        { carrier: 'DOMESTIC', speed: 'express', cost: 80, label: 'DOMESTIC EXPRESS +$80', originalCost: 80 },
       ];
     } else {
-      // International options: standard and express
+      // International options: standard and express (original prices)
       return [
-        { carrier: 'INTERNATIONAL', speed: 'standard', cost: 100, label: 'INTERNATIONAL STANDARD +$100' },
-        { carrier: 'INTERNATIONAL', speed: 'express', cost: 140, label: 'INTERNATIONAL EXPRESS +$140' },
+        { carrier: 'INTERNATIONAL', speed: 'standard', cost: 100, label: 'INTERNATIONAL STANDARD +$100', originalCost: 100 },
+        { carrier: 'INTERNATIONAL', speed: 'express', cost: 140, label: 'INTERNATIONAL EXPRESS +$140', originalCost: 140 },
       ];
     }
   };
 
+  // Calculate premium shipping discount based on selected method and tier
+  const calculatePremiumShippingDiscount = (): { discount: number; originalCost: number; finalCost: number } => {
+    if (!selectedShippingMethod || isSubscriptionUpgrade || isOnlyDigitalProducts) {
+      return { discount: 0, originalCost: 0, finalCost: 0 };
+    }
+
+    const originalCost = selectedShippingMethod.originalCost || selectedShippingMethod.cost || 0;
+    const isDomestic = selectedCountry === 'US';
+    let discount = 0;
+    let finalCost = originalCost;
+
+    // Premium tier shipping discounts
+    const premiumTier = getPremiumTier();
+    if (!premiumTier) {
+      return { discount: 0, originalCost, finalCost: originalCost };
+    }
+
+    if (isDomestic) {
+      if (selectedShippingMethod.speed === 'standard') {
+        if (premiumTier === '3months') {
+          discount = 10;
+        } else if (premiumTier === '6months') {
+          discount = 20;
+        } else if (premiumTier === '12months') {
+          discount = 60; // Free
+        }
+      } else if (selectedShippingMethod.speed === 'express') {
+        if (premiumTier === '6months') {
+          discount = 20;
+        } else if (premiumTier === '12months') {
+          discount = 40;
+        }
+      }
+    } else {
+      // International
+      if (selectedShippingMethod.speed === 'standard' && premiumTier === '12months') {
+        discount = 20;
+      }
+    }
+
+    finalCost = Math.max(0, originalCost - discount);
+    return { discount, originalCost, finalCost };
+  };
+
   const availableShippingOptions = calculateShippingOptions();
+
+  // Check if cart only contains digital products (gift cards or digital items)
+  const isOnlyDigitalProducts = cartItems.length > 0 && cartItems.every((item) => {
+    const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+    const isDigital = item.type === 'digital';
+    return isGiftCard || isDigital;
+  });
+
+  // Check if cart only contains gift cards
+  const isOnlyGiftCards = cartItems.length > 0 && cartItems.every((item) => {
+    return item.name === 'GIFT CARD' || item.type === 'gift-card';
+  });
 
   // Calculate order totals
   const orderAmount = cartItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
@@ -760,14 +917,51 @@ function CheckoutPage() {
     return sum + (item.price || 0) * (item.quantity || 1);
   }, 0);
   
+  // Calculate points-eligible amount (exclude gift cards and digital items like memberships)
+  const pointsEligibleAmount = cartItems.reduce((sum, item) => {
+    // Skip gift cards and digital items (memberships)
+    const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+    const isDigital = item.type === 'digital';
+    
+    if (isGiftCard || isDigital) {
+      return sum; // Don't add to points-eligible amount
+    }
+    
+    return sum + (item.price || 0) * (item.quantity || 1);
+  }, 0);
+  
   const taxesProcessing = taxableAmount * 0.10; // 10% sales tax on taxable amount only (excluding gift cards, digital items, shipping & discounts)
   
-  // Calculate shipping based on selected method
+  // Calculate shipping based on selected method (applies premium discount)
   const getShippingCost = () => {
+    if (isSubscriptionUpgrade || isOnlyDigitalProducts) return 0; // No shipping for digital subscription upgrades or digital-only carts
     if (!selectedShippingMethod) return 0;
-    return selectedShippingMethod.cost || 0;
+    
+    // Get premium discount
+    const premiumDiscount = calculatePremiumShippingDiscount();
+    return premiumDiscount.finalCost;
   };
   const shippingHandling = getShippingCost();
+  
+  // Get premium shipping discount info for display
+  const premiumShippingDiscount = calculatePremiumShippingDiscount();
+
+  // Update applied gift card balance when order amount changes (cap at order total)
+  // NOT applied to subscription upgrades
+  useEffect(() => {
+    // Don't apply gift card to subscription upgrades
+    if (isSubscriptionUpgrade) {
+      setAppliedGiftCardBalance(0);
+      return;
+    }
+    
+    if (giftCardBalance > 0) {
+      // Calculate the maximum discountable amount (order + taxes + shipping + rush + protection)
+      const maxDiscountable = orderAmount + taxesProcessing + shippingHandling + (selectedProcessing === 'rush' ? 100 : 0) + (packageProtection ? 5 : 0);
+      const cappedBalance = Math.min(giftCardBalance, maxDiscountable);
+      setAppliedGiftCardBalance(cappedBalance);
+    }
+  }, [giftCardBalance, orderAmount, taxesProcessing, shippingHandling, selectedProcessing, packageProtection, isSubscriptionUpgrade]);
   
   // Discount code validation function
   const validateDiscountCode = (code: string): number => {
@@ -791,6 +985,13 @@ function CheckoutPage() {
       return;
     }
     
+    // Show error for digital products (subscription upgrades or gift cards)
+    if (isSubscriptionUpgrade || isOnlyGiftCards) {
+      setDiscountCodeError('SORRY, THIS CODE IS NOT VALID.');
+      setAppliedDiscount(0);
+      return;
+    }
+    
     const discountAmount = validateDiscountCode(discountCode);
     
     if (discountAmount > 0) {
@@ -798,16 +999,19 @@ function CheckoutPage() {
       setDiscountCodeError('');
     } else {
       setAppliedDiscount(0);
-      setDiscountCodeError('SORRY, THIS CODE IS INVALID.');
+      setDiscountCodeError('SORRY, THIS CODE IS NOT VALID.');
     }
   };
   
   const discount = appliedDiscount;
+  // Gift card discount should NOT be applied to subscription upgrades
+  const giftCardDiscount = isSubscriptionUpgrade ? 0 : appliedGiftCardBalance; // Automatically applied gift card balance
+  const totalDiscount = discount + giftCardDiscount; // Combined discount from codes and gift card
   const rushProcessing = selectedProcessing === 'rush' ? 100 : 0;
   const protectionFee = packageProtection ? 5 : 0;
   // Calculate tip amount: if percentage is set, use that; otherwise use custom dollar amount (only if applied)
   const tipAmount = tipPercentage !== null ? Math.round(orderAmount * (tipPercentage / 100)) : (customTipApplied ? customTipAmount : 0);
-  const subtotal = orderAmount + taxesProcessing + shippingHandling + rushProcessing + protectionFee - discount + tipAmount;
+  const subtotal = orderAmount + taxesProcessing + shippingHandling + rushProcessing + protectionFee - totalDiscount + tipAmount;
 
   // Prepare payment data for payment handlers
   const preparePaymentData = (): PaymentData => {
@@ -815,7 +1019,7 @@ function CheckoutPage() {
     const convertedOrderAmount = orderAmount * currency.rate;
     const convertedTaxes = taxesProcessing * currency.rate;
     const convertedShipping = shippingHandling * currency.rate;
-    const convertedDiscount = discount * currency.rate;
+    const convertedDiscount = totalDiscount * currency.rate; // Use totalDiscount (includes gift card)
     const convertedTip = tipAmount * currency.rate;
     const convertedRush = rushProcessing * currency.rate;
     const convertedProtection = protectionFee * currency.rate;
@@ -842,8 +1046,8 @@ function CheckoutPage() {
   const handlePaymentClick = async (provider: PaymentProvider) => {
     if (processingPayment) return; // Prevent multiple clicks
     
-    // Validate shipping method is selected
-    if (!selectedShippingMethod) {
+    // Validate shipping method is selected (skip for subscription upgrades)
+    if (!isSubscriptionUpgrade && !selectedShippingMethod) {
       setValidationMessage('SHIPPING METHOD IS REQUIRED.');
       setShowValidationModal(true);
       return;
@@ -988,23 +1192,23 @@ function CheckoutPage() {
           color: #909090 !important;
         }
       `}</style>
-    <div className="min-h-screen" style={{ position: 'relative' }}>
-      {/* Marble Background */}
-      <div 
-        className="fixed inset-0 -z-10"
-        style={{
-          backgroundImage: `url('/assets/marble-half.png')`,
-          backgroundSize: 'contain',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'repeat',
-          backgroundAttachment: 'fixed'
-        }}
-      />
-      
-      {/* Scrollable Content */}
-      <div className="relative z-10">
-        <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible' }}>
-          {/* NAV BAR CONTAINER */}
+      <div className="min-h-screen" style={{ position: 'relative' }}>
+        {/* Marble Background */}
+        <div 
+          className="fixed inset-0 -z-10"
+          style={{
+            backgroundImage: `url('/assets/marble-half.png')`,
+            backgroundSize: 'contain',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'repeat',
+            backgroundAttachment: 'fixed'
+          }}
+        />
+        
+        {/* Scrollable Content */}
+        <div className="relative z-10">
+          <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible' }}>
+            {/* NAV BAR CONTAINER */}
           <div
             className="border-solid border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm relative"
             style={{ border: '1.3px solid black' }}
@@ -1041,7 +1245,7 @@ function CheckoutPage() {
               ) : (
                 <>
                   <button 
-                    onClick={() => navigate('/bag')} 
+                    onClick={() => isSubscriptionUpgrade ? navigate('/account/membership') : navigate('/bag')} 
                     className="cursor-pointer"
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
                   >
@@ -1084,14 +1288,14 @@ function CheckoutPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/bag')}
+                    onClick={() => isSubscriptionUpgrade ? navigate('/account/membership') : navigate('/bag')}
                   >
-                    BAG &gt;
+                    {isSubscriptionUpgrade ? 'CHECKOUT >' : 'BAG >'}
                   </span>{' '}
                   <span
                     style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
                   >
-                    CHECKOUT
+                    {isSubscriptionUpgrade ? 'UPGRADE' : 'CHECKOUT'}
                   </span>
                 </>
               )}
@@ -1371,7 +1575,7 @@ function CheckoutPage() {
               </div>
             ) : (
               /* CHECKOUT CONTENT */
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '24px', rowGap: '24px' }}>
                 {/* ORDER SUMMARY HEADER */}
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '-1px', marginTop: '-12px' }}>
                   <button
@@ -1530,7 +1734,7 @@ function CheckoutPage() {
                               <p
                                 style={{
                                   fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                                    fontSize: '16.8px',
+                                  fontSize: itemName === '6 MONTHS PREMIUM' ? '14.8px' : '16.8px',
                                   color: '#000000',
                                     marginTop: '4px',
                                     marginBottom: '0',
@@ -1573,6 +1777,9 @@ function CheckoutPage() {
                                   if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
                                     return 'DIGITAL ONLY';
                                   }
+                                  if (item.type === 'digital' || isSubscriptionUpgrade) {
+                                    return 'DIGITAL ONLY';
+                                  }
                                   return `${itemLength} RAW ${itemHairOrigin}`;
                                 })()}
                               </p>
@@ -1597,7 +1804,7 @@ function CheckoutPage() {
                                     fontSize: '10px',
                                     fontWeight: '500',
                                     color: '#000000',
-                                    margin: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '4px 0 0 0' : '1px 0 0 0',
+                                    margin: (item.name === 'GIFT CARD' || item.type === 'gift-card' || item.type === 'digital' || isSubscriptionUpgrade) ? '4px 0 0 0' : '1px 0 0 0',
                                     textTransform: 'uppercase',
                                     textAlign: 'center'
                                   }}
@@ -1628,7 +1835,18 @@ function CheckoutPage() {
                         }}>
                           {isSignedIn ? (
                             <>
-                              YOU'RE EARNING <span style={{ color: '#EB1C24' }}>${orderAmount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span> LOYALTY POINTS WITH THIS ORDER.
+                              {(() => {
+                                const basePoints = (isSubscriptionUpgrade || isOnlyDigitalProducts ? 0 : Math.round(pointsEligibleAmount));
+                                const multiplier = 1;
+                                const multiplierText = '';
+                                
+                                const actualPoints = Math.round(basePoints * multiplier);
+                                const pointsText = multiplier > 1 
+                                  ? `${basePoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} × ${multiplier} = ${actualPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
+                                  : actualPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                                
+                                return <>YOU'RE EARNING <span style={{ color: '#EB1C24' }}>{pointsText}</span> LOYALTY POINTS WITH THIS ORDER{multiplierText}.</>;
+                              })()}
                             </>
                           ) : (
                             <>
@@ -1662,7 +1880,7 @@ function CheckoutPage() {
                 </div>
 
                 {/* DISCOUNT CODE SECTION */}
-                <div style={{ marginBottom: '-9px', marginTop: '-4px' }}>
+                <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '0' }}>
                     <input
                       type="text"
@@ -1766,7 +1984,7 @@ function CheckoutPage() {
                     </div>
 
                 {/* OTHER PAYMENT OPTIONS SECTION */}
-                <div style={{ marginTop: '9px', marginBottom: '8px' }}>
+                <div>
                   <h2 
                     style={{ 
                       fontFamily: '"Futura PT Medium"',
@@ -1841,7 +2059,7 @@ function CheckoutPage() {
                     </div>
 
                 {/* PAYMENT PLANS SECTION */}
-                <div style={{ marginTop: '-6px', marginBottom: '8px' }}>
+                <div>
                   <h2 
                     style={{ 
                       fontFamily: '"Futura PT Medium"',
@@ -1916,7 +2134,7 @@ function CheckoutPage() {
                     </div>
 
                 {/* SHIPPING ADDRESS SECTION */}
-                <div style={{ marginTop: '-2px' }}>
+                <div>
                   <h2 
                     style={{ 
                       fontFamily: '"Futura PT Medium"',
@@ -2807,7 +3025,7 @@ function CheckoutPage() {
                             />
                           </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-                <div>
+                      <div>
                       <label 
                         style={{ 
                           fontFamily: '"Futura PT Book"',
@@ -2848,7 +3066,7 @@ function CheckoutPage() {
                         }}
                       />
                       </div>
-                <div>
+                      <div>
                       <label 
                         style={{ 
                           fontFamily: '"Futura PT Book"',
@@ -2923,7 +3141,6 @@ function CheckoutPage() {
                           }}
                         />
                     </div>
-                  </div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -3001,8 +3218,9 @@ function CheckoutPage() {
                   </div>
                 </div>
 
-                {/* SHIPPING CALCULATOR SECTION */}
-                <div>
+                {/* SHIPPING CALCULATOR SECTION - Hidden for subscription upgrades and digital-only carts */}
+                {!isSubscriptionUpgrade && !isOnlyDigitalProducts && (
+                  <div style={{ marginTop: '24px', marginBottom: '24px' }}>
                   <h2 
                       style={{ 
                       fontFamily: '"Futura PT Medium"',
@@ -3217,8 +3435,8 @@ function CheckoutPage() {
                     )}
                   </div>
                   
-                  {/* SHIPPING METHOD SELECTION */}
-                  {shippingCalculated && availableShippingOptions.length > 0 && !zipCodeError && (
+                  {/* SHIPPING METHOD SELECTION - Hidden for subscription upgrades and digital-only carts */}
+                  {!isSubscriptionUpgrade && !isOnlyDigitalProducts && shippingCalculated && availableShippingOptions.length > 0 && !zipCodeError && (
                     <div style={{ marginTop: '26px', marginBottom: '5px' }}>
                       <h2 
                         style={{ 
@@ -3242,7 +3460,8 @@ function CheckoutPage() {
                                 onClick={() => setSelectedShippingMethod({
                                   carrier: option.carrier,
                                   speed: option.speed,
-                                  cost: option.cost
+                                  cost: option.cost,
+                                  originalCost: option.originalCost || option.cost
                                 })}
                                 style={{
                                   width: '16px',
@@ -3282,9 +3501,11 @@ function CheckoutPage() {
                     </div>
                   )}
                 </div>
+                )}
 
                 {/* DELIVERY METHOD SECTION */}
-                <div>
+                {!isSubscriptionUpgrade && !isOnlyDigitalProducts && (
+                <div style={{ marginBottom: '24px' }}>
                   <h2 
                     style={{ 
                       fontFamily: '"Futura PT Medium"',
@@ -3436,9 +3657,10 @@ function CheckoutPage() {
                     </div>
                   </div>
                 </div>
+                )}
 
                 {/* TIPPING SECTION */}
-                <div style={{ marginTop: '4px', marginBottom: '4px' }}>
+                <div style={{ marginTop: isSubscriptionUpgrade ? '24px' : '4px', marginBottom: '24px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <div style={{ display: 'flex', gap: '8px', flexWrap: 'nowrap', width: '100%' }}>
                       {[10, 15, 20, 25, 30].map((percentage) => (
@@ -3593,7 +3815,7 @@ function CheckoutPage() {
                 </div>
 
                 {/* ORDER SUMMARY (COST BREAKDOWN) */}
-                <div>
+                <div style={{ marginBottom: '24px' }}>
                   <h2 
                     style={{ 
                       fontFamily: '"Futura PT Medium"',
@@ -3619,11 +3841,29 @@ function CheckoutPage() {
                       </span>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(taxesProcessing)}></span>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
-                        SHIPPING + HANDLING:
+                        SHIPPING + HANDLING:{premiumShippingDiscount.discount > 0 && <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080' }}> PREMIUM</span>}
                       </span>
-                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(shippingHandling)}></span>
+                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        {premiumShippingDiscount.discount > 0 ? (
+                          <>
+                            {premiumShippingDiscount.finalCost === 0 ? (
+                              <>
+                                <span style={{ color: '#EB1C24' }}>FREE</span>
+                                <span style={{ textDecoration: 'line-through' }} dangerouslySetInnerHTML={formatPrice(premiumShippingDiscount.originalCost)}></span>
+                              </>
+                            ) : (
+                              <>
+                                <span style={{ color: '#EB1C24' }}>(-${premiumShippingDiscount.discount})</span>
+                                <span dangerouslySetInnerHTML={formatPrice(premiumShippingDiscount.finalCost)}></span>
+                              </>
+                            )}
+                          </>
+                        ) : (
+                          <span dangerouslySetInnerHTML={formatPrice(shippingHandling)}></span>
+                        )}
+                      </span>
                     </div>
                     {rushProcessing > 0 && (
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -3649,6 +3889,26 @@ function CheckoutPage() {
                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(tipAmount)}></span>
                       </div>
                     )}
+                    {giftCardDiscount > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
+                        DISCOUNT:<span style={{ fontFamily: '"Futura PT Demi"', color: '#808080' }}> GIFT CARD</span>
+                      </span>
+                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>
+                        ({(() => {
+                          const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+                          const convertedAmount = giftCardDiscount * currency.rate;
+                          const formattedAmount = convertedAmount.toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                          });
+                          // Extract symbol and format as -$70.00
+                          const symbol = currency.symbol.replace(/&#36;/g, '$').replace(/&euro;/g, '€').replace(/&pound;/g, '£').replace(/&yen;/g, '¥').replace(/&#8377;/g, '₹');
+                          return `-${symbol}${formattedAmount}`;
+                        })()})
+                      </span>
+                    </div>
+                    )}
                     {discount > 0 && (
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
@@ -3667,7 +3927,7 @@ function CheckoutPage() {
                 </div>
 
                 {/* ORDER NOTES */}
-                <div>
+                <div style={{ marginBottom: '24px' }}>
                   <h2 
                     style={{ 
                       fontFamily: '"Futura PT Medium"',
@@ -3697,6 +3957,45 @@ function CheckoutPage() {
 
                 {/* CHECKBOXES AND SUBMIT BUTTON */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '-4px' }}>
+                  {/* AUTO RENEW MEMBERSHIP - Only for subscription upgrades */}
+                  {isSubscriptionUpgrade && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div
+                        onClick={() => setAutoRenewMembership(!autoRenewMembership)}
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          border: '1.3px solid #000000',
+                          backgroundColor: 'transparent',
+                          position: 'relative'
+                        }}
+                      >
+                        {autoRenewMembership && (
+                          <img 
+                            src="/assets/checkbox.svg" 
+                            alt="checked" 
+                            style={{ width: '16px', height: '16px', position: 'absolute' }}
+                          />
+                        )}
+                      </div>
+                      <label 
+                        onClick={() => setAutoRenewMembership(!autoRenewMembership)}
+                        style={{ 
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#000000',
+                          cursor: 'pointer',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        AUTO RENEW MEMBERSHIP
+                      </label>
+                    </div>
+                  )}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div
                       onClick={() => setSubscribeNewsletter(!subscribeNewsletter)}
@@ -3774,6 +4073,7 @@ function CheckoutPage() {
                     </label>
                   </div>
                 </div>
+              </div>
               </div>
             )}
           </div>
@@ -3899,8 +4199,8 @@ function CheckoutPage() {
                     }
                   }
                   
-                  // Check if shipping method is selected
-                  if (!selectedShippingMethod) {
+                  // Check if shipping method is selected (skip for subscription upgrades and digital-only carts)
+                  if (!isSubscriptionUpgrade && !isOnlyDigitalProducts && !selectedShippingMethod) {
                     setValidationMessage('SHIPPING METHOD IS REQUIRED.');
                     setShowValidationModal(true);
                     return;
@@ -3912,11 +4212,11 @@ function CheckoutPage() {
                     return;
                   }
                   
-                  // Calculate points earned (if signed in)
-                  const pointsEarned = isSignedIn ? Math.round(orderAmount) : 0;
+                  // Calculate points earned (if signed in) - exclude gift cards and digital items
+                  const basePoints = isSignedIn ? Math.round(pointsEligibleAmount) : 0;
+                  const multiplier = 1;
                   
-                  // Determine tier (simplified - you may want to get this from user data)
-                  const tier = pointsEarned >= 5000 ? 'RED' : pointsEarned >= 2000 ? 'GOLD' : 'SILVER';
+                  const pointsEarned = Math.round(basePoints * multiplier);
                   
                   // Get and increment order number
                   const lastOrderNumber = parseInt(localStorage.getItem('lastOrderNumber') || '0', 10);
@@ -4049,6 +4349,108 @@ function CheckoutPage() {
                     }
                   }
                   
+                  // Save subscription tier if this is a subscription upgrade
+                  if (isSubscriptionUpgrade && isSignedIn) {
+                    try {
+                      const subscriptionItem = localStorage.getItem('subscriptionUpgrade');
+                      if (subscriptionItem) {
+                        const item = JSON.parse(subscriptionItem);
+                        const subscriptionTier = item.subscriptionTier; // '3months', '6months', or '12months'
+                        
+                        if (subscriptionTier) {
+                          const currentUser = localStorage.getItem('currentUser');
+                          if (currentUser) {
+                            const user = JSON.parse(currentUser);
+                            
+                            // Calculate subscription end date based on tier
+                            const subscriptionEndDate = new Date();
+                            const monthsToAdd = subscriptionTier === '3months' ? 3 : subscriptionTier === '6months' ? 6 : 12;
+                            subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + monthsToAdd);
+                            
+                            // Check which discounts have been unlocked
+                            // If user doesn't have unlockedDiscounts field, initialize it
+                            // If they already have a subscriptionTier, mark that as already unlocked (migration for existing users)
+                            let unlockedDiscounts = user.unlockedDiscounts || [];
+                            if (!user.unlockedDiscounts && user.subscriptionTier) {
+                              // Existing user with subscription but no unlockedDiscounts - mark their current tier as unlocked
+                              unlockedDiscounts = [user.subscriptionTier];
+                            }
+                            
+                            // Calculate welcome gift card balance based on subscription tier
+                            // Only apply welcome discount if this tier hasn't been unlocked before
+                            let welcomeGiftCardAmount = 0;
+                            if (!unlockedDiscounts.includes(subscriptionTier)) {
+                              welcomeGiftCardAmount = subscriptionTier === '3months' ? 10 : subscriptionTier === '6months' ? 20 : 40;
+                            }
+                            
+                            const currentGiftCardBalance = user.giftCardBalance || 0;
+                            
+                            // Track this tier as unlocked if we're applying the discount
+                            const updatedUnlockedDiscounts = welcomeGiftCardAmount > 0 
+                              ? [...unlockedDiscounts, subscriptionTier]
+                              : unlockedDiscounts;
+                            
+                            const updatedUser = {
+                              ...user,
+                              membershipType: 'PREMIUM',
+                              subscriptionTier: subscriptionTier,
+                              subscriptionPurchasedAt: new Date().toISOString(),
+                              subscriptionEndDate: subscriptionEndDate.toISOString(),
+                              autoRenewMembership: autoRenewMembership,
+                              giftCardBalance: currentGiftCardBalance + welcomeGiftCardAmount,
+                              unlockedDiscounts: updatedUnlockedDiscounts
+                            };
+                            
+                            localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                            
+                            // Also update in registered users list
+                            const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                            const userIndex = registeredUsers.findIndex((u: any) => u.email === user.email);
+                            if (userIndex !== -1) {
+                              registeredUsers[userIndex] = updatedUser;
+                              localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                            }
+                            
+                            // Clear subscription upgrade flags
+                            localStorage.removeItem('subscriptionUpgrade');
+                            localStorage.removeItem('isSubscriptionUpgrade');
+                          }
+                        }
+                      }
+                    } catch (error) {
+                      console.error('Error saving subscription tier:', error);
+                    }
+                  }
+                  
+                  // Deduct gift card balance from user account after successful order
+                  if (isSignedIn && appliedGiftCardBalance > 0) {
+                    try {
+                      const currentUser = localStorage.getItem('currentUser');
+                      if (currentUser) {
+                        const user = JSON.parse(currentUser);
+                        const currentBalance = user.giftCardBalance || 0;
+                        const newBalance = Math.max(0, currentBalance - appliedGiftCardBalance);
+                        
+                        const updatedUser = {
+                          ...user,
+                          giftCardBalance: newBalance
+                        };
+                        
+                        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                        
+                        // Also update in registered users list
+                        const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                        const userIndex = registeredUsers.findIndex((u: any) => u.email === user.email);
+                        if (userIndex !== -1) {
+                          registeredUsers[userIndex] = updatedUser;
+                          localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                        }
+                      }
+                    } catch (error) {
+                      console.error('Error deducting gift card balance:', error);
+                    }
+                  }
+                  
                   // Navigate to confirmation page with order data
                   navigate('/checkout/summary', {
                     state: {
@@ -4067,7 +4469,6 @@ function CheckoutPage() {
                       paymentMethod: paymentMethodDisplay,
                       email,
                       pointsEarned,
-                      tier: isSignedIn ? tier : '',
                       cartItems: cartItems
                     }
                   });
@@ -4090,9 +4491,9 @@ function CheckoutPage() {
         </div>
       </div>
     
-    {/* Terms & Conditions Modal */}
-    {showTermsModal && (
-      <div 
+      {/* Terms & Conditions Modal */}
+      {showTermsModal && (
+        <div 
         className="fixed z-50 backdrop-blur-md"
         style={{
           top: '0',
@@ -4229,10 +4630,10 @@ function CheckoutPage() {
           </div>
         </div>
       </div>
-    )}
+        )}
 
-    {/* Terms Required Modal */}
-    <ConfirmationModal
+      {/* Terms Required Modal */}
+      <ConfirmationModal
       isOpen={showTermsRequiredModal}
       onClose={() => setShowTermsRequiredModal(false)}
       onConfirm={() => setShowTermsRequiredModal(false)}
@@ -4242,9 +4643,9 @@ function CheckoutPage() {
       cancelText="CLOSE"
       messageTextTransform="uppercase"
     />
-    
-    {/* Validation Modal */}
-    <ConfirmationModal
+
+      {/* Validation Modal */}
+      <ConfirmationModal
       isOpen={showValidationModal}
       onClose={() => {
         setShowValidationModal(false);
@@ -4315,8 +4716,8 @@ function CheckoutPage() {
       messageTextTransform="uppercase"
     />
     
-    {/* Sign Out Confirmation Modal */}
-    <ConfirmationModal
+      {/* Sign Out Confirmation Modal */}
+      <ConfirmationModal
       isOpen={showSignOutConfirm}
       onClose={() => setShowSignOutConfirm(false)}
       onConfirm={handleSignOut}
