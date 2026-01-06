@@ -23,7 +23,9 @@ function CapSizeSelection() {
     const isOnCustomizeRoute = pathname.includes('/noir/customize') ||
                                pathname.includes('/blanco/customize') ||
                                pathname.includes('/soft-wave/customize') ||
-                               pathname.includes('/soft-curl/customize');
+                               pathname.includes('/soft-curl/customize') ||
+                               pathname.includes('/ocean-curl/customize') ||
+                               pathname.includes('/beach-wave/customize');
     
     // CRITICAL: Check editSelected* keys first when in edit mode
     if (isOnEditRoute) {
@@ -65,7 +67,9 @@ function CapSizeSelection() {
     const isOnCustomizeRoute = pathname.includes('/noir/customize') ||
                                pathname.includes('/blanco/customize') ||
                                pathname.includes('/soft-wave/customize') ||
-                               pathname.includes('/soft-curl/customize');
+                               pathname.includes('/soft-curl/customize') ||
+                               pathname.includes('/ocean-curl/customize') ||
+                               pathname.includes('/beach-wave/customize');
     
     let storedCapSize: string | null = null;
     if (isOnEditRoute) {
@@ -130,7 +134,12 @@ function CapSizeSelection() {
       // NOTE: Only update if the stored value is different to prevent overwriting user selections
       const pathname = window.location.pathname;
       const isOnEditRoute = pathname.includes('/edit');
-      const isOnCustomizeRoute = pathname.includes('/noir/customize');
+      const isOnCustomizeRoute = pathname.includes('/noir/customize') ||
+                                 pathname.includes('/blanco/customize') ||
+                                 pathname.includes('/soft-wave/customize') ||
+                                 pathname.includes('/soft-curl/customize') ||
+                                 pathname.includes('/ocean-curl/customize') ||
+                                 pathname.includes('/beach-wave/customize');
       
       let storedCapSize: string | null = null;
       if (isOnEditRoute) {

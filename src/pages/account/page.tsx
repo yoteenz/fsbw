@@ -474,7 +474,7 @@ function AccountPage() {
           highestTier = 'BLACK';
         } else if (spending >= 2000 && (!highestTier || highestTier === 'SILVER')) {
           highestTier = 'RED';
-        } else if (spending >= 1000 && !highestTier) {
+        } else if (spending >= 500 && !highestTier) {
           highestTier = 'SILVER';
         }
       });
@@ -547,7 +547,7 @@ function AccountPage() {
       currentTier = 'BLACK';
     } else if (totalSpending >= 2000) {
       currentTier = 'RED';
-    } else if (totalSpending >= 1000) {
+    } else if (totalSpending >= 500) {
       currentTier = 'SILVER';
     }
 

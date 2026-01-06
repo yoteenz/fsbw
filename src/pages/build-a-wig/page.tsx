@@ -716,13 +716,25 @@ export default function BuildAWigPage() {
         // CRITICAL: Prioritize customizeSelected* keys (set by sub-pages), then selected* keys, then current state
         // This ensures we always use the NEW value from the sub-page, not stale values
         const isBlancoCustomizeRoute = location.pathname.startsWith('/build-a-wig/blanco');
+        const isOceanCurlCustomizeRoute = location.pathname.startsWith('/build-a-wig/ocean-curl');
+        const isBeachWaveCustomizeRoute = location.pathname.startsWith('/build-a-wig/beach-wave');
+        const isSoftCurlCustomizeRoute = location.pathname.startsWith('/build-a-wig/soft-curl');
+        const isSoftWaveCustomizeRoute = location.pathname.startsWith('/build-a-wig/soft-wave');
         const defaultColor = isBlancoCustomizeRoute ? 'PLATINUM' : 'OFF BLACK';
+        
+        // Determine product-specific default texture
+        let defaultTexture = 'SILKY';
+        if (isOceanCurlCustomizeRoute || isSoftCurlCustomizeRoute) {
+          defaultTexture = 'CURLY';
+        } else if (isBeachWaveCustomizeRoute || isSoftWaveCustomizeRoute) {
+          defaultTexture = 'WAVY';
+        }
         
         const savedCapSizeFinal = savedCapSizeCustomize || savedCapSizeSelected || customization.capSize || 'M';
         const savedLength = savedLengthCustomize || savedLengthSelected || customization.length || '24"';
         const savedDensity = savedDensityCustomize || savedDensitySelected || customization.density || '200%';
         const savedLace = savedLaceCustomize || savedLaceSelected || customization.lace || '13X6';
-        const savedTexture = savedTextureCustomize || savedTextureSelected || customization.texture || 'SILKY';
+        const savedTexture = savedTextureCustomize || savedTextureSelected || customization.texture || defaultTexture;
         const savedColor = savedColorCustomize || savedColorSelected || customization.color || defaultColor;
         const savedHairline = savedHairlineCustomize || savedHairlineSelected || customization.hairline || 'NATURAL';
         const savedStyling = savedStylingCustomize || savedStylingSelected || customization.styling || 'NONE';
@@ -835,12 +847,24 @@ export default function BuildAWigPage() {
         if (savedCapSize) {
           // Load existing selections from customizeSelected* keys if they exist, otherwise use defaults
           const isBlancoCustomizeRouteForDefaults = location.pathname.startsWith('/build-a-wig/blanco');
+          const isOceanCurlCustomizeRouteForDefaults = location.pathname.startsWith('/build-a-wig/ocean-curl');
+          const isBeachWaveCustomizeRouteForDefaults = location.pathname.startsWith('/build-a-wig/beach-wave');
+          const isSoftCurlCustomizeRouteForDefaults = location.pathname.startsWith('/build-a-wig/soft-curl');
+          const isSoftWaveCustomizeRouteForDefaults = location.pathname.startsWith('/build-a-wig/soft-wave');
           const defaultColorForFirstLoad = isBlancoCustomizeRouteForDefaults ? 'PLATINUM' : 'OFF BLACK';
+          
+          // Determine product-specific default texture
+          let defaultTextureForFirstLoad = 'SILKY';
+          if (isOceanCurlCustomizeRouteForDefaults || isSoftCurlCustomizeRouteForDefaults) {
+            defaultTextureForFirstLoad = 'CURLY';
+          } else if (isBeachWaveCustomizeRouteForDefaults || isSoftWaveCustomizeRouteForDefaults) {
+            defaultTextureForFirstLoad = 'WAVY';
+          }
           
           const existingLength = localStorage.getItem('customizeSelectedLength') || localStorage.getItem('selectedLength') || '24"';
           const existingDensity = localStorage.getItem('customizeSelectedDensity') || localStorage.getItem('selectedDensity') || '200%';
           const existingLace = localStorage.getItem('customizeSelectedLace') || localStorage.getItem('selectedLace') || '13X6';
-          const existingTexture = localStorage.getItem('customizeSelectedTexture') || localStorage.getItem('selectedTexture') || 'SILKY';
+          const existingTexture = localStorage.getItem('customizeSelectedTexture') || localStorage.getItem('selectedTexture') || defaultTextureForFirstLoad;
           const existingColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor') || defaultColorForFirstLoad;
           const existingHairline = localStorage.getItem('customizeSelectedHairline') || localStorage.getItem('selectedHairline') || 'NATURAL';
           const existingStyling = localStorage.getItem('customizeSelectedStyling') || localStorage.getItem('selectedStyling') || 'NONE';

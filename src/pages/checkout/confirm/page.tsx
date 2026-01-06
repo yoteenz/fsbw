@@ -284,10 +284,25 @@ function CheckoutConfirmPage() {
           }, 0)
         : 1290; // Default taxable amount if cart is empty
       
+      // Calculate points-eligible amount (exclude gift cards and digital items like memberships)
+      const pointsEligibleAmount = cartItems.length > 0
+        ? cartItems.reduce((sum, item) => {
+            // Skip gift cards and digital items (memberships)
+            const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+            const isDigital = item.type === 'digital';
+            
+            if (isGiftCard || isDigital) {
+              return sum; // Don't add to points-eligible amount
+            }
+            
+            return sum + (item.price || 0) * (item.quantity || 1);
+          }, 0)
+        : 1290; // Default points-eligible amount if cart is empty
+      
       const taxesProcessing = taxableAmount * 0.10;
       const shippingHandling = 60; // Standard shipping
       const subtotal = calculatedTotal + taxesProcessing + shippingHandling;
-      const pointsEarned = Math.round(calculatedTotal);
+      const pointsEarned = Math.round(pointsEligibleAmount);
       
       // Determine tier based on points
       let tier = 'SILVER';

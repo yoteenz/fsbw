@@ -114,6 +114,7 @@ function BeachWaveSelection() {
 
   // CRITICAL: Clear any noir-specific localStorage values and set BEACH WAVE defaults on page load
   // This prevents noir page settings from interfering with beach-wave page
+  // BUT: Don't overwrite if we're in customize mode (customizeSelected* keys exist)
   useEffect(() => {
     // Clear any edit mode flags that might be from other products
     if (localStorage.getItem('editingCartItem')) {
@@ -125,24 +126,34 @@ function BeachWaveSelection() {
       }
     }
     
-    // Set BEACH WAVE-specific defaults (don't read from localStorage to avoid noir contamination)
-    // These are only used if user goes to build-a-wig page from beach-wave
-    localStorage.setItem('selectedLength', '24"');
-    localStorage.setItem('selectedLengthPrice', '0');
-    localStorage.setItem('selectedDensity', '200%');
-    localStorage.setItem('selectedDensityPrice', '0');
-    localStorage.setItem('selectedLace', '13X6');
-    localStorage.setItem('selectedLacePrice', '0');
-    localStorage.setItem('selectedTexture', 'SILKY');
-    localStorage.setItem('selectedTexturePrice', '0');
-    localStorage.setItem('selectedColor', 'OFF BLACK');
-    localStorage.setItem('selectedColorPrice', '0');
-    localStorage.setItem('selectedHairline', 'NATURAL');
-    localStorage.setItem('selectedHairlinePrice', '0');
-    localStorage.setItem('selectedStyling', 'NONE');
-    localStorage.setItem('selectedStylingPrice', '0');
-    localStorage.setItem('selectedAddOns', JSON.stringify([]));
-    localStorage.setItem('selectedAddOnsPrice', '0');
+    // CRITICAL: Check if we're in customize mode - if customizeSelected* keys exist, don't overwrite
+    // This preserves selections made in customize mode sub-pages
+    const isInCustomizeMode = localStorage.getItem('customizeSelectedCapSize') || 
+                              localStorage.getItem('customizeSelectedLength') ||
+                              localStorage.getItem('customizeSelectedStyling') ||
+                              localStorage.getItem('customizeSelectedAddOns');
+    
+    // Only set defaults if NOT in customize mode
+    if (!isInCustomizeMode) {
+      // Set BEACH WAVE-specific defaults (don't read from localStorage to avoid noir contamination)
+      // These are only used if user goes to build-a-wig page from beach-wave
+      localStorage.setItem('selectedLength', '24"');
+      localStorage.setItem('selectedLengthPrice', '0');
+      localStorage.setItem('selectedDensity', '200%');
+      localStorage.setItem('selectedDensityPrice', '0');
+      localStorage.setItem('selectedLace', '13X6');
+      localStorage.setItem('selectedLacePrice', '0');
+      localStorage.setItem('selectedTexture', 'WAVY'); // Default for beach-wave
+      localStorage.setItem('selectedTexturePrice', '0');
+      localStorage.setItem('selectedColor', 'OFF BLACK');
+      localStorage.setItem('selectedColorPrice', '0');
+      localStorage.setItem('selectedHairline', 'NATURAL');
+      localStorage.setItem('selectedHairlinePrice', '0');
+      localStorage.setItem('selectedStyling', 'NONE');
+      localStorage.setItem('selectedStylingPrice', '0');
+      localStorage.setItem('selectedAddOns', JSON.stringify([]));
+      localStorage.setItem('selectedAddOnsPrice', '0');
+    }
   }, []);
 
   // Helper function to check if a cart item matches the default configuration exactly

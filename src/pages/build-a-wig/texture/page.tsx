@@ -23,7 +23,9 @@ function TextureSelection() {
     const isOnCustomizeRoute = pathname.includes('/noir/customize') ||
                                pathname.includes('/blanco/customize') ||
                                pathname.includes('/soft-wave/customize') ||
-                               pathname.includes('/soft-curl/customize');
+                               pathname.includes('/soft-curl/customize') ||
+                               pathname.includes('/ocean-curl/customize') ||
+                               pathname.includes('/beach-wave/customize');
     
     // CRITICAL: Check editSelected* keys first when in edit mode
     if (isOnEditRoute) {
