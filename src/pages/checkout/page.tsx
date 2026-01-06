@@ -1290,12 +1290,12 @@ function CheckoutPage() {
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
                     onClick={() => isSubscriptionUpgrade ? navigate('/account/membership') : navigate('/bag')}
                   >
-                    {isSubscriptionUpgrade ? 'CHECKOUT >' : 'BAG >'}
+                    {isSubscriptionUpgrade ? 'UPGRADE >' : 'BAG >'}
                   </span>{' '}
                   <span
                     style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
                   >
-                    {isSubscriptionUpgrade ? 'UPGRADE' : 'CHECKOUT'}
+                    {isSubscriptionUpgrade ? 'CHECKOUT' : 'CHECKOUT'}
                   </span>
                 </>
               )}
