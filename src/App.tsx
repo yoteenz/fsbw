@@ -14,40 +14,60 @@ import AddOnsPage from './pages/build-a-wig/addons/page';
 import { lazy, Suspense } from 'react';
 import LoadingScreen from './components/base/LoadingScreen';
 
+// Helper to wrap lazy imports with logging
+const lazyWithLogging = (importFn: () => Promise<any>, componentName: string) => {
+  return lazy(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:18',message:'Lazy import attempt',data:{componentName,pathname:window.location.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+    // #endregion
+    return importFn().then(module => {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:21',message:'Lazy import success',data:{componentName},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+      // #endregion
+      return module;
+    }).catch(error => {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:26',message:'Lazy import failed',data:{componentName,errorMessage:error.message,errorStack:error.stack?.substring(0,200),isMimeTypeError:error.message.includes('MIME type')||error.message.includes('text/html')},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+      // #endregion
+      throw error;
+    });
+  });
+};
+
 // Use lazy loading for admin pages and noir page (like canonical backup)
-const AdminDashboard = lazy(() => import('./pages/admin/dashboard/page'));
-const AdminBrand = lazy(() => import('./pages/admin/brand/page'));
-const AdminClients = lazy(() => import('./pages/admin/clients/page'));
-const AdminClientsAccount = lazy(() => import('./pages/admin/clients/account/page'));
-const AdminMeetings = lazy(() => import('./pages/admin/meetings/page'));
-const AdminPending = lazy(() => import('./pages/admin/pending/page'));
-const AdminRevenue = lazy(() => import('./pages/admin/revenue/page'));
-const AdminReviews = lazy(() => import('./pages/admin/reviews/page'));
-const NoirUnitPage = lazy(() => import('./pages/straight/noir/page'));
-const BlancoUnitPage = lazy(() => import('./pages/straight/blanco/page'));
-const SoftCurlUnitPage = lazy(() => import('./pages/curly/soft-curl/page'));
-const SoftWaveUnitPage = lazy(() => import('./pages/wavy/soft-wave/page'));
-const OceanCurlUnitPage = lazy(() => import('./pages/curly/ocean-curl/page'));
-const BeachWaveUnitPage = lazy(() => import('./pages/wavy/beach-wave/page'));
-const WishlistPage = lazy(() => import('./pages/wishlist/page'));
-const AccountPage = lazy(() => import('./pages/account/page'));
-const ConciergePage = lazy(() => import('./pages/account/concierge/page'));
-const MembershipPage = lazy(() => import('./pages/account/membership/page'));
-const NotificationsPage = lazy(() => import('./pages/account/notifications/page'));
-const LoadCardPage = lazy(() => import('./pages/account/load-card/page'));
-const OrdersPage = lazy(() => import('./pages/orders/page'));
-const SignInPage = lazy(() => import('./pages/sign-in/page'));
-const ShoppingBagPage = lazy(() => import('./pages/shopping-bag/page'));
-const CheckoutPage = lazy(() => import('./pages/checkout/page'));
-const CheckoutConfirmPage = lazy(() => import('./pages/checkout/confirm/page'));
-const StraightUnitsPage = lazy(() => import('./pages/units/straight/page'));
-const WavyUnitsPage = lazy(() => import('./pages/units/wavy/page'));
-const CurlyUnitsPage = lazy(() => import('./pages/units/curly/page'));
-const ProductsPage = lazy(() => import('./pages/products/page'));
-const ProductsUnitsPage = lazy(() => import('./pages/products/units/page'));
-const ToolsPage = lazy(() => import('./pages/tools/page'));
-const GiftCardPage = lazy(() => import('./pages/tools/gift-card/page'));
-const OrderFormPage = lazy(() => import('./pages/shop/order-form/page'));
+const AdminDashboard = lazyWithLogging(() => import('./pages/admin/dashboard/page'), 'AdminDashboard');
+const AdminBrand = lazyWithLogging(() => import('./pages/admin/brand/page'), 'AdminBrand');
+const AdminClients = lazyWithLogging(() => import('./pages/admin/clients/page'), 'AdminClients');
+const AdminClientsAccount = lazyWithLogging(() => import('./pages/admin/clients/account/page'), 'AdminClientsAccount');
+const AdminMeetings = lazyWithLogging(() => import('./pages/admin/meetings/page'), 'AdminMeetings');
+const AdminPending = lazyWithLogging(() => import('./pages/admin/pending/page'), 'AdminPending');
+const AdminRevenue = lazyWithLogging(() => import('./pages/admin/revenue/page'), 'AdminRevenue');
+const AdminReviews = lazyWithLogging(() => import('./pages/admin/reviews/page'), 'AdminReviews');
+const NoirUnitPage = lazyWithLogging(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
+const BlancoUnitPage = lazyWithLogging(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
+const SoftCurlUnitPage = lazyWithLogging(() => import('./pages/curly/soft-curl/page'), 'SoftCurlUnitPage');
+const SoftWaveUnitPage = lazyWithLogging(() => import('./pages/wavy/soft-wave/page'), 'SoftWaveUnitPage');
+const OceanCurlUnitPage = lazyWithLogging(() => import('./pages/curly/ocean-curl/page'), 'OceanCurlUnitPage');
+const BeachWaveUnitPage = lazyWithLogging(() => import('./pages/wavy/beach-wave/page'), 'BeachWaveUnitPage');
+const WishlistPage = lazyWithLogging(() => import('./pages/wishlist/page'), 'WishlistPage');
+const AccountPage = lazyWithLogging(() => import('./pages/account/page'), 'AccountPage');
+const ConciergePage = lazyWithLogging(() => import('./pages/account/concierge/page'), 'ConciergePage');
+const MembershipPage = lazyWithLogging(() => import('./pages/account/membership/page'), 'MembershipPage');
+const NotificationsPage = lazyWithLogging(() => import('./pages/account/notifications/page'), 'NotificationsPage');
+const LoadCardPage = lazyWithLogging(() => import('./pages/account/load-card/page'), 'LoadCardPage');
+const OrdersPage = lazyWithLogging(() => import('./pages/orders/page'), 'OrdersPage');
+const SignInPage = lazyWithLogging(() => import('./pages/sign-in/page'), 'SignInPage');
+const ShoppingBagPage = lazyWithLogging(() => import('./pages/shopping-bag/page'), 'ShoppingBagPage');
+const CheckoutPage = lazyWithLogging(() => import('./pages/checkout/page'), 'CheckoutPage');
+const CheckoutConfirmPage = lazyWithLogging(() => import('./pages/checkout/confirm/page'), 'CheckoutConfirmPage');
+const StraightUnitsPage = lazyWithLogging(() => import('./pages/units/straight/page'), 'StraightUnitsPage');
+const WavyUnitsPage = lazyWithLogging(() => import('./pages/units/wavy/page'), 'WavyUnitsPage');
+const CurlyUnitsPage = lazyWithLogging(() => import('./pages/units/curly/page'), 'CurlyUnitsPage');
+const ProductsPage = lazyWithLogging(() => import('./pages/products/page'), 'ProductsPage');
+const ProductsUnitsPage = lazyWithLogging(() => import('./pages/products/units/page'), 'ProductsUnitsPage');
+const ToolsPage = lazyWithLogging(() => import('./pages/tools/page'), 'ToolsPage');
+const GiftCardPage = lazyWithLogging(() => import('./pages/tools/gift-card/page'), 'GiftCardPage');
+const OrderFormPage = lazyWithLogging(() => import('./pages/shop/order-form/page'), 'OrderFormPage');
 
 // Error Boundary to catch component errors
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null }> {
@@ -57,11 +77,17 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
   }
 
   static getDerivedStateFromError(error: Error) {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:59',message:'ErrorBoundary caught error',data:{errorMessage:error.message,errorStack:error.stack?.substring(0,200),isMimeTypeError:error.message.includes('MIME type')||error.message.includes('text/html')},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
     return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Error caught by boundary:', error, errorInfo);
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:64',message:'ErrorBoundary componentDidCatch',data:{errorMessage:error.message,componentStack:errorInfo.componentStack?.substring(0,200),errorName:error.name},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+    // #endregion
   }
 
   render() {
@@ -441,6 +467,11 @@ function App() {
         <Route path="/bag" element={
           <Suspense fallback={<LoadingScreen />}>
             <ShoppingBagPage />
+          </Suspense>
+        } />
+        <Route path="/checkout/upgrade" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <CheckoutPage />
           </Suspense>
         } />
         <Route path="/checkout" element={

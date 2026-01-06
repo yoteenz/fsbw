@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 
@@ -45,10 +45,19 @@ function MembershipPage() {
     return null;
   });
   const [showPremiumView, setShowPremiumView] = useState(() => {
-    // Restore premium view state from localStorage if coming back from checkout
+    // Only restore premium view state if we're coming back from checkout
     try {
-      const saved = localStorage.getItem('membershipShowPremiumView');
-      return saved === 'true';
+      // Check if we have sessionStorage flag indicating we're returning from checkout
+      const isReturningFromCheckout = sessionStorage.getItem('returningFromCheckout') === 'true';
+      
+      if (isReturningFromCheckout) {
+        // Clear the flag after checking
+        sessionStorage.removeItem('returningFromCheckout');
+        return true;
+      }
+      
+      // Default to false (rewards program card) - always start with rewards program
+      return false;
     } catch (e) {
       return false;
     }
@@ -132,6 +141,15 @@ function MembershipPage() {
 
     return primaryCode;
   };
+
+  // Reset premium view when navigating away from membership page
+  useEffect(() => {
+    return () => {
+      // Clear premium view state when component unmounts (navigating away)
+      localStorage.removeItem('membershipShowPremiumView');
+      sessionStorage.removeItem('returningFromCheckout');
+    };
+  }, []);
 
   // Listen for cart count changes
   useEffect(() => {
@@ -231,8 +249,9 @@ function MembershipPage() {
       // Save membership page state to restore when coming back
       localStorage.setItem('membershipSelectedTier', selectedTier);
       localStorage.setItem('membershipShowPremiumView', 'true');
+      sessionStorage.setItem('returningFromCheckout', 'true');
       
-      navigate('/checkout');
+      navigate('/checkout/upgrade');
     } else {
       // Switch to premium view
       setShowPremiumView(true);
@@ -335,6 +354,7 @@ function MembershipPage() {
     setSelectedTier(null);
     // Clear saved state when user closes premium view
     localStorage.removeItem('membershipShowPremiumView');
+    sessionStorage.removeItem('returningFromCheckout');
     localStorage.removeItem('membershipSelectedTier');
   };
 
@@ -1537,141 +1557,141 @@ function MembershipPage() {
                   </div>
                           </>
                         )}
-                      </div>
+                </div>
 
                       {/* BECOME AN AFFILIATE Section - Only show when loyalty rewards is not active */}
                       {!showLoyaltyRewards && (
-                        <div style={{ marginBottom: '32px' }}>
-                          <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
-                            <h2
-                              style={{
-                                fontFamily: '"Futura PT Medium"',
-                                color: '#EB1C24',
-                                fontSize: '12px',
-                                fontWeight: '500',
-                                margin: '0',
-                                textTransform: 'uppercase'
-                              }}
-                            >
-                              BECOME AN AFFILIATE
-                            </h2>
-                          </div>
-                          
-                          <div style={{ marginBottom: '12px' }}>
-                            <p
-                              style={{
-                                fontFamily: '"Futura PT Medium"',
-                                color: '#EB1C24',
-                                fontSize: '10px',
-                                margin: '0 0 8px 0',
-                                textTransform: 'uppercase',
-                                fontWeight: '500'
-                              }}
-                            >
-                              PHOTO + VIDEO TAG:
-                            </p>
-                            <p
-                              style={{
-                                fontFamily: '"Futura PT Book"',
-                                color: '#000000',
-                                fontSize: '10px',
-                                margin: '0 0 12px 0',
-                                textTransform: 'uppercase'
-                              }}
-                            >
-                              RECEIVE <span style={{ color: '#EB1C24' }}>200 PTS</span> PER PRODUCT WHEN YOU TAG US ON SOCIALS*
-                            </p>
-                          </div>
+                <div style={{ marginBottom: '32px' }}>
+                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
+                    <h2
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        color: '#EB1C24',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        margin: '0',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      BECOME AN AFFILIATE
+                    </h2>
+                  </div>
+                  
+                  <div style={{ marginBottom: '12px' }}>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        color: '#EB1C24',
+                        fontSize: '10px',
+                        margin: '0 0 8px 0',
+                        textTransform: 'uppercase',
+                        fontWeight: '500'
+                      }}
+                    >
+                      PHOTO + VIDEO TAG:
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        color: '#000000',
+                        fontSize: '10px',
+                        margin: '0 0 12px 0',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      RECEIVE <span style={{ color: '#EB1C24' }}>200 PTS</span> PER PRODUCT WHEN YOU TAG US ON SOCIALS*
+                    </p>
+                  </div>
 
-                          <div style={{ marginBottom: '12px' }}>
-                            <p
-                              style={{
-                                fontFamily: '"Futura PT Medium"',
-                                color: '#EB1C24',
-                                fontSize: '10px',
-                                margin: '0 0 8px 0',
-                                textTransform: 'uppercase',
-                                fontWeight: '500'
-                              }}
-                            >
-                              CONTENT REVIEW:
-                            </p>
-                            <p
-                              style={{
-                                fontFamily: '"Futura PT Book"',
-                                color: '#000000',
-                                fontSize: '10px',
-                                margin: '0 0 12px 0',
-                                textTransform: 'uppercase'
-                              }}
-                            >
-                              RECEIVE <span style={{ color: '#EB1C24' }}>150 PTS</span> PER PRODUCT WHEN YOU SUBMIT A CONTENT REVIEW
-                            </p>
-                          </div>
+                  <div style={{ marginBottom: '12px' }}>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        color: '#EB1C24',
+                        fontSize: '10px',
+                        margin: '0 0 8px 0',
+                        textTransform: 'uppercase',
+                        fontWeight: '500'
+                      }}
+                    >
+                      CONTENT REVIEW:
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        color: '#000000',
+                        fontSize: '10px',
+                        margin: '0 0 12px 0',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      RECEIVE <span style={{ color: '#EB1C24' }}>150 PTS</span> PER PRODUCT WHEN YOU SUBMIT A CONTENT REVIEW
+                    </p>
+                  </div>
 
-                          <div style={{ marginBottom: '16px' }}>
-                            <p
-                              style={{
-                                fontFamily: '"Futura PT Medium"',
-                                color: '#EB1C24',
-                                fontSize: '10px',
-                                margin: '0 0 8px 0',
-                                textTransform: 'uppercase',
-                                fontWeight: '500'
-                              }}
-                            >
-                              REFERRALS:
-                            </p>
-                            <p
-                              style={{
-                                fontFamily: '"Futura PT Book"',
-                                color: '#000000',
-                                fontSize: '10px',
-                                margin: '0 0 12px 0',
-                                textTransform: 'uppercase'
-                              }}
-                            >
-                              RECEIVE <span style={{ color: '#EB1C24' }}>100 PTS</span> EVERY TIME YOU REFER SOMEONE WITH YOUR 5% OFF CODE
-                            </p>
-                          </div>
+                  <div style={{ marginBottom: '16px' }}>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        color: '#EB1C24',
+                        fontSize: '10px',
+                        margin: '0 0 8px 0',
+                        textTransform: 'uppercase',
+                        fontWeight: '500'
+                      }}
+                    >
+                      REFERRALS:
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        color: '#000000',
+                        fontSize: '10px',
+                        margin: '0 0 12px 0',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      RECEIVE <span style={{ color: '#EB1C24' }}>100 PTS</span> EVERY TIME YOU REFER SOMEONE WITH YOUR 5% OFF CODE
+                    </p>
+                  </div>
 
-                          <div style={{ marginBottom: '12px' }}>
-                            <p
-                              style={{
-                                fontFamily: '"Futura PT Book"',
-                                color: '#000000',
-                                fontSize: '9px',
-                                margin: '0 0 4px 0',
-                                fontStyle: 'italic'
-                              }}
-                            >
-                              *TAG INCLUDES CONTENT VIA TWITTER, FACEBOOK, IG, TIKTOK + YOUTUBE, PER APPROVAL
-                            </p>
-                            <p
-                              style={{
-                                fontFamily: '"Futura PT Book"',
-                                color: '#000000',
-                                fontSize: '9px',
-                                margin: '0 0 12px 0',
-                                fontStyle: 'italic'
-                              }}
-                            >
-                              *VIDEO MUST BE AT LEAST 10-60 SECONDS IN DURATION, PER APPROVAL
-                            </p>
-                          </div>
+                  <div style={{ marginBottom: '12px' }}>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        color: '#000000',
+                        fontSize: '9px',
+                        margin: '0 0 4px 0',
+                        fontStyle: 'italic'
+                      }}
+                    >
+                      *TAG INCLUDES CONTENT VIA TWITTER, FACEBOOK, IG, TIKTOK + YOUTUBE, PER APPROVAL
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        color: '#000000',
+                        fontSize: '9px',
+                        margin: '0 0 12px 0',
+                        fontStyle: 'italic'
+                      }}
+                    >
+                      *VIDEO MUST BE AT LEAST 10-60 SECONDS IN DURATION, PER APPROVAL
+                    </p>
+                  </div>
 
-                          <p
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              color: '#000000',
-                              fontSize: '9px',
-                              margin: '0',
-                              textTransform: 'uppercase'
-                            }}
-                          >
-                            SUBMIT ALL CONTENT VIA THE AFFILIATE TAB LOCATED UNDER YOUR ACCOUNT. YOU CAN SUBMIT AS MUCH CONTENT AS YOU WANT, WHICH MAY OR MAY NOT BE FEATURED. YOU WILL ONLY RECEIVE POINTS ONCE PER PRODUCT, FOR PHOTOS OR VIDEOS ON EACH PLATFORM.
-                          </p>
-                        </div>
+                  <p
+                    style={{
+                      fontFamily: '"Futura PT Book"',
+                      color: '#000000',
+                      fontSize: '9px',
+                      margin: '0',
+                      textTransform: 'uppercase'
+                    }}
+                  >
+                    SUBMIT ALL CONTENT VIA THE AFFILIATE TAB LOCATED UNDER YOUR ACCOUNT. YOU CAN SUBMIT AS MUCH CONTENT AS YOU WANT, WHICH MAY OR MAY NOT BE FEATURED. YOU WILL ONLY RECEIVE POINTS ONCE PER PRODUCT, FOR PHOTOS OR VIDEOS ON EACH PLATFORM.
+                  </p>
+                </div>
                       )}
 
                       {/* UPGRADE YOUR BASIC MEMBERSHIP / ADDITIONAL FEATURES Section - Only show when loyalty rewards is not active */}
@@ -1733,88 +1753,88 @@ function MembershipPage() {
                             </div>
                           ) : (
                             /* BASIC MEMBER - Upgrade Section */
-                            <div style={{ marginBottom: '24px' }}>
-                              <p
-                                style={{
-                                  fontFamily: '"Futura PT Medium"',
-                                  color: '#EB1C24',
-                                  fontSize: '10px',
-                                  margin: '0 0 8px 0',
-                                  textTransform: 'uppercase',
-                                  fontWeight: '500'
-                                }}
-                              >
-                                UPGRADE YOUR BASIC MEMBERSHIP TO
-                              </p>
-                              <p
-                                style={{
-                                  fontFamily: '"Futura PT Book"',
-                                  color: '#000000',
-                                  fontSize: '10px',
-                                  margin: '0 0 20px 0',
-                                  textTransform: 'uppercase'
-                                }}
-                              >
-                                UNLOCK THE FOLLOWING FEATURES PLUS MORE:
-                              </p>
+                <div style={{ marginBottom: '24px' }}>
+                  <p
+                    style={{
+                      fontFamily: '"Futura PT Medium"',
+                      color: '#EB1C24',
+                      fontSize: '10px',
+                      margin: '0 0 8px 0',
+                      textTransform: 'uppercase',
+                      fontWeight: '500'
+                    }}
+                  >
+                    UPGRADE YOUR BASIC MEMBERSHIP TO
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: '"Futura PT Book"',
+                      color: '#000000',
+                      fontSize: '10px',
+                      margin: '0 0 20px 0',
+                      textTransform: 'uppercase'
+                    }}
+                  >
+                    UNLOCK THE FOLLOWING FEATURES PLUS MORE:
+                  </p>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                <div>
+                    <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                                    UNLIMITED ACCESS TO VIRTUAL 3D WIG GENERATOR
+                        UNLIMITED ACCESS TO VIRTUAL 3D WIG GENERATOR
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                    ADDITIONAL, MORE EXTENSIVE CUSTOMIZATION OPTIONS
-                                  </p>
-                                </div>
-                                <div>
+                        ADDITIONAL, MORE EXTENSIVE CUSTOMIZATION OPTIONS
+                      </p>
+                    </div>
+                    <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                                    ENTRY PASS TO MEMBERS ONLY LOUNGE
+                        ENTRY PASS TO MEMBERS ONLY LOUNGE
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                    EARLY ACCESS TO SALES, NEW DROPS, RESTOCKS + BRAND RELATED CONTENT
-                                  </p>
-                                </div>
-                                <div>
+                        EARLY ACCESS TO SALES, NEW DROPS, RESTOCKS + BRAND RELATED CONTENT
+                      </p>
+                    </div>
+                    <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                                    FAST TRACK CUSTOMER SUPPORT
+                        FAST TRACK CUSTOMER SUPPORT
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                    PRIORITIZED CUSTOMER SUPPORT WITH A SIGNIFICANTLY REDUCED RESPONSE TIME
-                                  </p>
-                                </div>
-                                <div>
+                        PRIORITIZED CUSTOMER SUPPORT WITH A SIGNIFICANTLY REDUCED RESPONSE TIME
+                      </p>
+                    </div>
+                    <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                                    PRIORITY BOOKING + ORDER PROCESSING
+                        PRIORITY BOOKING + ORDER PROCESSING
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                    OPTION TO BOOK APPOINTMENTS IN ADVANCE, YOUR CUSTOM ORDERS GET HANDLED FIRST
-                                  </p>
-                                </div>
-                                <div>
+                        OPTION TO BOOK APPOINTMENTS IN ADVANCE, YOUR CUSTOM ORDERS GET HANDLED FIRST
+                      </p>
+                    </div>
+                    <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                                    SPECIAL GIFT WITH PURCHASE + FREE GIVEAWAYS
+                        SPECIAL GIFT WITH PURCHASE + FREE GIVEAWAYS
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                    ELIGIBLE FOR A CHANCE TO WIN RANDOM DISCOUNTS, STYLING VOUCHERS + EXCLUSIVE ITEMS
-                                  </p>
-                                </div>
-                                <div>
+                        ELIGIBLE FOR A CHANCE TO WIN RANDOM DISCOUNTS, STYLING VOUCHERS + EXCLUSIVE ITEMS
+                      </p>
+                    </div>
+                    <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                                    REDUCED SHIPPING FEE
+                        REDUCED SHIPPING FEE
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                    DISCOUNT APPLIED AUTOMATICALLY TO DOMESTIC + INTERNATIONAL ORDERS
-                                  </p>
-                                </div>
-                                <div>
+                        DISCOUNT APPLIED AUTOMATICALLY TO DOMESTIC + INTERNATIONAL ORDERS
+                      </p>
+                    </div>
+                    <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                                    DOUBLE YOUR POINTS
+                        DOUBLE YOUR POINTS
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                    EARN 2X LOYALTY POINTS FOR EACH ORDER, UNLOCKING DISCOUNTS & REWARDS FASTER
-                                  </p>
-                                </div>
-                              </div>
+                        EARN 2X LOYALTY POINTS FOR EACH ORDER, UNLOCKING DISCOUNTS & REWARDS FASTER
+                      </p>
+                    </div>
+                  </div>
                             </div>
                           )}
                         </>
