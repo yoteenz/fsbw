@@ -534,66 +534,6 @@ function AffiliatePage() {
     }
   };
 
-  // Generate referral code from user data with conflict checking
-  const generateReferralCode = (): string => {
-    // If user already has a referral code stored, use it
-    if (userData?.referralCode) {
-      return userData.referralCode;
-    }
-
-    if (!userData) {
-      return 'KA3047'; // Default/example code
-    }
-
-    // Get first initial of first name
-    const firstInitial = userData.firstName && userData.firstName.length > 0 
-      ? userData.firstName.charAt(0).toUpperCase() 
-      : 'K';
-
-    // Get first initial of last name
-    const lastInitial = userData.lastName && userData.lastName.length > 0 
-      ? userData.lastName.charAt(0).toUpperCase() 
-      : 'A';
-
-    // Extract day from birthday (format: MM/DD/YYYY)
-    let day = '30'; // Default
-    if (userData.birthday) {
-      const birthdayParts = userData.birthday.split('/');
-      if (birthdayParts.length >= 2) {
-        day = birthdayParts[1].padStart(2, '0'); // Ensure 2 digits
-      }
-    }
-
-    // Extract phone number digits
-    let phoneDigits = '2647'; // Default
-    if (userData.phoneNumber) {
-      // Remove all non-digit characters
-      phoneDigits = userData.phoneNumber.replace(/\D/g, '');
-    }
-
-    // Try primary code (last 2 digits)
-    let lastTwoDigits = phoneDigits.length >= 2 ? phoneDigits.slice(-2) : '47';
-    let primaryCode = `${firstInitial}${lastInitial}${day}${lastTwoDigits}`;
-
-    // Check if code already exists in registeredUsers
-    try {
-      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-      const codeExists = registeredUsers.some((user: any) => 
-        user.referralCode === primaryCode && user.email !== userData.email
-      );
-
-      // If code is taken, use alternative (2 digits before last 2)
-      if (codeExists && phoneDigits.length >= 4) {
-        const alternativeDigits = phoneDigits.slice(-4, -2); // 2 digits before last 2
-        return `${firstInitial}${lastInitial}${day}${alternativeDigits}`;
-      }
-    } catch (e) {
-      // If error checking, just return primary code
-    }
-
-    return primaryCode;
-  };
-
   // Listen for cart count changes
   useEffect(() => {
     const handleCartCountUpdate = (event: CustomEvent) => {
