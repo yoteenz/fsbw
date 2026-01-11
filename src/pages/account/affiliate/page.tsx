@@ -78,12 +78,6 @@ function AffiliatePage() {
     }
   };
 
-  // Helper function to format price
-  const formatPrice = (price: number) => {
-    const formatted = price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-    return `$${formatted}`;
-  };
-
   // Helper function to check if current user is Kristin Watson (mock account)
   const isKristinWatson = () => {
     if (!userData) return false;
@@ -425,8 +419,6 @@ function AffiliatePage() {
   
   // Helper function to get effective points (reset if period changed)
   const getEffectivePoints = (order: Order): { photoVideo: number; social: number } => {
-    const currentPeriod = getCurrentPeriod();
-    
     // If points were earned in a different period, reset them
     if (shouldResetPoints(order)) {
       return { photoVideo: 0, social: 0 };
@@ -1548,7 +1540,6 @@ function AffiliatePage() {
                                    }}
                                  >
                                    {(() => {
-                                     const effectivePoints = getEffectivePoints(expandedOrder);
                                      const currentPeriod = getCurrentPeriod();
                                      const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
                                      const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
@@ -1599,7 +1590,6 @@ function AffiliatePage() {
                                    }}
                                  >
                                    {(() => {
-                                     const effectivePoints = getEffectivePoints(expandedOrder);
                                      const currentPeriod = getCurrentPeriod();
                                      const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
                                      const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
@@ -1650,7 +1640,6 @@ function AffiliatePage() {
                                    }}
                                  >
                                    {(() => {
-                                     const effectivePoints = getEffectivePoints(expandedOrder);
                                      const currentPeriod = getCurrentPeriod();
                                      const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
                                      const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
@@ -1701,7 +1690,6 @@ function AffiliatePage() {
                                    }}
                                  >
                                    {(() => {
-                                     const effectivePoints = getEffectivePoints(expandedOrder);
                                      const currentPeriod = getCurrentPeriod();
                                      const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
                                      const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
@@ -1752,7 +1740,6 @@ function AffiliatePage() {
                                    }}
                                  >
                                    {(() => {
-                                     const effectivePoints = getEffectivePoints(expandedOrder);
                                      const currentPeriod = getCurrentPeriod();
                                      const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
                                      const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
@@ -2087,7 +2074,6 @@ function AffiliatePage() {
                                   const photoVideoEarned = effectivePoints.photoVideo;
                                   const socialPointsEarned = effectiveSocialTags * 200;
                                   const totalEarned = photoVideoEarned + socialPointsEarned;
-                                  const available = order.pointsAvailable || 2000;
                                   if (totalEarned === 0) {
                                     return '2K POINTS AVAILABLE';
                                   } else {
@@ -2097,11 +2083,14 @@ function AffiliatePage() {
                               </p>
                               <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#909090', margin: 0, lineHeight: '1.2' }}>
                                 {(() => {
-                                  // Calculate total points (photo/video + social)
-                                  const photoVideoEarned = order.pointsEarned || 0;
-                                  const socialPointsEarned = (order.socialTags || 0) * 200;
+                                  // Calculate total points (photo/video + social) with period reset
+                                  const effectivePoints = getEffectivePoints(order);
+                                  const currentPeriod = getCurrentPeriod();
+                                  const socialTagsPeriod = order.socialTagsPeriod || '';
+                                  const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (order.socialTags || 0) : 0;
+                                  const photoVideoEarned = effectivePoints.photoVideo;
+                                  const socialPointsEarned = effectiveSocialTags * 200;
                                   const totalEarned = photoVideoEarned + socialPointsEarned;
-                                  const available = order.pointsAvailable || 2000;
                                   const contentStatus = order.contentStatus || 'not_submitted';
                                   
                                   // If no content submitted yet
@@ -2121,6 +2110,7 @@ function AffiliatePage() {
                                   
                                   // If content is approved, show points earned
                                   if (contentStatus === 'approved') {
+                                    const available = order.pointsAvailable || 2000;
                                     if (totalEarned >= available) {
                                       return 'ALL POINTS EARNED';
                                     } else {
