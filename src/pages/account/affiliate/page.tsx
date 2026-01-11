@@ -1082,10 +1082,10 @@ function AffiliatePage() {
                        const totalEarned = photoVideoEarned + socialPointsEarned;
                        const totalAvailable = 2000; // 1,000 photo/video + 1,000 social
                        const pointsText = totalEarned === 0
-                         ? "YOU'VE EARNED 0 POINTS!"
+                         ? "YOU'VE EARNED 0 LOYALTY POINTS!"
                          : totalEarned >= totalAvailable 
-                           ? "YOU'VE EARNED 2,000 POINTS!" 
-                           : `YOU'VE EARNED ${totalEarned.toLocaleString()} POINTS!`;
+                           ? "YOU'VE EARNED 2,000 LOYALTY POINTS!" 
+                           : `YOU'VE EARNED ${totalEarned.toLocaleString()} LOYALTY POINTS!`;
                        
                        return (
                          <>
@@ -1905,124 +1905,7 @@ function AffiliatePage() {
                      })()
                    ) : (
                      <>
-                       {/* REFERRAL CODE Section */}
-                       <div style={{ marginBottom: '32px' }}>
-                         <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
-                           <h2
-                             style={{
-                               fontFamily: '"Futura PT Medium"',
-                               color: '#EB1C24',
-                               fontSize: '12px',
-                               fontWeight: '500',
-                               margin: '0',
-                               textTransform: 'uppercase'
-                             }}
-                           >
-                             REFERRAL CODE
-                           </h2>
-                           <p
-                             style={{
-                               fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                               color: '#000000',
-                               fontSize: '13px',
-                               margin: '0',
-                               textTransform: 'uppercase'
-                             }}
-                           >
-                             {generateReferralCode()}
-                           </p>
-                         </div>
-                    
-                    <div style={{ marginBottom: '12px' }}>
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          color: '#000000',
-                          fontSize: '10px',
-                          margin: '0 0 12px 0',
-                          textTransform: 'uppercase'
-                        }}
-                      >
-                        ONCE YOU CREATE AN ACCOUNT, YOU'RE ASSIGNED A UNIQUE REFERRAL CODE. SHARE THIS CODE WITH FRIENDS & FAMILY TO EARN DIGITAL CASH EVERY TIME SOMEONE USES YOUR CODE AT CHECKOUT.
-                      </p>
-                    </div>
-
-                    <div style={{ marginBottom: '12px' }}>
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Medium"',
-                          color: '#EB1C24',
-                          fontSize: '10px',
-                          margin: '0 0 8px 0',
-                          textTransform: 'uppercase',
-                          fontWeight: '500'
-                        }}
-                      >
-                        HOW IT WORKS:
-                      </p>
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          color: '#000000',
-                          fontSize: '10px',
-                          margin: '0 0 12px 0',
-                          textTransform: 'uppercase'
-                        }}
-                      >
-                        WHEN SOMEONE MAKES A PURCHASE USING YOUR REFERRAL CODE, THEY RECEIVE <span style={{ color: '#EB1C24' }}>$20 OFF</span> THEIR ORDER AND YOU RECEIVE <span style={{ color: '#EB1C24' }}>$20</span> DEPOSITED INTO YOUR GIFT CARD BALANCE AFTER THEIR PURCHASE HAS BEEN CONFIRMED.
-                      </p>
-                    </div>
-
-                    <div style={{ marginBottom: '12px' }}>
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Medium"',
-                          color: '#EB1C24',
-                          fontSize: '10px',
-                          margin: '0 0 8px 0',
-                          textTransform: 'uppercase',
-                          fontWeight: '500'
-                        }}
-                      >
-                        IMPORTANT NOTES:
-                      </p>
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          color: '#000000',
-                          fontSize: '10px',
-                          margin: '0 0 4px 0',
-                          textTransform: 'uppercase'
-                        }}
-                      >
-                        • REFERRAL CODES CAN ONLY BE APPLIED ONCE PER ACCOUNT
-                      </p>
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          color: '#000000',
-                          fontSize: '10px',
-                          margin: '0 0 4px 0',
-                          textTransform: 'uppercase'
-                        }}
-                      >
-                        • YOU CANNOT USE YOUR OWN REFERRAL CODE UNDER YOUR ACCOUNT
-                      </p>
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          color: '#000000',
-                          fontSize: '10px',
-                          margin: '0 0 12px 0',
-                          textTransform: 'uppercase'
-                        }}
-                      >
-                        • YOU MUST CREATE AN ACCOUNT OR BE SIGNED IN TO CHECKOUT WITH A REFERRAL CODE (FOR TRACKING PURPOSES)
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* BECOME AN AFFILIATE Section */}
+                       {/* BECOME AN AFFILIATE Section */}
                   <div style={{ marginBottom: '32px' }}>
                     <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
                       <h2
@@ -2138,7 +2021,7 @@ function AffiliatePage() {
                           textTransform: 'uppercase'
                         }}
                       >
-                        AFFILIATE REWARDS
+                        AFFILIATE CONTENT
                       </h2>
                     </div>
                     
@@ -2190,7 +2073,7 @@ function AffiliatePage() {
                                  }}
                                  onClick={() => setExpandedOrderId(order.id)}
                                >
-                                 SUBMIT CONTENT
+                                 VIEW POINTS
                                </p>
                             </div>
                             
@@ -2210,9 +2093,9 @@ function AffiliatePage() {
                                   const socialPointsEarned = effectiveSocialTags * 200;
                                   const totalEarned = photoVideoEarned + socialPointsEarned;
                                   if (totalEarned === 0) {
-                                    return '0/2,000';
+                                    return '0/2,000 LP';
                                   } else {
-                                    return `${totalEarned.toLocaleString()}/2,000`;
+                                    return `${totalEarned.toLocaleString()}/2,000 LP`;
                                   }
                                 })()}
                               </p>
@@ -2268,7 +2151,7 @@ function AffiliatePage() {
                                   const currentPeriod = getCurrentPeriod();
                                   const socialTagsPeriod = order.socialTagsPeriod || '';
                                   const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (order.socialTags || 0) : 0;
-                                  return `${effectiveSocialTags}/5 SOCIALS`;
+                                  return `${effectiveSocialTags}/5 TAGS`;
                                 })()}
                               </p>
                             </div>

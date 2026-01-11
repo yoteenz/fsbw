@@ -1885,7 +1885,7 @@ function CheckoutPage() {
                     <input
                       type="text"
                       className="discount-code-input"
-                      placeholder="DISCOUNT CODE OR GIFT CARD"
+                      placeholder="REFERRAL, DISCOUNT CODE OR GIFT CARD"
                       value={isDiscountCodeFocused ? discountCode : discountCodeDisplay || discountCode}
                       onChange={(e) => {
                         let rawValue = e.target.value;
@@ -3884,7 +3884,7 @@ function CheckoutPage() {
                     {tipAmount > 0 && (
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
-                          TIP AMOUNT:
+                          {tipPercentage !== null ? `${tipPercentage}% TIP:` : customTipApplied ? 'CUSTOM TIP:' : 'TIP AMOUNT:'}
                         </span>
                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(tipAmount)}></span>
                       </div>
@@ -3892,7 +3892,7 @@ function CheckoutPage() {
                     {giftCardDiscount > 0 && (
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
-                        DISCOUNT:<span style={{ fontFamily: '"Futura PT Demi"', color: '#808080' }}> GIFT CARD</span>
+                        DISCOUNT: GIFT CARD
                       </span>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>
                         ({(() => {
@@ -3912,7 +3912,7 @@ function CheckoutPage() {
                     {discount > 0 && (
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
-                        DISCOUNT:
+                        DISCOUNT: {discountCode.toUpperCase()}
                       </span>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(discount)}></span>
                     </div>

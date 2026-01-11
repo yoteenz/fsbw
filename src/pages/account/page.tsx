@@ -1502,8 +1502,8 @@ function AccountPage() {
                     subtitle: activeOrdersCount > 0 ? `${activeOrdersCount} ACTIVE ORDER${activeOrdersCount !== 1 ? 'S' : ''}` : '0 ACTIVE ORDERS', 
                     route: '/account/orders' 
                   },
-                  { title: 'ALERTS', subtitle: 'NEWSLETTER + NOTIFICATIONS', route: '/account/alerts' },
-                  { title: 'MEMBERSHIP', subtitle: 'SUBSCRIPTIONS + LOYALTY REWARDS', route: '/account/membership' },
+                  { title: 'ALERTS', subtitle: 'NOTIFICATIONS + NEWSLETTER', route: '/account/alerts' },
+                  { title: 'MEMBERSHIP', subtitle: 'SUBSCRIPTIONS + REWARDS', route: '/account/membership' },
                   { title: 'AFFILIATE', subtitle: 'SUBMIT CONTENT FOR POINTS', route: '/account/affiliate' },
                   { 
                     title: 'REVIEWS', 
