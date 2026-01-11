@@ -17,6 +17,8 @@ interface Order {
   socialTags?: number; // Number of social tags submitted/approved
   pointsEarnedPeriod?: string; // Period when points were earned (e.g., "2024-Jan-Jun" or "2024-Jul-Dec")
   socialTagsPeriod?: string; // Period when social tags were earned
+  pendingPhotos?: number; // Number of photos pending review
+  pendingVideos?: number; // Number of videos pending review
 }
 
 function AffiliatePage() {
@@ -119,6 +121,21 @@ function AffiliatePage() {
     }
   };
 
+  // Helper function to get the points reset date
+  const getPointsResetDate = (): string => {
+    const now = new Date();
+    const currentMonth = now.getMonth(); // 0-11 (Jan = 0, Dec = 11)
+    const currentYear = now.getFullYear();
+    
+    // If current period is Jan-Jun, reset is July 1 of current year
+    // If current period is Jul-Dec, reset is January 1 of next year
+    if (currentMonth < 6) {
+      return `JULY 1, ${currentYear}`;
+    } else {
+      return `JANUARY 1, ${currentYear + 1}`;
+    }
+  };
+
   // Mock delivered orders for Kristin Watson (one per product)
   const kristinMockDeliveredOrders: Order[] = [
     {
@@ -179,7 +196,9 @@ function AffiliatePage() {
       pointsEarned: 0, // Mock: content submitted but pending review
       pointsAvailable: 2000,
       contentStatus: 'pending', // Content pending review
-      socialTags: 1 // 1 social tag pending
+      socialTags: 1, // 1 social tag pending
+      pendingPhotos: 1, // 1 photo pending (500 pts)
+      pendingVideos: 0 // No videos pending
     },
     {
       id: 'kristin-delivered-5',
@@ -271,7 +290,9 @@ function AffiliatePage() {
       pointsEarned: 0, // Mock: content pending review
       pointsAvailable: 2000,
       contentStatus: 'pending', // Content pending
-      socialTags: 3 // 3 social tags pending
+      socialTags: 3, // 3 social tags pending
+      pendingPhotos: 1, // 1 photo pending (500 pts)
+      pendingVideos: 1 // 1 video pending (500 pts)
     }
   ];
 
@@ -985,16 +1006,21 @@ function AffiliatePage() {
                        const expandedOrder = deliveredOrders.find(o => o.id === expandedOrderId);
                        if (!expandedOrder) return null;
                        
-                       // Calculate photo/video points (independent of social points)
+                       // Calculate total points (photo/video + social) with period reset
                        // Check if points should be reset due to period change
                        const effectivePoints = getEffectivePoints(expandedOrder);
+                       const currentPeriod = getCurrentPeriod();
+                       const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
+                       const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
                        const photoVideoEarned = effectivePoints.photoVideo;
-                       const photoVideoAvailable = 1000;
-                       const pointsText = photoVideoEarned === 0
-                         ? "1,000 POINTS AVAILABLE"
-                         : photoVideoEarned >= photoVideoAvailable 
-                           ? "YOU'VE EARNED ALL 1,000 POINTS!" 
-                           : `YOU'VE EARNED ${photoVideoEarned.toLocaleString()} POINTS!`;
+                       const socialPointsEarned = effectiveSocialTags * 200;
+                       const totalEarned = photoVideoEarned + socialPointsEarned;
+                       const totalAvailable = 2000; // 1,000 photo/video + 1,000 social
+                       const pointsText = totalEarned === 0
+                         ? "2,000 POINTS AVAILABLE"
+                         : totalEarned >= totalAvailable 
+                           ? "YOU'VE EARNED 2,000 POINTS!" 
+                           : `YOU'VE EARNED ${totalEarned.toLocaleString()} POINTS!`;
                        
                        return (
                          <>
@@ -1079,29 +1105,47 @@ function AffiliatePage() {
                                {pointsText}
                              </p>
                              {(() => {
-                               // Calculate remaining photo/video points (independent of social points)
+                               // Calculate remaining total points (photo/video + social) with period reset
                                // Check if points should be reset due to period change
                                const effectivePoints = getEffectivePoints(expandedOrder);
+                               const currentPeriod = getCurrentPeriod();
+                               const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
+                               const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
                                const photoVideoEarned = effectivePoints.photoVideo;
-                               const photoVideoAvailable = 1000;
-                               const remaining = photoVideoAvailable - photoVideoEarned;
-                               // Only show remaining text if points have been earned (not 0) and not all points earned
-                               if (photoVideoEarned > 0 && remaining > 0) {
-                                 return (
+                               const socialPointsEarned = effectiveSocialTags * 200;
+                               const totalEarned = photoVideoEarned + socialPointsEarned;
+                               const totalAvailable = 2000; // 1,000 photo/video + 1,000 social
+                               const remaining = totalAvailable - totalEarned;
+                               // Show remaining text if points have been earned (not 0) and not all points earned
+                               // Always show reset date text
+                               return (
+                                 <>
+                                   {totalEarned > 0 && remaining > 0 && (
+                                     <p
+                                       style={{
+                                         fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
+                                         fontSize: '11px',
+                                         color: '#909090',
+                                         margin: '2px 0 -2px 0',
+                                         textTransform: 'uppercase'
+                                       }}
+                                     >
+                                       {remaining.toLocaleString()} POINTS REMAINING
+                                     </p>
+                                   )}
                                    <p
                                      style={{
-                                       fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
+                                       fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                                        fontSize: '11px',
-                                       color: '#909090',
+                                       color: '#000000',
                                        margin: '4px 0 0 0',
                                        textTransform: 'uppercase'
                                      }}
                                    >
-                                     {remaining.toLocaleString()} POINTS REMAINING
+                                     POINTS RESET {getPointsResetDate()}
                                    </p>
-                                 );
-                               }
-                               return null;
+                                 </>
+                               );
                              })()}
                            </div>
                            
@@ -2075,9 +2119,9 @@ function AffiliatePage() {
                                   const socialPointsEarned = effectiveSocialTags * 200;
                                   const totalEarned = photoVideoEarned + socialPointsEarned;
                                   if (totalEarned === 0) {
-                                    return '2K POINTS AVAILABLE';
+                                    return '0/2,000';
                                   } else {
-                                    return `${totalEarned.toLocaleString()}/2K POINTS`;
+                                    return `${totalEarned.toLocaleString()}/2,000`;
                                   }
                                 })()}
                               </p>
@@ -2100,7 +2144,13 @@ function AffiliatePage() {
                                   
                                   // If content is pending review
                                   if (contentStatus === 'pending') {
-                                    return 'POINTS PENDING';
+                                    const pendingPhotos = order.pendingPhotos || 0;
+                                    const pendingVideos = order.pendingVideos || 0;
+                                    const pendingSocialTags = order.socialTags || 0;
+                                    const pendingPhotoVideoPoints = (pendingPhotos * 500) + (pendingVideos * 500);
+                                    const pendingSocialPoints = pendingSocialTags * 200;
+                                    const totalPendingPoints = pendingPhotoVideoPoints + pendingSocialPoints;
+                                    return `+${totalPendingPoints.toLocaleString()} POINTS PENDING`;
                                   }
                                   
                                   // If content was rejected
@@ -2127,7 +2177,7 @@ function AffiliatePage() {
                                   const currentPeriod = getCurrentPeriod();
                                   const socialTagsPeriod = order.socialTagsPeriod || '';
                                   const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (order.socialTags || 0) : 0;
-                                  return `${effectiveSocialTags}/5 SOCIAL TAGS`;
+                                  return `${effectiveSocialTags}/5 SOCIALS`;
                                 })()}
                               </p>
                             </div>
