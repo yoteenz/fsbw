@@ -1503,8 +1503,8 @@ function AccountPage() {
                     route: '/account/orders' 
                   },
                   { title: 'ALERTS', subtitle: 'NEWSLETTER + NOTIFICATIONS', route: '/account/alerts' },
-                  { title: 'MEMBERSHIP', subtitle: 'SUBSCRIPTIONS + REWARDS PROGRAM', route: '/account/membership' },
-                  { title: 'AFFILIATE', subtitle: 'SUBMIT PHOTOS + VIDEOS FOR POINTS', route: null },
+                  { title: 'MEMBERSHIP', subtitle: 'SUBSCRIPTIONS + LOYALTY REWARDS', route: '/account/membership' },
+                  { title: 'AFFILIATE', subtitle: 'SUBMIT CONTENT FOR POINTS', route: '/account/affiliate' },
                   { 
                     title: 'REVIEWS', 
                     subtitle: userData && userData.email?.toLowerCase() !== 'bruno203@gmail.com' ? '0 TOTAL REVIEWS' : '4 TOTAL REVIEWS', 

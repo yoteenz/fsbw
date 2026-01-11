@@ -4649,7 +4649,7 @@ export default function BuildAWigPage() {
                 </>
               )}
             </p>
-            <div className="gap-5 flex absolute" style={{ right: '17px' }}>
+            <div className="gap-5 flex absolute" style={{ right: '17px', zIndex: 10 }}>
               <div>
                   <DynamicCartIcon count={cartCount} width={22} height={19} />
                 </div>
@@ -4661,7 +4661,7 @@ export default function BuildAWigPage() {
                   xmlns="http://www.w3.org/2000/svg"
                   className="cursor-pointer"
                   onClick={handleMobileMenuToggle}
-                  style={{ marginTop: '2px' }}
+                  style={{ marginTop: '2px', pointerEvents: 'auto', zIndex: 11 }}
                 >
                   <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
                 </svg>
