@@ -19,6 +19,15 @@ interface Order {
   socialTagsPeriod?: string; // Period when social tags were earned
   pendingPhotos?: number; // Number of photos pending review
   pendingVideos?: number; // Number of videos pending review
+  photo1ApprovedDate?: string; // Date when photo 1 was approved (ISO string)
+  photo2ApprovedDate?: string; // Date when photo 2 was approved (ISO string)
+  video1ApprovedDate?: string; // Date when video 1 was approved (ISO string)
+  video2ApprovedDate?: string; // Date when video 2 was approved (ISO string)
+  twitterApprovedDate?: string; // Date when Twitter content was approved (ISO string)
+  instagramApprovedDate?: string; // Date when Instagram content was approved (ISO string)
+  tiktokApprovedDate?: string; // Date when TikTok content was approved (ISO string)
+  youtubeApprovedDate?: string; // Date when YouTube content was approved (ISO string)
+  facebookApprovedDate?: string; // Date when Facebook content was approved (ISO string)
 }
 
 function AffiliatePage() {
@@ -450,6 +459,33 @@ function AffiliatePage() {
     const socialPointsEarned = (order.socialTags || 0) * 200;
     
     return { photoVideo: photoVideoEarned, social: socialPointsEarned };
+  };
+
+  // Helper function to get the period for a given date
+  const getPeriodForDate = (date: Date): string => {
+    const month = date.getMonth(); // 0-11 (Jan = 0, Dec = 11)
+    const year = date.getFullYear();
+    
+    // Jan-Jun (months 0-5) or Jul-Dec (months 6-11)
+    if (month < 6) {
+      return `${year}-Jan-Jun`;
+    } else {
+      return `${year}-Jul-Dec`;
+    }
+  };
+
+  // Helper function to check if content can be submitted
+  // Content can only be approved once per period (Jan-Jun or Jul-Dec)
+  // If the period has changed since approval, content can be resubmitted
+  const canSubmitContent = (approvedDate?: string): boolean => {
+    if (!approvedDate) return true; // No approval date means content hasn't been approved yet
+    
+    const approved = new Date(approvedDate);
+    const currentPeriod = getCurrentPeriod();
+    const approvalPeriod = getPeriodForDate(approved);
+    
+    // Can submit if approval was in a different period (period has reset)
+    return approvalPeriod !== currentPeriod;
   };
   
   // Helper function to get cart dropdown style thumbnail
@@ -1017,7 +1053,7 @@ function AffiliatePage() {
                        const totalEarned = photoVideoEarned + socialPointsEarned;
                        const totalAvailable = 2000; // 1,000 photo/video + 1,000 social
                        const pointsText = totalEarned === 0
-                         ? "2,000 POINTS AVAILABLE"
+                         ? "YOU'VE EARNED 0 POINTS!"
                          : totalEarned >= totalAvailable 
                            ? "YOU'VE EARNED 2,000 POINTS!" 
                            : `YOU'VE EARNED ${totalEarned.toLocaleString()} POINTS!`;
@@ -1116,23 +1152,20 @@ function AffiliatePage() {
                                const totalEarned = photoVideoEarned + socialPointsEarned;
                                const totalAvailable = 2000; // 1,000 photo/video + 1,000 social
                                const remaining = totalAvailable - totalEarned;
-                               // Show remaining text if points have been earned (not 0) and not all points earned
-                               // Always show reset date text
+                               // Always show remaining text and reset date text
                                return (
                                  <>
-                                   {totalEarned > 0 && remaining > 0 && (
-                                     <p
-                                       style={{
-                                         fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
-                                         fontSize: '11px',
-                                         color: '#909090',
-                                         margin: '2px 0 -2px 0',
-                                         textTransform: 'uppercase'
-                                       }}
-                                     >
-                                       {remaining.toLocaleString()} POINTS REMAINING
-                                     </p>
-                                   )}
+                                   <p
+                                     style={{
+                                       fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
+                                       fontSize: '11px',
+                                       color: '#909090',
+                                       margin: '2px 0 -2px 0',
+                                       textTransform: 'uppercase'
+                                     }}
+                                   >
+                                     {remaining.toLocaleString()} POINTS AVAILABLE
+                                   </p>
                                    <p
                                      style={{
                                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
@@ -1188,7 +1221,7 @@ function AffiliatePage() {
                                    accept="image/*"
                                    ref={photo1InputRef}
                                    onChange={(e) => {
-                                     if (expandedOrder.contentStatus !== 'approved') {
+                                     if (canSubmitContent(expandedOrder.photo1ApprovedDate)) {
                                        handlePhoto1Change(e);
                                      }
                                    }}
@@ -1205,7 +1238,7 @@ function AffiliatePage() {
                                  />
                                  <div
                                    onClick={() => {
-                                     if (!expandedOrder.contentStatus || expandedOrder.contentStatus !== 'approved') {
+                                     if (canSubmitContent(expandedOrder.photo1ApprovedDate)) {
                                        photo1InputRef.current?.click();
                                      }
                                    }}
@@ -1217,18 +1250,18 @@ function AffiliatePage() {
                                      border: '1.3px solid #000000',
                                      fontFamily: '"Futura PT Book"',
                                      fontSize: '11px',
-                                     backgroundColor: expandedOrder.contentStatus === 'approved' ? '#F5F5F5' : '#FFFFFF',
+                                     backgroundColor: !canSubmitContent(expandedOrder.photo1ApprovedDate) ? '#F5F5F5' : '#FFFFFF',
                                      color: photo1File ? '#909090' : '#EB1C24',
                                      boxSizing: 'border-box',
                                      borderRadius: '0',
-                                     cursor: expandedOrder.contentStatus === 'approved' ? 'not-allowed' : 'pointer',
+                                     cursor: !canSubmitContent(expandedOrder.photo1ApprovedDate) ? 'not-allowed' : 'pointer',
                                      textTransform: 'uppercase',
                                      position: 'relative',
                                      overflow: photo1Preview ? 'visible' : 'hidden',
                                      display: photo1Preview ? 'block' : 'flex',
                                      alignItems: photo1Preview ? 'normal' : 'center',
-                                     opacity: expandedOrder.contentStatus === 'approved' ? 0.6 : 1,
-                                     pointerEvents: expandedOrder.contentStatus === 'approved' ? 'none' : 'auto'
+                                     opacity: !canSubmitContent(expandedOrder.photo1ApprovedDate) ? 0.6 : 1,
+                                     pointerEvents: !canSubmitContent(expandedOrder.photo1ApprovedDate) ? 'none' : 'auto'
                                    }}
                                  >
                                    {photo1Preview ? (
@@ -1273,7 +1306,7 @@ function AffiliatePage() {
                                    accept="image/*"
                                    ref={photo2InputRef}
                                    onChange={(e) => {
-                                     if (expandedOrder.contentStatus !== 'approved') {
+                                     if (canSubmitContent(expandedOrder.photo2ApprovedDate)) {
                                        handlePhoto2Change(e);
                                      }
                                    }}
@@ -1290,7 +1323,7 @@ function AffiliatePage() {
                                  />
                                  <div
                                    onClick={() => {
-                                     if (!expandedOrder.contentStatus || expandedOrder.contentStatus !== 'approved') {
+                                     if (canSubmitContent(expandedOrder.photo2ApprovedDate)) {
                                        photo2InputRef.current?.click();
                                      }
                                    }}
@@ -1302,18 +1335,18 @@ function AffiliatePage() {
                                      border: '1.3px solid #000000',
                                      fontFamily: '"Futura PT Book"',
                                      fontSize: '11px',
-                                     backgroundColor: expandedOrder.contentStatus === 'approved' ? '#F5F5F5' : '#FFFFFF',
+                                     backgroundColor: !canSubmitContent(expandedOrder.photo2ApprovedDate) ? '#F5F5F5' : '#FFFFFF',
                                      color: photo2File ? '#909090' : '#EB1C24',
                                      boxSizing: 'border-box',
                                      borderRadius: '0',
-                                     cursor: expandedOrder.contentStatus === 'approved' ? 'not-allowed' : 'pointer',
+                                     cursor: !canSubmitContent(expandedOrder.photo2ApprovedDate) ? 'not-allowed' : 'pointer',
                                      textTransform: 'uppercase',
                                      position: 'relative',
                                      overflow: photo2Preview ? 'visible' : 'hidden',
                                      display: photo2Preview ? 'block' : 'flex',
                                      alignItems: photo2Preview ? 'normal' : 'center',
-                                     opacity: expandedOrder.contentStatus === 'approved' ? 0.6 : 1,
-                                     pointerEvents: expandedOrder.contentStatus === 'approved' ? 'none' : 'auto'
+                                     opacity: !canSubmitContent(expandedOrder.photo2ApprovedDate) ? 0.6 : 1,
+                                     pointerEvents: !canSubmitContent(expandedOrder.photo2ApprovedDate) ? 'none' : 'auto'
                                    }}
                                  >
                                    {photo2Preview ? (
@@ -1393,7 +1426,7 @@ function AffiliatePage() {
                                    accept="video/*"
                                    ref={video1InputRef}
                                    onChange={(e) => {
-                                     if (expandedOrder.contentStatus !== 'approved') {
+                                     if (canSubmitContent(expandedOrder.video1ApprovedDate)) {
                                        handleVideo1Change(e);
                                      }
                                    }}
@@ -1410,7 +1443,7 @@ function AffiliatePage() {
                                  />
                                  <div
                                    onClick={() => {
-                                     if (!expandedOrder.contentStatus || expandedOrder.contentStatus !== 'approved') {
+                                     if (canSubmitContent(expandedOrder.video1ApprovedDate)) {
                                        video1InputRef.current?.click();
                                      }
                                    }}
@@ -1422,18 +1455,18 @@ function AffiliatePage() {
                                      border: '1.3px solid #000000',
                                      fontFamily: '"Futura PT Book"',
                                      fontSize: '11px',
-                                     backgroundColor: expandedOrder.contentStatus === 'approved' ? '#F5F5F5' : '#FFFFFF',
+                                     backgroundColor: !canSubmitContent(expandedOrder.video1ApprovedDate) ? '#F5F5F5' : '#FFFFFF',
                                      color: video1File ? '#909090' : '#EB1C24',
                                      boxSizing: 'border-box',
                                      borderRadius: '0',
-                                     cursor: expandedOrder.contentStatus === 'approved' ? 'not-allowed' : 'pointer',
+                                     cursor: !canSubmitContent(expandedOrder.video1ApprovedDate) ? 'not-allowed' : 'pointer',
                                      textTransform: 'uppercase',
                                      position: 'relative',
                                      overflow: video1Preview ? 'visible' : 'hidden',
                                      display: video1Preview ? 'block' : 'flex',
                                      alignItems: video1Preview ? 'normal' : 'center',
-                                     opacity: expandedOrder.contentStatus === 'approved' ? 0.6 : 1,
-                                     pointerEvents: expandedOrder.contentStatus === 'approved' ? 'none' : 'auto'
+                                     opacity: !canSubmitContent(expandedOrder.video1ApprovedDate) ? 0.6 : 1,
+                                     pointerEvents: !canSubmitContent(expandedOrder.video1ApprovedDate) ? 'none' : 'auto'
                                    }}
                                  >
                                    {video1Preview ? (
@@ -1478,7 +1511,7 @@ function AffiliatePage() {
                                    accept="video/*"
                                    ref={video2InputRef}
                                    onChange={(e) => {
-                                     if (expandedOrder.contentStatus !== 'approved') {
+                                     if (canSubmitContent(expandedOrder.video2ApprovedDate)) {
                                        handleVideo2Change(e);
                                      }
                                    }}
@@ -1495,7 +1528,7 @@ function AffiliatePage() {
                                  />
                                  <div
                                    onClick={() => {
-                                     if (!expandedOrder.contentStatus || expandedOrder.contentStatus !== 'approved') {
+                                     if (canSubmitContent(expandedOrder.video2ApprovedDate)) {
                                        video2InputRef.current?.click();
                                      }
                                    }}
@@ -1507,18 +1540,18 @@ function AffiliatePage() {
                                      border: '1.3px solid #000000',
                                      fontFamily: '"Futura PT Book"',
                                      fontSize: '11px',
-                                     backgroundColor: expandedOrder.contentStatus === 'approved' ? '#F5F5F5' : '#FFFFFF',
+                                     backgroundColor: !canSubmitContent(expandedOrder.video2ApprovedDate) ? '#F5F5F5' : '#FFFFFF',
                                      color: video2File ? '#909090' : '#EB1C24',
                                      boxSizing: 'border-box',
                                      borderRadius: '0',
-                                     cursor: expandedOrder.contentStatus === 'approved' ? 'not-allowed' : 'pointer',
+                                     cursor: !canSubmitContent(expandedOrder.video2ApprovedDate) ? 'not-allowed' : 'pointer',
                                      textTransform: 'uppercase',
                                      position: 'relative',
                                      overflow: video2Preview ? 'visible' : 'hidden',
                                      display: video2Preview ? 'block' : 'flex',
                                      alignItems: video2Preview ? 'normal' : 'center',
-                                     opacity: expandedOrder.contentStatus === 'approved' ? 0.6 : 1,
-                                     pointerEvents: expandedOrder.contentStatus === 'approved' ? 'none' : 'auto'
+                                     opacity: !canSubmitContent(expandedOrder.video2ApprovedDate) ? 0.6 : 1,
+                                     pointerEvents: !canSubmitContent(expandedOrder.video2ApprovedDate) ? 'none' : 'auto'
                                    }}
                                  >
                                    {video2Preview ? (
@@ -1594,17 +1627,20 @@ function AffiliatePage() {
                                <input
                                  type="text"
                                  placeholder="LINK TO TWEET"
+                                 disabled={!canSubmitContent(expandedOrder.twitterApprovedDate)}
                                  style={{
                                    width: '100%',
                                    padding: '8px',
                                    border: '1.3px solid #000000',
                                    fontFamily: '"Futura PT Book"',
                                    fontSize: '11px',
-                                   backgroundColor: '#FFFFFF',
+                                   backgroundColor: !canSubmitContent(expandedOrder.twitterApprovedDate) ? '#F5F5F5' : '#FFFFFF',
                                    color: '#909090',
                                    boxSizing: 'border-box',
                                    borderRadius: '0',
-                                   textTransform: 'uppercase'
+                                   textTransform: 'uppercase',
+                                   opacity: !canSubmitContent(expandedOrder.twitterApprovedDate) ? 0.6 : 1,
+                                   cursor: !canSubmitContent(expandedOrder.twitterApprovedDate) ? 'not-allowed' : 'text'
                                  }}
                                />
                              </div>
@@ -1644,17 +1680,20 @@ function AffiliatePage() {
                                <input
                                  type="text"
                                  placeholder="LINK TO REEL"
+                                 disabled={!canSubmitContent(expandedOrder.instagramApprovedDate)}
                                  style={{
                                    width: '100%',
                                    padding: '8px',
                                    border: '1.3px solid #000000',
                                    fontFamily: '"Futura PT Book"',
                                    fontSize: '11px',
-                                   backgroundColor: '#FFFFFF',
+                                   backgroundColor: !canSubmitContent(expandedOrder.instagramApprovedDate) ? '#F5F5F5' : '#FFFFFF',
                                    color: '#909090',
                                    boxSizing: 'border-box',
                                    borderRadius: '0',
-                                   textTransform: 'uppercase'
+                                   textTransform: 'uppercase',
+                                   opacity: !canSubmitContent(expandedOrder.instagramApprovedDate) ? 0.6 : 1,
+                                   cursor: !canSubmitContent(expandedOrder.instagramApprovedDate) ? 'not-allowed' : 'text'
                                  }}
                                />
                              </div>
@@ -1694,17 +1733,20 @@ function AffiliatePage() {
                                <input
                                  type="text"
                                  placeholder="LINK TO TIK TOK"
+                                 disabled={!canSubmitContent(expandedOrder.tiktokApprovedDate)}
                                  style={{
                                    width: '100%',
                                    padding: '8px',
                                    border: '1.3px solid #000000',
                                    fontFamily: '"Futura PT Book"',
                                    fontSize: '11px',
-                                   backgroundColor: '#FFFFFF',
+                                   backgroundColor: !canSubmitContent(expandedOrder.tiktokApprovedDate) ? '#F5F5F5' : '#FFFFFF',
                                    color: '#909090',
                                    boxSizing: 'border-box',
                                    borderRadius: '0',
-                                   textTransform: 'uppercase'
+                                   textTransform: 'uppercase',
+                                   opacity: !canSubmitContent(expandedOrder.tiktokApprovedDate) ? 0.6 : 1,
+                                   cursor: !canSubmitContent(expandedOrder.tiktokApprovedDate) ? 'not-allowed' : 'text'
                                  }}
                                />
                              </div>
@@ -1744,17 +1786,20 @@ function AffiliatePage() {
                                <input
                                  type="text"
                                  placeholder="LINK TO VIDEO"
+                                 disabled={!canSubmitContent(expandedOrder.youtubeApprovedDate)}
                                  style={{
                                    width: '100%',
                                    padding: '8px',
                                    border: '1.3px solid #000000',
                                    fontFamily: '"Futura PT Book"',
                                    fontSize: '11px',
-                                   backgroundColor: '#FFFFFF',
+                                   backgroundColor: !canSubmitContent(expandedOrder.youtubeApprovedDate) ? '#F5F5F5' : '#FFFFFF',
                                    color: '#909090',
                                    boxSizing: 'border-box',
                                    borderRadius: '0',
-                                   textTransform: 'uppercase'
+                                   textTransform: 'uppercase',
+                                   opacity: !canSubmitContent(expandedOrder.youtubeApprovedDate) ? 0.6 : 1,
+                                   cursor: !canSubmitContent(expandedOrder.youtubeApprovedDate) ? 'not-allowed' : 'text'
                                  }}
                                />
                              </div>
@@ -1794,17 +1839,20 @@ function AffiliatePage() {
                                <input
                                  type="text"
                                  placeholder="LINK TO POST"
+                                 disabled={!canSubmitContent(expandedOrder.facebookApprovedDate)}
                                  style={{
                                    width: '100%',
                                    padding: '8px',
                                    border: '1.3px solid #000000',
                                    fontFamily: '"Futura PT Book"',
                                    fontSize: '11px',
-                                   backgroundColor: '#FFFFFF',
+                                   backgroundColor: !canSubmitContent(expandedOrder.facebookApprovedDate) ? '#F5F5F5' : '#FFFFFF',
                                    color: '#909090',
                                    boxSizing: 'border-box',
                                    borderRadius: '0',
-                                   textTransform: 'uppercase'
+                                   textTransform: 'uppercase',
+                                   opacity: !canSubmitContent(expandedOrder.facebookApprovedDate) ? 0.6 : 1,
+                                   cursor: !canSubmitContent(expandedOrder.facebookApprovedDate) ? 'not-allowed' : 'text'
                                  }}
                                />
                              </div>
