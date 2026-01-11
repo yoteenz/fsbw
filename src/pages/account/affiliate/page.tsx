@@ -1897,7 +1897,7 @@ function AffiliatePage() {
                                  textAlign: 'center'
                                }}
                              >
-                               FOR ELIGIBILITY PURPOSES AND THE HIGHEST CHANCE FOR CONTENT APPROVAL: SUBMIT CLEAR + WELL LIT PHOTOS WITHOUT ANY FILTERS.
+                               IN ORDER TO HAVE THE HIGHEST CHANCE FOR CONTENT APPROVAL, PLEASE SUBMIT CLEAR + WELL LIT PHOTOS WITHOUT ANY FILTERS. ALLOW UP TO 72 HOURS FOR YOUR CONTENT TO BE REVIEWED AND APPROVED.
                              </p>
                            </div>
                          </>
