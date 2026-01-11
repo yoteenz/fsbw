@@ -1223,7 +1223,7 @@ function MembershipPage() {
                         textTransform: 'uppercase'
                       }}
                     >
-                      ACCOUNT SUBSCRIPTION
+                      MEMBERSHIP STATUS
                     </h2>
                   </div>
                   

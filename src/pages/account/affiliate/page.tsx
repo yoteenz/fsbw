@@ -302,6 +302,31 @@ function AffiliatePage() {
       socialTags: 3, // 3 social tags pending
       pendingPhotos: 1, // 1 photo pending (500 pts)
       pendingVideos: 1 // 1 video pending (500 pts)
+    },
+    {
+      id: 'kateena-delivered-6',
+      orderNumber: 'ORDER #336',
+      date: getDateDaysAgo(25), // 25 days ago
+      status: 'DELIVERED',
+      productName: 'BEACH WAVE',
+      productImage: getProductImage('BEACH WAVE'),
+      total: 980,
+      items: 1,
+      pointsEarned: 1000, // Mock: earned 1000 pts (photo + video approved)
+      pointsAvailable: 2000,
+      contentStatus: 'approved', // All content approved
+      socialTags: 5, // All 5 social tags approved (1000 social points)
+      pointsEarnedPeriod: getCurrentPeriod(), // Current period
+      socialTagsPeriod: getCurrentPeriod(), // Current period
+      photo1ApprovedDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(), // 20 days ago
+      photo2ApprovedDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(), // 20 days ago
+      video1ApprovedDate: new Date(Date.now() - 19 * 24 * 60 * 60 * 1000).toISOString(), // 19 days ago
+      video2ApprovedDate: new Date(Date.now() - 19 * 24 * 60 * 60 * 1000).toISOString(), // 19 days ago
+      twitterApprovedDate: new Date(Date.now() - 17 * 24 * 60 * 60 * 1000).toISOString(), // 17 days ago
+      instagramApprovedDate: new Date(Date.now() - 16 * 24 * 60 * 60 * 1000).toISOString(), // 16 days ago
+      tiktokApprovedDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(), // 15 days ago
+      youtubeApprovedDate: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(), // 14 days ago
+      facebookApprovedDate: new Date(Date.now() - 13 * 24 * 60 * 60 * 1000).toISOString() // 13 days ago
     }
   ];
 
@@ -481,10 +506,14 @@ function AffiliatePage() {
     if (!approvedDate) return true; // No approval date means content hasn't been approved yet
     
     const approved = new Date(approvedDate);
+    // Check if date is valid
+    if (isNaN(approved.getTime())) return true; // Invalid date, allow submission
+    
     const currentPeriod = getCurrentPeriod();
     const approvalPeriod = getPeriodForDate(approved);
     
     // Can submit if approval was in a different period (period has reset)
+    // If same period, cannot submit (already approved in this period)
     return approvalPeriod !== currentPeriod;
   };
   
@@ -1856,6 +1885,20 @@ function AffiliatePage() {
                                  }}
                                />
                              </div>
+                             <p
+                               style={{
+                                 fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                                 color: '#EB1C24',
+                                 fontSize: '10px',
+                                 margin: '12px 0 0 0',
+                                 textTransform: 'uppercase',
+                                 fontWeight: '500',
+                                 lineHeight: '1.4',
+                                 textAlign: 'center'
+                               }}
+                             >
+                               FOR ELIGIBILITY PURPOSES AND THE HIGHEST CHANCE FOR CONTENT APPROVAL: SUBMIT CLEAR + WELL LIT PHOTOS WITHOUT ANY FILTERS.
+                             </p>
                            </div>
                          </>
                        );
@@ -2116,7 +2159,7 @@ function AffiliatePage() {
                         </p>
                       </div>
                     ) : (
-                      <div className="flex flex-col justify-start items-start gap-4 my-2 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '265px', scrollBehavior: 'smooth' }}>
+                      <div className="flex flex-col justify-start items-start gap-4 my-2 flex-shrink-0">
                         {deliveredOrders.map((order) => (
                           <div key={order.id} className="flex items-center gap-3" style={{ flexShrink: 0 }}>
                             {/* Thumbnail */}
