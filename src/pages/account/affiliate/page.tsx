@@ -3322,8 +3322,44 @@ function AffiliatePage() {
                                       return (
                                       <div key={photo.id} style={{ 
                                         width: '120px', 
-                                        flexShrink: 0
+                                        flexShrink: 0,
+                                        position: 'relative'
                                       }}>
+                                        {(photo.status === 'pending' || photo.status === 'rejected') && (
+                                          <button
+                                            onClick={() => setShowDeleteConfirm({ type: 'photo', id: photo.id })}
+                                            style={{
+                                              position: 'absolute',
+                                              top: '-10px',
+                                              right: '-10px',
+                                              width: '20px',
+                                              height: '20px',
+                                              backgroundColor: '#FFFFFF',
+                                              border: '0.97px solid #000000',
+                                              borderRadius: '50%',
+                                              cursor: 'pointer',
+                                              display: 'flex',
+                                              alignItems: 'center',
+                                              justifyContent: 'center',
+                                              zIndex: 10,
+                                              padding: 0,
+                                              flexShrink: 0
+                                            }}
+                                          >
+                                            <img
+                                              src="/assets/close-icon.svg"
+                                              alt="Close"
+                                              style={{
+                                                width: '12px',
+                                                height: '12px',
+                                                objectFit: 'contain',
+                                                display: 'block',
+                                                flexShrink: 0,
+                                                filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                                              }}
+                                            />
+                                          </button>
+                                        )}
                                         <div style={{ 
                                           position: 'relative', 
                                           padding: '1px', 
@@ -3336,40 +3372,8 @@ function AffiliatePage() {
                                           justifyContent: 'center',
                                           alignItems: 'center',
                                           backgroundColor: '#f5f5f5',
-                                          overflow: 'hidden' // Changed to hidden for custom blend
+                                          overflow: 'hidden'
                                         }}>
-                                          {(photo.status === 'pending' || photo.status === 'rejected') && (
-                                            <button
-                                              onClick={() => setShowDeleteConfirm({ type: 'photo', id: photo.id })}
-                                              style={{
-                                                position: 'absolute',
-                                                top: '-10px',
-                                                right: '-10px',
-                                                width: '20px',
-                                                height: '20px',
-                                                backgroundColor: '#FFFFFF',
-                                                border: '0.97px solid #000000',
-                                                borderRadius: '50%',
-                                                cursor: 'pointer',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                zIndex: 10,
-                                                padding: 0,
-                                                flexShrink: 0
-                                              }}
-                                            >
-                                              <img
-                                                src="/assets/close-icon.svg"
-                                                alt="Close"
-                                                style={{
-                                                  width: '12px',
-                                                  height: '12px',
-                                                  filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
-                                                }}
-                                              />
-                                            </button>
-                                          )}
                                          <img 
                                            src={typeof photo.preview === 'string' ? photo.preview : (typeof photo.file === 'string' ? photo.file : URL.createObjectURL(photo.file as File))} 
                                            alt="Submitted photo"
@@ -3454,8 +3458,44 @@ function AffiliatePage() {
                                         display: 'flex',
                                         flexDirection: 'column',
                                         alignItems: 'center',
-                                        justifyContent: 'flex-start'
+                                        justifyContent: 'flex-start',
+                                        position: 'relative'
                                       }}>
+                                        {(video.status === 'pending' || video.status === 'rejected') && (
+                                          <button
+                                            onClick={() => setShowDeleteConfirm({ type: 'video', id: video.id })}
+                                            style={{
+                                              position: 'absolute',
+                                              top: '-10px',
+                                              right: '-10px',
+                                              width: '20px',
+                                              height: '20px',
+                                              backgroundColor: '#FFFFFF',
+                                              border: '0.97px solid #000000',
+                                              borderRadius: '50%',
+                                              cursor: 'pointer',
+                                              display: 'flex',
+                                              alignItems: 'center',
+                                              justifyContent: 'center',
+                                              zIndex: 10,
+                                              padding: 0,
+                                              flexShrink: 0
+                                            }}
+                                          >
+                                            <img
+                                              src="/assets/close-icon.svg"
+                                              alt="Close"
+                                              style={{
+                                                width: '12px',
+                                                height: '12px',
+                                                objectFit: 'contain',
+                                                display: 'block',
+                                                flexShrink: 0,
+                                                filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                                              }}
+                                            />
+                                          </button>
+                                        )}
                                         <div style={{ 
                                           position: 'relative', 
                                           padding: '1px', 
@@ -3468,40 +3508,8 @@ function AffiliatePage() {
                                           justifyContent: 'center',
                                           alignItems: 'center',
                                           backgroundColor: '#f5f5f5',
-                                          overflow: 'visible'
+                                          overflow: 'hidden'
                                         }}>
-                                          {(video.status === 'pending' || video.status === 'rejected') && (
-                                            <button
-                                              onClick={() => setShowDeleteConfirm({ type: 'video', id: video.id })}
-                                              style={{
-                                                position: 'absolute',
-                                                top: '-10px',
-                                                right: '-10px',
-                                                width: '20px',
-                                                height: '20px',
-                                                backgroundColor: '#FFFFFF',
-                                                border: '0.97px solid #000000',
-                                                borderRadius: '50%',
-                                                cursor: 'pointer',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                zIndex: 10,
-                                                padding: 0,
-                                                flexShrink: 0
-                                              }}
-                                            >
-                                              <img
-                                                src="/assets/close-icon.svg"
-                                                alt="Close"
-                                                style={{
-                                                  width: '12px',
-                                                  height: '12px',
-                                                  filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
-                                                }}
-                                              />
-                                            </button>
-                                          )}
                                           <video 
                                             src={typeof video.preview === 'string' ? video.preview : (typeof video.file === 'string' ? video.file : URL.createObjectURL(video.file as File))} 
                                             controls
@@ -3576,6 +3584,9 @@ function AffiliatePage() {
                                                style={{
                                                  width: '10px',
                                                  height: '10px',
+                                                 objectFit: 'contain',
+                                                 display: 'block',
+                                                 flexShrink: 0,
                                                  filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
                                                }}
                                              />
