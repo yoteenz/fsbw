@@ -390,9 +390,22 @@ function AffiliatePage() {
   const [viewerImages, setViewerImages] = useState<string[]>([]);
   const [viewerCurrentIndex, setViewerCurrentIndex] = useState(0);
   
-  // State for submitted content gallery (stored per order) - Initialize with mock data for admin account only
+  // State for submitted content gallery (stored per order) - Load from localStorage and merge with mock data
   const [submittedContent, setSubmittedContent] = useState<{ [orderId: string]: { photos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; videos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; socials: Array<{ id: string; platform: string; link: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }> } }>(() => {
-    // Mock data for admin account (Kateena Armstrong) orders only
+    // Load from localStorage first
+    let storedContent: { [orderId: string]: { photos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; videos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; socials: Array<{ id: string; platform: string; link: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }> } } = {};
+    
+    try {
+      const stored = localStorage.getItem('affiliateSubmittedContent');
+      if (stored) {
+        storedContent = JSON.parse(stored);
+        console.log('✅ Loaded submitted content from localStorage:', Object.keys(storedContent).length, 'orders');
+      }
+    } catch (e) {
+      console.error('❌ Error loading submitted content from localStorage:', e);
+    }
+    
+    // Mock data for admin account (Kateena Armstrong) orders only - merge with stored content
     const mockContent: { [orderId: string]: { photos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; videos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; socials: Array<{ id: string; platform: string; link: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }> } } = {};
     
     // Mock data for NOIR order (kateena-delivered-1) - has some approved content
@@ -709,7 +722,40 @@ function AffiliatePage() {
       ]
     };
     
-    return mockContent;
+    // Merge stored content with mock content - stored content takes precedence
+    // This ensures user-submitted content is preserved while keeping mock data for demo
+    const mergedContent = { ...mockContent };
+    
+    // Overwrite with stored content (user submissions take priority)
+    Object.keys(storedContent).forEach(orderId => {
+      if (storedContent[orderId]) {
+        // Merge arrays, keeping all items from stored content
+        mergedContent[orderId] = {
+          photos: storedContent[orderId].photos || [],
+          videos: storedContent[orderId].videos || [],
+          socials: storedContent[orderId].socials || []
+        };
+      }
+    });
+    
+    // Also preserve any stored content for orders not in mock data
+    Object.keys(storedContent).forEach(orderId => {
+      if (!mergedContent[orderId]) {
+        mergedContent[orderId] = storedContent[orderId];
+      }
+    });
+    
+    console.log('✅ Merged content (stored + mock):', Object.keys(mergedContent).length, 'orders');
+    // Log pending content count
+    let pendingCount = 0;
+    Object.values(mergedContent).forEach(order => {
+      pendingCount += (order.photos?.filter((p: any) => p.status === 'pending').length || 0);
+      pendingCount += (order.videos?.filter((v: any) => v.status === 'pending').length || 0);
+    });
+    if (pendingCount > 0) {
+      console.log('📸 Found', pendingCount, 'pending items in merged content');
+    }
+    return mergedContent;
   });
   
   // Reset inputs when order changes
@@ -826,7 +872,7 @@ function AffiliatePage() {
   // Helper function to save submittedContent to localStorage
   const saveSubmittedContentToStorage = (content: { [orderId: string]: { photos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; videos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; socials: Array<{ id: string; platform: string; link: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }> } }) => {
     try {
-      const contentToStore = JSON.parse(JSON.stringify(content, (key, value) => {
+      const contentToStore = JSON.parse(JSON.stringify(content, (_key, value) => {
         // Convert File objects to their preview URLs for storage
         if (value instanceof File) {
           return null; // We'll use preview instead
@@ -834,21 +880,33 @@ function AffiliatePage() {
         return value;
       }));
       
-      // Ensure all file references use preview strings
+      // Ensure all file references and previews use strings (data URLs)
       Object.keys(contentToStore).forEach(orderId => {
         if (contentToStore[orderId].photos) {
-          contentToStore[orderId].photos = contentToStore[orderId].photos.map((photo: any) => ({
-            ...photo,
-            file: typeof photo.file === 'string' ? photo.file : photo.preview
-          }));
+          contentToStore[orderId].photos = contentToStore[orderId].photos.map((photo: any) => {
+            // Ensure preview is always a string (data URL)
+            const previewString = typeof photo.preview === 'string' ? photo.preview : (typeof photo.file === 'string' ? photo.file : '');
+            return {
+              ...photo,
+              file: typeof photo.file === 'string' ? photo.file : previewString,
+              preview: previewString
+            };
+          }).filter((photo: any) => photo.preview && photo.preview.length > 0); // Remove any items without valid previews
         }
         if (contentToStore[orderId].videos) {
-          contentToStore[orderId].videos = contentToStore[orderId].videos.map((video: any) => ({
-            ...video,
-            file: typeof video.file === 'string' ? video.file : video.preview
-          }));
+          contentToStore[orderId].videos = contentToStore[orderId].videos.map((video: any) => {
+            // Ensure preview is always a string (data URL)
+            const previewString = typeof video.preview === 'string' ? video.preview : (typeof video.file === 'string' ? video.file : '');
+            return {
+              ...video,
+              file: typeof video.file === 'string' ? video.file : previewString,
+              preview: previewString
+            };
+          }).filter((video: any) => video.preview && video.preview.length > 0); // Remove any items without valid previews
         }
       });
+      
+      console.log('💾 Saving to localStorage:', Object.keys(contentToStore).length, 'orders');
       
       localStorage.setItem('affiliateSubmittedContent', JSON.stringify(contentToStore));
     } catch (e) {
@@ -909,8 +967,6 @@ function AffiliatePage() {
         videos: [...(orderContent.videos || [])], 
         socials: [...(orderContent.socials || [])] 
       };
-      
-      let contentAdded = false;
     
     // Helper to create preview if missing
     const createPreview = (file: File, existingPreview: string | null): Promise<string> => {
@@ -937,7 +993,7 @@ function AffiliatePage() {
     // Submit photos
     if (photo1FileToUse) {
       // Ensure we have a preview string before saving
-      const preview = photo1Preview || await createPreview(photo1FileToUse, photo1Preview);
+      const preview = photo1Preview || await createPreview(photo1FileToUse as File, photo1Preview);
       const rejectedPhoto = filteredContent.photos.find(p => p.status === 'rejected');
         if (rejectedPhoto) {
         updatedContent.photos = updatedContent.photos.map(p => 
@@ -962,7 +1018,7 @@ function AffiliatePage() {
     
     if (photo2FileToUse) {
       // Ensure we have a preview string before saving
-      const preview2 = photo2Preview || await createPreview(photo2FileToUse, photo2Preview);
+      const preview2 = photo2Preview || await createPreview(photo2FileToUse as File, photo2Preview);
         const rejectedPhotos = filteredContent.photos.filter(p => p.status === 'rejected');
         const rejectedPhoto = rejectedPhotos.length > 1 ? rejectedPhotos[1] : rejectedPhotos[0];
         if (rejectedPhoto && rejectedPhotos.length > 1) {
@@ -1006,7 +1062,7 @@ function AffiliatePage() {
     // Submit videos
     if (video1FileToUse) {
       // Ensure we have a preview string before saving
-      const videoPreview1 = video1Preview || await createPreview(video1FileToUse, video1Preview);
+      const videoPreview1 = video1Preview || await createPreview(video1FileToUse as File, video1Preview);
         const rejectedVideo = filteredContent.videos.find(v => v.status === 'rejected');
         if (rejectedVideo) {
         updatedContent.videos = updatedContent.videos.map(v => 
@@ -1031,7 +1087,7 @@ function AffiliatePage() {
     
     if (video2FileToUse) {
       // Ensure we have a preview string before saving
-      const videoPreview2 = video2Preview || await createPreview(video2FileToUse, video2Preview);
+      const videoPreview2 = video2Preview || await createPreview(video2FileToUse as File, video2Preview);
         const rejectedVideos = filteredContent.videos.filter(v => v.status === 'rejected');
         const rejectedVideo = rejectedVideos.length > 1 ? rejectedVideos[1] : rejectedVideos[0];
         if (rejectedVideo && rejectedVideos.length > 1) {
@@ -1365,7 +1421,6 @@ function AffiliatePage() {
     
     const { photoCounts } = getContentCounts(orderId);
     const maxPhotos = 2;
-    const approvedCount = photoCounts.approved;
     const approvedPendingCount = photoCounts.approved + photoCounts.pending;
     const availableSlots = maxPhotos - approvedPendingCount;
     
@@ -1410,9 +1465,8 @@ function AffiliatePage() {
     // Check for approved or pending content in submittedContent state
     // Disable if there's approved OR pending content (both can't be replaced, must delete first)
     const { photoCounts } = getContentCounts(orderId);
-    const approvedCount = photoCounts.approved;
     const pendingCount = photoCounts.pending;
-    const approvedPendingCount = approvedCount + pendingCount;
+    const approvedPendingCount = photoCounts.approved + pendingCount;
     
     // Disable if there's approved or pending content in the slots
     if (inputIndex === 1) {
@@ -1454,6 +1508,7 @@ function AffiliatePage() {
   };
   
   // Helper function to check if a social input box should be enabled
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const canSubmitSocial = (orderId: string, platform: string): boolean => {
     const { socialCounts } = getContentCounts(orderId);
     const maxSocials = 5;
@@ -3850,7 +3905,7 @@ function AffiliatePage() {
               e.stopPropagation();
               handleSubmitContent(e as any);
             }}
-            onMouseDown={(e) => {
+            onMouseDown={(_e) => {
               // Don't prevent default here, let onClick handle it
             }}
             className="border border-black font-futura text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 active:bg-gray-100"
