@@ -3382,7 +3382,7 @@ function AffiliatePage() {
                                             }}
                                           />
                                          </div>
-                                         <p style={{ fontFamily: photo.status === 'pending' ? '"Futura PT Demi"' : photo.status === 'rejected' ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '10px', color: photo.status === 'approved' ? '#000000' : photo.status === 'rejected' ? '#EB1C24' : '#909090', textTransform: 'uppercase', margin: '8px 0 0 0', textAlign: 'center', whiteSpace: 'nowrap', width: 'max-content', maxWidth: '100%', marginLeft: 'auto', marginRight: 'auto' }}>
+                                         <p style={{ fontFamily: photo.status === 'pending' ? '"Futura PT Demi"' : photo.status === 'rejected' ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '10px', color: photo.status === 'approved' ? '#000000' : photo.status === 'rejected' ? '#EB1C24' : '#909090', textTransform: 'uppercase', margin: '8px 0 0 0', whiteSpace: 'nowrap', width: 'max-content', position: 'relative', left: '50%', transform: 'translateX(-50%)' }}>
                                            {photo.status === 'pending' ? 'PENDING: IN REVIEW' : photo.status === 'approved' ? (
                                              <>APPROVED: <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{photo.points || 400} POINTS</span></>
                                            ) : <>REJECTED: {photo.rejectionReason || 'LOW QUALITY'}</>}
@@ -3504,7 +3504,7 @@ function AffiliatePage() {
                                             }}
                                           />
                                          </div>
-                                         <p style={{ fontFamily: video.status === 'pending' ? '"Futura PT Demi"' : video.status === 'rejected' ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '10px', color: video.status === 'approved' ? '#000000' : video.status === 'rejected' ? '#EB1C24' : '#909090', textTransform: 'uppercase', margin: '8px 0 0 0', textAlign: 'center', whiteSpace: 'nowrap', width: 'max-content', maxWidth: '100%', marginLeft: 'auto', marginRight: 'auto', display: 'block' }}>
+                                         <p style={{ fontFamily: video.status === 'pending' ? '"Futura PT Demi"' : video.status === 'rejected' ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '10px', color: video.status === 'approved' ? '#000000' : video.status === 'rejected' ? '#EB1C24' : '#909090', textTransform: 'uppercase', margin: '8px 0 0 0', whiteSpace: 'nowrap', width: 'max-content', position: 'relative', left: '50%', transform: 'translateX(-50%)' }}>
                                            {video.status === 'pending' ? 'PENDING: IN REVIEW' : video.status === 'approved' ? (
                                              <>APPROVED: <span style={{ color: '#EB1C24' }}>{video.points || 600} POINTS</span></>
                                            ) : <>REJECTED: {video.rejectionReason || 'LOW QUALITY'}</>}
@@ -3697,8 +3697,8 @@ function AffiliatePage() {
                   <div style={{ marginBottom: '24px' }}>
                     <p
                       style={{
-                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                        color: '#EB1C24',
+                        fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                        color: '#000000',
                         fontSize: '10px',
                         margin: '0 0 24px 0',
                         textTransform: 'uppercase',
