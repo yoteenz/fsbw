@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
+import ConfirmationModal from '../../../components/ConfirmationModal';
+import ImageViewerModal from '../../../components/ImageViewerModal';
 
 interface Order {
   id: string;
@@ -28,6 +30,9 @@ interface Order {
   tiktokApprovedDate?: string; // Date when TikTok content was approved (ISO string)
   youtubeApprovedDate?: string; // Date when YouTube content was approved (ISO string)
   facebookApprovedDate?: string; // Date when Facebook content was approved (ISO string)
+  submittedPhotos?: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>;
+  submittedVideos?: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>;
+  submittedSocials?: Array<{ id: string; platform: string; link: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>;
 }
 
 function AffiliatePage() {
@@ -156,8 +161,8 @@ function AffiliatePage() {
       productImage: getProductImage('NOIR'),
       total: 1640,
       items: 2,
-      pointsEarned: 500, // Mock: earned 500 pts for approved photo
-      pointsAvailable: 2000, // Max: 1,000 (photo + video) + 1,000 (social tags)
+      pointsEarned: 400, // Mock: earned 400 pts for approved photo
+      pointsAvailable: 5000, // Max: 2,000 (800 photos + 1,200 videos) + 3,000 (5 social tags × 600)
       contentStatus: 'approved', // Content approved
       socialTags: 0, // No social tags yet
       pointsEarnedPeriod: getCurrentPeriod(), // Current period
@@ -173,7 +178,7 @@ function AffiliatePage() {
       total: 820,
       items: 1,
       pointsEarned: 0, // Mock: no content submitted yet
-      pointsAvailable: 2000, // Max: 1,000 (photo + video) + 1,000 (social tags)
+      pointsAvailable: 5000, // Max: 2,000 (800 photos + 1,200 videos) + 3,000 (5 social tags × 600)
       contentStatus: 'not_submitted', // No content submitted
       socialTags: 0 // No social tags
     },
@@ -186,10 +191,10 @@ function AffiliatePage() {
       productImage: getProductImage('SOFT CURL'),
       total: 1200,
       items: 1,
-      pointsEarned: 1000, // Mock: earned 1000 pts (photo + video approved)
-      pointsAvailable: 2000, // Max: 1,000 (photo + video) + 1,000 (social tags)
+      pointsEarned: 2000, // Mock: earned 2000 pts (2 photos + 2 videos approved)
+      pointsAvailable: 5000, // Max: 2,000 (800 photos + 1,200 videos) + 3,000 (5 social tags × 600)
       contentStatus: 'approved', // Content approved
-      socialTags: 2, // 2 social tags submitted
+      socialTags: 2, // 2 social tags submitted (800 social points)
       pointsEarnedPeriod: getCurrentPeriod(), // Current period
       socialTagsPeriod: getCurrentPeriod() // Current period
     },
@@ -203,10 +208,10 @@ function AffiliatePage() {
       total: 980,
       items: 1,
       pointsEarned: 0, // Mock: content submitted but pending review
-      pointsAvailable: 2000,
+      pointsAvailable: 5000,
       contentStatus: 'pending', // Content pending review
       socialTags: 1, // 1 social tag pending
-      pendingPhotos: 1, // 1 photo pending (500 pts)
+      pendingPhotos: 1, // 1 photo pending (400 pts)
       pendingVideos: 0 // No videos pending
     },
     {
@@ -219,7 +224,7 @@ function AffiliatePage() {
       total: 1200,
       items: 1,
       pointsEarned: 0, // Mock: content rejected
-      pointsAvailable: 2000,
+      pointsAvailable: 5000,
       contentStatus: 'rejected', // Content rejected
       socialTags: 0 // No social tags (rejected)
     }
@@ -236,10 +241,10 @@ function AffiliatePage() {
       productImage: getProductImage('NOIR'),
       total: 1640,
       items: 2,
-      pointsEarned: 1000, // Mock: earned 1000 pts (photo + video approved)
-      pointsAvailable: 2000, // Max: 1,000 (photo + video) + 1,000 (social tags)
+      pointsEarned: 2000, // Mock: earned 2000 pts (2 photos + 2 videos approved)
+      pointsAvailable: 5000, // Max: 2,000 (800 photos + 1,200 videos) + 3,000 (5 social tags × 600)
       contentStatus: 'approved', // Content approved
-      socialTags: 3, // 3 social tags approved (600 social points)
+      socialTags: 3, // 3 social tags approved (1,200 social points)
       pointsEarnedPeriod: getCurrentPeriod(), // Current period
       socialTagsPeriod: getCurrentPeriod() // Current period
     },
@@ -252,10 +257,10 @@ function AffiliatePage() {
       productImage: getProductImage('BLANCO'),
       total: 820,
       items: 1,
-      pointsEarned: 500, // Mock: earned 500 pts (1 photo approved)
-      pointsAvailable: 2000, // Max: 1,000 (photo + video) + 1,000 (social tags)
+      pointsEarned: 400, // Mock: earned 400 pts (1 photo approved)
+      pointsAvailable: 5000, // Max: 2,000 (800 photos + 1,200 videos) + 3,000 (5 social tags × 600)
       contentStatus: 'approved', // Content approved
-      socialTags: 1, // 1 social tag approved (200 social points)
+      socialTags: 1, // 1 social tag approved (600 social points)
       pointsEarnedPeriod: getCurrentPeriod(), // Current period
       socialTagsPeriod: getCurrentPeriod() // Current period
     },
@@ -269,7 +274,7 @@ function AffiliatePage() {
       total: 980,
       items: 1,
       pointsEarned: 0, // Mock: no content submitted yet
-      pointsAvailable: 2000, // Max: 1,000 (photo + video) + 1,000 (social tags)
+      pointsAvailable: 5000, // Max: 2,000 (800 photos + 1,200 videos) + 3,000 (5 social tags × 600)
       contentStatus: 'not_submitted', // No content submitted
       socialTags: 0 // No social tags
     },
@@ -282,10 +287,10 @@ function AffiliatePage() {
       productImage: getProductImage('SOFT CURL'),
       total: 1200,
       items: 1,
-      pointsEarned: 2000, // Mock: all points earned
-      pointsAvailable: 2000,
+      pointsEarned: 2000, // Mock: all photo/video points earned (2 photos + 2 videos)
+      pointsAvailable: 5000,
       contentStatus: 'approved', // All content approved
-      socialTags: 5 // All 5 social tags approved
+      socialTags: 5 // All 5 social tags approved (3,000 social points)
     },
     {
       id: 'kateena-delivered-5',
@@ -297,11 +302,11 @@ function AffiliatePage() {
       total: 1200,
       items: 1,
       pointsEarned: 0, // Mock: content pending review
-      pointsAvailable: 2000,
+      pointsAvailable: 5000,
       contentStatus: 'pending', // Content pending
       socialTags: 3, // 3 social tags pending
-      pendingPhotos: 1, // 1 photo pending (500 pts)
-      pendingVideos: 1 // 1 video pending (500 pts)
+      pendingPhotos: 1, // 1 photo pending (400 pts)
+      pendingVideos: 1 // 1 video pending (600 pts)
     },
     {
       id: 'kateena-delivered-6',
@@ -312,10 +317,10 @@ function AffiliatePage() {
       productImage: getProductImage('BEACH WAVE'),
       total: 980,
       items: 1,
-      pointsEarned: 1000, // Mock: earned 1000 pts (photo + video approved)
-      pointsAvailable: 2000,
+      pointsEarned: 2000, // Mock: earned 2000 pts (2 photos + 2 videos approved)
+      pointsAvailable: 5000,
       contentStatus: 'approved', // All content approved
-      socialTags: 5, // All 5 social tags approved (1000 social points)
+      socialTags: 5, // All 5 social tags approved (3,000 social points)
       pointsEarnedPeriod: getCurrentPeriod(), // Current period
       socialTagsPeriod: getCurrentPeriod(), // Current period
       photo1ApprovedDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(), // 20 days ago
@@ -366,7 +371,7 @@ function AffiliatePage() {
           .map((order: Order) => ({
             ...order,
             productImage: order.productImage || getProductImage(order.productName || 'NOIR'),
-            pointsAvailable: order.pointsAvailable !== undefined ? order.pointsAvailable : 2000 // Default to max 2,000 pts if not set
+            pointsAvailable: order.pointsAvailable !== undefined ? order.pointsAvailable : 5000 // Default to max 5,000 pts if not set
           }));
       }
     } catch (e) {
@@ -378,6 +383,355 @@ function AffiliatePage() {
 
   const [deliveredOrders] = useState<Order[]>(() => getDeliveredOrders());
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+  const [galleryActiveTab, setGalleryActiveTab] = useState<'photos' | 'videos' | 'socials'>('photos');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<{ type: 'photo' | 'video' | 'social'; id: string } | null>(null);
+  const [showImageViewer, setShowImageViewer] = useState(false);
+  const [viewerImages, setViewerImages] = useState<string[]>([]);
+  const [viewerCurrentIndex, setViewerCurrentIndex] = useState(0);
+  
+  // State for submitted content gallery (stored per order) - Initialize with mock data for admin account only
+  const [submittedContent, setSubmittedContent] = useState<{ [orderId: string]: { photos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; videos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; socials: Array<{ id: string; platform: string; link: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }> } }>(() => {
+    // Mock data for admin account (Kateena Armstrong) orders only
+    const mockContent: { [orderId: string]: { photos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; videos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; socials: Array<{ id: string; platform: string; link: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }> } } = {};
+    
+    // Mock data for NOIR order (kateena-delivered-1) - has some approved content
+    mockContent['kateena-delivered-1'] = {
+      photos: [
+        {
+          id: 'photo-noir-1',
+          file: '/assets/gallery-mock.png',
+          preview: '/assets/gallery-mock.png',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() // 5 days ago
+        },
+        {
+          id: 'photo-noir-2',
+          file: '/assets/gallery-mock.png',
+          preview: '/assets/gallery-mock.png',
+          status: 'pending',
+          submittedDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() // 1 day ago
+        }
+      ],
+      videos: [],
+      socials: [
+        {
+          id: 'social-noir-twitter',
+          platform: 'Twitter',
+          link: 'https://twitter.com/user/status/1234567890',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString() // 4 days ago
+        },
+        {
+          id: 'social-noir-instagram',
+          platform: 'Instagram',
+          link: 'https://instagram.com/p/abcdefghij',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() // 3 days ago
+        },
+        {
+          id: 'social-noir-tiktok',
+          platform: 'TikTok',
+          link: 'https://tiktok.com/@user/video/1234567890',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() // 2 days ago
+        }
+      ]
+    };
+    
+    // Mock data for BLANCO order (kateena-delivered-2) - has some approved content and rejected content
+    mockContent['kateena-delivered-2'] = {
+      photos: [
+        {
+          id: 'photo-blanco-1',
+          file: '/assets/gallery-mock.png',
+          preview: '/assets/gallery-mock.png',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString() // 10 days ago
+        },
+        {
+          id: 'photo-blanco-2',
+          file: '/assets/gallery-mock.png',
+          preview: '/assets/gallery-mock.png',
+          status: 'rejected',
+          rejectionReason: 'LOW QUALITY',
+          submittedDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString() // 8 days ago
+        }
+      ],
+      videos: [
+        {
+          id: 'video-blanco-1',
+          file: '/assets/gallery-mock.png',
+          preview: '/assets/gallery-mock.png',
+          status: 'rejected',
+          rejectionReason: 'DUPLICATE CONTENT',
+          submittedDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days ago
+        }
+      ],
+      socials: [
+        {
+          id: 'social-blanco-instagram',
+          platform: 'Instagram',
+          link: 'https://instagram.com/p/xyz123456',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString() // 9 days ago
+        },
+        {
+          id: 'social-blanco-twitter',
+          platform: 'Twitter',
+          link: 'https://twitter.com/user/status/blanco456',
+          status: 'rejected',
+          rejectionReason: 'LOW QUALITY',
+          submittedDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString() // 6 days ago
+        }
+      ]
+    };
+    
+    // Mock data for SOFT WAVE order (kateena-delivered-3) - no content submitted
+    mockContent['kateena-delivered-3'] = {
+      photos: [],
+      videos: [],
+      socials: []
+    };
+    
+    // Mock data for SOFT CURL order (kateena-delivered-4) - all approved (4,000 points)
+    mockContent['kateena-delivered-4'] = {
+      photos: [
+        {
+          id: 'photo-curl-1',
+          file: '/assets/gallery-mock.png',
+          preview: '/assets/gallery-mock.png',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString() // 12 days ago
+        },
+        {
+          id: 'photo-curl-2',
+          file: '/assets/gallery-mock.png',
+          preview: '/assets/gallery-mock.png',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000).toISOString() // 11 days ago
+        }
+      ],
+      videos: [
+        {
+          id: 'video-curl-1',
+          file: '/assets/gallery-mock.png',
+          preview: '/assets/gallery-mock.png',
+          status: 'approved',
+          points: 600,
+          submittedDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString() // 10 days ago
+        },
+        {
+          id: 'video-curl-2',
+          file: '/assets/gallery-mock.png',
+          preview: '/assets/gallery-mock.png',
+          status: 'approved',
+          points: 600,
+          submittedDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString() // 9 days ago
+        }
+      ],
+      socials: [
+        {
+          id: 'social-curl-twitter',
+          platform: 'Twitter',
+          link: 'https://twitter.com/user/status/9876543210',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString() // 8 days ago
+        },
+        {
+          id: 'social-curl-instagram',
+          platform: 'Instagram',
+          link: 'https://instagram.com/p/xyz123456',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days ago
+        },
+        {
+          id: 'social-curl-tiktok',
+          platform: 'TikTok',
+          link: 'https://tiktok.com/@user/video/9876543210',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString() // 6 days ago
+        },
+        {
+          id: 'social-curl-youtube',
+          platform: 'YouTube',
+          link: 'https://youtube.com/watch?v=9876543210',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() // 5 days ago
+        },
+        {
+          id: 'social-curl-facebook',
+          platform: 'Facebook',
+          link: 'https://facebook.com/user/posts/9876543210',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString() // 4 days ago
+        }
+      ]
+    };
+    
+    // Mock data for OCEAN CURL order (kateena-delivered-5) - has pending content
+    mockContent['kateena-delivered-5'] = {
+      photos: [
+        {
+          id: 'photo-ocean-1',
+          file: '/assets/gallery-mock.png',
+          preview: '/assets/gallery-mock.png',
+          status: 'pending',
+          submittedDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() // 2 days ago
+        }
+      ],
+      videos: [
+        {
+          id: 'video-ocean-1',
+          file: '/assets/gallery-mock.png',
+          preview: '/assets/gallery-mock.png',
+          status: 'pending',
+          submittedDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() // 1 day ago
+        }
+      ],
+      socials: [
+        {
+          id: 'social-ocean-twitter',
+          platform: 'Twitter',
+          link: 'https://twitter.com/user/status/1111111111',
+          status: 'pending',
+          submittedDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() // 3 days ago
+        },
+        {
+          id: 'social-ocean-instagram',
+          platform: 'Instagram',
+          link: 'https://instagram.com/p/aaaa1111',
+          status: 'pending',
+          submittedDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() // 2 days ago
+        },
+        {
+          id: 'social-ocean-tiktok',
+          platform: 'TikTok',
+          link: 'https://tiktok.com/@user/video/1111111111',
+          status: 'pending',
+          submittedDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() // 1 day ago
+        }
+      ]
+    };
+    
+    // Mock data for BEACH WAVE order (kateena-delivered-6) - all approved (4,000 points)
+    mockContent['kateena-delivered-6'] = {
+      photos: [
+        {
+          id: 'photo-beach-1',
+          file: '/assets/gallery-mock.png',
+          preview: '/assets/gallery-mock.png',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 23 * 24 * 60 * 60 * 1000).toISOString() // 23 days ago
+        },
+        {
+          id: 'photo-beach-2',
+          file: '/assets/gallery-mock.png',
+          preview: '/assets/gallery-mock.png',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 22 * 24 * 60 * 60 * 1000).toISOString() // 22 days ago
+        }
+      ],
+      videos: [
+        {
+          id: 'video-beach-1',
+          file: '/assets/gallery-mock.png',
+          preview: '/assets/gallery-mock.png',
+          status: 'approved',
+          points: 600,
+          submittedDate: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString() // 21 days ago
+        },
+        {
+          id: 'video-beach-2',
+          file: '/assets/gallery-mock.png',
+          preview: '/assets/gallery-mock.png',
+          status: 'approved',
+          points: 600,
+          submittedDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString() // 20 days ago
+        }
+      ],
+      socials: [
+        {
+          id: 'social-beach-twitter',
+          platform: 'Twitter',
+          link: 'https://twitter.com/user/status/2222222222',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 19 * 24 * 60 * 60 * 1000).toISOString() // 19 days ago
+        },
+        {
+          id: 'social-beach-instagram',
+          platform: 'Instagram',
+          link: 'https://instagram.com/p/bbbb2222',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000).toISOString() // 18 days ago
+        },
+        {
+          id: 'social-beach-tiktok',
+          platform: 'TikTok',
+          link: 'https://tiktok.com/@user/video/2222222222',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 17 * 24 * 60 * 60 * 1000).toISOString() // 17 days ago
+        },
+        {
+          id: 'social-beach-youtube',
+          platform: 'YouTube',
+          link: 'https://youtube.com/watch?v=2222222222',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 16 * 24 * 60 * 60 * 1000).toISOString() // 16 days ago
+        },
+        {
+          id: 'social-beach-facebook',
+          platform: 'Facebook',
+          link: 'https://facebook.com/user/posts/2222222222',
+          status: 'approved',
+          points: 400,
+          submittedDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString() // 15 days ago
+        }
+      ]
+    };
+    
+    return mockContent;
+  });
+  
+  // Reset inputs when order changes
+  useEffect(() => {
+    setPhoto1File(null);
+    setPhoto1Preview(null);
+    setPhoto2File(null);
+    setPhoto2Preview(null);
+    setVideo1File(null);
+    setVideo1Preview(null);
+    setVideo2File(null);
+    setVideo2Preview(null);
+    setTwitterLink('');
+    setInstagramLink('');
+    setTiktokLink('');
+    setYoutubeLink('');
+    setFacebookLink('');
+    setGalleryActiveTab('photos');
+    if (photo1InputRef.current) photo1InputRef.current.value = '';
+    if (photo2InputRef.current) photo2InputRef.current.value = '';
+    if (video1InputRef.current) video1InputRef.current.value = '';
+    if (video2InputRef.current) video2InputRef.current.value = '';
+  }, [expandedOrderId]);
   
   // File state for photo and video uploads
   const [photo1File, setPhoto1File] = useState<File | null>(null);
@@ -389,20 +743,32 @@ function AffiliatePage() {
   const [video2File, setVideo2File] = useState<File | null>(null);
   const [video2Preview, setVideo2Preview] = useState<string | null>(null);
   
+  // State for social link inputs
+  const [twitterLink, setTwitterLink] = useState<string>('');
+  const [instagramLink, setInstagramLink] = useState<string>('');
+  const [tiktokLink, setTiktokLink] = useState<string>('');
+  const [youtubeLink, setYoutubeLink] = useState<string>('');
+  const [facebookLink, setFacebookLink] = useState<string>('');
+  
   // Refs for file inputs
   const photo1InputRef = useRef<HTMLInputElement>(null);
   const photo2InputRef = useRef<HTMLInputElement>(null);
   const video1InputRef = useRef<HTMLInputElement>(null);
   const video2InputRef = useRef<HTMLInputElement>(null);
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
   
-  // File change handlers
+  // File change handlers - only set preview, don't auto-submit
   const handlePhoto1Change = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setPhoto1File(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPhoto1Preview(reader.result as string);
+        const preview = reader.result as string;
+        setPhoto1Preview(preview);
+      };
+      reader.onerror = () => {
+        console.error('Error reading photo1 file');
       };
       reader.readAsDataURL(file);
     }
@@ -414,7 +780,11 @@ function AffiliatePage() {
       setPhoto2File(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPhoto2Preview(reader.result as string);
+        const preview = reader.result as string;
+        setPhoto2Preview(preview);
+      };
+      reader.onerror = () => {
+        console.error('Error reading photo2 file');
       };
       reader.readAsDataURL(file);
     }
@@ -426,7 +796,11 @@ function AffiliatePage() {
       setVideo1File(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setVideo1Preview(reader.result as string);
+        const preview = reader.result as string;
+        setVideo1Preview(preview);
+      };
+      reader.onerror = () => {
+        console.error('Error reading video1 file');
       };
       reader.readAsDataURL(file);
     }
@@ -438,9 +812,314 @@ function AffiliatePage() {
       setVideo2File(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setVideo2Preview(reader.result as string);
+        const preview = reader.result as string;
+        setVideo2Preview(preview);
+      };
+      reader.onerror = () => {
+        console.error('Error reading video2 file');
       };
       reader.readAsDataURL(file);
+    }
+  };
+  
+  // Submit handler - adds all pending content to submittedContent
+  const handleSubmitContent = async (e?: React.MouseEvent<HTMLButtonElement> | React.TouchEvent<HTMLButtonElement>) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    if (!expandedOrderId) {
+      alert('Error: No order selected');
+      return;
+    }
+    
+    // Visual feedback for debugging - shows on mobile screen
+    const hasContent = !!(photo1File || photo2File || video1File || video2File || 
+      twitterLink.trim() || instagramLink.trim() || tiktokLink.trim() || 
+      youtubeLink.trim() || facebookLink.trim());
+    
+    if (!hasContent) {
+      alert('Please select at least one file or enter a social media link before submitting.');
+      return;
+    }
+    
+    try {
+        const orderContent = submittedContent[expandedOrderId] || { photos: [], videos: [], socials: [] };
+        const filteredContent = getFilteredContent(expandedOrderId);
+      const updatedContent = { 
+        photos: [...(orderContent.photos || [])], 
+        videos: [...(orderContent.videos || [])], 
+        socials: [...(orderContent.socials || [])] 
+      };
+      
+      let contentAdded = false;
+    
+    // Helper to create preview if missing
+    const createPreview = (file: File, existingPreview: string | null): Promise<string> => {
+      return new Promise((resolve, reject) => {
+        if (existingPreview) {
+          resolve(existingPreview);
+        } else {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            if (reader.result) {
+              resolve(reader.result as string);
+            } else {
+              reject(new Error('Failed to read file'));
+            }
+          };
+          reader.onerror = () => {
+            reject(new Error('Error reading file'));
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    };
+    
+    // Submit photos
+    if (photo1File) {
+      const preview = photo1Preview || await createPreview(photo1File, photo1Preview);
+      const rejectedPhoto = filteredContent.photos.find(p => p.status === 'rejected');
+        if (rejectedPhoto) {
+        updatedContent.photos = updatedContent.photos.map(p => 
+                p.id === rejectedPhoto.id 
+            ? { ...p, file: photo1File, preview: preview, status: 'pending' as const, submittedDate: new Date().toISOString() }
+                  : p
+        );
+        } else {
+        updatedContent.photos = [...updatedContent.photos, {
+                id: `photo-${Date.now()}-1`,
+          file: photo1File,
+          preview: preview,
+                status: 'pending' as const,
+                submittedDate: new Date().toISOString()
+        }];
+            }
+      contentAdded = true;
+        setPhoto1File(null);
+        setPhoto1Preview(null);
+        if (photo1InputRef.current) photo1InputRef.current.value = '';
+    }
+    
+    if (photo2File) {
+      const preview2 = photo2Preview || await createPreview(photo2File, photo2Preview);
+        const rejectedPhotos = filteredContent.photos.filter(p => p.status === 'rejected');
+        const rejectedPhoto = rejectedPhotos.length > 1 ? rejectedPhotos[1] : rejectedPhotos[0];
+        if (rejectedPhoto && rejectedPhotos.length > 1) {
+        updatedContent.photos = updatedContent.photos.map(p => 
+                p.id === rejectedPhoto.id 
+            ? { ...p, file: photo2File, preview: preview2, status: 'pending' as const, submittedDate: new Date().toISOString() }
+                  : p
+        );
+        } else if (rejectedPhoto) {
+        const alreadyReplaced = updatedContent.photos.find(p => p.status === 'pending' && p.id !== rejectedPhoto.id);
+          if (!alreadyReplaced) {
+          updatedContent.photos = updatedContent.photos.map(p => 
+                  p.id === rejectedPhoto.id 
+              ? { ...p, file: photo2File, preview: preview2, status: 'pending' as const, submittedDate: new Date().toISOString() }
+                    : p
+          );
+          } else {
+          updatedContent.photos = [...updatedContent.photos, {
+                  id: `photo-${Date.now()}-2`,
+            file: photo2File,
+            preview: preview2,
+                  status: 'pending' as const,
+                  submittedDate: new Date().toISOString()
+          }];
+          }
+        } else {
+        updatedContent.photos = [...updatedContent.photos, {
+                id: `photo-${Date.now()}-2`,
+          file: photo2File,
+          preview: preview2,
+                status: 'pending' as const,
+                submittedDate: new Date().toISOString()
+        }];
+            }
+      contentAdded = true;
+        setPhoto2File(null);
+        setPhoto2Preview(null);
+        if (photo2InputRef.current) photo2InputRef.current.value = '';
+    }
+    
+    // Submit videos
+    if (video1File) {
+      const videoPreview1 = video1Preview || await createPreview(video1File, video1Preview);
+        const rejectedVideo = filteredContent.videos.find(v => v.status === 'rejected');
+        if (rejectedVideo) {
+        updatedContent.videos = updatedContent.videos.map(v => 
+                v.id === rejectedVideo.id 
+            ? { ...v, file: video1File, preview: videoPreview1, status: 'pending' as const, submittedDate: new Date().toISOString() }
+                  : v
+        );
+        } else {
+        updatedContent.videos = [...updatedContent.videos, {
+                id: `video-${Date.now()}-1`,
+          file: video1File,
+          preview: videoPreview1,
+                status: 'pending' as const,
+                submittedDate: new Date().toISOString()
+        }];
+            }
+      contentAdded = true;
+        setVideo1File(null);
+        setVideo1Preview(null);
+        if (video1InputRef.current) video1InputRef.current.value = '';
+    }
+    
+    if (video2File) {
+      const videoPreview2 = video2Preview || await createPreview(video2File, video2Preview);
+        const rejectedVideos = filteredContent.videos.filter(v => v.status === 'rejected');
+        const rejectedVideo = rejectedVideos.length > 1 ? rejectedVideos[1] : rejectedVideos[0];
+        if (rejectedVideo && rejectedVideos.length > 1) {
+        updatedContent.videos = updatedContent.videos.map(v => 
+                v.id === rejectedVideo.id 
+            ? { ...v, file: video2File, preview: videoPreview2, status: 'pending' as const, submittedDate: new Date().toISOString() }
+                  : v
+        );
+        } else if (rejectedVideo) {
+        const alreadyReplaced = updatedContent.videos.find(v => v.status === 'pending' && v.id !== rejectedVideo.id);
+          if (!alreadyReplaced) {
+          updatedContent.videos = updatedContent.videos.map(v => 
+                  v.id === rejectedVideo.id 
+              ? { ...v, file: video2File, preview: videoPreview2, status: 'pending' as const, submittedDate: new Date().toISOString() }
+                    : v
+          );
+          } else {
+          updatedContent.videos = [...updatedContent.videos, {
+                  id: `video-${Date.now()}-2`,
+            file: video2File,
+            preview: videoPreview2,
+                  status: 'pending' as const,
+                  submittedDate: new Date().toISOString()
+          }];
+          }
+        } else {
+        updatedContent.videos = [...updatedContent.videos, {
+                id: `video-${Date.now()}-2`,
+          file: video2File,
+          preview: videoPreview2,
+                status: 'pending' as const,
+                submittedDate: new Date().toISOString()
+        }];
+            }
+      contentAdded = true;
+        setVideo2File(null);
+        setVideo2Preview(null);
+        if (video2InputRef.current) video2InputRef.current.value = '';
+    }
+    
+    // Submit social links
+    const expandedOrder = deliveredOrders.find(o => o.id === expandedOrderId);
+    if (twitterLink.trim() && expandedOrder && !hasSocialContent(expandedOrder.id, 'Twitter')) {
+      const rejectedTwitter = filteredContent.socials.find(s => s.platform.toLowerCase() === 'twitter' && s.status === 'rejected');
+      if (rejectedTwitter) {
+        updatedContent.socials = updatedContent.socials.map(s => 
+          s.id === rejectedTwitter.id 
+            ? { ...s, link: twitterLink.trim(), status: 'pending' as const, submittedDate: new Date().toISOString() }
+            : s
+        );
+      } else {
+        updatedContent.socials = [...updatedContent.socials, {
+          id: `social-${Date.now()}-twitter`,
+          platform: 'Twitter',
+          link: twitterLink.trim(),
+          status: 'pending' as const,
+          submittedDate: new Date().toISOString()
+        }];
+      }
+      setTwitterLink('');
+    }
+    
+    if (instagramLink.trim() && expandedOrder && !hasSocialContent(expandedOrder.id, 'Instagram')) {
+      const rejectedInstagram = filteredContent.socials.find(s => s.platform.toLowerCase() === 'instagram' && s.status === 'rejected');
+      if (rejectedInstagram) {
+        updatedContent.socials = updatedContent.socials.map(s => 
+          s.id === rejectedInstagram.id 
+            ? { ...s, link: instagramLink.trim(), status: 'pending' as const, submittedDate: new Date().toISOString() }
+            : s
+        );
+      } else {
+        updatedContent.socials = [...updatedContent.socials, {
+          id: `social-${Date.now()}-instagram`,
+          platform: 'Instagram',
+          link: instagramLink.trim(),
+          status: 'pending' as const,
+          submittedDate: new Date().toISOString()
+        }];
+      }
+      setInstagramLink('');
+    }
+    
+    if (tiktokLink.trim() && expandedOrder && !hasSocialContent(expandedOrder.id, 'TikTok')) {
+      const rejectedTiktok = filteredContent.socials.find(s => s.platform.toLowerCase() === 'tiktok' && s.status === 'rejected');
+      if (rejectedTiktok) {
+        updatedContent.socials = updatedContent.socials.map(s => 
+          s.id === rejectedTiktok.id 
+            ? { ...s, link: tiktokLink.trim(), status: 'pending' as const, submittedDate: new Date().toISOString() }
+            : s
+        );
+      } else {
+        updatedContent.socials = [...updatedContent.socials, {
+          id: `social-${Date.now()}-tiktok`,
+          platform: 'TikTok',
+          link: tiktokLink.trim(),
+          status: 'pending' as const,
+          submittedDate: new Date().toISOString()
+        }];
+      }
+      setTiktokLink('');
+    }
+    
+    if (youtubeLink.trim() && expandedOrder && !hasSocialContent(expandedOrder.id, 'YouTube')) {
+      const rejectedYoutube = filteredContent.socials.find(s => s.platform.toLowerCase() === 'youtube' && s.status === 'rejected');
+      if (rejectedYoutube) {
+        updatedContent.socials = updatedContent.socials.map(s => 
+          s.id === rejectedYoutube.id 
+            ? { ...s, link: youtubeLink.trim(), status: 'pending' as const, submittedDate: new Date().toISOString() }
+            : s
+        );
+      } else {
+        updatedContent.socials = [...updatedContent.socials, {
+          id: `social-${Date.now()}-youtube`,
+          platform: 'YouTube',
+          link: youtubeLink.trim(),
+          status: 'pending' as const,
+          submittedDate: new Date().toISOString()
+        }];
+      }
+      setYoutubeLink('');
+    }
+    
+    if (facebookLink.trim() && expandedOrder && !hasSocialContent(expandedOrder.id, 'Facebook')) {
+      const rejectedFacebook = filteredContent.socials.find(s => s.platform.toLowerCase() === 'facebook' && s.status === 'rejected');
+      if (rejectedFacebook) {
+        updatedContent.socials = updatedContent.socials.map(s => 
+          s.id === rejectedFacebook.id 
+            ? { ...s, link: facebookLink.trim(), status: 'pending' as const, submittedDate: new Date().toISOString() }
+            : s
+        );
+      } else {
+        updatedContent.socials = [...updatedContent.socials, {
+          id: `social-${Date.now()}-facebook`,
+          platform: 'Facebook',
+          link: facebookLink.trim(),
+          status: 'pending' as const,
+          submittedDate: new Date().toISOString()
+        }];
+      }
+      setFacebookLink('');
+    }
+    
+      // Update submittedContent using functional update to avoid stale state
+      setSubmittedContent(prev => ({
+        ...prev,
+        [expandedOrderId]: updatedContent
+      }));
+    } catch (error) {
+      console.error('Error submitting content:', error);
     }
   };
   
@@ -455,8 +1134,50 @@ function AffiliatePage() {
       setVideo1Preview(null);
       setVideo2File(null);
       setVideo2Preview(null);
+      setTwitterLink('');
+      setInstagramLink('');
+      setTiktokLink('');
+      setYoutubeLink('');
+      setFacebookLink('');
+      setGalleryActiveTab('photos');
+      if (photo1InputRef.current) photo1InputRef.current.value = '';
+      if (photo2InputRef.current) photo2InputRef.current.value = '';
+      if (video1InputRef.current) video1InputRef.current.value = '';
+      if (video2InputRef.current) video2InputRef.current.value = '';
     }
   }, [expandedOrderId]);
+  
+  // Add native event listeners for mobile button click (fallback)
+  useEffect(() => {
+    const button = submitButtonRef.current;
+    if (!button || !expandedOrderId) return;
+    
+    const handleNativeClick = (e: Event) => {
+      console.log('Native click event fired on button');
+      e.preventDefault();
+      e.stopPropagation();
+      // Call handleSubmitContent directly - it will have access to current state via closure
+      handleSubmitContent();
+    };
+    
+    const handleNativeTouch = (e: TouchEvent) => {
+      console.log('Native touch event fired on button');
+      e.preventDefault();
+      e.stopPropagation();
+      // Call handleSubmitContent directly - it will have access to current state via closure
+      handleSubmitContent();
+    };
+    
+    // Add both click and touchend listeners
+    button.addEventListener('click', handleNativeClick, { passive: false });
+    button.addEventListener('touchend', handleNativeTouch, { passive: false });
+    
+    return () => {
+      button.removeEventListener('click', handleNativeClick);
+      button.removeEventListener('touchend', handleNativeTouch);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expandedOrderId]); // handleSubmitContent is stable and doesn't need to be in deps
   
   // Helper function to check if points should be reset (new period started)
   const shouldResetPoints = (order: Order): boolean => {
@@ -480,16 +1201,18 @@ function AffiliatePage() {
     }
     
     // Otherwise return the stored points
-    const photoVideoEarned = Math.min(1000, order.pointsEarned || 0);
-    const socialPointsEarned = (order.socialTags || 0) * 200;
+    // Photos: 400 each (2 max = 800), Videos: 600 each (2 max = 1,200), Total photo/video: 2,000 max
+    const photoVideoEarned = Math.min(2000, order.pointsEarned || 0);
+    const socialPointsEarned = (order.socialTags || 0) * 600;
     
     return { photoVideo: photoVideoEarned, social: socialPointsEarned };
   };
 
   // Helper function to get the period for a given date
-  const getPeriodForDate = (date: Date): string => {
-    const month = date.getMonth(); // 0-11 (Jan = 0, Dec = 11)
-    const year = date.getFullYear();
+  const getPeriodForDate = (date: Date | string): string => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    const month = dateObj.getMonth(); // 0-11 (Jan = 0, Dec = 11)
+    const year = dateObj.getFullYear();
     
     // Jan-Jun (months 0-5) or Jul-Dec (months 6-11)
     if (month < 6) {
@@ -498,23 +1221,198 @@ function AffiliatePage() {
       return `${year}-Jul-Dec`;
     }
   };
-
-  // Helper function to check if content can be submitted
-  // Content can only be approved once per period (Jan-Jun or Jul-Dec)
-  // If the period has changed since approval, content can be resubmitted
-  const canSubmitContent = (approvedDate?: string): boolean => {
-    if (!approvedDate) return true; // No approval date means content hasn't been approved yet
-    
-    const approved = new Date(approvedDate);
-    // Check if date is valid
-    if (isNaN(approved.getTime())) return true; // Invalid date, allow submission
-    
+  
+  // Helper function to filter content by current period (only show content from current 6-month cycle)
+  const getFilteredContent = (orderId: string) => {
+    const orderContent = submittedContent[orderId] || { photos: [], videos: [], socials: [] };
     const currentPeriod = getCurrentPeriod();
-    const approvalPeriod = getPeriodForDate(approved);
     
-    // Can submit if approval was in a different period (period has reset)
-    // If same period, cannot submit (already approved in this period)
-    return approvalPeriod !== currentPeriod;
+    // Filter content to only include items from the current period
+    const filteredPhotos = orderContent.photos.filter(p => {
+      const contentPeriod = getPeriodForDate(p.submittedDate);
+      return contentPeriod === currentPeriod;
+    });
+    
+    const filteredVideos = orderContent.videos.filter(v => {
+      const contentPeriod = getPeriodForDate(v.submittedDate);
+      return contentPeriod === currentPeriod;
+    });
+    
+    const filteredSocials = orderContent.socials.filter(s => {
+      const contentPeriod = getPeriodForDate(s.submittedDate);
+      return contentPeriod === currentPeriod;
+    });
+    
+    return {
+      photos: filteredPhotos,
+      videos: filteredVideos,
+      socials: filteredSocials
+    };
+  };
+  
+  // Helper function to count content statuses from gallery (filtered by current period)
+  const getContentCounts = (orderId: string) => {
+    const filteredContent = getFilteredContent(orderId);
+    
+    const photoCounts = {
+      approved: filteredContent.photos.filter(p => p.status === 'approved').length,
+      pending: filteredContent.photos.filter(p => p.status === 'pending').length,
+      rejected: filteredContent.photos.filter(p => p.status === 'rejected').length
+    };
+    
+    const videoCounts = {
+      approved: filteredContent.videos.filter(v => v.status === 'approved').length,
+      pending: filteredContent.videos.filter(v => v.status === 'pending').length,
+      rejected: filteredContent.videos.filter(v => v.status === 'rejected').length
+    };
+    
+    const socialCounts = {
+      approved: filteredContent.socials.filter(s => s.status === 'approved').length,
+      pending: filteredContent.socials.filter(s => s.status === 'pending').length,
+      rejected: filteredContent.socials.filter(s => s.status === 'rejected').length
+    };
+    
+    return { photoCounts, videoCounts, socialCounts };
+  };
+  
+  // Helper function to check if a photo input box should be enabled
+  const canSubmitPhoto = (orderId: string, inputIndex: 1 | 2): boolean => {
+    // First check if the input is disabled due to approved content
+    if (hasPhotoContent(orderId, inputIndex)) {
+      return false;
+    }
+    
+    const { photoCounts } = getContentCounts(orderId);
+    const maxPhotos = 2;
+    const approvedCount = photoCounts.approved;
+    const approvedPendingCount = photoCounts.approved + photoCounts.pending;
+    const availableSlots = maxPhotos - approvedPendingCount;
+    
+    // Enable input boxes if:
+    // 1. There are available slots (not all slots filled with approved/pending)
+    // 2. There are rejected items to replace
+    // Note: Pending content disables the input (must delete first), so we don't check for pending here
+      return availableSlots > 0 || photoCounts.rejected > 0;
+  };
+  
+  // Helper function to check if a video input box should be enabled
+  const canSubmitVideo = (orderId: string, inputIndex: 1 | 2): boolean => {
+    // First check if the input is disabled due to approved content
+    if (hasVideoContent(orderId, inputIndex)) {
+      return false;
+    }
+    
+    const { videoCounts } = getContentCounts(orderId);
+    const maxVideos = 2;
+    const approvedPendingCount = videoCounts.approved + videoCounts.pending;
+    const availableSlots = maxVideos - approvedPendingCount;
+    
+    // Enable input boxes if:
+    // 1. There are available slots (not all slots filled with approved/pending)
+    // 2. There are rejected items to replace
+    // Note: Pending content disables the input (must delete first), so we don't check for pending here
+      return availableSlots > 0 || videoCounts.rejected > 0;
+  };
+  
+  // Helper function to check if a photo input box has approved or pending content (should be disabled)
+  const hasPhotoContent = (orderId: string, inputIndex: 1 | 2): boolean => {
+    const order = deliveredOrders.find(o => o.id === orderId);
+    if (!order) return false;
+    
+    // Check approved dates from order (like membership page) - if approved, disable
+    if (inputIndex === 1) {
+      if (order.photo1ApprovedDate) return true;
+    } else {
+      if (order.photo2ApprovedDate) return true;
+    }
+    
+    // Check for approved or pending content in submittedContent state
+    // Disable if there's approved OR pending content (both can't be replaced, must delete first)
+    const { photoCounts } = getContentCounts(orderId);
+    const approvedCount = photoCounts.approved;
+    const pendingCount = photoCounts.pending;
+    const approvedPendingCount = approvedCount + pendingCount;
+    
+    // Disable if there's approved or pending content in the slots
+    if (inputIndex === 1) {
+      // Disable if there's at least 1 approved or pending photo (slot 1 is filled, can't replace)
+      return approvedPendingCount >= 1;
+    } else {
+      // Disable if there are 2 approved/pending photos (both slots filled, can't replace slot 2)
+      return approvedPendingCount >= 2;
+    }
+  };
+  
+  // Helper function to check if a video input box has approved or pending content (should be disabled)
+  const hasVideoContent = (orderId: string, inputIndex: 1 | 2): boolean => {
+    const order = deliveredOrders.find(o => o.id === orderId);
+    if (!order) return false;
+    
+    // Check approved dates from order (like membership page) - if approved, disable
+    if (inputIndex === 1) {
+      if (order.video1ApprovedDate) return true;
+    } else {
+      if (order.video2ApprovedDate) return true;
+    }
+    
+    // Check for approved or pending content in submittedContent state
+    // Disable if there's approved OR pending content (both can't be replaced, must delete first)
+    const { videoCounts } = getContentCounts(orderId);
+    const approvedCount = videoCounts.approved;
+    const pendingCount = videoCounts.pending;
+    const approvedPendingCount = approvedCount + pendingCount;
+    
+    // Disable if there's approved or pending content in the slots
+    if (inputIndex === 1) {
+      // Disable if there's at least 1 approved or pending video (slot 1 is filled, can't replace)
+      return approvedPendingCount >= 1;
+    } else {
+      // Disable if there are 2 approved/pending videos (both slots filled, can't replace slot 2)
+      return approvedPendingCount >= 2;
+    }
+  };
+  
+  // Helper function to check if a social input box should be enabled
+  const canSubmitSocial = (orderId: string, platform: string): boolean => {
+    const { socialCounts } = getContentCounts(orderId);
+    const maxSocials = 5;
+    const approvedPendingCount = socialCounts.approved + socialCounts.pending;
+    const availableSlots = maxSocials - approvedPendingCount;
+    
+    // Check if this specific platform has rejected content (filtered by current period)
+    const filteredContent = getFilteredContent(orderId);
+    const platformRejected = filteredContent.socials.filter(s => s.platform.toLowerCase() === platform.toLowerCase() && s.status === 'rejected').length;
+    
+    // Enable if we have available slots OR if this platform has rejected content
+    return availableSlots > 0 || platformRejected > 0;
+  };
+  
+  // Helper function to check if a social platform has approved or pending content (should be disabled)
+  const hasSocialContent = (orderId: string, platform: string): boolean => {
+    const order = deliveredOrders.find(o => o.id === orderId);
+    if (!order) return false;
+    
+    // Check approved dates from order (like membership page)
+    const platformLower = platform.toLowerCase();
+    if (platformLower === 'twitter' && order.twitterApprovedDate) {
+      return true;
+    } else if (platformLower === 'instagram' && order.instagramApprovedDate) {
+      return true;
+    } else if (platformLower === 'tiktok' && order.tiktokApprovedDate) {
+      return true;
+    } else if (platformLower === 'youtube' && order.youtubeApprovedDate) {
+      return true;
+    } else if (platformLower === 'facebook' && order.facebookApprovedDate) {
+      return true;
+    }
+    
+    // Also check for pending content in submittedContent state
+    const filteredContent = getFilteredContent(orderId);
+    const platformContent = filteredContent.socials.filter(s => 
+      s.platform.toLowerCase() === platformLower && 
+      (s.status === 'approved' || s.status === 'pending')
+    );
+    return platformContent.length > 0;
   };
   
   // Helper function to get cart dropdown style thumbnail
@@ -772,7 +1670,7 @@ function AffiliatePage() {
                       color: mobileMenuActiveTab === 'SHOP' ? '#EB1C24' : 'black',
                       fontWeight: '500',
                       textTransform: 'uppercase',
-                      borderBottom: mobileMenuActiveTab === 'SHOP' ? '2px solid #EB1C24' : 'none',
+                      borderBottom: mobileMenuActiveTab === 'SHOP' ? '1px solid #EB1C24' : 'none',
                       borderTop: 'none',
                       borderLeft: 'none',
                       borderRight: 'none',
@@ -791,7 +1689,7 @@ function AffiliatePage() {
                       color: mobileMenuActiveTab === 'TOOLS' ? '#EB1C24' : 'black',
                       fontWeight: '500',
                       textTransform: 'uppercase',
-                      borderBottom: mobileMenuActiveTab === 'TOOLS' ? '2px solid #EB1C24' : 'none',
+                      borderBottom: mobileMenuActiveTab === 'TOOLS' ? '1px solid #EB1C24' : 'none',
                       borderTop: 'none',
                       borderLeft: 'none',
                       borderRight: 'none',
@@ -810,7 +1708,7 @@ function AffiliatePage() {
                       color: mobileMenuActiveTab === 'BRAND' ? '#EB1C24' : 'black',
                       fontWeight: '500',
                       textTransform: 'uppercase',
-                      borderBottom: mobileMenuActiveTab === 'BRAND' ? '2px solid #EB1C24' : 'none',
+                      borderBottom: mobileMenuActiveTab === 'BRAND' ? '1px solid #EB1C24' : 'none',
                       borderTop: 'none',
                       borderLeft: 'none',
                       borderRight: 'none',
@@ -998,10 +1896,9 @@ function AffiliatePage() {
               <>
                  {/* AFFILIATE CONTENT */}
                  <div
-                   className="border border-black bg-white/60 backdrop-blur-sm w-full transition-all duration-300 ease-out"
+                   className="border border-black bg-white/60 backdrop-blur-sm w-full pt-6 pb-4 px-5 mb-2 transition-all duration-300 ease-out"
                    style={{
                      borderWidth: '1.3px',
-                     padding: '20px',
                      backgroundColor: 'rgba(255, 255, 255, 0.6)'
                    }}
                  >
@@ -1018,13 +1915,13 @@ function AffiliatePage() {
                        const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
                        const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
                        const photoVideoEarned = effectivePoints.photoVideo;
-                       const socialPointsEarned = effectiveSocialTags * 200;
+                       const socialPointsEarned = effectiveSocialTags * 600;
                        const totalEarned = photoVideoEarned + socialPointsEarned;
-                       const totalAvailable = 2000; // 1,000 photo/video + 1,000 social
+                       const totalAvailable = 5000; // 2,000 photo/video (800 photos + 1,200 videos) + 3,000 social (5 tags × 600)
                        const pointsText = totalEarned === 0
                          ? "YOU'VE EARNED 0 LOYALTY POINTS!"
                          : totalEarned >= totalAvailable 
-                           ? "YOU'VE EARNED 2,000 LOYALTY POINTS!" 
+                           ? "YOU'VE EARNED 5,000 LOYALTY POINTS!" 
                            : `YOU'VE EARNED ${totalEarned.toLocaleString()} LOYALTY POINTS!`;
                        
                        return (
@@ -1117,9 +2014,9 @@ function AffiliatePage() {
                                const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
                                const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
                                const photoVideoEarned = effectivePoints.photoVideo;
-                               const socialPointsEarned = effectiveSocialTags * 200;
+                               const socialPointsEarned = effectiveSocialTags * 600;
                                const totalEarned = photoVideoEarned + socialPointsEarned;
-                               const totalAvailable = 2000; // 1,000 photo/video + 1,000 social
+                               const totalAvailable = 5000; // 2,000 photo/video (800 photos + 1,200 videos) + 3,000 social (5 tags × 600)
                                const remaining = totalAvailable - totalEarned;
                                // Always show remaining text and reset date text
                                return (
@@ -1137,7 +2034,7 @@ function AffiliatePage() {
                                    </p>
                                    <p
                                      style={{
-                                       fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                                       fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                                        fontSize: '11px',
                                        color: '#000000',
                                        margin: '4px 0 0 0',
@@ -1176,9 +2073,11 @@ function AffiliatePage() {
                                  }}
                                >
                                  {(() => {
-                                   const photoVideoEarned = Math.min(1000, expandedOrder.pointsEarned || 0);
-                                   const photoPointsEarned = photoVideoEarned >= 500 ? 500 : 0;
-                                   return `${photoPointsEarned}/500`;
+                                   const photoVideoEarned = Math.min(2000, expandedOrder.pointsEarned || 0);
+                                   // Photos: 400 each, 2 max = 800 total
+                                   // Calculate photo points: if earned <= 800, it's photos; if > 800, photos are maxed at 800
+                                   const photoPointsEarned = Math.min(800, photoVideoEarned);
+                                   return `${photoPointsEarned}/800`;
                                  })()}
                                </p>
                              </div>
@@ -1189,8 +2088,9 @@ function AffiliatePage() {
                                    type="file"
                                    accept="image/*"
                                    ref={photo1InputRef}
+                                   disabled={hasPhotoContent(expandedOrder.id, 1)}
                                    onChange={(e) => {
-                                     if (canSubmitContent(expandedOrder.photo1ApprovedDate)) {
+                                     if (canSubmitPhoto(expandedOrder.id, 1)) {
                                        handlePhoto1Change(e);
                                      }
                                    }}
@@ -1199,71 +2099,118 @@ function AffiliatePage() {
                                      width: '100%',
                                      height: '36px',
                                      opacity: 0,
-                                     cursor: 'pointer',
+                                     cursor: hasPhotoContent(expandedOrder.id, 1) ? 'not-allowed' : 'pointer',
                                      zIndex: 3,
                                      top: 0,
-                                     left: 0
+                                     left: 0,
+                                     pointerEvents: hasPhotoContent(expandedOrder.id, 1) ? 'none' : 'auto'
                                    }}
                                  />
                                  <div
                                    onClick={() => {
-                                     if (canSubmitContent(expandedOrder.photo1ApprovedDate)) {
+                                     if (canSubmitPhoto(expandedOrder.id, 1) && !hasPhotoContent(expandedOrder.id, 1)) {
                                        photo1InputRef.current?.click();
                                      }
                                    }}
                                    style={{
                                      width: '100%',
                                      minHeight: '36px',
-                                     height: photo1Preview ? 'auto' : '36px',
+                                     height: '36px',
                                      padding: '8px',
-                                     border: '1.3px solid #000000',
+                                     border: '1px solid #000000',
                                      fontFamily: '"Futura PT Book"',
                                      fontSize: '11px',
-                                     backgroundColor: !canSubmitContent(expandedOrder.photo1ApprovedDate) ? '#F5F5F5' : '#FFFFFF',
+                                     backgroundColor: '#FFFFFF',
                                      color: photo1File ? '#909090' : '#EB1C24',
                                      boxSizing: 'border-box',
                                      borderRadius: '0',
-                                     cursor: !canSubmitContent(expandedOrder.photo1ApprovedDate) ? 'not-allowed' : 'pointer',
+                                     cursor: hasPhotoContent(expandedOrder.id, 1) ? 'not-allowed' : 'pointer',
                                      textTransform: 'uppercase',
                                      position: 'relative',
-                                     overflow: photo1Preview ? 'visible' : 'hidden',
-                                     display: photo1Preview ? 'block' : 'flex',
-                                     alignItems: photo1Preview ? 'normal' : 'center',
-                                     opacity: !canSubmitContent(expandedOrder.photo1ApprovedDate) ? 0.6 : 1,
-                                     pointerEvents: !canSubmitContent(expandedOrder.photo1ApprovedDate) ? 'none' : 'auto'
+                                     overflow: 'hidden',
+                                     display: 'flex',
+                                     alignItems: 'center',
+                                     opacity: 1,
+                                     pointerEvents: hasPhotoContent(expandedOrder.id, 1) ? 'none' : 'auto'
                                    }}
                                  >
-                                   {photo1Preview ? (
-                                     <img 
-                                       src={photo1Preview} 
-                                       alt="Photo 1 preview" 
-                                       style={{
-                                         width: '100%',
-                                         height: 'auto',
-                                         objectFit: 'contain',
-                                         objectPosition: 'left center',
-                                         display: 'block'
-                                       }}
-                                     />
-                                   ) : (
-                                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                       <span style={{ 
-                                         padding: '4px 8px',
-                                         border: '1px solid #909090',
-                                         borderRadius: '4px',
-                                         backgroundColor: '#F5F5F5',
-                                         color: '#000000',
-                                         textTransform: 'uppercase',
-                                         fontSize: '11px',
-                                         fontFamily: '"Futura PT Book"'
-                                       }}>
-                                         CHOOSE FILE
-                                       </span>
-                                       <span style={{ marginLeft: '8px', color: '#909090', fontFamily: '"Futura PT Book"', fontSize: '10px' }}>
-                                         NO FILE SELECTED
-                                       </span>
-                                     </div>
-                                   )}
+                                  {photo1File ? (
+                                    <div style={{ display: 'flex', alignItems: 'center', width: '100%', minWidth: 0 }}>
+                                      <span style={{ 
+                                        padding: '4px 8px',
+                                        border: '1px solid #909090',
+                                        borderRadius: '4px',
+                                        backgroundColor: '#F5F5F5',
+                                        color: '#000000',
+                                        textTransform: 'uppercase',
+                                        fontSize: '11px',
+                                        fontFamily: '"Futura PT Book"',
+                                        flexShrink: 0,
+                                        whiteSpace: 'nowrap'
+                                      }}>
+                                        CHOOSE FILE
+                                      </span>
+                                      <span style={{ 
+                                        marginLeft: '8px', 
+                                        color: '#000000', 
+                                        fontFamily: '"Futura PT Book"', 
+                                        fontSize: '11px',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                        flex: 1,
+                                        minWidth: 0
+                                      }}>
+                                        {photo1File.name}
+                                      </span>
+                                    </div>
+                                  ) : hasPhotoContent(expandedOrder.id, 1) ? (
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                      <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '10px' }}>
+                                        CONTENT SUBMITTED
+                                      </span>
+                                      <div
+                                        style={{
+                                          width: '16px',
+                                          height: '16px',
+                                          borderRadius: '50%',
+                                          backgroundColor: '#FFFFFF',
+                                          border: '0.7px solid #EB1C24',
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          justifyContent: 'center',
+                                          flexShrink: 0,
+                                          marginLeft: '8px'
+                                        }}
+                                      >
+                                        <img
+                                          src="/assets/premium-check.svg"
+                                          alt="Content submitted"
+                                          style={{ width: '7.8px', height: '7.8px' }}
+                                        />
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div style={{ display: 'flex', alignItems: 'center', width: '100%', minWidth: 0 }}>
+                                      <span style={{ 
+                                        padding: '4px 8px',
+                                        border: '1px solid #909090',
+                                        borderRadius: '4px',
+                                        backgroundColor: '#F5F5F5',
+                                        color: '#000000',
+                                        textTransform: 'uppercase',
+                                        fontSize: '11px',
+                                        fontFamily: '"Futura PT Book"',
+                                        flexShrink: 0,
+                                        whiteSpace: 'nowrap'
+                                      }}>
+                                        CHOOSE FILE
+                                      </span>
+                                      <span style={{ marginLeft: '8px', color: '#909090', fontFamily: '"Futura PT Book"', fontSize: '10px', whiteSpace: 'nowrap' }}>
+                                        NO FILE SELECTED
+                                      </span>
+                                    </div>
+                                  )}
                                  </div>
                                </div>
                              </div>
@@ -1274,8 +2221,9 @@ function AffiliatePage() {
                                    type="file"
                                    accept="image/*"
                                    ref={photo2InputRef}
+                                   disabled={hasPhotoContent(expandedOrder.id, 2)}
                                    onChange={(e) => {
-                                     if (canSubmitContent(expandedOrder.photo2ApprovedDate)) {
+                                     if (canSubmitPhoto(expandedOrder.id, 2)) {
                                        handlePhoto2Change(e);
                                      }
                                    }}
@@ -1284,52 +2232,97 @@ function AffiliatePage() {
                                      width: '100%',
                                      height: '36px',
                                      opacity: 0,
-                                     cursor: 'pointer',
+                                     cursor: hasPhotoContent(expandedOrder.id, 2) ? 'not-allowed' : 'pointer',
                                      zIndex: 3,
                                      top: 0,
-                                     left: 0
+                                     left: 0,
+                                     pointerEvents: hasPhotoContent(expandedOrder.id, 2) ? 'none' : 'auto'
                                    }}
                                  />
                                  <div
                                    onClick={() => {
-                                     if (canSubmitContent(expandedOrder.photo2ApprovedDate)) {
+                                     if (canSubmitPhoto(expandedOrder.id, 2) && !hasPhotoContent(expandedOrder.id, 2)) {
                                        photo2InputRef.current?.click();
                                      }
                                    }}
                                    style={{
                                      width: '100%',
                                      minHeight: '36px',
-                                     height: photo2Preview ? 'auto' : '36px',
+                                     height: '36px',
                                      padding: '8px',
-                                     border: '1.3px solid #000000',
+                                     border: '1px solid #000000',
                                      fontFamily: '"Futura PT Book"',
                                      fontSize: '11px',
-                                     backgroundColor: !canSubmitContent(expandedOrder.photo2ApprovedDate) ? '#F5F5F5' : '#FFFFFF',
+                                     backgroundColor: '#FFFFFF',
                                      color: photo2File ? '#909090' : '#EB1C24',
                                      boxSizing: 'border-box',
                                      borderRadius: '0',
-                                     cursor: !canSubmitContent(expandedOrder.photo2ApprovedDate) ? 'not-allowed' : 'pointer',
+                                     cursor: hasPhotoContent(expandedOrder.id, 2) ? 'not-allowed' : 'pointer',
                                      textTransform: 'uppercase',
                                      position: 'relative',
-                                     overflow: photo2Preview ? 'visible' : 'hidden',
-                                     display: photo2Preview ? 'block' : 'flex',
-                                     alignItems: photo2Preview ? 'normal' : 'center',
-                                     opacity: !canSubmitContent(expandedOrder.photo2ApprovedDate) ? 0.6 : 1,
-                                     pointerEvents: !canSubmitContent(expandedOrder.photo2ApprovedDate) ? 'none' : 'auto'
+                                     overflow: 'hidden',
+                                     display: 'flex',
+                                     alignItems: 'center',
+                                     opacity: 1,
+                                     pointerEvents: hasPhotoContent(expandedOrder.id, 2) ? 'none' : 'auto'
                                    }}
                                  >
-                                   {photo2Preview ? (
-                                     <img 
-                                       src={photo2Preview} 
-                                       alt="Photo 2 preview" 
-                                       style={{
-                                         width: '100%',
-                                         height: 'auto',
-                                         objectFit: 'contain',
-                                         objectPosition: 'left center',
-                                         display: 'block'
-                                       }}
-                                     />
+                                  {photo2File ? (
+                                    <div style={{ display: 'flex', alignItems: 'center', width: '100%', minWidth: 0 }}>
+                                      <span style={{ 
+                                        padding: '4px 8px',
+                                        border: '1px solid #909090',
+                                        borderRadius: '4px',
+                                        backgroundColor: '#F5F5F5',
+                                        color: '#000000',
+                                        textTransform: 'uppercase',
+                                        fontSize: '11px',
+                                        fontFamily: '"Futura PT Book"',
+                                        flexShrink: 0,
+                                        whiteSpace: 'nowrap'
+                                      }}>
+                                        CHOOSE FILE
+                                      </span>
+                                      <span style={{ 
+                                        marginLeft: '8px', 
+                                        color: '#000000', 
+                                        fontFamily: '"Futura PT Book"', 
+                                        fontSize: '11px',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                        flex: 1,
+                                        minWidth: 0
+                                      }}>
+                                        {photo2File.name}
+                                      </span>
+                                    </div>
+                                   ) : hasPhotoContent(expandedOrder.id, 2) ? (
+                                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                       <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '11px' }}>
+                                         CONTENT SUBMITTED
+                                       </span>
+                                       <div
+                                         style={{
+                                           width: '16px',
+                                           height: '16px',
+                                           borderRadius: '50%',
+                                           backgroundColor: '#FFFFFF',
+                                           border: '0.7px solid #EB1C24',
+                                           display: 'flex',
+                                           alignItems: 'center',
+                                           justifyContent: 'center',
+                                           flexShrink: 0,
+                                           marginLeft: '8px'
+                                         }}
+                                       >
+                                         <img
+                                           src="/assets/premium-check.svg"
+                                           alt="Content submitted"
+                                           style={{ width: '7.8px', height: '7.8px' }}
+                                         />
+                                       </div>
+                                     </div>
                                    ) : (
                                      <div style={{ display: 'flex', alignItems: 'center' }}>
                                        <span style={{ 
@@ -1381,9 +2374,10 @@ function AffiliatePage() {
                                  {(() => {
                                    const effectivePoints = getEffectivePoints(expandedOrder);
                                    const photoVideoEarned = effectivePoints.photoVideo;
-                                   // If total is 1000, videos are approved (500 points); if 500, assume only photos approved
-                                   const videoPointsEarned = photoVideoEarned === 1000 ? 500 : 0;
-                                   return `${videoPointsEarned}/500`;
+                                   // Videos: 600 each, 2 max = 1,200 total
+                                   // Calculate video points: if earned > 800, the excess is video points (capped at 1,200)
+                                   const videoPointsEarned = photoVideoEarned > 800 ? Math.min(1200, photoVideoEarned - 800) : 0;
+                                   return `${videoPointsEarned}/1,200`;
                                  })()}
                                </p>
                              </div>
@@ -1394,8 +2388,9 @@ function AffiliatePage() {
                                    type="file"
                                    accept="video/*"
                                    ref={video1InputRef}
+                                   disabled={hasVideoContent(expandedOrder.id, 1)}
                                    onChange={(e) => {
-                                     if (canSubmitContent(expandedOrder.video1ApprovedDate)) {
+                                     if (canSubmitVideo(expandedOrder.id, 1)) {
                                        handleVideo1Change(e);
                                      }
                                    }}
@@ -1404,54 +2399,43 @@ function AffiliatePage() {
                                      width: '100%',
                                      height: '36px',
                                      opacity: 0,
-                                     cursor: 'pointer',
+                                     cursor: hasVideoContent(expandedOrder.id, 1) ? 'not-allowed' : 'pointer',
                                      zIndex: 3,
                                      top: 0,
-                                     left: 0
+                                     left: 0,
+                                     pointerEvents: hasVideoContent(expandedOrder.id, 1) ? 'none' : 'auto'
                                    }}
                                  />
                                  <div
                                    onClick={() => {
-                                     if (canSubmitContent(expandedOrder.video1ApprovedDate)) {
+                                     if (canSubmitVideo(expandedOrder.id, 1) && !hasVideoContent(expandedOrder.id, 1)) {
                                        video1InputRef.current?.click();
                                      }
                                    }}
                                    style={{
                                      width: '100%',
                                      minHeight: '36px',
-                                     height: video1Preview ? 'auto' : '36px',
+                                     height: '36px',
                                      padding: '8px',
-                                     border: '1.3px solid #000000',
+                                     border: '1px solid #000000',
                                      fontFamily: '"Futura PT Book"',
                                      fontSize: '11px',
-                                     backgroundColor: !canSubmitContent(expandedOrder.video1ApprovedDate) ? '#F5F5F5' : '#FFFFFF',
+                                     backgroundColor: '#FFFFFF',
                                      color: video1File ? '#909090' : '#EB1C24',
                                      boxSizing: 'border-box',
                                      borderRadius: '0',
-                                     cursor: !canSubmitContent(expandedOrder.video1ApprovedDate) ? 'not-allowed' : 'pointer',
+                                     cursor: hasVideoContent(expandedOrder.id, 1) ? 'not-allowed' : 'pointer',
                                      textTransform: 'uppercase',
                                      position: 'relative',
-                                     overflow: video1Preview ? 'visible' : 'hidden',
-                                     display: video1Preview ? 'block' : 'flex',
-                                     alignItems: video1Preview ? 'normal' : 'center',
-                                     opacity: !canSubmitContent(expandedOrder.video1ApprovedDate) ? 0.6 : 1,
-                                     pointerEvents: !canSubmitContent(expandedOrder.video1ApprovedDate) ? 'none' : 'auto'
+                                     overflow: 'hidden',
+                                     display: 'flex',
+                                     alignItems: 'center',
+                                     opacity: 1,
+                                     pointerEvents: hasVideoContent(expandedOrder.id, 1) ? 'none' : 'auto'
                                    }}
                                  >
-                                   {video1Preview ? (
-                                     <img 
-                                       src={video1Preview} 
-                                       alt="Video 1 preview" 
-                                       style={{
-                                         width: '100%',
-                                         height: 'auto',
-                                         objectFit: 'contain',
-                                         objectPosition: 'left center',
-                                         display: 'block'
-                                       }}
-                                     />
-                                   ) : (
-                                     <div style={{ display: 'flex', alignItems: 'center' }}>
+                                   {video1File ? (
+                                     <div style={{ display: 'flex', alignItems: 'center', width: '100%', minWidth: 0 }}>
                                        <span style={{ 
                                          padding: '4px 8px',
                                          border: '1px solid #909090',
@@ -1460,11 +2444,69 @@ function AffiliatePage() {
                                          color: '#000000',
                                          textTransform: 'uppercase',
                                          fontSize: '11px',
-                                         fontFamily: '"Futura PT Book"'
+                                         fontFamily: '"Futura PT Book"',
+                                         flexShrink: 0,
+                                         whiteSpace: 'nowrap'
                                        }}>
                                          CHOOSE FILE
                                        </span>
-                                       <span style={{ marginLeft: '8px', color: '#909090', fontFamily: '"Futura PT Book"', fontSize: '10px' }}>
+                                       <span style={{ 
+                                         marginLeft: '8px', 
+                                         color: '#000000', 
+                                         fontFamily: '"Futura PT Book"', 
+                                         fontSize: '11px',
+                                         overflow: 'hidden',
+                                         textOverflow: 'ellipsis',
+                                         whiteSpace: 'nowrap',
+                                         flex: 1,
+                                         minWidth: 0
+                                       }}>
+                                         {video1File.name}
+                                       </span>
+                                     </div>
+                                   ) : hasVideoContent(expandedOrder.id, 1) ? (
+                                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                       <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '11px' }}>
+                                         CONTENT SUBMITTED
+                                       </span>
+                                       <div
+                                         style={{
+                                           width: '16px',
+                                           height: '16px',
+                                           borderRadius: '50%',
+                                           backgroundColor: '#FFFFFF',
+                                           border: '0.7px solid #EB1C24',
+                                           display: 'flex',
+                                           alignItems: 'center',
+                                           justifyContent: 'center',
+                                           flexShrink: 0,
+                                           marginLeft: '8px'
+                                         }}
+                                       >
+                                         <img
+                                           src="/assets/premium-check.svg"
+                                           alt="Content submitted"
+                                           style={{ width: '7.8px', height: '7.8px' }}
+                                         />
+                                       </div>
+                                     </div>
+                                   ) : (
+                                     <div style={{ display: 'flex', alignItems: 'center', width: '100%', minWidth: 0 }}>
+                                       <span style={{ 
+                                         padding: '4px 8px',
+                                         border: '1px solid #909090',
+                                         borderRadius: '4px',
+                                         backgroundColor: '#F5F5F5',
+                                         color: '#000000',
+                                         textTransform: 'uppercase',
+                                         fontSize: '11px',
+                                         fontFamily: '"Futura PT Book"',
+                                         flexShrink: 0,
+                                         whiteSpace: 'nowrap'
+                                       }}>
+                                         CHOOSE FILE
+                                       </span>
+                                       <span style={{ marginLeft: '8px', color: '#909090', fontFamily: '"Futura PT Book"', fontSize: '10px', whiteSpace: 'nowrap' }}>
                                          NO FILE SELECTED
                                        </span>
                                      </div>
@@ -1479,8 +2521,9 @@ function AffiliatePage() {
                                    type="file"
                                    accept="video/*"
                                    ref={video2InputRef}
+                                   disabled={hasVideoContent(expandedOrder.id, 2)}
                                    onChange={(e) => {
-                                     if (canSubmitContent(expandedOrder.video2ApprovedDate)) {
+                                     if (canSubmitVideo(expandedOrder.id, 2)) {
                                        handleVideo2Change(e);
                                      }
                                    }}
@@ -1489,54 +2532,43 @@ function AffiliatePage() {
                                      width: '100%',
                                      height: '36px',
                                      opacity: 0,
-                                     cursor: 'pointer',
+                                     cursor: hasVideoContent(expandedOrder.id, 2) ? 'not-allowed' : 'pointer',
                                      zIndex: 3,
                                      top: 0,
-                                     left: 0
+                                     left: 0,
+                                     pointerEvents: hasVideoContent(expandedOrder.id, 2) ? 'none' : 'auto'
                                    }}
                                  />
                                  <div
                                    onClick={() => {
-                                     if (canSubmitContent(expandedOrder.video2ApprovedDate)) {
+                                     if (canSubmitVideo(expandedOrder.id, 2) && !hasVideoContent(expandedOrder.id, 2)) {
                                        video2InputRef.current?.click();
                                      }
                                    }}
                                    style={{
                                      width: '100%',
                                      minHeight: '36px',
-                                     height: video2Preview ? 'auto' : '36px',
+                                     height: '36px',
                                      padding: '8px',
-                                     border: '1.3px solid #000000',
+                                     border: '1px solid #000000',
                                      fontFamily: '"Futura PT Book"',
                                      fontSize: '11px',
-                                     backgroundColor: !canSubmitContent(expandedOrder.video2ApprovedDate) ? '#F5F5F5' : '#FFFFFF',
+                                     backgroundColor: '#FFFFFF',
                                      color: video2File ? '#909090' : '#EB1C24',
                                      boxSizing: 'border-box',
                                      borderRadius: '0',
-                                     cursor: !canSubmitContent(expandedOrder.video2ApprovedDate) ? 'not-allowed' : 'pointer',
+                                     cursor: hasVideoContent(expandedOrder.id, 2) ? 'not-allowed' : 'pointer',
                                      textTransform: 'uppercase',
                                      position: 'relative',
-                                     overflow: video2Preview ? 'visible' : 'hidden',
-                                     display: video2Preview ? 'block' : 'flex',
-                                     alignItems: video2Preview ? 'normal' : 'center',
-                                     opacity: !canSubmitContent(expandedOrder.video2ApprovedDate) ? 0.6 : 1,
-                                     pointerEvents: !canSubmitContent(expandedOrder.video2ApprovedDate) ? 'none' : 'auto'
+                                     overflow: 'hidden',
+                                     display: 'flex',
+                                     alignItems: 'center',
+                                     opacity: 1,
+                                     pointerEvents: hasVideoContent(expandedOrder.id, 2) ? 'none' : 'auto'
                                    }}
                                  >
-                                   {video2Preview ? (
-                                     <img 
-                                       src={video2Preview} 
-                                       alt="Video 2 preview" 
-                                       style={{
-                                         width: '100%',
-                                         height: 'auto',
-                                         objectFit: 'contain',
-                                         objectPosition: 'left center',
-                                         display: 'block'
-                                       }}
-                                     />
-                                   ) : (
-                                     <div style={{ display: 'flex', alignItems: 'center' }}>
+                                   {video2File ? (
+                                     <div style={{ display: 'flex', alignItems: 'center', width: '100%', minWidth: 0 }}>
                                        <span style={{ 
                                          padding: '4px 8px',
                                          border: '1px solid #909090',
@@ -1545,11 +2577,69 @@ function AffiliatePage() {
                                          color: '#000000',
                                          textTransform: 'uppercase',
                                          fontSize: '11px',
-                                         fontFamily: '"Futura PT Book"'
+                                         fontFamily: '"Futura PT Book"',
+                                         flexShrink: 0,
+                                         whiteSpace: 'nowrap'
                                        }}>
                                          CHOOSE FILE
                                        </span>
-                                       <span style={{ marginLeft: '8px', color: '#909090', fontFamily: '"Futura PT Book"', fontSize: '10px' }}>
+                                       <span style={{ 
+                                         marginLeft: '8px', 
+                                         color: '#000000', 
+                                         fontFamily: '"Futura PT Book"', 
+                                         fontSize: '11px',
+                                         overflow: 'hidden',
+                                         textOverflow: 'ellipsis',
+                                         whiteSpace: 'nowrap',
+                                         flex: 1,
+                                         minWidth: 0
+                                       }}>
+                                         {video2File.name}
+                                       </span>
+                                     </div>
+                                   ) : hasVideoContent(expandedOrder.id, 2) ? (
+                                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                       <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '11px' }}>
+                                         CONTENT SUBMITTED
+                                       </span>
+                                       <div
+                                         style={{
+                                           width: '16px',
+                                           height: '16px',
+                                           borderRadius: '50%',
+                                           backgroundColor: '#FFFFFF',
+                                           border: '0.7px solid #EB1C24',
+                                           display: 'flex',
+                                           alignItems: 'center',
+                                           justifyContent: 'center',
+                                           flexShrink: 0,
+                                           marginLeft: '8px'
+                                         }}
+                                       >
+                                         <img
+                                           src="/assets/premium-check.svg"
+                                           alt="Content submitted"
+                                           style={{ width: '7.8px', height: '7.8px' }}
+                                         />
+                                       </div>
+                                     </div>
+                                   ) : (
+                                     <div style={{ display: 'flex', alignItems: 'center', width: '100%', minWidth: 0 }}>
+                                       <span style={{ 
+                                         padding: '4px 8px',
+                                         border: '1px solid #909090',
+                                         borderRadius: '4px',
+                                         backgroundColor: '#F5F5F5',
+                                         color: '#000000',
+                                         textTransform: 'uppercase',
+                                         fontSize: '11px',
+                                         fontFamily: '"Futura PT Book"',
+                                         flexShrink: 0,
+                                         whiteSpace: 'nowrap'
+                                       }}>
+                                         CHOOSE FILE
+                                       </span>
+                                       <span style={{ marginLeft: '8px', color: '#909090', fontFamily: '"Futura PT Book"', fontSize: '10px', whiteSpace: 'nowrap' }}>
                                          NO FILE SELECTED
                                        </span>
                                      </div>
@@ -1589,29 +2679,64 @@ function AffiliatePage() {
                                      const currentPeriod = getCurrentPeriod();
                                      const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
                                      const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
-                                     return effectiveSocialTags >= 1 ? '200/200' : '0/200';
+                                     return effectiveSocialTags >= 1 ? '600/600' : '0/600';
                                    })()}
                                  </p>
                                </div>
-                               <input
-                                 type="text"
-                                 placeholder="LINK TO TWEET"
-                                 disabled={!canSubmitContent(expandedOrder.twitterApprovedDate)}
-                                 style={{
-                                   width: '100%',
-                                   padding: '8px',
-                                   border: '1.3px solid #000000',
-                                   fontFamily: '"Futura PT Book"',
-                                   fontSize: '11px',
-                                   backgroundColor: !canSubmitContent(expandedOrder.twitterApprovedDate) ? '#F5F5F5' : '#FFFFFF',
-                                   color: '#909090',
-                                   boxSizing: 'border-box',
-                                   borderRadius: '0',
-                                   textTransform: 'uppercase',
-                                   opacity: !canSubmitContent(expandedOrder.twitterApprovedDate) ? 0.6 : 1,
-                                   cursor: !canSubmitContent(expandedOrder.twitterApprovedDate) ? 'not-allowed' : 'text'
-                                 }}
-                               />
+                              <div style={{ position: 'relative', width: '100%' }}>
+                                <input
+                                  type="text"
+                                  placeholder={hasSocialContent(expandedOrder.id, 'Twitter') ? '' : 'LINK TO TWEET'}
+                                  value={hasSocialContent(expandedOrder.id, 'Twitter') ? 'CONTENT SUBMITTED' : twitterLink}
+                                  onChange={(e) => {
+                                    if (!hasSocialContent(expandedOrder.id, 'Twitter')) {
+                                      setTwitterLink(e.target.value);
+                                    }
+                                  }}
+                                  disabled={hasSocialContent(expandedOrder.id, 'Twitter')}
+                                  readOnly={hasSocialContent(expandedOrder.id, 'Twitter')}
+                                  style={{
+                                    width: '100%',
+                                    padding: '8px',
+                                    paddingRight: hasSocialContent(expandedOrder.id, 'Twitter') ? '36px' : '8px',
+                                    border: '1px solid #000000',
+                                    fontFamily: '"Futura PT Book"',
+                                    fontSize: '11px',
+                                    backgroundColor: '#FFFFFF',
+                                    color: hasSocialContent(expandedOrder.id, 'Twitter') ? '#EB1C24' : '#909090',
+                                    boxSizing: 'border-box',
+                                    borderRadius: '0',
+                                    textTransform: 'uppercase',
+                                    opacity: 1,
+                                    cursor: hasSocialContent(expandedOrder.id, 'Twitter') ? 'not-allowed' : 'text'
+                                  }}
+                                />
+                                {hasSocialContent(expandedOrder.id, 'Twitter') && (
+                                  <div
+                                    style={{
+                                      position: 'absolute',
+                                      right: '8px',
+                                      top: '50%',
+                                      transform: 'translateY(-50%)',
+                                      width: '16px',
+                                      height: '16px',
+                                      borderRadius: '50%',
+                                      backgroundColor: '#FFFFFF',
+                                      border: '0.7px solid #EB1C24',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      flexShrink: 0
+                                    }}
+                                  >
+                                    <img
+                                      src="/assets/premium-check.svg"
+                                      alt="Content submitted"
+                                      style={{ width: '7.8px', height: '7.8px' }}
+                                    />
+                                  </div>
+                                )}
+                              </div>
                              </div>
                              
                              {/* INSTAGRAM */}
@@ -1642,29 +2767,64 @@ function AffiliatePage() {
                                      const currentPeriod = getCurrentPeriod();
                                      const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
                                      const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
-                                     return effectiveSocialTags >= 2 ? '200/200' : '0/200';
+                                     return effectiveSocialTags >= 2 ? '600/600' : '0/600';
                                    })()}
                                  </p>
                                </div>
-                               <input
-                                 type="text"
-                                 placeholder="LINK TO REEL"
-                                 disabled={!canSubmitContent(expandedOrder.instagramApprovedDate)}
-                                 style={{
-                                   width: '100%',
-                                   padding: '8px',
-                                   border: '1.3px solid #000000',
-                                   fontFamily: '"Futura PT Book"',
-                                   fontSize: '11px',
-                                   backgroundColor: !canSubmitContent(expandedOrder.instagramApprovedDate) ? '#F5F5F5' : '#FFFFFF',
-                                   color: '#909090',
-                                   boxSizing: 'border-box',
-                                   borderRadius: '0',
-                                   textTransform: 'uppercase',
-                                   opacity: !canSubmitContent(expandedOrder.instagramApprovedDate) ? 0.6 : 1,
-                                   cursor: !canSubmitContent(expandedOrder.instagramApprovedDate) ? 'not-allowed' : 'text'
-                                 }}
-                               />
+                              <div style={{ position: 'relative', width: '100%' }}>
+                                <input
+                                  type="text"
+                                  placeholder={hasSocialContent(expandedOrder.id, 'Instagram') ? '' : 'LINK TO REEL'}
+                                  value={hasSocialContent(expandedOrder.id, 'Instagram') ? 'CONTENT SUBMITTED' : instagramLink}
+                                  onChange={(e) => {
+                                    if (!hasSocialContent(expandedOrder.id, 'Instagram')) {
+                                      setInstagramLink(e.target.value);
+                                    }
+                                  }}
+                                  disabled={hasSocialContent(expandedOrder.id, 'Instagram')}
+                                  readOnly={hasSocialContent(expandedOrder.id, 'Instagram')}
+                                  style={{
+                                    width: '100%',
+                                    padding: '8px',
+                                    paddingRight: hasSocialContent(expandedOrder.id, 'Instagram') ? '36px' : '8px',
+                                    border: '1px solid #000000',
+                                    fontFamily: '"Futura PT Book"',
+                                    fontSize: '11px',
+                                    backgroundColor: '#FFFFFF',
+                                    color: hasSocialContent(expandedOrder.id, 'Instagram') ? '#EB1C24' : '#909090',
+                                    boxSizing: 'border-box',
+                                    borderRadius: '0',
+                                    textTransform: 'uppercase',
+                                    opacity: 1,
+                                    cursor: hasSocialContent(expandedOrder.id, 'Instagram') ? 'not-allowed' : 'text'
+                                  }}
+                                />
+                                {hasSocialContent(expandedOrder.id, 'Instagram') && (
+                                  <div
+                                    style={{
+                                      position: 'absolute',
+                                      right: '8px',
+                                      top: '50%',
+                                      transform: 'translateY(-50%)',
+                                      width: '16px',
+                                      height: '16px',
+                                      borderRadius: '50%',
+                                      backgroundColor: '#FFFFFF',
+                                      border: '0.7px solid #EB1C24',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      flexShrink: 0
+                                    }}
+                                  >
+                                    <img
+                                      src="/assets/premium-check.svg"
+                                      alt="Content submitted"
+                                      style={{ width: '7.8px', height: '7.8px' }}
+                                    />
+                                  </div>
+                                )}
+                              </div>
                              </div>
                              
                              {/* TIKTOK */}
@@ -1695,29 +2855,64 @@ function AffiliatePage() {
                                      const currentPeriod = getCurrentPeriod();
                                      const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
                                      const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
-                                     return effectiveSocialTags >= 3 ? '200/200' : '0/200';
+                                     return effectiveSocialTags >= 3 ? '600/600' : '0/600';
                                    })()}
                                  </p>
                                </div>
-                               <input
-                                 type="text"
-                                 placeholder="LINK TO TIK TOK"
-                                 disabled={!canSubmitContent(expandedOrder.tiktokApprovedDate)}
-                                 style={{
-                                   width: '100%',
-                                   padding: '8px',
-                                   border: '1.3px solid #000000',
-                                   fontFamily: '"Futura PT Book"',
-                                   fontSize: '11px',
-                                   backgroundColor: !canSubmitContent(expandedOrder.tiktokApprovedDate) ? '#F5F5F5' : '#FFFFFF',
-                                   color: '#909090',
-                                   boxSizing: 'border-box',
-                                   borderRadius: '0',
-                                   textTransform: 'uppercase',
-                                   opacity: !canSubmitContent(expandedOrder.tiktokApprovedDate) ? 0.6 : 1,
-                                   cursor: !canSubmitContent(expandedOrder.tiktokApprovedDate) ? 'not-allowed' : 'text'
-                                 }}
-                               />
+                              <div style={{ position: 'relative', width: '100%' }}>
+                                <input
+                                  type="text"
+                                  placeholder={hasSocialContent(expandedOrder.id, 'TikTok') ? '' : 'LINK TO TIK TOK'}
+                                  value={hasSocialContent(expandedOrder.id, 'TikTok') ? 'CONTENT SUBMITTED' : tiktokLink}
+                                  onChange={(e) => {
+                                    if (!hasSocialContent(expandedOrder.id, 'TikTok')) {
+                                      setTiktokLink(e.target.value);
+                                    }
+                                  }}
+                                  disabled={hasSocialContent(expandedOrder.id, 'TikTok')}
+                                  readOnly={hasSocialContent(expandedOrder.id, 'TikTok')}
+                                  style={{
+                                    width: '100%',
+                                    padding: '8px',
+                                    paddingRight: hasSocialContent(expandedOrder.id, 'TikTok') ? '36px' : '8px',
+                                    border: '1px solid #000000',
+                                    fontFamily: '"Futura PT Book"',
+                                    fontSize: '11px',
+                                    backgroundColor: '#FFFFFF',
+                                    color: hasSocialContent(expandedOrder.id, 'TikTok') ? '#EB1C24' : '#909090',
+                                    boxSizing: 'border-box',
+                                    borderRadius: '0',
+                                    textTransform: 'uppercase',
+                                    opacity: 1,
+                                    cursor: hasSocialContent(expandedOrder.id, 'TikTok') ? 'not-allowed' : 'text'
+                                  }}
+                                />
+                                {hasSocialContent(expandedOrder.id, 'TikTok') && (
+                                  <div
+                                    style={{
+                                      position: 'absolute',
+                                      right: '8px',
+                                      top: '50%',
+                                      transform: 'translateY(-50%)',
+                                      width: '16px',
+                                      height: '16px',
+                                      borderRadius: '50%',
+                                      backgroundColor: '#FFFFFF',
+                                      border: '0.7px solid #EB1C24',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      flexShrink: 0
+                                    }}
+                                  >
+                                    <img
+                                      src="/assets/premium-check.svg"
+                                      alt="Content submitted"
+                                      style={{ width: '7.8px', height: '7.8px' }}
+                                    />
+                                  </div>
+                                )}
+                              </div>
                              </div>
                              
                              {/* YOUTUBE */}
@@ -1748,29 +2943,64 @@ function AffiliatePage() {
                                      const currentPeriod = getCurrentPeriod();
                                      const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
                                      const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
-                                     return effectiveSocialTags >= 4 ? '200/200' : '0/200';
+                                     return effectiveSocialTags >= 4 ? '600/600' : '0/600';
                                    })()}
                                  </p>
                                </div>
-                               <input
-                                 type="text"
-                                 placeholder="LINK TO VIDEO"
-                                 disabled={!canSubmitContent(expandedOrder.youtubeApprovedDate)}
-                                 style={{
-                                   width: '100%',
-                                   padding: '8px',
-                                   border: '1.3px solid #000000',
-                                   fontFamily: '"Futura PT Book"',
-                                   fontSize: '11px',
-                                   backgroundColor: !canSubmitContent(expandedOrder.youtubeApprovedDate) ? '#F5F5F5' : '#FFFFFF',
-                                   color: '#909090',
-                                   boxSizing: 'border-box',
-                                   borderRadius: '0',
-                                   textTransform: 'uppercase',
-                                   opacity: !canSubmitContent(expandedOrder.youtubeApprovedDate) ? 0.6 : 1,
-                                   cursor: !canSubmitContent(expandedOrder.youtubeApprovedDate) ? 'not-allowed' : 'text'
-                                 }}
-                               />
+                              <div style={{ position: 'relative', width: '100%' }}>
+                                <input
+                                  type="text"
+                                  placeholder={hasSocialContent(expandedOrder.id, 'YouTube') ? '' : 'LINK TO VIDEO'}
+                                  value={hasSocialContent(expandedOrder.id, 'YouTube') ? 'CONTENT SUBMITTED' : youtubeLink}
+                                  onChange={(e) => {
+                                    if (!hasSocialContent(expandedOrder.id, 'YouTube')) {
+                                      setYoutubeLink(e.target.value);
+                                    }
+                                  }}
+                                  disabled={hasSocialContent(expandedOrder.id, 'YouTube')}
+                                  readOnly={hasSocialContent(expandedOrder.id, 'YouTube')}
+                                  style={{
+                                    width: '100%',
+                                    padding: '8px',
+                                    paddingRight: hasSocialContent(expandedOrder.id, 'YouTube') ? '36px' : '8px',
+                                    border: '1px solid #000000',
+                                    fontFamily: '"Futura PT Book"',
+                                    fontSize: '11px',
+                                    backgroundColor: '#FFFFFF',
+                                    color: hasSocialContent(expandedOrder.id, 'YouTube') ? '#EB1C24' : '#909090',
+                                    boxSizing: 'border-box',
+                                    borderRadius: '0',
+                                    textTransform: 'uppercase',
+                                    opacity: 1,
+                                    cursor: hasSocialContent(expandedOrder.id, 'YouTube') ? 'not-allowed' : 'text'
+                                  }}
+                                />
+                                {hasSocialContent(expandedOrder.id, 'YouTube') && (
+                                  <div
+                                    style={{
+                                      position: 'absolute',
+                                      right: '8px',
+                                      top: '50%',
+                                      transform: 'translateY(-50%)',
+                                      width: '16px',
+                                      height: '16px',
+                                      borderRadius: '50%',
+                                      backgroundColor: '#FFFFFF',
+                                      border: '0.7px solid #EB1C24',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      flexShrink: 0
+                                    }}
+                                  >
+                                    <img
+                                      src="/assets/premium-check.svg"
+                                      alt="Content submitted"
+                                      style={{ width: '7.8px', height: '7.8px' }}
+                                    />
+                                  </div>
+                                )}
+                              </div>
                              </div>
                              
                              {/* FACEBOOK */}
@@ -1801,44 +3031,391 @@ function AffiliatePage() {
                                      const currentPeriod = getCurrentPeriod();
                                      const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
                                      const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
-                                     return effectiveSocialTags >= 5 ? '200/200' : '0/200';
+                                     return effectiveSocialTags >= 5 ? '600/600' : '0/600';
                                    })()}
                                  </p>
                                </div>
-                               <input
-                                 type="text"
-                                 placeholder="LINK TO POST"
-                                 disabled={!canSubmitContent(expandedOrder.facebookApprovedDate)}
-                                 style={{
-                                   width: '100%',
-                                   padding: '8px',
-                                   border: '1.3px solid #000000',
-                                   fontFamily: '"Futura PT Book"',
-                                   fontSize: '11px',
-                                   backgroundColor: !canSubmitContent(expandedOrder.facebookApprovedDate) ? '#F5F5F5' : '#FFFFFF',
-                                   color: '#909090',
-                                   boxSizing: 'border-box',
-                                   borderRadius: '0',
-                                   textTransform: 'uppercase',
-                                   opacity: !canSubmitContent(expandedOrder.facebookApprovedDate) ? 0.6 : 1,
-                                   cursor: !canSubmitContent(expandedOrder.facebookApprovedDate) ? 'not-allowed' : 'text'
-                                 }}
-                               />
+                              <input
+                                type="text"
+                                placeholder={hasSocialContent(expandedOrder.id, 'Facebook') ? '' : 'LINK TO POST'}
+                                value={hasSocialContent(expandedOrder.id, 'Facebook') ? 'CONTENT SUBMITTED' : facebookLink}
+                                onChange={(e) => {
+                                  if (!hasSocialContent(expandedOrder.id, 'Facebook')) {
+                                    setFacebookLink(e.target.value);
+                                  }
+                                }}
+                                disabled={hasSocialContent(expandedOrder.id, 'Facebook')}
+                                readOnly={hasSocialContent(expandedOrder.id, 'Facebook')}
+                                style={{
+                                  width: '100%',
+                                  padding: '8px',
+                                  border: '1px solid #000000',
+                                  fontFamily: '"Futura PT Book"',
+                                  fontSize: '11px',
+                                  backgroundColor: '#FFFFFF',
+                                  color: hasSocialContent(expandedOrder.id, 'Facebook') ? '#EB1C24' : '#909090',
+                                  boxSizing: 'border-box',
+                                  borderRadius: '0',
+                                  textTransform: 'uppercase',
+                                  opacity: 1,
+                                  cursor: hasSocialContent(expandedOrder.id, 'Facebook') ? 'not-allowed' : 'text'
+                                }}
+                              />
                              </div>
-                             <p
-                               style={{
-                                 fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                                 color: '#EB1C24',
-                                 fontSize: '10px',
-                                 margin: '12px 0 0 0',
-                                 textTransform: 'uppercase',
-                                 fontWeight: '500',
-                                 lineHeight: '1.4',
-                                 textAlign: 'center'
-                               }}
-                             >
-                               IN ORDER TO HAVE THE HIGHEST CHANCE FOR CONTENT APPROVAL, PLEASE SUBMIT CLEAR + WELL LIT PHOTOS WITHOUT ANY FILTERS. ALLOW UP TO 72 HOURS FOR YOUR CONTENT TO BE REVIEWED AND APPROVED.
-                             </p>
+                           </div>
+                           
+                           {/* GALLERY Section */}
+                           <div style={{ marginTop: '24px', marginBottom: '24px' }}>
+                             <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
+                             </div>
+                             
+                             {/* Gallery Tabs */}
+                            <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '26px' }}>
+                               <button
+                                 onClick={() => setGalleryActiveTab('photos')}
+                                 style={{
+                                   fontFamily: galleryActiveTab === 'photos' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                                   fontSize: '10px',
+                                   color: galleryActiveTab === 'photos' ? '#EB1C24' : '#000000',
+                                   backgroundColor: 'transparent',
+                                   borderTop: 'none',
+                                   borderLeft: 'none',
+                                   borderRight: 'none',
+                                   borderBottom: galleryActiveTab === 'photos' ? '1px solid #EB1C24' : 'none',
+                                   paddingTop: '8px',
+                                   paddingLeft: '0',
+                                   paddingRight: '0',
+                                   paddingBottom: galleryActiveTab === 'photos' ? '6px' : '8px',
+                                   cursor: 'pointer',
+                                   textTransform: 'uppercase',
+                                   fontWeight: galleryActiveTab === 'photos' ? '500' : '400'
+                                 }}
+                               >
+                                 PHOTOS
+                               </button>
+                               <button
+                                 onClick={() => setGalleryActiveTab('videos')}
+                                 style={{
+                                   fontFamily: galleryActiveTab === 'videos' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                                   fontSize: '10px',
+                                   color: galleryActiveTab === 'videos' ? '#EB1C24' : '#000000',
+                                   backgroundColor: 'transparent',
+                                   borderTop: 'none',
+                                   borderLeft: 'none',
+                                   borderRight: 'none',
+                                   borderBottom: galleryActiveTab === 'videos' ? '1px solid #EB1C24' : 'none',
+                                   paddingTop: '8px',
+                                   paddingLeft: '0',
+                                   paddingRight: '0',
+                                   paddingBottom: galleryActiveTab === 'videos' ? '6px' : '8px',
+                                   cursor: 'pointer',
+                                   textTransform: 'uppercase',
+                                   fontWeight: galleryActiveTab === 'videos' ? '500' : '400'
+                                 }}
+                               >
+                                 VIDEOS
+                               </button>
+                               <button
+                                 onClick={() => setGalleryActiveTab('socials')}
+                                 style={{
+                                   fontFamily: galleryActiveTab === 'socials' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                                   fontSize: '10px',
+                                   color: galleryActiveTab === 'socials' ? '#EB1C24' : '#000000',
+                                   backgroundColor: 'transparent',
+                                   borderTop: 'none',
+                                   borderLeft: 'none',
+                                   borderRight: 'none',
+                                   borderBottom: galleryActiveTab === 'socials' ? '1px solid #EB1C24' : 'none',
+                                   paddingTop: '8px',
+                                   paddingLeft: '0',
+                                   paddingRight: '0',
+                                   paddingBottom: galleryActiveTab === 'socials' ? '6px' : '8px',
+                                   cursor: 'pointer',
+                                   textTransform: 'uppercase',
+                                   fontWeight: galleryActiveTab === 'socials' ? '500' : '400'
+                                 }}
+                               >
+                                 SOCIALS
+                               </button>
+                             </div>
+                             
+                             {/* Gallery Content */}
+                             <div style={{ minHeight: '100px' }}>
+                               {galleryActiveTab === 'photos' && (
+                                 <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '26px' }}>
+                                   {(() => {
+                                     const filteredContent = getFilteredContent(expandedOrder.id);
+                                     const photos = filteredContent.photos || [];
+                                     
+                                     if (photos.length === 0) {
+                                       return (
+                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#909090', textTransform: 'uppercase', margin: '20px 0', textAlign: 'center', width: '100%' }}>
+                                           NO PHOTOS SUBMITTED YET.
+                                         </p>
+                                       );
+                                     }
+                                     
+                                     // Sort photos: pending first, then approved, then rejected
+                                     const sortedPhotos = [...photos].sort((a, b) => {
+                                       if (a.status === 'pending' && b.status !== 'pending') return -1;
+                                       if (a.status !== 'pending' && b.status === 'pending') return 1;
+                                       if (a.status === 'approved' && b.status === 'rejected') return -1;
+                                       if (a.status === 'rejected' && b.status === 'approved') return 1;
+                                       return 0;
+                                     });
+                                     
+                                    return sortedPhotos.map((photo) => (
+                                      <div key={photo.id} style={{ 
+                                        width: 'calc(40% - 13px)', 
+                                        flexShrink: 0
+                                      }}>
+                                        <div style={{ 
+                                          position: 'relative', 
+                                          padding: '1px', 
+                                          border: '3px solid white', 
+                                          boxShadow: '0 0 0 1.1px black', 
+                                          boxSizing: 'border-box'
+                                        }}>
+                                          {(photo.status === 'pending' || photo.status === 'rejected') && (
+                                            <button
+                                              onClick={() => setShowDeleteConfirm({ type: 'photo', id: photo.id })}
+                                              style={{
+                                                position: 'absolute',
+                                                top: '-10px',
+                                                right: '-10px',
+                                                width: '20px',
+                                                height: '20px',
+                                                backgroundColor: '#FFFFFF',
+                                                border: '0.97px solid #000000',
+                                                borderRadius: '50%',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                zIndex: 10,
+                                                padding: 0
+                                              }}
+                                            >
+                                              <img
+                                                src="/assets/close-icon.svg"
+                                                alt="Close"
+                                                style={{
+                                                  width: '12px',
+                                                  height: '12px',
+                                                  filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                                                }}
+                                              />
+                                            </button>
+                                          )}
+                                         <img 
+                                           src={typeof photo.preview === 'string' ? photo.preview : URL.createObjectURL(photo.file as File)} 
+                                           alt="Submitted photo"
+                                           style={{ 
+                                             width: '100%', 
+                                             height: '100%',
+                                             objectFit: 'contain',
+                                             display: 'block', 
+                                             cursor: 'pointer'
+                                           }}
+                                            onClick={() => {
+                                              const filteredContent = getFilteredContent(expandedOrder.id);
+                                              const photos = filteredContent.photos || [];
+                                              const photoUrls = photos.map(p => typeof p.preview === 'string' ? p.preview : URL.createObjectURL(p.file as File));
+                                              const clickedIndex = photos.findIndex(p => p.id === photo.id);
+                                              setViewerImages(photoUrls);
+                                              setViewerCurrentIndex(clickedIndex >= 0 ? clickedIndex : 0);
+                                              setShowImageViewer(true);
+                                            }}
+                                          />
+                                         </div>
+                                         <p style={{ fontFamily: photo.status === 'pending' ? '"Futura PT Demi"' : photo.status === 'rejected' ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '10px', color: photo.status === 'approved' ? '#000000' : photo.status === 'rejected' ? '#EB1C24' : '#909090', textTransform: 'uppercase', margin: '8px 0 0 0', textAlign: 'center', whiteSpace: 'nowrap', width: 'max-content', maxWidth: '100%', marginLeft: 'auto', marginRight: 'auto' }}>
+                                           {photo.status === 'pending' ? 'PENDING: IN REVIEW' : photo.status === 'approved' ? (
+                                             <>APPROVED: <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{photo.points || 400} POINTS</span></>
+                                           ) : <>REJECTED: {photo.rejectionReason || 'LOW QUALITY'}</>}
+                                         </p>
+                                       </div>
+                                     ));
+                                   })()}
+                                 </div>
+                               )}
+                               
+                               {galleryActiveTab === 'videos' && (
+                                 <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '26px' }}>
+                                   {(() => {
+                                     const filteredContent = getFilteredContent(expandedOrder.id);
+                                     const videos = filteredContent.videos || [];
+                                     
+                                     if (videos.length === 0) {
+                                       return (
+                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#909090', textTransform: 'uppercase', margin: '20px 0', textAlign: 'center' }}>
+                                           NO VIDEOS SUBMITTED YET.
+                                         </p>
+                                       );
+                                     }
+                                     
+                                     // Sort videos: pending first, then approved, then rejected
+                                     const sortedVideos = [...videos].sort((a, b) => {
+                                       if (a.status === 'pending' && b.status !== 'pending') return -1;
+                                       if (a.status !== 'pending' && b.status === 'pending') return 1;
+                                       if (a.status === 'approved' && b.status === 'rejected') return -1;
+                                       if (a.status === 'rejected' && b.status === 'approved') return 1;
+                                       return 0;
+                                     });
+                                     
+                                    return sortedVideos.map((video) => (
+                                      <div key={video.id} style={{ 
+                                        width: 'calc(40% - 13px)', 
+                                        flexShrink: 0,
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'flex-start'
+                                      }}>
+                                        <div style={{ 
+                                          position: 'relative', 
+                                          padding: '1px', 
+                                          border: '3px solid white', 
+                                          boxShadow: '0 0 0 1.1px black', 
+                                          boxSizing: 'border-box',
+                                          width: '100%',
+                                          aspectRatio: '1',
+                                          overflow: 'visible',
+                                          display: 'flex',
+                                          justifyContent: 'center',
+                                          alignItems: 'center'
+                                        }}>
+                                          {(video.status === 'pending' || video.status === 'rejected') && (
+                                            <button
+                                              onClick={() => setShowDeleteConfirm({ type: 'video', id: video.id })}
+                                              style={{
+                                                position: 'absolute',
+                                                top: '-10px',
+                                                right: '-10px',
+                                                width: '20px',
+                                                height: '20px',
+                                                backgroundColor: '#FFFFFF',
+                                                border: '0.97px solid #000000',
+                                                borderRadius: '50%',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                zIndex: 10,
+                                                padding: 0
+                                              }}
+                                            >
+                                              <img
+                                                src="/assets/close-icon.svg"
+                                                alt="Close"
+                                                style={{
+                                                  width: '12px',
+                                                  height: '12px',
+                                                  filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                                                }}
+                                              />
+                                            </button>
+                                          )}
+                                          <video 
+                                            src={typeof video.preview === 'string' ? video.preview : URL.createObjectURL(video.file as File)} 
+                                            controls
+                                            style={{ 
+                                              width: '100%', 
+                                              height: '100%',
+                                              objectFit: 'contain',
+                                              display: 'block', 
+                                              cursor: 'pointer',
+                                              margin: '0 auto'
+                                            }}
+                                            onClick={() => {
+                                              const filteredContent = getFilteredContent(expandedOrder.id);
+                                              const videos = filteredContent.videos || [];
+                                              const videoUrls = videos.map(v => typeof v.preview === 'string' ? v.preview : URL.createObjectURL(v.file as File));
+                                              const clickedIndex = videos.findIndex(v => v.id === video.id);
+                                              setViewerImages(videoUrls);
+                                              setViewerCurrentIndex(clickedIndex >= 0 ? clickedIndex : 0);
+                                              setShowImageViewer(true);
+                                            }}
+                                          />
+                                         </div>
+                                         <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '8px' }}>
+                                           <p style={{ fontFamily: video.status === 'pending' ? '"Futura PT Demi"' : video.status === 'rejected' ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '10px', color: video.status === 'approved' ? '#000000' : video.status === 'rejected' ? '#EB1C24' : '#909090', textTransform: 'uppercase', margin: '0', textAlign: 'center', whiteSpace: 'nowrap', width: 'max-content', maxWidth: '100%' }}>
+                                             {video.status === 'pending' ? 'PENDING: IN REVIEW' : video.status === 'approved' ? (
+                                               <>APPROVED: <span style={{ color: '#EB1C24' }}>{video.points || 600} POINTS</span></>
+                                           ) : <>REJECTED: {video.rejectionReason || 'LOW QUALITY'}</>}
+                                         </p>
+                                         </div>
+                                       </div>
+                                     ));
+                                   })()}
+                                 </div>
+                               )}
+                               
+                               {galleryActiveTab === 'socials' && (
+                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                                   {(() => {
+                                     const filteredContent = getFilteredContent(expandedOrder.id);
+                                     const socials = filteredContent.socials || [];
+                                     
+                                     if (socials.length === 0) {
+                                       return (
+                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#909090', textTransform: 'uppercase', margin: '20px 0', textAlign: 'center' }}>
+                                           NO SOCIAL TAGS SUBMITTED YET.
+                                         </p>
+                                       );
+                                     }
+                                     
+                                     return socials.map((social) => (
+                                       <div key={social.id} style={{ position: 'relative' }}>
+                                         {(social.status === 'pending' || social.status === 'rejected') && (
+                                           <button
+                                             onClick={() => setShowDeleteConfirm({ type: 'social', id: social.id })}
+                                             style={{
+                                               position: 'absolute',
+                                               top: '0',
+                                               right: '0',
+                                               backgroundColor: 'transparent',
+                                               border: 'none',
+                                               cursor: 'pointer',
+                                               display: 'flex',
+                                               alignItems: 'center',
+                                               justifyContent: 'center',
+                                               zIndex: 10,
+                                               padding: 0
+                                             }}
+                                           >
+                                             <img
+                                               src="/assets/close-icon.svg"
+                                               alt="Close"
+                                               style={{
+                                                 width: '10px',
+                                                 height: '10px',
+                                                 filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                                               }}
+                                             />
+                                           </button>
+                                         )}
+                                         <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', textTransform: 'uppercase', margin: '0 0 8px 0', fontWeight: '500' }}>
+                                           {social.platform.toUpperCase()}:
+                                         </p>
+                                         <a 
+                                           href={social.link} 
+                                           target="_blank" 
+                                           rel="noopener noreferrer"
+                                           style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textDecoration: 'underline', wordBreak: 'break-all', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}
+                                         >
+                                           {social.link.toUpperCase()}
+                                         </a>
+                                         <p style={{ fontFamily: social.status === 'pending' ? '"Futura PT Demi"' : social.status === 'rejected' ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '10px', color: social.status === 'approved' ? '#000000' : social.status === 'rejected' ? '#EB1C24' : '#909090', textTransform: 'uppercase', margin: '0', textAlign: 'left', whiteSpace: 'nowrap' }}>
+                                           {social.status === 'pending' ? 'PENDING: IN REVIEW' : social.status === 'approved' ? (
+                                             <>APPROVED: <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{social.points || 600} POINTS</span></>
+                                           ) : <>REJECTED: {social.rejectionReason || 'LOW QUALITY'}</>}
+                                         </p>
+                                       </div>
+                                     ));
+                                   })()}
+                                 </div>
+                               )}
+                             </div>
                            </div>
                          </>
                        );
@@ -1948,6 +3525,24 @@ function AffiliatePage() {
                     </div>
                   </div>
 
+                  {/* Content Approval Instructions */}
+                  <div style={{ marginBottom: '24px' }}>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                        color: '#EB1C24',
+                        fontSize: '10px',
+                        margin: '0 0 24px 0',
+                        textTransform: 'uppercase',
+                        fontWeight: '500',
+                        lineHeight: '1.4',
+                        textAlign: 'left'
+                      }}
+                    >
+                      IN ORDER TO HAVE THE HIGHEST CHANCE FOR CONTENT APPROVAL PLEASE SUBMIT CLEAR, WELL LIT PHOTOS/VIDEOS. PREFERABLY WITH NO FILTERS OR EDITS IN ORDER TO SHOWCASE THE PRODUCT IN ITS MOST AUTHENTIC STATE. ALLOW UP TO 72 HOURS FOR YOUR CONTENT TO BE REVIEWED AND APPROVED.
+                    </p>
+                  </div>
+
                   {/* SUBMIT CONTENT Section */}
                   <div style={{ marginBottom: '32px' }}>
                     <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
@@ -1961,7 +3556,7 @@ function AffiliatePage() {
                           textTransform: 'uppercase'
                         }}
                       >
-                        AFFILIATE CONTENT
+                        AFFILIATE PROGRAM
                       </h2>
                     </div>
                     
@@ -1995,8 +3590,8 @@ function AffiliatePage() {
                                 src={order.productImage}
                                 alt={order.productName}
                                 style={{
-                                  width: '102px',
-                                  height: '102px',
+                                  width: '133px',
+                                  height: '133px',
                                   objectFit: 'contain',
                                   cursor: 'pointer'
                                 }}
@@ -2018,7 +3613,7 @@ function AffiliatePage() {
                             </div>
                             
                             {/* Order Detail Text */}
-                            <div className="flex flex-col gap-1" style={{ flexShrink: 0, transform: 'translateY(-6px)' }}>
+                            <div className="flex flex-col gap-1" style={{ flexShrink: 0, transform: 'translateY(-14px)' }}>
                               <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '19px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
                                 {order.productName}
                               </p>
@@ -2030,12 +3625,12 @@ function AffiliatePage() {
                                   const socialTagsPeriod = order.socialTagsPeriod || '';
                                   const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (order.socialTags || 0) : 0;
                                   const photoVideoEarned = effectivePoints.photoVideo;
-                                  const socialPointsEarned = effectiveSocialTags * 200;
+                                  const socialPointsEarned = effectiveSocialTags * 600;
                                   const totalEarned = photoVideoEarned + socialPointsEarned;
                                   if (totalEarned === 0) {
-                                    return '0/2,000 LP';
+                                    return '0/5,000 LP';
                                   } else {
-                                    return `${totalEarned.toLocaleString()}/2,000 LP`;
+                                    return `${totalEarned.toLocaleString()}/5,000 LP`;
                                   }
                                 })()}
                               </p>
@@ -2047,7 +3642,7 @@ function AffiliatePage() {
                                   const socialTagsPeriod = order.socialTagsPeriod || '';
                                   const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (order.socialTags || 0) : 0;
                                   const photoVideoEarned = effectivePoints.photoVideo;
-                                  const socialPointsEarned = effectiveSocialTags * 200;
+                                  const socialPointsEarned = effectiveSocialTags * 600;
                                   const totalEarned = photoVideoEarned + socialPointsEarned;
                                   const contentStatus = order.contentStatus || 'not_submitted';
                                   
@@ -2061,8 +3656,8 @@ function AffiliatePage() {
                                     const pendingPhotos = order.pendingPhotos || 0;
                                     const pendingVideos = order.pendingVideos || 0;
                                     const pendingSocialTags = order.socialTags || 0;
-                                    const pendingPhotoVideoPoints = (pendingPhotos * 500) + (pendingVideos * 500);
-                                    const pendingSocialPoints = pendingSocialTags * 200;
+                                    const pendingPhotoVideoPoints = (pendingPhotos * 400) + (pendingVideos * 600);
+                                    const pendingSocialPoints = pendingSocialTags * 600;
                                     const totalPendingPoints = pendingPhotoVideoPoints + pendingSocialPoints;
                                     return `+${totalPendingPoints.toLocaleString()} POINTS PENDING`;
                                   }
@@ -2074,11 +3669,11 @@ function AffiliatePage() {
                                   
                                   // If content is approved, show points earned
                                   if (contentStatus === 'approved') {
-                                    const available = order.pointsAvailable || 2000;
+                                    const available = order.pointsAvailable || 5000;
                                     if (totalEarned >= available) {
-                                      return 'ALL POINTS EARNED';
+                                      return 'ALL POINTS EARNED!';
                                     } else {
-                                      return `+${totalEarned.toLocaleString()} POINTS EARNED`;
+                                      return `+${totalEarned.toLocaleString()} POINTS EARNED!`;
                                     }
                                   }
                                   
@@ -2103,29 +3698,115 @@ function AffiliatePage() {
                  </>
                )}
                  </div>
-                 
-                 {/* Submit Button - Below main card */}
-                 {expandedOrderId && (
-                   <div className="px-0 md:px-0" style={{ marginTop: '12px', marginBottom: '10px', transform: 'translateY(-2px)' }}>
-                     <button
-                       className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                       style={{ 
-                         borderWidth: '1.3px', 
-                         color: '#EB1C24',
-                         fontFamily: '"Futura PT Medium"',
-                         backgroundColor: '#FFFFFF'
-                       }}
-                       type="button"
-                     >
-                       SUBMIT
-                     </button>
-                   </div>
-                 )}
                </>
              )}
            </div>
          </div>
        </div>
+       
+      {/* Submit Button - Outside card */}
+      {expandedOrderId && !showMobileMenu && (
+        <div className="px-0 md:px-0 -mx-4" style={{ marginTop: '-40px', marginBottom: '20px', position: 'relative', zIndex: 10 }}>
+          <button
+            ref={submitButtonRef}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleSubmitContent(e);
+            }}
+            onTouchStart={(e) => {
+              e.stopPropagation();
+            }}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleSubmitContent(e as any);
+            }}
+            onMouseDown={(e) => {
+              // Don't prevent default here, let onClick handle it
+            }}
+            className="border border-black font-futura text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 active:bg-gray-100"
+            style={{
+              borderWidth: '1.3px', 
+              color: '#EB1C24',
+              fontFamily: '"Futura PT Medium"',
+              backgroundColor: '#FFFFFF',
+              textTransform: 'uppercase',
+              width: 'calc(100% - 64px)',
+              margin: '0 auto',
+              display: 'block',
+              touchAction: 'manipulation',
+              WebkitTapHighlightColor: 'transparent',
+              position: 'relative',
+              zIndex: 10,
+              userSelect: 'none',
+              WebkitUserSelect: 'none',
+              WebkitTouchCallout: 'none',
+              cursor: 'pointer',
+              minHeight: '44px' // Ensure minimum touch target size for mobile
+            }}
+            type="button"
+          >
+            SUBMIT CONTENT
+          </button>
+         </div>
+       )}
+       
+       {/* Delete Confirmation Modal */}
+       {showDeleteConfirm && expandedOrderId && (
+         <ConfirmationModal
+           isOpen={true}
+           onClose={() => setShowDeleteConfirm(null)}
+           onConfirm={() => {
+             if (!expandedOrderId || !showDeleteConfirm) return;
+             const expandedOrder = deliveredOrders.find(o => o.id === expandedOrderId);
+             if (!expandedOrder) return;
+             
+             const orderContent = submittedContent[expandedOrder.id] || { photos: [], videos: [], socials: [] };
+             
+             if (showDeleteConfirm.type === 'photo') {
+               setSubmittedContent({
+                 ...submittedContent,
+                 [expandedOrder.id]: {
+                   ...orderContent,
+                   photos: orderContent.photos.filter(p => p.id !== showDeleteConfirm.id)
+                 }
+               });
+             } else if (showDeleteConfirm.type === 'video') {
+               setSubmittedContent({
+                 ...submittedContent,
+                 [expandedOrder.id]: {
+                   ...orderContent,
+                   videos: orderContent.videos.filter(v => v.id !== showDeleteConfirm.id)
+                 }
+               });
+             } else if (showDeleteConfirm.type === 'social') {
+               setSubmittedContent({
+                 ...submittedContent,
+                 [expandedOrder.id]: {
+                   ...orderContent,
+                   socials: orderContent.socials.filter(s => s.id !== showDeleteConfirm.id)
+                 }
+               });
+             }
+             
+             setShowDeleteConfirm(null);
+           }}
+           title="DELETE CONTENT"
+           message="ARE YOU SURE YOU WANT TO DELETE THIS CONTENT?"
+           confirmText="DELETE"
+           cancelText="CANCEL"
+         />
+       )}
+
+       {/* Image Viewer Modal */}
+       <ImageViewerModal
+         isOpen={showImageViewer}
+         onClose={() => setShowImageViewer(false)}
+         images={viewerImages}
+         currentIndex={viewerCurrentIndex}
+         onNavigate={setViewerCurrentIndex}
+       />
      </div>
    );
  }

@@ -6,6 +6,7 @@ import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
 import ConfirmationModal from '../../../components/ConfirmationModal';
+import ImageViewerModal from '../../../components/ImageViewerModal';
 
 interface DensityOption {
   id: string;
@@ -35,6 +36,9 @@ function NoirSelection() {
     const saved3DView = localStorage.getItem('noir-3d-view');
     return saved3DView === 'true';
   });
+  const [showImageViewer, setShowImageViewer] = useState(false);
+  const [viewerImages, setViewerImages] = useState<string[]>([]);
+  const [viewerCurrentIndex, setViewerCurrentIndex] = useState(0);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -2054,7 +2058,7 @@ function NoirSelection() {
                       color: mobileMenuActiveTab === 'SHOP' ? '#EB1C24' : 'black',
                       fontWeight: '500',
                       textTransform: 'uppercase',
-                      borderBottom: mobileMenuActiveTab === 'SHOP' ? '2px solid #EB1C24' : 'none',
+                      borderBottom: mobileMenuActiveTab === 'SHOP' ? '1px solid #EB1C24' : 'none',
                       borderTop: 'none',
                       borderLeft: 'none',
                       borderRight: 'none',
@@ -2074,7 +2078,7 @@ function NoirSelection() {
                       color: mobileMenuActiveTab === 'TOOLS' ? '#EB1C24' : 'black',
                       fontWeight: '500',
                       textTransform: 'uppercase',
-                      borderBottom: mobileMenuActiveTab === 'TOOLS' ? '2px solid #EB1C24' : 'none',
+                      borderBottom: mobileMenuActiveTab === 'TOOLS' ? '1px solid #EB1C24' : 'none',
                       borderTop: 'none',
                       borderLeft: 'none',
                       borderRight: 'none',
@@ -2093,7 +2097,7 @@ function NoirSelection() {
                       color: mobileMenuActiveTab === 'BRAND' ? '#EB1C24' : 'black',
                       fontWeight: '500',
                       textTransform: 'uppercase',
-                      borderBottom: mobileMenuActiveTab === 'BRAND' ? '2px solid #EB1C24' : 'none',
+                      borderBottom: mobileMenuActiveTab === 'BRAND' ? '1px solid #EB1C24' : 'none',
                       borderTop: 'none',
                       borderLeft: 'none',
                       borderRight: 'none',
@@ -2381,7 +2385,16 @@ function NoirSelection() {
                     height: '290px',
                     backgroundImage: `url('/assets/NOIR/${is3DView ? current3DImages.hero : 'leaf-brick.png'}')`,
                     backgroundRepeat: 'repeat',
-                    overflow: 'visible'
+                    overflow: 'visible',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => {
+                    const allImages = is3DView 
+                      ? [`/assets/NOIR/${current3DImages.hero}`, `/assets/NOIR/${current3DImages.top}`, `/assets/NOIR/${current3DImages.bottom}`]
+                      : [currentImages.hero, currentImages.top, currentImages.bottom];
+                    setViewerImages(allImages);
+                    setViewerCurrentIndex(0);
+                    setShowImageViewer(true);
                   }}
                 >
                   <img
@@ -2398,7 +2411,18 @@ function NoirSelection() {
                       maxHeight: '610px',
                       minWidth: '230px',
                       minHeight: 'auto',
-                      display: is3DView ? 'none' : 'block'
+                      display: is3DView ? 'none' : 'block',
+                      cursor: 'pointer',
+                      pointerEvents: is3DView ? 'none' : 'auto'
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const allImages = is3DView 
+                        ? [`/assets/NOIR/${current3DImages.hero}`, `/assets/NOIR/${current3DImages.top}`, `/assets/NOIR/${current3DImages.bottom}`]
+                        : [currentImages.hero, currentImages.top, currentImages.bottom];
+                      setViewerImages(allImages);
+                      setViewerCurrentIndex(0);
+                      setShowImageViewer(true);
                     }}
                   />
                 </div>
@@ -2903,22 +2927,52 @@ function NoirSelection() {
                   src="/assets/NOIR/noir front.png"
                   alt="NOIR Front View"
                   className="h-full object-cover"
-                  style={{ width: '18%' }}
+                  style={{ width: '18%', cursor: 'pointer' }}
                   draggable={false}
+                  onClick={() => {
+                    const productShotImages = [
+                      '/assets/NOIR/noir front.png',
+                      '/assets/NOIR/noir left.png',
+                      '/assets/NOIR/noir right.png'
+                    ];
+                    setViewerImages(productShotImages);
+                    setViewerCurrentIndex(0);
+                    setShowImageViewer(true);
+                  }}
                 />
                 <img
                   src="/assets/NOIR/noir left.png"
                   alt="NOIR Left View"
                   className="h-full object-cover"
-                  style={{ width: '18%' }}
+                  style={{ width: '18%', cursor: 'pointer' }}
                   draggable={false}
+                  onClick={() => {
+                    const productShotImages = [
+                      '/assets/NOIR/noir front.png',
+                      '/assets/NOIR/noir left.png',
+                      '/assets/NOIR/noir right.png'
+                    ];
+                    setViewerImages(productShotImages);
+                    setViewerCurrentIndex(1);
+                    setShowImageViewer(true);
+                  }}
                 />
                 <img
                   src="/assets/NOIR/noir right.png"
                   alt="NOIR Right View"
                   className="h-full object-cover"
-                  style={{ width: '18%' }}
+                  style={{ width: '18%', cursor: 'pointer' }}
                   draggable={false}
+                  onClick={() => {
+                    const productShotImages = [
+                      '/assets/NOIR/noir front.png',
+                      '/assets/NOIR/noir left.png',
+                      '/assets/NOIR/noir right.png'
+                    ];
+                    setViewerImages(productShotImages);
+                    setViewerCurrentIndex(2);
+                    setShowImageViewer(true);
+                  }}
                 />
               </div>
               
@@ -2946,39 +3000,39 @@ function NoirSelection() {
               {/* Tabs Section */}
               <div className="mt-6" style={{ transform: 'translateY(-66px)' }}>
                 {/* Tab Navigation */}
-                <div className="flex justify-center">
+                <div className="flex justify-center" style={{ gap: '16px' }}>
                 <button
                   onClick={() => handleTabClick('DETAILS')}
-                  className={`px-2 py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                  className={`py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', borderBottom: activeTab === 'DETAILS' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
                 >
                   DETAILS
                 </button>
                 <button
                   onClick={() => handleTabClick('SHIPPING')}
-                  className={`px-2 py-1 text-xs font-medium ${activeTab === 'SHIPPING' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                  className={`py-1 text-xs font-medium ${activeTab === 'SHIPPING' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', borderBottom: activeTab === 'SHIPPING' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
                 >
                   SHIPPING
                 </button>
                 <button
                   onClick={() => handleTabClick('POLICY')}
-                  className={`px-2 py-1 text-xs font-medium ${activeTab === 'POLICY' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                  className={`py-1 text-xs font-medium ${activeTab === 'POLICY' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', borderBottom: activeTab === 'POLICY' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
                 >
                   POLICY
                 </button>
                 <button
                   onClick={() => handleTabClick('CARE & STORAGE')}
-                  className={`px-2 py-1 text-xs font-medium ${activeTab === 'CARE & STORAGE' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                  className={`py-1 text-xs font-medium ${activeTab === 'CARE & STORAGE' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', borderBottom: activeTab === 'CARE & STORAGE' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
                 >
                   CARE & STORAGE
                 </button>
                 <button
                   onClick={() => handleTabClick('REVIEWS')}
-                  className={`px-2 py-1 text-xs font-medium ${activeTab === 'REVIEWS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px' }}
+                  className={`py-1 text-xs font-medium ${activeTab === 'REVIEWS' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', borderBottom: activeTab === 'REVIEWS' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
                 >
                   REVIEWS
                 </button>
@@ -4424,6 +4478,15 @@ function NoirSelection() {
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="sign-out-confirm"
+      />
+
+      {/* Image Viewer Modal */}
+      <ImageViewerModal
+        isOpen={showImageViewer}
+        onClose={() => setShowImageViewer(false)}
+        images={viewerImages}
+        currentIndex={viewerCurrentIndex}
+        onNavigate={setViewerCurrentIndex}
       />
     </div>
   );

@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
+import ImageViewerModal from '../../../components/ImageViewerModal';
 
 function BlancoSelection() {
   const navigate = useNavigate();
@@ -12,6 +13,9 @@ function BlancoSelection() {
   const [quantity, setQuantity] = useState(1);
   const [showChartModal, setShowChartModal] = useState(false);
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
+  const [showImageViewer, setShowImageViewer] = useState(false);
+  const [viewerImages, setViewerImages] = useState<string[]>([]);
+  const [viewerCurrentIndex, setViewerCurrentIndex] = useState(0);
   
   // Wishlist state
   const [isInWishlist, setIsInWishlist] = useState(false);
@@ -517,23 +521,23 @@ function BlancoSelection() {
     if (selectedMannequinView === 0) {
       // Default state: BLANCO-FRONT in hero
       return {
-        hero: 'BLANCO-FRONT.png',
-        top: 'BLANCO-RIGHT.png',
-        bottom: 'BLANCO-LEFT.png'
+        hero: '/assets/BLANCO-FRONT.png',
+        top: '/assets/BLANCO-LEFT.png',
+        bottom: '/assets/BLANCO-RIGHT.png'
       };
     } else if (selectedMannequinView === 1) {
-      // Top thumbnail clicked: BLANCO-RIGHT in hero, BLANCO-FRONT in top
+      // Top thumbnail clicked: BLANCO-LEFT in hero, BLANCO-FRONT in top
       return {
-        hero: 'BLANCO-RIGHT.png',
-        top: 'BLANCO-FRONT.png',
-        bottom: 'BLANCO-LEFT.png'
+        hero: '/assets/BLANCO-LEFT.png',
+        top: '/assets/BLANCO-FRONT.png',
+        bottom: '/assets/BLANCO-RIGHT.png'
       };
     } else {
-      // Bottom thumbnail clicked: BLANCO-LEFT in hero, BLANCO-FRONT in bottom
+      // Bottom thumbnail clicked: BLANCO-RIGHT in hero, BLANCO-FRONT in bottom
       return {
-        hero: 'BLANCO-LEFT.png',
-        top: 'BLANCO-RIGHT.png',
-        bottom: 'BLANCO-FRONT.png'
+        hero: '/assets/BLANCO-RIGHT.png',
+        top: '/assets/BLANCO-LEFT.png',
+        bottom: '/assets/BLANCO-FRONT.png'
       };
     }
   };
@@ -934,7 +938,7 @@ function BlancoSelection() {
                       color: mobileMenuActiveTab === 'SHOP' ? '#EB1C24' : 'black',
                       fontWeight: '500',
                       textTransform: 'uppercase',
-                      borderBottom: mobileMenuActiveTab === 'SHOP' ? '2px solid #EB1C24' : 'none',
+                      borderBottom: mobileMenuActiveTab === 'SHOP' ? '1px solid #EB1C24' : 'none',
                       borderTop: 'none',
                       borderLeft: 'none',
                       borderRight: 'none',
@@ -954,7 +958,7 @@ function BlancoSelection() {
                       color: mobileMenuActiveTab === 'TOOLS' ? '#EB1C24' : 'black',
                       fontWeight: '500',
                       textTransform: 'uppercase',
-                      borderBottom: mobileMenuActiveTab === 'TOOLS' ? '2px solid #EB1C24' : 'none',
+                      borderBottom: mobileMenuActiveTab === 'TOOLS' ? '1px solid #EB1C24' : 'none',
                       borderTop: 'none',
                       borderLeft: 'none',
                       borderRight: 'none',
@@ -973,7 +977,7 @@ function BlancoSelection() {
                       color: mobileMenuActiveTab === 'BRAND' ? '#EB1C24' : 'black',
                       fontWeight: '500',
                       textTransform: 'uppercase',
-                      borderBottom: mobileMenuActiveTab === 'BRAND' ? '2px solid #EB1C24' : 'none',
+                      borderBottom: mobileMenuActiveTab === 'BRAND' ? '1px solid #EB1C24' : 'none',
                       borderTop: 'none',
                       borderLeft: 'none',
                       borderRight: 'none',
@@ -1268,9 +1272,18 @@ function BlancoSelection() {
                       justifyContent: 'center',
                       width: '200px',
                       height: '290px',
-                      backgroundImage: `url('/assets/${is3DView ? current3DImages.hero : 'NOIR/leaf-brick.png'}')`,
+                      backgroundImage: `url('${is3DView ? current3DImages.hero : '/assets/NOIR/leaf-brick.png'}')`,
                       backgroundRepeat: 'repeat',
-                      overflow: 'visible'
+                      overflow: 'visible',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => {
+                      const allImages = is3DView 
+                        ? [current3DImages.hero, current3DImages.top, current3DImages.bottom]
+                        : [currentImages.hero, currentImages.top, currentImages.bottom];
+                      setViewerImages(allImages);
+                      setViewerCurrentIndex(0);
+                      setShowImageViewer(true);
                     }}
                   >
                     <img
@@ -1287,7 +1300,18 @@ function BlancoSelection() {
                         maxHeight: '610px',
                         minWidth: '230px',
                         minHeight: 'auto',
-                        display: is3DView ? 'none' : 'block'
+                        display: is3DView ? 'none' : 'block',
+                        cursor: 'pointer',
+                        pointerEvents: is3DView ? 'none' : 'auto'
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const allImages = is3DView 
+                          ? [current3DImages.hero, current3DImages.top, current3DImages.bottom]
+                          : [currentImages.hero, currentImages.top, currentImages.bottom];
+                        setViewerImages(allImages);
+                        setViewerCurrentIndex(0);
+                        setShowImageViewer(true);
                       }}
                     />
                   </div>
@@ -1302,7 +1326,7 @@ function BlancoSelection() {
                       style={{
                         width: '100px',
                         height: '140px',
-                        backgroundImage: `url('/assets/${is3DView ? current3DImages.top : 'NOIR/leaf-brick.png'}')`,
+                        backgroundImage: `url('${is3DView ? current3DImages.top : '/assets/NOIR/leaf-brick.png'}')`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat'
@@ -1334,7 +1358,7 @@ function BlancoSelection() {
                       style={{
                         width: '100px',
                         height: '140px',
-                        backgroundImage: `url('/assets/${is3DView ? current3DImages.bottom : 'NOIR/leaf-brick.png'}')`,
+                        backgroundImage: `url('${is3DView ? current3DImages.bottom : '/assets/NOIR/leaf-brick.png'}')`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat'
@@ -1766,22 +1790,52 @@ function BlancoSelection() {
                     src="/assets/BLANCO-FRONT.png"
                     alt="BLANCO Front View"
                     className="object-cover"
-                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)' }}
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
+                    onClick={() => {
+                      const productShotImages = [
+                        '/assets/BLANCO-FRONT.png',
+                        '/assets/BLANCO-LEFT.png',
+                        '/assets/BLANCO-RIGHT.png'
+                      ];
+                      setViewerImages(productShotImages);
+                      setViewerCurrentIndex(0);
+                      setShowImageViewer(true);
+                    }}
                   />
                   <img
                     src="/assets/BLANCO-LEFT.png"
                     alt="BLANCO Left View"
                     className="object-cover"
-                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)' }}
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
+                    onClick={() => {
+                      const productShotImages = [
+                        '/assets/BLANCO-FRONT.png',
+                        '/assets/BLANCO-LEFT.png',
+                        '/assets/BLANCO-RIGHT.png'
+                      ];
+                      setViewerImages(productShotImages);
+                      setViewerCurrentIndex(1);
+                      setShowImageViewer(true);
+                    }}
                   />
                   <img
                     src="/assets/BLANCO-RIGHT.png"
                     alt="BLANCO Right View"
                     className="object-cover"
-                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)' }}
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
+                    onClick={() => {
+                      const productShotImages = [
+                        '/assets/BLANCO-FRONT.png',
+                        '/assets/BLANCO-LEFT.png',
+                        '/assets/BLANCO-RIGHT.png'
+                      ];
+                      setViewerImages(productShotImages);
+                      setViewerCurrentIndex(2);
+                      setShowImageViewer(true);
+                    }}
                   />
                 </div>
                 
@@ -1808,39 +1862,39 @@ function BlancoSelection() {
               {/* Tabs Section */}
               <div className="mt-6" style={{ transform: 'translateY(-20px)' }}>
                 {/* Tab Navigation */}
-                <div className="flex justify-center">
+                <div className="flex justify-center" style={{ gap: '16px' }}>
                   <button
                     onClick={() => handleTabClick('DETAILS')}
-                    className={`px-2 py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
+                    className={`py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', borderBottom: activeTab === 'DETAILS' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
                   >
                     DETAILS
                   </button>
                   <button
                     onClick={() => handleTabClick('SHIPPING')}
-                    className={`px-2 py-1 text-xs font-medium ${activeTab === 'SHIPPING' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
+                    className={`py-1 text-xs font-medium ${activeTab === 'SHIPPING' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', borderBottom: activeTab === 'SHIPPING' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
                   >
                     SHIPPING
                   </button>
                   <button
                     onClick={() => handleTabClick('POLICY')}
-                    className={`px-2 py-1 text-xs font-medium ${activeTab === 'POLICY' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
+                    className={`py-1 text-xs font-medium ${activeTab === 'POLICY' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', borderBottom: activeTab === 'POLICY' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
                   >
                     POLICY
                   </button>
                   <button
                     onClick={() => handleTabClick('CARE & STORAGE')}
-                    className={`px-2 py-1 text-xs font-medium ${activeTab === 'CARE & STORAGE' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
+                    className={`py-1 text-xs font-medium ${activeTab === 'CARE & STORAGE' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', borderBottom: activeTab === 'CARE & STORAGE' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
                   >
                     CARE & STORAGE
                   </button>
                   <button
                     onClick={() => handleTabClick('REVIEWS')}
-                    className={`px-2 py-1 text-xs font-medium ${activeTab === 'REVIEWS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
+                    className={`py-1 text-xs font-medium ${activeTab === 'REVIEWS' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', borderBottom: activeTab === 'REVIEWS' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
                   >
                     REVIEWS
                   </button>
@@ -2217,7 +2271,7 @@ function BlancoSelection() {
                   }}
                 >
                   <img
-                    src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
+                    src={is3DView ? "/assets/BLANCO-FRONT.png" : "/assets/NOIR/blanco-thumb.png"}
                     alt="BLANCO"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
@@ -2854,7 +2908,7 @@ function BlancoSelection() {
                   }}
                 >
                   <img
-                    src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
+                    src={is3DView ? "/assets/BLANCO-FRONT.png" : "/assets/NOIR/blanco-thumb.png"}
                     alt="BLANCO"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
@@ -2966,6 +3020,15 @@ function BlancoSelection() {
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="sign-out-confirm"
+      />
+
+      {/* Image Viewer Modal */}
+      <ImageViewerModal
+        isOpen={showImageViewer}
+        onClose={() => setShowImageViewer(false)}
+        images={viewerImages}
+        currentIndex={viewerCurrentIndex}
+        onNavigate={setViewerCurrentIndex}
       />
     </div>
   );

@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
+import ImageViewerModal from '../../../components/ImageViewerModal';
 
 function SoftWaveSelection() {
   const navigate = useNavigate();
@@ -13,6 +14,9 @@ function SoftWaveSelection() {
   const [quantity, setQuantity] = useState(1);
   const [showChartModal, setShowChartModal] = useState(false);
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
+  const [showImageViewer, setShowImageViewer] = useState(false);
+  const [viewerImages, setViewerImages] = useState<string[]>([]);
+  const [viewerCurrentIndex, setViewerCurrentIndex] = useState(0);
   
   // Cart count state
   const [cartCount, setCartCount] = useState(() => {
@@ -939,7 +943,7 @@ function SoftWaveSelection() {
                       color: mobileMenuActiveTab === 'SHOP' ? '#EB1C24' : 'black',
                       fontWeight: '500',
                       textTransform: 'uppercase',
-                      borderBottom: mobileMenuActiveTab === 'SHOP' ? '2px solid #EB1C24' : 'none',
+                      borderBottom: mobileMenuActiveTab === 'SHOP' ? '1px solid #EB1C24' : 'none',
                       borderTop: 'none',
                       borderLeft: 'none',
                       borderRight: 'none',
@@ -958,7 +962,7 @@ function SoftWaveSelection() {
                       color: mobileMenuActiveTab === 'TOOLS' ? '#EB1C24' : 'black',
                       fontWeight: '500',
                       textTransform: 'uppercase',
-                      borderBottom: mobileMenuActiveTab === 'TOOLS' ? '2px solid #EB1C24' : 'none',
+                      borderBottom: mobileMenuActiveTab === 'TOOLS' ? '1px solid #EB1C24' : 'none',
                       borderTop: 'none',
                       borderLeft: 'none',
                       borderRight: 'none',
@@ -977,7 +981,7 @@ function SoftWaveSelection() {
                       color: mobileMenuActiveTab === 'BRAND' ? '#EB1C24' : 'black',
                       fontWeight: '500',
                       textTransform: 'uppercase',
-                      borderBottom: mobileMenuActiveTab === 'BRAND' ? '2px solid #EB1C24' : 'none',
+                      borderBottom: mobileMenuActiveTab === 'BRAND' ? '1px solid #EB1C24' : 'none',
                       borderTop: 'none',
                       borderLeft: 'none',
                       borderRight: 'none',
@@ -1280,7 +1284,16 @@ function SoftWaveSelection() {
                       height: '290px',
                       backgroundImage: `url('/assets/${is3DView ? current3DImages.hero : 'NOIR/leaf-brick.png'}')`,
                       backgroundRepeat: 'repeat',
-                      overflow: 'visible'
+                      overflow: 'visible',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => {
+                      const allImages = is3DView 
+                        ? [`/assets/${current3DImages.hero}`, `/assets/${current3DImages.top}`, `/assets/${current3DImages.bottom}`]
+                        : [currentImages.hero, currentImages.top, currentImages.bottom];
+                      setViewerImages(allImages);
+                      setViewerCurrentIndex(0);
+                      setShowImageViewer(true);
                     }}
                   >
                     <img
@@ -1297,7 +1310,18 @@ function SoftWaveSelection() {
                         maxHeight: '610px',
                         minWidth: '230px',
                         minHeight: 'auto',
-                        display: is3DView ? 'none' : 'block'
+                        display: is3DView ? 'none' : 'block',
+                        cursor: 'pointer',
+                        pointerEvents: is3DView ? 'none' : 'auto'
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const allImages = is3DView 
+                          ? [`/assets/${current3DImages.hero}`, `/assets/${current3DImages.top}`, `/assets/${current3DImages.bottom}`]
+                          : [currentImages.hero, currentImages.top, currentImages.bottom];
+                        setViewerImages(allImages);
+                        setViewerCurrentIndex(0);
+                        setShowImageViewer(true);
                       }}
                     />
                   </div>
@@ -1777,22 +1801,52 @@ function SoftWaveSelection() {
                     src="/assets/SOFT-WAVE FRONT.png"
                     alt="SOFT WAVE Front View"
                     className="object-cover"
-                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)' }}
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
+                    onClick={() => {
+                      const productShotImages = [
+                        '/assets/SOFT-WAVE FRONT.png',
+                        '/assets/SOFT-WAVE LEFT.png',
+                        '/assets/SOFT-WAVE RIGHT.png'
+                      ];
+                      setViewerImages(productShotImages);
+                      setViewerCurrentIndex(0);
+                      setShowImageViewer(true);
+                    }}
                   />
                   <img
                     src="/assets/SOFT-WAVE LEFT.png"
                     alt="SOFT WAVE Left View"
                     className="object-cover"
-                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)' }}
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
+                    onClick={() => {
+                      const productShotImages = [
+                        '/assets/SOFT-WAVE FRONT.png',
+                        '/assets/SOFT-WAVE LEFT.png',
+                        '/assets/SOFT-WAVE RIGHT.png'
+                      ];
+                      setViewerImages(productShotImages);
+                      setViewerCurrentIndex(1);
+                      setShowImageViewer(true);
+                    }}
                   />
                   <img
                     src="/assets/SOFT-WAVE RIGHT.png"
                     alt="SOFT WAVE Right View"
                     className="object-cover"
-                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)' }}
+                    style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
+                    onClick={() => {
+                      const productShotImages = [
+                        '/assets/SOFT-WAVE FRONT.png',
+                        '/assets/SOFT-WAVE LEFT.png',
+                        '/assets/SOFT-WAVE RIGHT.png'
+                      ];
+                      setViewerImages(productShotImages);
+                      setViewerCurrentIndex(2);
+                      setShowImageViewer(true);
+                    }}
                   />
                 </div>
                 
@@ -1819,39 +1873,39 @@ function SoftWaveSelection() {
               {/* Tabs Section */}
               <div className="mt-6" style={{ transform: 'translateY(-20px)' }}>
                 {/* Tab Navigation */}
-                <div className="flex justify-center">
+                <div className="flex justify-center" style={{ gap: '16px' }}>
                   <button
                     onClick={() => handleTabClick('DETAILS')}
-                    className={`px-2 py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
+                    className={`py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', borderBottom: activeTab === 'DETAILS' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
                   >
                     DETAILS
                   </button>
                   <button
                     onClick={() => handleTabClick('SHIPPING')}
-                    className={`px-2 py-1 text-xs font-medium ${activeTab === 'SHIPPING' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
+                    className={`py-1 text-xs font-medium ${activeTab === 'SHIPPING' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', borderBottom: activeTab === 'SHIPPING' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
                   >
                     SHIPPING
                   </button>
                   <button
                     onClick={() => handleTabClick('POLICY')}
-                    className={`px-2 py-1 text-xs font-medium ${activeTab === 'POLICY' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
+                    className={`py-1 text-xs font-medium ${activeTab === 'POLICY' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', borderBottom: activeTab === 'POLICY' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
                   >
                     POLICY
                   </button>
                   <button
                     onClick={() => handleTabClick('CARE & STORAGE')}
-                    className={`px-2 py-1 text-xs font-medium ${activeTab === 'CARE & STORAGE' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
+                    className={`py-1 text-xs font-medium ${activeTab === 'CARE & STORAGE' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', borderBottom: activeTab === 'CARE & STORAGE' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
                   >
                     CARE & STORAGE
                   </button>
                   <button
                     onClick={() => handleTabClick('REVIEWS')}
-                    className={`px-2 py-1 text-xs font-medium ${activeTab === 'REVIEWS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
+                    className={`py-1 text-xs font-medium ${activeTab === 'REVIEWS' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', borderBottom: activeTab === 'REVIEWS' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
                   >
                     REVIEWS
                   </button>
@@ -2998,6 +3052,15 @@ function SoftWaveSelection() {
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="sign-out-confirm"
+      />
+
+      {/* Image Viewer Modal */}
+      <ImageViewerModal
+        isOpen={showImageViewer}
+        onClose={() => setShowImageViewer(false)}
+        images={viewerImages}
+        currentIndex={viewerCurrentIndex}
+        onNavigate={setViewerCurrentIndex}
       />
     </div>
   );
