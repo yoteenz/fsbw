@@ -967,6 +967,8 @@ function AffiliatePage() {
         videos: [...(orderContent.videos || [])], 
         socials: [...(orderContent.socials || [])] 
       };
+      
+      let contentAdded = false;
     
     // Helper to create preview if missing
     const createPreview = (file: File, existingPreview: string | null): Promise<string> => {
@@ -1047,7 +1049,7 @@ function AffiliatePage() {
         } else {
         updatedContent.photos = [...updatedContent.photos, {
                 id: `photo-${Date.now()}-2`,
-          file: photo2File,
+          file: preview2,
           preview: preview2,
                 status: 'pending' as const,
                 submittedDate: new Date().toISOString()
@@ -1508,19 +1510,21 @@ function AffiliatePage() {
   };
   
   // Helper function to check if a social input box should be enabled
+  // Note: Currently unused but kept for potential future use
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const canSubmitSocial = (orderId: string, platform: string): boolean => {
-    const { socialCounts } = getContentCounts(orderId);
-    const maxSocials = 5;
-    const approvedPendingCount = socialCounts.approved + socialCounts.pending;
-    const availableSlots = maxSocials - approvedPendingCount;
+  const canSubmitSocial = (_orderId: string, _platform: string): boolean => {
+    // const { socialCounts } = getContentCounts(orderId);
+    // const maxSocials = 5;
+    // const approvedPendingCount = socialCounts.approved + socialCounts.pending;
+    // const availableSlots = maxSocials - approvedPendingCount;
     
-    // Check if this specific platform has rejected content (filtered by current period)
-    const filteredContent = getFilteredContent(orderId);
-    const platformRejected = filteredContent.socials.filter(s => s.platform.toLowerCase() === platform.toLowerCase() && s.status === 'rejected').length;
+    // // Check if this specific platform has rejected content (filtered by current period)
+    // const filteredContent = getFilteredContent(orderId);
+    // const platformRejected = filteredContent.socials.filter(s => s.platform.toLowerCase() === platform.toLowerCase() && s.status === 'rejected').length;
     
-    // Enable if we have available slots OR if this platform has rejected content
-    return availableSlots > 0 || platformRejected > 0;
+    // // Enable if we have available slots OR if this platform has rejected content
+    // return availableSlots > 0 || platformRejected > 0;
+    return false;
   };
   
   // Helper function to check if a social platform has approved or pending content (should be disabled)
