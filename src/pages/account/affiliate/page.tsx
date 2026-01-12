@@ -967,8 +967,6 @@ function AffiliatePage() {
         videos: [...(orderContent.videos || [])], 
         socials: [...(orderContent.socials || [])] 
       };
-      
-      let contentAdded = false;
     
     // Helper to create preview if missing
     const createPreview = (file: File, existingPreview: string | null): Promise<string> => {
@@ -1012,7 +1010,6 @@ function AffiliatePage() {
                 submittedDate: new Date().toISOString()
         }];
             }
-      contentAdded = true;
         setPhoto1File(null);
         setPhoto1Preview(null);
         if (photo1InputRef.current) photo1InputRef.current.value = '';
@@ -1055,7 +1052,6 @@ function AffiliatePage() {
                 submittedDate: new Date().toISOString()
         }];
             }
-      contentAdded = true;
         setPhoto2File(null);
         setPhoto2Preview(null);
         if (photo2InputRef.current) photo2InputRef.current.value = '';
@@ -1081,7 +1077,6 @@ function AffiliatePage() {
                 submittedDate: new Date().toISOString()
         }];
             }
-      contentAdded = true;
         setVideo1File(null);
         setVideo1Preview(null);
         if (video1InputRef.current) video1InputRef.current.value = '';
@@ -1124,7 +1119,6 @@ function AffiliatePage() {
                 submittedDate: new Date().toISOString()
         }];
             }
-      contentAdded = true;
         setVideo2File(null);
         setVideo2Preview(null);
         if (video2InputRef.current) video2InputRef.current.value = '';
@@ -1507,24 +1501,6 @@ function AffiliatePage() {
       // Disable if there are 2 approved/pending videos (both slots filled, can't replace slot 2)
       return approvedPendingCount >= 2;
     }
-  };
-  
-  // Helper function to check if a social input box should be enabled
-  // Note: Currently unused but kept for potential future use
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const canSubmitSocial = (_orderId: string, _platform: string): boolean => {
-    // const { socialCounts } = getContentCounts(orderId);
-    // const maxSocials = 5;
-    // const approvedPendingCount = socialCounts.approved + socialCounts.pending;
-    // const availableSlots = maxSocials - approvedPendingCount;
-    
-    // // Check if this specific platform has rejected content (filtered by current period)
-    // const filteredContent = getFilteredContent(orderId);
-    // const platformRejected = filteredContent.socials.filter(s => s.platform.toLowerCase() === platform.toLowerCase() && s.status === 'rejected').length;
-    
-    // // Enable if we have available slots OR if this platform has rejected content
-    // return availableSlots > 0 || platformRejected > 0;
-    return false;
   };
   
   // Helper function to check if a social platform has approved or pending content (should be disabled)
@@ -3205,7 +3181,7 @@ function AffiliatePage() {
                            </div>
                            
                            {/* GALLERY Section */}
-                           <div style={{ marginTop: '24px', marginBottom: '24px' }}>
+                           <div style={{ marginTop: '24px', marginBottom: '8px' }}>
                              <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
                              </div>
                              
@@ -3455,10 +3431,6 @@ function AffiliatePage() {
                                       <div key={video.id} style={{ 
                                         width: '120px', 
                                         flexShrink: 0,
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        justifyContent: 'flex-start',
                                         position: 'relative'
                                       }}>
                                         {(video.status === 'pending' || video.status === 'rejected') && (
@@ -3532,13 +3504,11 @@ function AffiliatePage() {
                                             }}
                                           />
                                          </div>
-                                         <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '8px' }}>
-                                           <p style={{ fontFamily: video.status === 'pending' ? '"Futura PT Demi"' : video.status === 'rejected' ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '10px', color: video.status === 'approved' ? '#000000' : video.status === 'rejected' ? '#EB1C24' : '#909090', textTransform: 'uppercase', margin: '0', textAlign: 'center', whiteSpace: 'nowrap', width: 'max-content', maxWidth: '100%' }}>
-                                             {video.status === 'pending' ? 'PENDING: IN REVIEW' : video.status === 'approved' ? (
-                                               <>APPROVED: <span style={{ color: '#EB1C24' }}>{video.points || 600} POINTS</span></>
+                                         <p style={{ fontFamily: video.status === 'pending' ? '"Futura PT Demi"' : video.status === 'rejected' ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '10px', color: video.status === 'approved' ? '#000000' : video.status === 'rejected' ? '#EB1C24' : '#909090', textTransform: 'uppercase', margin: '8px 0 0 0', textAlign: 'center', whiteSpace: 'nowrap', width: 'max-content', maxWidth: '100%', marginLeft: 'auto', marginRight: 'auto', display: 'block' }}>
+                                           {video.status === 'pending' ? 'PENDING: IN REVIEW' : video.status === 'approved' ? (
+                                             <>APPROVED: <span style={{ color: '#EB1C24' }}>{video.points || 600} POINTS</span></>
                                            ) : <>REJECTED: {video.rejectionReason || 'LOW QUALITY'}</>}
                                          </p>
-                                         </div>
                                        </div>
                                      ));
                                    })()}
@@ -3582,8 +3552,8 @@ function AffiliatePage() {
                                                src="/assets/close-icon.svg"
                                                alt="Close"
                                                style={{
-                                                 width: '10px',
-                                                 height: '10px',
+                                                 width: '11px',
+                                                 height: '11px',
                                                  objectFit: 'contain',
                                                  display: 'block',
                                                  flexShrink: 0,
@@ -3742,7 +3712,7 @@ function AffiliatePage() {
                   </div>
 
                   {/* SUBMIT CONTENT Section */}
-                  <div style={{ marginBottom: '32px' }}>
+                  <div style={{ marginBottom: '8px' }}>
                     <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
                       <h2
                         style={{
