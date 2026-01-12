@@ -252,13 +252,15 @@ function ImageViewerModal({ isOpen, onClose, images, currentIndex, onNavigate }:
         style={{
           position: 'relative',
           maxWidth: is2DView ? '90vw' : '90vw',
-          maxHeight: is2DView ? '90vh' : '80vh',
+          maxHeight: is2DView ? '90vh' : '85vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           margin: 'auto',
-          width: is2DView ? 'auto' : '100%',
-          height: 'auto'
+          width: is2DView ? 'auto' : 'auto',
+          height: 'auto',
+          padding: '20px',
+          boxSizing: 'border-box'
         }}
         onClick={(e) => e.stopPropagation()}
         onTouchStart={onTouchStart}
@@ -351,15 +353,14 @@ function ImageViewerModal({ isOpen, onClose, images, currentIndex, onNavigate }:
           src={images[currentIndex]}
           alt={`Image ${currentIndex + 1} of ${images.length}`}
           style={{ 
-            maxWidth: '100%',
-            maxHeight: '80vh',
-              width: 'auto',
+            maxWidth: '90vw',
+            maxHeight: '85vh',
+            width: 'auto',
             height: 'auto',
             objectFit: 'contain',
             borderRadius: '0',
-              transform: 'scale(1.05)',
-              userSelect: 'none'
-            }}
+            userSelect: 'none'
+          }}
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={(e) => onTouchEnd(e)}

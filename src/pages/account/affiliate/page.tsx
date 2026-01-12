@@ -386,6 +386,7 @@ function AffiliatePage() {
   const [galleryActiveTab, setGalleryActiveTab] = useState<'photos' | 'videos' | 'socials'>('photos');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<{ type: 'photo' | 'video' | 'social'; id: string } | null>(null);
   const [showImageViewer, setShowImageViewer] = useState(false);
+  const [submitDebugMessage, setSubmitDebugMessage] = useState<string>('');
   const [viewerImages, setViewerImages] = useState<string[]>([]);
   const [viewerCurrentIndex, setViewerCurrentIndex] = useState(0);
   
@@ -822,6 +823,39 @@ function AffiliatePage() {
     }
   };
   
+  // Helper function to save submittedContent to localStorage
+  const saveSubmittedContentToStorage = (content: { [orderId: string]: { photos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; videos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; socials: Array<{ id: string; platform: string; link: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }> } }) => {
+    try {
+      const contentToStore = JSON.parse(JSON.stringify(content, (key, value) => {
+        // Convert File objects to their preview URLs for storage
+        if (value instanceof File) {
+          return null; // We'll use preview instead
+        }
+        return value;
+      }));
+      
+      // Ensure all file references use preview strings
+      Object.keys(contentToStore).forEach(orderId => {
+        if (contentToStore[orderId].photos) {
+          contentToStore[orderId].photos = contentToStore[orderId].photos.map((photo: any) => ({
+            ...photo,
+            file: typeof photo.file === 'string' ? photo.file : photo.preview
+          }));
+        }
+        if (contentToStore[orderId].videos) {
+          contentToStore[orderId].videos = contentToStore[orderId].videos.map((video: any) => ({
+            ...video,
+            file: typeof video.file === 'string' ? video.file : video.preview
+          }));
+        }
+      });
+      
+      localStorage.setItem('affiliateSubmittedContent', JSON.stringify(contentToStore));
+    } catch (e) {
+      console.error('Error saving submitted content to localStorage:', e);
+    }
+  };
+  
   // Submit handler - adds all pending content to submittedContent
   const handleSubmitContent = async (e?: React.MouseEvent<HTMLButtonElement> | React.TouchEvent<HTMLButtonElement>) => {
     if (e) {
@@ -829,24 +863,47 @@ function AffiliatePage() {
       e.stopPropagation();
     }
     
+    // Visual debug feedback - shows on mobile screen
+    setSubmitDebugMessage('Button clicked! Processing...');
+    
     if (!expandedOrderId) {
-      alert('Error: No order selected');
+      setSubmitDebugMessage('Error: No order selected');
+      setTimeout(() => setSubmitDebugMessage(''), 3000);
       return;
     }
     
-    // Visual feedback for debugging - shows on mobile screen
-    const hasContent = !!(photo1File || photo2File || video1File || video2File || 
-      twitterLink.trim() || instagramLink.trim() || tiktokLink.trim() || 
+    // Check for content - also check file inputs directly as fallback for mobile
+    const hasPhoto1 = !!photo1File || (photo1InputRef.current?.files && photo1InputRef.current.files.length > 0);
+    const hasPhoto2 = !!photo2File || (photo2InputRef.current?.files && photo2InputRef.current.files.length > 0);
+    const hasVideo1 = !!video1File || (video1InputRef.current?.files && video1InputRef.current.files.length > 0);
+    const hasVideo2 = !!video2File || (video2InputRef.current?.files && video2InputRef.current.files.length > 0);
+    const hasSocialLinks = !!(twitterLink.trim() || instagramLink.trim() || tiktokLink.trim() || 
       youtubeLink.trim() || facebookLink.trim());
     
+    const hasContent = hasPhoto1 || hasPhoto2 || hasVideo1 || hasVideo2 || hasSocialLinks;
+    
+    // Debug info
+    const debugInfo = `Files: P1=${!!photo1File}, P2=${!!photo2File}, V1=${!!video1File}, V2=${!!video2File}, Inputs: P1=${hasPhoto1}, P2=${hasPhoto2}, V1=${hasVideo1}, V2=${hasVideo2}, Social=${hasSocialLinks}`;
+    console.log('Content check:', debugInfo);
+    
     if (!hasContent) {
-      alert('Please select at least one file or enter a social media link before submitting.');
+      setSubmitDebugMessage(`No content found. ${debugInfo}`);
+      setTimeout(() => setSubmitDebugMessage(''), 5000);
       return;
     }
+    
+    // If files exist in input but not in state, get them from input directly (mobile fallback)
+    // We'll use these in the submission logic below
+    const photo1FileToUse = photo1File || (photo1InputRef.current?.files?.[0] || null);
+    const photo2FileToUse = photo2File || (photo2InputRef.current?.files?.[0] || null);
+    const video1FileToUse = video1File || (video1InputRef.current?.files?.[0] || null);
+    const video2FileToUse = video2File || (video2InputRef.current?.files?.[0] || null);
     
     try {
         const orderContent = submittedContent[expandedOrderId] || { photos: [], videos: [], socials: [] };
         const filteredContent = getFilteredContent(expandedOrderId);
+      // Use filteredContent (current period) as base, but preserve content from other periods
+      // This ensures we only work with current period content when submitting
       const updatedContent = { 
         photos: [...(orderContent.photos || [])], 
         videos: [...(orderContent.videos || [])], 
@@ -878,19 +935,20 @@ function AffiliatePage() {
     };
     
     // Submit photos
-    if (photo1File) {
-      const preview = photo1Preview || await createPreview(photo1File, photo1Preview);
+    if (photo1FileToUse) {
+      // Ensure we have a preview string before saving
+      const preview = photo1Preview || await createPreview(photo1FileToUse, photo1Preview);
       const rejectedPhoto = filteredContent.photos.find(p => p.status === 'rejected');
         if (rejectedPhoto) {
         updatedContent.photos = updatedContent.photos.map(p => 
                 p.id === rejectedPhoto.id 
-            ? { ...p, file: photo1File, preview: preview, status: 'pending' as const, submittedDate: new Date().toISOString() }
+            ? { ...p, file: preview, preview: preview, status: 'pending' as const, submittedDate: new Date().toISOString() }
                   : p
         );
         } else {
         updatedContent.photos = [...updatedContent.photos, {
                 id: `photo-${Date.now()}-1`,
-          file: photo1File,
+          file: preview,
           preview: preview,
                 status: 'pending' as const,
                 submittedDate: new Date().toISOString()
@@ -902,14 +960,15 @@ function AffiliatePage() {
         if (photo1InputRef.current) photo1InputRef.current.value = '';
     }
     
-    if (photo2File) {
-      const preview2 = photo2Preview || await createPreview(photo2File, photo2Preview);
+    if (photo2FileToUse) {
+      // Ensure we have a preview string before saving
+      const preview2 = photo2Preview || await createPreview(photo2FileToUse, photo2Preview);
         const rejectedPhotos = filteredContent.photos.filter(p => p.status === 'rejected');
         const rejectedPhoto = rejectedPhotos.length > 1 ? rejectedPhotos[1] : rejectedPhotos[0];
         if (rejectedPhoto && rejectedPhotos.length > 1) {
         updatedContent.photos = updatedContent.photos.map(p => 
                 p.id === rejectedPhoto.id 
-            ? { ...p, file: photo2File, preview: preview2, status: 'pending' as const, submittedDate: new Date().toISOString() }
+            ? { ...p, file: preview2, preview: preview2, status: 'pending' as const, submittedDate: new Date().toISOString() }
                   : p
         );
         } else if (rejectedPhoto) {
@@ -917,13 +976,13 @@ function AffiliatePage() {
           if (!alreadyReplaced) {
           updatedContent.photos = updatedContent.photos.map(p => 
                   p.id === rejectedPhoto.id 
-              ? { ...p, file: photo2File, preview: preview2, status: 'pending' as const, submittedDate: new Date().toISOString() }
+              ? { ...p, file: preview2, preview: preview2, status: 'pending' as const, submittedDate: new Date().toISOString() }
                     : p
           );
           } else {
           updatedContent.photos = [...updatedContent.photos, {
                   id: `photo-${Date.now()}-2`,
-            file: photo2File,
+            file: preview2,
             preview: preview2,
                   status: 'pending' as const,
                   submittedDate: new Date().toISOString()
@@ -945,19 +1004,20 @@ function AffiliatePage() {
     }
     
     // Submit videos
-    if (video1File) {
-      const videoPreview1 = video1Preview || await createPreview(video1File, video1Preview);
+    if (video1FileToUse) {
+      // Ensure we have a preview string before saving
+      const videoPreview1 = video1Preview || await createPreview(video1FileToUse, video1Preview);
         const rejectedVideo = filteredContent.videos.find(v => v.status === 'rejected');
         if (rejectedVideo) {
         updatedContent.videos = updatedContent.videos.map(v => 
                 v.id === rejectedVideo.id 
-            ? { ...v, file: video1File, preview: videoPreview1, status: 'pending' as const, submittedDate: new Date().toISOString() }
+            ? { ...v, file: videoPreview1, preview: videoPreview1, status: 'pending' as const, submittedDate: new Date().toISOString() }
                   : v
         );
         } else {
         updatedContent.videos = [...updatedContent.videos, {
                 id: `video-${Date.now()}-1`,
-          file: video1File,
+          file: videoPreview1,
           preview: videoPreview1,
                 status: 'pending' as const,
                 submittedDate: new Date().toISOString()
@@ -969,14 +1029,15 @@ function AffiliatePage() {
         if (video1InputRef.current) video1InputRef.current.value = '';
     }
     
-    if (video2File) {
-      const videoPreview2 = video2Preview || await createPreview(video2File, video2Preview);
+    if (video2FileToUse) {
+      // Ensure we have a preview string before saving
+      const videoPreview2 = video2Preview || await createPreview(video2FileToUse, video2Preview);
         const rejectedVideos = filteredContent.videos.filter(v => v.status === 'rejected');
         const rejectedVideo = rejectedVideos.length > 1 ? rejectedVideos[1] : rejectedVideos[0];
         if (rejectedVideo && rejectedVideos.length > 1) {
         updatedContent.videos = updatedContent.videos.map(v => 
                 v.id === rejectedVideo.id 
-            ? { ...v, file: video2File, preview: videoPreview2, status: 'pending' as const, submittedDate: new Date().toISOString() }
+            ? { ...v, file: videoPreview2, preview: videoPreview2, status: 'pending' as const, submittedDate: new Date().toISOString() }
                   : v
         );
         } else if (rejectedVideo) {
@@ -984,13 +1045,13 @@ function AffiliatePage() {
           if (!alreadyReplaced) {
           updatedContent.videos = updatedContent.videos.map(v => 
                   v.id === rejectedVideo.id 
-              ? { ...v, file: video2File, preview: videoPreview2, status: 'pending' as const, submittedDate: new Date().toISOString() }
+              ? { ...v, file: videoPreview2, preview: videoPreview2, status: 'pending' as const, submittedDate: new Date().toISOString() }
                     : v
           );
           } else {
           updatedContent.videos = [...updatedContent.videos, {
                   id: `video-${Date.now()}-2`,
-            file: video2File,
+            file: videoPreview2,
             preview: videoPreview2,
                   status: 'pending' as const,
                   submittedDate: new Date().toISOString()
@@ -999,7 +1060,7 @@ function AffiliatePage() {
         } else {
         updatedContent.videos = [...updatedContent.videos, {
                 id: `video-${Date.now()}-2`,
-          file: video2File,
+          file: videoPreview2,
           preview: videoPreview2,
                 status: 'pending' as const,
                 submittedDate: new Date().toISOString()
@@ -1114,12 +1175,24 @@ function AffiliatePage() {
     }
     
       // Update submittedContent using functional update to avoid stale state
-      setSubmittedContent(prev => ({
-        ...prev,
-        [expandedOrderId]: updatedContent
-      }));
+      setSubmittedContent(prev => {
+        const newContent = {
+          ...prev,
+          [expandedOrderId]: updatedContent
+        };
+        
+        // Save to localStorage
+        saveSubmittedContentToStorage(newContent);
+        
+        return newContent;
+      });
+      
+      // Success feedback
+      setSubmitDebugMessage('Content submitted successfully!');
+      setTimeout(() => setSubmitDebugMessage(''), 3000);
     } catch (error) {
-      console.error('Error submitting content:', error);
+      setSubmitDebugMessage(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setTimeout(() => setSubmitDebugMessage(''), 3000);
     }
   };
   
@@ -1149,35 +1222,43 @@ function AffiliatePage() {
   
   // Add native event listeners for mobile button click (fallback)
   useEffect(() => {
-    const button = submitButtonRef.current;
-    if (!button || !expandedOrderId) return;
-    
-    const handleNativeClick = (e: Event) => {
-      console.log('Native click event fired on button');
-      e.preventDefault();
-      e.stopPropagation();
-      // Call handleSubmitContent directly - it will have access to current state via closure
-      handleSubmitContent();
-    };
-    
-    const handleNativeTouch = (e: TouchEvent) => {
-      console.log('Native touch event fired on button');
-      e.preventDefault();
-      e.stopPropagation();
-      // Call handleSubmitContent directly - it will have access to current state via closure
-      handleSubmitContent();
-    };
-    
-    // Add both click and touchend listeners
-    button.addEventListener('click', handleNativeClick, { passive: false });
-    button.addEventListener('touchend', handleNativeTouch, { passive: false });
+    // Wait for button to be rendered in DOM
+    let cleanup: (() => void) | null = null;
+    const timer = setTimeout(() => {
+      const button = submitButtonRef.current;
+      if (!button || !expandedOrderId || showMobileMenu) return;
+      
+      const handleNativeClick = (e: Event) => {
+        e.preventDefault();
+        e.stopPropagation();
+        // Call handleSubmitContent directly - it will have access to current state via closure
+        handleSubmitContent();
+      };
+      
+      const handleNativeTouch = (e: TouchEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        // Call handleSubmitContent directly - it will have access to current state via closure
+        handleSubmitContent();
+      };
+      
+      // Add both click and touchend listeners
+      button.addEventListener('click', handleNativeClick, { passive: false });
+      button.addEventListener('touchend', handleNativeTouch, { passive: false });
+      
+      // Store cleanup function
+      cleanup = () => {
+        button.removeEventListener('click', handleNativeClick);
+        button.removeEventListener('touchend', handleNativeTouch);
+      };
+    }, 0);
     
     return () => {
-      button.removeEventListener('click', handleNativeClick);
-      button.removeEventListener('touchend', handleNativeTouch);
+      clearTimeout(timer);
+      if (cleanup) cleanup();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expandedOrderId]); // handleSubmitContent is stable and doesn't need to be in deps
+  }, [expandedOrderId, showMobileMenu]); // Re-run when order changes or menu state changes
   
   // Helper function to check if points should be reset (new period started)
   const shouldResetPoints = (order: Order): boolean => {
@@ -3155,18 +3236,33 @@ function AffiliatePage() {
                                        );
                                      }
                                      
-                                     // Sort photos: pending first, then approved, then rejected
-                                     const sortedPhotos = [...photos].sort((a, b) => {
-                                       if (a.status === 'pending' && b.status !== 'pending') return -1;
-                                       if (a.status !== 'pending' && b.status === 'pending') return 1;
-                                       if (a.status === 'approved' && b.status === 'rejected') return -1;
-                                       if (a.status === 'rejected' && b.status === 'approved') return 1;
-                                       return 0;
-                                     });
+                                    // Sort photos: pending first (most recent first), then rejected (most recent first), then approved (always last)
+                                    const sortedPhotos = [...photos].sort((a, b) => {
+                                      // First sort by status: pending first, then rejected, then approved (always last)
+                                      if (a.status === 'pending' && b.status !== 'pending') return -1;
+                                      if (a.status !== 'pending' && b.status === 'pending') return 1;
+                                      if (a.status === 'rejected' && b.status === 'approved') return -1;
+                                      if (a.status === 'approved' && b.status === 'rejected') return 1;
+                                      
+                                      // Within the same status, sort by date (most recent first)
+                                      // For rejected items, this ensures newly rejected items appear before older rejected items
+                                      if (a.status === b.status) {
+                                        const dateA = new Date(a.submittedDate).getTime();
+                                        const dateB = new Date(b.submittedDate).getTime();
+                                        return dateB - dateA; // Most recent first
+                                      }
+                                      
+                                      return 0;
+                                    });
                                      
-                                    return sortedPhotos.map((photo) => (
+                                    return sortedPhotos.map((photo, photoIndex) => {
+                                      // For SOFT CURL product: first photo uses 'cover', second uses custom blend
+                                      const isSoftCurl = expandedOrder.productName === 'SOFT CURL';
+                                      const useCustomBlend = isSoftCurl && photoIndex === 1;
+                                      
+                                      return (
                                       <div key={photo.id} style={{ 
-                                        width: 'calc(40% - 13px)', 
+                                        width: '120px', 
                                         flexShrink: 0
                                       }}>
                                         <div style={{ 
@@ -3174,7 +3270,14 @@ function AffiliatePage() {
                                           padding: '1px', 
                                           border: '3px solid white', 
                                           boxShadow: '0 0 0 1.1px black', 
-                                          boxSizing: 'border-box'
+                                          boxSizing: 'border-box',
+                                          width: '120px',
+                                          height: '120px',
+                                          display: 'flex',
+                                          justifyContent: 'center',
+                                          alignItems: 'center',
+                                          backgroundColor: '#f5f5f5',
+                                          overflow: 'hidden' // Changed to hidden for custom blend
                                         }}>
                                           {(photo.status === 'pending' || photo.status === 'rejected') && (
                                             <button
@@ -3193,7 +3296,8 @@ function AffiliatePage() {
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
                                                 zIndex: 10,
-                                                padding: 0
+                                                padding: 0,
+                                                flexShrink: 0
                                               }}
                                             >
                                               <img
@@ -3208,12 +3312,23 @@ function AffiliatePage() {
                                             </button>
                                           )}
                                          <img 
-                                           src={typeof photo.preview === 'string' ? photo.preview : URL.createObjectURL(photo.file as File)} 
+                                           src={typeof photo.preview === 'string' ? photo.preview : (typeof photo.file === 'string' ? photo.file : URL.createObjectURL(photo.file as File))} 
                                            alt="Submitted photo"
+                                           onLoad={(e) => {
+                                             if (useCustomBlend) {
+                                               const img = e.currentTarget;
+                                               // Custom blend: always use cover to fill container without letterboxing
+                                               // Cover scales up small images and scales down/crops large images
+                                               // This ensures no empty space while maintaining aspect ratio
+                                               img.style.objectFit = 'cover';
+                                               img.style.objectPosition = 'center';
+                                             }
+                                           }}
                                            style={{ 
                                              width: '100%', 
                                              height: '100%',
-                                             objectFit: 'contain',
+                                             objectFit: isSoftCurl && photoIndex === 0 ? 'cover' : (useCustomBlend ? 'cover' : 'cover'),
+                                             objectPosition: 'center',
                                              display: 'block', 
                                              cursor: 'pointer'
                                            }}
@@ -3234,7 +3349,8 @@ function AffiliatePage() {
                                            ) : <>REJECTED: {photo.rejectionReason || 'LOW QUALITY'}</>}
                                          </p>
                                        </div>
-                                     ));
+                                     );
+                                     });
                                    })()}
                                  </div>
                                )}
@@ -3253,18 +3369,28 @@ function AffiliatePage() {
                                        );
                                      }
                                      
-                                     // Sort videos: pending first, then approved, then rejected
-                                     const sortedVideos = [...videos].sort((a, b) => {
-                                       if (a.status === 'pending' && b.status !== 'pending') return -1;
-                                       if (a.status !== 'pending' && b.status === 'pending') return 1;
-                                       if (a.status === 'approved' && b.status === 'rejected') return -1;
-                                       if (a.status === 'rejected' && b.status === 'approved') return 1;
-                                       return 0;
-                                     });
+                                    // Sort videos: pending first (most recent first), then rejected (most recent first), then approved (always last)
+                                    const sortedVideos = [...videos].sort((a, b) => {
+                                      // First sort by status: pending first, then rejected, then approved (always last)
+                                      if (a.status === 'pending' && b.status !== 'pending') return -1;
+                                      if (a.status !== 'pending' && b.status === 'pending') return 1;
+                                      if (a.status === 'rejected' && b.status === 'approved') return -1;
+                                      if (a.status === 'approved' && b.status === 'rejected') return 1;
+                                      
+                                      // Within the same status, sort by date (most recent first)
+                                      // For rejected items, this ensures newly rejected items appear before older rejected items
+                                      if (a.status === b.status) {
+                                        const dateA = new Date(a.submittedDate).getTime();
+                                        const dateB = new Date(b.submittedDate).getTime();
+                                        return dateB - dateA; // Most recent first
+                                      }
+                                      
+                                      return 0;
+                                    });
                                      
                                     return sortedVideos.map((video) => (
                                       <div key={video.id} style={{ 
-                                        width: 'calc(40% - 13px)', 
+                                        width: '120px', 
                                         flexShrink: 0,
                                         display: 'flex',
                                         flexDirection: 'column',
@@ -3277,12 +3403,13 @@ function AffiliatePage() {
                                           border: '3px solid white', 
                                           boxShadow: '0 0 0 1.1px black', 
                                           boxSizing: 'border-box',
-                                          width: '100%',
-                                          aspectRatio: '1',
-                                          overflow: 'visible',
+                                          width: '120px',
+                                          height: '120px',
                                           display: 'flex',
                                           justifyContent: 'center',
-                                          alignItems: 'center'
+                                          alignItems: 'center',
+                                          backgroundColor: '#f5f5f5',
+                                          overflow: 'visible'
                                         }}>
                                           {(video.status === 'pending' || video.status === 'rejected') && (
                                             <button
@@ -3301,7 +3428,8 @@ function AffiliatePage() {
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
                                                 zIndex: 10,
-                                                padding: 0
+                                                padding: 0,
+                                                flexShrink: 0
                                               }}
                                             >
                                               <img
@@ -3316,15 +3444,15 @@ function AffiliatePage() {
                                             </button>
                                           )}
                                           <video 
-                                            src={typeof video.preview === 'string' ? video.preview : URL.createObjectURL(video.file as File)} 
+                                            src={typeof video.preview === 'string' ? video.preview : (typeof video.file === 'string' ? video.file : URL.createObjectURL(video.file as File))} 
                                             controls
                                             style={{ 
                                               width: '100%', 
                                               height: '100%',
-                                              objectFit: 'contain',
+                                              objectFit: 'cover',
+                                              objectPosition: 'center',
                                               display: 'block', 
-                                              cursor: 'pointer',
-                                              margin: '0 auto'
+                                              cursor: 'pointer'
                                             }}
                                             onClick={() => {
                                               const filteredContent = getFilteredContent(expandedOrder.id);
@@ -3742,13 +3870,44 @@ function AffiliatePage() {
               userSelect: 'none',
               WebkitUserSelect: 'none',
               WebkitTouchCallout: 'none',
-              cursor: 'pointer',
-              minHeight: '44px' // Ensure minimum touch target size for mobile
+              cursor: 'pointer'
             }}
             type="button"
           >
             SUBMIT CONTENT
           </button>
+          {/* Debug message - visible on mobile */}
+          {submitDebugMessage && (
+            <div
+              style={{
+                marginTop: '10px',
+                padding: '8px',
+                backgroundColor: submitDebugMessage.includes('Error') || submitDebugMessage.includes('✗') 
+                  ? '#ffebee' 
+                  : submitDebugMessage.includes('✓') 
+                    ? '#e8f5e9' 
+                    : '#fff3e0',
+                border: `1px solid ${submitDebugMessage.includes('Error') || submitDebugMessage.includes('✗') 
+                  ? '#f44336' 
+                  : submitDebugMessage.includes('✓') 
+                    ? '#4caf50' 
+                    : '#ff9800'}`,
+                color: submitDebugMessage.includes('Error') || submitDebugMessage.includes('✗') 
+                  ? '#c62828' 
+                  : submitDebugMessage.includes('✓') 
+                    ? '#2e7d32' 
+                    : '#e65100',
+                fontSize: '11px',
+                fontFamily: '"Futura PT Book"',
+                textAlign: 'center',
+                borderRadius: '4px',
+                width: 'calc(100% - 64px)',
+                margin: '0 auto'
+              }}
+            >
+              {submitDebugMessage}
+            </div>
+          )}
          </div>
        )}
        
@@ -3764,33 +3923,61 @@ function AffiliatePage() {
              
              const orderContent = submittedContent[expandedOrder.id] || { photos: [], videos: [], socials: [] };
              
-             if (showDeleteConfirm.type === 'photo') {
-               setSubmittedContent({
-                 ...submittedContent,
-                 [expandedOrder.id]: {
-                   ...orderContent,
-                   photos: orderContent.photos.filter(p => p.id !== showDeleteConfirm.id)
-                 }
-               });
-             } else if (showDeleteConfirm.type === 'video') {
-               setSubmittedContent({
-                 ...submittedContent,
-                 [expandedOrder.id]: {
-                   ...orderContent,
-                   videos: orderContent.videos.filter(v => v.id !== showDeleteConfirm.id)
-                 }
-               });
-             } else if (showDeleteConfirm.type === 'social') {
-               setSubmittedContent({
-                 ...submittedContent,
-                 [expandedOrder.id]: {
-                   ...orderContent,
-                   socials: orderContent.socials.filter(s => s.id !== showDeleteConfirm.id)
-                 }
-               });
-             }
-             
-             setShowDeleteConfirm(null);
+            if (showDeleteConfirm.type === 'photo') {
+              setSubmittedContent(prev => {
+                const newContent = {
+                  ...prev,
+                  [expandedOrder.id]: {
+                    ...orderContent,
+                    photos: orderContent.photos.filter(p => p.id !== showDeleteConfirm.id)
+                  }
+                };
+                saveSubmittedContentToStorage(newContent);
+                return newContent;
+              });
+              // Clear photo file states when deleting photo content
+              // This ensures a new file selection will use fresh state
+              setPhoto1File(null);
+              setPhoto1Preview(null);
+              setPhoto2File(null);
+              setPhoto2Preview(null);
+              if (photo1InputRef.current) photo1InputRef.current.value = '';
+              if (photo2InputRef.current) photo2InputRef.current.value = '';
+            } else if (showDeleteConfirm.type === 'video') {
+              setSubmittedContent(prev => {
+                const newContent = {
+                  ...prev,
+                  [expandedOrder.id]: {
+                    ...orderContent,
+                    videos: orderContent.videos.filter(v => v.id !== showDeleteConfirm.id)
+                  }
+                };
+                saveSubmittedContentToStorage(newContent);
+                return newContent;
+              });
+              // Clear video file states when deleting video content
+              // This ensures a new file selection will use fresh state
+              setVideo1File(null);
+              setVideo1Preview(null);
+              setVideo2File(null);
+              setVideo2Preview(null);
+              if (video1InputRef.current) video1InputRef.current.value = '';
+              if (video2InputRef.current) video2InputRef.current.value = '';
+            } else if (showDeleteConfirm.type === 'social') {
+              setSubmittedContent(prev => {
+                const newContent = {
+                  ...prev,
+                  [expandedOrder.id]: {
+                    ...orderContent,
+                    socials: orderContent.socials.filter(s => s.id !== showDeleteConfirm.id)
+                  }
+                };
+                saveSubmittedContentToStorage(newContent);
+                return newContent;
+              });
+            }
+            
+            setShowDeleteConfirm(null);
            }}
            title="DELETE CONTENT"
            message="ARE YOU SURE YOU WANT TO DELETE THIS CONTENT?"
