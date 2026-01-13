@@ -44,6 +44,103 @@ function MembershipPage() {
     }
     return null;
   });
+
+  // Calculate total approved affiliate points
+  const calculateTotalAffiliatePoints = (): number => {
+    try {
+      // Get current period
+      const now = new Date();
+      const currentMonth = now.getMonth();
+      const currentYear = now.getFullYear();
+      const currentPeriod = currentMonth < 6 
+        ? `${currentYear}-Jan-Jun` 
+        : `${currentYear}-Jul-Dec`;
+
+      // Get user's email to find their orders
+      if (!userData?.email) return 0;
+
+      // Check if this is Kateena Armstrong (uses mock data)
+      const isKateenaArmstrong = (userData.firstName?.toLowerCase().includes('kateena') && 
+                                  userData.lastName?.toLowerCase().includes('armstrong')) ||
+                                  userData.email?.toLowerCase().includes('kateena') ||
+                                  userData.email?.toLowerCase().includes('armstrong');
+
+      let deliveredOrders: any[] = [];
+
+      if (isKateenaArmstrong) {
+        // Use mock data for Kateena (same as affiliate page)
+        // Mock orders with approved content
+        deliveredOrders = [
+          {
+            id: 'kateena-delivered-1',
+            pointsEarned: 2000,
+            pointsEarnedPeriod: currentPeriod,
+            socialTags: 3,
+            socialTagsPeriod: currentPeriod
+          },
+          {
+            id: 'kateena-delivered-2',
+            pointsEarned: 400,
+            pointsEarnedPeriod: currentPeriod,
+            socialTags: 1,
+            socialTagsPeriod: currentPeriod
+          },
+          {
+            id: 'kateena-delivered-4',
+            pointsEarned: 2000,
+            pointsEarnedPeriod: currentPeriod,
+            socialTags: 5,
+            socialTagsPeriod: currentPeriod
+          },
+          {
+            id: 'kateena-delivered-6',
+            pointsEarned: 2000,
+            pointsEarnedPeriod: currentPeriod,
+            socialTags: 5,
+            socialTagsPeriod: currentPeriod
+          }
+        ];
+      } else {
+        // Get delivered orders from localStorage
+        const userOrdersKey = `userOrders_${userData.email}`;
+        const storedOrders = localStorage.getItem(userOrdersKey);
+        
+        if (!storedOrders) return 0;
+
+        const orders = JSON.parse(storedOrders);
+        const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
+        
+        // Filter only delivered orders
+        deliveredOrders = allOrders.filter((order: any) => order.status === 'DELIVERED');
+      }
+      
+      let totalPoints = 0;
+      
+      deliveredOrders.forEach((order: any) => {
+        // Check if points were earned in current period
+        const pointsPeriod = order.pointsEarnedPeriod || order.socialTagsPeriod || '';
+        if (pointsPeriod !== currentPeriod) {
+          return; // Skip orders from different periods
+        }
+
+        // Calculate photo/video points (capped at 2,000)
+        const photoVideoPoints = Math.min(2000, order.pointsEarned || 0);
+        
+        // Calculate social points (only if in current period)
+        const socialTagsPeriod = order.socialTagsPeriod || '';
+        const socialPoints = (socialTagsPeriod === currentPeriod) 
+          ? (order.socialTags || 0) * 600 
+          : 0;
+        
+        totalPoints += photoVideoPoints + socialPoints;
+      });
+
+      return totalPoints;
+    } catch (e) {
+      console.error('Error calculating affiliate points:', e);
+      return 0;
+    }
+  };
   const [showPremiumView, setShowPremiumView] = useState(() => {
     // Only restore premium view state if we're coming back from checkout
     try {
@@ -805,7 +902,11 @@ function MembershipPage() {
                               fontWeight: '500'
                             }}
                           >
-                            {userData?.loyaltyPoints || 200} PTS
+                            {(() => {
+                              const basePoints = userData?.loyaltyPoints || 200;
+                              const affiliatePoints = calculateTotalAffiliatePoints();
+                              return (basePoints + affiliatePoints).toLocaleString();
+                            })()} PTS
                           </p>
                           <p
                             style={{
@@ -827,7 +928,12 @@ function MembershipPage() {
                               textTransform: 'uppercase'
                             }}
                           >
-                            {Math.max(0, 10000 - (userData?.loyaltyPoints || 200)).toLocaleString()} MORE PTS TO EARN 10% OFF
+                            {(() => {
+                              const basePoints = userData?.loyaltyPoints || 200;
+                              const affiliatePoints = calculateTotalAffiliatePoints();
+                              const totalPoints = basePoints + affiliatePoints;
+                              return Math.max(0, 10000 - totalPoints).toLocaleString();
+                            })()} MORE PTS TO EARN 10% OFF
                           </p>
                         </div>
 
@@ -840,7 +946,9 @@ function MembershipPage() {
                             { discount: '30% OFF', points: 30000 },
                             { discount: '50% OFF UNIT', points: 50000 }
                           ].map((reward, index) => {
-                            const currentPoints = userData?.loyaltyPoints || 200;
+                            const basePoints = userData?.loyaltyPoints || 200;
+                            const affiliatePoints = calculateTotalAffiliatePoints();
+                            const currentPoints = basePoints + affiliatePoints;
                             const canRedeem = currentPoints >= reward.points;
                             return (
                               <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: index < 4 ? '1px solid #E5E5E5' : 'none' }}>
@@ -1511,7 +1619,11 @@ function MembershipPage() {
                                   fontWeight: '500'
                                 }}
                               >
-                                {userData?.loyaltyPoints || 200} PTS
+                                {(() => {
+                                  const basePoints = userData?.loyaltyPoints || 200;
+                                  const affiliatePoints = calculateTotalAffiliatePoints();
+                                  return (basePoints + affiliatePoints).toLocaleString();
+                                })()} PTS
                               </p>
                               <p
                                 style={{
@@ -1533,7 +1645,12 @@ function MembershipPage() {
                                   textTransform: 'uppercase'
                                 }}
                               >
-                                {Math.max(0, 10000 - (userData?.loyaltyPoints || 200)).toLocaleString()} MORE PTS TO EARN 10% OFF
+                                {(() => {
+                                  const basePoints = userData?.loyaltyPoints || 200;
+                                  const affiliatePoints = calculateTotalAffiliatePoints();
+                                  const totalPoints = basePoints + affiliatePoints;
+                                  return Math.max(0, 10000 - totalPoints).toLocaleString();
+                                })()} MORE PTS TO EARN 10% OFF
                               </p>
                             </div>
 
@@ -1546,7 +1663,9 @@ function MembershipPage() {
                                 { discount: '30% OFF', points: 30000 },
                                 { discount: '50% OFF UNIT', points: 50000 }
                               ].map((reward, index) => {
-                                const currentPoints = userData?.loyaltyPoints || 200;
+                                const basePoints = userData?.loyaltyPoints || 200;
+                                const affiliatePoints = calculateTotalAffiliatePoints();
+                                const currentPoints = basePoints + affiliatePoints;
                                 const canRedeem = currentPoints >= reward.points;
                                 return (
                                   <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: index < 4 ? '1px solid #E5E5E5' : 'none' }}>

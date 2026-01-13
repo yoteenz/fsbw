@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import CartDropdown from './CartDropdown';
 
 interface DynamicCartIconProps {
@@ -11,6 +12,12 @@ interface DynamicCartIconProps {
 
 export default function DynamicCartIcon({ count, size = 23, width, height, className = "" }: DynamicCartIconProps) {
   const [showCartDropdown, setShowCartDropdown] = useState(false);
+  const location = useLocation();
+  
+  // Close cart dropdown when route changes
+  useEffect(() => {
+    setShowCartDropdown(false);
+  }, [location.pathname]);
   
   // Use separate width/height if provided, otherwise use size for both
   // For active cart (count > 0), use original size. For inactive cart (count = 0), use provided width/height

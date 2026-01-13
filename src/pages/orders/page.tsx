@@ -1263,10 +1263,19 @@ function OrdersPage() {
                           padding: '0',
                           display: 'flex',
                           alignItems: 'center',
-                          justifyContent: 'center'
+                          justifyContent: 'center',
+                          flexShrink: 0
                         }}
                       >
-                        <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '16.5px', color: '#EB1C24' }}>×</span>
+                        <img
+                          src="/assets/close-icon.svg"
+                          alt="Close"
+                          style={{
+                            width: '16px',
+                            height: '16px',
+                            filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                          }}
+                        />
                       </button>
                     </>
                   ) : (
@@ -1772,10 +1781,19 @@ function OrdersPage() {
                           padding: '0',
                           display: 'flex',
                           alignItems: 'center',
-                          justifyContent: 'center'
+                          justifyContent: 'center',
+                          flexShrink: 0
                         }}
                       >
-                        <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '16.5px', color: '#EB1C24' }}>×</span>
+                        <img
+                          src="/assets/close-icon.svg"
+                          alt="Close"
+                          style={{
+                            width: '16px',
+                            height: '16px',
+                            filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                          }}
+                        />
                       </button>
                     </>
                   ) : (

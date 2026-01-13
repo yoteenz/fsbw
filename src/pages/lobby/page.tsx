@@ -526,14 +526,31 @@ const LobbyApp: React.FC = () => {
       const currentUser = localStorage.getItem('currentUser');
       if (currentUser) {
         const user = JSON.parse(currentUser);
+        
+        // Check if this is Kateena Armstrong (admin account) with PREMIUM membership
+        const isKateenaArmstrong = user && (
+          (user.firstName?.toLowerCase() === 'kateena' && user.lastName?.toLowerCase() === 'armstrong') ||
+          user.email?.toLowerCase().includes('kateena')
+        );
+        
+        if (isKateenaArmstrong && (user.membershipType === 'PREMIUM' || user.membershipType === 'Premium')) {
+          return true; // Kateena admin account with premium membership should have access
+        }
+        
         // Check if user has subscriptionTier (premium subscription)
         if (user?.subscriptionTier) {
           return true;
         }
+        
         // Check if user has premium tier (RED, GOLD, BLACK)
         if (user?.tier) {
           const tier = user.tier.toUpperCase();
           return tier === 'RED' || tier === 'GOLD' || tier === 'BLACK';
+        }
+        
+        // Check if user has PREMIUM membership type
+        if (user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium') {
+          return true;
         }
       }
     } catch (e) {

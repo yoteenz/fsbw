@@ -86,6 +86,10 @@ function CheckoutPage() {
   const [appliedDiscount, setAppliedDiscount] = useState(0);
   const [isDiscountCodeFocused, setIsDiscountCodeFocused] = useState(false);
   
+  // Referral code state
+  const [appliedReferralCode, setAppliedReferralCode] = useState('');
+  const [referralDiscount, setReferralDiscount] = useState(0);
+  
   // Gift card balance state
   const [giftCardBalance, setGiftCardBalance] = useState(0);
   const [appliedGiftCardBalance, setAppliedGiftCardBalance] = useState(0);
@@ -948,9 +952,16 @@ function CheckoutPage() {
 
   // Update applied gift card balance when order amount changes (cap at order total)
   // NOT applied to subscription upgrades
+  // Cannot be combined with referral codes or discount codes
   useEffect(() => {
     // Don't apply gift card to subscription upgrades
     if (isSubscriptionUpgrade) {
+      setAppliedGiftCardBalance(0);
+      return;
+    }
+    
+    // Don't apply gift card if referral code or discount code is active
+    if (appliedReferralCode || appliedDiscount > 0) {
       setAppliedGiftCardBalance(0);
       return;
     }
@@ -961,7 +972,27 @@ function CheckoutPage() {
       const cappedBalance = Math.min(giftCardBalance, maxDiscountable);
       setAppliedGiftCardBalance(cappedBalance);
     }
-  }, [giftCardBalance, orderAmount, taxesProcessing, shippingHandling, selectedProcessing, packageProtection, isSubscriptionUpgrade]);
+  }, [giftCardBalance, orderAmount, taxesProcessing, shippingHandling, selectedProcessing, packageProtection, isSubscriptionUpgrade, appliedReferralCode, appliedDiscount]);
+  
+  // Check if code is a referral code
+  const isReferralCode = (code: string): boolean => {
+    try {
+      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const upperCode = code.trim().toUpperCase();
+      // Check if code matches any user's referral code
+      return registeredUsers.some((user: any) => 
+        user.referralCode && user.referralCode.toUpperCase() === upperCode
+      );
+    } catch (e) {
+      return false;
+    }
+  };
+  
+  // Check if code is a gift card (numeric)
+  const isGiftCardCode = (code: string): boolean => {
+    const numericValue = code.replace(/[$€£¥₹,.\s]/g, '');
+    return /^\d+$/.test(numericValue) && numericValue.length > 0;
+  };
   
   // Discount code validation function
   const validateDiscountCode = (code: string): number => {
@@ -982,6 +1013,8 @@ function CheckoutPage() {
     if (!discountCode.trim()) {
       setDiscountCodeError('');
       setAppliedDiscount(0);
+      setAppliedReferralCode('');
+      setReferralDiscount(0);
       return;
     }
     
@@ -989,24 +1022,95 @@ function CheckoutPage() {
     if (isSubscriptionUpgrade || isOnlyGiftCards) {
       setDiscountCodeError('SORRY, THIS CODE IS NOT VALID.');
       setAppliedDiscount(0);
+      setAppliedReferralCode('');
+      setReferralDiscount(0);
       return;
     }
     
-    const discountAmount = validateDiscountCode(discountCode);
+    const code = discountCode.trim();
+    
+    // Check if it's a referral code
+    if (isReferralCode(code)) {
+      // Check if discount code or gift card is already applied
+      if (appliedDiscount > 0) {
+        setDiscountCodeError('REFERRAL CODES CANNOT BE COMBINED WITH DISCOUNT CODES.');
+        setAppliedReferralCode('');
+        setReferralDiscount(0);
+        return;
+      }
+      if (appliedGiftCardBalance > 0) {
+        setDiscountCodeError('REFERRAL CODES CANNOT BE COMBINED WITH GIFT CARDS.');
+        setAppliedReferralCode('');
+        setReferralDiscount(0);
+        return;
+      }
+      // Apply referral code ($20 discount)
+      // Clear gift card balance if applied
+      if (appliedGiftCardBalance > 0) {
+        setAppliedGiftCardBalance(0);
+      }
+      setAppliedReferralCode(code.toUpperCase());
+      setReferralDiscount(20);
+      setDiscountCodeError('');
+      setAppliedDiscount(0);
+      return;
+    }
+    
+    // Check if it's a gift card (numeric)
+    if (isGiftCardCode(code)) {
+      // Check if referral code or discount code is already applied
+      if (appliedReferralCode) {
+        setDiscountCodeError('GIFT CARDS CANNOT BE COMBINED WITH REFERRAL CODES.');
+        return;
+      }
+      if (appliedDiscount > 0) {
+        setDiscountCodeError('GIFT CARDS CANNOT BE COMBINED WITH DISCOUNT CODES.');
+        return;
+      }
+      // Gift card is handled separately via giftCardBalance
+      setDiscountCodeError('PLEASE USE YOUR GIFT CARD BALANCE FROM YOUR ACCOUNT.');
+      setAppliedDiscount(0);
+      setAppliedReferralCode('');
+      setReferralDiscount(0);
+      return;
+    }
+    
+    // Check if referral code or gift card is already applied before applying discount code
+    if (appliedReferralCode) {
+      setDiscountCodeError('DISCOUNT CODES CANNOT BE COMBINED WITH REFERRAL CODES.');
+      setAppliedDiscount(0);
+      return;
+    }
+    if (appliedGiftCardBalance > 0) {
+      setDiscountCodeError('DISCOUNT CODES CANNOT BE COMBINED WITH GIFT CARDS.');
+      setAppliedDiscount(0);
+      return;
+    }
+    
+    // Try to validate as discount code
+    const discountAmount = validateDiscountCode(code);
     
     if (discountAmount > 0) {
+      // Clear gift card balance if applied
+      if (appliedGiftCardBalance > 0) {
+        setAppliedGiftCardBalance(0);
+      }
       setAppliedDiscount(discountAmount);
       setDiscountCodeError('');
+      setAppliedReferralCode('');
+      setReferralDiscount(0);
     } else {
       setAppliedDiscount(0);
       setDiscountCodeError('SORRY, THIS CODE IS NOT VALID.');
+      setAppliedReferralCode('');
+      setReferralDiscount(0);
     }
   };
   
   const discount = appliedDiscount;
   // Gift card discount should NOT be applied to subscription upgrades
   const giftCardDiscount = isSubscriptionUpgrade ? 0 : appliedGiftCardBalance; // Automatically applied gift card balance
-  const totalDiscount = discount + giftCardDiscount; // Combined discount from codes and gift card
+  const totalDiscount = discount + referralDiscount + giftCardDiscount; // Combined discount from codes, referral codes, and gift card
   const rushProcessing = selectedProcessing === 'rush' ? 100 : 0;
   const protectionFee = packageProtection ? 5 : 0;
   // Calculate tip amount: if percentage is set, use that; otherwise use custom dollar amount (only if applied)
@@ -1909,6 +2013,8 @@ function CheckoutPage() {
                         
                         setDiscountCodeError('');
                         setAppliedDiscount(0);
+                        setAppliedReferralCode('');
+                        setReferralDiscount(0);
                       }}
                       onFocus={() => {
                         setIsDiscountCodeFocused(true);
@@ -3907,6 +4013,14 @@ function CheckoutPage() {
                           return `-${symbol}${formattedAmount}`;
                         })()})
                       </span>
+                    </div>
+                    )}
+                    {referralDiscount > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
+                        DISCOUNT: REFERRAL CODE {appliedReferralCode}
+                      </span>
+                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(referralDiscount)}></span>
                     </div>
                     )}
                     {discount > 0 && (

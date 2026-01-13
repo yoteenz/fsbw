@@ -279,36 +279,6 @@ function AffiliatePage() {
       socialTags: 0 // No social tags
     },
     {
-      id: 'kateena-delivered-4',
-      orderNumber: 'ORDER #339',
-      date: getDateDaysAgo(14), // 14 days ago
-      status: 'DELIVERED',
-      productName: 'SOFT CURL',
-      productImage: getProductImage('SOFT CURL'),
-      total: 1200,
-      items: 1,
-      pointsEarned: 2000, // Mock: all photo/video points earned (2 photos + 2 videos)
-      pointsAvailable: 5000,
-      contentStatus: 'approved', // All content approved
-      socialTags: 5 // All 5 social tags approved (3,000 social points)
-    },
-    {
-      id: 'kateena-delivered-5',
-      orderNumber: 'ORDER #338',
-      date: getDateDaysAgo(18), // 18 days ago
-      status: 'DELIVERED',
-      productName: 'OCEAN CURL',
-      productImage: getProductImage('OCEAN CURL'),
-      total: 1200,
-      items: 1,
-      pointsEarned: 0, // Mock: content pending review
-      pointsAvailable: 5000,
-      contentStatus: 'pending', // Content pending
-      socialTags: 3, // 3 social tags pending
-      pendingPhotos: 1, // 1 photo pending (400 pts)
-      pendingVideos: 1 // 1 video pending (600 pts)
-    },
-    {
       id: 'kateena-delivered-6',
       orderNumber: 'ORDER #336',
       date: getDateDaysAgo(25), // 25 days ago
@@ -332,6 +302,47 @@ function AffiliatePage() {
       tiktokApprovedDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(), // 15 days ago
       youtubeApprovedDate: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(), // 14 days ago
       facebookApprovedDate: new Date(Date.now() - 13 * 24 * 60 * 60 * 1000).toISOString() // 13 days ago
+    },
+    {
+      id: 'kateena-delivered-4',
+      orderNumber: 'ORDER #339',
+      date: getDateDaysAgo(14), // 14 days ago
+      status: 'DELIVERED',
+      productName: 'SOFT CURL',
+      productImage: getProductImage('SOFT CURL'),
+      total: 1200,
+      items: 1,
+      pointsEarned: 2000, // Mock: all photo/video points earned (2 photos + 2 videos)
+      pointsAvailable: 5000,
+      contentStatus: 'approved', // All content approved
+      socialTags: 5, // All 5 social tags approved (3,000 social points)
+      pointsEarnedPeriod: getCurrentPeriod(), // Current period
+      socialTagsPeriod: getCurrentPeriod(), // Current period
+      photo1ApprovedDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(), // 12 days ago
+      photo2ApprovedDate: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000).toISOString(), // 11 days ago
+      video1ApprovedDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), // 10 days ago
+      video2ApprovedDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(), // 9 days ago
+      twitterApprovedDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(), // 8 days ago
+      instagramApprovedDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days ago
+      tiktokApprovedDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(), // 6 days ago
+      youtubeApprovedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago
+      facebookApprovedDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString() // 4 days ago
+    },
+    {
+      id: 'kateena-delivered-5',
+      orderNumber: 'ORDER #338',
+      date: getDateDaysAgo(18), // 18 days ago
+      status: 'DELIVERED',
+      productName: 'OCEAN CURL',
+      productImage: getProductImage('OCEAN CURL'),
+      total: 1200,
+      items: 1,
+      pointsEarned: 0, // Mock: content pending review
+      pointsAvailable: 5000,
+      contentStatus: 'pending', // Content pending
+      socialTags: 3, // 3 social tags pending
+      pendingPhotos: 1, // 1 photo pending (400 pts)
+      pendingVideos: 1 // 1 video pending (600 pts)
     }
   ];
 
@@ -472,7 +483,7 @@ function AffiliatePage() {
           file: '/assets/gallery-mock.png',
           preview: '/assets/gallery-mock.png',
           status: 'rejected',
-          rejectionReason: 'LOW QUALITY',
+          rejectionReason: 'LIGHTING',
           submittedDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString() // 8 days ago
         }
       ],
@@ -500,7 +511,7 @@ function AffiliatePage() {
           platform: 'Twitter',
           link: 'https://twitter.com/user/status/blanco456',
           status: 'rejected',
-          rejectionReason: 'LOW QUALITY',
+          rejectionReason: 'LIGHTING',
           submittedDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString() // 6 days ago
         }
       ]
@@ -2148,17 +2159,17 @@ function AffiliatePage() {
                                    >
                                      {remaining.toLocaleString()} POINTS AVAILABLE
                                    </p>
-                                   <p
-                                     style={{
-                                       fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
-                                       fontSize: '11px',
-                                       color: '#000000',
-                                       margin: '4px 0 0 0',
-                                       textTransform: 'uppercase'
-                                     }}
-                                   >
-                                     POINTS RESET {getPointsResetDate()}
-                                   </p>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                      fontSize: '10px',
+                                      color: '#000000',
+                                      margin: '4px 0 0 0',
+                                      textTransform: 'uppercase'
+                                    }}
+                                  >
+                                    POINTS RESET {getPointsResetDate()}
+                                  </p>
                                  </>
                                );
                              })()}
@@ -2493,7 +2504,7 @@ function AffiliatePage() {
                                    // Videos: 600 each, 2 max = 1,200 total
                                    // Calculate video points: if earned > 800, the excess is video points (capped at 1,200)
                                    const videoPointsEarned = photoVideoEarned > 800 ? Math.min(1200, photoVideoEarned - 800) : 0;
-                                   return `${videoPointsEarned}/1,200`;
+                                   return `${videoPointsEarned.toLocaleString()}/1,200`;
                                  })()}
                                </p>
                              </div>
@@ -2792,10 +2803,27 @@ function AffiliatePage() {
                                    }}
                                  >
                                    {(() => {
+                                     // Check if Twitter specifically has been approved
                                      const currentPeriod = getCurrentPeriod();
                                      const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
-                                     const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
-                                     return effectiveSocialTags >= 1 ? '600/600' : '0/600';
+                                     const isCurrentPeriod = socialTagsPeriod === currentPeriod;
+                                     
+                                     // Check if Twitter has approved date
+                                     if (isCurrentPeriod && expandedOrder.twitterApprovedDate) {
+                                       return '600/600';
+                                     }
+                                     
+                                     // Check if Twitter has approved content in submittedContent
+                                     const filteredContent = getFilteredContent(expandedOrder.id);
+                                     const twitterContent = filteredContent.socials.find(s => 
+                                       s.platform.toLowerCase() === 'twitter' && s.status === 'approved'
+                                     );
+                                     
+                                     if (twitterContent) {
+                                       return '600/600';
+                                     }
+                                     
+                                     return '0/600';
                                    })()}
                                  </p>
                                </div>
@@ -2880,10 +2908,27 @@ function AffiliatePage() {
                                    }}
                                  >
                                    {(() => {
+                                     // Check if Instagram specifically has been approved
                                      const currentPeriod = getCurrentPeriod();
                                      const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
-                                     const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
-                                     return effectiveSocialTags >= 2 ? '600/600' : '0/600';
+                                     const isCurrentPeriod = socialTagsPeriod === currentPeriod;
+                                     
+                                     // Check if Instagram has approved date
+                                     if (isCurrentPeriod && expandedOrder.instagramApprovedDate) {
+                                       return '600/600';
+                                     }
+                                     
+                                     // Check if Instagram has approved content in submittedContent
+                                     const filteredContent = getFilteredContent(expandedOrder.id);
+                                     const instagramContent = filteredContent.socials.find(s => 
+                                       s.platform.toLowerCase() === 'instagram' && s.status === 'approved'
+                                     );
+                                     
+                                     if (instagramContent) {
+                                       return '600/600';
+                                     }
+                                     
+                                     return '0/600';
                                    })()}
                                  </p>
                                </div>
@@ -2968,10 +3013,27 @@ function AffiliatePage() {
                                    }}
                                  >
                                    {(() => {
+                                     // Check if TikTok specifically has been approved
                                      const currentPeriod = getCurrentPeriod();
                                      const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
-                                     const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
-                                     return effectiveSocialTags >= 3 ? '600/600' : '0/600';
+                                     const isCurrentPeriod = socialTagsPeriod === currentPeriod;
+                                     
+                                     // Check if TikTok has approved date
+                                     if (isCurrentPeriod && expandedOrder.tiktokApprovedDate) {
+                                       return '600/600';
+                                     }
+                                     
+                                     // Check if TikTok has approved content in submittedContent
+                                     const filteredContent = getFilteredContent(expandedOrder.id);
+                                     const tiktokContent = filteredContent.socials.find(s => 
+                                       s.platform.toLowerCase() === 'tiktok' && s.status === 'approved'
+                                     );
+                                     
+                                     if (tiktokContent) {
+                                       return '600/600';
+                                     }
+                                     
+                                     return '0/600';
                                    })()}
                                  </p>
                                </div>
@@ -3056,10 +3118,27 @@ function AffiliatePage() {
                                    }}
                                  >
                                    {(() => {
+                                     // Check if YouTube specifically has been approved
                                      const currentPeriod = getCurrentPeriod();
                                      const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
-                                     const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
-                                     return effectiveSocialTags >= 4 ? '600/600' : '0/600';
+                                     const isCurrentPeriod = socialTagsPeriod === currentPeriod;
+                                     
+                                     // Check if YouTube has approved date
+                                     if (isCurrentPeriod && expandedOrder.youtubeApprovedDate) {
+                                       return '600/600';
+                                     }
+                                     
+                                     // Check if YouTube has approved content in submittedContent
+                                     const filteredContent = getFilteredContent(expandedOrder.id);
+                                     const youtubeContent = filteredContent.socials.find(s => 
+                                       s.platform.toLowerCase() === 'youtube' && s.status === 'approved'
+                                     );
+                                     
+                                     if (youtubeContent) {
+                                       return '600/600';
+                                     }
+                                     
+                                     return '0/600';
                                    })()}
                                  </p>
                                </div>
@@ -3144,10 +3223,27 @@ function AffiliatePage() {
                                    }}
                                  >
                                    {(() => {
+                                     // Check if Facebook specifically has been approved
                                      const currentPeriod = getCurrentPeriod();
                                      const socialTagsPeriod = expandedOrder.socialTagsPeriod || '';
-                                     const effectiveSocialTags = (socialTagsPeriod === currentPeriod) ? (expandedOrder.socialTags || 0) : 0;
-                                     return effectiveSocialTags >= 5 ? '600/600' : '0/600';
+                                     const isCurrentPeriod = socialTagsPeriod === currentPeriod;
+                                     
+                                     // Check if Facebook has approved date
+                                     if (isCurrentPeriod && expandedOrder.facebookApprovedDate) {
+                                       return '600/600';
+                                     }
+                                     
+                                     // Check if Facebook has approved content in submittedContent
+                                     const filteredContent = getFilteredContent(expandedOrder.id);
+                                     const facebookContent = filteredContent.socials.find(s => 
+                                       s.platform.toLowerCase() === 'facebook' && s.status === 'approved'
+                                     );
+                                     
+                                     if (facebookContent) {
+                                       return '600/600';
+                                     }
+                                     
+                                     return '0/600';
                                    })()}
                                  </p>
                                </div>
@@ -3385,7 +3481,7 @@ function AffiliatePage() {
                                          <p style={{ fontFamily: photo.status === 'pending' ? '"Futura PT Demi"' : photo.status === 'rejected' ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '10px', color: photo.status === 'approved' ? '#000000' : photo.status === 'rejected' ? '#EB1C24' : '#909090', textTransform: 'uppercase', margin: '8px 0 0 0', whiteSpace: 'nowrap', width: 'max-content', position: 'relative', left: '50%', transform: 'translateX(-50%)' }}>
                                            {photo.status === 'pending' ? 'PENDING: IN REVIEW' : photo.status === 'approved' ? (
                                              <>APPROVED: <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{photo.points || 400} POINTS</span></>
-                                           ) : <>REJECTED: {photo.rejectionReason || 'LOW QUALITY'}</>}
+                                           ) : <>REJECTED: {photo.rejectionReason || 'LIGHTING'}</>}
                                          </p>
                                        </div>
                                      );
@@ -3507,7 +3603,7 @@ function AffiliatePage() {
                                          <p style={{ fontFamily: video.status === 'pending' ? '"Futura PT Demi"' : video.status === 'rejected' ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '10px', color: video.status === 'approved' ? '#000000' : video.status === 'rejected' ? '#EB1C24' : '#909090', textTransform: 'uppercase', margin: '8px 0 0 0', whiteSpace: 'nowrap', width: 'max-content', position: 'relative', left: '50%', transform: 'translateX(-50%)' }}>
                                            {video.status === 'pending' ? 'PENDING: IN REVIEW' : video.status === 'approved' ? (
                                              <>APPROVED: <span style={{ color: '#EB1C24' }}>{video.points || 600} POINTS</span></>
-                                           ) : <>REJECTED: {video.rejectionReason || 'LOW QUALITY'}</>}
+                                           ) : <>REJECTED: {video.rejectionReason || 'LIGHTING'}</>}
                                          </p>
                                        </div>
                                      ));
@@ -3576,7 +3672,7 @@ function AffiliatePage() {
                                          <p style={{ fontFamily: social.status === 'pending' ? '"Futura PT Demi"' : social.status === 'rejected' ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '10px', color: social.status === 'approved' ? '#000000' : social.status === 'rejected' ? '#EB1C24' : '#909090', textTransform: 'uppercase', margin: '0', textAlign: 'left', whiteSpace: 'nowrap' }}>
                                            {social.status === 'pending' ? 'PENDING: IN REVIEW' : social.status === 'approved' ? (
                                              <>APPROVED: <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{social.points || 600} POINTS</span></>
-                                           ) : <>REJECTED: {social.rejectionReason || 'LOW QUALITY'}</>}
+                                           ) : <>REJECTED: {social.rejectionReason || 'LIGHTING'}</>}
                                          </p>
                                        </div>
                                      ));
@@ -3700,7 +3796,7 @@ function AffiliatePage() {
                         fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                         color: '#000000',
                         fontSize: '10px',
-                        margin: '0 0 24px 0',
+                        margin: '-4px 0 24px 0',
                         textTransform: 'uppercase',
                         fontWeight: '500',
                         lineHeight: '1.4',
@@ -3796,9 +3892,9 @@ function AffiliatePage() {
                                   const socialPointsEarned = effectiveSocialTags * 600;
                                   const totalEarned = photoVideoEarned + socialPointsEarned;
                                   if (totalEarned === 0) {
-                                    return '0/5,000 LP';
+                                    return '0/5,000 PTS';
                                   } else {
-                                    return `${totalEarned.toLocaleString()}/5,000 LP`;
+                                    return `${totalEarned.toLocaleString()}/5,000 PTS`;
                                   }
                                 })()}
                               </p>
