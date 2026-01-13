@@ -575,6 +575,245 @@ function AccountPage() {
     return currentTier;
   };
 
+  // Helper functions to check for notifications on each card
+  const hasOrdersNotifications = (): boolean => {
+    if (!userData) return false;
+    try {
+      const userOrdersKey = `userOrders_${userData.email}`;
+      const storedOrders = localStorage.getItem(userOrdersKey);
+      if (!storedOrders) return false;
+      
+      const orders = JSON.parse(storedOrders);
+      const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
+      
+      // Check for orders with status updates (SHIPPED, PREPARING, CONFIRMED, etc.)
+      // that haven't been seen by the user
+      return allOrders.some((order: any) => {
+        if (!order.status) return false;
+        
+        // Status updates are: SHIPPED, PREPARING, CONFIRMED (not initial PLACED)
+        const hasStatusUpdate = ['SHIPPED', 'PREPARING', 'CONFIRMED'].includes(order.status);
+        
+        if (hasStatusUpdate) {
+          // Check if user has seen this status update
+          const seenKey = `orderStatusSeen_${order.id}_${order.status}`;
+          return !localStorage.getItem(seenKey);
+        }
+        
+        return false;
+      });
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const hasAlertsNotifications = (): boolean => {
+    try {
+      // Check for unread notifications in localStorage
+      const notificationsStr = localStorage.getItem('notifications');
+      if (notificationsStr) {
+        const notifications = JSON.parse(notificationsStr);
+        // Check for unread notifications
+        return notifications.some((n: any) => !n.isRead);
+      }
+      
+      // If no stored notifications, check if there are default unread notifications
+      // (This would be set when notifications are first created)
+      const hasUnreadNotifications = localStorage.getItem('hasUnreadNotifications') === 'true';
+      return hasUnreadNotifications;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const hasMembershipNotifications = (): boolean => {
+    if (!userData) return false;
+    try {
+      // Check if tier has changed (compare current tier with last known tier)
+      const lastKnownTier = localStorage.getItem(`lastKnownTier_${userData.email}`);
+      const currentTier = calculateTier();
+      
+      if (currentTier && lastKnownTier !== currentTier) {
+        return true; // Tier has changed
+      }
+      
+      // Check for subscription updates
+      const subscriptionUpdate = localStorage.getItem(`subscriptionUpdate_${userData.email}`);
+      return subscriptionUpdate === 'true';
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const hasAffiliateNotifications = (): boolean => {
+    if (!userData) return false;
+    
+    // For admin account (Kateena), show notifications for testing
+    const isKateenaArmstrong = userData && (
+      (userData.firstName?.toLowerCase() === 'kateena' && userData.lastName?.toLowerCase() === 'armstrong') ||
+      userData.email?.toLowerCase().includes('kateena') ||
+      userData.email?.toLowerCase().includes('armstrong')
+    );
+    
+    // Admin account always shows affiliate notifications for testing
+    if (isKateenaArmstrong) {
+      return true;
+    }
+    
+    try {
+      const submittedContentStr = localStorage.getItem('affiliateSubmittedContent');
+      if (!submittedContentStr) return false;
+      
+      const submittedContent = JSON.parse(submittedContentStr);
+      
+      // Check for pending, approved, or rejected content that user hasn't seen
+      for (const orderId in submittedContent) {
+        const content = submittedContent[orderId];
+        const photos = content.photos || [];
+        const videos = content.videos || [];
+        const socials = content.socials || [];
+        
+        // Check for pending approvals
+        const hasPending = [...photos, ...videos, ...socials].some((item: any) => item.status === 'pending');
+        
+        // Check for new approvals (approved but not seen)
+        const hasNewApprovals = [...photos, ...videos, ...socials].some((item: any) => {
+          if (item.status === 'approved' && item.approvedDate) {
+            const seenKey = `affiliateSeen_${orderId}_${item.id}`;
+            return !localStorage.getItem(seenKey);
+          }
+          return false;
+        });
+        
+        // Check for rejected content (rejected but not seen)
+        const hasNewRejections = [...photos, ...videos, ...socials].some((item: any) => {
+          if (item.status === 'rejected' && item.rejectedDate) {
+            const seenKey = `affiliateSeen_${orderId}_${item.id}`;
+            return !localStorage.getItem(seenKey);
+          }
+          return false;
+        });
+        
+        if (hasPending || hasNewApprovals || hasNewRejections) return true;
+      }
+      
+      return false;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const hasReviewsNotifications = (): boolean => {
+    if (!userData) return false;
+    try {
+      const userOrdersKey = `userOrders_${userData.email}`;
+      const storedOrders = localStorage.getItem(userOrdersKey);
+      if (!storedOrders) return false;
+      
+      const orders = JSON.parse(storedOrders);
+      const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
+      
+      // Check for delivered orders that are ready for review (delivered more than 24 hours ago, no review yet)
+      const now = Date.now();
+      const twentyFourHours = 24 * 60 * 60 * 1000;
+      
+      return allOrders.some((order: any) => {
+        if (order.status !== 'DELIVERED') return false;
+        if (!order.deliveredAt) return false;
+        
+        const timeSinceDelivered = now - order.deliveredAt;
+        if (timeSinceDelivered < twentyFourHours) return false; // Not ready yet
+        
+        // Check if review has been submitted
+        const reviewKey = `reviewSubmitted_${order.id}`;
+        return !localStorage.getItem(reviewKey);
+      });
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const hasPaymentMethodNotifications = (): boolean => {
+    if (!userData) return false;
+    try {
+      const savedCardsStr = localStorage.getItem(`savedCards_${userData.email}`);
+      if (!savedCardsStr) return false;
+      
+      const savedCards = JSON.parse(savedCardsStr);
+      
+      // Check for cards about to expire (within 30 days) or new cards added
+      const now = new Date();
+      const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+      
+      return savedCards.some((card: any) => {
+        // Check if card is about to expire
+        if (card.expiryDate) {
+          const expiryDate = new Date(card.expiryDate);
+          if (expiryDate <= thirtyDaysFromNow && expiryDate > now) {
+            return true; // Expiring soon
+          }
+        }
+        
+        // Check if card is new (added within last 7 days and not seen)
+        if (card.addedAt) {
+          const addedDate = new Date(card.addedAt);
+          const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          if (addedDate > sevenDaysAgo) {
+            const seenKey = `cardSeen_${card.id}`;
+            return !localStorage.getItem(seenKey);
+          }
+        }
+        
+        return false;
+      });
+    } catch (e) {
+      return false;
+    }
+  };
+
+  // Helper function to check if a specific card has notifications
+  const cardHasNotifications = (title: string): boolean => {
+    // For admin account (Kateena), show notifications on all cards for testing
+    const isKateenaArmstrong = userData && (
+      (userData.firstName?.toLowerCase() === 'kateena' && userData.lastName?.toLowerCase() === 'armstrong') ||
+      userData.email?.toLowerCase().includes('kateena') ||
+      userData.email?.toLowerCase().includes('armstrong')
+    );
+    
+    if (isKateenaArmstrong) {
+      // Admin account shows notifications on all cards for testing
+      switch (title) {
+        case 'ORDERS':
+        case 'ALERTS':
+        case 'MEMBERSHIP':
+        case 'AFFILIATE':
+        case 'REVIEWS':
+        case 'PAYMENT METHOD':
+          return true;
+        default:
+          return false;
+      }
+    }
+    
+    // Regular users - check actual notifications
+    switch (title) {
+      case 'ORDERS':
+        return hasOrdersNotifications();
+      case 'ALERTS':
+        return hasAlertsNotifications();
+      case 'MEMBERSHIP':
+        return hasMembershipNotifications();
+      case 'AFFILIATE':
+        return hasAffiliateNotifications();
+      case 'REVIEWS':
+        return hasReviewsNotifications();
+      case 'PAYMENT METHOD':
+        return hasPaymentMethodNotifications();
+      default:
+        return false;
+    }
+  };
+
   // Helper function to get active orders count (excluding DELIVERED status)
   const getActiveOrdersCount = (): number => {
     // Check for mock users first
@@ -1521,7 +1760,9 @@ function AccountPage() {
                     route: null 
                   },
                   { title: 'SETTINGS', subtitle: 'PASSWORD + NOTIFICATIONS', route: null }
-                ].map((item, index) => (
+                ].map((item, index) => {
+                  const hasNotification = cardHasNotifications(item.title);
+                  return (
                   <div
                     key={index}
                     onClick={() => {
@@ -1534,9 +1775,26 @@ function AccountPage() {
                       borderWidth: '1.3px',
                       padding: '13px 20px',
                       backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                      position: 'relative'
                     }}
                   >
+                    {/* Rose alert notification icon */}
+                    {hasNotification && (
+                      <img
+                        src="/assets/rose-alert.svg"
+                        alt="Notification"
+                        style={{
+                          position: 'absolute',
+                          top: '50%',
+                          right: '22px',
+                          transform: 'translateY(-50%)',
+                          width: '14px',
+                          height: '14px',
+                          zIndex: 10
+                        }}
+                      />
+                    )}
                     <p
                       style={{
                         fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
@@ -1564,7 +1822,8 @@ function AccountPage() {
                       {item.subtitle}
                     </p>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             )}
 
