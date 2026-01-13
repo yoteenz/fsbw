@@ -517,7 +517,8 @@ const LobbyApp: React.FC = () => {
   const [showLoading, setShowLoading] = useState<boolean>(true);
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
 
-  // Check if user is a premium member
+  // Check if user is a premium member or BLACK tier member
+  // Only BLACK tier members and PREMIUM members have access to the lobby
   const isPremiumMember = (): boolean => {
     try {
       const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
@@ -537,20 +538,15 @@ const LobbyApp: React.FC = () => {
           return true; // Kateena admin account with premium membership should have access
         }
         
-        // Check if user has subscriptionTier (premium subscription)
-        if (user?.subscriptionTier) {
-          return true;
-        }
-        
-        // Check if user has premium tier (RED, GOLD, BLACK)
-        if (user?.tier) {
-          const tier = user.tier.toUpperCase();
-          return tier === 'RED' || tier === 'GOLD' || tier === 'BLACK';
-        }
-        
         // Check if user has PREMIUM membership type
         if (user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium') {
           return true;
+        }
+        
+        // Check if user has BLACK tier (only BLACK tier has access, not SILVER or RED)
+        if (user?.tier) {
+          const tier = user.tier.toUpperCase();
+          return tier === 'BLACK';
         }
       }
     } catch (e) {
