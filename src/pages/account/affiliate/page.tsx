@@ -1643,6 +1643,12 @@ function AffiliatePage() {
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
+      <style>{`
+        input::placeholder {
+          font-size: 10px !important;
+          font-family: "Futura PT Book", futuristic-pt, Futura, Inter, sans-serif !important;
+        }
+      `}</style>
       {/* Marble Background */}
       <div 
         className="fixed inset-0 -z-10"
@@ -2180,8 +2186,8 @@ function AffiliatePage() {
                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                                <p
                                  style={{
-                                   fontFamily: '"Futura PT Medium"',
-                                   color: '#EB1C24',
+                                   fontFamily: '"Futura PT Book"',
+                                   color: '#000000',
                                    fontSize: '10px',
                                    margin: '0',
                                    textTransform: 'uppercase',
@@ -2426,7 +2432,7 @@ function AffiliatePage() {
                                     </div>
                                    ) : hasPhotoContent(expandedOrder.id, 2) ? (
                                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                                       <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '11px' }}>
+                                       <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '10px' }}>
                                          CONTENT SUBMITTED
                                        </span>
                                        <div
@@ -2479,8 +2485,8 @@ function AffiliatePage() {
                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                                <p
                                  style={{
-                                   fontFamily: '"Futura PT Medium"',
-                                   color: '#EB1C24',
+                                   fontFamily: '"Futura PT Book"',
+                                   color: '#000000',
                                    fontSize: '10px',
                                    margin: '0',
                                    textTransform: 'uppercase',
@@ -2593,7 +2599,7 @@ function AffiliatePage() {
                                      </div>
                                    ) : hasVideoContent(expandedOrder.id, 1) ? (
                                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                                       <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '11px' }}>
+                                       <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '10px' }}>
                                          CONTENT SUBMITTED
                                        </span>
                                        <div
@@ -2726,7 +2732,7 @@ function AffiliatePage() {
                                      </div>
                                    ) : hasVideoContent(expandedOrder.id, 2) ? (
                                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                                       <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '11px' }}>
+                                       <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '10px' }}>
                                          CONTENT SUBMITTED
                                        </span>
                                        <div
@@ -2783,8 +2789,8 @@ function AffiliatePage() {
                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                                  <p
                                    style={{
-                                     fontFamily: '"Futura PT Medium"',
-                                     color: '#EB1C24',
+                                     fontFamily: '"Futura PT Book"',
+                                     color: '#000000',
                                      fontSize: '10px',
                                      margin: '0',
                                      textTransform: 'uppercase',
@@ -2845,7 +2851,7 @@ function AffiliatePage() {
                                     paddingRight: hasSocialContent(expandedOrder.id, 'Twitter') ? '36px' : '8px',
                                     border: '1px solid #000000',
                                     fontFamily: '"Futura PT Book"',
-                                    fontSize: '11px',
+                                    fontSize: '10px',
                                     backgroundColor: '#FFFFFF',
                                     color: hasSocialContent(expandedOrder.id, 'Twitter') ? '#EB1C24' : '#909090',
                                     boxSizing: 'border-box',
@@ -2888,8 +2894,8 @@ function AffiliatePage() {
                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                                  <p
                                    style={{
-                                     fontFamily: '"Futura PT Medium"',
-                                     color: '#EB1C24',
+                                     fontFamily: '"Futura PT Book"',
+                                     color: '#000000',
                                      fontSize: '10px',
                                      margin: '0',
                                      textTransform: 'uppercase',
@@ -2950,7 +2956,7 @@ function AffiliatePage() {
                                     paddingRight: hasSocialContent(expandedOrder.id, 'Instagram') ? '36px' : '8px',
                                     border: '1px solid #000000',
                                     fontFamily: '"Futura PT Book"',
-                                    fontSize: '11px',
+                                    fontSize: '10px',
                                     backgroundColor: '#FFFFFF',
                                     color: hasSocialContent(expandedOrder.id, 'Instagram') ? '#EB1C24' : '#909090',
                                     boxSizing: 'border-box',
@@ -2993,8 +2999,8 @@ function AffiliatePage() {
                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                                  <p
                                    style={{
-                                     fontFamily: '"Futura PT Medium"',
-                                     color: '#EB1C24',
+                                     fontFamily: '"Futura PT Book"',
+                                     color: '#000000',
                                      fontSize: '10px',
                                      margin: '0',
                                      textTransform: 'uppercase',
@@ -3055,7 +3061,7 @@ function AffiliatePage() {
                                     paddingRight: hasSocialContent(expandedOrder.id, 'TikTok') ? '36px' : '8px',
                                     border: '1px solid #000000',
                                     fontFamily: '"Futura PT Book"',
-                                    fontSize: '11px',
+                                    fontSize: '10px',
                                     backgroundColor: '#FFFFFF',
                                     color: hasSocialContent(expandedOrder.id, 'TikTok') ? '#EB1C24' : '#909090',
                                     boxSizing: 'border-box',
@@ -3098,8 +3104,8 @@ function AffiliatePage() {
                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                                  <p
                                    style={{
-                                     fontFamily: '"Futura PT Medium"',
-                                     color: '#EB1C24',
+                                     fontFamily: '"Futura PT Book"',
+                                     color: '#000000',
                                      fontSize: '10px',
                                      margin: '0',
                                      textTransform: 'uppercase',
@@ -3160,7 +3166,7 @@ function AffiliatePage() {
                                     paddingRight: hasSocialContent(expandedOrder.id, 'YouTube') ? '36px' : '8px',
                                     border: '1px solid #000000',
                                     fontFamily: '"Futura PT Book"',
-                                    fontSize: '11px',
+                                    fontSize: '10px',
                                     backgroundColor: '#FFFFFF',
                                     color: hasSocialContent(expandedOrder.id, 'YouTube') ? '#EB1C24' : '#909090',
                                     boxSizing: 'border-box',
@@ -3203,8 +3209,8 @@ function AffiliatePage() {
                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                                  <p
                                    style={{
-                                     fontFamily: '"Futura PT Medium"',
-                                     color: '#EB1C24',
+                                     fontFamily: '"Futura PT Book"',
+                                     color: '#000000',
                                      fontSize: '10px',
                                      margin: '0',
                                      textTransform: 'uppercase',
@@ -3263,7 +3269,7 @@ function AffiliatePage() {
                                   padding: '8px',
                                   border: '1px solid #000000',
                                   fontFamily: '"Futura PT Book"',
-                                  fontSize: '11px',
+                                  fontSize: '10px',
                                   backgroundColor: '#FFFFFF',
                                   color: hasSocialContent(expandedOrder.id, 'Facebook') ? '#EB1C24' : '#909090',
                                   boxSizing: 'border-box',
