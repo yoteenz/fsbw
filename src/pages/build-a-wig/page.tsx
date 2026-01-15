@@ -1546,6 +1546,17 @@ export default function BuildAWigPage() {
           // This ensures negative prices (discounts) are preserved correctly
           const comingFromSubPage = sessionStorage.getItem('comingFromSubPage') === 'true';
           
+          // Declare price variables in outer scope so they're accessible after if/else
+          let capSizePrice: number;
+          let colorPrice: number;
+          let lengthPrice: number;
+          let densityPrice: number;
+          let lacePrice: number;
+          let texturePrice: number;
+          let hairlinePrice: number;
+          let stylingPrice: number;
+          let addOnsPrice: number;
+          
           if (comingFromSubPage) {
             // Coming from sub-page: preserve prices from localStorage (may include negative values)
             // Only use calculated prices as fallback if localStorage doesn't have the price

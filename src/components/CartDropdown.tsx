@@ -1445,6 +1445,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         // Custom cap sizes (XS, S, M, L) are single-size caps, not flexible caps
                         const customCapSizes = ['XS', 'S', 'M', 'L'];
                         const _isCustomCapSize = item.capSize && customCapSizes.includes(item.capSize);
+                        void _isCustomCapSize; // Intentionally unused, kept for future use
                         // For OCEAN CURL, custom cap sizes should not trigger view details (they're defaults)
                         // For other products, flexible caps (XXS/XS/S, S/M/L) trigger view details
                         const hasFlexCap = !isBlanco && item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L');
