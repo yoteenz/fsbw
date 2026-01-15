@@ -105,6 +105,7 @@ function ConciergePage() {
   // Order tracking state
   const [selectedOrderId, setSelectedOrderId] = useState<string>('');
   const [activeOrders, setActiveOrders] = useState<any[]>([]);
+  const [expandedStages, setExpandedStages] = useState<Set<number>>(new Set());
   
   // Get active orders for tracking
   useEffect(() => {
@@ -142,7 +143,12 @@ function ConciergePage() {
             productImage: '/assets/natural front.png',
             total: 740,
             items: 1,
-            trackingStage: 9 // All stages completed for delivered order
+            trackingStage: 9, // All stages completed for delivered order
+            trackingNumber: '1Z999AA10123456784',
+            deliveryDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            deliveryTime: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+            deliveryLocation: 'FRONT DOOR',
+            requiresSignature: true
           };
           
           const testOrdersData = {
@@ -175,7 +181,12 @@ function ConciergePage() {
               productImage: '/assets/natural front.png',
               total: 740,
               items: 1,
-              trackingStage: 9 // All stages completed for delivered order
+              trackingStage: 9, // All stages completed for delivered order
+              trackingNumber: '1Z999AA10123456784',
+              deliveryDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+              deliveryTime: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+              deliveryLocation: 'FRONT DOOR',
+              requiresSignature: true
             };
             
             // Add to activeOrders array
@@ -245,6 +256,155 @@ function ConciergePage() {
   
   const currentTrackingStage = getOrderTrackingStage(selectedOrderId);
   
+  // Helper function to get stage duration in days
+  const getStageDuration = (stageIndex: number, hasCustomization: boolean = true, shippingMethod?: string): number => {
+    switch (stageIndex) {
+      case 0: // ORDER CONFIRMED
+        return 0; // Pending
+      case 1: // SOURCING + COLLECTING
+        return 3; // 3 days
+      case 2: // CONSTRUCTING UNIT
+        return 28; // 4 weeks (28 days)
+      case 3: // SHIPPED TO USA
+        return 5; // 5 days
+      case 4: // ARRIVED AT HUB
+        return 2; // 2 days
+      case 5: // PREPPING + WASHING
+        return 2; // 2 days
+      case 6: // CUSTOMIZING
+        return hasCustomization ? 10 : 0; // 10 days if customization
+      case 7: // FINALIZING
+        return 2; // 2 days
+      case 8: // PACKAGING
+        return 3; // 3 days
+      case 9: // ORDER SHIPPED
+        // 3-5 days depending on shipping method (default to 3 if not specified)
+        if (shippingMethod?.toLowerCase().includes('express') || shippingMethod?.toLowerCase().includes('rush')) {
+          return 3;
+        } else if (shippingMethod?.toLowerCase().includes('standard')) {
+          return 5;
+        }
+        return 3; // Default to 3 days
+      default:
+        return 0;
+    }
+  };
+  
+  // Helper function to calculate progress percentage for current stage
+  const getStageProgress = (stageIndex: number, orderDate: string | undefined, hasCustomization: boolean = true): number => {
+    if (!orderDate || stageIndex !== currentTrackingStage) {
+      return stageIndex < currentTrackingStage ? 100 : 0;
+    }
+    
+    try {
+      // Parse order date
+      let orderDateObj: Date;
+      if (orderDate.includes('-')) {
+        const [month, day, year] = orderDate.split('-').map(Number);
+        orderDateObj = new Date(year, month - 1, day);
+      } else {
+        orderDateObj = new Date(orderDate);
+      }
+      
+      const now = new Date();
+      const stageStartDate = getStageStartDate(stageIndex, orderDateObj, hasCustomization);
+      const stageEndDate = getStageEndDate(stageIndex, orderDateObj, hasCustomization);
+      
+      if (now <= stageStartDate) return 0;
+      if (now >= stageEndDate) return 100;
+      
+      const totalDuration = stageEndDate.getTime() - stageStartDate.getTime();
+      const elapsed = now.getTime() - stageStartDate.getTime();
+      return Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+    } catch (e) {
+      return 0;
+    }
+  };
+  
+  // Helper function to get stage start date (matches getStageTimestamp logic)
+  const getStageStartDate = (stageIndex: number, orderDate: Date, hasCustomization: boolean): Date => {
+    const startDate = new Date(orderDate);
+    
+    if (stageIndex === 0) {
+      // ORDER CONFIRMED - same day
+      return new Date(orderDate);
+    } else if (stageIndex === 1) {
+      // SOURCING + COLLECTING - starts same day, takes 3 days
+      return new Date(orderDate);
+    } else if (stageIndex === 2) {
+      // CONSTRUCTING UNIT - starts after sourcing (3 days), takes 28 days (4 weeks)
+      startDate.setDate(startDate.getDate() + 3);
+    } else if (stageIndex === 3) {
+      // SHIPPED TO USA - starts after construction (3 + 28 = 31 days), takes 5 days
+      startDate.setDate(startDate.getDate() + 3 + 28);
+    } else if (stageIndex === 4) {
+      // ARRIVED AT HUB - starts after shipped (31 + 5 = 36 days), takes 2 days
+      startDate.setDate(startDate.getDate() + 3 + 28 + 5);
+    } else if (stageIndex === 5) {
+      // PREPPING + WASHING - starts after arrived (36 + 2 = 38 days), takes 2 days
+      startDate.setDate(startDate.getDate() + 3 + 28 + 5 + 2);
+    } else if (stageIndex === 6) {
+      // CUSTOMIZING - starts after prepping (38 + 2 = 40 days), takes 10 days (if customization)
+      if (!hasCustomization) return new Date(orderDate);
+      startDate.setDate(startDate.getDate() + 3 + 28 + 5 + 2 + 2);
+    } else if (stageIndex === 7) {
+      // FINALIZING - starts after customizing/prepping, takes 2 days
+      const baseDays = 3 + 28 + 5 + 2 + 2; // up to prepping
+      if (hasCustomization) {
+        startDate.setDate(startDate.getDate() + baseDays + 10); // after customizing
+      } else {
+        startDate.setDate(startDate.getDate() + baseDays); // after prepping
+      }
+    } else if (stageIndex === 8) {
+      // PACKAGING - starts after finalizing, takes 3 days
+      const baseDays = 3 + 28 + 5 + 2 + 2; // up to prepping
+      if (hasCustomization) {
+        startDate.setDate(startDate.getDate() + baseDays + 10 + 2); // after finalizing
+      } else {
+        startDate.setDate(startDate.getDate() + baseDays + 2); // after finalizing
+      }
+    } else if (stageIndex === 9) {
+      // ORDER SHIPPED - starts after packaging, takes 3-5 days
+      const baseDays = 3 + 28 + 5 + 2 + 2; // up to prepping
+      if (hasCustomization) {
+        startDate.setDate(startDate.getDate() + baseDays + 10 + 2 + 3); // after packaging
+      } else {
+        startDate.setDate(startDate.getDate() + baseDays + 2 + 3); // after packaging
+      }
+    }
+    
+    return startDate;
+  };
+  
+  // Helper function to get stage end date
+  const getStageEndDate = (stageIndex: number, orderDate: Date, hasCustomization: boolean): Date => {
+    const startDate = getStageStartDate(stageIndex, orderDate, hasCustomization);
+    const endDate = new Date(startDate);
+    const duration = getStageDuration(stageIndex, hasCustomization);
+    
+    if (stageIndex === 4) {
+      // ARRIVED AT HUB uses business days
+      return addBusinessDays(startDate, duration);
+    } else {
+      endDate.setDate(endDate.getDate() + duration);
+    }
+    
+    return endDate;
+  };
+  
+  // Toggle stage expansion
+  const toggleStageExpansion = (stageIndex: number) => {
+    setExpandedStages(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(stageIndex)) {
+        newSet.delete(stageIndex);
+      } else {
+        newSet.add(stageIndex);
+      }
+      return newSet;
+    });
+  };
+  
   // Helper function to format date as "FEB 21"
   const formatDate = (date: Date): string => {
     const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
@@ -309,22 +469,22 @@ function ConciergePage() {
         // Same day
         stageDate = new Date(orderDateObj);
       } else if (stageIndex === 2) {
-        // 3 days from sourcing
+        // 28 days from order (construction takes 28 days)
         stageDate = new Date(orderDateObj);
-        stageDate.setDate(stageDate.getDate() + 3);
+        stageDate.setDate(stageDate.getDate() + 28);
       } else if (stageIndex === 3) {
-        // 4 weeks (28 days) from constructing
+        // 4 weeks (28 days) from constructing completion (28 + 28 = 56 days from order)
         stageDate = new Date(orderDateObj);
-        stageDate.setDate(stageDate.getDate() + 3 + 28);
+        stageDate.setDate(stageDate.getDate() + 28 + 28);
       } else if (stageIndex === 4) {
         // 5 business days from shipped
         const shippedDate = new Date(orderDateObj);
-        shippedDate.setDate(shippedDate.getDate() + 3 + 28);
+        shippedDate.setDate(shippedDate.getDate() + 28 + 28);
         stageDate = addBusinessDays(shippedDate, 5);
       } else if (stageIndex === 5) {
         // 2 days from arrived
         const shippedDate = new Date(orderDateObj);
-        shippedDate.setDate(shippedDate.getDate() + 3 + 28);
+        shippedDate.setDate(shippedDate.getDate() + 28 + 28);
         const arrivedDate = addBusinessDays(shippedDate, 5);
         stageDate = new Date(arrivedDate);
         stageDate.setDate(stageDate.getDate() + 2);
@@ -334,7 +494,7 @@ function ConciergePage() {
           return null; // Skip this stage
         }
         const shippedDate = new Date(orderDateObj);
-        shippedDate.setDate(shippedDate.getDate() + 3 + 28);
+        shippedDate.setDate(shippedDate.getDate() + 28 + 28);
         const arrivedDate = addBusinessDays(shippedDate, 5);
         const preppingDate = new Date(arrivedDate);
         preppingDate.setDate(preppingDate.getDate() + 2);
@@ -343,7 +503,7 @@ function ConciergePage() {
       } else if (stageIndex === 7) {
         // 10 days from customizing (or 0 if no customization)
         const shippedDate = new Date(orderDateObj);
-        shippedDate.setDate(shippedDate.getDate() + 3 + 28);
+        shippedDate.setDate(shippedDate.getDate() + 28 + 28);
         const arrivedDate = addBusinessDays(shippedDate, 5);
         const preppingDate = new Date(arrivedDate);
         preppingDate.setDate(preppingDate.getDate() + 2);
@@ -360,7 +520,7 @@ function ConciergePage() {
       } else if (stageIndex === 8) {
         // 2 days from finalizing
         const shippedDate = new Date(orderDateObj);
-        shippedDate.setDate(shippedDate.getDate() + 3 + 28);
+        shippedDate.setDate(shippedDate.getDate() + 28 + 28);
         const arrivedDate = addBusinessDays(shippedDate, 5);
         const preppingDate = new Date(arrivedDate);
         preppingDate.setDate(preppingDate.getDate() + 2);
@@ -380,7 +540,7 @@ function ConciergePage() {
       } else if (stageIndex === 9) {
         // 3 days from packaging
         const shippedDate = new Date(orderDateObj);
-        shippedDate.setDate(shippedDate.getDate() + 3 + 28);
+        shippedDate.setDate(shippedDate.getDate() + 28 + 28);
         const arrivedDate = addBusinessDays(shippedDate, 5);
         const preppingDate = new Date(arrivedDate);
         preppingDate.setDate(preppingDate.getDate() + 2);
@@ -419,7 +579,7 @@ function ConciergePage() {
     { name: 'SHIPPED TO USA', description: 'HEADED TO FS HUB.' },
     { name: 'ARRIVED AT HUB', description: 'PERFORMING QUALITY CHECK.' },
     { name: 'PREPPING + WASHING', description: 'SANITIZING + DISINFECTING THE HAIR.' },
-    { name: 'CUSTOMIZING', description: 'COLORING, PLUCKING, BLEACHING & STYLING (DEPENDING ON WHAT ADD-ONS THEY SELECTED; IF NONE OF THESE APPLIES THIS STEP WILL BE SKIPPED ON THE MODAL).' },
+    { name: 'CUSTOMIZING', description: 'COLORING, PLUCKING, BLEACHING & STYLING.' },
     { name: 'FINALIZING', description: 'CONFIRMING ORDER DETAILS.' },
     { name: 'PACKAGING', description: 'PREPARING TO SHIP YOUR ORDER.' },
     { name: 'ORDER SHIPPED', description: 'YOUR ORDER HAS BEEN SHIPPED.' }
@@ -1225,9 +1385,138 @@ function ConciergePage() {
                         <div style={{ marginTop: '16px' }}>
                           {/* Order Number or Delivery Estimate Display */}
                           {currentTrackingStage === 9 ? (
-                            // Show delivery estimate when status is "shipped" or "delivered"
+                            // Show delivery estimate when status is "shipped" or "PACKAGE DELIVERED" for delivered orders
                             (() => {
                               const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
+                              const isDelivered = selectedOrder?.status === 'DELIVERED';
+                              
+                              // If delivered, show "PACKAGE DELIVERED" with date, time, and location
+                              if (isDelivered) {
+                                // Format delivery date to get weekday, month, and day
+                                const formatDeliveryDate = (dateStr: string | undefined) => {
+                                  if (!dateStr) return null;
+                                  try {
+                                    const date = new Date(dateStr);
+                                    // Check if date is valid
+                                    if (isNaN(date.getTime())) {
+                                      return null;
+                                    }
+                                    const weekdays = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+                                    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                                    return {
+                                      weekday: weekdays[date.getDay()],
+                                      month: months[date.getMonth()],
+                                      day: date.getDate()
+                                    };
+                                  } catch (e) {
+                                    return null;
+                                  }
+                                };
+                                
+                                const formatDeliveryTime = (timeStr: string | undefined) => {
+                                  if (!timeStr) return null;
+                                  // Convert "9:07 AM" to "9:07AM" format
+                                  return timeStr.replace(/\s/g, '').toUpperCase();
+                                };
+                                
+                                // Use deliveryDate if available, otherwise use order date as fallback
+                                const dateToFormat = selectedOrder?.deliveryDate || selectedOrder?.date;
+                                const deliveryDateInfo = formatDeliveryDate(dateToFormat);
+                                const deliveryTimeFormatted = formatDeliveryTime(selectedOrder?.deliveryTime);
+                                
+                                // Format delivery location with signature information
+                                const formatDeliveryLocation = () => {
+                                  const location = selectedOrder?.deliveryLocation;
+                                  const requiresSignature = selectedOrder?.requiresSignature;
+                                  
+                                  if (!location) {
+                                    return 'LOCATION UNAVAILABLE';
+                                  }
+                                  
+                                  const signatureText = requiresSignature ? 'SIGNATURE' : 'NO SIGNATURE';
+                                  return `${signatureText}: ${location.toUpperCase()}`;
+                                };
+                                
+                                const deliveryLocation = formatDeliveryLocation();
+                                
+                                return (
+                                  <div style={{ textAlign: 'center', marginBottom: '16px', marginTop: '-10px' }}>
+                                    <p
+                                      style={{
+                                        fontFamily: '"Covered by Your Grace", cursive',
+                                        color: '#909090',
+                                        fontSize: '15px',
+                                        margin: '0 0 4px 0',
+                                        textTransform: 'none'
+                                      }}
+                                    >
+                                      PACKAGE DELIVERED
+                                    </p>
+                                    {deliveryDateInfo && (
+                                      <>
+                                        <p
+                                          style={{
+                                            fontFamily: '"Futura PT Medium"',
+                                            color: '#000000',
+                                            fontSize: '12px',
+                                            margin: '0 0 2px 0',
+                                            textTransform: 'uppercase',
+                                            fontWeight: '500'
+                                          }}
+                                        >
+                                          {deliveryDateInfo.weekday}
+                                        </p>
+                                        <p
+                                          style={{
+                                            fontFamily: '"Futura PT Demi"',
+                                            color: '#909090',
+                                            fontSize: '12px',
+                                            margin: '0 0 2px 0',
+                                            textTransform: 'uppercase'
+                                          }}
+                                        >
+                                          {deliveryDateInfo.month}
+                                        </p>
+                                        <p
+                                          style={{
+                                            fontFamily: '"Futura PT Book"',
+                                            color: '#EB1C24',
+                                            fontSize: '22px',
+                                            margin: '-2px 0 4px 0',
+                                            textTransform: 'uppercase'
+                                          }}
+                                        >
+                                          {deliveryDateInfo.day}
+                                        </p>
+                                      </>
+                                    )}
+                                    {deliveryTimeFormatted && (
+                                      <p
+                                        style={{
+                                          fontFamily: '"Futura PT Book"',
+                                          color: '#EB1C24',
+                                          fontSize: '9px',
+                                          margin: '0 0 4px 0',
+                                          textTransform: 'uppercase'
+                                        }}
+                                      >
+                                        {deliveryTimeFormatted}
+                                      </p>
+                                    )}
+                                    <p
+                                      style={{
+                                        fontFamily: '"Futura PT Book"',
+                                        color: '#909090',
+                                        fontSize: '9px',
+                                        margin: '0',
+                                        textTransform: 'uppercase'
+                                      }}
+                                    >
+                                      {deliveryLocation}
+                                    </p>
+                                  </div>
+                                );
+                              }
                               
                               // Calculate delivery date based on order date and processing time
                               const calculateDeliveryDate = () => {
@@ -1327,7 +1616,7 @@ function ConciergePage() {
                                     style={{
                                       fontFamily: '"Futura PT Demi"',
                                       color: '#909090',
-                                      fontSize: '13px',
+                                      fontSize: '12px',
                                       margin: '0 0 2px 0',
                                       textTransform: 'uppercase'
                                     }}
@@ -1338,8 +1627,8 @@ function ConciergePage() {
                                     style={{
                                       fontFamily: '"Futura PT Book"',
                                       color: '#EB1C24',
-                                      fontSize: '23px',
-                                      margin: '0',
+                                      fontSize: '22px',
+                                      margin: '-2px 0 0 0',
                                       textTransform: 'uppercase'
                                     }}
                                   >
@@ -1355,18 +1644,129 @@ function ConciergePage() {
                               const isDelivered = selectedOrder?.status === 'DELIVERED';
                               
                               if (isDelivered) {
+                                // Format delivery date to get weekday, month, and day
+                                const formatDeliveryDate = (dateStr: string | undefined) => {
+                                  if (!dateStr) return null;
+                                  try {
+                                    const date = new Date(dateStr);
+                                    // Check if date is valid
+                                    if (isNaN(date.getTime())) {
+                                      return null;
+                                    }
+                                    const weekdays = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+                                    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                                    return {
+                                      weekday: weekdays[date.getDay()],
+                                      month: months[date.getMonth()],
+                                      day: date.getDate()
+                                    };
+                                  } catch (e) {
+                                    return null;
+                                  }
+                                };
+                                
+                                const formatDeliveryTime = (timeStr: string | undefined) => {
+                                  if (!timeStr) return null;
+                                  // Convert "9:07 AM" to "9:07AM" format
+                                  return timeStr.replace(/\s/g, '').toUpperCase();
+                                };
+                                
+                                // Use deliveryDate if available, otherwise use order date as fallback
+                                const dateToFormat = selectedOrder?.deliveryDate || selectedOrder?.date;
+                                const deliveryDateInfo = formatDeliveryDate(dateToFormat);
+                                const deliveryTimeFormatted = formatDeliveryTime(selectedOrder?.deliveryTime);
+                                
+                                // Format delivery location with signature information
+                                const formatDeliveryLocation = () => {
+                                  const location = selectedOrder?.deliveryLocation;
+                                  const requiresSignature = selectedOrder?.requiresSignature;
+                                  
+                                  if (!location) {
+                                    return 'LOCATION UNAVAILABLE';
+                                  }
+                                  
+                                  const signatureText = requiresSignature ? 'SIGNATURE' : 'NO SIGNATURE';
+                                  return `${signatureText}: ${location.toUpperCase()}`;
+                                };
+                                
+                                const deliveryLocation = formatDeliveryLocation();
+                                
                                 return (
-                                  <p
-                                    style={{
-                                      fontFamily: '"Futura PT Book"',
-                                      color: '#000000',
-                      fontSize: '11px',
-                                      margin: '0 0 16px 0',
-                      textTransform: 'uppercase'
-                    }}
-                                  >
-                                    DELIVERED
-                                  </p>
+                                  <div style={{ marginBottom: '16px', marginTop: '-10px', textAlign: 'center' }}>
+                                    <p
+                                      style={{
+                                        fontFamily: '"Covered by Your Grace", cursive',
+                                        color: '#909090',
+                                        fontSize: '15px',
+                                        margin: '0 0 4px 0',
+                                        textTransform: 'none'
+                                      }}
+                                    >
+                                      PACKAGE DELIVERED
+                                    </p>
+                                    {deliveryDateInfo && (
+                                      <>
+                                        <p
+                                          style={{
+                                            fontFamily: '"Futura PT Medium"',
+                                            color: '#000000',
+                                            fontSize: '12px',
+                                            margin: '0 0 2px 0',
+                                            textTransform: 'uppercase',
+                                            fontWeight: '500'
+                                          }}
+                                        >
+                                          {deliveryDateInfo.weekday}
+                                        </p>
+                                        <p
+                                          style={{
+                                            fontFamily: '"Futura PT Demi"',
+                                            color: '#909090',
+                                            fontSize: '12px',
+                                            margin: '0 0 2px 0',
+                                            textTransform: 'uppercase'
+                                          }}
+                                        >
+                                          {deliveryDateInfo.month}
+                                        </p>
+                                        <p
+                                          style={{
+                                            fontFamily: '"Futura PT Book"',
+                                            color: '#EB1C24',
+                                            fontSize: '22px',
+                                            margin: '-2px 0 4px 0',
+                                            textTransform: 'uppercase'
+                                          }}
+                                        >
+                                          {deliveryDateInfo.day}
+                                        </p>
+                                      </>
+                                    )}
+                                    {deliveryTimeFormatted && (
+                                      <p
+                                        style={{
+                                          fontFamily: '"Futura PT Book"',
+                                          color: '#EB1C24',
+                                          fontSize: '9px',
+                                          margin: '0 0 4px 0',
+                                          textTransform: 'uppercase'
+                                        }}
+                                      >
+                                        {deliveryTimeFormatted}
+                                      </p>
+                                    )}
+                                    <p
+                                      style={{
+                                        fontFamily: '"Futura PT Book"',
+                                        color: '#909090',
+                                        fontSize: '9px',
+                                        margin: '0',
+                                        textTransform: 'uppercase'
+                                      }}
+                                    >
+                                      {deliveryLocation}
+                                    </p>
+                                  </div>
                                 );
                               }
                               
@@ -1443,7 +1843,7 @@ function ConciergePage() {
                                         style={{
                                           fontFamily: '"Futura PT Medium"',
                                           color: '#000000',
-                                          fontSize: '14px',
+                                          fontSize: '12px',
                                           margin: '0 0 2px 0',
                                           textTransform: 'uppercase',
                                           fontWeight: '500'
@@ -1455,7 +1855,7 @@ function ConciergePage() {
                                         style={{
                                           fontFamily: '"Futura PT Demi"',
                                           color: '#909090',
-                                          fontSize: '9px',
+                                          fontSize: '12px',
                                           margin: '0 0 2px 0',
                                           textTransform: 'uppercase'
                                         }}
@@ -1466,8 +1866,8 @@ function ConciergePage() {
                                         style={{
                                           fontFamily: '"Futura PT Book"',
                                           color: '#EB1C24',
-                                          fontSize: '24px',
-                                          margin: '0',
+                                          fontSize: '22px',
+                                          margin: '-2px 0 0 0',
                                           textTransform: 'uppercase'
                                         }}
                                       >
@@ -1510,6 +1910,20 @@ function ConciergePage() {
                                 const isCompleted = displayIndex < adjustedCurrentStage;
                                 const isCurrent = displayIndex === adjustedCurrentStage;
                                 const isUpcoming = displayIndex > adjustedCurrentStage;
+                                const isExpanded = expandedStages.has(index);
+                                
+                                // Check if this is the last stage and order is delivered
+                                const isLastStage = index === 9; // ORDER SHIPPED is the last stage
+                                const isDelivered = selectedOrder?.status === 'DELIVERED';
+                                const isDeliveredLastStage = isLastStage && isDelivered;
+                                
+                                // Get stage duration and progress
+                                const stageDuration = getStageDuration(index, hasCustomization);
+                                const progress = isDeliveredLastStage ? 100 : getStageProgress(index, selectedOrder?.date, hasCustomization);
+                                const durationText = index === 0 ? 'PENDING' : (stageDuration === 0 ? 'SAME DAY' : stageDuration === 1 ? '1 DAY' : stageDuration === 28 ? '4 WEEKS' : `${stageDuration} DAYS`);
+                                
+                                // Only allow expansion for completed or current steps, not upcoming ones
+                                const isExpandable = isCompleted || isCurrent || isDeliveredLastStage;
 
                               return (
                                 <div key={index} style={{ position: 'relative', marginBottom: displayIndex < filteredStages.length - 1 ? '0' : '0' }}>
@@ -1519,9 +1933,9 @@ function ConciergePage() {
                                       style={{
                                         position: 'absolute',
                                         left: '12px',
-                                        top: '-18px',
+                                        top: '-17px',
                                         width: '2px',
-                                        height: '12px',
+                                        height: '16px',
                                         backgroundColor: isCompleted ? '#EB1C24' : '#E0E0E0',
                                         zIndex: 0
                                       }}
@@ -1531,34 +1945,40 @@ function ConciergePage() {
                                   <div
                     style={{
                                       display: 'flex',
-                                      alignItems: 'center',
-                                      gap: '12px',
-                      padding: '12px',
-                                      border: isCurrent ? '1.3px solid #EB1C24' : '1.3px solid #000000',
+                                      flexDirection: 'column',
+                                      gap: '0',
+                                      border: (isCurrent || isDeliveredLastStage) ? '1.3px solid #EB1C24' : '1.3px solid #000000',
                                       backgroundColor: 'transparent',
-                                      marginTop: displayIndex > 0 ? '8px' : '0',
+                                      marginTop: displayIndex > 0 ? '12px' : '0',
                                       marginBottom: '20px',
                                       position: 'relative',
-                                      zIndex: 1
+                                      zIndex: 1,
+                                      cursor: isExpandable ? 'pointer' : 'default'
+                                    }}
+                                    onClick={() => {
+                                      if (isExpandable) {
+                                        toggleStageExpansion(index);
+                                      }
                                     }}
                                   >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px' }}>
                                     {/* Stage Indicator */}
                                     <div
                                       style={{
                                         width: '24px',
                                         height: '24px',
                                         borderRadius: '50%',
-                                        backgroundColor: isCompleted || isCurrent
+                                        backgroundColor: isCompleted || isCurrent || isDeliveredLastStage
                                           ? '#FFFFFF'
                                           : '#E0E0E0',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         flexShrink: 0,
-                                        border: isCompleted || isCurrent ? '1px solid #000000' : 'none'
+                                        border: (isCompleted || isCurrent || isDeliveredLastStage) ? '1px solid #000000' : 'none'
                                       }}
                                     >
-                                      {isCompleted ? (
+                                      {isCompleted || isDeliveredLastStage ? (
                                         <img
                                           src="/assets/premium-check.svg"
                                           alt="Completed"
@@ -1583,12 +2003,12 @@ function ConciergePage() {
                                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <p
                                           style={{
-                                            fontFamily: isCurrent || isCompleted ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                            color: isCompleted || isCurrent ? '#EB1C24' : '#909090',
+                                            fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
+                                            color: isCompleted ? '#000000' : (isCurrent ? '#EB1C24' : '#909090'),
                                             fontSize: '11px',
                                             margin: '0',
                                             textTransform: 'uppercase',
-                                            fontWeight: isCurrent || isCompleted ? '500' : '400'
+                                            fontWeight: isCurrent ? '500' : '400'
                                           }}
                                         >
                                           {stage.name}
@@ -1648,6 +2068,90 @@ function ConciergePage() {
                                         </p>
                                       )}
                                     </div>
+                                    </div>
+                                    
+                                    {/* Expanded Content */}
+                                    {isExpanded && isExpandable && (
+                                      <div style={{ 
+                                        padding: '0 12px 12px 12px', 
+                                        marginTop: '8px',
+                                        paddingTop: '12px'
+                                      }}>
+                                        {/* Gray line above estimated duration */}
+                                        <div
+                                          style={{
+                                            width: 'calc(100% - 4px)',
+                                            height: '1px',
+                                            backgroundColor: '#E0E0E0',
+                                            margin: '0 auto 12px auto'
+                                          }}
+                                        />
+                                        {/* Timeframe */}
+                                        <p
+                                          style={{
+                                            fontFamily: '"Futura PT Book"',
+                                            color: '#909090',
+                                            fontSize: '9px',
+                                            margin: '0 0 8px 0',
+                                            textTransform: 'uppercase'
+                                          }}
+                                        >
+                                          ESTIMATED DURATION: {durationText}
+                                        </p>
+                                        
+                                        {/* Progress Bar */}
+                                        {(isCurrent || isCompleted || isDeliveredLastStage) && (
+                                          <div style={{ marginTop: '8px' }}>
+                                            <div
+                                              style={{
+                                                width: '100%',
+                                                height: '7px',
+                                                backgroundColor: '#E0E0E0',
+                                                borderRadius: '0',
+                                                overflow: 'hidden',
+                                                position: 'relative',
+                                                border: progress === 0 ? '1px solid #909090' : 'none'
+                                              }}
+                                            >
+                                              <div
+                                                style={{
+                                                  width: `${progress}%`,
+                                                  height: '100%',
+                                                  backgroundColor: isCompleted || isDeliveredLastStage ? '#EB1C24' : '#EB1C24',
+                                                  transition: 'width 0.3s ease',
+                                                  borderRadius: '4px'
+                                                }}
+                                              />
+                                            </div>
+                                            <p
+                                              style={{
+                                                fontFamily: '"Futura PT Book"',
+                                                color: '#000000',
+                                                fontSize: '9px',
+                                                margin: '4px 0 0 0',
+                                                textTransform: 'uppercase'
+                                              }}
+                                            >
+                                              {isDeliveredLastStage ? 'STATUS: DELIVERED' : (isCompleted ? 'STATUS: COMPLETE' : `STATUS: ${Math.round(progress)}% COMPLETE`)}
+                                            </p>
+                                          </div>
+                                        )}
+                                        
+                                        {isUpcoming && (
+                                          <p
+                                            style={{
+                                              fontFamily: '"Futura PT Book"',
+                                              color: '#909090',
+                                              fontSize: '9px',
+                                              margin: '8px 0 0 0',
+                                              textTransform: 'uppercase'
+                                            }}
+                                          >
+                                            PENDING
+                                          </p>
+                                        )}
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
                               );
