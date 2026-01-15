@@ -1428,10 +1428,39 @@ export default function BuildAWigPage() {
           // Set button to 'added' (IN THE BAG) since item is already in cart
           setAddToBagState('added');
           
-          setCustomization(editCustomization);
+          // CRITICAL: Calculate capSizeToUse BEFORE setting customization state
+          // This ensures flex cap selections from cart are properly loaded
+          const existingCapSize = localStorage.getItem('editSelectedCapSize') || localStorage.getItem('selectedCapSize');
+          const cartItemCapSize = item.capSize || 'M';
+          const isFlexibleCap = existingCapSize === 'XXS/XS/S' || existingCapSize === 'S/M/L';
+          const cartItemIsFlexCap = cartItemCapSize === 'XXS/XS/S' || cartItemCapSize === 'S/M/L';
+          let capSizeToUseForState = cartItemCapSize;
+          
+          // If cart item has flex cap, always use it (it's the source of truth)
+          // If localStorage has a flex cap and cart item doesn't, preserve localStorage (user changed it)
+          // Otherwise, use cart item's cap size
+          if (cartItemIsFlexCap) {
+            capSizeToUseForState = cartItemCapSize;
+          } else if (existingCapSize && isFlexibleCap) {
+            // localStorage has flex cap but cart item doesn't - user changed it, preserve localStorage
+            capSizeToUseForState = existingCapSize;
+          } else {
+            // Default to cart item's cap size
+            capSizeToUseForState = cartItemCapSize;
+          }
+          
+          // Update editCustomization with the correct cap size
+          const editCustomizationWithCorrectCapSize = {
+            ...editCustomization,
+            capSize: capSizeToUseForState
+          };
+          
+          setCustomization(editCustomizationWithCorrectCapSize);
           
           // Also update localStorage so sub-pages can read the edit values
-          localStorage.setItem('selectedCapSize', item.capSize || 'M');
+          // Use capSizeToUseForState which was calculated above to ensure flex cap is properly loaded
+          localStorage.setItem('selectedCapSize', capSizeToUseForState);
+          localStorage.setItem('editSelectedCapSize', capSizeToUseForState);
           localStorage.setItem('selectedLength', item.length || '24"');
           localStorage.setItem('selectedDensity', item.density || '200%');
           // For BLANCO items, default to PLATINUM; for others, default to OFF BLACK
@@ -1453,33 +1482,18 @@ export default function BuildAWigPage() {
           localStorage.setItem('selectedAddOns', JSON.stringify(item.addOns || []));
           
           // Also save with 'editSelected' prefix for CartDropdown
-          // CRITICAL: Preserve cap size selection from localStorage if it exists and differs from cart item
-          // This prevents losing flexible cap selections after multiple edits
-          const existingCapSize = localStorage.getItem('editSelectedCapSize') || localStorage.getItem('selectedCapSize');
-          const cartItemCapSize = item.capSize || 'M';
-          const isFlexibleCap = existingCapSize === 'XXS/XS/S' || existingCapSize === 'S/M/L';
-          
-          console.log('[FLEX_CAP_DEBUG] ROUTE_CHANGE - Cap size preservation check:', {
-            existingCapSize,
+          console.log('[FLEX_CAP_DEBUG] ROUTE_CHANGE - Initial load cap size:', {
+            capSizeToUseForState,
             cartItemCapSize,
+            cartItemIsFlexCap,
+            existingCapSize,
             isFlexibleCap,
-            comingFromSubPage: sessionStorage.getItem('comingFromSubPage'),
-            existingPrice: localStorage.getItem('editSelectedCapSizePrice') || localStorage.getItem('selectedCapSizePrice'),
+            reason: cartItemIsFlexCap ? 'from_cart_item_flex_cap' : 
+                   (existingCapSize && isFlexibleCap) ? 'preserved_from_localStorage' : 'from_cart_item',
             timestamp: new Date().toISOString()
           });
           
-          // If localStorage has a flexible cap selection, preserve it (user may have changed it)
-          // Only use cart item's cap size if localStorage doesn't have a selection
-          const capSizeToUse = (existingCapSize && isFlexibleCap) ? existingCapSize : cartItemCapSize;
-          
-          console.log('[FLEX_CAP_DEBUG] ROUTE_CHANGE - Cap size decision:', {
-            capSizeToUse,
-            reason: (existingCapSize && isFlexibleCap) ? 'preserved_from_localStorage' : 'from_cart_item',
-            timestamp: new Date().toISOString()
-          });
-          
-          localStorage.setItem('editSelectedCapSize', capSizeToUse);
-          localStorage.setItem('selectedCapSize', capSizeToUse);
+          localStorage.setItem('editSelectedLength', item.length || '24"');
           console.log('[FLEX_CAP_DEBUG] ROUTE_CHANGE - Saved cap size to localStorage:', {
             editSelectedCapSize: localStorage.getItem('editSelectedCapSize'),
             selectedCapSize: localStorage.getItem('selectedCapSize'),
@@ -4653,18 +4667,20 @@ export default function BuildAWigPage() {
               <div>
                   <DynamicCartIcon count={cartCount} width={22} height={19} />
                 </div>
-                <svg
-                  width="17"
-                  height="18"
-                  viewBox="0 0 16 14"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="cursor-pointer"
-                  onClick={handleMobileMenuToggle}
-                  style={{ marginTop: '2px', pointerEvents: 'auto', zIndex: 11 }}
-                >
-                  <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
-                </svg>
+                <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'auto', zIndex: 11 }}>
+                  <svg
+                    width="17"
+                    height="18"
+                    viewBox="0 0 16 14"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="cursor-pointer"
+                    onClick={handleMobileMenuToggle}
+                    style={{ marginTop: '2px' }}
+                  >
+                    <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
+                  </svg>
+                </div>
             </div>
         </div>
 

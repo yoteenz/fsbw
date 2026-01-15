@@ -40,6 +40,22 @@ function ProductsUnitsPage() {
     return false;
   });
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth;
+    }
+    return 1024;
+  });
+
+  // Track window width for responsive layout
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Currency state - load from localStorage on mount
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -643,17 +659,26 @@ function ProductsUnitsPage() {
                     gap: '0',
                     transform: `translateX(${scrollState}px)`,
                     transition: 'none',
-                    width: products.length >= 4 ? 'calc(200% - 20px)' : 'calc(100% - 20px)'
+                    width: windowWidth > 1024 
+                      ? (products.length >= 4 ? 'calc(100% - 20px)' : 'calc(100% - 20px)')
+                      : (products.length >= 4 ? 'calc(200% - 20px)' : 'calc(100% - 20px)')
                   }}
                 >
-                  {products.map((product, index) => (
+                  {products.map((product, index) => {
+                    const isLargeScreen = windowWidth > 1024;
+                    const flexBasis = isLargeScreen ? '25%' : '50%';
+                    const transformX = isLargeScreen 
+                      ? '0px'
+                      : (index % 2 === 0 ? '0px' : '10px');
+                    
+                    return (
                     <div
                       key={product.id}
                       style={{ 
                         padding: '5px 10px 4px 10px',
                         textAlign: 'center',
-                        transform: index % 2 === 0 ? 'translateX(0px) translateY(-4px)' : 'translateX(10px) translateY(-4px)',
-                        flex: '0 0 50%',
+                        transform: `translateX(${transformX}) translateY(-4px)`,
+                        flex: `0 0 ${flexBasis}`,
                         boxSizing: 'border-box',
                         position: 'relative',
                         overflow: 'visible'
@@ -731,7 +756,8 @@ function ProductsUnitsPage() {
                         ))}
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -885,18 +911,20 @@ function ProductsUnitsPage() {
               <div>
                 <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
-              <svg
-                width="17"
-                height="18"
-                viewBox="0 0 16 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="cursor-pointer"
-                onClick={handleMobileMenuToggle}
-                style={{ marginTop: '2px' }}
-              >
-                <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
-              </svg>
+              <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg
+                  width="17"
+                  height="18"
+                  viewBox="0 0 16 14"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="cursor-pointer"
+                  onClick={handleMobileMenuToggle}
+                  style={{ marginTop: '2px' }}
+                >
+                  <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
+                </svg>
+              </div>
             </div>
           </div>
 

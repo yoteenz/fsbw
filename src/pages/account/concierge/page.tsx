@@ -3,6 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 
+// Add pulsating animation style (recording indicator style)
+const pulsateStyle = `
+  @keyframes pulsate {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.2;
+    }
+  }
+`;
+
 function ConciergePage() {
   const navigate = useNavigate();
   const [cartCount, setCartCount] = useState(() => {
@@ -36,11 +48,382 @@ function ConciergePage() {
 
   // Priority message state
   const [priorityMessage, setPriorityMessage] = useState('');
-  const [specialRequest, setSpecialRequest] = useState('');
-  const [orderChangeRequest, setOrderChangeRequest] = useState('');
-  const [bookingRequest, setBookingRequest] = useState('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [isOrderRelated, setIsOrderRelated] = useState<'yes' | 'no'>('no');
+  const [isUrgent, setIsUrgent] = useState<'yes' | 'no'>('no');
+  const [relatedOrderId, setRelatedOrderId] = useState<string>('');
+  
+  // Free gift state - load from localStorage
+  const [selectedFreeGift, setSelectedFreeGift] = useState<'melt-band' | 'wig-brush' | ''>(() => {
+    try {
+      const saved = localStorage.getItem('selectedFreeGift');
+      return (saved === 'melt-band' || saved === 'wig-brush') ? saved : '';
+    } catch (e) {
+      return '';
+    }
+  });
+  
+  // Birthday gift state - load from localStorage
+  const [selectedBirthdayGift, setSelectedBirthdayGift] = useState<'points' | 'gift-card' | ''>(() => {
+    try {
+      const saved = localStorage.getItem('selectedBirthdayGift');
+      return (saved === 'points' || saved === 'gift-card') ? saved : '';
+    } catch (e) {
+      return '';
+    }
+  });
+  
+  // Check if user is eligible for birthday gift (within 12 months of premium membership start)
+  const isEligibleForBirthdayGift = () => {
+    try {
+      const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      if (!userData?.membershipType || userData.membershipType !== 'PREMIUM') {
+        return false;
+      }
+      
+      // Check if user has subscriptionPurchasedAt date
+      if (!userData.subscriptionPurchasedAt) {
+        return false;
+      }
+      
+      const startDate = new Date(userData.subscriptionPurchasedAt);
+      const now = new Date();
+      const twelveMonthsLater = new Date(startDate);
+      twelveMonthsLater.setMonth(twelveMonthsLater.getMonth() + 12);
+      
+      // Eligible if current date is within 12 months of premium membership start
+      return now <= twelveMonthsLater;
+    } catch (e) {
+      console.error('Error checking birthday gift eligibility:', e);
+      return false;
+    }
+  };
+  
+  const eligibleForBirthdayGift = isEligibleForBirthdayGift();
+  
+  // Order tracking state
+  const [selectedOrderId, setSelectedOrderId] = useState<string>('');
+  const [activeOrders, setActiveOrders] = useState<any[]>([]);
+  
+  // Get active orders for tracking
+  useEffect(() => {
+    const getActiveOrders = () => {
+      try {
+        const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        if (!userData?.email) {
+          setActiveOrders([]);
+          return;
+        }
+        
+        const userOrdersKey = `userOrders_${userData.email}`;
+        let storedOrders = localStorage.getItem(userOrdersKey);
+        
+        // If no orders exist, create test orders for UI testing
+        if (!storedOrders) {
+          const testOrder = {
+            id: 'test-order-1',
+            orderNumber: 'ORDER #999',
+            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            status: 'SHIPPED',
+            productName: 'NOIR',
+            productImage: '/assets/natural front.png',
+            total: 740,
+            items: 1,
+            trackingStage: 9 // Set to stage 9 (SHIPPED) for testing delivery estimate
+          };
+          
+          const deliveredOrder = {
+            id: 'test-order-2',
+            orderNumber: 'ORDER #888',
+            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            status: 'DELIVERED',
+            productName: 'NOIR',
+            productImage: '/assets/natural front.png',
+            total: 740,
+            items: 1,
+            trackingStage: 9 // All stages completed for delivered order
+          };
+          
+          const testOrdersData = {
+            activeOrders: [testOrder, deliveredOrder],
+            pastOrders: []
+          };
+          
+          localStorage.setItem(userOrdersKey, JSON.stringify(testOrdersData));
+          storedOrders = JSON.stringify(testOrdersData);
+        }
+        
+        if (storedOrders) {
+          const orders = JSON.parse(storedOrders);
+          const active = orders.activeOrders || [];
+          const past = orders.pastOrders || [];
+          
+          // Check if there's already a delivered order for testing
+          const hasDeliveredOrder = [...active, ...past].some((order: any) => 
+            order.id === 'test-order-2' || (order.status === 'DELIVERED' && order.orderNumber === 'ORDER #888')
+          );
+          
+          // If no delivered test order exists, add one
+          if (!hasDeliveredOrder) {
+            const deliveredOrder = {
+              id: 'test-order-2',
+              orderNumber: 'ORDER #888',
+              date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+              status: 'DELIVERED',
+              productName: 'NOIR',
+              productImage: '/assets/natural front.png',
+              total: 740,
+              items: 1,
+              trackingStage: 9 // All stages completed for delivered order
+            };
+            
+            // Add to activeOrders array
+            active.push(deliveredOrder);
+            
+            // Save back to localStorage
+            const updatedOrders = {
+              activeOrders: active,
+              pastOrders: past
+            };
+            localStorage.setItem(userOrdersKey, JSON.stringify(updatedOrders));
+          }
+          
+          // Include all orders (active + past, including DELIVERED)
+          const allOrders = [...active, ...past];
+          setActiveOrders(allOrders);
+          
+          // Auto-select first order if none selected
+          if (allOrders.length > 0 && !selectedOrderId) {
+            setSelectedOrderId(allOrders[0].id);
+          }
+        } else {
+          setActiveOrders([]);
+        }
+      } catch (e) {
+        console.error('Error loading active orders:', e);
+        setActiveOrders([]);
+      }
+    };
+    
+    getActiveOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
+  // Get current order's tracking stage
+  const getOrderTrackingStage = (orderId: string): number => {
+    if (!orderId) return 0;
+    const order = activeOrders.find((o: any) => o.id === orderId);
+    if (!order) return 0;
+    
+    // If order is DELIVERED, all stages are completed (stage 9)
+    if (order.status === 'DELIVERED') {
+      return 9;
+    }
+    
+    // Map order status to tracking stage (0-9)
+    const statusMap: { [key: string]: number } = {
+      'PLACED': 0, // confirmation
+      'CONFIRMED': 1, // sourcing
+      'PREPARING': 2, // constructing
+      'SHIPPED_TO_HUB': 3, // shipped to hub
+      'IN_TRANSIT': 4, // arrived at hub
+      'PROCESSING': 5, // prep
+      'CUSTOMIZING': 6, // customize
+      'FINALIZING': 7, // finalize
+      'PACKAGING': 8, // package
+      'SHIPPED': 9 // shipped
+    };
+    
+    // Default to stage based on status, or use custom trackingStage if available
+    if (order.trackingStage !== undefined) {
+      return Math.min(Math.max(0, order.trackingStage), 9);
+    }
+    
+    return statusMap[order.status] || 0;
+  };
+  
+  const currentTrackingStage = getOrderTrackingStage(selectedOrderId);
+  
+  // Helper function to format date as "FEB 21"
+  const formatDate = (date: Date): string => {
+    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    return `${month} ${day}`;
+  };
+  
+  // Helper function to format time as "9:07PM"
+  const formatTime = (date: Date): string => {
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    const minutesStr = minutes < 10 ? `0${minutes}` : minutes;
+    return `${hours}:${minutesStr}${ampm}`;
+  };
+  
+  // Helper function to add business days to a date
+  const addBusinessDays = (date: Date, businessDays: number): Date => {
+    const result = new Date(date);
+    let added = 0;
+    while (added < businessDays) {
+      result.setDate(result.getDate() + 1);
+      if (result.getDay() !== 0 && result.getDay() !== 6) {
+        added++;
+      }
+    }
+    return result;
+  };
+
+  // Helper function to get timestamp for a stage based on order date
+  const getStageTimestamp = (stageIndex: number, orderDate: string | undefined, hasCustomization: boolean = true): { date: string; time: string } | null => {
+    if (!orderDate) return null;
+    
+    try {
+      // Parse order date (could be MM-DD-YYYY or other formats)
+      let orderDateObj: Date;
+      if (orderDate.includes('-')) {
+        const [month, day, year] = orderDate.split('-').map(Number);
+        orderDateObj = new Date(year, month - 1, day);
+      } else {
+        orderDateObj = new Date(orderDate);
+      }
+      
+      let stageDate = new Date(orderDateObj);
+      
+      // Calculate cumulative days for each stage based on timeline
+      // Stage 0: ORDER CONFIRMED - same day (0 days)
+      // Stage 1: SOURCING + COLLECTING - same day (0 days)
+      // Stage 2: CONSTRUCTING UNIT - 3 days from sourcing
+      // Stage 3: SHIPPED TO USA - 4 weeks (28 days) from constructing
+      // Stage 4: ARRIVED AT HUB - 5 business days from shipped
+      // Stage 5: PREPPING + WASHING - 2 days from arrived
+      // Stage 6: CUSTOMIZING - 2 days from prepping (only if customization)
+      // Stage 7: FINALIZING - 10 days from customizing (or 0 if no customization)
+      // Stage 8: PACKAGING - 2 days from finalizing
+      // Stage 9: ORDER SHIPPED - 3 days from packaging
+      
+      if (stageIndex === 0 || stageIndex === 1) {
+        // Same day
+        stageDate = new Date(orderDateObj);
+      } else if (stageIndex === 2) {
+        // 3 days from sourcing
+        stageDate = new Date(orderDateObj);
+        stageDate.setDate(stageDate.getDate() + 3);
+      } else if (stageIndex === 3) {
+        // 4 weeks (28 days) from constructing
+        stageDate = new Date(orderDateObj);
+        stageDate.setDate(stageDate.getDate() + 3 + 28);
+      } else if (stageIndex === 4) {
+        // 5 business days from shipped
+        const shippedDate = new Date(orderDateObj);
+        shippedDate.setDate(shippedDate.getDate() + 3 + 28);
+        stageDate = addBusinessDays(shippedDate, 5);
+      } else if (stageIndex === 5) {
+        // 2 days from arrived
+        const shippedDate = new Date(orderDateObj);
+        shippedDate.setDate(shippedDate.getDate() + 3 + 28);
+        const arrivedDate = addBusinessDays(shippedDate, 5);
+        stageDate = new Date(arrivedDate);
+        stageDate.setDate(stageDate.getDate() + 2);
+      } else if (stageIndex === 6) {
+        // 2 days from prepping (only if customization)
+        if (!hasCustomization) {
+          return null; // Skip this stage
+        }
+        const shippedDate = new Date(orderDateObj);
+        shippedDate.setDate(shippedDate.getDate() + 3 + 28);
+        const arrivedDate = addBusinessDays(shippedDate, 5);
+        const preppingDate = new Date(arrivedDate);
+        preppingDate.setDate(preppingDate.getDate() + 2);
+        stageDate = new Date(preppingDate);
+        stageDate.setDate(stageDate.getDate() + 2);
+      } else if (stageIndex === 7) {
+        // 10 days from customizing (or 0 if no customization)
+        const shippedDate = new Date(orderDateObj);
+        shippedDate.setDate(shippedDate.getDate() + 3 + 28);
+        const arrivedDate = addBusinessDays(shippedDate, 5);
+        const preppingDate = new Date(arrivedDate);
+        preppingDate.setDate(preppingDate.getDate() + 2);
+        
+        if (hasCustomization) {
+          const customizingDate = new Date(preppingDate);
+          customizingDate.setDate(customizingDate.getDate() + 2);
+          stageDate = new Date(customizingDate);
+          stageDate.setDate(stageDate.getDate() + 10);
+        } else {
+          // No customization, finalizing happens immediately after prepping
+          stageDate = new Date(preppingDate);
+        }
+      } else if (stageIndex === 8) {
+        // 2 days from finalizing
+        const shippedDate = new Date(orderDateObj);
+        shippedDate.setDate(shippedDate.getDate() + 3 + 28);
+        const arrivedDate = addBusinessDays(shippedDate, 5);
+        const preppingDate = new Date(arrivedDate);
+        preppingDate.setDate(preppingDate.getDate() + 2);
+        
+        let finalizingDate: Date;
+        if (hasCustomization) {
+          const customizingDate = new Date(preppingDate);
+          customizingDate.setDate(customizingDate.getDate() + 2);
+          finalizingDate = new Date(customizingDate);
+          finalizingDate.setDate(finalizingDate.getDate() + 10);
+        } else {
+          finalizingDate = new Date(preppingDate);
+        }
+        
+        stageDate = new Date(finalizingDate);
+        stageDate.setDate(stageDate.getDate() + 2);
+      } else if (stageIndex === 9) {
+        // 3 days from packaging
+        const shippedDate = new Date(orderDateObj);
+        shippedDate.setDate(shippedDate.getDate() + 3 + 28);
+        const arrivedDate = addBusinessDays(shippedDate, 5);
+        const preppingDate = new Date(arrivedDate);
+        preppingDate.setDate(preppingDate.getDate() + 2);
+        
+        let finalizingDate: Date;
+        if (hasCustomization) {
+          const customizingDate = new Date(preppingDate);
+          customizingDate.setDate(customizingDate.getDate() + 2);
+          finalizingDate = new Date(customizingDate);
+          finalizingDate.setDate(finalizingDate.getDate() + 10);
+        } else {
+          finalizingDate = new Date(preppingDate);
+        }
+        
+        const packagingDate = new Date(finalizingDate);
+        packagingDate.setDate(packagingDate.getDate() + 2);
+        stageDate = new Date(packagingDate);
+        stageDate.setDate(stageDate.getDate() + 3);
+      }
+      
+      stageDate.setHours(9 + (stageIndex % 12), 7 + (stageIndex * 3) % 60); // Vary time slightly
+      
+      return {
+        date: formatDate(stageDate),
+        time: formatTime(stageDate)
+      };
+    } catch (e) {
+      return null;
+    }
+  };
+  
+  const trackingStages = [
+    { name: 'ORDER CONFIRMED', description: 'PROCESSING YOUR ORDER.' },
+    { name: 'SOURCING + COLLECTING', description: 'GATHERING RAW MATERIALS.' },
+    { name: 'CONSTRUCTING UNIT', description: 'WEFTING TRACKS + VENTILATING THE LACE.' },
+    { name: 'SHIPPED TO USA', description: 'HEADED TO FS HUB.' },
+    { name: 'ARRIVED AT HUB', description: 'PERFORMING QUALITY CHECK.' },
+    { name: 'PREPPING + WASHING', description: 'SANITIZING + DISINFECTING THE HAIR.' },
+    { name: 'CUSTOMIZING', description: 'COLORING, PLUCKING, BLEACHING & STYLING (DEPENDING ON WHAT ADD-ONS THEY SELECTED; IF NONE OF THESE APPLIES THIS STEP WILL BE SKIPPED ON THE MODAL).' },
+    { name: 'FINALIZING', description: 'CONFIRMING ORDER DETAILS.' },
+    { name: 'PACKAGING', description: 'PREPARING TO SHIP YOUR ORDER.' },
+    { name: 'ORDER SHIPPED', description: 'YOUR ORDER HAS BEEN SHIPPED.' }
+  ];
 
   // Listen for cart count changes
   useEffect(() => {
@@ -127,91 +510,68 @@ function ConciergePage() {
     }
   };
 
-  const handleSubmitSpecialRequest = () => {
-    if (!specialRequest.trim()) {
-      return;
-    }
-    
+
+  const handleSubmitFreeGift = () => {
     try {
+      // Save selection to localStorage (can be empty string to clear)
+      if (selectedFreeGift) {
+        localStorage.setItem('selectedFreeGift', selectedFreeGift);
+        
+        // Also save to adminFreeGifts for admin dashboard
       const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
-      const requests = JSON.parse(localStorage.getItem('adminSpecialRequests') || '[]');
-      const newRequest = {
+        const freeGifts = JSON.parse(localStorage.getItem('adminFreeGifts') || '[]');
+        const newGift = {
         id: Date.now().toString(),
         userId: userData.email || 'unknown',
         userName: `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'Unknown User',
-        request: specialRequest,
-        type: 'special_request',
+          giftType: selectedFreeGift,
+          type: 'free_gift',
         timestamp: new Date().toISOString(),
         status: 'new'
       };
-      requests.unshift(newRequest);
-      localStorage.setItem('adminSpecialRequests', JSON.stringify(requests));
-      
-      setSpecialRequest('');
-      setSuccessMessage('SPECIAL REQUEST SUBMITTED SUCCESSFULLY');
-      setShowSuccessModal(true);
+        freeGifts.unshift(newGift);
+        localStorage.setItem('adminFreeGifts', JSON.stringify(freeGifts));
+      } else {
+        // Clear selection
+        localStorage.removeItem('selectedFreeGift');
+      }
     } catch (e) {
-      console.error('Error saving special request:', e);
+      console.error('Error saving free gift request:', e);
     }
   };
-
-  const handleSubmitOrderChange = () => {
-    if (!orderChangeRequest.trim()) {
-      return;
-    }
-    
+  
+  const handleSubmitBirthdayGift = () => {
     try {
+      // Save selection to localStorage (can be empty string to clear)
+      if (selectedBirthdayGift) {
+        localStorage.setItem('selectedBirthdayGift', selectedBirthdayGift);
+        
+        // Also save to adminBirthdayGifts for admin dashboard
       const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
-      const requests = JSON.parse(localStorage.getItem('adminOrderChanges') || '[]');
-      const newRequest = {
+        const birthdayGifts = JSON.parse(localStorage.getItem('adminBirthdayGifts') || '[]');
+        const newGift = {
         id: Date.now().toString(),
         userId: userData.email || 'unknown',
         userName: `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'Unknown User',
-        request: orderChangeRequest,
-        type: 'order_change',
+          giftType: selectedBirthdayGift,
+          type: 'birthday_gift',
         timestamp: new Date().toISOString(),
         status: 'new'
       };
-      requests.unshift(newRequest);
-      localStorage.setItem('adminOrderChanges', JSON.stringify(requests));
-      
-      setOrderChangeRequest('');
-      setSuccessMessage('ORDER CHANGE REQUEST SUBMITTED SUCCESSFULLY');
-      setShowSuccessModal(true);
+        birthdayGifts.unshift(newGift);
+        localStorage.setItem('adminBirthdayGifts', JSON.stringify(birthdayGifts));
+      } else {
+        // Clear selection
+        localStorage.removeItem('selectedBirthdayGift');
+      }
     } catch (e) {
-      console.error('Error saving order change request:', e);
-    }
-  };
-
-  const handleSubmitBookingRequest = () => {
-    if (!bookingRequest.trim()) {
-      return;
-    }
-    
-    try {
-      const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
-      const bookings = JSON.parse(localStorage.getItem('adminPriorityBookings') || '[]');
-      const newBooking = {
-        id: Date.now().toString(),
-        userId: userData.email || 'unknown',
-        userName: `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'Unknown User',
-        request: bookingRequest,
-        type: 'priority_booking',
-        timestamp: new Date().toISOString(),
-        status: 'new'
-      };
-      bookings.unshift(newBooking);
-      localStorage.setItem('adminPriorityBookings', JSON.stringify(bookings));
-      
-      setBookingRequest('');
-      setSuccessMessage('PRIORITY BOOKING REQUEST SUBMITTED SUCCESSFULLY');
-      setShowSuccessModal(true);
-    } catch (e) {
-      console.error('Error saving booking request:', e);
+      console.error('Error saving birthday gift request:', e);
     }
   };
 
   return (
+    <>
+      <style>{pulsateStyle}</style>
     <div className="min-h-screen" style={{ position: 'relative' }}>
       {/* Marble Background */}
       <div 
@@ -318,18 +678,20 @@ function ConciergePage() {
               <div>
                 <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
-              <svg
-                width="17"
-                height="18"
-                viewBox="0 0 16 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="cursor-pointer"
-                onClick={handleMobileMenuToggle}
-                style={{ marginTop: '2px' }}
-              >
-                <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
-              </svg>
+              <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg
+                  width="17"
+                  height="18"
+                  viewBox="0 0 16 14"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="cursor-pointer"
+                  onClick={handleMobileMenuToggle}
+                  style={{ marginTop: '2px' }}
+                >
+                  <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
+                </svg>
+              </div>
             </div>
           </div>
 
@@ -604,7 +966,7 @@ function ConciergePage() {
                     backgroundColor: 'rgba(255, 255, 255, 0.6)'
                   }}
                 >
-                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
+                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '22px' }}>
                     <h2
                       style={{
                         fontFamily: '"Futura PT Medium"',
@@ -618,22 +980,151 @@ function ConciergePage() {
                       PRIORITY MESSAGES
                     </h2>
                   </div>
+                  
+                  {/* IS THIS ORDER RELATED? Prompt */}
+                  <div style={{ marginBottom: '12px' }}>
                   <p
                     style={{
-                      fontFamily: '"Futura PT Medium"',
-                      color: '#EB1C24',
+                        fontFamily: '"Futura PT Book"',
+                        color: '#000000',
                       fontSize: '10px',
-                      margin: '0 0 16px 0',
+                        margin: '0 0 8px 0',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      IS THIS ORDER RELATED?
+                    </p>
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                      <button
+                        onClick={() => setIsOrderRelated('yes')}
+                        style={{
+                          flex: 1,
+                          height: '32px',
+                          border: isOrderRelated === 'yes' ? '1.3px solid #EB1C24' : '1.3px solid #000000',
+                          backgroundColor: '#FFFFFF',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: isOrderRelated === 'yes' ? '#EB1C24' : '#000000',
                       textTransform: 'uppercase',
-                      fontWeight: '500'
-                    }}
-                  >
-                    SEND PRIORITY MESSAGES TO ADMIN
-                  </p>
+                          cursor: 'pointer',
+                          borderRadius: '0'
+                        }}
+                      >
+                        YES
+                      </button>
+                      <button
+                        onClick={() => setIsOrderRelated('no')}
+                        style={{
+                          flex: 1,
+                          height: '32px',
+                          border: isOrderRelated === 'no' ? '1.3px solid #EB1C24' : '1.3px solid #000000',
+                          backgroundColor: '#FFFFFF',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: isOrderRelated === 'no' ? '#EB1C24' : '#000000',
+                          textTransform: 'uppercase',
+                          cursor: 'pointer',
+                          borderRadius: '0'
+                        }}
+                      >
+                        NO
+                      </button>
+                    </div>
+                    
+                    {/* Order Selection - Show when YES is selected */}
+                    {isOrderRelated === 'yes' && (
+                      <div style={{ marginTop: '12px' }}>
+                        <select
+                          value={relatedOrderId}
+                          onChange={(e) => setRelatedOrderId(e.target.value)}
+                          style={{
+                            width: '100%',
+                            height: '36px',
+                            padding: '8px',
+                            paddingLeft: '12px',
+                            border: '1.3px solid #000000',
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '11px',
+                            backgroundColor: '#FFFFFF',
+                            boxSizing: 'border-box',
+                            textTransform: 'uppercase',
+                            cursor: 'pointer',
+                            borderRadius: '0',
+                            appearance: 'none',
+                            WebkitAppearance: 'none',
+                            MozAppearance: 'none',
+                            backgroundImage: 'url("/assets/dropdown.svg")',
+                            backgroundRepeat: 'no-repeat',
+                            backgroundPosition: 'right 12px center',
+                            backgroundSize: '7.2px',
+                            paddingRight: '28px'
+                          }}
+                        >
+                          <option value="">SELECT AN ORDER</option>
+                          {activeOrders.map((order: any) => (
+                            <option key={order.id} value={order.id}>
+                              {order.orderNumber}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* IS THIS URGENT? Prompt */}
+                  <div style={{ marginBottom: '20px' }}>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        color: '#000000',
+                        fontSize: '10px',
+                        margin: '0 0 8px 0',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      IS THIS URGENT?
+                    </p>
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                      <button
+                        onClick={() => setIsUrgent('yes')}
+                        style={{
+                          flex: 1,
+                          height: '32px',
+                          border: isUrgent === 'yes' ? '1.3px solid #EB1C24' : '1.3px solid #000000',
+                          backgroundColor: '#FFFFFF',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: isUrgent === 'yes' ? '#EB1C24' : '#000000',
+                          textTransform: 'uppercase',
+                          cursor: 'pointer',
+                          borderRadius: '0'
+                        }}
+                      >
+                        YES
+                      </button>
+                      <button
+                        onClick={() => setIsUrgent('no')}
+                        style={{
+                          flex: 1,
+                          height: '32px',
+                          border: isUrgent === 'no' ? '1.3px solid #EB1C24' : '1.3px solid #000000',
+                          backgroundColor: '#FFFFFF',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: isUrgent === 'no' ? '#EB1C24' : '#000000',
+                          textTransform: 'uppercase',
+                          cursor: 'pointer',
+                          borderRadius: '0'
+                        }}
+                      >
+                        NO
+                      </button>
+                    </div>
+                  </div>
+                  
                   <textarea
                     value={priorityMessage}
                     onChange={(e) => setPriorityMessage(e.target.value.toUpperCase())}
-                    placeholder="TYPE YOUR PRIORITY MESSAGE HERE..."
                     rows={6}
                     style={{
                       width: '100%',
@@ -644,14 +1135,14 @@ function ConciergePage() {
                       resize: 'vertical',
                       backgroundColor: '#FFFFFF',
                       boxSizing: 'border-box',
-                      textTransform: 'uppercase'
+                      textTransform: 'uppercase',
+                      borderRadius: '0'
                     }}
                   />
                 </div>
                 <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
                   <button
                     onClick={handleSubmitPriorityMessage}
-                    disabled={!priorityMessage.trim()}
                     className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                     style={{
                       borderWidth: '1.3px',
@@ -665,7 +1156,7 @@ function ConciergePage() {
                   </button>
                 </div>
 
-                {/* Special Requests / Order Changes Section */}
+                {/* Order Tracking Section */}
                 <div
                   className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
                   style={{
@@ -688,148 +1179,509 @@ function ConciergePage() {
                         textTransform: 'uppercase'
                       }}
                     >
-                      SPECIAL REQUESTS
+                      ORDER TRACKING
                     </h2>
                   </div>
-                  <p
-                    style={{
-                      fontFamily: '"Futura PT Medium"',
-                      color: '#EB1C24',
-                      fontSize: '10px',
-                      margin: '0 0 16px 0',
-                      textTransform: 'uppercase',
-                      fontWeight: '500'
-                    }}
-                  >
-                    SUBMIT SPECIAL REQUESTS OR ORDER CHANGES
-                  </p>
-                  <textarea
-                    value={specialRequest}
-                    onChange={(e) => setSpecialRequest(e.target.value.toUpperCase())}
-                    placeholder="DESCRIBE YOUR SPECIAL REQUEST..."
-                    rows={4}
-                    style={{
-                      width: '100%',
-                      padding: '12px',
-                      border: '1.3px solid #000000',
-                      fontFamily: '"Futura PT Book"',
+                  {(activeOrders.length > 0) ? (
+                    <>
+                      <select
+                        value={selectedOrderId}
+                        onChange={(e) => setSelectedOrderId(e.target.value)}
+                        style={{
+                          width: '100%',
+                          height: '36px',
+                          padding: '8px',
+                          paddingLeft: '12px',
+                          border: '1.3px solid #000000',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '11px',
+                          backgroundColor: '#FFFFFF',
+                          boxSizing: 'border-box',
+                          marginTop: '10px',
+                          marginBottom: selectedOrderId ? '16px' : '10px',
+                          textTransform: 'uppercase',
+                          cursor: 'pointer',
+                          borderRadius: '0',
+                          appearance: 'none',
+                          WebkitAppearance: 'none',
+                          MozAppearance: 'none',
+                          backgroundImage: 'url("/assets/dropdown.svg")',
+                          backgroundRepeat: 'no-repeat',
+                          backgroundPosition: 'right 12px center',
+                          backgroundSize: '7.2px',
+                          paddingRight: '28px'
+                        }}
+                      >
+                        <option value="">SELECT AN ORDER</option>
+                        {activeOrders.map((order: any) => (
+                          <option key={order.id} value={order.id}>
+                            {order.orderNumber}
+                          </option>
+                        ))}
+                      </select>
+                      
+                      {/* Tracking Stages - Show when order is selected */}
+                      {selectedOrderId && (
+                        <div style={{ marginTop: '16px' }}>
+                          {/* Order Number or Delivery Estimate Display */}
+                          {currentTrackingStage === 9 ? (
+                            // Show delivery estimate when status is "shipped" or "delivered"
+                            (() => {
+                              const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
+                              
+                              // Calculate delivery date based on order date and processing time
+                              const calculateDeliveryDate = () => {
+                                if (!selectedOrder?.date) {
+                                  // Fallback: 5-7 business days from now
+                                  const today = new Date();
+                                  let deliveryDate = new Date(today);
+                                  deliveryDate.setDate(today.getDate() + 5);
+                                  while (deliveryDate.getDay() === 0 || deliveryDate.getDay() === 6) {
+                                    deliveryDate.setDate(deliveryDate.getDate() + 1);
+                                  }
+                                  return deliveryDate;
+                                }
+                                
+                                try {
+                                  // Parse order date
+                                  let orderDate: Date;
+                                  if (selectedOrder.date.includes('-')) {
+                                    const [month, day, year] = selectedOrder.date.split('-').map(Number);
+                                    orderDate = new Date(year, month - 1, day);
+                                  } else {
+                                    orderDate = new Date(selectedOrder.date);
+                                  }
+                                  
+                                  // Determine weeks based on processing time
+                                  // Base timeline: 8 weeks with customization, 6 weeks without
+                                  const processingTime = selectedOrder.processingTime || '6-8 WEEKS';
+                                  let maxWeeks = 8; // Default: with customization
+                                  
+                                  if (processingTime.includes('4')) {
+                                    // Rush processing: 4-6 weeks (no customization)
+                                    maxWeeks = 6;
+                                  } else if (processingTime.includes('10')) {
+                                    // Customized units: up to 10 weeks
+                                    maxWeeks = 10;
+                                  } else {
+                                    // Default 6-8 weeks: assume customization (8 weeks)
+                                    maxWeeks = 8;
+                                  }
+                                  
+                                  // Calculate max delivery date
+                                  const deliveryDate = new Date(orderDate);
+                                  deliveryDate.setDate(deliveryDate.getDate() + (maxWeeks * 7));
+                                  
+                                  // Ensure it's a weekday
+                                  while (deliveryDate.getDay() === 0 || deliveryDate.getDay() === 6) {
+                                    deliveryDate.setDate(deliveryDate.getDate() + 1);
+                                  }
+                                  
+                                  return deliveryDate;
+                                } catch (e) {
+                                  // Fallback
+                                  const today = new Date();
+                                  let deliveryDate = new Date(today);
+                                  deliveryDate.setDate(today.getDate() + 5);
+                                  while (deliveryDate.getDay() === 0 || deliveryDate.getDay() === 6) {
+                                    deliveryDate.setDate(deliveryDate.getDate() + 1);
+                                  }
+                                  return deliveryDate;
+                                }
+                              };
+                              
+                              const deliveryDate = calculateDeliveryDate();
+                              const weekdays = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+                              const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                              
+                              const weekday = weekdays[deliveryDate.getDay()];
+                              const month = months[deliveryDate.getMonth()];
+                              const day = deliveryDate.getDate();
+                              
+                              return (
+                                <div style={{ textAlign: 'center', marginBottom: '16px', marginTop: '-10px' }}>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Covered by Your Grace", cursive',
+                                      color: '#909090',
+                                      fontSize: '15px',
+                                      margin: '0 0 4px 0',
+                                      textTransform: 'none'
+                                    }}
+                                  >
+                                    DELIVERY ESTIMATE
+                                  </p>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Medium"',
+                                      color: '#000000',
+                                      fontSize: '12px',
+                                      margin: '0 0 2px 0',
+                                      textTransform: 'uppercase',
+                                      fontWeight: '500'
+                                    }}
+                                  >
+                                    {weekday}
+                                  </p>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Demi"',
+                                      color: '#909090',
+                                      fontSize: '13px',
+                                      margin: '0 0 2px 0',
+                                      textTransform: 'uppercase'
+                                    }}
+                                  >
+                                    {month}
+                                  </p>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Book"',
+                                      color: '#EB1C24',
+                                      fontSize: '23px',
+                                      margin: '0',
+                                      textTransform: 'uppercase'
+                                    }}
+                                  >
+                                    {day}
+                                  </p>
+                                </div>
+                              );
+                            })()
+                          ) : (
+                            // Show "ESTIMATED DELIVERY" with date or "DELIVERED" for delivered orders
+                            (() => {
+                              const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
+                              const isDelivered = selectedOrder?.status === 'DELIVERED';
+                              
+                              if (isDelivered) {
+                                return (
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Book"',
+                                      color: '#000000',
                       fontSize: '11px',
-                      resize: 'vertical',
-                      backgroundColor: '#FFFFFF',
-                      boxSizing: 'border-box',
-                      marginBottom: '16px',
+                                      margin: '0 0 16px 0',
                       textTransform: 'uppercase'
                     }}
-                  />
-                  <textarea
-                    value={orderChangeRequest}
-                    onChange={(e) => setOrderChangeRequest(e.target.value.toUpperCase())}
-                    placeholder="DESCRIBE YOUR ORDER CHANGE REQUEST..."
-                    rows={4}
+                                  >
+                                    DELIVERED
+                                  </p>
+                                );
+                              }
+                              
+                              // Calculate estimated delivery date based on order date and processing time
+                              const calculateEstimatedDelivery = () => {
+                                if (!selectedOrder?.date) return null;
+                                
+                                try {
+                                  // Parse order date (could be MM-DD-YYYY or other formats)
+                                  let orderDate: Date;
+                                  if (selectedOrder.date.includes('-')) {
+                                    const [month, day, year] = selectedOrder.date.split('-').map(Number);
+                                    orderDate = new Date(year, month - 1, day);
+                                  } else {
+                                    orderDate = new Date(selectedOrder.date);
+                                  }
+                                  
+                                  // Determine weeks based on processing time
+                                  // Base timeline: 8 weeks with customization, 6 weeks without
+                                  const processingTime = selectedOrder.processingTime || '6-8 WEEKS';
+                                  let maxWeeks = 8; // Default: with customization
+                                  
+                                  if (processingTime.includes('4')) {
+                                    // Rush processing: 4-6 weeks (no customization)
+                                    maxWeeks = 6;
+                                  } else if (processingTime.includes('10')) {
+                                    // Customized units: up to 10 weeks
+                                    maxWeeks = 10;
+                                  } else {
+                                    // Default 6-8 weeks: assume customization (8 weeks)
+                                    maxWeeks = 8;
+                                  }
+                                  
+                                  // Calculate max delivery date
+                                  const deliveryDate = new Date(orderDate);
+                                  deliveryDate.setDate(deliveryDate.getDate() + (maxWeeks * 7));
+                                  
+                                  // Ensure it's a weekday (Monday-Friday)
+                                  while (deliveryDate.getDay() === 0 || deliveryDate.getDay() === 6) {
+                                    deliveryDate.setDate(deliveryDate.getDate() + 1);
+                                  }
+                                  
+                                  const weekdays = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+                                  const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                                  
+                                  return {
+                                    weekday: weekdays[deliveryDate.getDay()],
+                                    month: months[deliveryDate.getMonth()],
+                                    day: deliveryDate.getDate()
+                                  };
+                                } catch (e) {
+                                  return null;
+                                }
+                              };
+                              
+                              const deliveryInfo = calculateEstimatedDelivery();
+                              
+                              return (
+                                <div style={{ marginBottom: '16px', marginTop: '-10px', textAlign: 'center' }}>
+                                  <p
                     style={{
-                      width: '100%',
+                                      fontFamily: '"Covered by Your Grace", cursive',
+                                      color: '#909090',
+                                      fontSize: '15px',
+                                      margin: '0 0 4px 0',
+                                      textTransform: 'none'
+                                    }}
+                                  >
+                                    DELIVERY ESTIMATE
+                                  </p>
+                                  {deliveryInfo && (
+                                    <>
+                                      <p
+                                        style={{
+                                          fontFamily: '"Futura PT Medium"',
+                                          color: '#000000',
+                                          fontSize: '14px',
+                                          margin: '0 0 2px 0',
+                                          textTransform: 'uppercase',
+                                          fontWeight: '500'
+                                        }}
+                                      >
+                                        {deliveryInfo.weekday}
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontFamily: '"Futura PT Demi"',
+                                          color: '#909090',
+                                          fontSize: '9px',
+                                          margin: '0 0 2px 0',
+                                          textTransform: 'uppercase'
+                                        }}
+                                      >
+                                        {deliveryInfo.month}
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontFamily: '"Futura PT Book"',
+                                          color: '#EB1C24',
+                                          fontSize: '24px',
+                                          margin: '0',
+                                          textTransform: 'uppercase'
+                                        }}
+                                      >
+                                        {deliveryInfo.day}
+                                      </p>
+                                    </>
+                                  )}
+                                </div>
+                              );
+                            })()
+                          )}
+                          
+                          {/* Tracking Stages */}
+                          <div style={{ position: 'relative', paddingLeft: '12px' }}>
+                            {(() => {
+                              const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
+                              const processingTime = selectedOrder?.processingTime || '6-8 WEEKS';
+                              const hasCustomization = !processingTime.includes('4'); // Rush (4-6 weeks) = no customization
+                              
+                              // Filter out customizing stage (index 6) if no customization
+                              const filteredStages = trackingStages.map((stage, originalIndex) => ({ stage, originalIndex }))
+                                .filter(({ originalIndex }) => {
+                                  if (originalIndex === 6) { // CUSTOMIZING stage
+                                    return hasCustomization;
+                                  }
+                                  return true;
+                                });
+                              
+                              // Adjust currentTrackingStage to account for filtered stages
+                              let adjustedCurrentStage = currentTrackingStage;
+                              if (!hasCustomization && currentTrackingStage > 6) {
+                                adjustedCurrentStage = currentTrackingStage - 1;
+                              } else if (!hasCustomization && currentTrackingStage === 6) {
+                                adjustedCurrentStage = 5; // Move to prepping stage
+                              }
+                              
+                              return filteredStages.map(({ stage, originalIndex: index }) => {
+                                // Adjust stage indices for display
+                                const displayIndex = filteredStages.findIndex(s => s.originalIndex === index);
+                                const isCompleted = displayIndex < adjustedCurrentStage;
+                                const isCurrent = displayIndex === adjustedCurrentStage;
+                                const isUpcoming = displayIndex > adjustedCurrentStage;
+
+                              return (
+                                <div key={index} style={{ position: 'relative', marginBottom: displayIndex < filteredStages.length - 1 ? '0' : '0' }}>
+                                  {/* Connector Line (before each stage except first) */}
+                                  {displayIndex > 0 && (
+                                    <div
+                                      style={{
+                                        position: 'absolute',
+                                        left: '12px',
+                                        top: '-18px',
+                                        width: '2px',
+                                        height: '12px',
+                                        backgroundColor: isCompleted ? '#EB1C24' : '#E0E0E0',
+                                        zIndex: 0
+                                      }}
+                                    />
+                                  )}
+
+                                  <div
+                    style={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: '12px',
                       padding: '12px',
-                      border: '1.3px solid #000000',
-                      fontFamily: '"Futura PT Book"',
-                      fontSize: '11px',
-                      resize: 'vertical',
-                      backgroundColor: '#FFFFFF',
-                      boxSizing: 'border-box',
-                      textTransform: 'uppercase'
-                    }}
-                  />
-                </div>
-                <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px', display: 'flex', gap: '12px', transform: 'translateY(-2px)' }}>
-                  <button
-                    onClick={handleSubmitSpecialRequest}
-                    disabled={!specialRequest.trim()}
-                    className="border border-black font-futura flex-1 text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                    style={{
-                      borderWidth: '1.3px',
-                      color: '#EB1C24',
-                      fontFamily: '"Futura PT Medium"',
-                      backgroundColor: '#FFFFFF'
-                    }}
-                    type="button"
-                  >
-                    SUBMIT REQUEST
-                  </button>
-                  <button
-                    onClick={handleSubmitOrderChange}
-                    disabled={!orderChangeRequest.trim()}
-                    className="border border-black font-futura flex-1 text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                    style={{
-                      borderWidth: '1.3px',
-                      color: '#EB1C24',
-                      fontFamily: '"Futura PT Medium"',
-                      backgroundColor: '#FFFFFF'
-                    }}
-                    type="button"
-                  >
-                    SUBMIT CHANGE
-                  </button>
+                                      border: isCurrent ? '1.3px solid #EB1C24' : '1.3px solid #000000',
+                                      backgroundColor: 'transparent',
+                                      marginTop: displayIndex > 0 ? '8px' : '0',
+                                      marginBottom: '20px',
+                                      position: 'relative',
+                                      zIndex: 1
+                                    }}
+                                  >
+                                    {/* Stage Indicator */}
+                                    <div
+                                      style={{
+                                        width: '24px',
+                                        height: '24px',
+                                        borderRadius: '50%',
+                                        backgroundColor: isCompleted || isCurrent
+                                          ? '#FFFFFF'
+                                          : '#E0E0E0',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        flexShrink: 0,
+                                        border: isCompleted || isCurrent ? '1px solid #000000' : 'none'
+                                      }}
+                                    >
+                                      {isCompleted ? (
+                                        <img
+                                          src="/assets/premium-check.svg"
+                                          alt="Completed"
+                                          style={{ width: '11.7px', height: '11.7px' }}
+                                        />
+                                      ) : isCurrent ? (
+                                        <span 
+                                          style={{ 
+                                            color: '#EB1C24', 
+                                            fontSize: '10px', 
+                                            fontWeight: 'bold',
+                                            animation: 'pulsate 1s ease-in-out infinite'
+                                          }}
+                                        >
+                                          ●
+                                        </span>
+                                      ) : null}
                 </div>
 
-                {/* Priority Booking Section */}
-                <div
-                  className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
-                  style={{
-                    borderWidth: '1.3px',
-                    paddingTop: '20px',
-                    paddingLeft: '20px',
-                    paddingRight: '20px',
-                    paddingBottom: '16px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.6)'
-                  }}
-                >
-                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
-                    <h2
+                                    {/* Stage Label */}
+                                    <div style={{ flex: 1 }}>
+                                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <p
+                                          style={{
+                                            fontFamily: isCurrent || isCompleted ? '"Futura PT Medium"' : '"Futura PT Book"',
+                                            color: isCompleted || isCurrent ? '#EB1C24' : '#909090',
+                                            fontSize: '11px',
+                                            margin: '0',
+                                            textTransform: 'uppercase',
+                                            fontWeight: isCurrent || isCompleted ? '500' : '400'
+                                          }}
+                                        >
+                                          {stage.name}
+                                        </p>
+                                        {(isCurrent || isCompleted) && (() => {
+                                          const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
+                                          const processingTime = selectedOrder?.processingTime || '6-8 WEEKS';
+                                          const hasCustomization = !processingTime.includes('4'); // Rush (4-6 weeks) = no customization
+                                          const timestamp = getStageTimestamp(index, selectedOrder?.date, hasCustomization);
+                                          return timestamp ? (
+                                            <p
+                                              style={{
+                      fontFamily: '"Futura PT Book"',
+                                                color: '#000000',
+                                                fontSize: '9px',
+                                                margin: '0',
+                                                textTransform: 'uppercase',
+                                                marginLeft: '12px'
+                                              }}
+                                            >
+                                              {timestamp.date}
+                                            </p>
+                                          ) : null;
+                                        })()}
+                                      </div>
+                                      {(isCurrent || isCompleted) && (
+                                        <p
+                                          style={{
+                          fontFamily: '"Futura PT Book"',
+                                            color: '#909090',
+                                            fontSize: '9px',
+                                            margin: '4px 0 0 0',
+                                            textTransform: 'uppercase',
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'flex-start'
+                                          }}
+                                        >
+                                          <span>{stage.description}</span>
+                                          {(() => {
+                                            const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
+                                            const processingTime = selectedOrder?.processingTime || '6-8 WEEKS';
+                                            const hasCustomization = !processingTime.includes('4'); // Rush (4-6 weeks) = no customization
+                                            const timestamp = getStageTimestamp(index, selectedOrder?.date, hasCustomization);
+                                            return timestamp ? (
+                                              <span
+                                                style={{
+                                                  color: '#EB1C24',
+                                                  marginLeft: '12px',
+                                                  whiteSpace: 'nowrap'
+                                                }}
+                                              >
+                                                {timestamp.time}
+                                              </span>
+                                            ) : null;
+                                          })()}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                              });
+                            })()}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <p
                       style={{
-                        fontFamily: '"Futura PT Medium"',
-                        color: '#EB1C24',
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        margin: '0',
-                        textTransform: 'uppercase'
+                        fontFamily: '"Futura PT Book"',
+                        color: '#909090',
+                      fontSize: '11px',
+                        margin: '0 0 16px 0',
+                        textTransform: 'uppercase',
+                        textAlign: 'center',
+                        padding: '12px'
                       }}
                     >
-                      PRIORITY BOOKING
-                    </h2>
-                  </div>
-                  <p
-                    style={{
-                      fontFamily: '"Futura PT Medium"',
-                      color: '#EB1C24',
-                      fontSize: '10px',
-                      margin: '0 0 16px 0',
-                      textTransform: 'uppercase',
-                      fontWeight: '500'
-                    }}
-                  >
-                    REQUEST PRIORITY BOOKING APPOINTMENT
-                  </p>
-                  <textarea
-                    value={bookingRequest}
-                    onChange={(e) => setBookingRequest(e.target.value.toUpperCase())}
-                    placeholder="DESCRIBE YOUR BOOKING REQUEST, PREFERRED DATES, AND ANY SPECIAL REQUIREMENTS..."
-                    rows={6}
-                    style={{
-                      width: '100%',
-                      padding: '12px',
-                      border: '1.3px solid #000000',
-                      fontFamily: '"Futura PT Book"',
-                      fontSize: '11px',
-                      resize: 'vertical',
-                      backgroundColor: '#FFFFFF',
-                      boxSizing: 'border-box',
-                      textTransform: 'uppercase'
-                    }}
-                  />
+                      NO ACTIVE ORDERS TO TRACK.
+                    </p>
+                  )}
                 </div>
-                <div className="px-0 md:px-0" style={{ marginTop: '2px', transform: 'translateY(-2px)' }}>
+                <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
                   <button
-                    onClick={handleSubmitBookingRequest}
-                    disabled={!bookingRequest.trim()}
+                    onClick={() => {
+                      // Button action - could navigate or trigger tracking
+                      if (!selectedOrderId) {
+                        // If no order selected, focus on select
+                        return;
+                      }
+                    }}
                     className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                     style={{
                       borderWidth: '1.3px',
@@ -839,7 +1691,275 @@ function ConciergePage() {
                     }}
                     type="button"
                   >
-                    SUBMIT BOOKING REQUEST
+                    TRACK ORDER
+                  </button>
+                </div>
+
+                {/* Free Gift Section */}
+                <div
+                  className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
+                  style={{
+                    borderWidth: '1.3px',
+                    paddingTop: '20px',
+                    paddingLeft: '20px',
+                    paddingRight: '20px',
+                    paddingBottom: '7px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.6)'
+                  }}
+                >
+                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '22px' }}>
+                    <h2
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        color: '#EB1C24',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        margin: '0',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      GIFT WITH PURCHASE
+                    </h2>
+                  </div>
+                  
+                  {/* Gift Selection Options */}
+                  <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+                    {/* Melt Band Option */}
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <div
+                        onClick={() => setSelectedFreeGift(selectedFreeGift === 'melt-band' ? '' : 'melt-band')}
+                        style={{
+                          border: selectedFreeGift === 'melt-band' ? '1.3px solid #EB1C24' : '1.3px solid #000000',
+                          padding: '12px',
+                          cursor: 'pointer',
+                      backgroundColor: '#FFFFFF',
+                          textAlign: 'center',
+                          marginBottom: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: 'calc(100% - 20px)',
+                          height: '144px'
+                        }}
+                      >
+                        <img
+                          src="/assets/melt-band.png"
+                          alt="Melt Band"
+                          style={{
+                            maxWidth: '78px',
+                            maxHeight: '118px',
+                            width: 'auto',
+                            height: 'auto',
+                            objectFit: 'contain'
+                          }}
+                        />
+                      </div>
+                      <p
+                        style={{
+                          fontFamily: selectedFreeGift === 'melt-band' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                          color: selectedFreeGift === 'melt-band' ? '#EB1C24' : '#000000',
+                          fontSize: '10px',
+                          margin: '0',
+                          textAlign: 'center',
+                      textTransform: 'uppercase'
+                        }}
+                      >
+                        MELT BAND
+                      </p>
+                    </div>
+                    
+                    {/* Wig Brush Option */}
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <div
+                        onClick={() => setSelectedFreeGift(selectedFreeGift === 'wig-brush' ? '' : 'wig-brush')}
+                        style={{
+                          border: selectedFreeGift === 'wig-brush' ? '1.3px solid #EB1C24' : '1.3px solid #000000',
+                          padding: '12px',
+                          cursor: 'pointer',
+                          backgroundColor: '#FFFFFF',
+                          textAlign: 'center',
+                          marginBottom: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: 'calc(100% - 20px)',
+                          height: '144px'
+                        }}
+                      >
+                        <img
+                          src="/assets/wig-brush.png"
+                          alt="Wig Brush"
+                          style={{
+                            maxWidth: '42px',
+                            maxHeight: '126px',
+                            width: 'auto',
+                            height: 'auto',
+                            objectFit: 'contain'
+                    }}
+                  />
+                </div>
+                      <p
+                    style={{
+                          fontFamily: selectedFreeGift === 'wig-brush' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                          color: selectedFreeGift === 'wig-brush' ? '#EB1C24' : '#000000',
+                          fontSize: '10px',
+                          margin: '0',
+                          textAlign: 'center',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        WIG BRUSH
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
+                  <button
+                    onClick={handleSubmitFreeGift}
+                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                    style={{
+                      borderWidth: '1.3px',
+                      color: '#EB1C24',
+                      fontFamily: '"Futura PT Medium"',
+                      backgroundColor: '#FFFFFF'
+                    }}
+                    type="button"
+                  >
+                    SAVE SELECTION
+                  </button>
+                </div>
+
+                {/* Birthday Gift Section */}
+                <div
+                  className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
+                  style={{
+                    borderWidth: '1.3px',
+                    paddingTop: '20px',
+                    paddingLeft: '20px',
+                    paddingRight: '20px',
+                    paddingBottom: '7px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.6)'
+                  }}
+                >
+                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '22px' }}>
+                    <h2
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        color: '#EB1C24',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        margin: '0',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      BIRTHDAY GIFT
+                    </h2>
+                  </div>
+                  
+                  {/* Birthday Gift Selection Options */}
+                  <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+                    {/* 200 Loyalty Points Option */}
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <div
+                        onClick={() => setSelectedBirthdayGift(selectedBirthdayGift === 'points' ? '' : 'points')}
+                        style={{
+                          border: selectedBirthdayGift === 'points' ? '1.3px solid #EB1C24' : '1.3px solid #000000',
+                          padding: '12px',
+                          cursor: 'pointer',
+                          backgroundColor: '#FFFFFF',
+                          textAlign: 'center',
+                          marginBottom: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: 'calc(100% - 20px)',
+                          height: '144px'
+                        }}
+                      >
+                        <img
+                          src="/assets/gift-card asset.png"
+                          alt="200 Loyalty Points"
+                          style={{
+                            maxWidth: '130px',
+                            maxHeight: '194px',
+                            width: 'auto',
+                            height: 'auto',
+                            objectFit: 'contain'
+                          }}
+                        />
+                  </div>
+                  <p
+                    style={{
+                          fontFamily: selectedBirthdayGift === 'points' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                          color: selectedBirthdayGift === 'points' ? '#EB1C24' : '#000000',
+                      fontSize: '10px',
+                          margin: '0',
+                          textAlign: 'center',
+                      textTransform: 'uppercase'
+                        }}
+                      >
+                        200 LOYALTY POINTS
+                      </p>
+                    </div>
+                    
+                    {/* $20 Gift Card Option */}
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <div
+                        onClick={() => setSelectedBirthdayGift(selectedBirthdayGift === 'gift-card' ? '' : 'gift-card')}
+                    style={{
+                          border: selectedBirthdayGift === 'gift-card' ? '1.3px solid #EB1C24' : '1.3px solid #000000',
+                      padding: '12px',
+                          cursor: 'pointer',
+                      backgroundColor: '#FFFFFF',
+                          textAlign: 'center',
+                          marginBottom: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: 'calc(100% - 20px)',
+                          height: '144px'
+                        }}
+                      >
+                        <img
+                          src="/assets/gift-card asset.png"
+                          alt="$20 Gift Card"
+                          style={{
+                            maxWidth: '130px',
+                            maxHeight: '194px',
+                            width: 'auto',
+                            height: 'auto',
+                            objectFit: 'contain'
+                          }}
+                        />
+                      </div>
+                      <p
+                        style={{
+                          fontFamily: selectedBirthdayGift === 'gift-card' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                          color: selectedBirthdayGift === 'gift-card' ? '#EB1C24' : '#000000',
+                          fontSize: '10px',
+                          margin: '0',
+                          textAlign: 'center',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        $20 GIFT CARD
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="px-0 md:px-0" style={{ marginTop: '2px', transform: 'translateY(-2px)' }}>
+                  <button
+                    onClick={handleSubmitBirthdayGift}
+                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                    style={{
+                      borderWidth: '1.3px',
+                      color: '#EB1C24',
+                      fontFamily: '"Futura PT Medium"',
+                      backgroundColor: '#FFFFFF'
+                    }}
+                    type="button"
+                  >
+                    SAVE SELECTION
                   </button>
                 </div>
               </div>
@@ -859,7 +1979,9 @@ function ConciergePage() {
         cancelText=""
         messageTextTransform="uppercase"
       />
+
     </div>
+    </>
   );
 }
 

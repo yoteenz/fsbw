@@ -358,7 +358,9 @@ function CapSizeSelection() {
     const isOnCustomizeRoute = pathname.includes('/noir/customize') ||
                                pathname.includes('/blanco/customize') ||
                                pathname.includes('/soft-wave/customize') ||
-                               pathname.includes('/soft-curl/customize');
+                               pathname.includes('/soft-curl/customize') ||
+                               pathname.includes('/ocean-curl/customize') ||
+                               pathname.includes('/beach-wave/customize');
     
     // Calculate price for the selected cap size
     // Use the same logic as getSelectedPrice() but with the capSizeId parameter
@@ -775,18 +777,20 @@ function CapSizeSelection() {
             <div>
               <DynamicCartIcon count={cartCount} width={22} height={19} />
             </div>
-            <svg
-              width="17"
-              height="18"
-              viewBox="0 0 16 14"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="cursor-pointer"
-              onClick={handleMobileMenuToggle}
-              style={{ marginTop: '2px' }}
-            >
-              <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
-            </svg>
+            <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg
+                width="17"
+                height="18"
+                viewBox="0 0 16 14"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="cursor-pointer"
+                onClick={handleMobileMenuToggle}
+                style={{ marginTop: '2px' }}
+              >
+                <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
+              </svg>
+            </div>
           </div>
         </div>
 

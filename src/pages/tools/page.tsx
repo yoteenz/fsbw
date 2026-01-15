@@ -463,26 +463,57 @@ function ToolsPage() {
           >
             {/* Left side buttons */}
             <div className="flex gap-5 absolute left-4">
-              <button 
-                onClick={() => navigate(-1)} 
-                className="cursor-pointer"
-                style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
-              >
-                <img
-                  alt="Back"
-                  width="21"
-                  height="15"
-                  src="/assets/back-button.svg"
-                />
-              </button>
-              <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                <img
-                  alt="Search icon"
-                  width="16"
-                  height="15"
-                  src="/assets/search-icon.svg"
-                />
-              </button>
+              {showMobileMenu ? (
+                <>
+                  <button 
+                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    className="cursor-pointer" 
+                    style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
+                  >
+                    <img
+                      alt="Account icon"
+                      width="16"
+                      height="16"
+                      src="/assets/NOIR/account-icon.svg"
+                    />
+                  </button>
+                  <button 
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
+                    className="cursor-pointer"
+                    style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
+                  >
+                    <img
+                      alt="Wishlist"
+                      width="18"
+                      height="18"
+                      src="/assets/wishlist-heart.svg"
+                    />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button 
+                    onClick={() => navigate(-1)} 
+                    className="cursor-pointer"
+                    style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
+                  >
+                    <img
+                      alt="Back"
+                      width="21"
+                      height="15"
+                      src="/assets/back-button.svg"
+                    />
+                  </button>
+                  <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                    <img
+                      alt="Search icon"
+                      width="16"
+                      height="15"
+                      src="/assets/search-icon.svg"
+                    />
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Text in the middle */}
@@ -505,18 +536,20 @@ function ToolsPage() {
               <div>
                 <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
-              <svg
-                width="17"
-                height="18"
-                viewBox="0 0 16 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="cursor-pointer"
-                onClick={handleMobileMenuToggle}
-                style={{ marginTop: '2px' }}
-              >
-                <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
-              </svg>
+              <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg
+                  width="17"
+                  height="18"
+                  viewBox="0 0 16 14"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="cursor-pointer"
+                  onClick={handleMobileMenuToggle}
+                  style={{ marginTop: '2px' }}
+                >
+                  <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
+                </svg>
+              </div>
             </div>
           </div>
 

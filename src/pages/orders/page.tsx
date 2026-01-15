@@ -967,6 +967,7 @@ function OrdersPage() {
               <div>
                 <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
+              <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg
                   width="17"
                   height="18"
@@ -979,6 +980,7 @@ function OrdersPage() {
                 >
                   <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
                 </svg>
+              </div>
             </div>
             </div>
 
@@ -1761,7 +1763,7 @@ function OrdersPage() {
 
               {/* Past Orders Card - Only show when there are archived orders */}
               {pastOrders.length > 0 && (
-              <div className="bg-white/60 backdrop-blur-sm border border-black p-4 min-h-[360px] flex flex-col overflow-hidden shadow-lg transition-all duration-300 ease-out" style={{ borderWidth: '1.3px' }}>
+              <div className={`bg-white/60 backdrop-blur-sm border border-black p-4 flex flex-col shadow-lg transition-all duration-300 ease-out ${pastOrders.length > 1 ? 'min-h-[360px] overflow-hidden' : ''}`} style={{ borderWidth: '1.3px', minHeight: pastOrders.length > 1 ? '360px' : 'auto' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
                   {expandedOrderId && pastOrders.find(o => o.id === expandedOrderId) ? (
@@ -1815,7 +1817,7 @@ function OrdersPage() {
                 </div>
 
                  {/* Body */}
-                 <div className="flex-1 flex flex-col overflow-hidden mt-2">
+                 <div className={`${pastOrders.length > 1 ? 'flex-1' : ''} flex flex-col ${pastOrders.length > 1 ? 'overflow-hidden' : ''} mt-2`}>
                    {expandedOrderId && pastOrders.find(o => o.id === expandedOrderId) ? (
                      // Expanded Order View for Archived Orders
                      (() => {
@@ -2024,7 +2026,7 @@ function OrdersPage() {
                        );
                      })()
                    ) : (
-                   <div className="flex flex-col justify-start items-start gap-4 my-2 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '265px', scrollBehavior: 'smooth' }}>
+                   <div className={`flex flex-col justify-start items-start gap-4 my-2 flex-shrink-0 ${pastOrders.length > 1 ? 'overflow-y-auto' : ''}`} style={{ maxHeight: pastOrders.length > 1 ? '265px' : 'auto', scrollBehavior: 'smooth' }}>
                      {pastOrders.map((order) => (
                        <div key={order.id} className="flex items-center gap-3" style={{ flexShrink: 0 }}>
                          {/* Thumbnail */}

@@ -118,7 +118,7 @@ function BeachWaveSelection() {
 
   // CRITICAL: Clear any noir-specific localStorage values and set BEACH WAVE defaults on page load
   // This prevents noir page settings from interfering with beach-wave page
-  // BUT: Don't overwrite if we're in customize mode (customizeSelected* keys exist)
+  // BUT: Don't overwrite if we're in customize mode (customizeSelected* keys exist) OR edit mode (editingCartItem exists)
   useEffect(() => {
     // Clear any edit mode flags that might be from other products
     if (localStorage.getItem('editingCartItem')) {
@@ -130,6 +130,19 @@ function BeachWaveSelection() {
       }
     }
     
+    // CRITICAL: Check if we're in edit mode - if editingCartItem exists for BEACH WAVE, don't overwrite
+    // This preserves selections loaded from cart item in edit mode
+    const editingCartItem = localStorage.getItem('editingCartItem');
+    let isInEditMode = false;
+    if (editingCartItem) {
+      try {
+        const editingItem = JSON.parse(editingCartItem);
+        isInEditMode = editingItem.name === 'BEACH WAVE';
+      } catch (e) {
+        // Ignore parse errors
+      }
+    }
+    
     // CRITICAL: Check if we're in customize mode - if customizeSelected* keys exist, don't overwrite
     // This preserves selections made in customize mode sub-pages
     const isInCustomizeMode = localStorage.getItem('customizeSelectedCapSize') || 
@@ -137,8 +150,14 @@ function BeachWaveSelection() {
                               localStorage.getItem('customizeSelectedStyling') ||
                               localStorage.getItem('customizeSelectedAddOns');
     
-    // Only set defaults if NOT in customize mode
-    if (!isInCustomizeMode) {
+    // CRITICAL: Check if editSelected* keys exist - if they do, we're in edit mode and shouldn't overwrite
+    const hasEditSelectedKeys = localStorage.getItem('editSelectedCapSize') ||
+                               localStorage.getItem('editSelectedLength') ||
+                               localStorage.getItem('editSelectedStyling') ||
+                               localStorage.getItem('editSelectedAddOns');
+    
+    // Only set defaults if NOT in customize mode AND NOT in edit mode
+    if (!isInCustomizeMode && !isInEditMode && !hasEditSelectedKeys) {
       // Set BEACH WAVE-specific defaults (don't read from localStorage to avoid noir contamination)
       // These are only used if user goes to build-a-wig page from beach-wave
       localStorage.setItem('selectedLength', '24"');
@@ -849,8 +868,8 @@ function BeachWaveSelection() {
                   >
                     <img
                       alt="Wishlist"
-                      width="17"
-                      height="17"
+                      width="18"
+                      height="18"
                       src="/assets/wishlist-heart.svg"
                     />
                   </button>
@@ -915,18 +934,20 @@ function BeachWaveSelection() {
               <div>
                 <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
-              <svg
-                width="17"
-                height="18"
-                viewBox="0 0 16 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="cursor-pointer"
-                onClick={handleMobileMenuToggle}
-                style={{ marginTop: '2px' }}
-              >
-                <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
-              </svg>
+              <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg
+                  width="17"
+                  height="18"
+                  viewBox="0 0 16 14"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="cursor-pointer"
+                  onClick={handleMobileMenuToggle}
+                  style={{ marginTop: '2px' }}
+                >
+                  <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
+                </svg>
+              </div>
             </div>
           </div>
 

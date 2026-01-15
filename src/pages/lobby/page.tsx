@@ -43,26 +43,6 @@ const LobbyPage: React.FC = () => {
         }}
       />
       
-      {/* Chat Icon - Upper Left */}
-      <div className="absolute z-20" style={{ top: '54px', left: '20px' }}>
-        <img 
-          src="/assets/chat-icon.svg" 
-          alt="Chat" 
-          className="cursor-pointer hover:opacity-80 transition-opacity"
-          style={{ width: '22px', height: '22px' }}
-        />
-      </div>
-      
-      {/* Menu Icon - Upper Right */}
-      <div className="absolute right-6 z-20" style={{ top: '59px' }}>
-        <img 
-          src="/assets/landing-menu-icon.svg" 
-          alt="Menu" 
-          className="cursor-pointer hover:opacity-80 transition-opacity"
-          style={{ width: '16px', height: '16px' }}
-        />
-      </div>
-      
       {/* Main Content Container */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen" style={{ overflow: 'visible' }}>
         {/* Placeholder for logo to maintain flex flow */}
@@ -320,15 +300,6 @@ const LoungePage: React.FC = () => {
           contain: 'layout style paint'
         }}
       />
-      
-      {/* Menu Icon - Upper Right */}
-      <div className="absolute right-6 z-20" style={{ top: '104px' }}>
-        <img 
-          src="/assets/landing-menu-icon.svg" 
-          alt="Menu" 
-          style={{ width: '16px', height: '16px', cursor: 'pointer' }}
-        />
-      </div>
       
       {/* Neon Logo - Independent container with absolute positioning */}
       <div style={{ 

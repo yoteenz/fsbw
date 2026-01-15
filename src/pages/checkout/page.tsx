@@ -1111,7 +1111,7 @@ function CheckoutPage() {
   // Gift card discount should NOT be applied to subscription upgrades
   const giftCardDiscount = isSubscriptionUpgrade ? 0 : appliedGiftCardBalance; // Automatically applied gift card balance
   const totalDiscount = discount + referralDiscount + giftCardDiscount; // Combined discount from codes, referral codes, and gift card
-  const rushProcessing = selectedProcessing === 'rush' ? 100 : 0;
+  const rushProcessing = selectedProcessing === 'rush' ? 120 : 0;
   const protectionFee = packageProtection ? 5 : 0;
   // Calculate tip amount: if percentage is set, use that; otherwise use custom dollar amount (only if applied)
   const tipAmount = tipPercentage !== null ? Math.round(orderAmount * (tipPercentage / 100)) : (customTipApplied ? customTipAmount : 0);
@@ -1410,18 +1410,20 @@ function CheckoutPage() {
               <div>
                 <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
-              <svg
-                width="17"
-                height="18"
-                viewBox="0 0 16 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="cursor-pointer"
-                onClick={handleMobileMenuToggle}
-                style={{ marginTop: '2px' }}
-              >
-                <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
-              </svg>
+              <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg
+                  width="17"
+                  height="18"
+                  viewBox="0 0 16 14"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="cursor-pointer"
+                  onClick={handleMobileMenuToggle}
+                  style={{ marginTop: '2px' }}
+                >
+                  <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
+                </svg>
+              </div>
             </div>
           </div>
 
@@ -1949,7 +1951,7 @@ function CheckoutPage() {
                                   ? `${basePoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} × ${multiplier} = ${actualPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
                                   : actualPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
                                 
-                                return <>YOU'RE EARNING <span style={{ color: '#EB1C24' }}>{pointsText}</span> LOYALTY POINTS WITH THIS ORDER{multiplierText}.</>;
+                                return <>YOU'RE EARNING <span style={{ color: '#EB1C24' }}>{pointsText}</span> LOYALTY POINTS WITH THIS ORDER{multiplierText}!</>;
                               })()}
                             </>
                           ) : (
@@ -3710,7 +3712,7 @@ function CheckoutPage() {
                           textTransform: 'uppercase'
                         }}
                       >
-                          4-6 WEEKS RUSH PROCESSING <span className="delivery-price" dangerouslySetInnerHTML={formatPrice(100)}></span>
+                          4-6 WEEKS RUSH PROCESSING <span className="delivery-price" dangerouslySetInnerHTML={formatPrice(120)}></span>
                         </label>
                         <label 
                           style={{ 
