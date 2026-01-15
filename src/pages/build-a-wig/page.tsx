@@ -1528,6 +1528,7 @@ export default function BuildAWigPage() {
           localStorage.setItem('selectedAddOns', JSON.stringify(item.addOns || []));
           // CRITICAL: Calculate prices based on the preserved cap size selection (not cart item's potentially stale cap size)
           // Use the cap size we just preserved from localStorage, not the cart item's cap size
+          const capSizeToUse = capSizeToUseForState;
           const editCustomizationWithPreservedCapSize = {
             ...editCustomization,
             capSize: capSizeToUse // Use preserved cap size, not cart item's cap size
@@ -1584,16 +1585,26 @@ export default function BuildAWigPage() {
               return result;
             };
             
+            capSizePrice = getPreservedPrice('CapSize', calculatedPrices.capSizePrice);
+            colorPrice = getPreservedPrice('Color', calculatedPrices.colorPrice);
+            lengthPrice = getPreservedPrice('Length', calculatedPrices.lengthPrice);
+            densityPrice = getPreservedPrice('Density', calculatedPrices.densityPrice);
+            lacePrice = getPreservedPrice('Lace', calculatedPrices.lacePrice);
+            texturePrice = getPreservedPrice('Texture', calculatedPrices.texturePrice);
+            hairlinePrice = getPreservedPrice('Hairline', calculatedPrices.hairlinePrice);
+            stylingPrice = getPreservedPrice('Styling', calculatedPrices.stylingPrice);
+            addOnsPrice = getPreservedPrice('AddOns', calculatedPrices.addOnsPrice);
+            
             const pricesToSave = {
-              capSizePrice: getPreservedPrice('CapSize', calculatedPrices.capSizePrice),
-              colorPrice: getPreservedPrice('Color', calculatedPrices.colorPrice),
-              lengthPrice: getPreservedPrice('Length', calculatedPrices.lengthPrice),
-              densityPrice: getPreservedPrice('Density', calculatedPrices.densityPrice),
-              lacePrice: getPreservedPrice('Lace', calculatedPrices.lacePrice),
-              texturePrice: getPreservedPrice('Texture', calculatedPrices.texturePrice),
-              hairlinePrice: getPreservedPrice('Hairline', calculatedPrices.hairlinePrice),
-              stylingPrice: getPreservedPrice('Styling', calculatedPrices.stylingPrice),
-              addOnsPrice: getPreservedPrice('AddOns', calculatedPrices.addOnsPrice)
+              capSizePrice,
+              colorPrice,
+              lengthPrice,
+              densityPrice,
+              lacePrice,
+              texturePrice,
+              hairlinePrice,
+              stylingPrice,
+              addOnsPrice
             };
             
             console.log('[FLEX_CAP_DEBUG] ROUTE_CHANGE - Final pricesToSave (from sub-page):', {
@@ -1633,15 +1644,15 @@ export default function BuildAWigPage() {
             };
             
             // Get prices using cart item's stored values when available
-            const capSizePrice = getPriceFromCartOrCalculated('CapSize', calculatedPrices.capSizePrice);
-            const colorPrice = getPriceFromCartOrCalculated('Color', calculatedPrices.colorPrice);
-            const lengthPrice = getPriceFromCartOrCalculated('Length', calculatedPrices.lengthPrice);
-            const densityPrice = getPriceFromCartOrCalculated('Density', calculatedPrices.densityPrice);
-            const lacePrice = getPriceFromCartOrCalculated('Lace', calculatedPrices.lacePrice);
-            const texturePrice = getPriceFromCartOrCalculated('Texture', calculatedPrices.texturePrice);
-            const hairlinePrice = getPriceFromCartOrCalculated('Hairline', calculatedPrices.hairlinePrice);
-            const stylingPrice = getPriceFromCartOrCalculated('Styling', calculatedPrices.stylingPrice);
-            const addOnsPrice = getPriceFromCartOrCalculated('AddOns', calculatedPrices.addOnsPrice);
+            capSizePrice = getPriceFromCartOrCalculated('CapSize', calculatedPrices.capSizePrice);
+            colorPrice = getPriceFromCartOrCalculated('Color', calculatedPrices.colorPrice);
+            lengthPrice = getPriceFromCartOrCalculated('Length', calculatedPrices.lengthPrice);
+            densityPrice = getPriceFromCartOrCalculated('Density', calculatedPrices.densityPrice);
+            lacePrice = getPriceFromCartOrCalculated('Lace', calculatedPrices.lacePrice);
+            texturePrice = getPriceFromCartOrCalculated('Texture', calculatedPrices.texturePrice);
+            hairlinePrice = getPriceFromCartOrCalculated('Hairline', calculatedPrices.hairlinePrice);
+            stylingPrice = getPriceFromCartOrCalculated('Styling', calculatedPrices.stylingPrice);
+            addOnsPrice = getPriceFromCartOrCalculated('AddOns', calculatedPrices.addOnsPrice);
             
             // Save all prices to localStorage
             localStorage.setItem('editSelectedCapSizePrice', capSizePrice.toString());

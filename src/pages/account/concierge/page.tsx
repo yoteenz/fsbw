@@ -109,7 +109,7 @@ function ConciergePage() {
   // Check if user is eligible for birthday gift
   // Note: This is calculated but may not be used in current render logic
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const eligibleForBirthdayGift = isEligibleForBirthdayGift();
+  const _eligibleForBirthdayGift = isEligibleForBirthdayGift();
   
   // Order tracking state
   const [selectedOrderId, setSelectedOrderId] = useState<string>('');
@@ -386,7 +386,7 @@ function ConciergePage() {
       
       const now = new Date();
       now.setHours(0, 0, 0, 0); // Normalize to midnight for consistent calculation
-      const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
+      const _selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
       const stageStartDate = getStageStartDate(stageIndex, orderDateObj, hasCustomization);
       const stageEndDate = getStageEndDate(stageIndex, orderDateObj, hasCustomization);
       
@@ -1605,7 +1605,7 @@ function ConciergePage() {
                                       style={{
                                         fontFamily: '"Covered by Your Grace", cursive',
                                         color: '#909090',
-                                        fontSize: '15px',
+                                        fontSize: '16px',
                                         margin: '0 0 4px 0',
                                         textTransform: 'none'
                                       }}
@@ -1728,10 +1728,8 @@ function ConciergePage() {
                               };
                               
                               const deliveryDate = calculateDeliveryDate();
-                              const weekdays = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
                               const months = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
                               
-                              const weekday = weekdays[deliveryDate.getDay()];
                               const month = months[deliveryDate.getMonth()];
                               const day = deliveryDate.getDate();
                               
@@ -1741,7 +1739,7 @@ function ConciergePage() {
                                     style={{
                                       fontFamily: '"Covered by Your Grace", cursive',
                                       color: '#909090',
-                                      fontSize: '15px',
+                                      fontSize: '16px',
                                       margin: '0 0 4px 0',
                                       textTransform: 'none'
                                     }}
@@ -1958,7 +1956,7 @@ function ConciergePage() {
                     style={{
                                       fontFamily: '"Covered by Your Grace", cursive',
                                       color: '#909090',
-                                      fontSize: '15px',
+                                      fontSize: '16px',
                                       margin: '0 0 4px 0',
                                       textTransform: 'none'
                                     }}
