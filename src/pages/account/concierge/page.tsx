@@ -54,6 +54,12 @@ function ConciergePage() {
   const [isUrgent, setIsUrgent] = useState<'yes' | 'no'>('no');
   const [relatedOrderId, setRelatedOrderId] = useState<string>('');
   
+  // Gift confirmation modal state
+  const [showFreeGiftModal, setShowFreeGiftModal] = useState(false);
+  const [showBirthdayGiftModal, setShowBirthdayGiftModal] = useState(false);
+  const [freeGiftModalMessage, setFreeGiftModalMessage] = useState('');
+  const [birthdayGiftModalMessage, setBirthdayGiftModalMessage] = useState('');
+  
   // Free gift state - load from localStorage
   const [selectedFreeGift, setSelectedFreeGift] = useState<'melt-band' | 'wig-brush' | ''>(() => {
     try {
@@ -122,10 +128,10 @@ function ConciergePage() {
         
         // If no orders exist, create test orders for UI testing
         if (!storedOrders) {
-          // Create order date 11 days ago to show 20% progress in CONSTRUCTING UNIT stage
-          // Constructing starts at day 5 (after sourcing), takes 28 days. To be at 20%: 5 + (28 * 0.2) = 10.6 days ≈ 11 days
+          // Create order date 13 days ago to show 20% progress in CONSTRUCTING UNIT stage
+          // Constructing starts at day 7 (after sourcing ends: 2 + 5 = 7), takes 28 days. To be at 20%: 7 + (28 * 0.2) = 12.6 days ≈ 13 days
           const constructingOrderDate = new Date();
-          constructingOrderDate.setDate(constructingOrderDate.getDate() - 11);
+          constructingOrderDate.setDate(constructingOrderDate.getDate() - 13);
           // Format as MM-DD-YYYY for consistent parsing
           const month = String(constructingOrderDate.getMonth() + 1).padStart(2, '0');
           const day = String(constructingOrderDate.getDate()).padStart(2, '0');
@@ -186,9 +192,9 @@ function ConciergePage() {
           );
           
           // Create or update the test order with 20% progress in CONSTRUCTING UNIT
-          // Constructing starts at day 5 (after sourcing), takes 28 days. To be at 20%: 5 + (28 * 0.2) = 10.6 days ≈ 11 days
+          // Constructing starts at day 7 (after sourcing ends: 2 + 5 = 7), takes 28 days. To be at 20%: 7 + (28 * 0.2) = 12.6 days ≈ 13 days
           const constructingOrderDate = new Date();
-          constructingOrderDate.setDate(constructingOrderDate.getDate() - 11);
+          constructingOrderDate.setDate(constructingOrderDate.getDate() - 13);
           // Format as MM-DD-YYYY for consistent parsing
           const month = String(constructingOrderDate.getMonth() + 1).padStart(2, '0');
           const day = String(constructingOrderDate.getDate()).padStart(2, '0');
@@ -400,27 +406,27 @@ function ConciergePage() {
       // ORDER CONFIRMED - same day
       return new Date(orderDate);
     } else if (stageIndex === 1) {
-      // SOURCING + COLLECTING - starts same day, takes 5 days
-      return new Date(orderDate);
+      // SOURCING + COLLECTING - starts 2 days after order (for payment processing), takes 5 days
+      startDate.setDate(startDate.getDate() + 2);
     } else if (stageIndex === 2) {
-      // CONSTRUCTING UNIT - starts after sourcing (5 days), takes 28 days (4 weeks)
-      startDate.setDate(startDate.getDate() + 5);
+      // CONSTRUCTING UNIT - starts after sourcing (2 + 5 = 7 days), takes 28 days (4 weeks)
+      startDate.setDate(startDate.getDate() + 2 + 5);
     } else if (stageIndex === 3) {
-      // SHIPPED TO USA - starts after construction (5 + 28 = 33 days), takes 5 days
-      startDate.setDate(startDate.getDate() + 5 + 28);
+      // SHIPPED TO USA - starts after construction (2 + 5 + 28 = 35 days), takes 5 days
+      startDate.setDate(startDate.getDate() + 2 + 5 + 28);
     } else if (stageIndex === 4) {
-      // ARRIVED AT HUB - starts after shipped (33 + 5 = 38 days), takes 2 days
-      startDate.setDate(startDate.getDate() + 5 + 28 + 5);
+      // ARRIVED AT HUB - starts after shipped (35 + 5 = 40 days), takes 2 days
+      startDate.setDate(startDate.getDate() + 2 + 5 + 28 + 5);
     } else if (stageIndex === 5) {
-      // PREPPING + WASHING - starts after arrived (38 + 2 = 40 days), takes 2 days
-      startDate.setDate(startDate.getDate() + 5 + 28 + 5 + 2);
+      // PREPPING + WASHING - starts after arrived (40 + 2 = 42 days), takes 2 days
+      startDate.setDate(startDate.getDate() + 2 + 5 + 28 + 5 + 2);
     } else if (stageIndex === 6) {
-      // CUSTOMIZING - starts after prepping (40 + 2 = 42 days), takes 10 days (if customization)
+      // CUSTOMIZING - starts after prepping (42 + 2 = 44 days), takes 10 days (if customization)
       if (!hasCustomization) return new Date(orderDate);
-      startDate.setDate(startDate.getDate() + 5 + 28 + 5 + 2 + 2);
+      startDate.setDate(startDate.getDate() + 2 + 5 + 28 + 5 + 2 + 2);
     } else if (stageIndex === 7) {
       // FINALIZING - starts after customizing/prepping, takes 2 days
-      const baseDays = 5 + 28 + 5 + 2 + 2; // up to prepping
+      const baseDays = 2 + 5 + 28 + 5 + 2 + 2; // up to prepping
       if (hasCustomization) {
         startDate.setDate(startDate.getDate() + baseDays + 10); // after customizing
       } else {
@@ -428,7 +434,7 @@ function ConciergePage() {
       }
     } else if (stageIndex === 8) {
       // PACKAGING - starts after finalizing, takes 3 days
-      const baseDays = 5 + 28 + 5 + 2 + 2; // up to prepping
+      const baseDays = 2 + 5 + 28 + 5 + 2 + 2; // up to prepping
       if (hasCustomization) {
         startDate.setDate(startDate.getDate() + baseDays + 10 + 2); // after finalizing
       } else {
@@ -436,7 +442,7 @@ function ConciergePage() {
       }
     } else if (stageIndex === 9) {
       // ORDER SHIPPED - starts after packaging, takes 3-5 days
-      const baseDays = 5 + 28 + 5 + 2 + 2; // up to prepping
+      const baseDays = 2 + 5 + 28 + 5 + 2 + 2; // up to prepping
       if (hasCustomization) {
         startDate.setDate(startDate.getDate() + baseDays + 10 + 2 + 3); // after packaging
       } else {
@@ -526,8 +532,8 @@ function ConciergePage() {
       
       // Calculate cumulative days for each stage based on timeline
       // Stage 0: ORDER CONFIRMED - same day (0 days)
-      // Stage 1: SOURCING + COLLECTING - same day (0 days)
-      // Stage 2: CONSTRUCTING UNIT - 5 days from sourcing
+      // Stage 1: SOURCING + COLLECTING - starts 2 days after order (for payment processing), takes 5 days
+      // Stage 2: CONSTRUCTING UNIT - starts after sourcing ends (2 + 5 = 7 days)
       // Stage 3: SHIPPED TO USA - 4 weeks (28 days) from constructing
       // Stage 4: ARRIVED AT HUB - 5 business days from shipped
       // Stage 5: PREPPING + WASHING - 2 days from arrived
@@ -540,49 +546,49 @@ function ConciergePage() {
         // ORDER CONFIRMED - same day
         stageDate = new Date(orderDateObj);
       } else if (stageIndex === 1) {
-        // SOURCING + COLLECTING - 5 days from order
+        // SOURCING + COLLECTING - starts 2 days after order (for payment processing), takes 5 days
         stageDate = new Date(orderDateObj);
-        stageDate.setDate(stageDate.getDate() + 5);
+        stageDate.setDate(stageDate.getDate() + 2);
       } else if (stageIndex === 2) {
-        // CONSTRUCTING UNIT - starts after sourcing (5 days), takes 28 days (4 weeks)
+        // CONSTRUCTING UNIT - starts after sourcing (2 + 5 = 7 days), takes 28 days (4 weeks)
         stageDate = new Date(orderDateObj);
-        stageDate.setDate(stageDate.getDate() + 5 + 28);
+        stageDate.setDate(stageDate.getDate() + 2 + 5);
       } else if (stageIndex === 3) {
-        // SHIPPED TO USA - starts after construction (5 + 28 = 33 days), takes 5 days
+        // SHIPPED TO USA - starts after construction (2 + 5 + 28 = 35 days), takes 5 days
         stageDate = new Date(orderDateObj);
-        stageDate.setDate(stageDate.getDate() + 5 + 28 + 5);
+        stageDate.setDate(stageDate.getDate() + 2 + 5 + 28);
       } else if (stageIndex === 4) {
-        // ARRIVED AT HUB - starts after shipped (33 + 5 = 38 days), takes 2 days
+        // ARRIVED AT HUB - starts after shipped (35 + 5 = 40 days), takes 2 days
         stageDate = new Date(orderDateObj);
-        stageDate.setDate(stageDate.getDate() + 5 + 28 + 5 + 2);
+        stageDate.setDate(stageDate.getDate() + 2 + 5 + 28 + 5);
       } else if (stageIndex === 5) {
-        // PREPPING + WASHING - starts after arrived (38 + 2 = 40 days), takes 2 days
+        // PREPPING + WASHING - starts after arrived (40 + 2 = 42 days), takes 2 days
         stageDate = new Date(orderDateObj);
-        stageDate.setDate(stageDate.getDate() + 5 + 28 + 5 + 2 + 2);
+        stageDate.setDate(stageDate.getDate() + 2 + 5 + 28 + 5 + 2);
       } else if (stageIndex === 6) {
-        // CUSTOMIZING - starts after prepping (40 + 2 = 42 days), takes 10 days (only if customization)
+        // CUSTOMIZING - starts after prepping (42 + 2 = 44 days), takes 10 days (only if customization)
         if (!hasCustomization) {
           return null; // Skip this stage
         }
         stageDate = new Date(orderDateObj);
-        stageDate.setDate(stageDate.getDate() + 5 + 28 + 5 + 2 + 2 + 10);
+        stageDate.setDate(stageDate.getDate() + 2 + 5 + 28 + 5 + 2 + 2);
       } else if (stageIndex === 7) {
         // FINALIZING - starts after customizing/prepping, takes 2 days
-        const baseDays = 5 + 28 + 5 + 2 + 2; // up to prepping
+        const baseDays = 2 + 5 + 28 + 5 + 2 + 2; // up to prepping
+        stageDate = new Date(orderDateObj);
+        if (hasCustomization) {
+          stageDate.setDate(stageDate.getDate() + baseDays + 10); // after customizing
+        } else {
+          stageDate.setDate(stageDate.getDate() + baseDays); // after prepping
+        }
+      } else if (stageIndex === 8) {
+        // PACKAGING - starts after finalizing, takes 3 days
+        const baseDays = 2 + 5 + 28 + 5 + 2 + 2; // up to prepping
         stageDate = new Date(orderDateObj);
         if (hasCustomization) {
           stageDate.setDate(stageDate.getDate() + baseDays + 10 + 2); // after customizing + finalizing
         } else {
           stageDate.setDate(stageDate.getDate() + baseDays + 2); // after prepping + finalizing
-        }
-      } else if (stageIndex === 8) {
-        // PACKAGING - starts after finalizing, takes 3 days
-        const baseDays = 5 + 28 + 5 + 2 + 2; // up to prepping
-        stageDate = new Date(orderDateObj);
-        if (hasCustomization) {
-          stageDate.setDate(stageDate.getDate() + baseDays + 10 + 2 + 3); // after finalizing + packaging
-        } else {
-          stageDate.setDate(stageDate.getDate() + baseDays + 2 + 3); // after finalizing + packaging
         }
       } else if (stageIndex === 9) {
         // ORDER SHIPPED - starts after packaging, takes 3-5 days (default to 3)
@@ -705,6 +711,28 @@ function ConciergePage() {
     }
   };
 
+  // Helper function to get gift display name
+  const getFreeGiftDisplayName = (giftType: string): string => {
+    switch (giftType) {
+      case 'melt-band':
+        return 'MELT BAND';
+      case 'wig-brush':
+        return 'WIG BRUSH';
+      default:
+        return '';
+    }
+  };
+  
+  const getBirthdayGiftDisplayName = (giftType: string): string => {
+    switch (giftType) {
+      case 'points':
+        return '200 LOYALTY POINTS';
+      case 'gift-card':
+        return '$20 GIFT CARD';
+      default:
+        return '';
+    }
+  };
 
   const handleSubmitFreeGift = () => {
     try {
@@ -726,9 +754,18 @@ function ConciergePage() {
       };
         freeGifts.unshift(newGift);
         localStorage.setItem('adminFreeGifts', JSON.stringify(freeGifts));
+        
+        // Show confirmation modal with selection message
+        const giftName = getFreeGiftDisplayName(selectedFreeGift);
+        setFreeGiftModalMessage(`YOU'LL RECEIVE A ${giftName} WITH YOUR NEXT GIFT WITH PURCHASE.`);
+        setShowFreeGiftModal(true);
       } else {
         // Clear selection
         localStorage.removeItem('selectedFreeGift');
+        
+        // Show confirmation modal with deselection message
+        setFreeGiftModalMessage("YOU WON'T RECEIVE A FREE GIFT WITH YOUR NEXT PURCHASE.");
+        setShowFreeGiftModal(true);
       }
     } catch (e) {
       console.error('Error saving free gift request:', e);
@@ -755,9 +792,22 @@ function ConciergePage() {
       };
         birthdayGifts.unshift(newGift);
         localStorage.setItem('adminBirthdayGifts', JSON.stringify(birthdayGifts));
+        
+        // Show confirmation modal with selection message
+        const giftName = getBirthdayGiftDisplayName(selectedBirthdayGift);
+        // Only add "A" for gift card, not for loyalty points
+        const message = selectedBirthdayGift === 'gift-card' 
+          ? `YOU'LL RECEIVE A ${giftName} AS YOUR BIRTHDAY GIFT.`
+          : `YOU'LL RECEIVE ${giftName} AS YOUR BIRTHDAY GIFT.`;
+        setBirthdayGiftModalMessage(message);
+        setShowBirthdayGiftModal(true);
       } else {
         // Clear selection
         localStorage.removeItem('selectedBirthdayGift');
+        
+        // Show confirmation modal with deselection message
+        setBirthdayGiftModalMessage("YOU WON'T RECEIVE A FREE GIFT FOR YOUR BIRTHDAY THIS YEAR.");
+        setShowBirthdayGiftModal(true);
       }
     } catch (e) {
       console.error('Error saving birthday gift request:', e);
@@ -862,7 +912,7 @@ function ConciergePage() {
                   <span
                     style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
                   >
-                    CONCIERGE
+                    PRIORITY MESSAGES + TRACKING
                   </span>
                 </>
               )}
@@ -2194,6 +2244,134 @@ function ConciergePage() {
                                             PENDING
                                           </p>
                                         )}
+                                        
+                                        {/* Order Confirmed Sub-Statuses */}
+                                        {index === 0 && (isCurrent || isCompleted) && (
+                                          <div style={{ marginTop: '12px' }}>
+                                            <div
+                                              style={{
+                                                width: 'calc(100% - 4px)',
+                                                height: '1px',
+                                                backgroundColor: '#E0E0E0',
+                                                margin: '0 auto 12px auto'
+                                              }}
+                                            />
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                              <p
+                                                style={{
+                                                  fontFamily: '"Futura PT Book"',
+                                                  color: '#909090',
+                                                  fontSize: '9px',
+                                                  margin: '0',
+                                                  textTransform: 'uppercase'
+                                                }}
+                                              >
+                                                PENDING
+                                              </p>
+                                              {isCompleted ? (
+                                                <>
+                                                  <p
+                                                    style={{
+                                                      fontFamily: '"Futura PT Book"',
+                                                      color: '#909090',
+                                                      fontSize: '9px',
+                                                      margin: '0',
+                                                      textTransform: 'uppercase'
+                                                    }}
+                                                  >
+                                                    AWAITING ORDER FORM
+                                                  </p>
+                                                  <p
+                                                    style={{
+                                                      fontFamily: '"Futura PT Book"',
+                                                      color: '#EB1C24',
+                                                      fontSize: '9px',
+                                                      margin: '0',
+                                                      textTransform: 'uppercase'
+                                                    }}
+                                                  >
+                                                    ORDER FORM APPROVED
+                                                  </p>
+                                                </>
+                                              ) : (
+                                                <p
+                                                  style={{
+                                                    fontFamily: '"Futura PT Book"',
+                                                    color: '#909090',
+                                                    fontSize: '9px',
+                                                    margin: '0',
+                                                    textTransform: 'uppercase'
+                                                  }}
+                                                >
+                                                  AWAITING ORDER FORM
+                                                </p>
+                                              )}
+                                            </div>
+                                          </div>
+                                        )}
+                                        
+                                        {/* Tracking Number and Shipping Status for ORDER SHIPPED */}
+                                        {index === 9 && (isCurrent || isCompleted || isDeliveredLastStage) && selectedOrder?.trackingNumber && (
+                                          <div style={{ marginTop: '12px' }}>
+                                            <div
+                                              style={{
+                                                width: 'calc(100% - 4px)',
+                                                height: '1px',
+                                                backgroundColor: '#E0E0E0',
+                                                margin: '0 auto 12px auto'
+                                              }}
+                                            />
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                              <p
+                                                style={{
+                                                  fontFamily: '"Futura PT Book"',
+                                                  color: '#909090',
+                                                  fontSize: '9px',
+                                                  margin: '0',
+                                                  textTransform: 'uppercase'
+                                                }}
+                                              >
+                                                PREPARING
+                                              </p>
+                                              <p
+                                                style={{
+                                                  fontFamily: '"Futura PT Book"',
+                                                  color: '#000000',
+                                                  fontSize: '9px',
+                                                  margin: '0',
+                                                  textTransform: 'uppercase'
+                                                }}
+                                              >
+                                                TRACKING NUMBER: {selectedOrder.trackingNumber}
+                                              </p>
+                                              {isDeliveredLastStage ? (
+                                                <p
+                                                  style={{
+                                                    fontFamily: '"Futura PT Book"',
+                                                    color: '#EB1C24',
+                                                    fontSize: '9px',
+                                                    margin: '0',
+                                                    textTransform: 'uppercase'
+                                                  }}
+                                                >
+                                                  DELIVERED
+                                                </p>
+                                              ) : (
+                                                <p
+                                                  style={{
+                                                    fontFamily: '"Futura PT Book"',
+                                                    color: '#909090',
+                                                    fontSize: '9px',
+                                                    margin: '0',
+                                                    textTransform: 'uppercase'
+                                                  }}
+                                                >
+                                                  OUT FOR DELIVERY
+                                                </p>
+                                              )}
+                                            </div>
+                                          </div>
+                                        )}
                                       </div>
                                     )}
                                   </div>
@@ -2269,6 +2447,19 @@ function ConciergePage() {
                       GIFT WITH PURCHASE
                     </h2>
                   </div>
+                  
+                  <p
+                    style={{
+                      fontFamily: '"Futura PT Book"',
+                      color: '#000000',
+                      fontSize: '10px',
+                      margin: '0 0 16px 0',
+                      textAlign: 'center',
+                      textTransform: 'uppercase'
+                    }}
+                  >
+                    choose which gift you'd like to be included in your next order:
+                  </p>
                   
                   {/* Gift Selection Options */}
                   <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
@@ -2404,10 +2595,23 @@ function ConciergePage() {
                     </h2>
                   </div>
                   
+                  <p
+                    style={{
+                      fontFamily: '"Futura PT Book"',
+                      color: '#000000',
+                      fontSize: '10px',
+                      margin: '0 0 16px 0',
+                      textAlign: 'center',
+                      textTransform: 'uppercase'
+                    }}
+                  >
+                    choose which gift you'd like to receive for your birthday:
+                  </p>
+                  
                   {/* Birthday Gift Selection Options */}
-                  <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', minWidth: 0 }}>
                     {/* $20 Gift Card Option */}
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 0 }}>
                       <div
                         onClick={() => setSelectedBirthdayGift(selectedBirthdayGift === 'gift-card' ? '' : 'gift-card')}
                     style={{
@@ -2421,7 +2625,9 @@ function ConciergePage() {
                           alignItems: 'center',
                           justifyContent: 'center',
                           width: 'calc(100% - 20px)',
-                          height: '144px'
+                          height: '144px',
+                          overflow: 'hidden',
+                          boxSizing: 'border-box'
                         }}
                       >
                         <img
@@ -2432,7 +2638,8 @@ function ConciergePage() {
                             maxHeight: '194px',
                             width: 'auto',
                             height: 'auto',
-                            objectFit: 'contain'
+                            objectFit: 'contain',
+                            display: 'block'
                           }}
                         />
                       </div>
@@ -2443,7 +2650,7 @@ function ConciergePage() {
                           fontSize: '10px',
                           margin: '0',
                           textAlign: 'center',
-                          textTransform: 'uppercase'
+                      textTransform: 'uppercase'
                         }}
                       >
                         $20 GIFT CARD
@@ -2451,7 +2658,7 @@ function ConciergePage() {
                     </div>
                     
                     {/* 200 Loyalty Points Option */}
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 0 }}>
                       <div
                         onClick={() => setSelectedBirthdayGift(selectedBirthdayGift === 'points' ? '' : 'points')}
                         style={{
@@ -2465,7 +2672,9 @@ function ConciergePage() {
                           alignItems: 'center',
                           justifyContent: 'center',
                           width: 'calc(100% - 20px)',
-                          height: '144px'
+                          height: '144px',
+                          overflow: 'hidden',
+                          boxSizing: 'border-box'
                         }}
                       >
                         <img
@@ -2477,8 +2686,9 @@ function ConciergePage() {
                             width: 'auto',
                             height: 'auto',
                             objectFit: 'contain',
+                            display: 'block',
                             marginTop: '10px',
-                            transform: 'translateX(3.7px)'
+                            transform: 'translateX(7px)'
                           }}
                         />
                   </div>
@@ -2525,6 +2735,30 @@ function ConciergePage() {
         onConfirm={() => setShowSuccessModal(false)}
         title="SUCCESS"
         message={successMessage}
+        confirmText="OK"
+        cancelText=""
+        messageTextTransform="uppercase"
+      />
+      
+      {/* Free Gift Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showFreeGiftModal}
+        onClose={() => setShowFreeGiftModal(false)}
+        onConfirm={() => setShowFreeGiftModal(false)}
+        title="SELECTION SAVED"
+        message={freeGiftModalMessage}
+        confirmText="OK"
+        cancelText=""
+        messageTextTransform="uppercase"
+      />
+      
+      {/* Birthday Gift Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showBirthdayGiftModal}
+        onClose={() => setShowBirthdayGiftModal(false)}
+        onConfirm={() => setShowBirthdayGiftModal(false)}
+        title="SELECTION SAVED"
+        message={birthdayGiftModalMessage}
         confirmText="OK"
         cancelText=""
         messageTextTransform="uppercase"
