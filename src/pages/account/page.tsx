@@ -1734,7 +1734,7 @@ function AccountPage() {
                     
                     return showConcierge ? [{
                       title: 'CONCIERGE',
-                      subtitle: 'PRIORITY MESSAGES + BOOKING',
+                      subtitle: 'PRIORITY MESSAGES + TRACKING',
                       route: '/account/concierge'
                     }] : [];
                   })()),
