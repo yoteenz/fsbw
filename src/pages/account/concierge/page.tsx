@@ -830,7 +830,7 @@ function ConciergePage() {
         
         // Show confirmation modal with selection message
         const giftName = getFreeGiftDisplayName(selectedFreeGift);
-        setFreeGiftModalMessage(`YOU'LL RECEIVE A ${giftName} WITH YOUR NEXT GIFT WITH PURCHASE.`);
+        setFreeGiftModalMessage(`YOU'LL RECEIVE A ${giftName} WITH YOUR NEXT PURCHASE.`);
         setShowFreeGiftModal(true);
       } else {
         // Clear selection
