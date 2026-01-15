@@ -106,6 +106,9 @@ function ConciergePage() {
     }
   };
   
+  // Check if user is eligible for birthday gift
+  // Note: This is calculated but may not be used in current render logic
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const eligibleForBirthdayGift = isEligibleForBirthdayGift();
   
   // Order tracking state
@@ -385,7 +388,7 @@ function ConciergePage() {
       now.setHours(0, 0, 0, 0); // Normalize to midnight for consistent calculation
       const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
       const stageStartDate = getStageStartDate(stageIndex, orderDateObj, hasCustomization);
-      const stageEndDate = getStageEndDate(stageIndex, orderDateObj, hasCustomization, selectedOrder?.shippingMethod);
+      const stageEndDate = getStageEndDate(stageIndex, orderDateObj, hasCustomization);
       
       if (now <= stageStartDate) return 0;
       if (now >= stageEndDate) return 100;
