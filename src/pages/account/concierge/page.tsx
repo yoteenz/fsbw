@@ -122,16 +122,26 @@ function ConciergePage() {
         
         // If no orders exist, create test orders for UI testing
         if (!storedOrders) {
+          // Create order date 11 days ago to show 20% progress in CONSTRUCTING UNIT stage
+          // Constructing starts at day 5 (after sourcing), takes 28 days. To be at 20%: 5 + (28 * 0.2) = 10.6 days ≈ 11 days
+          const constructingOrderDate = new Date();
+          constructingOrderDate.setDate(constructingOrderDate.getDate() - 11);
+          // Format as MM-DD-YYYY for consistent parsing
+          const month = String(constructingOrderDate.getMonth() + 1).padStart(2, '0');
+          const day = String(constructingOrderDate.getDate()).padStart(2, '0');
+          const year = constructingOrderDate.getFullYear();
+          const formattedDate = `${month}-${day}-${year}`;
+          
           const testOrder = {
             id: 'test-order-1',
             orderNumber: 'ORDER #999',
-            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-            status: 'SHIPPED',
+            date: formattedDate,
+            status: 'PREPARING',
             productName: 'NOIR',
             productImage: '/assets/natural front.png',
             total: 740,
             items: 1,
-            trackingStage: 9 // Set to stage 9 (SHIPPED) for testing delivery estimate
+            trackingStage: 2 // Set to stage 2 (CONSTRUCTING UNIT) for testing 20% progress
           };
           
           const deliveredOrder = {
@@ -165,40 +175,88 @@ function ConciergePage() {
           const active = orders.activeOrders || [];
           const past = orders.pastOrders || [];
           
+          // Check if there's already a test order for testing
+          const existingTestOrderIndex = [...active, ...past].findIndex((order: any) => 
+            order.id === 'test-order-1' || (order.orderNumber === 'ORDER #999')
+          );
+          
           // Check if there's already a delivered order for testing
-          const hasDeliveredOrder = [...active, ...past].some((order: any) => 
+          const existingDeliveredOrderIndex = [...active, ...past].findIndex((order: any) => 
             order.id === 'test-order-2' || (order.status === 'DELIVERED' && order.orderNumber === 'ORDER #888')
           );
           
-          // If no delivered test order exists, add one
-          if (!hasDeliveredOrder) {
-            const deliveredOrder = {
-              id: 'test-order-2',
-              orderNumber: 'ORDER #888',
-              date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-              status: 'DELIVERED',
-              productName: 'NOIR',
-              productImage: '/assets/natural front.png',
-              total: 740,
-              items: 1,
-              trackingStage: 9, // All stages completed for delivered order
-              trackingNumber: '1Z999AA10123456784',
-              deliveryDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-              deliveryTime: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
-              deliveryLocation: 'FRONT DOOR',
-              requiresSignature: true
-            };
-            
-            // Add to activeOrders array
-            active.push(deliveredOrder);
-            
-            // Save back to localStorage
-            const updatedOrders = {
-              activeOrders: active,
-              pastOrders: past
-            };
-            localStorage.setItem(userOrdersKey, JSON.stringify(updatedOrders));
+          // Create or update the test order with 20% progress in CONSTRUCTING UNIT
+          // Constructing starts at day 5 (after sourcing), takes 28 days. To be at 20%: 5 + (28 * 0.2) = 10.6 days ≈ 11 days
+          const constructingOrderDate = new Date();
+          constructingOrderDate.setDate(constructingOrderDate.getDate() - 11);
+          // Format as MM-DD-YYYY for consistent parsing
+          const month = String(constructingOrderDate.getMonth() + 1).padStart(2, '0');
+          const day = String(constructingOrderDate.getDate()).padStart(2, '0');
+          const year = constructingOrderDate.getFullYear();
+          const formattedDate = `${month}-${day}-${year}`;
+          
+          const testOrder = {
+            id: 'test-order-1',
+            orderNumber: 'ORDER #999',
+            date: formattedDate,
+            status: 'PREPARING',
+            productName: 'NOIR',
+            productImage: '/assets/natural front.png',
+            total: 740,
+            items: 1,
+            trackingStage: 2 // Set to stage 2 (CONSTRUCTING UNIT) for testing 20% progress
+          };
+          
+          if (existingTestOrderIndex >= 0) {
+            // Update existing test order
+            if (existingTestOrderIndex < active.length) {
+              active[existingTestOrderIndex] = testOrder;
+            } else {
+              const pastIndex = existingTestOrderIndex - active.length;
+              past[pastIndex] = testOrder;
+            }
+          } else {
+            // Add new test order if it doesn't exist
+            active.push(testOrder);
           }
+          
+          // Create or update the delivered test order with correct signature and location
+          const deliveredOrder = {
+            id: 'test-order-2',
+            orderNumber: 'ORDER #888',
+            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            status: 'DELIVERED',
+            productName: 'NOIR',
+            productImage: '/assets/natural front.png',
+            total: 740,
+            items: 1,
+            trackingStage: 9, // All stages completed for delivered order
+            trackingNumber: '1Z999AA10123456784',
+            deliveryDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            deliveryTime: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+            deliveryLocation: 'FRONT DOOR',
+            requiresSignature: true
+          };
+          
+          if (existingDeliveredOrderIndex >= 0) {
+            // Update existing order
+            if (existingDeliveredOrderIndex < active.length) {
+              active[existingDeliveredOrderIndex] = deliveredOrder;
+            } else {
+              const pastIndex = existingDeliveredOrderIndex - active.length;
+              past[pastIndex] = deliveredOrder;
+            }
+          } else {
+            // Add new order
+            active.push(deliveredOrder);
+          }
+          
+          // Save back to localStorage
+          const updatedOrders = {
+            activeOrders: active,
+            pastOrders: past
+          };
+          localStorage.setItem(userOrdersKey, JSON.stringify(updatedOrders));
           
           // Include all orders (active + past, including DELIVERED)
           const allOrders = [...active, ...past];
@@ -262,7 +320,7 @@ function ConciergePage() {
       case 0: // ORDER CONFIRMED
         return 0; // Pending
       case 1: // SOURCING + COLLECTING
-        return 3; // 3 days
+        return 5; // 5 days
       case 2: // CONSTRUCTING UNIT
         return 28; // 4 weeks (28 days)
       case 3: // SHIPPED TO USA
@@ -302,13 +360,26 @@ function ConciergePage() {
       if (orderDate.includes('-')) {
         const [month, day, year] = orderDate.split('-').map(Number);
         orderDateObj = new Date(year, month - 1, day);
+      } else if (orderDate.includes(',')) {
+        // Handle format like "Jan 15, 2024"
+        orderDateObj = new Date(orderDate);
       } else {
         orderDateObj = new Date(orderDate);
       }
       
+      // Validate date
+      if (isNaN(orderDateObj.getTime())) {
+        return stageIndex < currentTrackingStage ? 100 : 0;
+      }
+      
+      // Normalize order date to midnight for accurate calculation
+      orderDateObj.setHours(0, 0, 0, 0);
+      
       const now = new Date();
+      now.setHours(0, 0, 0, 0); // Normalize to midnight for consistent calculation
+      const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
       const stageStartDate = getStageStartDate(stageIndex, orderDateObj, hasCustomization);
-      const stageEndDate = getStageEndDate(stageIndex, orderDateObj, hasCustomization);
+      const stageEndDate = getStageEndDate(stageIndex, orderDateObj, hasCustomization, selectedOrder?.shippingMethod);
       
       if (now <= stageStartDate) return 0;
       if (now >= stageEndDate) return 100;
@@ -329,27 +400,27 @@ function ConciergePage() {
       // ORDER CONFIRMED - same day
       return new Date(orderDate);
     } else if (stageIndex === 1) {
-      // SOURCING + COLLECTING - starts same day, takes 3 days
+      // SOURCING + COLLECTING - starts same day, takes 5 days
       return new Date(orderDate);
     } else if (stageIndex === 2) {
-      // CONSTRUCTING UNIT - starts after sourcing (3 days), takes 28 days (4 weeks)
-      startDate.setDate(startDate.getDate() + 3);
+      // CONSTRUCTING UNIT - starts after sourcing (5 days), takes 28 days (4 weeks)
+      startDate.setDate(startDate.getDate() + 5);
     } else if (stageIndex === 3) {
-      // SHIPPED TO USA - starts after construction (3 + 28 = 31 days), takes 5 days
-      startDate.setDate(startDate.getDate() + 3 + 28);
+      // SHIPPED TO USA - starts after construction (5 + 28 = 33 days), takes 5 days
+      startDate.setDate(startDate.getDate() + 5 + 28);
     } else if (stageIndex === 4) {
-      // ARRIVED AT HUB - starts after shipped (31 + 5 = 36 days), takes 2 days
-      startDate.setDate(startDate.getDate() + 3 + 28 + 5);
+      // ARRIVED AT HUB - starts after shipped (33 + 5 = 38 days), takes 2 days
+      startDate.setDate(startDate.getDate() + 5 + 28 + 5);
     } else if (stageIndex === 5) {
-      // PREPPING + WASHING - starts after arrived (36 + 2 = 38 days), takes 2 days
-      startDate.setDate(startDate.getDate() + 3 + 28 + 5 + 2);
+      // PREPPING + WASHING - starts after arrived (38 + 2 = 40 days), takes 2 days
+      startDate.setDate(startDate.getDate() + 5 + 28 + 5 + 2);
     } else if (stageIndex === 6) {
-      // CUSTOMIZING - starts after prepping (38 + 2 = 40 days), takes 10 days (if customization)
+      // CUSTOMIZING - starts after prepping (40 + 2 = 42 days), takes 10 days (if customization)
       if (!hasCustomization) return new Date(orderDate);
-      startDate.setDate(startDate.getDate() + 3 + 28 + 5 + 2 + 2);
+      startDate.setDate(startDate.getDate() + 5 + 28 + 5 + 2 + 2);
     } else if (stageIndex === 7) {
       // FINALIZING - starts after customizing/prepping, takes 2 days
-      const baseDays = 3 + 28 + 5 + 2 + 2; // up to prepping
+      const baseDays = 5 + 28 + 5 + 2 + 2; // up to prepping
       if (hasCustomization) {
         startDate.setDate(startDate.getDate() + baseDays + 10); // after customizing
       } else {
@@ -357,7 +428,7 @@ function ConciergePage() {
       }
     } else if (stageIndex === 8) {
       // PACKAGING - starts after finalizing, takes 3 days
-      const baseDays = 3 + 28 + 5 + 2 + 2; // up to prepping
+      const baseDays = 5 + 28 + 5 + 2 + 2; // up to prepping
       if (hasCustomization) {
         startDate.setDate(startDate.getDate() + baseDays + 10 + 2); // after finalizing
       } else {
@@ -365,7 +436,7 @@ function ConciergePage() {
       }
     } else if (stageIndex === 9) {
       // ORDER SHIPPED - starts after packaging, takes 3-5 days
-      const baseDays = 3 + 28 + 5 + 2 + 2; // up to prepping
+      const baseDays = 5 + 28 + 5 + 2 + 2; // up to prepping
       if (hasCustomization) {
         startDate.setDate(startDate.getDate() + baseDays + 10 + 2 + 3); // after packaging
       } else {
@@ -456,7 +527,7 @@ function ConciergePage() {
       // Calculate cumulative days for each stage based on timeline
       // Stage 0: ORDER CONFIRMED - same day (0 days)
       // Stage 1: SOURCING + COLLECTING - same day (0 days)
-      // Stage 2: CONSTRUCTING UNIT - 3 days from sourcing
+      // Stage 2: CONSTRUCTING UNIT - 5 days from sourcing
       // Stage 3: SHIPPED TO USA - 4 weeks (28 days) from constructing
       // Stage 4: ARRIVED AT HUB - 5 business days from shipped
       // Stage 5: PREPPING + WASHING - 2 days from arrived
@@ -465,100 +536,64 @@ function ConciergePage() {
       // Stage 8: PACKAGING - 2 days from finalizing
       // Stage 9: ORDER SHIPPED - 3 days from packaging
       
-      if (stageIndex === 0 || stageIndex === 1) {
-        // Same day
+      if (stageIndex === 0) {
+        // ORDER CONFIRMED - same day
         stageDate = new Date(orderDateObj);
+      } else if (stageIndex === 1) {
+        // SOURCING + COLLECTING - 5 days from order
+        stageDate = new Date(orderDateObj);
+        stageDate.setDate(stageDate.getDate() + 5);
       } else if (stageIndex === 2) {
-        // 28 days from order (construction takes 28 days)
+        // CONSTRUCTING UNIT - starts after sourcing (5 days), takes 28 days (4 weeks)
         stageDate = new Date(orderDateObj);
-        stageDate.setDate(stageDate.getDate() + 28);
+        stageDate.setDate(stageDate.getDate() + 5 + 28);
       } else if (stageIndex === 3) {
-        // 4 weeks (28 days) from constructing completion (28 + 28 = 56 days from order)
+        // SHIPPED TO USA - starts after construction (5 + 28 = 33 days), takes 5 days
         stageDate = new Date(orderDateObj);
-        stageDate.setDate(stageDate.getDate() + 28 + 28);
+        stageDate.setDate(stageDate.getDate() + 5 + 28 + 5);
       } else if (stageIndex === 4) {
-        // 5 business days from shipped
-        const shippedDate = new Date(orderDateObj);
-        shippedDate.setDate(shippedDate.getDate() + 28 + 28);
-        stageDate = addBusinessDays(shippedDate, 5);
+        // ARRIVED AT HUB - starts after shipped (33 + 5 = 38 days), takes 2 days
+        stageDate = new Date(orderDateObj);
+        stageDate.setDate(stageDate.getDate() + 5 + 28 + 5 + 2);
       } else if (stageIndex === 5) {
-        // 2 days from arrived
-        const shippedDate = new Date(orderDateObj);
-        shippedDate.setDate(shippedDate.getDate() + 28 + 28);
-        const arrivedDate = addBusinessDays(shippedDate, 5);
-        stageDate = new Date(arrivedDate);
-        stageDate.setDate(stageDate.getDate() + 2);
+        // PREPPING + WASHING - starts after arrived (38 + 2 = 40 days), takes 2 days
+        stageDate = new Date(orderDateObj);
+        stageDate.setDate(stageDate.getDate() + 5 + 28 + 5 + 2 + 2);
       } else if (stageIndex === 6) {
-        // 2 days from prepping (only if customization)
+        // CUSTOMIZING - starts after prepping (40 + 2 = 42 days), takes 10 days (only if customization)
         if (!hasCustomization) {
           return null; // Skip this stage
         }
-        const shippedDate = new Date(orderDateObj);
-        shippedDate.setDate(shippedDate.getDate() + 28 + 28);
-        const arrivedDate = addBusinessDays(shippedDate, 5);
-        const preppingDate = new Date(arrivedDate);
-        preppingDate.setDate(preppingDate.getDate() + 2);
-        stageDate = new Date(preppingDate);
-        stageDate.setDate(stageDate.getDate() + 2);
+        stageDate = new Date(orderDateObj);
+        stageDate.setDate(stageDate.getDate() + 5 + 28 + 5 + 2 + 2 + 10);
       } else if (stageIndex === 7) {
-        // 10 days from customizing (or 0 if no customization)
-        const shippedDate = new Date(orderDateObj);
-        shippedDate.setDate(shippedDate.getDate() + 28 + 28);
-        const arrivedDate = addBusinessDays(shippedDate, 5);
-        const preppingDate = new Date(arrivedDate);
-        preppingDate.setDate(preppingDate.getDate() + 2);
-        
+        // FINALIZING - starts after customizing/prepping, takes 2 days
+        const baseDays = 5 + 28 + 5 + 2 + 2; // up to prepping
+        stageDate = new Date(orderDateObj);
         if (hasCustomization) {
-          const customizingDate = new Date(preppingDate);
-          customizingDate.setDate(customizingDate.getDate() + 2);
-          stageDate = new Date(customizingDate);
-          stageDate.setDate(stageDate.getDate() + 10);
+          stageDate.setDate(stageDate.getDate() + baseDays + 10 + 2); // after customizing + finalizing
         } else {
-          // No customization, finalizing happens immediately after prepping
-          stageDate = new Date(preppingDate);
+          stageDate.setDate(stageDate.getDate() + baseDays + 2); // after prepping + finalizing
         }
       } else if (stageIndex === 8) {
-        // 2 days from finalizing
-        const shippedDate = new Date(orderDateObj);
-        shippedDate.setDate(shippedDate.getDate() + 28 + 28);
-        const arrivedDate = addBusinessDays(shippedDate, 5);
-        const preppingDate = new Date(arrivedDate);
-        preppingDate.setDate(preppingDate.getDate() + 2);
-        
-        let finalizingDate: Date;
+        // PACKAGING - starts after finalizing, takes 3 days
+        const baseDays = 5 + 28 + 5 + 2 + 2; // up to prepping
+        stageDate = new Date(orderDateObj);
         if (hasCustomization) {
-          const customizingDate = new Date(preppingDate);
-          customizingDate.setDate(customizingDate.getDate() + 2);
-          finalizingDate = new Date(customizingDate);
-          finalizingDate.setDate(finalizingDate.getDate() + 10);
+          stageDate.setDate(stageDate.getDate() + baseDays + 10 + 2 + 3); // after finalizing + packaging
         } else {
-          finalizingDate = new Date(preppingDate);
+          stageDate.setDate(stageDate.getDate() + baseDays + 2 + 3); // after finalizing + packaging
         }
-        
-        stageDate = new Date(finalizingDate);
-        stageDate.setDate(stageDate.getDate() + 2);
       } else if (stageIndex === 9) {
-        // 3 days from packaging
-        const shippedDate = new Date(orderDateObj);
-        shippedDate.setDate(shippedDate.getDate() + 28 + 28);
-        const arrivedDate = addBusinessDays(shippedDate, 5);
-        const preppingDate = new Date(arrivedDate);
-        preppingDate.setDate(preppingDate.getDate() + 2);
-        
-        let finalizingDate: Date;
+        // ORDER SHIPPED - starts after packaging, takes 3-5 days (default to 3)
+        const baseDays = 5 + 28 + 5 + 2 + 2; // up to prepping
+        stageDate = new Date(orderDateObj);
+        const shippingDays = 3; // Default, could be 3-5 based on shipping method
         if (hasCustomization) {
-          const customizingDate = new Date(preppingDate);
-          customizingDate.setDate(customizingDate.getDate() + 2);
-          finalizingDate = new Date(customizingDate);
-          finalizingDate.setDate(finalizingDate.getDate() + 10);
+          stageDate.setDate(stageDate.getDate() + baseDays + 10 + 2 + 3 + shippingDays); // after packaging + shipping
         } else {
-          finalizingDate = new Date(preppingDate);
+          stageDate.setDate(stageDate.getDate() + baseDays + 2 + 3 + shippingDays); // after packaging + shipping
         }
-        
-        const packagingDate = new Date(finalizingDate);
-        packagingDate.setDate(packagingDate.getDate() + 2);
-        stageDate = new Date(packagingDate);
-        stageDate.setDate(stageDate.getDate() + 3);
       }
       
       stageDate.setHours(9 + (stageIndex % 12), 7 + (stageIndex * 3) % 60); // Vary time slightly
@@ -576,7 +611,7 @@ function ConciergePage() {
     { name: 'ORDER CONFIRMED', description: 'PROCESSING YOUR ORDER.' },
     { name: 'SOURCING + COLLECTING', description: 'GATHERING RAW MATERIALS.' },
     { name: 'CONSTRUCTING UNIT', description: 'WEFTING TRACKS + VENTILATING THE LACE.' },
-    { name: 'SHIPPED TO USA', description: 'HEADED TO FS HUB.' },
+    { name: 'SHIPPED TO USA', description: 'HEADED TO HUB.' },
     { name: 'ARRIVED AT HUB', description: 'PERFORMING QUALITY CHECK.' },
     { name: 'PREPPING + WASHING', description: 'SANITIZING + DISINFECTING THE HAIR.' },
     { name: 'CUSTOMIZING', description: 'COLORING, PLUCKING, BLEACHING & STYLING.' },
@@ -1430,10 +1465,14 @@ function ConciergePage() {
                                   const requiresSignature = selectedOrder?.requiresSignature;
                                   
                                   if (!location) {
+                                    // Fallback to tracking number if available
+                                    if (selectedOrder?.trackingNumber) {
+                                      return `NO SIGNATURE: ${selectedOrder.trackingNumber}`;
+                                    }
                                     return 'LOCATION UNAVAILABLE';
                                   }
                                   
-                                  const signatureText = requiresSignature ? 'SIGNATURE' : 'NO SIGNATURE';
+                                  const signatureText = requiresSignature === true ? 'SIGNATURE' : 'NO SIGNATURE';
                                   return `${signatureText}: ${location.toUpperCase()}`;
                                 };
                                 
@@ -1454,9 +1493,9 @@ function ConciergePage() {
                                     </p>
                                     {deliveryDateInfo && (
                                       <>
-                                        <p
-                                          style={{
-                                            fontFamily: '"Futura PT Medium"',
+                  <p
+                    style={{
+                      fontFamily: '"Futura PT Medium"',
                                             color: '#000000',
                                             fontSize: '12px',
                                             margin: '0 0 2px 0',
@@ -1480,8 +1519,8 @@ function ConciergePage() {
                                         <p
                                           style={{
                                             fontFamily: '"Futura PT Book"',
-                                            color: '#EB1C24',
-                                            fontSize: '22px',
+                      color: '#EB1C24',
+                                            fontSize: '20px',
                                             margin: '-2px 0 4px 0',
                                             textTransform: 'uppercase'
                                           }}
@@ -1493,10 +1532,10 @@ function ConciergePage() {
                                     {deliveryTimeFormatted && (
                                       <p
                                         style={{
-                                          fontFamily: '"Futura PT Book"',
-                                          color: '#EB1C24',
-                                          fontSize: '9px',
-                                          margin: '0 0 4px 0',
+                                          fontFamily: '"Futura PT Medium"',
+                                          color: '#000000',
+                                          fontSize: '11px',
+                                          margin: '-2px 0 4px 0',
                                           textTransform: 'uppercase'
                                         }}
                                       >
@@ -1505,8 +1544,8 @@ function ConciergePage() {
                                     )}
                                     <p
                                       style={{
-                                        fontFamily: '"Futura PT Book"',
-                                        color: '#909090',
+                                        fontFamily: '"Futura PT Medium"',
+                                        color: '#EB1C24',
                                         fontSize: '9px',
                                         margin: '0',
                                         textTransform: 'uppercase'
@@ -1606,14 +1645,14 @@ function ConciergePage() {
                                       color: '#000000',
                                       fontSize: '12px',
                                       margin: '0 0 2px 0',
-                                      textTransform: 'uppercase',
-                                      fontWeight: '500'
-                                    }}
-                                  >
+                      textTransform: 'uppercase',
+                      fontWeight: '500'
+                    }}
+                  >
                                     {weekday}
                                   </p>
                                   <p
-                                    style={{
+                    style={{
                                       fontFamily: '"Futura PT Demi"',
                                       color: '#909090',
                                       fontSize: '12px',
@@ -1625,12 +1664,12 @@ function ConciergePage() {
                                   </p>
                                   <p
                                     style={{
-                                      fontFamily: '"Futura PT Book"',
+                      fontFamily: '"Futura PT Book"',
                                       color: '#EB1C24',
                                       fontSize: '22px',
                                       margin: '-2px 0 0 0',
-                                      textTransform: 'uppercase'
-                                    }}
+                      textTransform: 'uppercase'
+                    }}
                                   >
                                     {day}
                                   </p>
@@ -1682,10 +1721,14 @@ function ConciergePage() {
                                   const requiresSignature = selectedOrder?.requiresSignature;
                                   
                                   if (!location) {
+                                    // Fallback to tracking number if available
+                                    if (selectedOrder?.trackingNumber) {
+                                      return `NO SIGNATURE: ${selectedOrder.trackingNumber}`;
+                                    }
                                     return 'LOCATION UNAVAILABLE';
                                   }
                                   
-                                  const signatureText = requiresSignature ? 'SIGNATURE' : 'NO SIGNATURE';
+                                  const signatureText = requiresSignature === true ? 'SIGNATURE' : 'NO SIGNATURE';
                                   return `${signatureText}: ${location.toUpperCase()}`;
                                 };
                                 
@@ -1694,7 +1737,7 @@ function ConciergePage() {
                                 return (
                                   <div style={{ marginBottom: '16px', marginTop: '-10px', textAlign: 'center' }}>
                                     <p
-                                      style={{
+                    style={{
                                         fontFamily: '"Covered by Your Grace", cursive',
                                         color: '#909090',
                                         fontSize: '15px',
@@ -1731,9 +1774,9 @@ function ConciergePage() {
                                         </p>
                                         <p
                                           style={{
-                                            fontFamily: '"Futura PT Book"',
+                      fontFamily: '"Futura PT Book"',
                                             color: '#EB1C24',
-                                            fontSize: '22px',
+                                            fontSize: '20px',
                                             margin: '-2px 0 4px 0',
                                             textTransform: 'uppercase'
                                           }}
@@ -1745,11 +1788,11 @@ function ConciergePage() {
                                     {deliveryTimeFormatted && (
                                       <p
                                         style={{
-                                          fontFamily: '"Futura PT Book"',
-                                          color: '#EB1C24',
-                                          fontSize: '9px',
-                                          margin: '0 0 4px 0',
-                                          textTransform: 'uppercase'
+                                          fontFamily: '"Futura PT Medium"',
+                                          color: '#000000',
+                      fontSize: '11px',
+                                          margin: '-2px 0 4px 0',
+                      textTransform: 'uppercase'
                                         }}
                                       >
                                         {deliveryTimeFormatted}
@@ -1757,8 +1800,8 @@ function ConciergePage() {
                                     )}
                                     <p
                                       style={{
-                                        fontFamily: '"Futura PT Book"',
-                                        color: '#909090',
+                                        fontFamily: '"Futura PT Medium"',
+                                        color: '#EB1C24',
                                         fontSize: '9px',
                                         margin: '0',
                                         textTransform: 'uppercase'
@@ -1933,9 +1976,9 @@ function ConciergePage() {
                                       style={{
                                         position: 'absolute',
                                         left: '12px',
-                                        top: '-17px',
+                                        top: '-21px',
                                         width: '2px',
-                                        height: '16px',
+                                        height: '20px',
                                         backgroundColor: isCompleted ? '#EB1C24' : '#E0E0E0',
                                         zIndex: 0
                                       }}
@@ -1965,8 +2008,8 @@ function ConciergePage() {
                                     {/* Stage Indicator */}
                                     <div
                                       style={{
-                                        width: '24px',
-                                        height: '24px',
+                                        width: '21.6px',
+                                        height: '21.6px',
                                         borderRadius: '50%',
                                         backgroundColor: isCompleted || isCurrent || isDeliveredLastStage
                                           ? '#FFFFFF'
@@ -1982,7 +2025,7 @@ function ConciergePage() {
                                         <img
                                           src="/assets/premium-check.svg"
                                           alt="Completed"
-                                          style={{ width: '11.7px', height: '11.7px' }}
+                                          style={{ width: '10.5px', height: '10.5px' }}
                                         />
                                       ) : isCurrent ? (
                                         <span 
@@ -2005,7 +2048,7 @@ function ConciergePage() {
                                           style={{
                                             fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
                                             color: isCompleted ? '#000000' : (isCurrent ? '#EB1C24' : '#909090'),
-                                            fontSize: '11px',
+                      fontSize: '10px',
                                             margin: '0',
                                             textTransform: 'uppercase',
                                             fontWeight: isCurrent ? '500' : '400'
@@ -2056,6 +2099,7 @@ function ConciergePage() {
                                             return timestamp ? (
                                               <span
                                                 style={{
+                                                  fontFamily: '"Futura PT Medium"',
                                                   color: '#EB1C24',
                                                   marginLeft: '12px',
                                                   whiteSpace: 'nowrap'
@@ -2093,7 +2137,7 @@ function ConciergePage() {
                                             color: '#909090',
                                             fontSize: '9px',
                                             margin: '0 0 8px 0',
-                                            textTransform: 'uppercase'
+                      textTransform: 'uppercase'
                                           }}
                                         >
                                           ESTIMATED DURATION: {durationText}
@@ -2120,9 +2164,9 @@ function ConciergePage() {
                                                   backgroundColor: isCompleted || isDeliveredLastStage ? '#EB1C24' : '#EB1C24',
                                                   transition: 'width 0.3s ease',
                                                   borderRadius: '4px'
-                                                }}
-                                              />
-                                            </div>
+                    }}
+                  />
+                </div>
                                             <p
                                               style={{
                                                 fontFamily: '"Futura PT Book"',
@@ -2362,50 +2406,6 @@ function ConciergePage() {
                   
                   {/* Birthday Gift Selection Options */}
                   <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
-                    {/* 200 Loyalty Points Option */}
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <div
-                        onClick={() => setSelectedBirthdayGift(selectedBirthdayGift === 'points' ? '' : 'points')}
-                        style={{
-                          border: selectedBirthdayGift === 'points' ? '1.3px solid #EB1C24' : '1.3px solid #000000',
-                          padding: '12px',
-                          cursor: 'pointer',
-                          backgroundColor: '#FFFFFF',
-                          textAlign: 'center',
-                          marginBottom: '8px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: 'calc(100% - 20px)',
-                          height: '144px'
-                        }}
-                      >
-                        <img
-                          src="/assets/gift-card asset.png"
-                          alt="200 Loyalty Points"
-                          style={{
-                            maxWidth: '130px',
-                            maxHeight: '194px',
-                            width: 'auto',
-                            height: 'auto',
-                            objectFit: 'contain'
-                          }}
-                        />
-                  </div>
-                  <p
-                    style={{
-                          fontFamily: selectedBirthdayGift === 'points' ? '"Futura PT Medium"' : '"Futura PT Book"',
-                          color: selectedBirthdayGift === 'points' ? '#EB1C24' : '#000000',
-                      fontSize: '10px',
-                          margin: '0',
-                          textAlign: 'center',
-                      textTransform: 'uppercase'
-                        }}
-                      >
-                        200 LOYALTY POINTS
-                      </p>
-                    </div>
-                    
                     {/* $20 Gift Card Option */}
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                       <div
@@ -2447,6 +2447,52 @@ function ConciergePage() {
                         }}
                       >
                         $20 GIFT CARD
+                      </p>
+                    </div>
+                    
+                    {/* 200 Loyalty Points Option */}
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <div
+                        onClick={() => setSelectedBirthdayGift(selectedBirthdayGift === 'points' ? '' : 'points')}
+                        style={{
+                          border: selectedBirthdayGift === 'points' ? '1.3px solid #EB1C24' : '1.3px solid #000000',
+                          padding: '12px',
+                          cursor: 'pointer',
+                          backgroundColor: '#FFFFFF',
+                          textAlign: 'center',
+                          marginBottom: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: 'calc(100% - 20px)',
+                          height: '144px'
+                        }}
+                      >
+                        <img
+                          src="/assets/points-loyalty.png"
+                          alt="200 Loyalty Points"
+                          style={{
+                            maxWidth: '119px',
+                            maxHeight: '173px',
+                            width: 'auto',
+                            height: 'auto',
+                            objectFit: 'contain',
+                            marginTop: '10px',
+                            transform: 'translateX(3.7px)'
+                          }}
+                        />
+                  </div>
+                  <p
+                    style={{
+                          fontFamily: selectedBirthdayGift === 'points' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                          color: selectedBirthdayGift === 'points' ? '#EB1C24' : '#000000',
+                      fontSize: '10px',
+                          margin: '0',
+                          textAlign: 'center',
+                      textTransform: 'uppercase'
+                        }}
+                      >
+                        200 LOYALTY POINTS
                       </p>
                     </div>
                   </div>
