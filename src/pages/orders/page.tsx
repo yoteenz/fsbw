@@ -964,7 +964,7 @@ function OrdersPage() {
 
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
-              <div>
+              <div style={{ transform: 'translateX(5px)' }}>
                 <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

@@ -132,7 +132,7 @@ function ConciergePage() {
         // If no orders exist, create test orders for UI testing
         if (!storedOrders) {
           // Create order date 13 days ago to show 20% progress in CONSTRUCTING UNIT stage
-          // Constructing starts at day 7 (after sourcing ends: 2 + 5 = 7), takes 28 days. To be at 20%: 7 + (28 * 0.2) = 12.6 days ≈ 13 days
+          // Constructing starts at day 7 (after sourcing ends: 2 + 5 = 7), takes 28 days. To be at 20%: 7 + (28 * 0.2) = 12.6 days ? 13 days
           const constructingOrderDate = new Date();
           constructingOrderDate.setDate(constructingOrderDate.getDate() - 13);
           // Format as MM-DD-YYYY for consistent parsing
@@ -195,7 +195,7 @@ function ConciergePage() {
           );
           
           // Create or update the test order with 20% progress in CONSTRUCTING UNIT
-          // Constructing starts at day 7 (after sourcing ends: 2 + 5 = 7), takes 28 days. To be at 20%: 7 + (28 * 0.2) = 12.6 days ≈ 13 days
+          // Constructing starts at day 7 (after sourcing ends: 2 + 5 = 7), takes 28 days. To be at 20%: 7 + (28 * 0.2) = 12.6 days ? 13 days
           const constructingOrderDate = new Date();
           constructingOrderDate.setDate(constructingOrderDate.getDate() - 13);
           // Format as MM-DD-YYYY for consistent parsing
@@ -485,12 +485,80 @@ function ConciergePage() {
     });
   };
   
-  // Helper function to format date as "FEB 21"
+  // Helper function to format date as "FEBRUARY 21"
   const formatDate = (date: Date): string => {
-    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const months = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
     const month = months[date.getMonth()];
     const day = date.getDate();
     return `${month} ${day}`;
+  };
+  
+  // Helper function to get the current ORDER SHIPPED sub-status
+  // Returns: 'PREPARING LABEL' | tracking number string | 'DELIVERED'
+  const getOrderShippedSubStatus = (order: any): string => {
+    if (!order) return 'PREPARING LABEL';
+    
+    // If delivered, show "DELIVERED"
+    if (order.status === 'DELIVERED' || order.trackingStage === 9) {
+      return 'DELIVERED';
+    }
+    
+    // If tracking number exists, show it
+    if (order.trackingNumber) {
+      return order.trackingNumber;
+    }
+    
+    // Otherwise, show "PREPARING LABEL"
+    return 'PREPARING LABEL';
+  };
+  
+  // Helper function to get the current ORDER CONFIRMED sub-status
+  // Returns: 'PENDING' | 'AWAITING ORDER FORM' | 'ORDER FORM PENDING' | 'ORDER FORM APPROVED'
+  const getOrderConfirmedSubStatus = (order: any): string => {
+    if (!order || !order.date) return 'PENDING';
+    
+    // Parse order date
+    let orderDate: Date;
+    try {
+      // Try parsing MM-DD-YYYY format first
+      if (order.date.includes('-')) {
+        const [month, day, year] = order.date.split('-').map(Number);
+        orderDate = new Date(year, month - 1, day);
+      } else {
+        // Try parsing locale date string
+        orderDate = new Date(order.date);
+      }
+    } catch (e) {
+      return 'PENDING';
+    }
+    
+    // Check if order has explicit orderFormStatus (for future use)
+    if (order.orderFormStatus) {
+      return order.orderFormStatus;
+    }
+    
+    // Calculate time elapsed since order confirmation
+    const now = new Date();
+    const hoursElapsed = (now.getTime() - orderDate.getTime()) / (1000 * 60 * 60);
+    
+    // Check if order form has been submitted (stored in order data)
+    if (order.orderFormSubmitted) {
+      // If submitted but not approved yet
+      if (!order.orderFormApproved) {
+        return 'ORDER FORM PENDING';
+      } else {
+        return 'ORDER FORM APPROVED';
+      }
+    }
+    
+    // Time-based progression (for demo/testing purposes)
+    // After 1 hour, show "AWAITING ORDER FORM"
+    if (hoursElapsed >= 1) {
+      return 'AWAITING ORDER FORM';
+    }
+    
+    // Within first hour, show "PENDING"
+    return 'PENDING';
   };
   
   // Helper function to format time as "9:07PM"
@@ -923,7 +991,7 @@ function ConciergePage() {
 
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
-              <div>
+              <div style={{ transform: 'translateX(5px)' }}>
                 <DynamicCartIcon count={cartCount} width={22} height={19} />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1490,7 +1558,7 @@ function ConciergePage() {
                                       return null;
                                     }
                                     const weekdays = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
-                                    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                                    const months = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
                                     return {
                                       weekday: weekdays[date.getDay()],
                                       month: months[date.getMonth()],
@@ -1503,8 +1571,8 @@ function ConciergePage() {
                                 
                                 const formatDeliveryTime = (timeStr: string | undefined) => {
                                   if (!timeStr) return null;
-                                  // Convert "9:07 AM" to "9:07AM" format
-                                  return timeStr.replace(/\s/g, '').toUpperCase();
+                                  // Format time with space between time and AM/PM (e.g., "9:07 AM")
+                                  return timeStr.replace(/(\d+:\d+)\s*(AM|PM)/i, '$1 $2').toUpperCase();
                                 };
                                 
                                 // Use deliveryDate if available, otherwise use order date as fallback
@@ -1546,22 +1614,10 @@ function ConciergePage() {
                                     </p>
                                     {deliveryDateInfo && (
                                       <>
-                  <p
-                    style={{
-                      fontFamily: '"Futura PT Medium"',
-                                            color: '#000000',
-                                            fontSize: '12px',
-                                            margin: '0 0 2px 0',
-                                            textTransform: 'uppercase',
-                                            fontWeight: '500'
-                                          }}
-                                        >
-                                          {deliveryDateInfo.weekday}
-                                        </p>
                                         <p
                                           style={{
-                                            fontFamily: '"Futura PT Demi"',
-                                            color: '#909090',
+                                            fontFamily: '"Futura PT Medium"',
+                                            color: '#000000',
                                             fontSize: '12px',
                                             margin: '0 0 2px 0',
                                             textTransform: 'uppercase'
@@ -1585,8 +1641,8 @@ function ConciergePage() {
                                     {deliveryTimeFormatted && (
                                       <p
                                         style={{
-                                          fontFamily: '"Futura PT Medium"',
-                                          color: '#000000',
+                                          fontFamily: '"Futura PT Demi"',
+                                          color: '#909090',
                                           fontSize: '11px',
                                           margin: '-2px 0 4px 0',
                                           textTransform: 'uppercase'
@@ -1673,7 +1729,7 @@ function ConciergePage() {
                               
                               const deliveryDate = calculateDeliveryDate();
                               const weekdays = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
-                              const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                              const months = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
                               
                               const weekday = weekdays[deliveryDate.getDay()];
                               const month = months[deliveryDate.getMonth()];
@@ -1693,21 +1749,9 @@ function ConciergePage() {
                                     DELIVERY ESTIMATE
                                   </p>
                                   <p
-                                    style={{
+                    style={{
                                       fontFamily: '"Futura PT Medium"',
                                       color: '#000000',
-                                      fontSize: '12px',
-                                      margin: '0 0 2px 0',
-                      textTransform: 'uppercase',
-                      fontWeight: '500'
-                    }}
-                  >
-                                    {weekday}
-                                  </p>
-                                  <p
-                    style={{
-                                      fontFamily: '"Futura PT Demi"',
-                                      color: '#909090',
                                       fontSize: '12px',
                                       margin: '0 0 2px 0',
                                       textTransform: 'uppercase'
@@ -1746,7 +1790,7 @@ function ConciergePage() {
                                       return null;
                                     }
                                     const weekdays = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
-                                    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                                    const months = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
                                     return {
                                       weekday: weekdays[date.getDay()],
                                       month: months[date.getMonth()],
@@ -1759,8 +1803,8 @@ function ConciergePage() {
                                 
                                 const formatDeliveryTime = (timeStr: string | undefined) => {
                                   if (!timeStr) return null;
-                                  // Convert "9:07 AM" to "9:07AM" format
-                                  return timeStr.replace(/\s/g, '').toUpperCase();
+                                  // Format time with space between time and AM/PM (e.g., "9:07 AM")
+                                  return timeStr.replace(/(\d+:\d+)\s*(AM|PM)/i, '$1 $2').toUpperCase();
                                 };
                                 
                                 // Use deliveryDate if available, otherwise use order date as fallback
@@ -1803,21 +1847,9 @@ function ConciergePage() {
                                     {deliveryDateInfo && (
                                       <>
                                         <p
-                                          style={{
+                    style={{
                                             fontFamily: '"Futura PT Medium"',
                                             color: '#000000',
-                                            fontSize: '12px',
-                                            margin: '0 0 2px 0',
-                                            textTransform: 'uppercase',
-                                            fontWeight: '500'
-                                          }}
-                                        >
-                                          {deliveryDateInfo.weekday}
-                                        </p>
-                                        <p
-                                          style={{
-                                            fontFamily: '"Futura PT Demi"',
-                                            color: '#909090',
                                             fontSize: '12px',
                                             margin: '0 0 2px 0',
                                             textTransform: 'uppercase'
@@ -1841,8 +1873,8 @@ function ConciergePage() {
                                     {deliveryTimeFormatted && (
                                       <p
                                         style={{
-                                          fontFamily: '"Futura PT Medium"',
-                                          color: '#000000',
+                                          fontFamily: '"Futura PT Demi"',
+                                          color: '#909090',
                       fontSize: '11px',
                                           margin: '-2px 0 4px 0',
                       textTransform: 'uppercase'
@@ -1906,7 +1938,7 @@ function ConciergePage() {
                                   }
                                   
                                   const weekdays = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
-                                  const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                                  const months = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
                                   
                                   return {
                                     weekday: weekdays[deliveryDate.getDay()],
@@ -1939,18 +1971,6 @@ function ConciergePage() {
                                         style={{
                                           fontFamily: '"Futura PT Medium"',
                                           color: '#000000',
-                                          fontSize: '12px',
-                                          margin: '0 0 2px 0',
-                                          textTransform: 'uppercase',
-                                          fontWeight: '500'
-                                        }}
-                                      >
-                                        {deliveryInfo.weekday}
-                                      </p>
-                                      <p
-                                        style={{
-                                          fontFamily: '"Futura PT Demi"',
-                                          color: '#909090',
                                           fontSize: '12px',
                                           margin: '0 0 2px 0',
                                           textTransform: 'uppercase'
@@ -2086,11 +2106,14 @@ function ConciergePage() {
                                             color: '#EB1C24', 
                                             fontSize: '10px', 
                                             fontWeight: 'bold',
-                                            animation: 'pulsate 1s ease-in-out infinite'
+                                            animation: 'pulsate 1s ease-in-out infinite',
+                                            display: 'block',
+                                            width: '6px',
+                                            height: '6px',
+                                            borderRadius: '50%',
+                                            backgroundColor: '#EB1C24'
                                           }}
-                                        >
-                                          ●
-                                        </span>
+                                        />
                                       ) : null}
                 </div>
 
@@ -2172,7 +2195,7 @@ function ConciergePage() {
                                       <div style={{ 
                                         padding: '0 12px 12px 12px', 
                                         marginTop: '8px',
-                                        paddingTop: '12px'
+                                        paddingTop: '10px'
                                       }}>
                                         {/* Gray line above estimated duration */}
                                         <div
@@ -2189,7 +2212,7 @@ function ConciergePage() {
                                             fontFamily: '"Futura PT Book"',
                                             color: '#909090',
                                             fontSize: '9px',
-                                            margin: '0 0 8px 0',
+                                            margin: '0 0 5px 0',
                       textTransform: 'uppercase'
                                           }}
                                         >
@@ -2198,10 +2221,10 @@ function ConciergePage() {
                                         
                                         {/* Progress Bar */}
                                         {(isCurrent || isCompleted || isDeliveredLastStage) && (
-                                          <div style={{ marginTop: '8px' }}>
+                                          <div style={{ marginTop: '3px' }}>
                                             <div
-                                              style={{
-                                                width: '100%',
+                    style={{
+                      width: '100%',
                                                 height: '7px',
                                                 backgroundColor: '#E0E0E0',
                                                 borderRadius: '0',
@@ -2220,21 +2243,23 @@ function ConciergePage() {
                     }}
                   />
                 </div>
-                                            <p
-                                              style={{
-                                                fontFamily: '"Futura PT Book"',
-                                                color: '#000000',
-                                                fontSize: '9px',
-                                                margin: '4px 0 0 0',
-                                                textTransform: 'uppercase'
-                                              }}
-                                            >
-                                              {isDeliveredLastStage ? 'STATUS: DELIVERED' : (isCompleted ? 'STATUS: COMPLETE' : `STATUS: ${Math.round(progress)}% COMPLETE`)}
-                                            </p>
+                                            {!(isDeliveredLastStage && index === 9) && (
+                                              <p
+                                                style={{
+                          fontFamily: '"Futura PT Book"',
+                                                    color: '#000000',
+                                                    fontSize: '9px',
+                                                    margin: '4px 0 0 0',
+                          textTransform: 'uppercase'
+                                                }}
+                                              >
+                                                {isDeliveredLastStage ? 'STATUS: DELIVERED' : (isCompleted ? 'STATUS: COMPLETE' : `STATUS: ${Math.round(progress)}% COMPLETE`)}
+                                              </p>
+                                            )}
                                           </div>
                                         )}
                                         
-                                        {isUpcoming && (
+                                        {isUpcoming && index !== 0 && (
                                           <p
                                             style={{
                                               fontFamily: '"Futura PT Book"',
@@ -2249,41 +2274,68 @@ function ConciergePage() {
                                         )}
                                         
                                         {/* Order Confirmed Sub-Statuses */}
-                                        {index === 0 && (isCurrent || isCompleted) && (
-                                          <div style={{ marginTop: '12px' }}>
-                                            <div
-                                              style={{
-                                                width: 'calc(100% - 4px)',
-                                                height: '1px',
-                                                backgroundColor: '#E0E0E0',
-                                                margin: '0 auto 12px auto'
-                                              }}
-                                            />
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                              <p
+                                        {index === 0 && (isCurrent || isCompleted) && (() => {
+                                          const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
+                                          const subStatus = getOrderConfirmedSubStatus(selectedOrder);
+                                          
+                                          // Determine if this is the active/completed status
+                                          const isPending = subStatus === 'PENDING';
+                                          const isAwaiting = subStatus === 'AWAITING ORDER FORM';
+                                          const isPendingApproval = subStatus === 'ORDER FORM PENDING';
+                                          const isApproved = subStatus === 'ORDER FORM APPROVED';
+                                          
+                                          return (
+                                            <div style={{ marginTop: '12px' }}>
+                                              <div
                                                 style={{
-                                                  fontFamily: '"Futura PT Book"',
-                                                  color: '#909090',
-                                                  fontSize: '9px',
-                                                  margin: '0',
-                                                  textTransform: 'uppercase'
+                                                  width: 'calc(100% - 4px)',
+                                                  height: '1px',
+                                                  backgroundColor: '#E0E0E0',
+                                                  margin: '0 auto 12px auto'
                                                 }}
-                                              >
-                                                PENDING
-                                              </p>
-                                              {isCompleted ? (
-                                                <>
+                                              />
+                                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                                {/* Show only the current status */}
+                                                {isPending && (
                                                   <p
                                                     style={{
                                                       fontFamily: '"Futura PT Book"',
-                                                      color: '#909090',
+                                                      color: isCurrent ? '#EB1C24' : '#909090',
                                                       fontSize: '9px',
                                                       margin: '0',
                                                       textTransform: 'uppercase'
                                                     }}
                                                   >
-                                                    AWAITING ORDER FORM
+                                                    STATUS: PENDING
                                                   </p>
+                                                )}
+                                                {isAwaiting && (
+                                                  <p
+                                                    style={{
+                                                      fontFamily: '"Futura PT Book"',
+                                                      color: isCurrent ? '#EB1C24' : '#909090',
+                                                      fontSize: '9px',
+                                                      margin: '0',
+                                                      textTransform: 'uppercase'
+                                                    }}
+                                                  >
+                                                    STATUS: AWAITING ORDER FORM
+                                                  </p>
+                                                )}
+                                                {isPendingApproval && (
+                                                  <p
+                                                    style={{
+                                                      fontFamily: '"Futura PT Book"',
+                                                      color: isCurrent ? '#EB1C24' : '#909090',
+                                                      fontSize: '9px',
+                                                      margin: '0',
+                                                      textTransform: 'uppercase'
+                                                    }}
+                                                  >
+                                                    STATUS: ORDER FORM PENDING
+                                                  </p>
+                                                )}
+                                                {isApproved && (
                                                   <p
                                                     style={{
                                                       fontFamily: '"Futura PT Book"',
@@ -2293,88 +2345,80 @@ function ConciergePage() {
                                                       textTransform: 'uppercase'
                                                     }}
                                                   >
-                                                    ORDER FORM APPROVED
+                                                    STATUS: ORDER FORM APPROVED
                                                   </p>
-                                                </>
-                                              ) : (
-                                                <p
-                                                  style={{
-                                                    fontFamily: '"Futura PT Book"',
-                                                    color: '#909090',
-                                                    fontSize: '9px',
-                                                    margin: '0',
-                                                    textTransform: 'uppercase'
-                                                  }}
-                                                >
-                                                  AWAITING ORDER FORM
-                                                </p>
-                                              )}
+                                                )}
+                </div>
                                             </div>
-                                          </div>
-                                        )}
+                                          );
+                                        })()}
                                         
                                         {/* Tracking Number and Shipping Status for ORDER SHIPPED */}
-                                        {index === 9 && (isCurrent || isCompleted || isDeliveredLastStage) && selectedOrder?.trackingNumber && (
-                                          <div style={{ marginTop: '12px' }}>
-                                            <div
-                                              style={{
-                                                width: 'calc(100% - 4px)',
-                                                height: '1px',
-                                                backgroundColor: '#E0E0E0',
-                                                margin: '0 auto 12px auto'
-                                              }}
-                                            />
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                              <p
-                                                style={{
-                                                  fontFamily: '"Futura PT Book"',
-                                                  color: '#909090',
-                                                  fontSize: '9px',
-                                                  margin: '0',
-                                                  textTransform: 'uppercase'
-                                                }}
-                                              >
-                                                PREPARING
-                                              </p>
-                                              <p
-                                                style={{
-                                                  fontFamily: '"Futura PT Book"',
-                                                  color: '#000000',
-                                                  fontSize: '9px',
-                                                  margin: '0',
-                                                  textTransform: 'uppercase'
-                                                }}
-                                              >
-                                                TRACKING NUMBER: {selectedOrder.trackingNumber}
-                                              </p>
-                                              {isDeliveredLastStage ? (
-                                                <p
+                                        {index === 9 && (isCurrent || isCompleted || isDeliveredLastStage) && (() => {
+                                          const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
+                                          const subStatus = getOrderShippedSubStatus(selectedOrder);
+                                          
+                                          const isPreparing = subStatus === 'PREPARING LABEL';
+                                          const isTrackingNumber = subStatus !== 'PREPARING LABEL' && subStatus !== 'DELIVERED';
+                                          const isDelivered = subStatus === 'DELIVERED';
+                                          
+                                          return (
+                                            <div style={{ marginTop: isDelivered ? '1px' : '6px' }}>
+                                              {!isDelivered && (
+                                                <div
                                                   style={{
-                                                    fontFamily: '"Futura PT Book"',
-                                                    color: '#EB1C24',
-                                                    fontSize: '9px',
-                                                    margin: '0',
-                                                    textTransform: 'uppercase'
+                                                    width: 'calc(100% - 4px)',
+                                                    height: '1px',
+                                                    backgroundColor: '#E0E0E0',
+                                                    margin: '0 auto 12px auto'
                                                   }}
-                                                >
-                                                  DELIVERED
-                                                </p>
-                                              ) : (
-                                                <p
-                                                  style={{
-                                                    fontFamily: '"Futura PT Book"',
-                                                    color: '#909090',
-                                                    fontSize: '9px',
-                                                    margin: '0',
-                                                    textTransform: 'uppercase'
-                                                  }}
-                                                >
-                                                  OUT FOR DELIVERY
-                                                </p>
+                                                />
                                               )}
+                                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                                {/* Show only the current status */}
+                                                {isPreparing && (
+                                                  <p
+                                                    style={{
+                                                      fontFamily: '"Futura PT Book"',
+                                                      color: isCurrent ? '#EB1C24' : '#909090',
+                                                      fontSize: '9px',
+                                                      margin: '4px 0 0 0',
+                                                      textTransform: 'uppercase'
+                                                    }}
+                                                  >
+                                                    STATUS: PREPARING LABEL
+                                                  </p>
+                                                )}
+                                                {isTrackingNumber && (
+                                                  <p
+                                                    style={{
+                                                      fontFamily: '"Futura PT Book"',
+                                                      color: isCurrent ? '#EB1C24' : '#000000',
+                                                      fontSize: '9px',
+                                                      margin: '4px 0 0 0',
+                                                      textTransform: 'uppercase'
+                                                    }}
+                                                  >
+                                                    STATUS: {subStatus}
+                                                  </p>
+                                                )}
+                                                {isDelivered && (
+                                                  <p
+                                                    style={{
+                                                      fontFamily: '"Futura PT Book"',
+                                                      color: '#EB1C24',
+                                                      fontSize: '9px',
+                                                      margin: '4px 0 0 0',
+                                                      textTransform: 'uppercase'
+                                                    }}
+                                                  >
+                                                    STATUS: DELIVERED
+                                                  </p>
+                                                )}
+                                              </div>
                                             </div>
-                                          </div>
-                                        )}
+                                          );
+                                        })()}
                                       </div>
                                     )}
                                   </div>
@@ -2421,6 +2465,22 @@ function ConciergePage() {
                     type="button"
                   >
                     TRACK ORDER
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigate('/account/orders');
+                    }}
+                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                    style={{
+                      borderWidth: '1.3px',
+                      color: '#EB1C24',
+                      fontFamily: '"Futura PT Medium"',
+                      backgroundColor: '#FFFFFF',
+                      marginTop: '8px'
+                    }}
+                    type="button"
+                  >
+                    VIEW ALL ORDERS
                   </button>
                 </div>
 
