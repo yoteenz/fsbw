@@ -620,55 +620,6 @@ function ConciergePage() {
     return 'PREPARING LABEL';
   };
   
-  // Helper function to get the current ORDER CONFIRMED sub-status
-  // Returns: 'PENDING' | 'AWAITING ORDER FORM' | 'ORDER FORM PENDING' | 'ORDER FORM APPROVED'
-  const getOrderConfirmedSubStatus = (order: any): string => {
-    if (!order || !order.date) return 'PENDING';
-    
-    // Parse order date
-    let orderDate: Date;
-    try {
-      // Try parsing MM-DD-YYYY format first
-      if (order.date.includes('-')) {
-        const [month, day, year] = order.date.split('-').map(Number);
-        orderDate = new Date(year, month - 1, day);
-      } else {
-        // Try parsing locale date string
-        orderDate = new Date(order.date);
-      }
-    } catch (e) {
-      return 'PENDING';
-    }
-    
-    // Check if order has explicit orderFormStatus (for future use)
-    if (order.orderFormStatus) {
-      return order.orderFormStatus;
-    }
-    
-    // Calculate time elapsed since order confirmation
-    const now = new Date();
-    const hoursElapsed = (now.getTime() - orderDate.getTime()) / (1000 * 60 * 60);
-    
-    // Check if order form has been submitted (stored in order data)
-    if (order.orderFormSubmitted) {
-      // If submitted but not approved yet
-      if (!order.orderFormApproved) {
-        return 'ORDER FORM PENDING';
-      } else {
-        return 'ORDER FORM APPROVED';
-      }
-    }
-    
-    // Time-based progression (for demo/testing purposes)
-    // After 1 hour, show "AWAITING ORDER FORM"
-    if (hoursElapsed >= 1) {
-      return 'AWAITING ORDER FORM';
-    }
-    
-    // Within first hour, show "PENDING"
-    return 'PENDING';
-  };
-  
   // Helper function to format time as "9:07 PM"
   const formatTime = (date: Date): string => {
     let hours = date.getHours();
@@ -681,7 +632,7 @@ function ConciergePage() {
   };
 
   // Helper functions to get icon paths for selections
-  const getLengthIcon = (length: string, productName: string): string => {
+  const getLengthIcon = (length: string): string => {
     if (['16"', '18"', '20"', '22"'].includes(length)) {
       return '/assets/back length-icon.svg';
     } else if (['24"', '26"', '28"', '30"'].includes(length)) {
@@ -708,11 +659,6 @@ function ConciergePage() {
   const getLineIcon = (): string => {
     // Line icon for prepping stage - bottles icon
     return '/assets/prep-stage.svg';
-  };
-
-  const getHubIcon = (): string => {
-    // Line icon for arrived at hub stage
-    return '/assets/hub-icon.svg';
   };
 
   const getShippingIcon = (): string => {
@@ -751,11 +697,6 @@ function ConciergePage() {
       default:
         return '/assets/Natural Hairline-icon.svg';
     }
-  };
-
-  const getColorIcon = (color: string): string => {
-    // Color uses a color circle, return a placeholder or use a generic icon
-    return '/assets/none-icon.svg'; // Placeholder - colors typically use color swatches
   };
 
   const getStylingIcon = (styling: string): string => {
@@ -2537,27 +2478,6 @@ function ConciergePage() {
                                           const productName = selectedOrder.productName || 'NOIR';
                                           
                                           // Helper functions to check if a selection is non-default
-                                          const isNonDefaultCapSize = (capSize: string) => {
-                                            // Default is 'M', flexible caps (XXS/XS/S, S/M/L) are always non-default
-                                            return capSize && capSize !== 'M' && (capSize === 'XXS/XS/S' || capSize === 'S/M/L' || capSize === 'L' || capSize === 'S' || capSize === 'XS' || capSize === 'XXS');
-                                          };
-                                          
-                                          const isNonDefaultLength = (length: string) => {
-                                            // Default is '24"'
-                                            return length && length !== '24"';
-                                          };
-                                          
-                                          const isNonDefaultDensity = (density: string, productName: string) => {
-                                            // Default is '200%' for most products, '250%' for BLANCO
-                                            const defaultDensity = productName === 'BLANCO' ? '250%' : '200%';
-                                            return density && density !== defaultDensity;
-                                          };
-                                          
-                                          const isNonDefaultLace = (lace: string) => {
-                                            // Default is '13X6'
-                                            return lace && lace !== '13X6';
-                                          };
-                                          
                                           const isNonDefaultTexture = (texture: string) => {
                                             // Default is 'SILKY', so 'KINKY' and others are non-default
                                             return texture && texture !== 'SILKY';
@@ -2638,7 +2558,7 @@ function ConciergePage() {
                                                   const lengthSize = ['16"', '18"', '20"', '22"'].includes(unit.length) ? '72px' : '42px';
                                                   const lengthTop = ['16"', '18"', '20"', '22"'].includes(unit.length) ? '50%' : 'calc(58% - 1px)';
                                                   icons.push(
-                                                    renderIconBox('LENGTH', getLengthIcon(unit.length, productName), getLengthDisplayText(unit.length), lengthSize, lengthTop)
+                                                    renderIconBox('LENGTH', getLengthIcon(unit.length), getLengthDisplayText(unit.length), lengthSize, lengthTop)
                                                   );
                                                 }
                                                 // Show density (including default)
@@ -2672,7 +2592,7 @@ function ConciergePage() {
                                                 const lengthSize = ['16"', '18"', '20"', '22"'].includes(selectedOrder.length) ? '72px' : '42px';
                                                 const lengthTop = ['16"', '18"', '20"', '22"'].includes(selectedOrder.length) ? '50%' : 'calc(58% - 1px)';
                                                 icons.push(
-                                                  renderIconBox('LENGTH', getLengthIcon(selectedOrder.length, productName), getLengthDisplayText(selectedOrder.length), lengthSize, lengthTop)
+                                                  renderIconBox('LENGTH', getLengthIcon(selectedOrder.length), getLengthDisplayText(selectedOrder.length), lengthSize, lengthTop)
                                                 );
                                               }
                                               
