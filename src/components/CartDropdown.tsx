@@ -747,7 +747,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                 fontWeight: '500'
               }}
             >
-              SHOPPING BAG (<span style={{ color: '#000000' }}>{cartCount}</span>)
+              SHOPPING BAG <span style={{ color: '#EB1C24' }}>({cartCount})</span>
             </h3>
               <div className="flex items-center" style={{ gap: '6px', flexWrap: 'wrap' }}>
             <span
@@ -1708,16 +1708,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                 >
                   <div className="flex justify-between items-center">
                       <div className="flex items-center" style={{ gap: '8px' }}>
-                        <span
-                          dangerouslySetInnerHTML={{ __html: getFlagIcon(code) }}
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            width: '16px',
-                            height: '12px',
-                            flexShrink: 0
-                          }}
-                        />
                         <span>{currency.name}</span>
                       </div>
                       <span style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{currency.symbol}</span>

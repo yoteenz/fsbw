@@ -320,7 +320,7 @@ function OrdersPage() {
       productImage: getProductImage('NOIR'),
       total: 2220,
       items: 3,
-      reviewInfo: 'REVIEW NEEDED',
+      reviewInfo: 'REVIEW READY',
       trackingNumber: '9400136106023046913326',
       trackingCarrier: 'FEDEX',
       deliveredAt: Date.now() - (30 * 60 * 60 * 1000) // Delivered 30 hours ago (archived but still shows in active for 48 hours)
@@ -334,7 +334,7 @@ function OrdersPage() {
       productImage: getProductImage('NOIR'),
       total: 1480,
       items: 2,
-      reviewInfo: 'REVIEW NEEDED',
+      reviewInfo: 'REVIEW READY',
       trackingNumber: '9400136106023046913338',
       trackingCarrier: 'DHL'
     },
@@ -360,7 +360,7 @@ function OrdersPage() {
       productImage: getProductImage('BLANCO'),
       total: 820,
       items: 1,
-      reviewInfo: 'REVIEW NEEDED',
+      reviewInfo: 'REVIEW READY',
       trackingNumber: '9400136106023046913338',
       trackingCarrier: 'DHL'
     },
@@ -414,7 +414,7 @@ function OrdersPage() {
       productImage: getProductImage('NOIR'),
       total: 1640,
       items: 2,
-      reviewInfo: 'REVIEW NEEDED',
+      reviewInfo: 'REVIEW READY',
       trackingNumber: '9400136106023046913440',
       trackingCarrier: 'DHL',
       deliveredAt: getTimestampHoursAgo(24), // Delivered yesterday (24 hours ago)
@@ -935,7 +935,30 @@ function OrdersPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/build-a-wig')}
+                    onClick={() => {
+                      // Check if user is premium member
+                      try {
+                        const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
+                        if (isSignedIn) {
+                          const currentUser = localStorage.getItem('currentUser');
+                          if (currentUser) {
+                            const user = JSON.parse(currentUser);
+                            const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
+                            if (isPremium) {
+                              navigate('/'); // Lobby for premium members
+                            } else {
+                              navigate('/home/shop'); // Shop for standard/non-members
+                            }
+                          } else {
+                            navigate('/home/shop'); // Default to shop if not signed in
+                          }
+                        } else {
+                          navigate('/home/shop'); // Default to shop if not signed in
+                        }
+                      } catch (e) {
+                        navigate('/home/shop'); // Default to shop on error
+                      }
+                    }}
                   >
                     HOME &gt;
                   </span>{' '}

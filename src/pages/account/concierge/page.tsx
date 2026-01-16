@@ -151,7 +151,17 @@ function ConciergePage() {
             productImage: '/assets/natural front.png',
             total: 740,
             items: 1,
-            trackingStage: 2 // Set to stage 2 (CONSTRUCTING UNIT) for testing 20% progress
+            trackingStage: 2, // Set to stage 2 (CONSTRUCTING UNIT) for testing 20% progress
+            // Selection data for icons
+            length: '16"',
+            density: '200%',
+            texture: 'SILKY',
+            capSize: 'L',
+            lace: '13X6',
+            hairline: 'NATURAL',
+            color: 'OFF BLACK',
+            styling: 'BANGS',
+            addOns: ['BLEACH']
           };
           
           const deliveredOrder = {
@@ -163,12 +173,22 @@ function ConciergePage() {
             productImage: '/assets/natural front.png',
             total: 740,
             items: 1,
-            trackingStage: 9, // All stages completed for delivered order
+            trackingStage: 8, // All stages completed for delivered order
             trackingNumber: '1Z999AA10123456784',
             deliveryDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
             deliveryTime: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
             deliveryLocation: 'FRONT DOOR',
-            requiresSignature: true
+            requiresSignature: true,
+            // Selection data for icons
+            length: '24"',
+            density: '250%',
+            texture: 'SILKY',
+            capSize: 'M',
+            lace: '13X6',
+            hairline: 'LAGOS',
+            color: 'OFF BLACK',
+            styling: 'NONE', // No styling selected - icon should not appear
+            addOns: [] // No add-ons selected - icon should not appear
           };
           
           const testOrdersData = {
@@ -195,6 +215,11 @@ function ConciergePage() {
             order.id === 'test-order-2' || (order.status === 'DELIVERED' && order.orderNumber === 'ORDER #888')
           );
           
+          // Check if there's already a multi-unit test order
+          const existingMultiUnitOrderIndex = [...active, ...past].findIndex((order: any) => 
+            order.id === 'test-order-3' || order.orderNumber === 'ORDER #777'
+          );
+          
           // Create or update the test order with 20% progress in CONSTRUCTING UNIT
           // Constructing starts at day 7 (after sourcing ends: 2 + 5 = 7), takes 28 days. To be at 20%: 7 + (28 * 0.2) = 12.6 days ? 13 days
           const constructingOrderDate = new Date();
@@ -214,7 +239,17 @@ function ConciergePage() {
             productImage: '/assets/natural front.png',
             total: 740,
             items: 1,
-            trackingStage: 2 // Set to stage 2 (CONSTRUCTING UNIT) for testing 20% progress
+            trackingStage: 2, // Set to stage 2 (CONSTRUCTING UNIT) for testing 20% progress
+            // Selection data for icons
+            length: '16"',
+            density: '200%',
+            texture: 'SILKY',
+            capSize: 'L',
+            lace: '13X6',
+            hairline: 'NATURAL',
+            color: 'OFF BLACK',
+            styling: 'BANGS',
+            addOns: ['BLEACH']
           };
           
           if (existingTestOrderIndex >= 0) {
@@ -240,12 +275,22 @@ function ConciergePage() {
             productImage: '/assets/natural front.png',
             total: 740,
             items: 1,
-            trackingStage: 9, // All stages completed for delivered order
+            trackingStage: 8, // All stages completed for delivered order
             trackingNumber: '1Z999AA10123456784',
             deliveryDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
             deliveryTime: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
             deliveryLocation: 'FRONT DOOR',
-            requiresSignature: true
+            requiresSignature: true,
+            // Selection data for icons
+            length: '24"',
+            density: '250%',
+            texture: 'SILKY',
+            capSize: 'M',
+            lace: '13X6',
+            hairline: 'LAGOS',
+            color: 'OFF BLACK',
+            styling: 'NONE', // No styling selected - icon should not appear
+            addOns: [] // No add-ons selected - icon should not appear
           };
           
           if (existingDeliveredOrderIndex >= 0) {
@@ -259,6 +304,76 @@ function ConciergePage() {
           } else {
             // Add new order
             active.push(deliveredOrder);
+          }
+          
+          // Create or update multi-unit test order for icon positioning/design testing
+          const multiUnitOrderDate = new Date();
+          multiUnitOrderDate.setDate(multiUnitOrderDate.getDate() - 20);
+          const multiUnitMonth = String(multiUnitOrderDate.getMonth() + 1).padStart(2, '0');
+          const multiUnitDay = String(multiUnitOrderDate.getDate()).padStart(2, '0');
+          const multiUnitYear = multiUnitOrderDate.getFullYear();
+          const multiUnitFormattedDate = `${multiUnitMonth}-${multiUnitDay}-${multiUnitYear}`;
+          
+          const multiUnitOrder = {
+            id: 'test-order-3',
+            orderNumber: 'ORDER #777',
+            date: multiUnitFormattedDate,
+            status: 'PREPARING',
+            productName: 'NOIR',
+            productImage: '/assets/natural front.png',
+            total: 1480,
+            items: 2,
+            trackingStage: 1, // Set to SOURCING stage to test icon display
+            // Multi-unit selection data - array of units with different selections
+            units: [
+              {
+                // Unit 1
+                length: '16"',
+                density: '200%',
+                texture: 'SILKY',
+                capSize: 'L',
+                lace: '13X6',
+                hairline: 'NATURAL',
+                color: 'OFF BLACK',
+                styling: 'BANGS',
+                addOns: ['BLEACH']
+              },
+              {
+                // Unit 2 - different selections
+                length: '20"',
+                density: '250%',
+                texture: 'SILKY',
+                capSize: 'M',
+                lace: '13X4',
+                hairline: 'LAGOS',
+                color: 'JET BLACK',
+                styling: 'CRIMPS',
+                addOns: ['PLUCK', 'BLEACH']
+              }
+            ],
+            // For backward compatibility, also set first unit's values at root level
+            length: '16"',
+            density: '200%',
+            texture: 'SILKY',
+            capSize: 'L',
+            lace: '13X6',
+            hairline: 'NATURAL',
+            color: 'OFF BLACK',
+            styling: 'BANGS',
+            addOns: ['BLEACH']
+          };
+          
+          if (existingMultiUnitOrderIndex >= 0) {
+            // Update existing multi-unit order
+            if (existingMultiUnitOrderIndex < active.length) {
+              active[existingMultiUnitOrderIndex] = multiUnitOrder;
+            } else {
+              const pastIndex = existingMultiUnitOrderIndex - active.length;
+              past[pastIndex] = multiUnitOrder;
+            }
+          } else {
+            // Add new multi-unit order
+            active.push(multiUnitOrder);
           }
           
           // Save back to localStorage
@@ -295,12 +410,12 @@ function ConciergePage() {
     const order = activeOrders.find((o: any) => o.id === orderId);
     if (!order) return 0;
     
-    // If order is DELIVERED, all stages are completed (stage 9)
+    // If order is DELIVERED, all stages are completed (stage 8)
     if (order.status === 'DELIVERED') {
-      return 9;
+      return 8;
     }
     
-    // Map order status to tracking stage (0-9)
+    // Map order status to tracking stage (0-8)
     const statusMap: { [key: string]: number } = {
       'PLACED': 0, // confirmation
       'CONFIRMED': 1, // sourcing
@@ -310,13 +425,12 @@ function ConciergePage() {
       'PROCESSING': 5, // prep
       'CUSTOMIZING': 6, // customize
       'FINALIZING': 7, // finalize
-      'PACKAGING': 8, // package
-      'SHIPPED': 9 // shipped
+      'SHIPPED': 8 // shipped
     };
     
     // Default to stage based on status, or use custom trackingStage if available
     if (order.trackingStage !== undefined) {
-      return Math.min(Math.max(0, order.trackingStage), 9);
+      return Math.min(Math.max(0, order.trackingStage), 8);
     }
     
     return statusMap[order.status] || 0;
@@ -333,11 +447,11 @@ function ConciergePage() {
         return 5; // 5 days
       case 2: // CONSTRUCTING UNIT
         return 28; // 4 weeks (28 days)
-      case 3: // SHIPPED TO USA
+      case 3: // SHIPPED TO HUB
         return 5; // 5 days
       case 4: // ARRIVED AT HUB
         return 2; // 2 days
-      case 5: // PREPPING + WASHING
+      case 5: // PREPPING
         return 2; // 2 days
       case 6: // CUSTOMIZING
         return hasCustomization ? 10 : 0; // 10 days if customization
@@ -417,20 +531,20 @@ function ConciergePage() {
       // CONSTRUCTING UNIT - starts after sourcing (2 + 5 = 7 days), takes 28 days (4 weeks)
       startDate.setDate(startDate.getDate() + 2 + 5);
     } else if (stageIndex === 3) {
-      // SHIPPED TO USA - starts after construction (2 + 5 + 28 = 35 days), takes 5 days
+      // SHIPPED TO HUB - starts after construction (2 + 5 + 28 = 35 days), takes 5 days
       startDate.setDate(startDate.getDate() + 2 + 5 + 28);
     } else if (stageIndex === 4) {
       // ARRIVED AT HUB - starts after shipped (35 + 5 = 40 days), takes 2 days
       startDate.setDate(startDate.getDate() + 2 + 5 + 28 + 5);
     } else if (stageIndex === 5) {
-      // PREPPING + WASHING - starts after arrived (40 + 2 = 42 days), takes 2 days
+      // PREPPING - starts after arrived (40 + 2 = 42 days), takes 2 days
       startDate.setDate(startDate.getDate() + 2 + 5 + 28 + 5 + 2);
     } else if (stageIndex === 6) {
       // CUSTOMIZING - starts after prepping (42 + 2 = 44 days), takes 10 days (if customization)
       if (!hasCustomization) return new Date(orderDate);
       startDate.setDate(startDate.getDate() + 2 + 5 + 28 + 5 + 2 + 2);
     } else if (stageIndex === 7) {
-      // FINALIZING - starts after customizing/prepping, takes 2 days
+      // FINALIZING - starts after customizing/prepping, takes 4 days
       const baseDays = 2 + 5 + 28 + 5 + 2 + 2; // up to prepping
       if (hasCustomization) {
         startDate.setDate(startDate.getDate() + baseDays + 10); // after customizing
@@ -438,20 +552,12 @@ function ConciergePage() {
         startDate.setDate(startDate.getDate() + baseDays); // after prepping
       }
     } else if (stageIndex === 8) {
-      // PACKAGING - starts after finalizing, takes 3 days
+      // ORDER SHIPPED - starts after finalizing, takes 3-5 days
       const baseDays = 2 + 5 + 28 + 5 + 2 + 2; // up to prepping
       if (hasCustomization) {
-        startDate.setDate(startDate.getDate() + baseDays + 10 + 2); // after finalizing
+        startDate.setDate(startDate.getDate() + baseDays + 10 + 4); // after finalizing (4 days)
       } else {
-        startDate.setDate(startDate.getDate() + baseDays + 2); // after finalizing
-      }
-    } else if (stageIndex === 9) {
-      // ORDER SHIPPED - starts after packaging, takes 3-5 days
-      const baseDays = 2 + 5 + 28 + 5 + 2 + 2; // up to prepping
-      if (hasCustomization) {
-        startDate.setDate(startDate.getDate() + baseDays + 10 + 2 + 3); // after packaging
-      } else {
-        startDate.setDate(startDate.getDate() + baseDays + 2 + 3); // after packaging
+        startDate.setDate(startDate.getDate() + baseDays + 4); // after finalizing (4 days)
       }
     }
     
@@ -563,7 +669,7 @@ function ConciergePage() {
     return 'PENDING';
   };
   
-  // Helper function to format time as "9:07PM"
+  // Helper function to format time as "9:07 PM"
   const formatTime = (date: Date): string => {
     let hours = date.getHours();
     const minutes = date.getMinutes();
@@ -571,7 +677,212 @@ function ConciergePage() {
     hours = hours % 12;
     hours = hours ? hours : 12; // the hour '0' should be '12'
     const minutesStr = minutes < 10 ? `0${minutes}` : minutes;
-    return `${hours}:${minutesStr}${ampm}`;
+    return `${hours}:${minutesStr} ${ampm}`;
+  };
+
+  // Helper functions to get icon paths for selections
+  const getLengthIcon = (length: string, productName: string): string => {
+    if (['16"', '18"', '20"', '22"'].includes(length)) {
+      return '/assets/back length-icon.svg';
+    } else if (['24"', '26"', '28"', '30"'].includes(length)) {
+      return '/assets/b length thumb.png';
+    } else {
+      return '/assets/thigh length thumb.png';
+    }
+  };
+
+  const getDensityIcon = (productName: string): string => {
+    if (productName === 'BLANCO') {
+      return '/assets/density-blanco.png';
+    }
+    return '/assets/density.png';
+  };
+
+  const getTextureIcon = (productName: string): string => {
+    if (productName === 'BLANCO') {
+      return '/assets/blanco texture.svg';
+    }
+    return '/assets/Texture-icon.svg';
+  };
+
+  const getLineIcon = (): string => {
+    // Line icon for prepping stage - bottles icon
+    return '/assets/prep-stage.svg';
+  };
+
+  const getHubIcon = (): string => {
+    // Line icon for arrived at hub stage
+    return '/assets/hub-icon.svg';
+  };
+
+  const getShippingIcon = (): string => {
+    // Line icon for shipping stages - airplane and parcel box
+    return '/assets/shipping-icon.svg';
+  };
+
+  const getCapSizeIcon = (): string => {
+    return '/assets/cap size-icon.svg';
+  };
+
+  const getLaceIcon = (productName: string): string => {
+    if (productName === 'BLANCO') {
+      return '/assets/lace-blanco.png';
+    }
+    return '/assets/lace-icon.svg';
+  };
+
+  const getHairlineIcon = (hairline: string): string => {
+    const hairlineArray = hairline.split(',');
+    const correctOrder = ['NATURAL', 'LAGOS', 'PEAK'];
+    const sortedSelections = hairlineArray.sort((a, b) => {
+      const indexA = correctOrder.indexOf(a);
+      const indexB = correctOrder.indexOf(b);
+      return indexA - indexB;
+    });
+    const firstHairline = sortedSelections[0];
+    
+    switch (firstHairline) {
+      case 'NATURAL':
+        return '/assets/Natural Hairline-icon.svg';
+      case 'LAGOS':
+        return '/assets/Lagos Hairline-icon.svg';
+      case 'PEAK':
+        return '/assets/Peak Hairline-icon.svg';
+      default:
+        return '/assets/Natural Hairline-icon.svg';
+    }
+  };
+
+  const getColorIcon = (color: string): string => {
+    // Color uses a color circle, return a placeholder or use a generic icon
+    return '/assets/none-icon.svg'; // Placeholder - colors typically use color swatches
+  };
+
+  const getStylingIcon = (styling: string): string => {
+    if (!styling || styling === 'NONE') {
+      return '/assets/none-icon.svg';
+    }
+    const stylingArray = styling.split(',');
+    const correctOrder = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
+    const sortedSelections = stylingArray.sort((a, b) => {
+      const indexA = correctOrder.indexOf(a);
+      const indexB = correctOrder.indexOf(b);
+      return indexA - indexB;
+    });
+    const firstStyling = sortedSelections[0];
+    
+    const hairStylingIconMap: { [key: string]: string } = {
+      'BANGS': '/assets/Bangs-icon.svg',
+      'CRIMPS': '/assets/Crimps-icon.svg',
+      'FLAT IRON': '/assets/Flat iron-icon.svg',
+      'LAYERS': '/assets/Layers-icon.svg'
+    };
+    
+    return hairStylingIconMap[firstStyling] || '/assets/none-icon.svg';
+  };
+
+  const getAddOnsIcon = (addOns: string[]): string => {
+    if (!addOns || addOns.length === 0) {
+      return '/assets/none-icon.svg';
+    }
+    // Addon icon mapping based on the addon sub page
+    const addOnIconMap: { [key: string]: string } = {
+      'BLEACH': '/assets/Bleach-icon.svg',
+      'PLUCK': '/assets/Pluck-icon.svg',
+      'BLUNT CUT': '/assets/clip ends-icon.svg'
+    };
+    
+    // Show the first selected addon icon
+    const firstAddOn = addOns[0];
+    return firstAddOn ? (addOnIconMap[firstAddOn] || '/assets/none-icon.svg') : '/assets/none-icon.svg';
+  };
+
+  // Helper functions to get display text for selections
+  const getLengthDisplayText = (length: string): string => {
+    return length || '24"';
+  };
+
+  const getDensityDisplayText = (density: string): string => {
+    return density || '200%';
+  };
+
+  const getTextureDisplayText = (texture: string): string => {
+    return texture || 'SILKY';
+  };
+
+  const getCapSizeDisplayText = (capSize: string): string => {
+    return capSize || 'M';
+  };
+
+  const getLaceDisplayText = (lace: string): string => {
+    return lace || '13X6';
+  };
+
+  const getHairlineDisplayText = (hairline: string): string => {
+    if (!hairline) return 'NATURAL';
+    const hairlineArray = hairline.split(',');
+    const correctOrder = ['NATURAL', 'LAGOS', 'PEAK'];
+    const sortedSelections = hairlineArray.sort((a, b) => {
+      const indexA = correctOrder.indexOf(a);
+      const indexB = correctOrder.indexOf(b);
+      return indexA - indexB;
+    });
+    return sortedSelections[0];
+  };
+
+  const getColorDisplayText = (color: string): string => {
+    return color || 'OFF BLACK';
+  };
+
+  const getStylingDisplayText = (styling: string): string => {
+    if (!styling || styling === 'NONE') return 'NONE';
+    const stylingArray = styling.split(',');
+    const correctOrder = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
+    const sortedSelections = stylingArray.sort((a, b) => {
+      const indexA = correctOrder.indexOf(a);
+      const indexB = correctOrder.indexOf(b);
+      return indexA - indexB;
+    });
+    return sortedSelections[0];
+  };
+
+  const getAddOnsDisplayText = (addOns: string[]): string => {
+    if (!addOns || addOns.length === 0) return 'NONE';
+    return addOns[0]; // Show first add-on
+  };
+
+  // Helper function to get color hex code
+  const getColorCode = (color: string, productName: string): string => {
+    const isBlanco = productName === 'BLANCO';
+    const selectedColor = color || (isBlanco ? 'PLATINUM' : 'OFF BLACK');
+    
+    // Color mapping based on the color sub page
+    const colorMap: { [key: string]: string } = {
+      // Blanco colors
+      'GOLDEN': '#FBF08B',
+      'PLATINUM': '#F6F3D2',
+      'ASH': '#E5E3CB',
+      // Noir/other colors
+      'JET BLACK': '#000000',
+      'OFF BLACK': '#2A2424',
+      'ESPRESSO': '#3B1301',
+      'CHESTNUT': '#6C2D11',
+      'HONEY': '#C58628',
+      'AUBURN': '#9C5617',
+      'COPPER': '#802F02',
+      'GINGER': '#F64F07',
+      'SANGRIA': '#7E0A1E',
+      'CHERRY': '#D70808',
+      'RASPBERRY': '#EF0461',
+      'PLUM': '#640E82',
+      'COBALT': '#290481',
+      'TEAL': '#46EBCA',
+      'SLIME': '#03D92A',
+      'CITRINE': '#E2E91C'
+    };
+    
+    // Default to PLATINUM for blanco routes, OFF BLACK for others
+    return colorMap[selectedColor] || (isBlanco ? '#F6F3D2' : '#2A2424');
   };
   
   // Helper function to add business days to a date
@@ -627,7 +938,7 @@ function ConciergePage() {
         stageDate = new Date(orderDateObj);
         stageDate.setDate(stageDate.getDate() + 2 + 5);
       } else if (stageIndex === 3) {
-        // SHIPPED TO USA - starts after construction (2 + 5 + 28 = 35 days), takes 5 days
+        // SHIPPED TO HUB - starts after construction (2 + 5 + 28 = 35 days), takes 5 days
         stageDate = new Date(orderDateObj);
         stageDate.setDate(stageDate.getDate() + 2 + 5 + 28);
       } else if (stageIndex === 4) {
@@ -635,7 +946,7 @@ function ConciergePage() {
         stageDate = new Date(orderDateObj);
         stageDate.setDate(stageDate.getDate() + 2 + 5 + 28 + 5);
       } else if (stageIndex === 5) {
-        // PREPPING + WASHING - starts after arrived (40 + 2 = 42 days), takes 2 days
+        // PREPPING - starts after arrived (40 + 2 = 42 days), takes 2 days
         stageDate = new Date(orderDateObj);
         stageDate.setDate(stageDate.getDate() + 2 + 5 + 28 + 5 + 2);
       } else if (stageIndex === 6) {
@@ -687,16 +998,15 @@ function ConciergePage() {
   };
   
   const trackingStages = [
-    { name: 'ORDER CONFIRMED', description: 'PROCESSING YOUR ORDER.' },
-    { name: 'SOURCING + COLLECTING', description: 'GATHERING RAW MATERIALS.' },
-    { name: 'CONSTRUCTING UNIT', description: 'WEFTING TRACKS + VENTILATING THE LACE.' },
-    { name: 'SHIPPED TO USA', description: 'HEADED TO HUB.' },
+    { name: 'CONFIRMED', description: 'PROCESSING YOUR ORDER.' },
+    { name: 'SOURCING', description: 'GATHERING RAW MATERIALS.' },
+    { name: 'CONSTRUCTING', description: 'WEFTING TRACKS + VENTILATING THE LACE.' },
+    { name: 'SHIPPED TO HUB', description: 'HEADED TO HUB.' },
     { name: 'ARRIVED AT HUB', description: 'PERFORMING QUALITY CHECK.' },
-    { name: 'PREPPING + WASHING', description: 'SANITIZING + DISINFECTING THE HAIR.' },
+    { name: 'WASHING', description: 'DEEP CONDITIONING THE HAIR.' },
     { name: 'CUSTOMIZING', description: 'COLORING, PLUCKING, BLEACHING & STYLING.' },
-    { name: 'FINALIZING', description: 'CONFIRMING ORDER DETAILS.' },
-    { name: 'PACKAGING', description: 'PREPARING TO SHIP YOUR ORDER.' },
-    { name: 'ORDER SHIPPED', description: 'YOUR ORDER HAS BEEN SHIPPED.' }
+    { name: 'FINALIZING', description: 'PREPARING TO SHIP YOUR ORDER.' },
+    { name: 'PACKAGE SHIPPED', description: 'YOUR ORDER HAS BEEN SHIPPED.' }
   ];
 
   // Listen for cart count changes
@@ -964,7 +1274,30 @@ function ConciergePage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/build-a-wig')}
+                    onClick={() => {
+                      // Check if user is premium member
+                      try {
+                        const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
+                        if (isSignedIn) {
+                          const currentUser = localStorage.getItem('currentUser');
+                          if (currentUser) {
+                            const user = JSON.parse(currentUser);
+                            const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
+                            if (isPremium) {
+                              navigate('/'); // Lobby for premium members
+                            } else {
+                              navigate('/home/shop'); // Shop for standard/non-members
+                            }
+                          } else {
+                            navigate('/home/shop'); // Default to shop if not signed in
+                          }
+                        } else {
+                          navigate('/home/shop'); // Default to shop if not signed in
+                        }
+                      } catch (e) {
+                        navigate('/home/shop'); // Default to shop on error
+                      }
+                    }}
                   >
                     HOME &gt;
                   </span>{' '}
@@ -1605,11 +1938,11 @@ function ConciergePage() {
                                   <div style={{ textAlign: 'center', marginBottom: '16px', marginTop: '-10px' }}>
                                     <p
                                       style={{
-                                        fontFamily: '"Covered by Your Grace", cursive',
+                                        fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                                         color: '#909090',
-                                        fontSize: '16px',
-                                        margin: '0 0 4px 0',
-                                        textTransform: 'none'
+                                        fontSize: '13px',
+                                        margin: '0 0 2px 0',
+                                        textTransform: 'uppercase'
                                       }}
                                     >
                                       PACKAGE DELIVERED
@@ -1621,7 +1954,7 @@ function ConciergePage() {
                                             fontFamily: '"Futura PT Medium"',
                                             color: '#000000',
                                             fontSize: '12px',
-                                            margin: '0 0 2px 0',
+                                            margin: '0 0 0 0',
                                             textTransform: 'uppercase'
                                           }}
                                         >
@@ -1629,11 +1962,11 @@ function ConciergePage() {
                                         </p>
                                         <p
                                           style={{
-                                            fontFamily: '"Futura PT Book"',
+                                            fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                       color: '#EB1C24',
                                             fontSize: '20px',
                                             margin: '-2px 0 4px 0',
-                                            textTransform: 'uppercase'
+                                            textTransform: 'none'
                                           }}
                                         >
                                           {deliveryDateInfo.day}
@@ -1643,7 +1976,7 @@ function ConciergePage() {
                                     {deliveryTimeFormatted && (
                                       <p
                                         style={{
-                                          fontFamily: '"Futura PT Demi"',
+                                          fontFamily: '"Futura PT Medium"',
                                           color: '#909090',
                                           fontSize: '11px',
                                           margin: '-2px 0 4px 0',
@@ -1739,11 +2072,11 @@ function ConciergePage() {
                                 <div style={{ textAlign: 'center', marginBottom: '16px', marginTop: '-10px' }}>
                                   <p
                                     style={{
-                                      fontFamily: '"Covered by Your Grace", cursive',
+                                      fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                                       color: '#909090',
-                                      fontSize: '16px',
-                                      margin: '0 0 4px 0',
-                                      textTransform: 'none'
+                                      fontSize: '13px',
+                                      margin: '0 0 2px 0',
+                                      textTransform: 'uppercase'
                                     }}
                                   >
                                     DELIVERY ESTIMATE
@@ -1753,7 +2086,7 @@ function ConciergePage() {
                                       fontFamily: '"Futura PT Medium"',
                                       color: '#000000',
                                       fontSize: '12px',
-                                      margin: '0 0 2px 0',
+                                      margin: '0 0 0 0',
                                       textTransform: 'uppercase'
                                     }}
                                   >
@@ -1761,11 +2094,11 @@ function ConciergePage() {
                                   </p>
                                   <p
                                     style={{
-                      fontFamily: '"Futura PT Book"',
+                      fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                                       color: '#EB1C24',
                                       fontSize: '22px',
                                       margin: '-2px 0 0 0',
-                      textTransform: 'uppercase'
+                      textTransform: 'none'
                     }}
                                   >
                                     {day}
@@ -1835,11 +2168,11 @@ function ConciergePage() {
                                   <div style={{ marginBottom: '16px', marginTop: '-10px', textAlign: 'center' }}>
                                     <p
                     style={{
-                                        fontFamily: '"Covered by Your Grace", cursive',
+                                        fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                                         color: '#909090',
-                                        fontSize: '15px',
-                                        margin: '0 0 4px 0',
-                                        textTransform: 'none'
+                                        fontSize: '12px',
+                                        margin: '0 0 2px 0',
+                                        textTransform: 'uppercase'
                                       }}
                                     >
                                       PACKAGE DELIVERED
@@ -1851,7 +2184,7 @@ function ConciergePage() {
                                             fontFamily: '"Futura PT Medium"',
                                             color: '#000000',
                                             fontSize: '12px',
-                                            margin: '0 0 2px 0',
+                                            margin: '0 0 0 0',
                                             textTransform: 'uppercase'
                                           }}
                                         >
@@ -1859,11 +2192,11 @@ function ConciergePage() {
                                         </p>
                                         <p
                                           style={{
-                      fontFamily: '"Futura PT Book"',
+                      fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                                             color: '#EB1C24',
                                             fontSize: '20px',
                                             margin: '-2px 0 4px 0',
-                                            textTransform: 'uppercase'
+                                            textTransform: 'none'
                                           }}
                                         >
                                           {deliveryDateInfo.day}
@@ -1956,11 +2289,11 @@ function ConciergePage() {
                                 <div style={{ marginBottom: '16px', marginTop: '-10px', textAlign: 'center' }}>
                                   <p
                     style={{
-                                      fontFamily: '"Covered by Your Grace", cursive',
+                                      fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                                       color: '#909090',
-                                      fontSize: '16px',
-                                      margin: '0 0 4px 0',
-                                      textTransform: 'none'
+                                      fontSize: '13px',
+                                      margin: '0 0 2px 0',
+                                      textTransform: 'uppercase'
                                     }}
                                   >
                                     DELIVERY ESTIMATE
@@ -1972,7 +2305,7 @@ function ConciergePage() {
                                           fontFamily: '"Futura PT Medium"',
                                           color: '#000000',
                                           fontSize: '12px',
-                                          margin: '0 0 2px 0',
+                                          margin: '0 0 0 0',
                                           textTransform: 'uppercase'
                                         }}
                                       >
@@ -1980,11 +2313,11 @@ function ConciergePage() {
                                       </p>
                                       <p
                                         style={{
-                                          fontFamily: '"Futura PT Book"',
+                                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                                           color: '#EB1C24',
                                           fontSize: '22px',
                                           margin: '-2px 0 0 0',
-                                          textTransform: 'uppercase'
+                                          textTransform: 'none'
                                         }}
                                       >
                                         {deliveryInfo.day}
@@ -2029,7 +2362,7 @@ function ConciergePage() {
                                 const isExpanded = expandedStages.has(index);
                                 
                                 // Check if this is the last stage and order is delivered
-                                const isLastStage = index === 9; // ORDER SHIPPED is the last stage
+                                const isLastStage = index === 8; // ORDER SHIPPED is the last stage
                                 const isDelivered = selectedOrder?.status === 'DELIVERED';
                                 const isDeliveredLastStage = isLastStage && isDelivered;
                                 
@@ -2194,16 +2527,443 @@ function ConciergePage() {
                                     {isExpanded && isExpandable && (
                                       <div style={{ 
                                         padding: '0 12px 12px 12px', 
-                                        marginTop: '8px',
-                                        paddingTop: '10px'
+                                        marginTop: '0px',
+                                        paddingTop: '6px'
                                       }}>
+                                        {/* Selection Icons for specific statuses */}
+                                        {(() => {
+                                          const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
+                                          if (!selectedOrder) return null;
+                                          const productName = selectedOrder.productName || 'NOIR';
+                                          
+                                          // Helper functions to check if a selection is non-default
+                                          const isNonDefaultCapSize = (capSize: string) => {
+                                            // Default is 'M', flexible caps (XXS/XS/S, S/M/L) are always non-default
+                                            return capSize && capSize !== 'M' && (capSize === 'XXS/XS/S' || capSize === 'S/M/L' || capSize === 'L' || capSize === 'S' || capSize === 'XS' || capSize === 'XXS');
+                                          };
+                                          
+                                          const isNonDefaultLength = (length: string) => {
+                                            // Default is '24"'
+                                            return length && length !== '24"';
+                                          };
+                                          
+                                          const isNonDefaultDensity = (density: string, productName: string) => {
+                                            // Default is '200%' for most products, '250%' for BLANCO
+                                            const defaultDensity = productName === 'BLANCO' ? '250%' : '200%';
+                                            return density && density !== defaultDensity;
+                                          };
+                                          
+                                          const isNonDefaultLace = (lace: string) => {
+                                            // Default is '13X6'
+                                            return lace && lace !== '13X6';
+                                          };
+                                          
+                                          const isNonDefaultTexture = (texture: string) => {
+                                            // Default is 'SILKY', so 'KINKY' and others are non-default
+                                            return texture && texture !== 'SILKY';
+                                          };
+                                          
+                                          const isNonDefaultHairline = (hairline: string) => {
+                                            // Default is 'NATURAL'
+                                            return hairline && hairline !== 'NATURAL';
+                                          };
+                                          
+                                          const isNonDefaultColor = (color: string, productName: string) => {
+                                            // Default is 'OFF BLACK' for most products, 'PLATINUM' for BLANCO
+                                            const defaultColor = productName === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
+                                            return color && color !== defaultColor;
+                                          };
+                                          
+                                          // Helper to render icon box
+                                          const renderIconBox = (label: string, iconSrc: string, displayText: string, iconSize: string = '57px', iconTop: string = '55%') => (
+                                            <div
+                                              className="border relative text-center border-black bg-white"
+                                              style={{
+                                                borderWidth: '1.3px',
+                                                width: '50px',
+                                                height: '80px',
+                                                boxSizing: 'border-box',
+                                                padding: '0',
+                                                overflow: 'visible'
+                                              }}
+                                            >
+                                              <p
+                                                className="text-[10px] text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
+                                                style={{ fontFamily: '"Covered By Your Grace", cursive' }}
+                                              >
+                                                {label}
+                                              </p>
+                                              <div
+                                                className="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center"
+                                                style={{
+                                                  width: iconSize,
+                                                  height: iconSize,
+                                                  overflow: 'visible',
+                                                  top: iconTop,
+                                                  transform: 'translateX(-50%) translateY(-50%)'
+                                                }}
+                                              >
+                                                <img
+                                                  alt={label}
+                                                  src={iconSrc}
+                                                  style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    objectFit: 'contain',
+                                                    display: 'block',
+                                                    position: 'relative'
+                                                  }}
+                                                />
+                                              </div>
+                                              <p 
+                                                className="absolute bottom-[-6.9px] left-1/2 transform -translate-x-1/2 text-[9px] w-full font-medium text-center" 
+                                                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}
+                                              >
+                                                {displayText}
+                                              </p>
+                                            </div>
+                                          );
+                                          
+                                          // SOURCING (index 1): length, density, texture (only non-defaults)
+                                          if (index === 1) {
+                                            // Check if order has multiple units
+                                            const hasMultipleUnits = selectedOrder.units && Array.isArray(selectedOrder.units) && selectedOrder.units.length > 1;
+                                            
+                                            if (hasMultipleUnits) {
+                                              // Render icons for all units side-by-side (show defaults except silky texture)
+                                              const icons: JSX.Element[] = [];
+                                              selectedOrder.units.forEach((unit: any) => {
+                                                // Show length (including default)
+                                                if (unit.length) {
+                                                  const lengthSize = ['16"', '18"', '20"', '22"'].includes(unit.length) ? '72px' : '42px';
+                                                  const lengthTop = ['16"', '18"', '20"', '22"'].includes(unit.length) ? '50%' : 'calc(58% - 1px)';
+                                                  icons.push(
+                                                    renderIconBox('LENGTH', getLengthIcon(unit.length, productName), getLengthDisplayText(unit.length), lengthSize, lengthTop)
+                                                  );
+                                                }
+                                                // Show density (including default)
+                                                if (unit.density) {
+                                                  const densitySize = productName === 'BLANCO' ? '80px' : '57px';
+                                                  icons.push(
+                                                    renderIconBox('DENSITY', getDensityIcon(productName), getDensityDisplayText(unit.density), densitySize)
+                                                  );
+                                                }
+                                                // Only show texture if non-default (not SILKY)
+                                                if (unit.texture && isNonDefaultTexture(unit.texture)) {
+                                                  icons.push(
+                                                    renderIconBox('TEXTURE', getTextureIcon(productName), getTextureDisplayText(unit.texture), productName === 'BLANCO' ? '35.48px' : '83px', productName === 'BLANCO' ? 'calc(50% + 5px)' : 'calc(50% + 2px)')
+                                                  );
+                                                }
+                                              });
+                                              
+                                              if (icons.length > 0) {
+                                                return (
+                                                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                    {icons}
+                                                  </div>
+                                                );
+                                              }
+                                            } else {
+                                              // Single unit - show defaults except silky texture
+                                              const icons: JSX.Element[] = [];
+                                              
+                                              // Show length (including default)
+                                              if (selectedOrder.length) {
+                                                const lengthSize = ['16"', '18"', '20"', '22"'].includes(selectedOrder.length) ? '72px' : '42px';
+                                                const lengthTop = ['16"', '18"', '20"', '22"'].includes(selectedOrder.length) ? '50%' : 'calc(58% - 1px)';
+                                                icons.push(
+                                                  renderIconBox('LENGTH', getLengthIcon(selectedOrder.length, productName), getLengthDisplayText(selectedOrder.length), lengthSize, lengthTop)
+                                                );
+                                              }
+                                              
+                                              // Show density (including default)
+                                              if (selectedOrder.density) {
+                                                const densitySize = productName === 'BLANCO' ? '80px' : '57px';
+                                                icons.push(
+                                                  renderIconBox('DENSITY', getDensityIcon(productName), getDensityDisplayText(selectedOrder.density), densitySize)
+                                                );
+                                              }
+                                              
+                                              // Only show texture if non-default (not SILKY)
+                                              if (selectedOrder.texture && isNonDefaultTexture(selectedOrder.texture)) {
+                                                icons.push(
+                                                  renderIconBox('TEXTURE', getTextureIcon(productName), getTextureDisplayText(selectedOrder.texture), productName === 'BLANCO' ? '35.48px' : '83px', productName === 'BLANCO' ? 'calc(50% + 5px)' : 'calc(50% + 2px)')
+                                                );
+                                              }
+                                              
+                                              if (icons.length > 0) {
+                                                return (
+                                                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                    {icons}
+                                                  </div>
+                                                );
+                                              }
+                                            }
+                                          }
+                                          
+                                          // CONSTRUCTING UNIT (index 2): cap size, lace, hairline (only non-defaults)
+                                          if (index === 2) {
+                                            // Check if order has multiple units
+                                            const hasMultipleUnits = selectedOrder.units && Array.isArray(selectedOrder.units) && selectedOrder.units.length > 1;
+                                            
+                                            if (hasMultipleUnits) {
+                                              // Render icons for all units side-by-side (show defaults except natural hairline)
+                                              const icons: JSX.Element[] = [];
+                                              selectedOrder.units.forEach((unit: any) => {
+                                                // Show cap size (including default)
+                                                if (unit.capSize) {
+                                                  icons.push(
+                                                    renderIconBox('CAP SIZE', getCapSizeIcon(), getCapSizeDisplayText(unit.capSize), '78px', '53%')
+                                                  );
+                                                }
+                                                // Show lace (including default)
+                                                if (unit.lace) {
+                                                  const laceSize = productName === 'BLANCO' ? '44px' : '74px';
+                                                  icons.push(
+                                                    renderIconBox('LACE', getLaceIcon(productName), getLaceDisplayText(unit.lace), laceSize, '52%')
+                                                  );
+                                                }
+                                                // Only show hairline if non-default (not NATURAL)
+                                                if (unit.hairline && isNonDefaultHairline(unit.hairline)) {
+                                                  const hairlineSize = productName === 'BLANCO' ? '45px' : '75px';
+                                                  icons.push(
+                                                    renderIconBox('HAIRLINE', getHairlineIcon(unit.hairline), getHairlineDisplayText(unit.hairline), hairlineSize)
+                                                  );
+                                                }
+                                              });
+                                              
+                                              if (icons.length > 0) {
+                                                return (
+                                                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                                                    {icons}
+                                                  </div>
+                                                );
+                                              }
+                                            } else {
+                                              // Single unit - show defaults except natural hairline
+                                              const icons: JSX.Element[] = [];
+                                              
+                                              // Show cap size (including default)
+                                              if (selectedOrder.capSize) {
+                                                icons.push(
+                                                  renderIconBox('CAP SIZE', getCapSizeIcon(), getCapSizeDisplayText(selectedOrder.capSize), '78px', '53%')
+                                                );
+                                              }
+                                              
+                                              // Show lace (including default)
+                                              if (selectedOrder.lace) {
+                                                const laceSize = productName === 'BLANCO' ? '44px' : '74px';
+                                                icons.push(
+                                                  renderIconBox('LACE', getLaceIcon(productName), getLaceDisplayText(selectedOrder.lace), laceSize, '52%')
+                                                );
+                                              }
+                                              
+                                              // Only show hairline if non-default (not NATURAL)
+                                              if (selectedOrder.hairline && isNonDefaultHairline(selectedOrder.hairline)) {
+                                                const hairlineSize = productName === 'BLANCO' ? '45px' : '75px';
+                                                icons.push(
+                                                  renderIconBox('HAIRLINE', getHairlineIcon(selectedOrder.hairline), getHairlineDisplayText(selectedOrder.hairline), hairlineSize)
+                                                );
+                                              }
+                                              
+                                              if (icons.length > 0) {
+                                                return (
+                                                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                    {icons}
+                                                  </div>
+                                                );
+                                              }
+                                            }
+                                          }
+                                          
+                                          // CUSTOMIZING (index 6): color, styling, add ons (only non-defaults)
+                                          if (index === 6) {
+                                            // Check if order has multiple units
+                                            const hasMultipleUnits = selectedOrder.units && Array.isArray(selectedOrder.units) && selectedOrder.units.length > 1;
+                                            
+                                            // Color icon needs special handling - it's a color circle
+                                            const renderColorIconBox = (unitColor: string) => {
+                                              const colorCode = getColorCode(unitColor, productName);
+                                              return (
+                                                <div
+                                                  className="border relative text-center border-black bg-white"
+                                                  style={{
+                                                    borderWidth: '1.3px',
+                                                    width: '50px',
+                                                    height: '80px',
+                                                    boxSizing: 'border-box',
+                                                    padding: '0',
+                                                    overflow: 'visible'
+                                                  }}
+                                                >
+                                                  <p
+                                                    className="text-[10px] text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
+                                                    style={{ fontFamily: '"Covered By Your Grace", cursive' }}
+                                                  >
+                                                    COLOR
+                                                  </p>
+                                                  <div
+                                                    className="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center"
+                                                    style={{
+                                                      width: '35px',
+                                                      height: '35px',
+                                                      overflow: 'visible',
+                                                      top: '55%',
+                                                      transform: 'translateX(-50%) translateY(-50%)'
+                                                    }}
+                                                  >
+                                                    <div
+                                                      style={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        backgroundColor: '#909090',
+                                                        borderRadius: '50%',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        position: 'relative'
+                                                      }}
+                                                    >
+                                                      <div
+                                                        style={{
+                                                          width: '81%',
+                                                          height: '81%',
+                                                          backgroundColor: '#FFFFFF',
+                                                          borderRadius: '50%',
+                                                          display: 'flex',
+                                                          alignItems: 'center',
+                                                          justifyContent: 'center'
+                                                        }}
+                                                      >
+                                                        <div
+                                                          style={{
+                                                            width: '76%',
+                                                            height: '76%',
+                                                            backgroundColor: colorCode,
+                                                            borderRadius: '50%'
+                                                          }}
+                                                        />
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                  <p 
+                                                    className="absolute bottom-[-6.9px] left-1/2 transform -translate-x-1/2 text-[9px] w-full font-medium text-center" 
+                                                    style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}
+                                                  >
+                                                    {getColorDisplayText(unitColor)}
+                                                  </p>
+                                                </div>
+                                              );
+                                            };
+                                            
+                                            if (hasMultipleUnits) {
+                                              // Render icons for all units side-by-side (only non-defaults)
+                                              const icons: JSX.Element[] = [];
+                                              selectedOrder.units.forEach((unit: any) => {
+                                                // Only show color if non-default
+                                                if (unit.color && isNonDefaultColor(unit.color, productName)) {
+                                                  icons.push(renderColorIconBox(unit.color));
+                                                }
+                                                
+                                                // Only add styling icon if it has a selection (not "NONE")
+                                                const hasStyling = unit.styling && unit.styling !== 'NONE';
+                                                if (hasStyling) {
+                                                  icons.push(renderIconBox('STYLING', getStylingIcon(unit.styling), getStylingDisplayText(unit.styling), '80px', '52.5%'));
+                                                }
+                                                
+                                                // Only add add-ons icon if it has selections
+                                                const hasAddOns = unit.addOns && Array.isArray(unit.addOns) && unit.addOns.length > 0;
+                                                if (hasAddOns) {
+                                                  icons.push(renderIconBox('ADD-ONS', getAddOnsIcon(unit.addOns), getAddOnsDisplayText(unit.addOns), '80px', '52.5%'));
+                                                }
+                                              });
+                                              
+                                              if (icons.length > 0) {
+                                                return (
+                                                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                    {icons}
+                                                  </div>
+                                                );
+                                              }
+                                            } else {
+                                              // Single unit - only show non-default selections
+                                              const icons: JSX.Element[] = [];
+                                              
+                                              // Only show color if non-default
+                                              if (selectedOrder.color && isNonDefaultColor(selectedOrder.color, productName)) {
+                                                icons.push(renderColorIconBox(selectedOrder.color));
+                                              }
+                                              
+                                              // Only add styling icon if it has a selection (not "NONE")
+                                              const hasStyling = selectedOrder.styling && selectedOrder.styling !== 'NONE';
+                                              if (hasStyling) {
+                                                icons.push(renderIconBox('STYLING', getStylingIcon(selectedOrder.styling), getStylingDisplayText(selectedOrder.styling), '80px', '52.5%'));
+                                              }
+                                              
+                                              // Only add add-ons icon if it has selections
+                                              const hasAddOns = selectedOrder.addOns && Array.isArray(selectedOrder.addOns) && selectedOrder.addOns.length > 0;
+                                              if (hasAddOns) {
+                                                icons.push(renderIconBox('ADD-ONS', getAddOnsIcon(selectedOrder.addOns), getAddOnsDisplayText(selectedOrder.addOns), '80px', '52.5%'));
+                                              }
+                                              
+                                              if (icons.length > 0) {
+                                                return (
+                                                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                    {icons}
+                                                  </div>
+                                                );
+                                              }
+                                            }
+                                          }
+                                          
+                                          // For all other stages (0, 3, 4, 5, 7, 8), show silky texture icon as base design
+                                          // Stages with icons: 1 (SOURCING), 2 (CONSTRUCTING), 6 (CUSTOMIZING)
+                                          // Prepping stage (index 5), Arrived at Hub (index 4), Shipped to Hub (index 3), and Package Shipped (index 8) use line icons instead
+                                          if (index !== 1 && index !== 2 && index !== 6) {
+                                            // Prepping stage (index 5) uses line icon
+                                            if (index === 5) {
+                                              return (
+                                                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                  {renderIconBox('', getLineIcon(), '', '40px', '55%')}
+                                                </div>
+                                              );
+                                            }
+                                            // Arrived at Hub stage (index 4) uses shipping icon
+                                            if (index === 4) {
+                                              return (
+                                                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                  {renderIconBox('', getShippingIcon(), '', '40px', '55%')}
+                                                </div>
+                                              );
+                                            }
+                                            // Shipped to Hub (index 3) and Package Shipped (index 8) use shipping icon
+                                            if (index === 3 || index === 8) {
+                                              return (
+                                                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                  {renderIconBox('', getShippingIcon(), '', '40px', '55%')}
+                                                </div>
+                                              );
+                                            }
+                                            // Other stages use silky texture icon
+                                            const textureIconSize = productName === 'BLANCO' ? '35.48px' : '83px';
+                                            const textureIconTop = productName === 'BLANCO' ? 'calc(50% + 5px)' : 'calc(50% + 2px)';
+                                            return (
+                                              <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                {renderIconBox('TEXTURE', getTextureIcon(productName), 'SILKY', textureIconSize, textureIconTop)}
+                                              </div>
+                                            );
+                                          }
+                                          
+                                          return null;
+                                        })()}
+                                        
                                         {/* Gray line above estimated duration */}
                                         <div
                                           style={{
                                             width: 'calc(100% - 4px)',
                                             height: '1px',
                                             backgroundColor: '#E0E0E0',
-                                            margin: '0 auto 12px auto'
+                                            margin: '0 auto 8px auto'
                                           }}
                                         />
                                         {/* Timeframe */}
@@ -2243,11 +3003,11 @@ function ConciergePage() {
                     }}
                   />
                 </div>
-                                            {!(isDeliveredLastStage && index === 9) && (
+                                            {!(isDeliveredLastStage && index === 8) && (
                                               <p
                                                 style={{
                           fontFamily: '"Futura PT Book"',
-                                                    color: '#000000',
+                                                    color: isCompleted ? '#EB1C24' : '#000000',
                                                     fontSize: '9px',
                                                     margin: '4px 0 0 0',
                           textTransform: 'uppercase'
@@ -2273,88 +3033,8 @@ function ConciergePage() {
                                           </p>
                                         )}
                                         
-                                        {/* Order Confirmed Sub-Statuses */}
-                                        {index === 0 && (isCurrent || isCompleted) && (() => {
-                                          const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
-                                          const subStatus = getOrderConfirmedSubStatus(selectedOrder);
-                                          
-                                          // Determine if this is the active/completed status
-                                          const isPending = subStatus === 'PENDING';
-                                          const isAwaiting = subStatus === 'AWAITING ORDER FORM';
-                                          const isPendingApproval = subStatus === 'ORDER FORM PENDING';
-                                          const isApproved = subStatus === 'ORDER FORM APPROVED';
-                                          
-                                          return (
-                                            <div style={{ marginTop: '12px' }}>
-                                              <div
-                                                style={{
-                                                  width: 'calc(100% - 4px)',
-                                                  height: '1px',
-                                                  backgroundColor: '#E0E0E0',
-                                                  margin: '0 auto 12px auto'
-                                                }}
-                                              />
-                                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                                {/* Show only the current status */}
-                                                {isPending && (
-                                                  <p
-                                                    style={{
-                                                      fontFamily: '"Futura PT Book"',
-                                                      color: isCurrent ? '#EB1C24' : '#909090',
-                                                      fontSize: '9px',
-                                                      margin: '0',
-                                                      textTransform: 'uppercase'
-                                                    }}
-                                                  >
-                                                    STATUS: PENDING
-                                                  </p>
-                                                )}
-                                                {isAwaiting && (
-                                                  <p
-                                                    style={{
-                                                      fontFamily: '"Futura PT Book"',
-                                                      color: isCurrent ? '#EB1C24' : '#909090',
-                                                      fontSize: '9px',
-                                                      margin: '0',
-                                                      textTransform: 'uppercase'
-                                                    }}
-                                                  >
-                                                    STATUS: AWAITING ORDER FORM
-                                                  </p>
-                                                )}
-                                                {isPendingApproval && (
-                                                  <p
-                                                    style={{
-                                                      fontFamily: '"Futura PT Book"',
-                                                      color: isCurrent ? '#EB1C24' : '#909090',
-                                                      fontSize: '9px',
-                                                      margin: '0',
-                                                      textTransform: 'uppercase'
-                                                    }}
-                                                  >
-                                                    STATUS: ORDER FORM PENDING
-                                                  </p>
-                                                )}
-                                                {isApproved && (
-                                                  <p
-                                                    style={{
-                                                      fontFamily: '"Futura PT Book"',
-                                                      color: '#EB1C24',
-                                                      fontSize: '9px',
-                                                      margin: '0',
-                                                      textTransform: 'uppercase'
-                                                    }}
-                                                  >
-                                                    STATUS: ORDER FORM APPROVED
-                                                  </p>
-                                                )}
-                </div>
-                                            </div>
-                                          );
-                                        })()}
-                                        
                                         {/* Tracking Number and Shipping Status for ORDER SHIPPED */}
-                                        {index === 9 && (isCurrent || isCompleted || isDeliveredLastStage) && (() => {
+                                        {index === 8 && (isCurrent || isCompleted || isDeliveredLastStage) && (() => {
                                           const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
                                           const subStatus = getOrderShippedSubStatus(selectedOrder);
                                           
@@ -2810,7 +3490,7 @@ function ConciergePage() {
         onConfirm={() => setShowFreeGiftModal(false)}
         title="SELECTION SAVED"
         message={freeGiftModalMessage}
-        confirmText="OK"
+        confirmText="CLOSE"
         cancelText=""
         messageTextTransform="uppercase"
       />
@@ -2822,7 +3502,7 @@ function ConciergePage() {
         onConfirm={() => setShowBirthdayGiftModal(false)}
         title="SELECTION SAVED"
         message={birthdayGiftModalMessage}
-        confirmText="OK"
+        confirmText="CLOSE"
         cancelText=""
         messageTextTransform="uppercase"
       />

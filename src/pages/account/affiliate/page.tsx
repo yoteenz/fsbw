@@ -4123,9 +4123,51 @@ function AffiliatePage() {
             
             setShowDeleteConfirm(null);
            }}
-           title="DELETE CONTENT"
-           message="ARE YOU SURE YOU WANT TO DELETE THIS CONTENT?"
-           confirmText="DELETE"
+           title={(() => {
+             if (!expandedOrderId || !showDeleteConfirm) return "DELETE CONTENT";
+             const expandedOrder = deliveredOrders.find(o => o.id === expandedOrderId);
+             if (!expandedOrder) return "DELETE CONTENT";
+             const orderContent = submittedContent[expandedOrder.id] || { photos: [], videos: [], socials: [] };
+             let contentItem = null;
+             if (showDeleteConfirm.type === 'photo') {
+               contentItem = orderContent.photos?.find(p => p.id === showDeleteConfirm.id);
+             } else if (showDeleteConfirm.type === 'video') {
+               contentItem = orderContent.videos?.find(v => v.id === showDeleteConfirm.id);
+             } else if (showDeleteConfirm.type === 'social') {
+               contentItem = orderContent.socials?.find(s => s.id === showDeleteConfirm.id);
+             }
+             return contentItem?.status === 'pending' ? "CANCEL SUBMISSION" : "DELETE CONTENT";
+           })()}
+           message={(() => {
+             if (!expandedOrderId || !showDeleteConfirm) return "ARE YOU SURE YOU WANT TO DELETE THIS CONTENT?";
+             const expandedOrder = deliveredOrders.find(o => o.id === expandedOrderId);
+             if (!expandedOrder) return "ARE YOU SURE YOU WANT TO DELETE THIS CONTENT?";
+             const orderContent = submittedContent[expandedOrder.id] || { photos: [], videos: [], socials: [] };
+             let contentItem = null;
+             if (showDeleteConfirm.type === 'photo') {
+               contentItem = orderContent.photos?.find(p => p.id === showDeleteConfirm.id);
+             } else if (showDeleteConfirm.type === 'video') {
+               contentItem = orderContent.videos?.find(v => v.id === showDeleteConfirm.id);
+             } else if (showDeleteConfirm.type === 'social') {
+               contentItem = orderContent.socials?.find(s => s.id === showDeleteConfirm.id);
+             }
+             return contentItem?.status === 'pending' ? "ARE YOU SURE YOU WANT TO CANCEL THIS SUBMISSION?" : "ARE YOU SURE YOU WANT TO DELETE THIS CONTENT?";
+           })()}
+           confirmText={(() => {
+             if (!expandedOrderId || !showDeleteConfirm) return "DELETE";
+             const expandedOrder = deliveredOrders.find(o => o.id === expandedOrderId);
+             if (!expandedOrder) return "DELETE";
+             const orderContent = submittedContent[expandedOrder.id] || { photos: [], videos: [], socials: [] };
+             let contentItem = null;
+             if (showDeleteConfirm.type === 'photo') {
+               contentItem = orderContent.photos?.find(p => p.id === showDeleteConfirm.id);
+             } else if (showDeleteConfirm.type === 'video') {
+               contentItem = orderContent.videos?.find(v => v.id === showDeleteConfirm.id);
+             } else if (showDeleteConfirm.type === 'social') {
+               contentItem = orderContent.socials?.find(s => s.id === showDeleteConfirm.id);
+             }
+             return contentItem?.status === 'pending' ? "CONFIRM" : "DELETE";
+           })()}
            cancelText="CANCEL"
          />
        )}

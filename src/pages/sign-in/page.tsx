@@ -306,7 +306,30 @@ function SignInPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/build-a-wig')}
+                    onClick={() => {
+                      // Check if user is premium member
+                      try {
+                        const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
+                        if (isSignedIn) {
+                          const currentUser = localStorage.getItem('currentUser');
+                          if (currentUser) {
+                            const user = JSON.parse(currentUser);
+                            const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
+                            if (isPremium) {
+                              navigate('/'); // Lobby for premium members
+                            } else {
+                              navigate('/home/shop'); // Shop for standard/non-members
+                            }
+                          } else {
+                            navigate('/home/shop'); // Default to shop if not signed in
+                          }
+                        } else {
+                          navigate('/home/shop'); // Default to shop if not signed in
+                        }
+                      } catch (e) {
+                        navigate('/home/shop'); // Default to shop on error
+                      }
+                    }}
                   >
                     HOME &gt;
                   </span>{' '}

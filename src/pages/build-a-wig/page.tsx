@@ -4568,7 +4568,30 @@ export default function BuildAWigPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/build-a-wig')}
+                    onClick={() => {
+                      // Check if user is premium member
+                      try {
+                        const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
+                        if (isSignedIn) {
+                          const currentUser = localStorage.getItem('currentUser');
+                          if (currentUser) {
+                            const user = JSON.parse(currentUser);
+                            const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
+                            if (isPremium) {
+                              navigate('/'); // Lobby for premium members
+                            } else {
+                              navigate('/home/shop'); // Shop for standard/non-members
+                            }
+                          } else {
+                            navigate('/home/shop'); // Default to shop if not signed in
+                          }
+                        } else {
+                          navigate('/home/shop'); // Default to shop if not signed in
+                        }
+                      } catch (e) {
+                        navigate('/home/shop'); // Default to shop on error
+                      }
+                    }}
                   >
                     HOME &gt;
                   </span>{' '}
@@ -4658,10 +4681,19 @@ export default function BuildAWigPage() {
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                     className="cursor-pointer"
-                    onClick={handleMobileMenuToggle}
-                    style={{ marginTop: '2px' }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleMobileMenuToggle();
+                    }}
+                    onTouchStart={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleMobileMenuToggle();
+                    }}
+                    style={{ marginTop: '2px', pointerEvents: 'auto' }}
                   >
-                    <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
+                    <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black" pointerEvents="none"/>
                   </svg>
                 </div>
             </div>
