@@ -133,7 +133,7 @@ function ConciergePage() {
         // If no orders exist, create test orders for UI testing
         if (!storedOrders) {
           // Create order date 13 days ago to show 20% progress in CONSTRUCTING UNIT stage
-          // Constructing starts at day 7 (after sourcing ends: 2 + 5 = 7), takes 28 days. To be at 20%: 7 + (28 * 0.2) = 12.6 days ? 13 days
+          // Constructing starts at day 5 (after sourcing ends: 2 + 3 = 5), takes 28 days. To be at 20%: 5 + (28 * 0.2) = 10.6 days ? 11 days
           const constructingOrderDate = new Date();
           constructingOrderDate.setDate(constructingOrderDate.getDate() - 13);
           // Format as MM-DD-YYYY for consistent parsing
@@ -289,7 +289,7 @@ function ConciergePage() {
           );
           
           // Create or update the test order with 20% progress in CONSTRUCTING UNIT
-          // Constructing starts at day 7 (after sourcing ends: 2 + 5 = 7), takes 28 days. To be at 20%: 7 + (28 * 0.2) = 12.6 days ? 13 days
+          // Constructing starts at day 5 (after sourcing ends: 2 + 3 = 5), takes 28 days. To be at 20%: 5 + (28 * 0.2) = 10.6 days ? 11 days
           const constructingOrderDate = new Date();
           constructingOrderDate.setDate(constructingOrderDate.getDate() - 13);
           // Format as MM-DD-YYYY for consistent parsing
@@ -643,7 +643,7 @@ function ConciergePage() {
       case 0: // ORDER CONFIRMED
         return 0; // Pending
       case 1: // SOURCING + COLLECTING
-        return 5; // 5 days
+        return 3; // 3 days
       case 2: // CONSTRUCTING UNIT
         return 28; // 4 weeks (28 days)
       case 3: // SHIPPED TO HUB
@@ -750,27 +750,27 @@ function ConciergePage() {
       // ORDER CONFIRMED - same day
       return new Date(orderDate);
     } else if (stageIndex === 1) {
-      // SOURCING + COLLECTING - starts 2 days after order (for payment processing), takes 5 days
+      // SOURCING + COLLECTING - starts 2 days after order (for payment processing), takes 3 days
       startDate.setDate(startDate.getDate() + 2);
     } else if (stageIndex === 2) {
       // CONSTRUCTING UNIT - starts after sourcing (2 + 5 = 7 days), takes 28 days (4 weeks)
       startDate.setDate(startDate.getDate() + 2 + 5);
     } else if (stageIndex === 3) {
-      // SHIPPED TO HUB - starts after construction (2 + 5 + 28 = 35 days), takes 5 days
-      startDate.setDate(startDate.getDate() + 2 + 5 + 28);
+      // SHIPPED TO HUB - starts after construction (2 + 3 + 28 = 33 days), takes 5 days
+      startDate.setDate(startDate.getDate() + 2 + 3 + 28);
     } else if (stageIndex === 4) {
       // ARRIVED AT HUB - starts after shipped (35 + 5 = 40 days), takes 2 days
       startDate.setDate(startDate.getDate() + 2 + 5 + 28 + 5);
     } else if (stageIndex === 5) {
       // PREPPING - starts after arrived (40 + 2 = 42 days), takes 2 days
-      startDate.setDate(startDate.getDate() + 2 + 5 + 28 + 5 + 2);
+      startDate.setDate(startDate.getDate() + 2 + 3 + 28 + 5 + 2);
     } else if (stageIndex === 6) {
       // CUSTOMIZING - starts after prepping (42 + 2 = 44 days), takes 10 days (if customization)
       if (!hasCustomization) return new Date(orderDate);
       startDate.setDate(startDate.getDate() + 2 + 5 + 28 + 5 + 2 + 2);
     } else if (stageIndex === 7) {
       // FINALIZING - starts after customizing/prepping, takes 3 days
-      const baseDays = 2 + 5 + 28 + 5 + 2 + 2; // up to prepping
+      const baseDays = 2 + 3 + 28 + 5 + 2 + 2; // up to prepping
       if (hasCustomization) {
         startDate.setDate(startDate.getDate() + baseDays + 10); // after customizing
       } else {
@@ -778,7 +778,7 @@ function ConciergePage() {
       }
     } else if (stageIndex === 8) {
       // ORDER SHIPPED - starts after finalizing, takes 3-5 days
-      const baseDays = 2 + 5 + 28 + 5 + 2 + 2; // up to prepping
+      const baseDays = 2 + 3 + 28 + 5 + 2 + 2; // up to prepping
       if (hasCustomization) {
         startDate.setDate(startDate.getDate() + baseDays + 10 + 3); // after finalizing (3 days)
       } else {
@@ -1096,13 +1096,13 @@ function ConciergePage() {
         // ORDER CONFIRMED - same day
         stageDate = new Date(orderDateObj);
       } else if (stageIndex === 1) {
-        // SOURCING + COLLECTING - starts 2 days after order (for payment processing), takes 5 days
+        // SOURCING + COLLECTING - starts 2 days after order (for payment processing), takes 3 days
         stageDate = new Date(orderDateObj);
         stageDate.setDate(stageDate.getDate() + 2);
       } else if (stageIndex === 2) {
-        // CONSTRUCTING UNIT - starts after sourcing (2 + 5 = 7 days), takes 28 days (4 weeks)
+        // CONSTRUCTING UNIT - starts after sourcing (2 + 3 = 5 days), takes 28 days (4 weeks)
         stageDate = new Date(orderDateObj);
-        stageDate.setDate(stageDate.getDate() + 2 + 5);
+        stageDate.setDate(stageDate.getDate() + 2 + 3);
       } else if (stageIndex === 3) {
         // SHIPPED TO HUB - starts after construction (2 + 5 + 28 = 35 days), takes 5 days
         stageDate = new Date(orderDateObj);
@@ -1110,11 +1110,11 @@ function ConciergePage() {
       } else if (stageIndex === 4) {
         // ARRIVED AT HUB - starts after shipped (35 + 5 = 40 days), takes 2 days
         stageDate = new Date(orderDateObj);
-        stageDate.setDate(stageDate.getDate() + 2 + 5 + 28 + 5);
+        stageDate.setDate(stageDate.getDate() + 2 + 3 + 28 + 5);
       } else if (stageIndex === 5) {
         // PREPPING - starts after arrived (40 + 2 = 42 days), takes 2 days
         stageDate = new Date(orderDateObj);
-        stageDate.setDate(stageDate.getDate() + 2 + 5 + 28 + 5 + 2);
+        stageDate.setDate(stageDate.getDate() + 2 + 3 + 28 + 5 + 2);
       } else if (stageIndex === 6) {
         // CUSTOMIZING - starts after prepping (42 + 2 = 44 days), takes 10 days (only if customization)
         if (!hasCustomization) {
@@ -1124,7 +1124,7 @@ function ConciergePage() {
         stageDate.setDate(stageDate.getDate() + 2 + 5 + 28 + 5 + 2 + 2);
       } else if (stageIndex === 7) {
         // FINALIZING - starts after customizing/prepping, takes 3 days
-        const baseDays = 2 + 5 + 28 + 5 + 2 + 2; // up to prepping
+        const baseDays = 2 + 3 + 28 + 5 + 2 + 2; // up to prepping
         stageDate = new Date(orderDateObj);
         if (hasCustomization) {
           stageDate.setDate(stageDate.getDate() + baseDays + 10); // after customizing
@@ -1133,7 +1133,7 @@ function ConciergePage() {
         }
       } else if (stageIndex === 8) {
         // PACKAGING - starts after finalizing, takes 3 days
-        const baseDays = 2 + 5 + 28 + 5 + 2 + 2; // up to prepping
+        const baseDays = 2 + 3 + 28 + 5 + 2 + 2; // up to prepping
         stageDate = new Date(orderDateObj);
         if (hasCustomization) {
           stageDate.setDate(stageDate.getDate() + baseDays + 10 + 3); // after customizing + finalizing
@@ -1142,7 +1142,7 @@ function ConciergePage() {
         }
       } else if (stageIndex === 9) {
         // ORDER SHIPPED - starts after packaging, takes 3-5 days (default to 3)
-        const baseDays = 5 + 28 + 5 + 2 + 2; // up to prepping
+        const baseDays = 3 + 28 + 5 + 2 + 2; // up to prepping
         stageDate = new Date(orderDateObj);
         const shippingDays = 3; // Default, could be 3-5 based on shipping method
         if (hasCustomization) {
@@ -2630,15 +2630,19 @@ function ConciergePage() {
                                   const isStandard = shippingLower.includes('standard');
                                   
                                   if (isDomestic && isExpress) {
-                                    durationText = '1-2 DAYS';
+                                    durationText = '2 DAYS';
                                   } else if (isDomestic && isStandard) {
-                                    durationText = '3-5 DAYS';
+                                    durationText = '5 DAYS';
                                   } else if (isInternational && isExpress) {
-                                    durationText = '1-3 DAYS';
+                                    durationText = '3 DAYS';
                                   } else if (isInternational && isStandard) {
-                                    durationText = '7-14 DAYS';
+                                    durationText = '2 WEEKS';
+                                  } else if (isExpress) {
+                                    // Express shipping without domestic/international specified
+                                    durationText = '2 DAYS';
                                   } else {
-                                    durationText = stageDuration === 0 ? 'SAME DAY' : stageDuration === 1 ? '1 DAY' : stageDuration === 28 ? '4 WEEKS' : `${stageDuration} DAYS`;
+                                    // Default to standard shipping when shipping method not specified or not recognized
+                                    durationText = '5 DAYS';
                                   }
                                 } else {
                                   durationText = stageDuration === 0 ? 'SAME DAY' : stageDuration === 1 ? '1 DAY' : stageDuration === 28 ? '4 WEEKS' : `${stageDuration} DAYS`;
