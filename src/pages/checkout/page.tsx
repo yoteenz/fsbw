@@ -1231,7 +1231,66 @@ function CheckoutPage() {
       
       if (result.success) {
         if (result.redirectUrl) {
+          // Prepare order data before redirecting (for return after payment completion)
+          const lastOrderNumber = parseInt(localStorage.getItem('lastOrderNumber') || '0', 10);
+          const nextOrderNumber = lastOrderNumber + 1;
+          localStorage.setItem('lastOrderNumber', nextOrderNumber.toString());
+          const orderNumber = `#${String(nextOrderNumber).padStart(3, '0')}`;
+          
+          // Generate random 6-character alphanumeric confirmation number
+          const generateConfirmationNumber = () => {
+            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let result = '';
+            for (let i = 0; i < 6; i++) {
+              result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+          };
+          const confirmationNumber = generateConfirmationNumber();
+          const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
+          orderConfirmations[orderNumber] = confirmationNumber;
+          localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
+          
+          // Calculate points earned
+          const basePoints = isSignedIn ? Math.round(pointsEligibleAmount) : 0;
+          const multiplier = 1;
+          const pointsEarned = Math.round(basePoints * multiplier);
+          
+          // Store order data for return from payment provider
+          const orderDataForReturn = {
+            orderNumber: orderNumber,
+            confirmationNumber: confirmationNumber,
+            orderDate: new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-'),
+            orderTotal: paymentData.amount,
+            paymentMethod: provider,
+            cartItems: cartItems,
+            pointsEarned: pointsEarned,
+            firstName: firstName,
+            lastName: lastName,
+            shippingAddress: shippingAddress,
+            city: city,
+            state: state,
+            zip: zip,
+            country: selectedCountry || 'US',
+            email: email,
+            shippingMethod: selectedShippingMethod ? (() => {
+              const options = calculateShippingOptions();
+              const option = options.find(opt => 
+                opt.carrier === selectedShippingMethod.carrier && 
+                opt.speed === selectedShippingMethod.speed &&
+                opt.cost === selectedShippingMethod.cost
+              );
+              return option?.label || `${selectedShippingMethod.carrier} ${selectedShippingMethod.speed.toUpperCase()}`;
+            })() : 'STANDARD SHIPPING',
+            processingTime: selectedProcessing === 'rush' ? '4 TO 6 WEEKS' : (hasColorStylingOrAddOns ? '6 TO 8 WEEKS (UP TO 10 WEEKS FOR CUSTOMIZED UNITS)' : '6 TO 8 WEEKS'),
+          };
+          
+          // Store order data with a key that includes the provider for retrieval after redirect
+          localStorage.setItem(`pendingOrder_${provider}`, JSON.stringify(orderDataForReturn));
+          
           // Redirect to payment provider's checkout page
+          // For placeholder implementations, this will route directly to order summary
+          // For real implementations, payment provider will redirect back to the returnUrl in the redirect URL
           window.location.href = result.redirectUrl;
         } else if (result.transactionId) {
           // Payment completed successfully (e.g., Apple Pay)

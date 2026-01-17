@@ -164,6 +164,8 @@ function ConciergePage() {
             addOns: ['BLEACH']
           };
           
+          const deliveredOrderDate = new Date();
+          deliveredOrderDate.setDate(deliveredOrderDate.getDate() - 60); // 60 days ago for delivered order
           const deliveredOrder = {
             id: 'test-order-2',
             orderNumber: 'ORDER #888',
@@ -174,6 +176,8 @@ function ConciergePage() {
             total: 740,
             items: 1,
             trackingStage: 8, // All stages completed for delivered order
+            orderFormSigned: true, // Form was signed (order progressed to delivered)
+            placedAt: deliveredOrderDate.getTime(), // Timestamp when order was placed
             trackingNumber: '1Z999AA10123456784',
             deliveryDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
             deliveryTime: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
@@ -191,8 +195,72 @@ function ConciergePage() {
             addOns: [] // No add-ons selected - icon should not appear
           };
           
+          // Create a canceled order (form not signed + past 24 hours) for initial setup
+          const canceledOrderDate = new Date();
+          canceledOrderDate.setDate(canceledOrderDate.getDate() - 2); // 2 days ago (past 24 hour limit)
+          const canceledMonth = String(canceledOrderDate.getMonth() + 1).padStart(2, '0');
+          const canceledDay = String(canceledOrderDate.getDate()).padStart(2, '0');
+          const canceledYear = canceledOrderDate.getFullYear();
+          const canceledFormattedDate = `${canceledMonth}-${canceledDay}-${canceledYear}`;
+          
+          const canceledOrder = {
+            id: 'test-order-4',
+            orderNumber: 'ORDER #666',
+            date: canceledFormattedDate,
+            status: 'PLACED', // Still in PLACED status (never progressed)
+            productName: 'BLANCO',
+            productImage: '/assets/natural front.png',
+            total: 820,
+            items: 1,
+            trackingStage: 0, // Still at confirmed stage
+            orderFormSigned: false, // Form was NOT signed
+            placedAt: canceledOrderDate.getTime() - (25 * 60 * 60 * 1000), // 25 hours ago (past 24 hour limit)
+            // Selection data for icons
+            length: '18"',
+            density: '200%',
+            texture: 'SILKY',
+            capSize: 'M',
+            lace: '13X6',
+            hairline: 'NATURAL',
+            color: 'PLATINUM',
+            styling: 'NONE',
+            addOns: []
+          };
+          
+          // Create an order awaiting signature (form not signed + within 24 hours)
+          const awaitingSignatureOrderDate = new Date();
+          awaitingSignatureOrderDate.setHours(awaitingSignatureOrderDate.getHours() - 12); // 12 hours ago (within 24 hour limit)
+          const awaitingMonth = String(awaitingSignatureOrderDate.getMonth() + 1).padStart(2, '0');
+          const awaitingDay = String(awaitingSignatureOrderDate.getDate()).padStart(2, '0');
+          const awaitingYear = awaitingSignatureOrderDate.getFullYear();
+          const awaitingFormattedDate = `${awaitingMonth}-${awaitingDay}-${awaitingYear}`;
+          
+          const awaitingSignatureOrder = {
+            id: 'test-order-5',
+            orderNumber: 'ORDER #555',
+            date: awaitingFormattedDate,
+            status: 'PLACED', // Still in PLACED status (awaiting signature)
+            productName: 'NOIR',
+            productImage: '/assets/natural front.png',
+            total: 920,
+            items: 1,
+            trackingStage: 0, // Still at confirmed stage
+            orderFormSigned: false, // Form was NOT signed yet
+            placedAt: awaitingSignatureOrderDate.getTime(), // 12 hours ago (within 24 hour limit)
+            // Selection data for icons
+            length: '20"',
+            density: '200%',
+            texture: 'SILKY',
+            capSize: 'M',
+            lace: '13X6',
+            hairline: 'NATURAL',
+            color: 'OFF BLACK',
+            styling: 'NONE',
+            addOns: []
+          };
+          
           const testOrdersData = {
-            activeOrders: [testOrder, deliveredOrder],
+            activeOrders: [testOrder, deliveredOrder, canceledOrder, awaitingSignatureOrder],
             pastOrders: []
           };
           
@@ -240,6 +308,8 @@ function ConciergePage() {
             total: 740,
             items: 1,
             trackingStage: 2, // Set to stage 2 (CONSTRUCTING UNIT) for testing 20% progress
+            orderFormSigned: true, // Form was signed (order progressed to later stages)
+            placedAt: constructingOrderDate.getTime(), // Timestamp when order was placed
             // Selection data for icons
             length: '16"',
             density: '200%',
@@ -266,6 +336,8 @@ function ConciergePage() {
           }
           
           // Create or update the delivered test order with correct signature and location
+          const deliveredOrderDate = new Date();
+          deliveredOrderDate.setDate(deliveredOrderDate.getDate() - 60); // 60 days ago for delivered order
           const deliveredOrder = {
             id: 'test-order-2',
             orderNumber: 'ORDER #888',
@@ -276,6 +348,8 @@ function ConciergePage() {
             total: 740,
             items: 1,
             trackingStage: 8, // All stages completed for delivered order
+            orderFormSigned: true, // Form was signed (order progressed to delivered)
+            placedAt: deliveredOrderDate.getTime(), // Timestamp when order was placed
             trackingNumber: '1Z999AA10123456784',
             deliveryDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
             deliveryTime: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
@@ -324,6 +398,8 @@ function ConciergePage() {
             total: 1480,
             items: 2,
             trackingStage: 1, // Set to SOURCING stage to test icon display
+            orderFormSigned: true, // Form was signed (order progressed to sourcing)
+            placedAt: multiUnitOrderDate.getTime(), // Timestamp when order was placed
             // Multi-unit selection data - array of units with different selections
             units: [
               {
@@ -374,6 +450,106 @@ function ConciergePage() {
           } else {
             // Add new multi-unit order
             active.push(multiUnitOrder);
+          }
+          
+          // Create a canceled order (form not signed + past 24 hours)
+          const canceledOrderDate = new Date();
+          canceledOrderDate.setDate(canceledOrderDate.getDate() - 2); // 2 days ago (past 24 hour limit)
+          const canceledMonth = String(canceledOrderDate.getMonth() + 1).padStart(2, '0');
+          const canceledDay = String(canceledOrderDate.getDate()).padStart(2, '0');
+          const canceledYear = canceledOrderDate.getFullYear();
+          const canceledFormattedDate = `${canceledMonth}-${canceledDay}-${canceledYear}`;
+          
+          const canceledOrder = {
+            id: 'test-order-4',
+            orderNumber: 'ORDER #666',
+            date: canceledFormattedDate,
+            status: 'PLACED', // Still in PLACED status (never progressed)
+            productName: 'BLANCO',
+            productImage: '/assets/natural front.png',
+            total: 820,
+            items: 1,
+            trackingStage: 0, // Still at confirmed stage
+            orderFormSigned: false, // Form was NOT signed
+            placedAt: canceledOrderDate.getTime() - (25 * 60 * 60 * 1000), // 25 hours ago (past 24 hour limit)
+            // Selection data for icons
+            length: '18"',
+            density: '200%',
+            texture: 'SILKY',
+            capSize: 'M',
+            lace: '13X6',
+            hairline: 'NATURAL',
+            color: 'PLATINUM',
+            styling: 'NONE',
+            addOns: []
+          };
+          
+          // Check if canceled order already exists
+          const existingCanceledOrderIndex = [...active, ...past].findIndex((order: any) => 
+            order.id === 'test-order-4' || order.orderNumber === 'ORDER #666'
+          );
+          
+          if (existingCanceledOrderIndex >= 0) {
+            // Update existing canceled order
+            if (existingCanceledOrderIndex < active.length) {
+              active[existingCanceledOrderIndex] = canceledOrder;
+            } else {
+              const pastIndex = existingCanceledOrderIndex - active.length;
+              past[pastIndex] = canceledOrder;
+            }
+          } else {
+            // Add new canceled order
+            active.push(canceledOrder);
+          }
+          
+          // Create or update an order awaiting signature (form not signed + within 24 hours)
+          const awaitingSignatureOrderDate = new Date();
+          awaitingSignatureOrderDate.setHours(awaitingSignatureOrderDate.getHours() - 12); // 12 hours ago (within 24 hour limit)
+          const awaitingMonth = String(awaitingSignatureOrderDate.getMonth() + 1).padStart(2, '0');
+          const awaitingDay = String(awaitingSignatureOrderDate.getDate()).padStart(2, '0');
+          const awaitingYear = awaitingSignatureOrderDate.getFullYear();
+          const awaitingFormattedDate = `${awaitingMonth}-${awaitingDay}-${awaitingYear}`;
+          
+          const awaitingSignatureOrder = {
+            id: 'test-order-5',
+            orderNumber: 'ORDER #555',
+            date: awaitingFormattedDate,
+            status: 'PLACED', // Still in PLACED status (awaiting signature)
+            productName: 'NOIR',
+            productImage: '/assets/natural front.png',
+            total: 920,
+            items: 1,
+            trackingStage: 0, // Still at confirmed stage
+            orderFormSigned: false, // Form was NOT signed yet
+            placedAt: awaitingSignatureOrderDate.getTime(), // 12 hours ago (within 24 hour limit)
+            // Selection data for icons
+            length: '20"',
+            density: '200%',
+            texture: 'SILKY',
+            capSize: 'M',
+            lace: '13X6',
+            hairline: 'NATURAL',
+            color: 'OFF BLACK',
+            styling: 'NONE',
+            addOns: []
+          };
+          
+          // Check if awaiting signature order already exists
+          const existingAwaitingOrderIndex = [...active, ...past].findIndex((order: any) => 
+            order.id === 'test-order-5' || order.orderNumber === 'ORDER #555'
+          );
+          
+          if (existingAwaitingOrderIndex >= 0) {
+            // Update existing awaiting signature order
+            if (existingAwaitingOrderIndex < active.length) {
+              active[existingAwaitingOrderIndex] = awaitingSignatureOrder;
+            } else {
+              const pastIndex = existingAwaitingOrderIndex - active.length;
+              past[pastIndex] = awaitingSignatureOrder;
+            }
+          } else {
+            // Add new awaiting signature order
+            active.push(awaitingSignatureOrder);
           }
           
           // Save back to localStorage
@@ -433,7 +609,15 @@ function ConciergePage() {
       return Math.min(Math.max(0, order.trackingStage), 8);
     }
     
-    return statusMap[order.status] || 0;
+    const baseStage = statusMap[order.status] || 0;
+    
+    // If order form is signed and status is PLACED/CONFIRMED, confirmed stage (0) is complete
+    // Move to next stage (sourcing) if form is signed
+    if ((order.status === 'PLACED' || order.status === 'CONFIRMED') && order.orderFormSigned === true) {
+      return Math.max(1, baseStage); // At least stage 1 (sourcing) if form is signed
+    }
+    
+    return baseStage;
   };
   
   const currentTrackingStage = getOrderTrackingStage(selectedOrderId);
@@ -471,16 +655,42 @@ function ConciergePage() {
       case 6: // CUSTOMIZING
         return hasCustomization ? 10 : 0; // 10 days if customization
       case 7: // FINALIZING
-        return 2; // 2 days
+        return 3; // 3 days
       case 8: // PACKAGING
         return 3; // 3 days
       case 9: // ORDER SHIPPED
-        // 3-5 days depending on shipping method (default to 3 if not specified)
-        if (shippingMethod?.toLowerCase().includes('express') || shippingMethod?.toLowerCase().includes('rush')) {
-          return 3;
-        } else if (shippingMethod?.toLowerCase().includes('standard')) {
-          return 5;
+        // Duration depends on shipping method: domestic vs international, standard vs express
+        if (!shippingMethod) {
+          return 3; // Default to 3 days if not specified
         }
+        
+        const shippingLower = shippingMethod.toLowerCase();
+        const isDomestic = shippingLower.includes('domestic');
+        const isInternational = shippingLower.includes('international');
+        const isExpress = shippingLower.includes('express');
+        const isStandard = shippingLower.includes('standard');
+        
+        if (isDomestic) {
+          if (isExpress) {
+            return 2; // Domestic express: 1-2 days (return 2 for display as range)
+          } else if (isStandard) {
+            return 5; // Domestic standard: 3-5 days (return 5 for display as range)
+          }
+        } else if (isInternational) {
+          if (isExpress) {
+            return 3; // International express: 1-3 days (return 3 for display as range)
+          } else if (isStandard) {
+            return 10; // International standard: 7-14 days (return 10 for display as range)
+          }
+        }
+        
+        // Fallback: check for express/standard without domestic/international prefix
+        if (isExpress) {
+          return 2; // Default express to 1-2 days
+        } else if (isStandard) {
+          return 5; // Default standard to 3-5 days
+        }
+        
         return 3; // Default to 3 days
       default:
         return 0;
@@ -559,7 +769,7 @@ function ConciergePage() {
       if (!hasCustomization) return new Date(orderDate);
       startDate.setDate(startDate.getDate() + 2 + 5 + 28 + 5 + 2 + 2);
     } else if (stageIndex === 7) {
-      // FINALIZING - starts after customizing/prepping, takes 4 days
+      // FINALIZING - starts after customizing/prepping, takes 3 days
       const baseDays = 2 + 5 + 28 + 5 + 2 + 2; // up to prepping
       if (hasCustomization) {
         startDate.setDate(startDate.getDate() + baseDays + 10); // after customizing
@@ -570,9 +780,9 @@ function ConciergePage() {
       // ORDER SHIPPED - starts after finalizing, takes 3-5 days
       const baseDays = 2 + 5 + 28 + 5 + 2 + 2; // up to prepping
       if (hasCustomization) {
-        startDate.setDate(startDate.getDate() + baseDays + 10 + 4); // after finalizing (4 days)
+        startDate.setDate(startDate.getDate() + baseDays + 10 + 3); // after finalizing (3 days)
       } else {
-        startDate.setDate(startDate.getDate() + baseDays + 4); // after finalizing (4 days)
+        startDate.setDate(startDate.getDate() + baseDays + 3); // after finalizing (3 days)
       }
     }
     
@@ -913,7 +1123,7 @@ function ConciergePage() {
         stageDate = new Date(orderDateObj);
         stageDate.setDate(stageDate.getDate() + 2 + 5 + 28 + 5 + 2 + 2);
       } else if (stageIndex === 7) {
-        // FINALIZING - starts after customizing/prepping, takes 2 days
+        // FINALIZING - starts after customizing/prepping, takes 3 days
         const baseDays = 2 + 5 + 28 + 5 + 2 + 2; // up to prepping
         stageDate = new Date(orderDateObj);
         if (hasCustomization) {
@@ -926,9 +1136,9 @@ function ConciergePage() {
         const baseDays = 2 + 5 + 28 + 5 + 2 + 2; // up to prepping
         stageDate = new Date(orderDateObj);
         if (hasCustomization) {
-          stageDate.setDate(stageDate.getDate() + baseDays + 10 + 2); // after customizing + finalizing
+          stageDate.setDate(stageDate.getDate() + baseDays + 10 + 3); // after customizing + finalizing
         } else {
-          stageDate.setDate(stageDate.getDate() + baseDays + 2); // after prepping + finalizing
+          stageDate.setDate(stageDate.getDate() + baseDays + 3); // after prepping + finalizing
         }
       } else if (stageIndex === 9) {
         // ORDER SHIPPED - starts after packaging, takes 3-5 days (default to 3)
@@ -2312,7 +2522,13 @@ function ConciergePage() {
                               return filteredStages.map(({ stage, originalIndex: index }) => {
                                 // Adjust stage indices for display
                                 const displayIndex = filteredStages.findIndex(s => s.originalIndex === index);
-                                const isCompleted = displayIndex < adjustedCurrentStage;
+                                
+                                // Special handling for confirmed stage (index 0): completed if form is signed
+                                let isCompleted = displayIndex < adjustedCurrentStage;
+                                if (index === 0 && selectedOrder?.orderFormSigned === true) {
+                                  isCompleted = true;
+                                }
+                                
                                 const isCurrent = displayIndex === adjustedCurrentStage;
                                 const isUpcoming = displayIndex > adjustedCurrentStage;
                                 const isExpanded = expandedStages.has(index);
@@ -2323,9 +2539,76 @@ function ConciergePage() {
                                 const isDeliveredLastStage = isLastStage && isDelivered;
                                 
                                 // Get stage duration and progress
-                                const stageDuration = getStageDuration(index, hasCustomization);
-                                const progress = isDeliveredLastStage ? 100 : getStageProgress(index, selectedOrder?.date, hasCustomization);
-                                const durationText = index === 0 ? 'PENDING' : (stageDuration === 0 ? 'SAME DAY' : stageDuration === 1 ? '1 DAY' : stageDuration === 28 ? '4 WEEKS' : `${stageDuration} DAYS`);
+                                const shippingMethod = selectedOrder?.shippingMethod || '';
+                                const stageDuration = getStageDuration(index, hasCustomization, shippingMethod);
+                                let progress = isDeliveredLastStage ? 100 : getStageProgress(index, selectedOrder?.date, hasCustomization);
+                                
+                                // Format duration text with ranges for package shipped stage
+                                let durationText = '';
+                                if (index === 0) {
+                                  // Confirmed stage: show duration based on form signature status
+                                  const isFormSigned = selectedOrder?.orderFormSigned === true;
+                                  const orderDate = selectedOrder?.date;
+                                  const placedAt = selectedOrder?.placedAt;
+                                  
+                                  // Check if 24 hours have passed since order was placed
+                                  let isPastTimeLimit = false;
+                                  if (placedAt) {
+                                    const timeSincePlaced = Date.now() - placedAt;
+                                    const hoursSincePlaced = timeSincePlaced / (1000 * 60 * 60);
+                                    isPastTimeLimit = hoursSincePlaced > 24;
+                                  } else if (orderDate) {
+                                    // Fallback: use order date if placedAt not available
+                                    try {
+                                      let orderDateObj: Date;
+                                      if (orderDate.includes('-')) {
+                                        const [month, day, year] = orderDate.split('-').map(Number);
+                                        orderDateObj = new Date(year, month - 1, day);
+                                      } else {
+                                        orderDateObj = new Date(orderDate);
+                                      }
+                                      const timeSincePlaced = Date.now() - orderDateObj.getTime();
+                                      const hoursSincePlaced = timeSincePlaced / (1000 * 60 * 60);
+                                      isPastTimeLimit = hoursSincePlaced > 24;
+                                    } catch (e) {
+                                      // If date parsing fails, assume not past limit
+                                      isPastTimeLimit = false;
+                                    }
+                                  }
+                                  
+                                  // Special handling for confirmed stage progress - awaiting signature should be 50%
+                                  if (!isFormSigned && !isPastTimeLimit) {
+                                    progress = 50; // Awaiting signature: show 50% progress
+                                  }
+                                  
+                                  if (isFormSigned) {
+                                    durationText = '2 DAYS';
+                                  } else if (isPastTimeLimit) {
+                                    durationText = 'INCOMPLETE';
+                                  } else {
+                                    durationText = 'PENDING';
+                                  }
+                                } else if (index === 8) { // PACKAGE SHIPPED stage
+                                  const shippingLower = shippingMethod.toLowerCase();
+                                  const isDomestic = shippingLower.includes('domestic');
+                                  const isInternational = shippingLower.includes('international');
+                                  const isExpress = shippingLower.includes('express');
+                                  const isStandard = shippingLower.includes('standard');
+                                  
+                                  if (isDomestic && isExpress) {
+                                    durationText = '1-2 DAYS';
+                                  } else if (isDomestic && isStandard) {
+                                    durationText = '3-5 DAYS';
+                                  } else if (isInternational && isExpress) {
+                                    durationText = '1-3 DAYS';
+                                  } else if (isInternational && isStandard) {
+                                    durationText = '7-14 DAYS';
+                                  } else {
+                                    durationText = stageDuration === 0 ? 'SAME DAY' : stageDuration === 1 ? '1 DAY' : stageDuration === 28 ? '4 WEEKS' : `${stageDuration} DAYS`;
+                                  }
+                                } else {
+                                  durationText = stageDuration === 0 ? 'SAME DAY' : stageDuration === 1 ? '1 DAY' : stageDuration === 28 ? '4 WEEKS' : `${stageDuration} DAYS`;
+                                }
                                 
                                 // Only allow expansion for completed or current steps, not upcoming ones
                                 const isExpandable = isCompleted || isCurrent || isDeliveredLastStage;
@@ -2519,7 +2802,8 @@ function ConciergePage() {
                                                 height: '80px',
                                                 boxSizing: 'border-box',
                                                 padding: '0',
-                                                overflow: 'visible'
+                                                overflow: 'visible',
+                                                borderRadius: '0'
                                               }}
                                             >
                                               <p
@@ -2855,11 +3139,131 @@ function ConciergePage() {
                                           // Stages with icons: 1 (SOURCING), 2 (CONSTRUCTING), 6 (CUSTOMIZING)
                                           // Prepping stage (index 5), Arrived at Hub (index 4), Shipped to Hub (index 3), and Package Shipped (index 8) use line icons instead
                                           if (index !== 1 && index !== 2 && index !== 6) {
-                                            // Cleansing stage (index 5) uses line icon with prep and shampoo text
+                                            // Confirmed stage (index 0) uses form icon with form and sign/signed text
+                                            if (index === 0) {
+                                              const isFormSigned = selectedOrder?.orderFormSigned === true;
+                                              const orderDate = selectedOrder?.date;
+                                              const placedAt = selectedOrder?.placedAt;
+                                              
+                                              // Check if 24 hours have passed since order was placed
+                                              let isPastTimeLimit = false;
+                                              if (placedAt) {
+                                                const timeSincePlaced = Date.now() - placedAt;
+                                                const hoursSincePlaced = timeSincePlaced / (1000 * 60 * 60);
+                                                isPastTimeLimit = hoursSincePlaced > 24;
+                                              } else if (orderDate) {
+                                                // Fallback: use order date if placedAt not available
+                                                try {
+                                                  let orderDateObj: Date;
+                                                  if (orderDate.includes('-')) {
+                                                    const [month, day, year] = orderDate.split('-').map(Number);
+                                                    orderDateObj = new Date(year, month - 1, day);
+                                                  } else {
+                                                    orderDateObj = new Date(orderDate);
+                                                  }
+                                                  const timeSincePlaced = Date.now() - orderDateObj.getTime();
+                                                  const hoursSincePlaced = timeSincePlaced / (1000 * 60 * 60);
+                                                  isPastTimeLimit = hoursSincePlaced > 24;
+                                                } catch (e) {
+                                                  isPastTimeLimit = false;
+                                                }
+                                              }
+                                              
+                                              // Determine form status text based on signature and time limit
+                                              let formStatusText: string;
+                                              if (isFormSigned) {
+                                                formStatusText = 'SIGNED';
+                                              } else if (isPastTimeLimit) {
+                                                formStatusText = 'EXPIRED';
+                                              } else {
+                                                formStatusText = 'SIGN';
+                                              }
+                                              
+                                              // Only clickable if form is not signed AND within 24 hours (not canceled)
+                                              const isClickable = !isFormSigned && !isPastTimeLimit;
+                                              
+                                              return (
+                                                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                  <div style={{ position: 'relative' }}>
+                                                    {(() => {
+                                                      const renderFormIconBox = (label: string, iconSrc: string, displayText: string, iconSize: string = '57px', iconTop: string = '55%', isClickable: boolean = false): JSX.Element => {
+                                                        const baseStyle: React.CSSProperties = {
+                                                          borderWidth: '1.3px',
+                                                          width: '50px',
+                                                          height: '80px',
+                                                          boxSizing: 'border-box',
+                                                          padding: '0',
+                                                          overflow: 'visible',
+                                                          borderRadius: '0'
+                                                        };
+                                                        
+                                                        if (isClickable) {
+                                                          baseStyle.transition = 'background-color 0.2s ease';
+                                                        }
+                                                        
+                                                        return (
+                                                          <div
+                                                            className={`border relative text-center border-black bg-white ${isClickable ? 'cursor-pointer hover:bg-gray-50' : ''}`}
+                                                            style={baseStyle}
+                                                            onClick={isClickable ? () => {
+                                                              navigate('/shop/order-form', {
+                                                                state: {
+                                                                  orderNumber: selectedOrder?.orderNumber,
+                                                                  orderDate: selectedOrder?.date,
+                                                                  orderId: selectedOrder?.id
+                                                                }
+                                                              });
+                                                            } : undefined}
+                                                          >
+                                                          <p
+                                                            className="text-[10px] text-black absolute top-0 left-1/2 transform -translate-x-1/2 w-full"
+                                                            style={{ fontFamily: '"Covered By Your Grace", cursive' }}
+                                                          >
+                                                            {label}
+                                                          </p>
+                                                          <div
+                                                            className="absolute flex items-center justify-center"
+                                                            style={{
+                                                              width: iconSize,
+                                                              height: iconSize,
+                                                              overflow: 'visible',
+                                                              top: iconTop,
+                                                              left: 'calc(50% + 3px)',
+                                                              transform: 'translateX(-50%) translateY(-50%)'
+                                                            }}
+                                                          >
+                                                            <img
+                                                              alt={label}
+                                                              src={iconSrc}
+                                                              style={{
+                                                                width: '100%',
+                                                                height: '100%',
+                                                                objectFit: 'contain',
+                                                                display: 'block',
+                                                                position: 'relative'
+                                                              }}
+                                                            />
+                                                          </div>
+                                                          <p 
+                                                            className="absolute bottom-[-6.9px] left-1/2 transform -translate-x-1/2 text-[9px] w-full font-medium text-center" 
+                                                            style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif' }}
+                                                          >
+                                                            {displayText}
+                                                          </p>
+                                                        </div>
+                                                        );
+                                                      };
+                                                      return renderFormIconBox('FORM', '/assets/order-form.svg', formStatusText, '28.96px', 'calc(50% + 5px)', isClickable);
+                                                    })()}
+                                                  </div>
+                                                </div>
+                                              );
+                                            }
+                                            // Cleansing stage (index 5) uses line icon with sanitize and soak text
                                             if (index === 5) {
                                               return (
                                                 <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
-                                                  {renderIconBox('prep', getLineIcon(), 'shampoo', '40px', '55%')}
+                                                  {renderIconBox('SANITIZE', getLineIcon(), 'SOAK', '40px', '55%')}
                                                 </div>
                                               );
                                             }
@@ -2942,13 +3346,91 @@ function ConciergePage() {
                                               <p
                                                 style={{
                           fontFamily: '"Futura PT Book"',
-                                                    color: isCompleted ? '#EB1C24' : '#000000',
+                                                    color: (() => {
+                                                      // Special handling for confirmed stage (index 0) - all statuses should be red
+                                                      if (index === 0) {
+                                                        const isFormSigned = selectedOrder?.orderFormSigned === true;
+                                                        const orderDate = selectedOrder?.date;
+                                                        const placedAt = selectedOrder?.placedAt;
+                                                        
+                                                        // Check if 24 hours have passed since order was placed
+                                                        let isPastTimeLimit = false;
+                                                        if (placedAt) {
+                                                          const timeSincePlaced = Date.now() - placedAt;
+                                                          const hoursSincePlaced = timeSincePlaced / (1000 * 60 * 60);
+                                                          isPastTimeLimit = hoursSincePlaced > 24;
+                                                        } else if (orderDate) {
+                                                          // Fallback: use order date if placedAt not available
+                                                          try {
+                                                            let orderDateObj: Date;
+                                                            if (orderDate.includes('-')) {
+                                                              const [month, day, year] = orderDate.split('-').map(Number);
+                                                              orderDateObj = new Date(year, month - 1, day);
+                                                            } else {
+                                                              orderDateObj = new Date(orderDate);
+                                                            }
+                                                            const timeSincePlaced = Date.now() - orderDateObj.getTime();
+                                                            const hoursSincePlaced = timeSincePlaced / (1000 * 60 * 60);
+                                                            isPastTimeLimit = hoursSincePlaced > 24;
+                                                          } catch (e) {
+                                                            isPastTimeLimit = false;
+                                                          }
+                                                        }
+                                                        
+                                                        // All confirmed stage statuses should be red
+                                                        return '#EB1C24';
+                                                      }
+                                                      // For other stages, use existing logic
+                                                      return isCompleted ? '#EB1C24' : '#000000';
+                                                    })(),
                                                     fontSize: '9px',
                                                     margin: '4px 0 0 0',
                           textTransform: 'uppercase'
                                                 }}
                                               >
-                                                {isDeliveredLastStage ? 'STATUS: DELIVERED' : (isCompleted ? 'STATUS: COMPLETE' : `STATUS: ${Math.round(progress)}% COMPLETE`)}
+                                                {(() => {
+                                                  // Special handling for confirmed stage (index 0)
+                                                  if (index === 0) {
+                                                    const isFormSigned = selectedOrder?.orderFormSigned === true;
+                                                    const orderDate = selectedOrder?.date;
+                                                    const placedAt = selectedOrder?.placedAt;
+                                                    
+                                                    // Check if 24 hours have passed since order was placed
+                                                    let isPastTimeLimit = false;
+                                                    if (placedAt) {
+                                                      const timeSincePlaced = Date.now() - placedAt;
+                                                      const hoursSincePlaced = timeSincePlaced / (1000 * 60 * 60);
+                                                      isPastTimeLimit = hoursSincePlaced > 24;
+                                                    } else if (orderDate) {
+                                                      // Fallback: use order date if placedAt not available
+                                                      try {
+                                                        let orderDateObj: Date;
+                                                        if (orderDate.includes('-')) {
+                                                          const [month, day, year] = orderDate.split('-').map(Number);
+                                                          orderDateObj = new Date(year, month - 1, day);
+                                                        } else {
+                                                          orderDateObj = new Date(orderDate);
+                                                        }
+                                                        const timeSincePlaced = Date.now() - orderDateObj.getTime();
+                                                        const hoursSincePlaced = timeSincePlaced / (1000 * 60 * 60);
+                                                        isPastTimeLimit = hoursSincePlaced > 24;
+                                                      } catch (e) {
+                                                        isPastTimeLimit = false;
+                                                      }
+                                                    }
+                                                    
+                                                    if (isFormSigned) {
+                                                      return 'STATUS: COMPLETE';
+                                                    } else if (isPastTimeLimit) {
+                                                      return 'STATUS: CANCELED';
+                                                    } else {
+                                                      return 'STATUS: AWAITING SIGNATURE';
+                                                    }
+                                                  }
+                                                  
+                                                  // For other stages, use existing logic
+                                                  return isDeliveredLastStage ? 'STATUS: DELIVERED' : (isCompleted ? 'STATUS: COMPLETE' : `STATUS: ${Math.round(progress)}% COMPLETE`);
+                                                })()}
                                               </p>
                                             )}
                                           </div>

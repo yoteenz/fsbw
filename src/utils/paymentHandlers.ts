@@ -62,10 +62,13 @@ export const handleShopPay = async (paymentData: PaymentData): Promise<PaymentRe
     // return { success: true, redirectUrl: checkout.url };
 
     console.log('Shop Pay checkout initiated', paymentData);
-    // Placeholder: Return mock redirect URL
+    // Placeholder: Return redirect URL that routes back to order summary after completion
+    const returnUrl = typeof window !== 'undefined' 
+      ? `${window.location.origin}/checkout/summary?paymentReturn=true&provider=SHOP_PAY`
+      : '/checkout/summary?paymentReturn=true&provider=SHOP_PAY';
     return {
       success: true,
-      redirectUrl: '/checkout/shop-pay?amount=' + paymentData.amount
+      redirectUrl: returnUrl
     };
   } catch (error) {
     console.error('Shop Pay error:', error);
@@ -184,9 +187,13 @@ export const handlePayPal = async (paymentData: PaymentData): Promise<PaymentRes
     // });
 
     console.log('PayPal checkout initiated', paymentData);
+    // Placeholder: Return redirect URL that routes back to order summary after completion
+    const returnUrl = typeof window !== 'undefined' 
+      ? `${window.location.origin}/checkout/summary?paymentReturn=true&provider=PAYPAL`
+      : '/checkout/summary?paymentReturn=true&provider=PAYPAL';
     return {
       success: true,
-      redirectUrl: '/checkout/paypal?amount=' + paymentData.amount
+      redirectUrl: returnUrl
     };
   } catch (error) {
     console.error('PayPal error:', error);
@@ -223,9 +230,13 @@ export const handleKlarna = async (paymentData: PaymentData): Promise<PaymentRes
     // });
 
     console.log('Klarna checkout initiated', paymentData);
+    // Placeholder: Return redirect URL that routes back to order summary after completion
+    const returnUrl = typeof window !== 'undefined' 
+      ? `${window.location.origin}/checkout/summary?paymentReturn=true&provider=KLARNA`
+      : '/checkout/summary?paymentReturn=true&provider=KLARNA';
     return {
       success: true,
-      redirectUrl: '/checkout/klarna?amount=' + paymentData.amount
+      redirectUrl: returnUrl
     };
   } catch (error) {
     console.error('Klarna error:', error);
@@ -301,9 +312,13 @@ export const handleAffirm = async (paymentData: PaymentData): Promise<PaymentRes
     // });
 
     console.log('Affirm checkout initiated', paymentData);
+    // Placeholder: Return redirect URL that routes back to order summary after completion
+    const returnUrl = typeof window !== 'undefined' 
+      ? `${window.location.origin}/checkout/summary?paymentReturn=true&provider=AFFIRM`
+      : '/checkout/summary?paymentReturn=true&provider=AFFIRM';
     return {
       success: true,
-      redirectUrl: '/checkout/affirm?amount=' + paymentData.amount
+      redirectUrl: returnUrl
     };
   } catch (error) {
     console.error('Affirm error:', error);
@@ -346,9 +361,13 @@ export const handlePayIn4 = async (paymentData: PaymentData): Promise<PaymentRes
     // });
 
     console.log('Pay in 4 checkout initiated', paymentData);
+    // Placeholder: Return redirect URL that routes back to order summary after completion
+    const returnUrl = typeof window !== 'undefined' 
+      ? `${window.location.origin}/checkout/summary?paymentReturn=true&provider=PAY_IN_4`
+      : '/checkout/summary?paymentReturn=true&provider=PAY_IN_4';
     return {
       success: true,
-      redirectUrl: '/checkout/pay-in-4?amount=' + paymentData.amount
+      redirectUrl: returnUrl
     };
   } catch (error) {
     console.error('Pay in 4 error:', error);

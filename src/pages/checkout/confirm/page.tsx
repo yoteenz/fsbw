@@ -38,8 +38,31 @@ function CheckoutConfirmPage() {
     return false;
   });
   
-  // Order data - get from location state or generate
+  // Order data - get from location state, payment return, or generate
   const [orderData, setOrderData] = useState(() => {
+    // Check if returning from payment provider
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentReturn = urlParams.get('paymentReturn');
+    const provider = urlParams.get('provider');
+    
+    if (paymentReturn && provider) {
+      // Retrieve stored order data from payment redirect
+      const storedOrderKey = `pendingOrder_${provider}`;
+      const storedOrderData = localStorage.getItem(storedOrderKey);
+      if (storedOrderData) {
+        try {
+          const orderData = JSON.parse(storedOrderData);
+          // Clear the stored data after retrieving
+          localStorage.removeItem(storedOrderKey);
+          // Clean up URL parameters
+          window.history.replaceState({}, '', '/checkout/summary');
+          return orderData;
+        } catch (e) {
+          console.error('Error parsing stored order data:', e);
+        }
+      }
+    }
+    
     if (location.state) {
       return location.state;
     }
