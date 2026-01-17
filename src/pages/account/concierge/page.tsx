@@ -362,9 +362,9 @@ function ConciergePage() {
             capSize: 'M',
             lace: '13X6',
             hairline: 'LAGOS',
-            color: 'OFF BLACK',
-            styling: 'NONE', // No styling selected - icon should not appear
-            addOns: [] // No add-ons selected - icon should not appear
+            color: 'JET BLACK', // Custom color for customizing stage
+            styling: 'CRIMPS', // Custom styling for customizing stage
+            addOns: ['PLUCK', 'BLEACH'] // Add-ons for customizing stage
           };
           
           if (existingDeliveredOrderIndex >= 0) {
@@ -1166,11 +1166,11 @@ function ConciergePage() {
   const trackingStages = [
     { name: 'CONFIRMED', description: 'PROCESSING YOUR ORDER.' },
     { name: 'SOURCING', description: 'GATHERING RAW MATERIALS.' },
-    { name: 'CONSTRUCTING', description: 'WEFTING TRACKS + VENTILATING THE LACE.' },
+    { name: 'CONSTRUCTING', description: 'WEFTING TRACKS + VENTILATING LACE.' },
     { name: 'MATERIALS SHIPPED', description: 'HEADED TO HUB.' },
     { name: 'ARRIVED AT HUB', description: 'PERFORMING QUALITY CHECK.' },
     { name: 'CLEANSING', description: 'DEEP CONDITIONING THE HAIR.' },
-    { name: 'CUSTOMIZING', description: 'COLORING, PLUCKING, BLEACHING & STYLING.' },
+    { name: 'CUSTOMIZING', description: 'COLORING + STYLING.' },
     { name: 'FINALIZING', description: 'PREPARING TO SHIP YOUR ORDER.' },
     { name: 'PACKAGE SHIPPED', description: 'YOUR ORDER HAS BEEN SHIPPED.' }
   ];
@@ -2588,6 +2588,40 @@ function ConciergePage() {
                                   } else {
                                     durationText = 'PENDING';
                                   }
+                                } else if (index === 6) { // CUSTOMIZING stage
+                                  // Check if there are any customizing options selected
+                                  const orderProductName = selectedOrder?.productName || 'NOIR';
+                                  const hasMultipleUnits = selectedOrder?.units && Array.isArray(selectedOrder.units) && selectedOrder.units.length > 1;
+                                  let hasCustomizingOptions = false;
+                                  
+                                  // Helper to check if color is non-default
+                                  const isNonDefaultColor = (color: string, prodName: string) => {
+                                    const defaultColor = prodName === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
+                                    return color && color !== defaultColor;
+                                  };
+                                  
+                                  if (hasMultipleUnits) {
+                                    // Check if any unit has customizing options
+                                    hasCustomizingOptions = selectedOrder.units.some((unit: any) => {
+                                      const hasColor = unit.color && isNonDefaultColor(unit.color, orderProductName);
+                                      const hasStyling = unit.styling && unit.styling !== 'NONE';
+                                      const hasAddOns = unit.addOns && Array.isArray(unit.addOns) && unit.addOns.length > 0;
+                                      return hasColor || hasStyling || hasAddOns;
+                                    });
+                                  } else {
+                                    // Single unit - check for customizing options
+                                    const hasColor = selectedOrder?.color && isNonDefaultColor(selectedOrder.color, orderProductName);
+                                    const hasStyling = selectedOrder?.styling && selectedOrder.styling !== 'NONE';
+                                    const hasAddOns = selectedOrder?.addOns && Array.isArray(selectedOrder.addOns) && selectedOrder.addOns.length > 0;
+                                    hasCustomizingOptions = hasColor || hasStyling || hasAddOns;
+                                  }
+                                  
+                                  // Show N/A if no customizing options, otherwise show duration
+                                  if (!hasCustomizingOptions) {
+                                    durationText = 'N/A';
+                                  } else {
+                                    durationText = stageDuration === 0 ? 'SAME DAY' : stageDuration === 1 ? '1 DAY' : stageDuration === 28 ? '4 WEEKS' : `${stageDuration} DAYS`;
+                                  }
                                 } else if (index === 8) { // PACKAGE SHIPPED stage
                                   const shippingLower = shippingMethod.toLowerCase();
                                   const isDomestic = shippingLower.includes('domestic');
@@ -3349,34 +3383,6 @@ function ConciergePage() {
                                                     color: (() => {
                                                       // Special handling for confirmed stage (index 0) - all statuses should be red
                                                       if (index === 0) {
-                                                        const isFormSigned = selectedOrder?.orderFormSigned === true;
-                                                        const orderDate = selectedOrder?.date;
-                                                        const placedAt = selectedOrder?.placedAt;
-                                                        
-                                                        // Check if 24 hours have passed since order was placed
-                                                        let isPastTimeLimit = false;
-                                                        if (placedAt) {
-                                                          const timeSincePlaced = Date.now() - placedAt;
-                                                          const hoursSincePlaced = timeSincePlaced / (1000 * 60 * 60);
-                                                          isPastTimeLimit = hoursSincePlaced > 24;
-                                                        } else if (orderDate) {
-                                                          // Fallback: use order date if placedAt not available
-                                                          try {
-                                                            let orderDateObj: Date;
-                                                            if (orderDate.includes('-')) {
-                                                              const [month, day, year] = orderDate.split('-').map(Number);
-                                                              orderDateObj = new Date(year, month - 1, day);
-                                                            } else {
-                                                              orderDateObj = new Date(orderDate);
-                                                            }
-                                                            const timeSincePlaced = Date.now() - orderDateObj.getTime();
-                                                            const hoursSincePlaced = timeSincePlaced / (1000 * 60 * 60);
-                                                            isPastTimeLimit = hoursSincePlaced > 24;
-                                                          } catch (e) {
-                                                            isPastTimeLimit = false;
-                                                          }
-                                                        }
-                                                        
                                                         // All confirmed stage statuses should be red
                                                         return '#EB1C24';
                                                       }
