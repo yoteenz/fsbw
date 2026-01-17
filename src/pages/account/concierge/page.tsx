@@ -3313,11 +3313,52 @@ function ConciergePage() {
                                                 </div>
                                               );
                                             }
-                                            // Shipped to Hub (index 3) and Package Shipped (index 8) use shipping icon
-                                            if (index === 3 || index === 8) {
+                                            // Shipped to Hub (index 3) uses shipping icon, Package Shipped (index 8) uses package icon
+                                            if (index === 3) {
                                               return (
                                                 <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
                                                   {renderIconBox('', getShippingIcon(), '', '40px', '55%')}
+                                                </div>
+                                              );
+                                            }
+                                            if (index === 8) {
+                                              return (
+                                                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                  <div
+                                                    className="relative text-center"
+                                                    style={{
+                                                      width: '50px',
+                                                      height: '80px',
+                                                      boxSizing: 'border-box',
+                                                      padding: '0',
+                                                      overflow: 'visible',
+                                                      borderRadius: '0'
+                                                    }}
+                                                  >
+                                                    <div
+                                                      className="absolute flex items-center justify-center"
+                                                      style={{
+                                                        width: '100px',
+                                                        height: '100px',
+                                                        overflow: 'visible',
+                                                        top: 'calc(55% + 3px)',
+                                                        left: 'calc(50% + 28px)',
+                                                        transform: 'translateX(-50%) translateY(-50%)'
+                                                      }}
+                                                    >
+                                                      <img
+                                                        alt="Package"
+                                                        src="/assets/package-icon.png"
+                                                        style={{
+                                                          width: '100%',
+                                                          height: '100%',
+                                                          objectFit: 'contain',
+                                                          display: 'block',
+                                                          position: 'relative'
+                                                        }}
+                                                      />
+                                                    </div>
+                                                  </div>
                                                 </div>
                                               );
                                             }
