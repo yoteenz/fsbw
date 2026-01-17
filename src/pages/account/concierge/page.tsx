@@ -438,6 +438,21 @@ function ConciergePage() {
   
   const currentTrackingStage = getOrderTrackingStage(selectedOrderId);
   
+  // Auto-expand current tracking stage when order is selected
+  useEffect(() => {
+    if (selectedOrderId && currentTrackingStage !== undefined && currentTrackingStage !== null) {
+      setExpandedStages(prev => {
+        const newSet = new Set(prev);
+        // Add current stage to expanded set (use original index, not adjusted)
+        newSet.add(currentTrackingStage);
+        return newSet;
+      });
+    } else if (!selectedOrderId) {
+      // Clear expanded stages when no order is selected
+      setExpandedStages(new Set());
+    }
+  }, [selectedOrderId, currentTrackingStage]);
+  
   // Helper function to get stage duration in days
   const getStageDuration = (stageIndex: number, hasCustomization: boolean = true, shippingMethod?: string): number => {
     switch (stageIndex) {
@@ -942,9 +957,9 @@ function ConciergePage() {
     { name: 'CONFIRMED', description: 'PROCESSING YOUR ORDER.' },
     { name: 'SOURCING', description: 'GATHERING RAW MATERIALS.' },
     { name: 'CONSTRUCTING', description: 'WEFTING TRACKS + VENTILATING THE LACE.' },
-    { name: 'SHIPPED TO HUB', description: 'HEADED TO HUB.' },
+    { name: 'MATERIALS SHIPPED', description: 'HEADED TO HUB.' },
     { name: 'ARRIVED AT HUB', description: 'PERFORMING QUALITY CHECK.' },
-    { name: 'WASHING', description: 'DEEP CONDITIONING THE HAIR.' },
+    { name: 'CLEANSING', description: 'DEEP CONDITIONING THE HAIR.' },
     { name: 'CUSTOMIZING', description: 'COLORING, PLUCKING, BLEACHING & STYLING.' },
     { name: 'FINALIZING', description: 'PREPARING TO SHIP YOUR ORDER.' },
     { name: 'PACKAGE SHIPPED', description: 'YOUR ORDER HAS BEEN SHIPPED.' }
@@ -2840,11 +2855,11 @@ function ConciergePage() {
                                           // Stages with icons: 1 (SOURCING), 2 (CONSTRUCTING), 6 (CUSTOMIZING)
                                           // Prepping stage (index 5), Arrived at Hub (index 4), Shipped to Hub (index 3), and Package Shipped (index 8) use line icons instead
                                           if (index !== 1 && index !== 2 && index !== 6) {
-                                            // Prepping stage (index 5) uses line icon
+                                            // Cleansing stage (index 5) uses line icon with prep and shampoo text
                                             if (index === 5) {
                                               return (
                                                 <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
-                                                  {renderIconBox('', getLineIcon(), '', '40px', '55%')}
+                                                  {renderIconBox('prep', getLineIcon(), 'shampoo', '40px', '55%')}
                                                 </div>
                                               );
                                             }
@@ -3049,25 +3064,6 @@ function ConciergePage() {
                 <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
                   <button
                     onClick={() => {
-                      // Button action - could navigate or trigger tracking
-                      if (!selectedOrderId) {
-                        // If no order selected, focus on select
-                        return;
-                      }
-                    }}
-                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                    style={{
-                      borderWidth: '1.3px',
-                      color: '#EB1C24',
-                      fontFamily: '"Futura PT Medium"',
-                      backgroundColor: '#FFFFFF'
-                    }}
-                    type="button"
-                  >
-                    TRACK ORDER
-                  </button>
-                  <button
-                    onClick={() => {
                       navigate('/account/orders');
                     }}
                     className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
@@ -3075,8 +3071,7 @@ function ConciergePage() {
                       borderWidth: '1.3px',
                       color: '#EB1C24',
                       fontFamily: '"Futura PT Medium"',
-                      backgroundColor: '#FFFFFF',
-                      marginTop: '8px'
+                      backgroundColor: '#FFFFFF'
                     }}
                     type="button"
                   >

@@ -916,7 +916,7 @@ function CheckoutPage() {
         if (premiumTier === '6months') {
           discount = 40;
         } else if (premiumTier === '12months') {
-          discount = 60;
+          discount = 40;
         }
       }
     } else {
@@ -924,7 +924,7 @@ function CheckoutPage() {
       if (selectedShippingMethod.speed === 'standard' && premiumTier === '12months') {
         discount = 40;
       } else if (selectedShippingMethod.speed === 'express' && premiumTier === '12months') {
-        discount = 60;
+        discount = 40;
       }
     }
 
@@ -949,16 +949,21 @@ function CheckoutPage() {
   // Calculate Route protection fee based on order value (scales with cart total)
   // Structure: Flat $20 for orders up to $1,000, then percentage-based for larger orders
   // This aligns with Route's typical 2.5% rate for high-value orders
-  // Always rounds UP to nearest whole number
+  // Always rounds UP to nearest $10 increment
   const calculateProtectionFee = (orderTotal: number): number => {
     if (orderTotal <= 1000) {
       return 20; // Flat $20 for orders up to $1,000 (covers typical $740-$820 orders)
-    } else if (orderTotal <= 2500) {
-      return Math.ceil(orderTotal * 0.02); // 2% for orders $1,000-$2,500, rounded up
-    } else if (orderTotal <= 5000) {
-      return Math.ceil(orderTotal * 0.0225); // 2.25% for orders $2,500-$5,000, rounded up
     } else {
-      return Math.ceil(orderTotal * 0.025); // 2.5% for orders $5,000+ (matches Route's typical rate), rounded up
+      let calculatedFee = 0;
+      if (orderTotal <= 2500) {
+        calculatedFee = orderTotal * 0.02; // 2% for orders $1,000-$2,500
+      } else if (orderTotal <= 5000) {
+        calculatedFee = orderTotal * 0.0225; // 2.25% for orders $2,500-$5,000
+      } else {
+        calculatedFee = orderTotal * 0.025; // 2.5% for orders $5,000+
+      }
+      // Round up to nearest $10 increment
+      return Math.ceil(calculatedFee / 10) * 10;
     }
   };
 
@@ -1251,6 +1256,11 @@ function CheckoutPage() {
           orderConfirmations[orderNumber] = confirmationNumber;
           localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
           
+          // Calculate points earned (if signed in) - exclude gift cards and digital items
+          const basePoints = isSignedIn ? Math.round(pointsEligibleAmount) : 0;
+          const multiplier = 1;
+          const pointsEarned = Math.round(basePoints * multiplier);
+          
           // Create Route protection if package protection is selected (non-blocking)
           if (packageProtection && !isSubscriptionUpgrade && !isOnlyDigitalProducts) {
             try {
@@ -1296,6 +1306,7 @@ function CheckoutPage() {
               transactionId: result.transactionId,
               paymentMethod: provider,
               cartItems: cartItems,
+              pointsEarned: pointsEarned,
             }
           });
         }
@@ -3910,6 +3921,9 @@ function CheckoutPage() {
                           // Remove currency symbol (handle all possible symbols)
                           rawValue = rawValue.replace(/[$€£¥₹]/g, '');
                           
+                          // Remove commas for processing
+                          rawValue = rawValue.replace(/,/g, '');
+                          
                           // Remove any decimal point and everything after it
                           if (rawValue.includes('.')) {
                             rawValue = rawValue.split('.')[0];
@@ -3918,12 +3932,17 @@ function CheckoutPage() {
                           // Extract only digits
                           const numericValue = rawValue.replace(/[^0-9]/g, '');
                           
-                          // Update display value (raw numeric value)
-                          setCustomTipDisplay(numericValue);
-                          
-                          // Set the numeric value
+                          // Set the numeric value (without commas for calculations)
                           const newAmount = numericValue === '' ? 0 : parseInt(numericValue, 10);
                           setCustomTipAmount(newAmount);
+                          
+                          // Format display value with commas
+                          if (numericValue === '') {
+                            setCustomTipDisplay('');
+                          } else {
+                            const formattedValue = parseInt(numericValue, 10).toLocaleString('en-US');
+                            setCustomTipDisplay(formattedValue);
+                          }
                           
                           if (numericValue) {
                             setTipPercentage(null);
@@ -3933,23 +3952,24 @@ function CheckoutPage() {
                           }
                         }}
                         onBlur={() => {
-                          // Format the display value when user leaves the field
+                          // Format the display value when user leaves the field (keep commas)
                           if (customTipAmount > 0) {
+                            const formattedAmount = customTipAmount.toLocaleString('en-US');
                             const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
                             if (!currency) {
-                              setCustomTipDisplay('$' + customTipAmount.toString() + '.00');
+                              setCustomTipDisplay('$' + formattedAmount + '.00');
                             } else {
                               const symbol = currency.symbol.replace('&#36;', '$').replace('&euro;', '€').replace('&pound;', '£').replace('&yen;', '¥').replace('&#8377;', '₹');
-                              setCustomTipDisplay(symbol + customTipAmount.toString() + '.00');
+                              setCustomTipDisplay(symbol + formattedAmount + '.00');
                             }
                           } else {
                             setCustomTipDisplay('');
                           }
                         }}
                         onFocus={() => {
-                          // Show raw numeric value when focused for easier editing
+                          // Show formatted numeric value with commas when focused
                           if (customTipAmount > 0) {
-                            setCustomTipDisplay(customTipAmount.toString());
+                            setCustomTipDisplay(customTipAmount.toLocaleString('en-US'));
                           }
                           }}
                           style={{
@@ -3977,13 +3997,14 @@ function CheckoutPage() {
                               // Apply tip: set applied state to true and format display
                               setCustomTipApplied(true);
                               setTipPercentage(null);
-                              // Format the display value with currency symbol and .00
+                              // Format the display value with currency symbol, commas, and .00
+                              const formattedAmount = customTipAmount.toLocaleString('en-US');
                               const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
                               if (!currency) {
-                                setCustomTipDisplay('$' + customTipAmount.toString() + '.00');
+                                setCustomTipDisplay('$' + formattedAmount + '.00');
                               } else {
                                 const symbol = currency.symbol.replace('&#36;', '$').replace('&euro;', '€').replace('&pound;', '£').replace('&yen;', '¥').replace('&#8377;', '₹');
-                                setCustomTipDisplay(symbol + customTipAmount.toString() + '.00');
+                                setCustomTipDisplay(symbol + formattedAmount + '.00');
                               }
                             }
                           }}

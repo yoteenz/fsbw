@@ -14,23 +14,60 @@ import AddOnsPage from './pages/build-a-wig/addons/page';
 import { lazy, Suspense } from 'react';
 import LoadingScreen from './components/base/LoadingScreen';
 
-// Helper to wrap lazy imports with logging
+// Helper to wrap lazy imports with retry logic and logging
 const lazyWithLogging = (importFn: () => Promise<any>, componentName: string) => {
   return lazy(() => {
     // #region agent log
     fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:18',message:'Lazy import attempt',data:{componentName,pathname:window.location.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
     // #endregion
-    return importFn().then(module => {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:21',message:'Lazy import success',data:{componentName},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-      // #endregion
-      return module;
-    }).catch(error => {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:26',message:'Lazy import failed',data:{componentName,errorMessage:error.message,errorStack:error.stack?.substring(0,200),isMimeTypeError:error.message.includes('MIME type')||error.message.includes('text/html')},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-      // #endregion
-      throw error;
-    });
+    
+    // Retry logic for chunk loading failures (common on Vercel)
+    const retryImport = async (retries = 3, delay = 1000): Promise<any> => {
+      for (let i = 0; i < retries; i++) {
+        try {
+          const module = await importFn();
+          // #region agent log
+          fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:21',message:'Lazy import success',data:{componentName,attempt:i+1},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+          // #endregion
+          return module;
+        } catch (error: any) {
+          const isChunkError = error.message?.includes('Failed to fetch') || 
+                               error.message?.includes('Loading chunk') ||
+                               error.message?.includes('MIME type') ||
+                               error.message?.includes('text/html') ||
+                               error.name === 'ChunkLoadError';
+          
+          if (isChunkError && i < retries - 1) {
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:26',message:'Lazy import retry',data:{componentName,attempt:i+1,errorMessage:error.message},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+            // #endregion
+            // Wait before retrying, with exponential backoff
+            await new Promise(resolve => setTimeout(resolve, delay * (i + 1)));
+            // Force reload chunk by adding cache busting query param
+            if (error.message?.includes('Failed to fetch') || error.message?.includes('Loading chunk')) {
+              // Clear module cache and retry
+              if (typeof window !== 'undefined' && 'caches' in window) {
+                try {
+                  const cacheNames = await caches.keys();
+                  await Promise.all(cacheNames.map(name => caches.delete(name)));
+                } catch (e) {
+                  // Ignore cache clearing errors
+                }
+              }
+            }
+            continue;
+          }
+          
+          // #region agent log
+          fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:26',message:'Lazy import failed',data:{componentName,errorMessage:error.message,errorStack:error.stack?.substring(0,200),isMimeTypeError:error.message.includes('MIME type')||error.message.includes('text/html'),attempts:i+1},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+          // #endregion
+          throw error;
+        }
+      }
+      throw new Error(`Failed to load ${componentName} after ${retries} attempts`);
+    };
+    
+    return retryImport();
   });
 };
 
@@ -70,18 +107,20 @@ const ToolsPage = lazyWithLogging(() => import('./pages/tools/page'), 'ToolsPage
 const GiftCardPage = lazyWithLogging(() => import('./pages/tools/gift-card/page'), 'GiftCardPage');
 const OrderFormPage = lazyWithLogging(() => import('./pages/shop/order-form/page'), 'OrderFormPage');
 
-// Error Boundary to catch component errors
-class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null }> {
+// Error Boundary to catch component errors with auto-recovery
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null; retryCount: number }> {
+  private retryTimeout: NodeJS.Timeout | null = null;
+
   constructor(props: { children: ReactNode }) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, retryCount: 0 };
   }
 
   static getDerivedStateFromError(error: Error) {
     // #region agent log
     fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:59',message:'ErrorBoundary caught error',data:{errorMessage:error.message,errorStack:error.stack?.substring(0,200),isMimeTypeError:error.message.includes('MIME type')||error.message.includes('text/html')},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
     // #endregion
-    return { hasError: true, error };
+    return { hasError: true, error, retryCount: 0 };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
@@ -89,10 +128,59 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
     // #region agent log
     fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:64',message:'ErrorBoundary componentDidCatch',data:{errorMessage:error.message,componentStack:errorInfo.componentStack?.substring(0,200),errorName:error.name},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
     // #endregion
+    
+    // Auto-retry for chunk loading errors (common on Vercel)
+    const isChunkError = error.message?.includes('Failed to fetch') || 
+                         error.message?.includes('Loading chunk') ||
+                         error.message?.includes('MIME type') ||
+                         error.message?.includes('text/html') ||
+                         error.name === 'ChunkLoadError';
+    
+    if (isChunkError && this.state.retryCount < 2) {
+      // Clear any cached chunks and retry after a delay
+      this.retryTimeout = setTimeout(() => {
+        if (typeof window !== 'undefined' && 'caches' in window) {
+          caches.keys().then(cacheNames => {
+            return Promise.all(cacheNames.map(name => caches.delete(name)));
+          }).catch(() => {});
+        }
+        this.setState(prev => ({ 
+          hasError: false, 
+          error: null, 
+          retryCount: prev.retryCount + 1 
+        }));
+        // Force a page reload if retry count is maxed
+        if (this.state.retryCount >= 1) {
+          window.location.reload();
+        }
+      }, 1000);
+    }
   }
+
+  componentWillUnmount() {
+    if (this.retryTimeout) {
+      clearTimeout(this.retryTimeout);
+    }
+  }
+
+  handleRetry = () => {
+    // Clear caches and reset error state
+    if (typeof window !== 'undefined' && 'caches' in window) {
+      caches.keys().then(cacheNames => {
+        return Promise.all(cacheNames.map(name => caches.delete(name)));
+      }).catch(() => {});
+    }
+    this.setState({ hasError: false, error: null, retryCount: 0 });
+  };
 
   render() {
     if (this.state.hasError) {
+      const isChunkError = this.state.error?.message?.includes('Failed to fetch') || 
+                          this.state.error?.message?.includes('Loading chunk') ||
+                          this.state.error?.message?.includes('MIME type') ||
+                          this.state.error?.message?.includes('text/html') ||
+                          this.state.error?.name === 'ChunkLoadError';
+      
       return (
         <div style={{
           position: 'fixed',
@@ -104,11 +192,48 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
           color: 'white',
           padding: '20px',
           fontSize: '24px',
-          zIndex: 99999
+          zIndex: 99999,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '20px'
         }}>
           <h1>ERROR: Component Failed to Load</h1>
           <p>{this.state.error?.message}</p>
-          <pre>{this.state.error?.stack}</pre>
+          {isChunkError && (
+            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+              <button 
+                onClick={this.handleRetry}
+                style={{
+                  padding: '10px 20px',
+                  fontSize: '16px',
+                  backgroundColor: 'white',
+                  color: 'red',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}
+              >
+                Retry
+              </button>
+              <button 
+                onClick={() => window.location.reload()}
+                style={{
+                  padding: '10px 20px',
+                  fontSize: '16px',
+                  backgroundColor: 'white',
+                  color: 'red',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}
+              >
+                Reload Page
+              </button>
+            </div>
+          )}
+          <pre style={{ fontSize: '12px', maxWidth: '90%', overflow: 'auto' }}>{this.state.error?.stack}</pre>
         </div>
       );
     }

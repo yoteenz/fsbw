@@ -284,25 +284,34 @@ function CheckoutConfirmPage() {
           }, 0)
         : 1290; // Default taxable amount if cart is empty
       
-      // Calculate points-eligible amount (exclude gift cards and digital items like memberships)
-      const pointsEligibleAmount = cartItems.length > 0
-        ? cartItems.reduce((sum, item) => {
-            // Skip gift cards and digital items (memberships)
-            const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
-            const isDigital = item.type === 'digital';
-            
-            if (isGiftCard || isDigital) {
-              return sum; // Don't add to points-eligible amount
-            }
-            
-            return sum + (item.price || 0) * (item.quantity || 1);
-          }, 0)
-        : 1290; // Default points-eligible amount if cart is empty
+      // Use pointsEarned from location.state (passed from checkout page) if available
+      // Only recalculate as fallback if not provided
+      const pointsEarnedFromState = location.state?.pointsEarned;
+      let pointsEarned = pointsEarnedFromState;
+      
+      // Only recalculate if pointsEarned wasn't passed from checkout
+      if (pointsEarned === undefined || pointsEarned === null) {
+        // Calculate points-eligible amount (exclude gift cards and digital items like memberships)
+        const pointsEligibleAmount = cartItems.length > 0
+          ? cartItems.reduce((sum, item) => {
+              // Skip gift cards and digital items (memberships)
+              const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+              const isDigital = item.type === 'digital';
+              
+              if (isGiftCard || isDigital) {
+                return sum; // Don't add to points-eligible amount
+              }
+              
+              return sum + (item.price || 0) * (item.quantity || 1);
+            }, 0)
+          : 1290; // Default points-eligible amount if cart is empty
+        
+        pointsEarned = Math.round(pointsEligibleAmount);
+      }
       
       const taxesProcessing = taxableAmount * 0.10;
       const shippingHandling = 60; // Standard shipping
       const subtotal = calculatedTotal + taxesProcessing + shippingHandling;
-      const pointsEarned = Math.round(pointsEligibleAmount);
       
       // Determine tier based on points
       let tier = 'SILVER';
@@ -386,7 +395,7 @@ function CheckoutConfirmPage() {
           country: prev.country || 'UNITED STATES',
           paymentMethod: prev.paymentMethod || 'VISA MASTERCARD ENDING IN 8065',
           email: prev.email || 'ASHLEYEVANS@GMAIL.COM',
-          pointsEarned: prev.pointsEarned || (pointsEarned > 0 ? pointsEarned : 1290), // Ensure points are shown
+          pointsEarned: prev.pointsEarned || pointsEarned || 0, // Use points from checkout page, fallback to calculated or 0
           tier: prev.tier || tier
         };
       });
@@ -1405,8 +1414,8 @@ function CheckoutConfirmPage() {
                       .replace(/\s+(UPS|DHL|FEDEX|USPS)$/i, '')
                       .trim();
                     
-                    // Ensure proper formatting (all caps, no extra spaces)
-                    methodName = methodName.toUpperCase().replace(/\s+/g, ' ');
+                    // Ensure proper formatting (all caps, no extra spaces, replace underscores with spaces)
+                    methodName = methodName.toUpperCase().replace(/_/g, ' ').replace(/\s+/g, ' ');
                     
                     // Determine shipping time based on method
                     const getShippingTime = (method: string): string => {
@@ -1458,7 +1467,9 @@ function CheckoutConfirmPage() {
                     const paymentMethod = orderData.paymentMethod || 'VISA MASTERCARD ENDING IN 8065';
                     const endingMatch = paymentMethod.match(/ENDING IN (\d+)/i);
                     const endingNumber = endingMatch ? endingMatch[1] : '8065';
-                    const methodName = paymentMethod.replace(/\s*ENDING IN \d+.*$/i, '').trim();
+                    let methodName = paymentMethod.replace(/\s*ENDING IN \d+.*$/i, '').trim();
+                    // Replace underscores with spaces
+                    methodName = methodName.replace(/_/g, ' ');
                     return (
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
