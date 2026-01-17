@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { handlePaymentOption, PaymentProvider, PaymentData } from '../../utils/paymentHandlers';
+import { createRouteProtection, prepareRouteProtectionData } from '../../utils/routeProtection';
 
 function CheckoutPage() {
   const navigate = useNavigate();
@@ -44,7 +45,29 @@ function CheckoutPage() {
   const [useDefaultPaymentMethod, setUseDefaultPaymentMethod] = useState(false);
   const [savePaymentMethodCard, setSavePaymentMethodCard] = useState(false);
   const [autoRenewMembership, setAutoRenewMembership] = useState(false);
-  const [subscribeNewsletter, setSubscribeNewsletter] = useState(false);
+  // Initialize newsletter subscription based on mailing list status
+  // Auto-select if NOT on mailing list, auto-deselect if ON mailing list
+  const [subscribeNewsletter, setSubscribeNewsletter] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
+        if (isSignedIn) {
+          const currentUser = localStorage.getItem('currentUser');
+          if (currentUser) {
+            const user = JSON.parse(currentUser);
+            // If user is on mailing list, auto-deselect (false)
+            // If user is NOT on mailing list, auto-select (true)
+            const onMailingList = user.onMailingList === true;
+            return !onMailingList; // Invert: not on list = subscribe (true), on list = don't subscribe (false)
+          }
+        }
+      } catch (e) {
+        // If error, default to true (subscribe) for new users
+      }
+    }
+    // Default to true (auto-select) if not signed in or user not found
+    return true;
+  });
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [showTermsRequiredModal, setShowTermsRequiredModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
@@ -396,6 +419,29 @@ function CheckoutPage() {
       } catch (error) {
         console.error('Error loading user email:', error);
       }
+    }
+  }, [isSignedIn]);
+
+  // Auto-select/deselect newsletter subscription based on mailing list status
+  useEffect(() => {
+    if (isSignedIn) {
+      try {
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+          const user = JSON.parse(currentUser);
+          // If user is on mailing list, auto-deselect (false)
+          // If user is NOT on mailing list, auto-select (true)
+          const onMailingList = user.onMailingList === true;
+          setSubscribeNewsletter(!onMailingList);
+        }
+      } catch (error) {
+        console.error('Error checking mailing list status:', error);
+        // Default to true (subscribe) if error
+        setSubscribeNewsletter(true);
+      }
+    } else {
+      // If not signed in, default to true (auto-select)
+      setSubscribeNewsletter(true);
     }
   }, [isSignedIn]);
 
@@ -805,17 +851,10 @@ function CheckoutPage() {
           return user.subscriptionTier; // '3months', '6months', or '12months'
         }
         
-        // Check if this is Kateena Armstrong (admin account - 12 months premium without subscriptionTier)
-        const isKateenaArmstrong = user && (
-          (user.firstName?.toLowerCase() === 'kateena' && user.lastName?.toLowerCase() === 'armstrong') ||
-          user.email?.toLowerCase().includes('kateena') ||
-          user.email?.toLowerCase().includes('armstrong')
-        );
-        
-        // Only Kateena gets 12months tier without subscriptionTier (admin account)
-        // All other premium accounts must have a subscriptionTier from their purchase
-        if (isKateenaArmstrong && (user.membershipType === 'PREMIUM' || user.membershipType === 'Premium')) {
-          return '12months'; // Admin account gets 12 months premium benefits
+        // Check if user has PREMIUM membership but no subscriptionTier (admin accounts)
+        // Admin accounts with PREMIUM membership get 12months tier for shipping discounts
+        if (user.membershipType === 'PREMIUM' || user.membershipType === 'Premium') {
+          return '12months'; // Admin/premium accounts get 12 months premium benefits
         }
         
         return null;
@@ -836,13 +875,13 @@ function CheckoutPage() {
       // Domestic options: standard or express (original prices)
       return [
         { carrier: 'DOMESTIC', speed: 'standard', cost: 60, label: 'DOMESTIC STANDARD +$60', originalCost: 60 },
-        { carrier: 'DOMESTIC', speed: 'express', cost: 80, label: 'DOMESTIC EXPRESS +$80', originalCost: 80 },
+        { carrier: 'DOMESTIC', speed: 'express', cost: 100, label: 'DOMESTIC EXPRESS +$100', originalCost: 100 },
       ];
     } else {
       // International options: standard and express (original prices)
       return [
         { carrier: 'INTERNATIONAL', speed: 'standard', cost: 100, label: 'INTERNATIONAL STANDARD +$100', originalCost: 100 },
-        { carrier: 'INTERNATIONAL', speed: 'express', cost: 140, label: 'INTERNATIONAL EXPRESS +$140', originalCost: 140 },
+        { carrier: 'INTERNATIONAL', speed: 'express', cost: 160, label: 'INTERNATIONAL EXPRESS +$160', originalCost: 160 },
       ];
     }
   };
@@ -867,23 +906,25 @@ function CheckoutPage() {
     if (isDomestic) {
       if (selectedShippingMethod.speed === 'standard') {
         if (premiumTier === '3months') {
-          discount = 10;
-        } else if (premiumTier === '6months') {
           discount = 20;
+        } else if (premiumTier === '6months') {
+          discount = 40;
         } else if (premiumTier === '12months') {
           discount = 60; // Free
         }
       } else if (selectedShippingMethod.speed === 'express') {
         if (premiumTier === '6months') {
-          discount = 20;
-        } else if (premiumTier === '12months') {
           discount = 40;
+        } else if (premiumTier === '12months') {
+          discount = 60;
         }
       }
     } else {
       // International
       if (selectedShippingMethod.speed === 'standard' && premiumTier === '12months') {
-        discount = 20;
+        discount = 40;
+      } else if (selectedShippingMethod.speed === 'express' && premiumTier === '12months') {
+        discount = 60;
       }
     }
 
@@ -904,6 +945,22 @@ function CheckoutPage() {
   const isOnlyGiftCards = cartItems.length > 0 && cartItems.every((item) => {
     return item.name === 'GIFT CARD' || item.type === 'gift-card';
   });
+
+  // Calculate Route protection fee based on order value (scales with cart total)
+  // Structure: Flat $20 for orders up to $1,000, then percentage-based for larger orders
+  // This aligns with Route's typical 2.5% rate for high-value orders
+  // Always rounds UP to nearest whole number
+  const calculateProtectionFee = (orderTotal: number): number => {
+    if (orderTotal <= 1000) {
+      return 20; // Flat $20 for orders up to $1,000 (covers typical $740-$820 orders)
+    } else if (orderTotal <= 2500) {
+      return Math.ceil(orderTotal * 0.02); // 2% for orders $1,000-$2,500, rounded up
+    } else if (orderTotal <= 5000) {
+      return Math.ceil(orderTotal * 0.0225); // 2.25% for orders $2,500-$5,000, rounded up
+    } else {
+      return Math.ceil(orderTotal * 0.025); // 2.5% for orders $5,000+ (matches Route's typical rate), rounded up
+    }
+  };
 
   // Calculate order totals
   const orderAmount = cartItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
@@ -968,7 +1025,9 @@ function CheckoutPage() {
     
     if (giftCardBalance > 0) {
       // Calculate the maximum discountable amount (order + taxes + shipping + rush + protection)
-      const maxDiscountable = orderAmount + taxesProcessing + shippingHandling + (selectedProcessing === 'rush' ? 100 : 0) + (packageProtection ? 5 : 0);
+      // Calculate protection fee for max discountable amount
+      const protectionFeeForDiscount = packageProtection ? calculateProtectionFee(orderAmount) : 0;
+      const maxDiscountable = orderAmount + taxesProcessing + shippingHandling + (selectedProcessing === 'rush' ? 100 : 0) + protectionFeeForDiscount;
       const cappedBalance = Math.min(giftCardBalance, maxDiscountable);
       setAppliedGiftCardBalance(cappedBalance);
     }
@@ -1112,7 +1171,9 @@ function CheckoutPage() {
   const giftCardDiscount = isSubscriptionUpgrade ? 0 : appliedGiftCardBalance; // Automatically applied gift card balance
   const totalDiscount = discount + referralDiscount + giftCardDiscount; // Combined discount from codes, referral codes, and gift card
   const rushProcessing = selectedProcessing === 'rush' ? 120 : 0;
-  const protectionFee = packageProtection ? 5 : 0;
+  // Always calculate the protection fee amount (for display), but only add to total if selected
+  const protectionFeeAmount = calculateProtectionFee(orderAmount);
+  const protectionFee = packageProtection ? protectionFeeAmount : 0;
   // Calculate tip amount: if percentage is set, use that; otherwise use custom dollar amount (only if applied)
   const tipAmount = tipPercentage !== null ? Math.round(orderAmount * (tipPercentage / 100)) : (customTipApplied ? customTipAmount : 0);
   const subtotal = orderAmount + taxesProcessing + shippingHandling + rushProcessing + protectionFee - totalDiscount + tipAmount;
@@ -1189,6 +1250,42 @@ function CheckoutPage() {
           const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
           orderConfirmations[orderNumber] = confirmationNumber;
           localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
+          
+          // Create Route protection if package protection is selected (non-blocking)
+          if (packageProtection && !isSubscriptionUpgrade && !isOnlyDigitalProducts) {
+            try {
+              const routeProtectionData = prepareRouteProtectionData(
+                `order-${nextOrderNumber}`,
+                orderNumber,
+                paymentData.amount,
+                selectedCurrency,
+                cartItems,
+                email,
+                firstName,
+                lastName,
+                phoneNumber,
+                shippingAddress,
+                city,
+                state,
+                zip,
+                selectedCountry || 'US',
+                protectionFee
+              );
+              
+              // Call Route API asynchronously (don't block navigation)
+              createRouteProtection(routeProtectionData).then((routeResult) => {
+                if (routeResult.success && routeResult.protectionId) {
+                  console.log('Route protection created successfully:', routeResult.protectionId);
+                } else {
+                  console.warn('Route protection creation failed:', routeResult.error);
+                }
+              }).catch((error) => {
+                console.error('Error creating Route protection:', error);
+              });
+            } catch (error) {
+              console.error('Error preparing Route protection data:', error);
+            }
+          }
           
           navigate('/checkout/summary', {
             state: {
@@ -3760,7 +3857,7 @@ function CheckoutPage() {
                           textTransform: 'uppercase'
                         }}
                       >
-                        PACKAGE PROTECTION +<span className="delivery-price" dangerouslySetInnerHTML={formatPrice(5)}></span>
+                        PACKAGE PROTECTION +<span className="delivery-price" dangerouslySetInnerHTML={formatPrice(protectionFeeAmount)}></span>
                       </label>
                     </div>
                   </div>
@@ -4000,7 +4097,7 @@ function CheckoutPage() {
                     {giftCardDiscount > 0 && (
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
-                        DISCOUNT: GIFT CARD
+                        DISCOUNT: <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080' }}>GIFT CARD</span>
                       </span>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>
                         ({(() => {
@@ -4019,7 +4116,7 @@ function CheckoutPage() {
                     )}
                     {referralDiscount > 0 && (
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
+                      <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '11px', color: '#808080' }}>
                         DISCOUNT: REFERRAL CODE {appliedReferralCode}
                       </span>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(referralDiscount)}></span>
@@ -4028,7 +4125,7 @@ function CheckoutPage() {
                     {discount > 0 && (
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
-                        DISCOUNT: {discountCode.toUpperCase()}
+                        DISCOUNT: <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080' }}>{discountCode.toUpperCase()}</span>
                       </span>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(discount)}></span>
                     </div>
@@ -4564,6 +4661,43 @@ function CheckoutPage() {
                       }
                     } catch (error) {
                       console.error('Error deducting gift card balance:', error);
+                    }
+                  }
+                  
+                  // Create Route protection if package protection is selected (non-blocking)
+                  if (packageProtection && !isSubscriptionUpgrade && !isOnlyDigitalProducts) {
+                    try {
+                      const orderId = `order-${nextOrderNumber}`;
+                      const routeProtectionData = prepareRouteProtectionData(
+                        orderId,
+                        orderNumber,
+                        subtotal,
+                        selectedCurrency,
+                        cartItems,
+                        email,
+                        firstName,
+                        lastName,
+                        phoneNumber,
+                        shippingAddress,
+                        city,
+                        state,
+                        zip,
+                        selectedCountry || 'US',
+                        protectionFee
+                      );
+                      
+                      // Call Route API asynchronously (don't block navigation)
+                      createRouteProtection(routeProtectionData).then((routeResult) => {
+                        if (routeResult.success && routeResult.protectionId) {
+                          console.log('Route protection created successfully:', routeResult.protectionId);
+                        } else {
+                          console.warn('Route protection creation failed:', routeResult.error);
+                        }
+                      }).catch((error) => {
+                        console.error('Error creating Route protection:', error);
+                      });
+                    } catch (error) {
+                      console.error('Error preparing Route protection data:', error);
                     }
                   }
                   

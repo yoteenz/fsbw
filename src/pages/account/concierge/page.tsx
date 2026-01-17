@@ -383,13 +383,13 @@ function ConciergePage() {
           };
           localStorage.setItem(userOrdersKey, JSON.stringify(updatedOrders));
           
-          // Include all orders (active + past, including DELIVERED)
-          const allOrders = [...active, ...past];
-          setActiveOrders(allOrders);
+          // Only include active orders (exclude archived/past orders)
+          // Priority messages and order tracking should only show active orders
+          setActiveOrders(active);
           
           // Auto-select first order if none selected
-          if (allOrders.length > 0 && !selectedOrderId) {
-            setSelectedOrderId(allOrders[0].id);
+          if (active.length > 0 && !selectedOrderId) {
+            setSelectedOrderId(active[0].id);
           }
         } else {
           setActiveOrders([]);
@@ -3080,7 +3080,7 @@ function ConciergePage() {
                     }}
                     type="button"
                   >
-                    VIEW ALL ORDERS
+                    VIEW ORDERS
                   </button>
                 </div>
 
@@ -3107,7 +3107,7 @@ function ConciergePage() {
                         textTransform: 'uppercase'
                       }}
                     >
-                      GIFT WITH PURCHASE
+                      FREE GIFT
                     </h2>
                   </div>
                   

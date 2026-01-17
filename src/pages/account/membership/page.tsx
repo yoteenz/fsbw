@@ -174,9 +174,9 @@ function MembershipPage() {
 
   // Subscription tier data
   const subscriptionTiers = {
-    '3months': { name: '3 MONTHS PREMIUM', price: 180 },
-    '6months': { name: '6 MONTHS PREMIUM', price: 320 },
-    '12months': { name: '12 MONTHS PREMIUM', price: 600 }
+    '3months': { name: '3 MONTHS PREMIUM', price: 280 },
+    '6months': { name: '6 MONTHS PREMIUM', price: 520 },
+    '12months': { name: '12 MONTHS PREMIUM', price: 960 }
   };
 
   // Generate referral code from user data with conflict checking
@@ -1208,7 +1208,7 @@ function MembershipPage() {
                                   <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '16px', height: '16px' }} />
                                 </td>
                                 <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
+                                  <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '16px', height: '16px' }} />
                                 </td>
                                 <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
                                   <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
@@ -1241,7 +1241,7 @@ function MembershipPage() {
                                   <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '16px', height: '16px' }} />
                                 </td>
                                 <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
+                                  <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '16px', height: '16px' }} />
                                 </td>
                                 <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
                                   <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
@@ -1266,7 +1266,7 @@ function MembershipPage() {
                                 <td style={{ fontFamily: '"Futura PT Medium"', padding: '8px 4px', textTransform: 'uppercase', fontWeight: '500' }}>PRICE</td>
                                 <td style={{ fontFamily: '"Futura PT Book"', padding: '8px 4px', textAlign: 'center' }}>FREE</td>
                                 <td style={{ fontFamily: '"Futura PT Book"', padding: '8px 4px', textAlign: 'center' }}>
-                                  $180 USD
+                                  $280 USD
                                   <button
                                     onClick={() => {
                                       // If changing subscription, don't allow deselection of current tier
@@ -1292,7 +1292,7 @@ function MembershipPage() {
                                   </button>
                                 </td>
                                 <td style={{ fontFamily: '"Futura PT Book"', padding: '8px 4px', textAlign: 'center' }}>
-                                  $320 USD
+                                  $520 USD
                                   <button
                                     onClick={() => {
                                       // If changing subscription, don't allow deselection of current tier
@@ -1318,7 +1318,7 @@ function MembershipPage() {
                                   </button>
                                 </td>
                                 <td style={{ fontFamily: '"Futura PT Book"', padding: '8px 4px', textAlign: 'center' }}>
-                                  $600 USD
+                                  $960 USD
                                   <button
                                     onClick={() => {
                                       // If changing subscription, don't allow deselection of current tier
@@ -1941,7 +1941,7 @@ function MembershipPage() {
                   }}
                   type="button"
                 >
-                          {showPremiumView ? 'CONFIRM SUBSCRIPTION' : 'CHANGE SUBSCRIPTION'}
+                          {showPremiumView ? 'CONFIRM SUBSCRIPTION' : ((userData?.subscriptionTier === '12months' || (isKateenaArmstrong && !userData?.subscriptionTier)) ? 'CHANGE SUBSCRIPTION' : 'UPGRADE SUBSCRIPTION')}
                         </button>
                       </div>
                       {/* CANCEL SUBSCRIPTION Button - Hidden when chart is open */}
