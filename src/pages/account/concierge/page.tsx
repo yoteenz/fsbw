@@ -963,16 +963,6 @@ function ConciergePage() {
     return '/assets/Texture-icon.svg';
   };
 
-  const getLineIcon = (): string => {
-    // Line icon for prepping stage - bottles icon
-    return '/assets/prep-stage.svg';
-  };
-
-  const getShippingIcon = (): string => {
-    // Line icon for shipping stages - airplane and parcel box
-    return '/assets/shipping-icon.svg';
-  };
-
   const getCapSizeIcon = (): string => {
     return '/assets/cap size-icon.svg';
   };
