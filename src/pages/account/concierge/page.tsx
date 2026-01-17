@@ -112,6 +112,22 @@ function ConciergePage() {
   // @ts-ignore - intentionally unused, may be used in future
   const _eligibleForBirthdayGift = isEligibleForBirthdayGift();
   
+  // Helper function to check if current user is Kateena Armstrong (admin account)
+  const isKateenaArmstrong = () => {
+    try {
+      const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      if (!userData) return false;
+      const firstName = userData.firstName?.toLowerCase() || '';
+      const lastName = userData.lastName?.toLowerCase() || '';
+      const email = userData.email?.toLowerCase() || '';
+      return (firstName === 'kateena' && lastName === 'armstrong') || 
+             email.includes('kateena') || 
+             email.includes('armstrong');
+    } catch (e) {
+      return false;
+    }
+  };
+  
   // Order tracking state
   const [selectedOrderId, setSelectedOrderId] = useState<string>('');
   const [activeOrders, setActiveOrders] = useState<any[]>([]);
@@ -144,14 +160,21 @@ function ConciergePage() {
           
           const testOrder = {
             id: 'test-order-1',
-            orderNumber: 'ORDER #999',
+            orderNumber: 'ORDER #888',
             date: formattedDate,
-            status: 'PREPARING',
+            status: 'DELIVERED',
             productName: 'NOIR',
             productImage: '/assets/natural front.png',
             total: 740,
             items: 1,
-            trackingStage: 2, // Set to stage 2 (CONSTRUCTING UNIT) for testing 20% progress
+            trackingStage: 8, // All stages completed for delivered order
+            orderFormSigned: true, // Form was signed (order progressed to delivered)
+            placedAt: constructingOrderDate.getTime(), // Timestamp when order was placed
+            trackingNumber: '1Z888AA10123456784',
+            deliveryDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            deliveryTime: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+            deliveryLocation: 'FRONT DOOR',
+            requiresSignature: true,
             // Selection data for icons
             length: '16"',
             density: '200%',
@@ -168,7 +191,7 @@ function ConciergePage() {
           deliveredOrderDate.setDate(deliveredOrderDate.getDate() - 60); // 60 days ago for delivered order
           const deliveredOrder = {
             id: 'test-order-2',
-            orderNumber: 'ORDER #888',
+            orderNumber: 'ORDER #999',
             date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
             status: 'DELIVERED',
             productName: 'NOIR',
@@ -275,12 +298,12 @@ function ConciergePage() {
           
           // Check if there's already a test order for testing
           const existingTestOrderIndex = [...active, ...past].findIndex((order: any) => 
-            order.id === 'test-order-1' || (order.orderNumber === 'ORDER #999')
+            order.id === 'test-order-1' || (order.orderNumber === 'ORDER #888')
           );
           
           // Check if there's already a delivered order for testing
           const existingDeliveredOrderIndex = [...active, ...past].findIndex((order: any) => 
-            order.id === 'test-order-2' || (order.status === 'DELIVERED' && order.orderNumber === 'ORDER #888')
+            order.id === 'test-order-2' || (order.status === 'DELIVERED' && order.orderNumber === 'ORDER #999')
           );
           
           // Check if there's already a multi-unit test order
@@ -300,16 +323,21 @@ function ConciergePage() {
           
           const testOrder = {
             id: 'test-order-1',
-            orderNumber: 'ORDER #999',
+            orderNumber: 'ORDER #888',
             date: formattedDate,
-            status: 'PREPARING',
+            status: 'DELIVERED',
             productName: 'NOIR',
             productImage: '/assets/natural front.png',
             total: 740,
             items: 1,
-            trackingStage: 2, // Set to stage 2 (CONSTRUCTING UNIT) for testing 20% progress
-            orderFormSigned: true, // Form was signed (order progressed to later stages)
+            trackingStage: 8, // All stages completed for delivered order
+            orderFormSigned: true, // Form was signed (order progressed to delivered)
             placedAt: constructingOrderDate.getTime(), // Timestamp when order was placed
+            trackingNumber: '1Z888AA10123456784',
+            deliveryDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            deliveryTime: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+            deliveryLocation: 'FRONT DOOR',
+            requiresSignature: true,
             // Selection data for icons
             length: '16"',
             density: '200%',
@@ -340,7 +368,7 @@ function ConciergePage() {
           deliveredOrderDate.setDate(deliveredOrderDate.getDate() - 60); // 60 days ago for delivered order
           const deliveredOrder = {
             id: 'test-order-2',
-            orderNumber: 'ORDER #888',
+            orderNumber: 'ORDER #999',
             date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
             status: 'DELIVERED',
             productName: 'NOIR',
@@ -559,14 +587,29 @@ function ConciergePage() {
           };
           localStorage.setItem(userOrdersKey, JSON.stringify(updatedOrders));
           
+          // Auto-select order 999 (completed) if it exists and user is Kateena admin, otherwise first active order
+          if (!selectedOrderId) {
+            // Only auto-load order 999 for Kateena admin account (for mock order testing)
+            if (isKateenaArmstrong()) {
+              // First, try to find order 999 in past orders (delivered/completed)
+              const order999 = past.find((order: any) => order.orderNumber === 'ORDER #999');
+              if (order999) {
+                // Add order 999 to active orders temporarily so tracking can display it
+                active.push(order999);
+                setSelectedOrderId(order999.id);
+              } else if (active.length > 0) {
+                // Fall back to first active order if order 999 not found
+                setSelectedOrderId(active[0].id);
+              }
+            } else if (active.length > 0) {
+              // For non-admin accounts, select first active order
+              setSelectedOrderId(active[0].id);
+            }
+          }
+          
           // Only include active orders (exclude archived/past orders)
           // Priority messages and order tracking should only show active orders
           setActiveOrders(active);
-          
-          // Auto-select first order if none selected
-          if (active.length > 0 && !selectedOrderId) {
-            setSelectedOrderId(active[0].id);
-          }
         } else {
           setActiveOrders([]);
         }
@@ -629,13 +672,52 @@ function ConciergePage() {
         const newSet = new Set(prev);
         // Add current stage to expanded set (use original index, not adjusted)
         newSet.add(currentTrackingStage);
+        
+        // If current stage is 100% complete, also expand the next stage
+        const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
+        if (selectedOrder) {
+          const processingTime = selectedOrder.processingTime || '6-8 WEEKS';
+          const hasCustomization = !processingTime.includes('4');
+          
+          // Get the progress for the current stage
+          const currentStageProgress = getStageProgress(currentTrackingStage, selectedOrder.date, hasCustomization);
+          
+          // If current stage is 100% complete, expand the next stage
+          if (currentStageProgress >= 100) {
+            // Find the next stage index (accounting for filtered stages)
+            const trackingStagesArray = [
+              'CONFIRMED', 'SOURCING', 'CONSTRUCTING', 'MATERIALS SHIPPED', 
+              'ARRIVED AT HUB', 'CLEANSING', 'CUSTOMIZING', 'FINALIZING', 'PACKAGE SHIPPED'
+            ];
+            
+            // Filter out customizing if no customization
+            const filteredStages = trackingStagesArray
+              .map((stage, originalIndex) => ({ stage, originalIndex }))
+              .filter(({ originalIndex }) => {
+                if (originalIndex === 6) { // CUSTOMIZING stage
+                  return hasCustomization;
+                }
+                return true;
+              });
+            
+            // Find current stage in filtered array
+            const currentStageInFiltered = filteredStages.findIndex(s => s.originalIndex === currentTrackingStage);
+            
+            // If there's a next stage, expand it
+            if (currentStageInFiltered >= 0 && currentStageInFiltered < filteredStages.length - 1) {
+              const nextStageOriginalIndex = filteredStages[currentStageInFiltered + 1].originalIndex;
+              newSet.add(nextStageOriginalIndex);
+            }
+          }
+        }
+        
         return newSet;
       });
     } else if (!selectedOrderId) {
       // Clear expanded stages when no order is selected
       setExpandedStages(new Set());
     }
-  }, [selectedOrderId, currentTrackingStage]);
+  }, [selectedOrderId, currentTrackingStage, activeOrders]);
   
   // Helper function to get stage duration in days
   const getStageDuration = (stageIndex: number, hasCustomization: boolean = true, shippingMethod?: string): number => {
@@ -1170,9 +1252,9 @@ function ConciergePage() {
     { name: 'MATERIALS SHIPPED', description: 'HEADED TO HUB.' },
     { name: 'ARRIVED AT HUB', description: 'PERFORMING QUALITY CHECK.' },
     { name: 'CLEANSING', description: 'DEEP CONDITIONING THE HAIR.' },
-    { name: 'CUSTOMIZING', description: 'COLORING + STYLING.' },
+    { name: 'CUSTOMIZING', description: 'COLORING + STYLING YOUR UNIT.' },
     { name: 'FINALIZING', description: 'PREPARING TO SHIP YOUR ORDER.' },
-    { name: 'PACKAGE SHIPPED', description: 'YOUR ORDER HAS BEEN SHIPPED.' }
+    { name: 'PACKAGE SHIPPED', description: 'YOUR ORDER IS ON THE WAY!' }
   ];
 
   // Listen for cart count changes
@@ -1796,6 +1878,16 @@ function ConciergePage() {
                     >
                       PRIORITY MESSAGES
                     </h2>
+                    <img
+                      src="/assets/priority2.svg"
+                      alt="Priority Messages"
+                      style={{
+                        width: '19.76px',
+                        height: '19.76px',
+                        objectFit: 'contain',
+                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
+                      }}
+                    />
                   </div>
                   
                   {/* IS THIS ORDER RELATED? Prompt */}
@@ -1998,6 +2090,16 @@ function ConciergePage() {
                     >
                       ORDER TRACKING
                     </h2>
+                    <img
+                      src="/assets/order-tracking.svg"
+                      alt="Order Tracking"
+                      style={{
+                        width: '22.4px',
+                        height: '22.4px',
+                        objectFit: 'contain',
+                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
+                      }}
+                    />
                   </div>
                   {(activeOrders.length > 0) ? (
                     <>
@@ -2104,9 +2206,9 @@ function ConciergePage() {
                                   <div style={{ textAlign: 'center', marginBottom: '16px', marginTop: '-10px' }}>
                                     <p
                                       style={{
-                                        fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                        fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                         color: '#909090',
-                                        fontSize: '13px',
+                                        fontSize: '12px',
                                         margin: '0 0 2px 0',
                                         textTransform: 'uppercase'
                                       }}
@@ -2238,9 +2340,9 @@ function ConciergePage() {
                                 <div style={{ textAlign: 'center', marginBottom: '16px', marginTop: '-10px' }}>
                                   <p
                                     style={{
-                                      fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                      fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                       color: '#909090',
-                                      fontSize: '13px',
+                                      fontSize: '12px',
                                       margin: '0 0 2px 0',
                                       textTransform: 'uppercase'
                                     }}
@@ -2334,7 +2436,7 @@ function ConciergePage() {
                                   <div style={{ marginBottom: '16px', marginTop: '-10px', textAlign: 'center' }}>
                                     <p
                     style={{
-                                        fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                        fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                         color: '#909090',
                                         fontSize: '12px',
                                         margin: '0 0 2px 0',
@@ -2372,7 +2474,7 @@ function ConciergePage() {
                                     {deliveryTimeFormatted && (
                                       <p
                                         style={{
-                                          fontFamily: '"Futura PT Demi"',
+                                          fontFamily: '"Futura PT Medium"',
                                           color: '#909090',
                       fontSize: '11px',
                                           margin: '-2px 0 4px 0',
@@ -2455,9 +2557,9 @@ function ConciergePage() {
                                 <div style={{ marginBottom: '16px', marginTop: '-10px', textAlign: 'center' }}>
                                   <p
                     style={{
-                                      fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                      fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                       color: '#909090',
-                                      fontSize: '13px',
+                                      fontSize: '12px',
                                       margin: '0 0 2px 0',
                                       textTransform: 'uppercase'
                                     }}
@@ -2915,7 +3017,7 @@ function ConciergePage() {
                                               
                                               if (icons.length > 0) {
                                                 return (
-                                                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                  <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
                                                     {icons}
                                                   </div>
                                                 );
@@ -2950,7 +3052,7 @@ function ConciergePage() {
                                               
                                               if (icons.length > 0) {
                                                 return (
-                                                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                  <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
                                                     {icons}
                                                   </div>
                                                 );
@@ -3025,7 +3127,7 @@ function ConciergePage() {
                                               
                                               if (icons.length > 0) {
                                                 return (
-                                                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                  <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
                                                     {icons}
                                                   </div>
                                                 );
@@ -3137,7 +3239,7 @@ function ConciergePage() {
                                               
                                               if (icons.length > 0) {
                                                 return (
-                                                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                  <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
                                                     {icons}
                                                   </div>
                                                 );
@@ -3165,7 +3267,7 @@ function ConciergePage() {
                                               
                                               if (icons.length > 0) {
                                                 return (
-                                                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                  <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
                                                     {icons}
                                                   </div>
                                                 );
@@ -3173,10 +3275,10 @@ function ConciergePage() {
                                             }
                                           }
                                           
-                                          // For all other stages (0, 3, 4, 5, 7, 8), show silky texture icon as base design
-                                          // Stages with icons: 1 (SOURCING), 2 (CONSTRUCTING), 6 (CUSTOMIZING)
-                                          // Prepping stage (index 5), Arrived at Hub (index 4), Shipped to Hub (index 3), and Package Shipped (index 8) use line icons instead
-                                          if (index !== 1 && index !== 2 && index !== 6) {
+                                          // For all other stages (0, 3, 4, 5), show silky texture icon as base design
+                                          // Stages with icons: 1 (SOURCING), 2 (CONSTRUCTING), 6 (CUSTOMIZING), 7 (FINALIZING), 8 (PACKAGE SHIPPED)
+                                          // Prepping stage (index 5), Arrived at Hub (index 4), Shipped to Hub (index 3) use line icons instead
+                                          if (index !== 1 && index !== 2 && index !== 6 && index !== 7 && index !== 8) {
                                             // Confirmed stage (index 0) uses form icon with form and sign/signed text
                                             if (index === 0) {
                                               const isFormSigned = selectedOrder?.orderFormSigned === true;
@@ -3221,7 +3323,7 @@ function ConciergePage() {
                                               const isClickable = !isFormSigned && !isPastTimeLimit;
                                               
                                               return (
-                                                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
                                                   <div style={{ position: 'relative' }}>
                                                     {(() => {
                                                       const renderFormIconBox = (label: string, iconSrc: string, displayText: string, iconSize: string = '57px', iconTop: string = '55%', isClickable: boolean = false): JSX.Element => {
@@ -3291,74 +3393,33 @@ function ConciergePage() {
                                                         </div>
                                                         );
                                                       };
-                                                      return renderFormIconBox('FORM', '/assets/order-form.svg', formStatusText, '28.96px', 'calc(50% + 5px)', isClickable);
+                                                      return renderFormIconBox('FORM', '/assets/order-form.svg', formStatusText, '29.27px', 'calc(50% + 3px)', isClickable);
                                                     })()}
                                                   </div>
                                                 </div>
                                               );
                                             }
-                                            // Cleansing stage (index 5) uses line icon with sanitize and soak text
+                                            // Cleansing stage (index 5) uses shampoo icon
                                             if (index === 5) {
                                               return (
-                                                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
-                                                  {renderIconBox('SANITIZE', getLineIcon(), 'SOAK', '40px', '55%')}
+                                                <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                  {renderIconBox('SANITIZE', '/assets/Shampoo.svg', 'SOAK', '28px', '55%')}
                                                 </div>
                                               );
                                             }
-                                            // Arrived at Hub stage (index 4) uses shipping icon
+                                            // Arrived at Hub stage (index 4) uses arrived plane icon
                                             if (index === 4) {
                                               return (
-                                                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
-                                                  {renderIconBox('', getShippingIcon(), '', '40px', '55%')}
+                                                <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                  {renderIconBox('TEXTURE', '/assets/Arrived Plane.svg', 'SILKY', '35px', '55%')}
                                                 </div>
                                               );
                                             }
-                                            // Shipped to Hub (index 3) uses shipping icon, Package Shipped (index 8) uses package icon
+                                            // Shipped to Hub (index 3) uses shipped plane icon
                                             if (index === 3) {
                                               return (
-                                                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
-                                                  {renderIconBox('', getShippingIcon(), '', '40px', '55%')}
-                                                </div>
-                                              );
-                                            }
-                                            if (index === 8) {
-                                              return (
-                                                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
-                                                  <div
-                                                    className="relative text-center"
-                                                    style={{
-                                                      width: '50px',
-                                                      height: '80px',
-                                                      boxSizing: 'border-box',
-                                                      padding: '0',
-                                                      overflow: 'visible',
-                                                      borderRadius: '0'
-                                                    }}
-                                                  >
-                                                    <div
-                                                      className="absolute flex items-center justify-center"
-                                                      style={{
-                                                        width: '100px',
-                                                        height: '100px',
-                                                        overflow: 'visible',
-                                                        top: 'calc(55% + 3px)',
-                                                        left: 'calc(50% + 28px)',
-                                                        transform: 'translateX(-50%) translateY(-50%)'
-                                                      }}
-                                                    >
-                                                      <img
-                                                        alt="Package"
-                                                        src="/assets/package-icon.png"
-                                                        style={{
-                                                          width: '100%',
-                                                          height: '100%',
-                                                          objectFit: 'contain',
-                                                          display: 'block',
-                                                          position: 'relative'
-                                                        }}
-                                                      />
-                                                    </div>
-                                                  </div>
+                                                <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                  {renderIconBox('TEXTURE', '/assets/Shipped Plane.svg', 'SILKY', '26.6px', '55%')}
                                                 </div>
                                               );
                                             }
@@ -3368,6 +3429,34 @@ function ConciergePage() {
                                             return (
                                               <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
                                                 {renderIconBox('TEXTURE', getTextureIcon(productName), 'SILKY', textureIconSize, textureIconTop)}
+                                              </div>
+                                            );
+                                          }
+                                          
+                                          // Finalizing stage (index 7) uses package icon
+                                          if (index === 7) {
+                                            const textureIconSize = productName === 'BLANCO' ? '41.96px' : '98.19px';
+                                            return (
+                                              <div style={{ display: 'flex', gap: '12px', marginTop: '-1px', marginBottom: '11px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                <img
+                                                  alt="package icon"
+                                                  src="/assets/final-package2.png"
+                                                  style={{
+                                                    width: textureIconSize,
+                                                    height: textureIconSize,
+                                                    objectFit: 'contain',
+                                                    display: 'block'
+                                                  }}
+                                                />
+                                              </div>
+                                            );
+                                          }
+                                          
+                                          // Package Shipped stage (index 8) uses shipped plane icon
+                                          if (index === 8) {
+                                            return (
+                                              <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
+                                                {renderIconBox('TEXTURE', '/assets/Shipped Plane.svg', 'SILKY', '26.6px', '55%')}
                                               </div>
                                             );
                                           }
@@ -3431,8 +3520,8 @@ function ConciergePage() {
                                                         // All confirmed stage statuses should be red
                                                         return '#EB1C24';
                                                       }
-                                                      // For other stages, use existing logic
-                                                      return isCompleted ? '#EB1C24' : '#000000';
+                                                      // For other stages: red if completed OR if progress is 100%
+                                                      return (isCompleted || progress >= 100) ? '#EB1C24' : '#000000';
                                                     })(),
                                                     fontSize: '9px',
                                                     margin: '4px 0 0 0',
@@ -3637,6 +3726,16 @@ function ConciergePage() {
                     >
                       FREE GIFT
                     </h2>
+                    <img
+                      src="/assets/Free Gift.svg"
+                      alt="Free Gift"
+                      style={{
+                        width: '13.3px',
+                        height: '13.3px',
+                        objectFit: 'contain',
+                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
+                      }}
+                    />
                   </div>
                   
                   <p
@@ -3784,6 +3883,16 @@ function ConciergePage() {
                     >
                       BIRTHDAY GIFT
                     </h2>
+                    <img
+                      src="/assets/Birthday.svg"
+                      alt="Birthday Gift"
+                      style={{
+                        width: '16px',
+                        height: '16px',
+                        objectFit: 'contain',
+                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
+                      }}
+                    />
                   </div>
                   
                   <p
