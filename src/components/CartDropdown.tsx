@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { CartItem } from '../types/cart';
 import ConfirmationModal from './ConfirmationModal';
@@ -12,9 +12,39 @@ interface CartDropdownProps {
 
 export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdownProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [viewingDetailsFor, setViewingDetailsFor] = useState<string | null>(null);
+
+  // Close cart dropdown immediately when route changes (before new page loads)
+  useEffect(() => {
+    if (isOpen) {
+      onClose();
+    }
+  }, [location.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Close cart dropdown when any link is clicked (catches navigation before route change)
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleLinkClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Check if clicked element or its parent is a link
+      const link = target.closest('a[href]');
+      if (link && link.getAttribute('href')?.startsWith('/')) {
+        // Only close for internal navigation links, not external links or special cases
+        const href = link.getAttribute('href');
+        if (href && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+          onClose();
+        }
+      }
+    };
+
+    // Use capture phase to catch clicks early
+    document.addEventListener('click', handleLinkClick, true);
+    return () => document.removeEventListener('click', handleLinkClick, true);
+  }, [isOpen, onClose]);
 
   // Reset viewing details when dropdown closes
   useEffect(() => {
