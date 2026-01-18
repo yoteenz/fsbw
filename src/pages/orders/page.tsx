@@ -192,6 +192,49 @@ function OrdersPage() {
   // Mock order data (only for Kristin Watson)
   const mockActiveOrders: Order[] = [
     {
+      id: 'test-order-3',
+      orderNumber: 'ORDER #777',
+      date: getDateDaysAgo(20), // 20 days ago (matching concierge - multi-unit order date)
+      status: 'PREPARING',
+      productName: 'NOIR',
+      productImage: getProductImage('NOIR'),
+      total: 1480,
+      items: 2,
+      trackingNumber: undefined,
+      trackingCarrier: undefined,
+      placedAt: Date.now() - (20 * 24 * 60 * 60 * 1000), // 20 days ago
+      orderFormSigned: true
+    },
+    {
+      id: 'test-order-4',
+      orderNumber: 'ORDER #666',
+      date: getDateDaysAgo(2), // 2 days ago (matching concierge)
+      status: 'CANCELED',
+      productName: 'BLANCO',
+      productImage: getProductImage('BLANCO'),
+      total: 820,
+      items: 1,
+      trackingNumber: undefined,
+      trackingCarrier: undefined,
+      placedAt: Date.now() - (25 * 60 * 60 * 1000), // 25 hours ago (past 24 hour limit)
+      canceledAt: Date.now() - (12 * 60 * 60 * 1000), // Canceled 12 hours ago
+      orderFormSigned: false
+    },
+    {
+      id: 'test-order-5',
+      orderNumber: 'ORDER #555',
+      date: getDateDaysAgo(0), // Today (matching concierge - 12 hours ago)
+      status: 'PLACED',
+      productName: 'NOIR',
+      productImage: getProductImage('NOIR'),
+      total: 920,
+      items: 1,
+      trackingNumber: undefined,
+      trackingCarrier: undefined,
+      placedAt: Date.now() - (12 * 60 * 60 * 1000), // 12 hours ago (within 24 hour limit)
+      orderFormSigned: false
+    },
+    {
       id: '1',
       orderNumber: 'ORDER #237',
       date: getDateDaysAgo(2), // 2 days ago
@@ -298,6 +341,38 @@ function OrdersPage() {
 
   const mockPastOrders: Order[] = [
     {
+      id: 'test-order-1',
+      orderNumber: 'ORDER #888',
+      date: getDateDaysAgo(13), // 13 days ago (matching concierge)
+      status: 'DELIVERED',
+      productName: 'NOIR',
+      productImage: getProductImage('NOIR'),
+      total: 740,
+      items: 1,
+      reviewInfo: 'REVIEW MISSING',
+      trackingNumber: '1Z888AA10123456784',
+      trackingCarrier: 'FEDEX',
+      deliveredAt: Date.now() - (1 * 24 * 60 * 60 * 1000), // Delivered 1 day ago
+      placedAt: Date.now() - (13 * 24 * 60 * 60 * 1000), // 13 days ago
+      orderFormSigned: true
+    },
+    {
+      id: 'test-order-2',
+      orderNumber: 'ORDER #999',
+      date: getDateDaysAgo(60), // 60 days ago (matching concierge)
+      status: 'DELIVERED',
+      productName: 'NOIR',
+      productImage: getProductImage('NOIR'),
+      total: 740,
+      items: 1,
+      reviewInfo: 'REVIEW MISSING',
+      trackingNumber: '1Z999AA10123456784',
+      trackingCarrier: 'DHL',
+      deliveredAt: Date.now() - (1 * 24 * 60 * 60 * 1000), // Delivered 1 day ago
+      placedAt: Date.now() - (60 * 24 * 60 * 60 * 1000), // 60 days ago
+      orderFormSigned: true
+    },
+    {
       id: '10',
       orderNumber: 'ORDER #236',
       date: getDateDaysAgo(3), // 3 days ago
@@ -320,7 +395,7 @@ function OrdersPage() {
       productImage: getProductImage('NOIR'),
       total: 2220,
       items: 3,
-      reviewInfo: 'REVIEW READY',
+      reviewInfo: 'REVIEW MISSING',
       trackingNumber: '9400136106023046913326',
       trackingCarrier: 'FEDEX',
       deliveredAt: Date.now() - (30 * 60 * 60 * 1000) // Delivered 30 hours ago (archived but still shows in active for 48 hours)
@@ -334,7 +409,7 @@ function OrdersPage() {
       productImage: getProductImage('NOIR'),
       total: 1480,
       items: 2,
-      reviewInfo: 'REVIEW READY',
+      reviewInfo: 'REVIEW MISSING',
       trackingNumber: '9400136106023046913338',
       trackingCarrier: 'DHL'
     },
@@ -360,7 +435,7 @@ function OrdersPage() {
       productImage: getProductImage('BLANCO'),
       total: 820,
       items: 1,
-      reviewInfo: 'REVIEW READY',
+      reviewInfo: 'REVIEW MISSING',
       trackingNumber: '9400136106023046913338',
       trackingCarrier: 'DHL'
     },
@@ -414,7 +489,7 @@ function OrdersPage() {
       productImage: getProductImage('NOIR'),
       total: 1640,
       items: 2,
-      reviewInfo: 'REVIEW READY',
+      reviewInfo: 'REVIEW MISSING',
       trackingNumber: '9400136106023046913440',
       trackingCarrier: 'DHL',
       deliveredAt: getTimestampHoursAgo(24), // Delivered yesterday (24 hours ago)

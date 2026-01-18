@@ -666,38 +666,39 @@ function ConciergePage() {
   
   const currentTrackingStage = getOrderTrackingStage(selectedOrderId);
   
-  // Auto-expand current tracking stage when order is selected
+  // Auto-expand current tracking stage when order is selected or on page refresh
   useEffect(() => {
     if (selectedOrderId && currentTrackingStage !== undefined && currentTrackingStage !== null) {
-      setExpandedStages(prev => {
-        const newSet = new Set(prev);
-        const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
+      const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
+      
+      if (selectedOrder) {
+        const processingTime = selectedOrder.processingTime || '6-8 WEEKS';
+        const hasCustomization = !processingTime.includes('4');
         
-        if (selectedOrder) {
-          const processingTime = selectedOrder.processingTime || '6-8 WEEKS';
-          const hasCustomization = !processingTime.includes('4');
-          
-          // Get the progress for the current stage
-          const currentStageProgress = getStageProgress(currentTrackingStage, selectedOrder.date, hasCustomization);
-          
-          // Find the next stage index (accounting for filtered stages)
-          const trackingStagesArray = [
-            'CONFIRMED', 'SOURCING', 'CONSTRUCTING', 'MATERIALS SHIPPED', 
-            'ARRIVED AT HUB', 'CLEANSING', 'CUSTOMIZING', 'FINALIZING', 'PACKAGE SHIPPED'
-          ];
-          
-          // Filter out customizing if no customization
-          const filteredStages = trackingStagesArray
-            .map((stage, originalIndex) => ({ stage, originalIndex }))
-            .filter(({ originalIndex }) => {
-              if (originalIndex === 6) { // CUSTOMIZING stage
-                return hasCustomization;
-              }
-              return true;
-            });
-          
-          // Find current stage in filtered array
-          const currentStageInFiltered = filteredStages.findIndex(s => s.originalIndex === currentTrackingStage);
+        // Get the progress for the current stage
+        const currentStageProgress = getStageProgress(currentTrackingStage, selectedOrder.date, hasCustomization);
+        
+        // Find the next stage index (accounting for filtered stages)
+        const trackingStagesArray = [
+          'CONFIRMED', 'SOURCING', 'CONSTRUCTING', 'MATERIALS SHIPPED', 
+          'ARRIVED AT HUB', 'CLEANSING', 'CUSTOMIZING', 'FINALIZING', 'PACKAGE SHIPPED'
+        ];
+        
+        // Filter out customizing if no customization
+        const filteredStages = trackingStagesArray
+          .map((stage, originalIndex) => ({ stage, originalIndex }))
+          .filter(({ originalIndex }) => {
+            if (originalIndex === 6) { // CUSTOMIZING stage
+              return hasCustomization;
+            }
+            return true;
+          });
+        
+        // Find current stage in filtered array
+        const currentStageInFiltered = filteredStages.findIndex(s => s.originalIndex === currentTrackingStage);
+        
+        setExpandedStages(prev => {
+          const newSet = new Set(prev);
           
           // If current stage is 100% complete, expand the next stage
           if (currentStageProgress >= 100) {
@@ -708,22 +709,41 @@ function ConciergePage() {
             }
             // Don't remove currentTrackingStage - preserve user-expanded completed stages
           } else {
-            // Current stage is not 100% complete, so expand it
+            // Current stage is not 100% complete, so ensure it's expanded
             newSet.add(currentTrackingStage);
             // Don't remove completed stages - preserve user-expanded stages
           }
-        } else {
-          // Fallback: just expand current stage if order not found
+          
+          return newSet;
+        });
+      } else {
+        // Fallback: just expand current stage if order not found
+        setExpandedStages(prev => {
+          const newSet = new Set(prev);
           newSet.add(currentTrackingStage);
-        }
-        
-        return newSet;
-      });
+          return newSet;
+        });
+      }
     } else if (!selectedOrderId) {
       // Clear expanded stages when no order is selected
       setExpandedStages(new Set());
     }
   }, [selectedOrderId, currentTrackingStage, activeOrders]);
+  
+  // Ensure current stage is expanded on initial load/refresh
+  useEffect(() => {
+    if (selectedOrderId && currentTrackingStage !== undefined && currentTrackingStage !== null && activeOrders.length > 0) {
+      setExpandedStages(prev => {
+        // Only add if not already expanded (to avoid unnecessary updates)
+        if (!prev.has(currentTrackingStage)) {
+          const newSet = new Set(prev);
+          newSet.add(currentTrackingStage);
+          return newSet;
+        }
+        return prev;
+      });
+    }
+  }, [selectedOrderId, currentTrackingStage, activeOrders.length]);
   
   // Update current time periodically to trigger progress recalculation
   useEffect(() => {
