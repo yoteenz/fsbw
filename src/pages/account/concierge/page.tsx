@@ -2718,12 +2718,6 @@ function ConciergePage() {
                                 // Adjust stage indices for display
                                 const displayIndex = filteredStages.findIndex(s => s.originalIndex === index);
                                 
-                                // Special handling for confirmed stage (index 0): completed if form is signed
-                                let isCompleted = displayIndex < adjustedCurrentStage;
-                                if (index === 0 && selectedOrder?.orderFormSigned === true) {
-                                  isCompleted = true;
-                                }
-                                
                                 const isCurrent = displayIndex === adjustedCurrentStage;
                                 const isUpcoming = displayIndex > adjustedCurrentStage;
                                 const isExpanded = expandedStages.has(index);
@@ -2733,14 +2727,29 @@ function ConciergePage() {
                                 const isDelivered = selectedOrder?.status === 'DELIVERED';
                                 const isDeliveredLastStage = isLastStage && isDelivered;
                                 
-                                // Get stage duration and progress
+                                // Get stage duration and progress FIRST
                                 const shippingMethod = selectedOrder?.shippingMethod || '';
                                 const stageDuration = getStageDuration(index, hasCustomization, shippingMethod);
                                 let progress = isDeliveredLastStage ? 100 : getStageProgress(index, selectedOrder?.date, hasCustomization, true);
                                 
-                                // Mark stage as completed if progress is 100% AND it's not the current stage
-                                // (Current stage should show beeping dot even if at 100%)
-                                // Also mark as completed if it's before the current stage (already handled above, but ensure it's set)
+                                // Determine if stage is completed:
+                                // 1. If it's before the current stage (already passed)
+                                // 2. If progress is 100% AND it's not the current stage
+                                // 3. Special case: confirmed stage (index 0) is completed if form is signed
+                                let isCompleted = false;
+                                
+                                // Check if stage is before current stage
+                                if (displayIndex < adjustedCurrentStage) {
+                                  isCompleted = true;
+                                }
+                                
+                                // Special case: confirmed stage (index 0) is completed if form is signed
+                                if (index === 0 && selectedOrder?.orderFormSigned === true) {
+                                  isCompleted = true;
+                                }
+                                
+                                // CRITICAL: If progress is 100% and NOT current, mark as completed
+                                // This ensures 100% complete stages show checkmark, not beeping dot
                                 if (progress >= 100 && !isCurrent) {
                                   isCompleted = true;
                                 }
@@ -2915,7 +2924,7 @@ function ConciergePage() {
                                         border: (isCompleted || isCurrent || isDeliveredLastStage) ? '1px solid #000000' : 'none'
                                       }}
                                     >
-                                      {isCompleted || isDeliveredLastStage ? (
+                                      {(isCompleted || isDeliveredLastStage) ? (
                                         <img
                                           src="/assets/premium-check.svg"
                                           alt="Completed"
@@ -3678,7 +3687,16 @@ function ConciergePage() {
                                                   }
                                                   
                                                   // For other stages, use existing logic
-                                                  return isDeliveredLastStage ? 'STATUS: DELIVERED' : (isCompleted ? 'STATUS: COMPLETE' : `STATUS: ${Math.round(progress)}% COMPLETE`);
+                                                  // Show "COMPLETE" if completed or progress is 100%, otherwise show percentage (1-99%)
+                                                  if (isDeliveredLastStage) {
+                                                    return 'STATUS: DELIVERED';
+                                                  } else if (isCompleted || progress >= 100) {
+                                                    return 'STATUS: COMPLETE';
+                                                  } else if (progress > 0) {
+                                                    return `STATUS: ${Math.round(progress)}% COMPLETE`;
+                                                  } else {
+                                                    return `STATUS: ${Math.round(progress)}% COMPLETE`;
+                                                  }
                                                 })()}
                                               </p>
                                             )}
