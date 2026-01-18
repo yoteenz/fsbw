@@ -788,11 +788,25 @@ function ConciergePage() {
         setExpandedStages(prevExpanded => {
           const newSet = new Set(prevExpanded);
           
-          // If current stage is 100% complete, expand the next stage
+          // Check progress for all stages up to and including current
+          // If any stage is 100% complete, ensure the next stage is expanded
+          for (let i = 0; i <= currentTrackingStage; i++) {
+            // Calculate actual progress for this stage (force calculation)
+            const stageProgress = getStageProgress(i, selectedOrder.date, hasCustomization, true);
+            
+            const stageInFiltered = filteredStages.findIndex(s => s.originalIndex === i);
+            
+            // If this stage is 100% complete and there's a next stage, expand the next one
+            if (stageProgress >= 100 && stageInFiltered >= 0 && stageInFiltered < filteredStages.length - 1) {
+              const nextStageOriginalIndex = filteredStages[stageInFiltered + 1].originalIndex;
+              newSet.add(nextStageOriginalIndex);
+            }
+          }
+          
+          // Special case: if current stage is 100% complete, ensure next stage is expanded
           if (currentStageProgress >= 100 && currentStageInFiltered >= 0 && currentStageInFiltered < filteredStages.length - 1) {
             const nextStageOriginalIndex = filteredStages[currentStageInFiltered + 1].originalIndex;
             newSet.add(nextStageOriginalIndex);
-            // Don't remove currentTrackingStage - let user manually collapse if they want
           } else if (currentStageProgress < 100) {
             // If current stage is not 100% complete, make sure it's expanded
             newSet.add(currentTrackingStage);
@@ -865,9 +879,14 @@ function ConciergePage() {
     }
   };
   
-  // Helper function to calculate progress percentage for current stage
-  const getStageProgress = (stageIndex: number, orderDate: string | undefined, hasCustomization: boolean = true): number => {
-    if (!orderDate || stageIndex !== currentTrackingStage) {
+  // Helper function to calculate progress percentage for any stage
+  const getStageProgress = (stageIndex: number, orderDate: string | undefined, hasCustomization: boolean = true, forceCalculate: boolean = false): number => {
+    if (!orderDate) {
+      return stageIndex < currentTrackingStage ? 100 : 0;
+    }
+    
+    // If not current stage and not forcing calculation, return based on position
+    if (!forceCalculate && stageIndex !== currentTrackingStage) {
       return stageIndex < currentTrackingStage ? 100 : 0;
     }
     
@@ -894,8 +913,6 @@ function ConciergePage() {
       
       const now = new Date();
       now.setHours(0, 0, 0, 0); // Normalize to midnight for consistent calculation
-      const _selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
-      void _selectedOrder; // Intentionally unused, kept for future use
       const stageStartDate = getStageStartDate(stageIndex, orderDateObj, hasCustomization);
       const stageEndDate = getStageEndDate(stageIndex, orderDateObj, hasCustomization);
       
@@ -2719,7 +2736,14 @@ function ConciergePage() {
                                 // Get stage duration and progress
                                 const shippingMethod = selectedOrder?.shippingMethod || '';
                                 const stageDuration = getStageDuration(index, hasCustomization, shippingMethod);
-                                let progress = isDeliveredLastStage ? 100 : getStageProgress(index, selectedOrder?.date, hasCustomization);
+                                let progress = isDeliveredLastStage ? 100 : getStageProgress(index, selectedOrder?.date, hasCustomization, true);
+                                
+                                // Mark stage as completed if progress is 100% AND it's not the current stage
+                                // (Current stage should show beeping dot even if at 100%)
+                                // Also mark as completed if it's before the current stage (already handled above, but ensure it's set)
+                                if (progress >= 100 && !isCurrent) {
+                                  isCompleted = true;
+                                }
                                 
                                 // Format duration text with ranges for package shipped stage
                                 let durationText = '';
@@ -2826,8 +2850,17 @@ function ConciergePage() {
                                   durationText = stageDuration === 0 ? 'SAME DAY' : stageDuration === 1 ? '1 DAY' : stageDuration === 28 ? '4 WEEKS' : `${stageDuration} DAYS`;
                                 }
                                 
-                                // Only allow expansion for completed or current steps, not upcoming ones
-                                const isExpandable = isCompleted || isCurrent || isDeliveredLastStage;
+                                // Check if previous stage is 100% complete to make next stage expandable
+                                let previousStageComplete = false;
+                                if (displayIndex > 0) {
+                                  const previousStageIndex = filteredStages[displayIndex - 1].originalIndex;
+                                  // Calculate actual progress for previous stage (force calculation)
+                                  const previousStageProgress = getStageProgress(previousStageIndex, selectedOrder?.date, hasCustomization, true);
+                                  previousStageComplete = previousStageProgress >= 100;
+                                }
+                                
+                                // Allow expansion for completed, current, or next stage when previous is 100% complete
+                                const isExpandable = isCompleted || isCurrent || isDeliveredLastStage || previousStageComplete;
 
                               return (
                                 <div key={index} style={{ position: 'relative', marginBottom: displayIndex < filteredStages.length - 1 ? '0' : '0' }}>
@@ -2888,7 +2921,7 @@ function ConciergePage() {
                                           alt="Completed"
                                           style={{ width: '10.5px', height: '10.5px' }}
                                         />
-                                      ) : isCurrent ? (
+                                      ) : (isCurrent && !isCompleted) ? (
                                         <span 
                                           style={{ 
                                             color: '#EB1C24', 
@@ -3169,7 +3202,7 @@ function ConciergePage() {
                                               
                                               if (icons.length > 0) {
                                                 return (
-                                                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                                                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                                                     {icons}
                                                   </div>
                                                 );
@@ -3578,7 +3611,7 @@ function ConciergePage() {
                                             >
                                               <div
                                                 style={{
-                                                  width: `${progress}%`,
+                                                  width: isCompleted || isDeliveredLastStage ? '100%' : `${progress}%`,
                                                   height: '100%',
                                                   backgroundColor: isCompleted || isDeliveredLastStage ? '#EB1C24' : '#EB1C24',
                                                   transition: 'width 0.3s ease',

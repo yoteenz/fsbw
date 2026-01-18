@@ -481,6 +481,49 @@ function OrdersPage() {
   // ORDER #344 progression: Confirmed (1 week ago) -> Shipped (2 days ago) -> Delivered (yesterday)
   const kateenaMockActiveOrders: Order[] = [
     {
+      id: 'test-order-3',
+      orderNumber: 'ORDER #777',
+      date: getDateDaysAgo(20), // 20 days ago (matching concierge - multi-unit order date)
+      status: 'PREPARING',
+      productName: 'NOIR',
+      productImage: getProductImage('NOIR'),
+      total: 1480,
+      items: 2,
+      trackingNumber: undefined,
+      trackingCarrier: undefined,
+      placedAt: Date.now() - (20 * 24 * 60 * 60 * 1000), // 20 days ago
+      orderFormSigned: true
+    },
+    {
+      id: 'test-order-4',
+      orderNumber: 'ORDER #666',
+      date: getDateDaysAgo(2), // 2 days ago (matching concierge)
+      status: 'CANCELED',
+      productName: 'BLANCO',
+      productImage: getProductImage('BLANCO'),
+      total: 820,
+      items: 1,
+      trackingNumber: undefined,
+      trackingCarrier: undefined,
+      placedAt: Date.now() - (25 * 60 * 60 * 1000), // 25 hours ago (past 24 hour limit)
+      canceledAt: Date.now() - (12 * 60 * 60 * 1000), // Canceled 12 hours ago
+      orderFormSigned: false
+    },
+    {
+      id: 'test-order-5',
+      orderNumber: 'ORDER #555',
+      date: getDateDaysAgo(0), // Today (matching concierge - 12 hours ago)
+      status: 'PLACED',
+      productName: 'NOIR',
+      productImage: getProductImage('NOIR'),
+      total: 920,
+      items: 1,
+      trackingNumber: undefined,
+      trackingCarrier: undefined,
+      placedAt: Date.now() - (12 * 60 * 60 * 1000), // 12 hours ago (within 24 hour limit)
+      orderFormSigned: false
+    },
+    {
       id: 'kateena-1',
       orderNumber: 'ORDER #344',
       date: getDateDaysAgo(7), // 1 week ago (confirmed)
@@ -524,7 +567,38 @@ function OrdersPage() {
   ];
 
   const kateenaMockPastOrders: Order[] = [
-    // Past orders can be added here if needed
+    {
+      id: 'test-order-1',
+      orderNumber: 'ORDER #888',
+      date: getDateDaysAgo(13), // 13 days ago (matching concierge)
+      status: 'DELIVERED',
+      productName: 'NOIR',
+      productImage: getProductImage('NOIR'),
+      total: 740,
+      items: 1,
+      reviewInfo: 'REVIEW MISSING',
+      trackingNumber: '1Z888AA10123456784',
+      trackingCarrier: 'FEDEX',
+      deliveredAt: Date.now() - (1 * 24 * 60 * 60 * 1000), // Delivered 1 day ago
+      placedAt: Date.now() - (13 * 24 * 60 * 60 * 1000), // 13 days ago
+      orderFormSigned: true
+    },
+    {
+      id: 'test-order-2',
+      orderNumber: 'ORDER #999',
+      date: getDateDaysAgo(60), // 60 days ago (matching concierge)
+      status: 'DELIVERED',
+      productName: 'NOIR',
+      productImage: getProductImage('NOIR'),
+      total: 740,
+      items: 1,
+      reviewInfo: 'REVIEW MISSING',
+      trackingNumber: '1Z999AA10123456784',
+      trackingCarrier: 'DHL',
+      deliveredAt: Date.now() - (1 * 24 * 60 * 60 * 1000), // Delivered 1 day ago
+      placedAt: Date.now() - (60 * 24 * 60 * 60 * 1000), // 60 days ago
+      orderFormSigned: true
+    }
   ];
 
   // Get orders based on user - show mock orders for Kristin Watson or Kateena Armstrong, otherwise show user's actual orders
