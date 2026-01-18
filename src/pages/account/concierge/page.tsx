@@ -426,7 +426,7 @@ function ConciergePage() {
             productImage: '/assets/natural front.png',
             total: 1480,
             items: 2,
-            trackingStage: 1, // Set to SOURCING stage to test icon display
+            trackingStage: 2, // PREPARING status = constructing stage (2)
             orderFormSigned: true, // Form was signed (order progressed to sourcing)
             placedAt: multiUnitOrderDate.getTime(), // Timestamp when order was placed
             // Multi-unit selection data - array of units with different selections
