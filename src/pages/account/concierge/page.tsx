@@ -803,13 +803,13 @@ function ConciergePage() {
             }
           }
           
-          // Special case: if current stage is 100% complete, ensure next stage is expanded
+          // ALWAYS ensure current stage is expanded (regardless of progress)
+          newSet.add(currentTrackingStage);
+          
+          // Special case: if current stage is 100% complete, also expand the next stage
           if (currentStageProgress >= 100 && currentStageInFiltered >= 0 && currentStageInFiltered < filteredStages.length - 1) {
             const nextStageOriginalIndex = filteredStages[currentStageInFiltered + 1].originalIndex;
             newSet.add(nextStageOriginalIndex);
-          } else if (currentStageProgress < 100) {
-            // If current stage is not 100% complete, make sure it's expanded
-            newSet.add(currentTrackingStage);
           }
           
           // Don't remove any stages - preserve user-expanded completed stages
@@ -2736,22 +2736,26 @@ function ConciergePage() {
                                 // 1. If it's before the current stage (already passed)
                                 // 2. If progress is 100% AND it's not the current stage
                                 // 3. Special case: confirmed stage (index 0) is completed if form is signed
+                                // IMPORTANT: Current stage should NEVER be marked as completed (it should show beeping dot)
                                 let isCompleted = false;
                                 
-                                // Check if stage is before current stage
-                                if (displayIndex < adjustedCurrentStage) {
-                                  isCompleted = true;
-                                }
-                                
-                                // Special case: confirmed stage (index 0) is completed if form is signed
-                                if (index === 0 && selectedOrder?.orderFormSigned === true) {
-                                  isCompleted = true;
-                                }
-                                
-                                // CRITICAL: If progress is 100% and NOT current, mark as completed
-                                // This ensures 100% complete stages show checkmark, not beeping dot
-                                if (progress >= 100 && !isCurrent) {
-                                  isCompleted = true;
+                                // NEVER mark current stage as completed - it should always show beeping dot
+                                if (!isCurrent) {
+                                  // Check if stage is before current stage
+                                  if (displayIndex < adjustedCurrentStage) {
+                                    isCompleted = true;
+                                  }
+                                  
+                                  // Special case: confirmed stage (index 0) is completed if form is signed
+                                  if (index === 0 && selectedOrder?.orderFormSigned === true) {
+                                    isCompleted = true;
+                                  }
+                                  
+                                  // CRITICAL: If progress is 100% and NOT current, mark as completed
+                                  // This ensures 100% complete stages show checkmark, not beeping dot
+                                  if (progress >= 100) {
+                                    isCompleted = true;
+                                  }
                                 }
                                 
                                 // Format duration text with ranges for package shipped stage
@@ -3604,7 +3608,7 @@ function ConciergePage() {
                                           ESTIMATED DURATION: {durationText}
                                         </p>
                                         
-                                        {/* Progress Bar */}
+                                        {/* Progress Bar - Always show for current, completed, or delivered stages */}
                                         {(isCurrent || isCompleted || isDeliveredLastStage) && (
                                           <div style={{ marginTop: '3px' }}>
                                             <div
