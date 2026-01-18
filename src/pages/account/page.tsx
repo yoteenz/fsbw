@@ -75,50 +75,10 @@ function AccountPage() {
   const [pinchStart, setPinchStart] = useState<{ distance: number; scale: number } | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   
-  // Drag and drop state for account cards
-  const [draggedCardIndex, setDraggedCardIndex] = useState<number | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-  const [cardOrder, setCardOrder] = useState<string[]>(() => {
-    // Load saved order from localStorage
-    if (typeof window !== 'undefined') {
-      try {
-        const savedOrder = localStorage.getItem('accountCardOrder');
-        return savedOrder ? JSON.parse(savedOrder) : [];
-      } catch (e) {
-        return [];
-      }
-    }
-    return [];
-  });
-  const dragStartPos = useRef<{ x: number; y: number } | null>(null);
-  const draggedElementRef = useRef<HTMLDivElement | null>(null);
-  const touchStartTime = useRef<number | null>(null);
-  const touchStartPos = useRef<{ x: number; y: number } | null>(null);
   
-  // Get cards with visual reordering during drag
-  const getCardsForDisplay = (): Array<{ title: string; subtitle: string; route: string | null; originalIndex: number }> => {
-    const orderedCards = getOrderedCards();
-    
-    // Add original index to each card
-    const cardsWithIndex = orderedCards.map((card, index) => ({ ...card, originalIndex: index }));
-    
-    // If dragging, show reordered cards visually
-    if (draggedCardIndex !== null && dragOverIndex !== null && draggedCardIndex !== dragOverIndex) {
-      const reordered = [...cardsWithIndex];
-      const [removed] = reordered.splice(draggedCardIndex, 1);
-      // Calculate where to insert: dragOverIndex is the target card's original position
-      // We want to insert the dragged card after the target card
-      // If dragging down (draggedCardIndex < dragOverIndex), target shifts left by 1 after removal
-      let insertIndex = dragOverIndex;
-      if (draggedCardIndex < dragOverIndex) {
-        insertIndex = dragOverIndex - 1;
-      }
-      // Insert after the target card (at insertIndex + 1)
-      reordered.splice(insertIndex + 1, 0, removed);
-      return reordered;
-    }
-    
-    return cardsWithIndex;
+  // Get cards for display
+  const getCardsForDisplay = (): Array<{ title: string; subtitle: string; route: string | null }> => {
+    return getOrderedCards();
   };
 
   // Currency state - load from localStorage on mount
@@ -865,147 +825,11 @@ function AccountPage() {
     return defaultCards;
   };
 
-  // Get ordered cards based on saved order or default order
+  // Get ordered cards (using default order)
   const getOrderedCards = (): Array<{ title: string; subtitle: string; route: string | null }> => {
-    const defaultCards = getDefaultCardOrder();
-    const defaultTitles = defaultCards.map(card => card.title);
-    
-    // If no saved order or saved order doesn't match current cards, use default
-    if (cardOrder.length === 0 || !cardOrder.every(title => defaultTitles.includes(title))) {
-      // Initialize with default order
-      const titles = defaultCards.map(card => card.title);
-      setCardOrder(titles);
-      localStorage.setItem('accountCardOrder', JSON.stringify(titles));
-      return defaultCards;
-    }
-    
-    // Reorder cards based on saved order
-    const orderedCards: Array<{ title: string; subtitle: string; route: string | null }> = [];
-    const cardMap = new Map(defaultCards.map(card => [card.title, card]));
-    
-    // Add cards in saved order
-    cardOrder.forEach(title => {
-      const card = cardMap.get(title);
-      if (card) {
-        orderedCards.push(card);
-      }
-    });
-    
-    // Add any new cards that weren't in saved order (shouldn't happen, but safety check)
-    defaultCards.forEach(card => {
-      if (!cardOrder.includes(card.title)) {
-        orderedCards.push(card);
-      }
-    });
-    
-    return orderedCards;
+    return getDefaultCardOrder();
   };
 
-  // Handle drag start
-  const handleCardDragStart = (e: React.MouseEvent | React.TouchEvent, index: number) => {
-    if ('touches' in e) {
-      // For touch events, store initial position and time
-      touchStartTime.current = Date.now();
-      touchStartPos.current = {
-        x: e.touches[0].clientX,
-        y: e.touches[0].clientY
-      };
-      // Don't prevent default immediately - wait for movement
-      return;
-    }
-    // For mouse events, start drag immediately
-    e.preventDefault();
-    e.stopPropagation();
-    setDraggedCardIndex(index);
-    dragStartPos.current = {
-      x: e.clientX,
-      y: e.clientY
-    };
-  };
-
-
-  // Handle drag end
-  const handleCardDragEnd = () => {
-    if (draggedCardIndex !== null && dragOverIndex !== null && draggedCardIndex !== dragOverIndex) {
-      // Calculate new order based on drag positions
-      const newOrder = [...cardOrder];
-      const [removed] = newOrder.splice(draggedCardIndex, 1);
-      // Adjust insert index: if dragging down, the target index shifts left by 1
-      let insertIndex = dragOverIndex;
-      if (draggedCardIndex < dragOverIndex) {
-        insertIndex = dragOverIndex - 1;
-      }
-      newOrder.splice(insertIndex + 1, 0, removed);
-      
-      setCardOrder(newOrder);
-      localStorage.setItem('accountCardOrder', JSON.stringify(newOrder));
-    }
-    
-    setDraggedCardIndex(null);
-    setDragOverIndex(null);
-    dragStartPos.current = null;
-    touchStartTime.current = null;
-    touchStartPos.current = null;
-  };
-
-  // Global mouse/touch move handler for drag
-  useEffect(() => {
-    if (draggedCardIndex === null) return;
-
-    const handleGlobalMove = (e: MouseEvent | TouchEvent) => {
-      if (draggedCardIndex === null) return;
-      
-      // Prevent default scrolling on touch devices
-      if ('touches' in e) {
-        e.preventDefault();
-      }
-      
-      const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-      const cards = document.querySelectorAll('[data-original-index]');
-      
-      cards.forEach((card) => {
-        const cardOriginalIndex = parseInt(card.getAttribute('data-original-index') || '0');
-        if (cardOriginalIndex === draggedCardIndex) return;
-        const rect = card.getBoundingClientRect();
-        
-        if (clientY >= rect.top && clientY <= rect.bottom) {
-          setDragOverIndex(cardOriginalIndex);
-        }
-      });
-    };
-
-    const handleGlobalEnd = () => {
-      handleCardDragEnd();
-    };
-
-    const handleTouchCancel = () => {
-      handleCardDragEnd();
-    };
-
-    window.addEventListener('mousemove', handleGlobalMove);
-    window.addEventListener('touchmove', handleGlobalMove, { passive: false });
-    window.addEventListener('mouseup', handleGlobalEnd);
-    window.addEventListener('touchend', handleGlobalEnd);
-    window.addEventListener('touchcancel', handleTouchCancel);
-
-    return () => {
-      window.removeEventListener('mousemove', handleGlobalMove);
-      window.removeEventListener('touchmove', handleGlobalMove);
-      window.removeEventListener('mouseup', handleGlobalEnd);
-      window.removeEventListener('touchend', handleGlobalEnd);
-      window.removeEventListener('touchcancel', handleTouchCancel);
-    };
-  }, [draggedCardIndex]);
-
-  // Initialize card order on mount
-  useEffect(() => {
-    const orderedCards = getOrderedCards();
-    const titles = orderedCards.map(card => card.title);
-    if (cardOrder.length === 0 || !cardOrder.every(title => titles.includes(title))) {
-      setCardOrder(titles);
-      localStorage.setItem('accountCardOrder', JSON.stringify(titles));
-    }
-  }, []);
 
   // Helper function to check if a specific card has notifications
   const cardHasNotifications = (title: string): boolean => {
@@ -1980,99 +1804,14 @@ function AccountPage() {
                 </div>
 
                 {/* Navigation Options */}
-                {getCardsForDisplay().map((item, displayIndex) => {
-                  const originalIndex = item.originalIndex;
+                {getCardsForDisplay().map((item) => {
                   const hasNotification = cardHasNotifications(item.title);
-                  const isDragging = draggedCardIndex === originalIndex;
-                  // Check if this card's original position is the drag over target
-                  const isDragOver = dragOverIndex === originalIndex && draggedCardIndex !== null && draggedCardIndex !== originalIndex;
                   return (
                   <div
                     key={item.title}
-                    data-card-index={displayIndex}
-                    data-original-index={originalIndex}
-                    ref={isDragging ? draggedElementRef : null}
-                    onMouseDown={(e) => {
-                      // Only start drag on long press or specific area
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleCardDragStart(e, originalIndex);
-                    }}
-                    onTouchStart={(e) => {
-                      handleCardDragStart(e, originalIndex);
-                    }}
-                    onTouchMove={(e) => {
-                      // Check if we should start dragging (after initial touch and movement)
-                      if (touchStartTime.current && touchStartPos.current && draggedCardIndex === null) {
-                        const touch = e.touches[0];
-                        const timeDiff = Date.now() - touchStartTime.current;
-                        const moveDiff = Math.abs(touch.clientY - touchStartPos.current.y);
-                        
-                        // Start drag if user has held for 100ms or moved 10px
-                        if (timeDiff > 100 || moveDiff > 10) {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setDraggedCardIndex(originalIndex);
-                          dragStartPos.current = touchStartPos.current;
-                        }
-                      }
-                      
-                      if (draggedCardIndex !== null) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        const clientY = e.touches[0].clientY;
-                        const cards = document.querySelectorAll('[data-original-index]');
-                        
-                        cards.forEach((card) => {
-                          const cardOriginalIndex = parseInt(card.getAttribute('data-original-index') || '0');
-                          if (cardOriginalIndex === draggedCardIndex) return;
-                          const rect = card.getBoundingClientRect();
-                          
-                          if (clientY >= rect.top && clientY <= rect.bottom) {
-                            setDragOverIndex(cardOriginalIndex);
-                          }
-                        });
-                      }
-                    }}
-                    onTouchEnd={(e) => {
-                      if (draggedCardIndex !== null) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleCardDragEnd();
-                      } else if (touchStartTime.current) {
-                        // If we didn't drag, treat as click
-                        const timeDiff = Date.now() - touchStartTime.current;
-                        if (timeDiff < 300 && item.route) {
-                          // Quick tap - navigate
-                          navigate(item.route);
-                        }
-                      }
-                      // Reset touch tracking
-                      touchStartTime.current = null;
-                      touchStartPos.current = null;
-                    }}
-                    onTouchCancel={(e) => {
-                      if (draggedCardIndex !== null) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleCardDragEnd();
-                      }
-                      // Reset touch tracking
-                      touchStartTime.current = null;
-                      touchStartPos.current = null;
-                    }}
-                    onMouseOver={() => {
-                      if (draggedCardIndex !== null && draggedCardIndex !== originalIndex) {
-                        setDragOverIndex(originalIndex);
-                      }
-                    }}
-                    onClick={(e) => {
-                      // Only navigate if not dragging
-                      if (draggedCardIndex === null && dragStartPos.current === null && item.route) {
+                    onClick={() => {
+                      if (item.route) {
                         navigate(item.route);
-                      } else {
-                        e.preventDefault();
-                        e.stopPropagation();
                       }
                     }}
                     className="border border-black bg-white/60 backdrop-blur-sm cursor-pointer w-full transition-all duration-300 ease-out"
@@ -2080,14 +1819,8 @@ function AccountPage() {
                       borderWidth: '1.3px',
                       padding: '13px 20px',
                       backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                      boxShadow: isDragging ? '0 4px 8px rgba(0, 0, 0, 0.2)' : isDragOver ? '0 3px 6px rgba(0, 0, 0, 0.15)' : '0 2px 4px rgba(0, 0, 0, 0.1)',
-                      position: 'relative',
-                      opacity: isDragging ? 0.6 : 1,
-                      transform: isDragging ? 'scale(0.98)' : isDragOver ? 'translateY(2px)' : 'none',
-                      zIndex: isDragging ? 1000 : isDragOver ? 100 : 1,
-                      cursor: draggedCardIndex !== null ? 'grabbing' : 'grab',
-                      userSelect: 'none',
-                      WebkitUserSelect: 'none'
+                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                      position: 'relative'
                     }}
                   >
                     {/* Rose alert notification icon */}

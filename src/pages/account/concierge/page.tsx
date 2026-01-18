@@ -132,6 +132,7 @@ function ConciergePage() {
   const [selectedOrderId, setSelectedOrderId] = useState<string>('');
   const [activeOrders, setActiveOrders] = useState<any[]>([]);
   const [expandedStages, setExpandedStages] = useState<Set<number>>(new Set());
+  const [currentTime, setCurrentTime] = useState<number>(Date.now());
   
   // Get active orders for tracking
   useEffect(() => {
@@ -670,11 +671,8 @@ function ConciergePage() {
     if (selectedOrderId && currentTrackingStage !== undefined && currentTrackingStage !== null) {
       setExpandedStages(prev => {
         const newSet = new Set(prev);
-        // Add current stage to expanded set (use original index, not adjusted)
-        newSet.add(currentTrackingStage);
-        
-        // If current stage is 100% complete, also expand the next stage
         const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
+        
         if (selectedOrder) {
           const processingTime = selectedOrder.processingTime || '6-8 WEEKS';
           const hasCustomization = !processingTime.includes('4');
@@ -682,33 +680,41 @@ function ConciergePage() {
           // Get the progress for the current stage
           const currentStageProgress = getStageProgress(currentTrackingStage, selectedOrder.date, hasCustomization);
           
+          // Find the next stage index (accounting for filtered stages)
+          const trackingStagesArray = [
+            'CONFIRMED', 'SOURCING', 'CONSTRUCTING', 'MATERIALS SHIPPED', 
+            'ARRIVED AT HUB', 'CLEANSING', 'CUSTOMIZING', 'FINALIZING', 'PACKAGE SHIPPED'
+          ];
+          
+          // Filter out customizing if no customization
+          const filteredStages = trackingStagesArray
+            .map((stage, originalIndex) => ({ stage, originalIndex }))
+            .filter(({ originalIndex }) => {
+              if (originalIndex === 6) { // CUSTOMIZING stage
+                return hasCustomization;
+              }
+              return true;
+            });
+          
+          // Find current stage in filtered array
+          const currentStageInFiltered = filteredStages.findIndex(s => s.originalIndex === currentTrackingStage);
+          
           // If current stage is 100% complete, expand the next stage
           if (currentStageProgress >= 100) {
-            // Find the next stage index (accounting for filtered stages)
-            const trackingStagesArray = [
-              'CONFIRMED', 'SOURCING', 'CONSTRUCTING', 'MATERIALS SHIPPED', 
-              'ARRIVED AT HUB', 'CLEANSING', 'CUSTOMIZING', 'FINALIZING', 'PACKAGE SHIPPED'
-            ];
-            
-            // Filter out customizing if no customization
-            const filteredStages = trackingStagesArray
-              .map((stage, originalIndex) => ({ stage, originalIndex }))
-              .filter(({ originalIndex }) => {
-                if (originalIndex === 6) { // CUSTOMIZING stage
-                  return hasCustomization;
-                }
-                return true;
-              });
-            
-            // Find current stage in filtered array
-            const currentStageInFiltered = filteredStages.findIndex(s => s.originalIndex === currentTrackingStage);
-            
             // If there's a next stage, expand it
             if (currentStageInFiltered >= 0 && currentStageInFiltered < filteredStages.length - 1) {
               const nextStageOriginalIndex = filteredStages[currentStageInFiltered + 1].originalIndex;
               newSet.add(nextStageOriginalIndex);
             }
+            // Don't remove currentTrackingStage - preserve user-expanded completed stages
+          } else {
+            // Current stage is not 100% complete, so expand it
+            newSet.add(currentTrackingStage);
+            // Don't remove completed stages - preserve user-expanded stages
           }
+        } else {
+          // Fallback: just expand current stage if order not found
+          newSet.add(currentTrackingStage);
         }
         
         return newSet;
@@ -718,6 +724,66 @@ function ConciergePage() {
       setExpandedStages(new Set());
     }
   }, [selectedOrderId, currentTrackingStage, activeOrders]);
+  
+  // Update current time periodically to trigger progress recalculation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000); // Update every second
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  // Auto-update expansion based on stage progress (checks when time updates)
+  useEffect(() => {
+    if (selectedOrderId && currentTrackingStage !== undefined && currentTrackingStage !== null) {
+      const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
+      if (selectedOrder) {
+        const processingTime = selectedOrder.processingTime || '6-8 WEEKS';
+        const hasCustomization = !processingTime.includes('4');
+        
+        // Get the progress for the current stage
+        const currentStageProgress = getStageProgress(currentTrackingStage, selectedOrder.date, hasCustomization);
+        
+        // Find the next stage index (accounting for filtered stages)
+        const trackingStagesArray = [
+          'CONFIRMED', 'SOURCING', 'CONSTRUCTING', 'MATERIALS SHIPPED', 
+          'ARRIVED AT HUB', 'CLEANSING', 'CUSTOMIZING', 'FINALIZING', 'PACKAGE SHIPPED'
+        ];
+        
+        // Filter out customizing if no customization
+        const filteredStages = trackingStagesArray
+          .map((stage, originalIndex) => ({ stage, originalIndex }))
+          .filter(({ originalIndex }) => {
+            if (originalIndex === 6) { // CUSTOMIZING stage
+              return hasCustomization;
+            }
+            return true;
+          });
+        
+        // Find current stage in filtered array
+        const currentStageInFiltered = filteredStages.findIndex(s => s.originalIndex === currentTrackingStage);
+        
+        // Update expansion: preserve user-expanded stages, but auto-expand current/next stage
+        setExpandedStages(prevExpanded => {
+          const newSet = new Set(prevExpanded);
+          
+          // If current stage is 100% complete, expand the next stage
+          if (currentStageProgress >= 100 && currentStageInFiltered >= 0 && currentStageInFiltered < filteredStages.length - 1) {
+            const nextStageOriginalIndex = filteredStages[currentStageInFiltered + 1].originalIndex;
+            newSet.add(nextStageOriginalIndex);
+            // Don't remove currentTrackingStage - let user manually collapse if they want
+          } else if (currentStageProgress < 100) {
+            // If current stage is not 100% complete, make sure it's expanded
+            newSet.add(currentTrackingStage);
+          }
+          
+          // Don't remove any stages - preserve user-expanded completed stages
+          return newSet;
+        });
+      }
+    }
+  }, [selectedOrderId, currentTrackingStage, activeOrders, currentTime]);
   
   // Helper function to get stage duration in days
   const getStageDuration = (stageIndex: number, hasCustomization: boolean = true, shippingMethod?: string): number => {
@@ -1875,7 +1941,7 @@ function ConciergePage() {
                         width: '19.76px',
                         height: '19.76px',
                         objectFit: 'contain',
-                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
+                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.1px #EB1C24)'
                       }}
                     />
                   </div>
@@ -1962,7 +2028,7 @@ function ConciergePage() {
                           <option value="">SELECT AN ORDER</option>
                           {activeOrders.map((order: any) => (
                             <option key={order.id} value={order.id}>
-                              {order.orderNumber}
+                              {order.orderNumber.replace('ORDER ', '')}
                             </option>
                           ))}
                         </select>
@@ -2087,7 +2153,7 @@ function ConciergePage() {
                         width: '22.4px',
                         height: '22.4px',
                         objectFit: 'contain',
-                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
+                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.15px #EB1C24)'
                       }}
                     />
                   </div>
@@ -2124,7 +2190,7 @@ function ConciergePage() {
                         <option value="">SELECT AN ORDER</option>
                         {activeOrders.map((order: any) => (
                           <option key={order.id} value={order.id}>
-                            {order.orderNumber}
+                            {order.orderNumber.replace('ORDER ', '')}
                           </option>
                         ))}
                       </select>
@@ -2235,7 +2301,7 @@ function ConciergePage() {
                                       <p
                                         style={{
                                           fontFamily: '"Futura PT Medium"',
-                                          color: '#909090',
+                                          color: '#000000',
                                           fontSize: '11px',
                                           margin: '-2px 0 4px 0',
                                           textTransform: 'uppercase'
@@ -2248,7 +2314,7 @@ function ConciergePage() {
                                       style={{
                                         fontFamily: '"Futura PT Medium"',
                                         color: '#EB1C24',
-                                        fontSize: '9px',
+                                        fontSize: '10px',
                                         margin: '0',
                                         textTransform: 'uppercase'
                                       }}
@@ -2465,7 +2531,7 @@ function ConciergePage() {
                                       <p
                                         style={{
                                           fontFamily: '"Futura PT Medium"',
-                                          color: '#909090',
+                                          color: '#000000',
                       fontSize: '11px',
                                           margin: '-2px 0 4px 0',
                       textTransform: 'uppercase'
@@ -2478,7 +2544,7 @@ function ConciergePage() {
                                       style={{
                                         fontFamily: '"Futura PT Medium"',
                                         color: '#EB1C24',
-                                        fontSize: '9px',
+                                        fontSize: '10px',
                                         margin: '0',
                                         textTransform: 'uppercase'
                                       }}
@@ -2754,7 +2820,7 @@ function ConciergePage() {
                                         top: '-21px',
                                         width: '2px',
                                         height: '20px',
-                                        backgroundColor: isCompleted ? '#EB1C24' : '#E0E0E0',
+                                        backgroundColor: (isCompleted || index === 8) ? '#EB1C24' : '#E0E0E0',
                                         zIndex: 0
                                       }}
                                     />
@@ -2842,7 +2908,7 @@ function ConciergePage() {
                                           return timestamp ? (
                                             <p
                                               style={{
-                      fontFamily: '"Futura PT Book"',
+                      fontFamily: '"Futura PT Medium"',
                                                 color: '#000000',
                                                 fontSize: '9px',
                                                 margin: '0',
@@ -2858,8 +2924,8 @@ function ConciergePage() {
                                       {(isCurrent || isCompleted) && (
                                         <p
                                           style={{
-                          fontFamily: '"Futura PT Book"',
-                                            color: '#909090',
+                          fontFamily: '"Futura PT Medium"',
+                                            color: '#000000',
                                             fontSize: '9px',
                                             margin: '4px 0 0 0',
                                             textTransform: 'uppercase',
@@ -2868,7 +2934,7 @@ function ConciergePage() {
                                             alignItems: 'flex-start'
                                           }}
                                         >
-                                          <span>{stage.description}</span>
+                                          <span style={{ fontFamily: '"Futura PT Book"', color: '#909090' }}>{stage.description}</span>
                                           {(() => {
                                             const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
                                             const processingTime = selectedOrder?.processingTime || '6-8 WEEKS';
@@ -3401,7 +3467,7 @@ function ConciergePage() {
                                             if (index === 4) {
                                               return (
                                                 <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
-                                                  {renderIconBox('TEXTURE', '/assets/Arrived Plane.svg', 'SILKY', '35px', '55%')}
+                                                  {renderIconBox('PARCEL', '/assets/Arrived Plane.svg', 'RECEIVED', '35px', '55%')}
                                                 </div>
                                               );
                                             }
@@ -3409,7 +3475,7 @@ function ConciergePage() {
                                             if (index === 3) {
                                               return (
                                                 <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
-                                                  {renderIconBox('TEXTURE', '/assets/Shipped Plane.svg', 'SILKY', '26.6px', '55%')}
+                                                  {renderIconBox('PARCEL', '/assets/Shipped Plane.svg', 'SENT', '26.6px', '55%')}
                                                 </div>
                                               );
                                             }
@@ -3446,7 +3512,7 @@ function ConciergePage() {
                                           if (index === 8) {
                                             return (
                                               <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', justifyContent: 'flex-start', marginLeft: '2px' }}>
-                                                {renderIconBox('TEXTURE', '/assets/Shipped Plane.svg', 'SILKY', '26.6px', '55%')}
+                                                {renderIconBox('PARCEL', '/assets/Shipped Plane.svg', 'SENT', '26.6px', '55%')}
                                               </div>
                                             );
                                           }
@@ -3697,8 +3763,8 @@ function ConciergePage() {
                   style={{
                     borderWidth: '1.3px',
                     paddingTop: '20px',
-                    paddingLeft: '20px',
-                    paddingRight: '20px',
+                    paddingLeft: '10px',
+                    paddingRight: '10px',
                     paddingBottom: '7px',
                     backgroundColor: 'rgba(255, 255, 255, 0.6)'
                   }}
@@ -3723,19 +3789,22 @@ function ConciergePage() {
                         width: '13.3px',
                         height: '13.3px',
                         objectFit: 'contain',
-                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
+                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.15px #EB1C24)'
                       }}
                     />
                   </div>
                   
                   <p
                     style={{
-                      fontFamily: '"Futura PT Book"',
+                      fontFamily: '"Futura PT Medium"',
                       color: '#000000',
                       fontSize: '10px',
                       margin: '0 0 16px 0',
                       textAlign: 'center',
-                      textTransform: 'uppercase'
+                      textTransform: 'uppercase',
+                      whiteSpace: 'nowrap',
+                      marginLeft: '-10px',
+                      marginRight: '-10px'
                     }}
                   >
                     choose which gift you'd like to be included in your next order:
@@ -3874,20 +3943,20 @@ function ConciergePage() {
                       BIRTHDAY GIFT
                     </h2>
                     <img
-                      src="/assets/Birthday.svg"
+                      src="/assets/birthday1.svg"
                       alt="Birthday Gift"
                       style={{
                         width: '16px',
                         height: '16px',
                         objectFit: 'contain',
-                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
+                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.15px #EB1C24)'
                       }}
                     />
                   </div>
                   
                   <p
                     style={{
-                      fontFamily: '"Futura PT Book"',
+                      fontFamily: '"Futura PT Medium"',
                       color: '#000000',
                       fontSize: '10px',
                       margin: '0 0 16px 0',
