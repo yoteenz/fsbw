@@ -132,7 +132,6 @@ function ConciergePage() {
   const [selectedOrderId, setSelectedOrderId] = useState<string>('');
   const [activeOrders, setActiveOrders] = useState<any[]>([]);
   const [expandedStages, setExpandedStages] = useState<Set<number>>(new Set());
-  const [currentTime, setCurrentTime] = useState<number>(Date.now());
   
   // Get active orders for tracking
   useEffect(() => {
@@ -630,6 +629,13 @@ function ConciergePage() {
     const order = activeOrders.find((o: any) => o.id === orderId);
     if (!order) return 0;
     
+    // CANCELED orders should NOT progress - stay at their current stage (or stage 0 if never confirmed)
+    if (order.status === 'CANCELED') {
+      // If trackingStage is set, use it (frozen at cancellation point)
+      // Otherwise, stay at stage 0 (confirmed/placed stage)
+      return order.trackingStage !== undefined ? Math.min(Math.max(0, order.trackingStage), 8) : 0;
+    }
+    
     // If order is DELIVERED, all stages are completed (stage 8)
     if (order.status === 'DELIVERED') {
       return 8;
@@ -666,7 +672,7 @@ function ConciergePage() {
   
   const currentTrackingStage = getOrderTrackingStage(selectedOrderId);
   
-  // Auto-expand current tracking stage when order is selected or on page refresh
+  // Auto-expand current tracking stage when order is selected or on page refresh (only initial expansion)
   useEffect(() => {
     if (selectedOrderId && currentTrackingStage !== undefined && currentTrackingStage !== null) {
       const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
@@ -700,27 +706,26 @@ function ConciergePage() {
         setExpandedStages(prev => {
           const newSet = new Set(prev);
           
-          // If current stage is 100% complete, expand the next stage
-          if (currentStageProgress >= 100) {
-            // If there's a next stage, expand it
-            if (currentStageInFiltered >= 0 && currentStageInFiltered < filteredStages.length - 1) {
+          // Only auto-expand if not already expanded (respect user manual collapses)
+          if (!prev.has(currentTrackingStage)) {
+            newSet.add(currentTrackingStage);
+            
+            // If current stage is 100% complete, also expand the next stage (only on initial expansion)
+            if (currentStageProgress >= 100 && currentStageInFiltered >= 0 && currentStageInFiltered < filteredStages.length - 1) {
               const nextStageOriginalIndex = filteredStages[currentStageInFiltered + 1].originalIndex;
               newSet.add(nextStageOriginalIndex);
             }
-            // Don't remove currentTrackingStage - preserve user-expanded completed stages
-          } else {
-            // Current stage is not 100% complete, so ensure it's expanded
-            newSet.add(currentTrackingStage);
-            // Don't remove completed stages - preserve user-expanded stages
           }
           
           return newSet;
         });
       } else {
-        // Fallback: just expand current stage if order not found
+        // Fallback: just expand current stage if order not found (only if not already expanded)
         setExpandedStages(prev => {
           const newSet = new Set(prev);
-          newSet.add(currentTrackingStage);
+          if (!prev.has(currentTrackingStage)) {
+            newSet.add(currentTrackingStage);
+          }
           return newSet;
         });
       }
@@ -745,16 +750,9 @@ function ConciergePage() {
     }
   }, [selectedOrderId, currentTrackingStage, activeOrders.length]);
   
-  // Update current time periodically to trigger progress recalculation
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(Date.now());
-    }, 1000); // Update every second
-    
-    return () => clearInterval(interval);
-  }, []);
+  // Note: Progress calculation uses Date.now() directly, so no need for currentTime state
   
-  // Auto-update expansion based on stage progress (checks when time updates)
+  // Auto-update expansion based on stage progress (only when currentTrackingStage changes, not every second)
   useEffect(() => {
     if (selectedOrderId && currentTrackingStage !== undefined && currentTrackingStage !== null) {
       const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
@@ -784,12 +782,18 @@ function ConciergePage() {
         // Find current stage in filtered array
         const currentStageInFiltered = filteredStages.findIndex(s => s.originalIndex === currentTrackingStage);
         
-        // Update expansion: preserve user-expanded stages, but auto-expand current/next stage
+        // Update expansion: only auto-expand on stage change, respect user manual collapses
         setExpandedStages(prevExpanded => {
           const newSet = new Set(prevExpanded);
           
+          // Only auto-expand current stage if it's not already in the set (initial expansion)
+          // This allows users to manually collapse stages without them immediately reopening
+          if (!prevExpanded.has(currentTrackingStage)) {
+            newSet.add(currentTrackingStage);
+          }
+          
           // Check progress for all stages up to and including current
-          // If any stage is 100% complete, ensure the next stage is expanded
+          // If any stage is 100% complete, ensure the next stage is expanded (but only if not manually collapsed)
           for (let i = 0; i <= currentTrackingStage; i++) {
             // Calculate actual progress for this stage (force calculation)
             const stageProgress = getStageProgress(i, selectedOrder.date, hasCustomization, true);
@@ -797,19 +801,23 @@ function ConciergePage() {
             const stageInFiltered = filteredStages.findIndex(s => s.originalIndex === i);
             
             // If this stage is 100% complete and there's a next stage, expand the next one
+            // But only if it's not already manually collapsed (check if it was in previous set)
             if (stageProgress >= 100 && stageInFiltered >= 0 && stageInFiltered < filteredStages.length - 1) {
               const nextStageOriginalIndex = filteredStages[stageInFiltered + 1].originalIndex;
-              newSet.add(nextStageOriginalIndex);
+              // Only auto-expand if it was already expanded or if it's the immediate next stage after current
+              if (prevExpanded.has(nextStageOriginalIndex) || i === currentTrackingStage) {
+                newSet.add(nextStageOriginalIndex);
+              }
             }
           }
           
-          // ALWAYS ensure current stage is expanded (regardless of progress)
-          newSet.add(currentTrackingStage);
-          
-          // Special case: if current stage is 100% complete, also expand the next stage
+          // Special case: if current stage is 100% complete, also expand the next stage (only on initial expansion)
           if (currentStageProgress >= 100 && currentStageInFiltered >= 0 && currentStageInFiltered < filteredStages.length - 1) {
             const nextStageOriginalIndex = filteredStages[currentStageInFiltered + 1].originalIndex;
-            newSet.add(nextStageOriginalIndex);
+            // Only auto-expand next stage if current stage was just completed (not already in set)
+            if (!prevExpanded.has(currentTrackingStage)) {
+              newSet.add(nextStageOriginalIndex);
+            }
           }
           
           // Don't remove any stages - preserve user-expanded completed stages
@@ -817,7 +825,7 @@ function ConciergePage() {
         });
       }
     }
-  }, [selectedOrderId, currentTrackingStage, activeOrders, currentTime]);
+  }, [selectedOrderId, currentTrackingStage, activeOrders]); // Removed currentTime dependency to prevent constant re-expansion
   
   // Helper function to get stage duration in days
   const getStageDuration = (stageIndex: number, hasCustomization: boolean = true, shippingMethod?: string): number => {
@@ -1978,7 +1986,7 @@ function ConciergePage() {
                         width: '19.76px',
                         height: '19.76px',
                         objectFit: 'contain',
-                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.1px #EB1C24)'
+                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.1px #EB1C24) drop-shadow(0 0 0.2px #EB1C24)'
                       }}
                     />
                   </div>
@@ -2719,8 +2727,10 @@ function ConciergePage() {
                                 const displayIndex = filteredStages.findIndex(s => s.originalIndex === index);
                                 
                                 const isCurrent = displayIndex === adjustedCurrentStage;
-                                const isUpcoming = displayIndex > adjustedCurrentStage;
-                                const isExpanded = expandedStages.has(index);
+                                
+                                // Check if order is canceled or awaiting signature
+                                const isCanceled = selectedOrder?.status === 'CANCELED';
+                                const isAwaitingSignature = selectedOrder?.status === 'PLACED' && !selectedOrder?.orderFormSigned;
                                 
                                 // Check if this is the last stage and order is delivered
                                 const isLastStage = index === 8; // ORDER SHIPPED is the last stage
@@ -2730,7 +2740,33 @@ function ConciergePage() {
                                 // Get stage duration and progress FIRST
                                 const shippingMethod = selectedOrder?.shippingMethod || '';
                                 const stageDuration = getStageDuration(index, hasCustomization, shippingMethod);
-                                let progress = isDeliveredLastStage ? 100 : getStageProgress(index, selectedOrder?.date, hasCustomization, true);
+                                // CANCELED orders should not show progress - freeze at 0% or current progress
+                                let progress = isDeliveredLastStage ? 100 : 
+                                  (selectedOrder?.status === 'CANCELED' ? 0 : getStageProgress(index, selectedOrder?.date, hasCustomization, true));
+                                
+                                // Check if previous stage is complete (100% progress) - needed for upcoming stage logic
+                                let previousStageComplete = false;
+                                if (displayIndex > 0) {
+                                  const previousStageIndex = filteredStages[displayIndex - 1].originalIndex;
+                                  const previousStageProgress = getStageProgress(previousStageIndex, selectedOrder?.date, hasCustomization, true);
+                                  previousStageComplete = previousStageProgress >= 100;
+                                }
+                                
+                                // Upcoming stages should ONLY show if:
+                                // 1. Not canceled
+                                // 2. Not awaiting signature
+                                // 3. Previous stage is complete (100%)
+                                const isUpcoming = displayIndex > adjustedCurrentStage && 
+                                  !isCanceled && 
+                                  !isAwaitingSignature && 
+                                  (displayIndex === 0 || previousStageComplete);
+                                
+                                // Don't render upcoming stages if they shouldn't be shown
+                                if (displayIndex > adjustedCurrentStage && (!previousStageComplete || isCanceled || isAwaitingSignature) && displayIndex > 0) {
+                                  return null;
+                                }
+                                
+                                const isExpanded = expandedStages.has(index);
                                 
                                 // Determine if stage is completed:
                                 // 1. If it's before the current stage (already passed)
@@ -2863,14 +2899,7 @@ function ConciergePage() {
                                   durationText = stageDuration === 0 ? 'SAME DAY' : stageDuration === 1 ? '1 DAY' : stageDuration === 28 ? '4 WEEKS' : `${stageDuration} DAYS`;
                                 }
                                 
-                                // Check if previous stage is 100% complete to make next stage expandable
-                                let previousStageComplete = false;
-                                if (displayIndex > 0) {
-                                  const previousStageIndex = filteredStages[displayIndex - 1].originalIndex;
-                                  // Calculate actual progress for previous stage (force calculation)
-                                  const previousStageProgress = getStageProgress(previousStageIndex, selectedOrder?.date, hasCustomization, true);
-                                  previousStageComplete = previousStageProgress >= 100;
-                                }
+                                // previousStageComplete is already calculated above, reuse it here
                                 
                                 // Allow expansion for completed, current, or next stage when previous is 100% complete
                                 const isExpandable = isCompleted || isCurrent || isDeliveredLastStage || previousStageComplete;

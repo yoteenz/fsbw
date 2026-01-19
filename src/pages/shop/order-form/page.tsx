@@ -690,7 +690,7 @@ function OrderFormPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/products')}
+                    onClick={() => navigate('/home/shop')}
                   >
                     SHOP &gt;
                   </span>{' '}
@@ -1322,7 +1322,7 @@ function OrderFormPage() {
                           display: 'block'
                         }}
                       >
-                        <span style={{ color: '#EB1C24' }}>PHOTO ID</span> (CARDHOLDER) NAME/ADDRESS SHOULD MATCH ORDER DETAILS. YOU MAY CENSOR OTHER INFO.<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                        <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>PHOTO ID</span> (CARDHOLDER) NAME/ADDRESS SHOULD MATCH ORDER DETAILS. YOU MAY CENSOR OTHER INFO.<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
                       </label>
                       <div style={{ position: 'relative' }}>
                         <input
@@ -1411,7 +1411,7 @@ function OrderFormPage() {
                           display: 'block'
                         }}
                       >
-                        <span style={{ color: '#EB1C24' }}>LAST 4 DIGITS</span> (CARDHOLDER) PHOTO IDENTIFICATION SHOWING FULL NAME AND LAST 4 DIGITS OF CARD. YOU MAY CENSOR OTHER DIGITS. DISREGARD THIS BOX IF USING A PAYMENT PLAN.
+                        <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>LAST 4 DIGITS</span> (CARDHOLDER) PHOTO IDENTIFICATION SHOWING FULL NAME AND LAST 4 DIGITS OF CARD. YOU MAY CENSOR OTHER DIGITS. DISREGARD THIS BOX IF USING A PAYMENT PLAN.
                       </label>
                       <div style={{ position: 'relative' }}>
                         <input
