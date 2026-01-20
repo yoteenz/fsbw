@@ -1333,8 +1333,7 @@ function AccountPage() {
               ) : (
                 <>
                   <span 
-                    style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/build-a-wig')}
+                    style={{ fontFamily: '"Futura PT Book"', fontWeight: '400' }}
                   >
                     ACCOUNT &gt;
                   </span>{' '}

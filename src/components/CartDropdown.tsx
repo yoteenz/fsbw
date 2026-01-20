@@ -555,7 +555,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
       'BANGS': 40,
       'CRIMPS': 80,
       'FLAT IRON': 80,
-      'LAYERS': 100
+      'LAYERS': 120
     };
     
     // Handle multiple styling selections

@@ -490,7 +490,7 @@ export default function BuildAWigPage() {
       'BANGS': 40,
         'CRIMPS': 80,
         'FLAT IRON': 80,
-        'LAYERS': 100
+        'LAYERS': 120
       };
       
       if (hasBangs && otherStyling) {
@@ -4734,7 +4734,7 @@ export default function BuildAWigPage() {
                     color: mobileMenuActiveTab === 'SHOP' ? '#EB1C24' : 'black',
                     fontWeight: '500',
                     textTransform: 'uppercase',
-                    borderBottom: mobileMenuActiveTab === 'SHOP' ? '2px solid #EB1C24' : 'none',
+                    borderBottom: mobileMenuActiveTab === 'SHOP' ? '1px solid #EB1C24' : 'none',
                     borderTop: 'none',
                     borderLeft: 'none',
                     borderRight: 'none',
@@ -4753,7 +4753,7 @@ export default function BuildAWigPage() {
                     color: mobileMenuActiveTab === 'TOOLS' ? '#EB1C24' : 'black',
                     fontWeight: '500',
                     textTransform: 'uppercase',
-                    borderBottom: mobileMenuActiveTab === 'TOOLS' ? '2px solid #EB1C24' : 'none',
+                    borderBottom: mobileMenuActiveTab === 'TOOLS' ? '1px solid #EB1C24' : 'none',
                     borderTop: 'none',
                     borderLeft: 'none',
                     borderRight: 'none',
@@ -4772,7 +4772,7 @@ export default function BuildAWigPage() {
                     color: mobileMenuActiveTab === 'BRAND' ? '#EB1C24' : 'black',
                     fontWeight: '500',
                     textTransform: 'uppercase',
-                    borderBottom: mobileMenuActiveTab === 'BRAND' ? '2px solid #EB1C24' : 'none',
+                    borderBottom: mobileMenuActiveTab === 'BRAND' ? '1px solid #EB1C24' : 'none',
                     borderTop: 'none',
                     borderLeft: 'none',
                     borderRight: 'none',

@@ -1807,7 +1807,40 @@ function OrdersPage() {
                            ) : order.status === 'PREPARING' ? (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2' }}>
                                <span style={{ color: '#000000' }}>CLICK </span>
-                               <span style={{ color: '#EB1C24' }}>HERE</span>
+                               <span 
+                                 style={{ color: '#EB1C24', cursor: 'pointer' }}
+                                 onClick={() => {
+                                   // Check if user is premium member
+                                   try {
+                                     const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
+                                     if (isSignedIn) {
+                                       const currentUser = localStorage.getItem('currentUser');
+                                       if (currentUser) {
+                                         const user = JSON.parse(currentUser);
+                                         const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
+                                         if (isPremium) {
+                                           // Premium members: navigate to concierge page with order ID
+                                           navigate(`/account/concierge?orderId=${order.id}`);
+                                         } else {
+                                           // Standard members: expand order on orders page
+                                           setExpandedOrderId(order.id === expandedOrderId ? null : order.id);
+                                         }
+                                       } else {
+                                         // Default to expanding order if user data not found
+                                         setExpandedOrderId(order.id === expandedOrderId ? null : order.id);
+                                       }
+                                     } else {
+                                       // Not signed in: expand order
+                                       setExpandedOrderId(order.id === expandedOrderId ? null : order.id);
+                                     }
+                                   } catch (e) {
+                                     // On error, default to expanding order
+                                     setExpandedOrderId(order.id === expandedOrderId ? null : order.id);
+                                   }
+                                 }}
+                               >
+                                 HERE
+                               </span>
                                <span style={{ color: '#000000' }}> TO TRACK ORDER STATUS</span>
                              </p>
                            ) : order.status !== 'PLACED' && order.status !== 'CANCELED' ? (
@@ -2277,7 +2310,40 @@ function OrdersPage() {
                            ) : order.status === 'PREPARING' ? (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2' }}>
                                <span style={{ color: '#000000' }}>CLICK </span>
-                               <span style={{ color: '#EB1C24' }}>HERE</span>
+                               <span 
+                                 style={{ color: '#EB1C24', cursor: 'pointer' }}
+                                 onClick={() => {
+                                   // Check if user is premium member
+                                   try {
+                                     const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
+                                     if (isSignedIn) {
+                                       const currentUser = localStorage.getItem('currentUser');
+                                       if (currentUser) {
+                                         const user = JSON.parse(currentUser);
+                                         const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
+                                         if (isPremium) {
+                                           // Premium members: navigate to concierge page with order ID
+                                           navigate(`/account/concierge?orderId=${order.id}`);
+                                         } else {
+                                           // Standard members: expand order on orders page
+                                           setExpandedOrderId(order.id === expandedOrderId ? null : order.id);
+                                         }
+                                       } else {
+                                         // Default to expanding order if user data not found
+                                         setExpandedOrderId(order.id === expandedOrderId ? null : order.id);
+                                       }
+                                     } else {
+                                       // Not signed in: expand order
+                                       setExpandedOrderId(order.id === expandedOrderId ? null : order.id);
+                                     }
+                                   } catch (e) {
+                                     // On error, default to expanding order
+                                     setExpandedOrderId(order.id === expandedOrderId ? null : order.id);
+                                   }
+                                 }}
+                               >
+                                 HERE
+                               </span>
                                <span style={{ color: '#000000' }}> TO TRACK ORDER STATUS</span>
                              </p>
                            ) : order.status !== 'PLACED' && order.status !== 'CANCELED' ? (

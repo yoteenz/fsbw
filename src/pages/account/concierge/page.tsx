@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 
@@ -17,6 +17,7 @@ const pulsateStyle = `
 
 function ConciergePage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [cartCount, setCartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
@@ -587,8 +588,22 @@ function ConciergePage() {
           };
           localStorage.setItem(userOrdersKey, JSON.stringify(updatedOrders));
           
-          // Auto-select order 999 (completed) if it exists and user is Kateena admin, otherwise first active order
-          if (!selectedOrderId) {
+          // Check if orderId is in URL query params (from orders page click)
+          const urlParams = new URLSearchParams(location.search);
+          const orderIdFromUrl = urlParams.get('orderId');
+          
+          if (orderIdFromUrl) {
+            // Check if the order exists in active or past orders
+            const orderFromUrl = active.find((o: any) => o.id === orderIdFromUrl) || past.find((o: any) => o.id === orderIdFromUrl);
+            if (orderFromUrl) {
+              // If order is in past orders, add it to active temporarily for display
+              if (past.find((o: any) => o.id === orderIdFromUrl)) {
+                active.push(orderFromUrl);
+              }
+              setSelectedOrderId(orderIdFromUrl);
+            }
+          } else if (!selectedOrderId) {
+            // Auto-select order 999 (completed) if it exists and user is Kateena admin, otherwise first active order
             // Only auto-load order 999 for Kateena admin account (for mock order testing)
             if (isKateenaArmstrong()) {
               // First, try to find order 999 in past orders (delivered/completed)
@@ -621,7 +636,7 @@ function ConciergePage() {
     
     getActiveOrders();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [location.search]);
   
   // Get current order's tracking stage
   const getOrderTrackingStage = (orderId: string): number => {
@@ -2729,8 +2744,37 @@ function ConciergePage() {
                                 const isCurrent = displayIndex === adjustedCurrentStage;
                                 
                                 // Check if order is canceled or awaiting signature
-                                const isCanceled = selectedOrder?.status === 'CANCELED';
-                                const isAwaitingSignature = selectedOrder?.status === 'PLACED' && !selectedOrder?.orderFormSigned;
+                                // An order is considered canceled if:
+                                // 1. Status is explicitly 'CANCELED', OR
+                                // 2. Status is 'PLACED' with form not signed AND past 24 hours
+                                let isCanceled = selectedOrder?.status === 'CANCELED';
+                                if (!isCanceled && selectedOrder?.status === 'PLACED' && !selectedOrder?.orderFormSigned) {
+                                  // Check if 24 hours have passed since order was placed
+                                  const placedAt = selectedOrder?.placedAt;
+                                  if (placedAt) {
+                                    const timeSincePlaced = Date.now() - placedAt;
+                                    const hoursSincePlaced = timeSincePlaced / (1000 * 60 * 60);
+                                    isCanceled = hoursSincePlaced > 24;
+                                  } else if (selectedOrder?.date) {
+                                    // Fallback: use order date if placedAt not available
+                                    try {
+                                      const orderDate = selectedOrder.date;
+                                      let orderDateObj: Date;
+                                      if (orderDate.includes('-')) {
+                                        const [month, day, year] = orderDate.split('-').map(Number);
+                                        orderDateObj = new Date(year, month - 1, day);
+                                      } else {
+                                        orderDateObj = new Date(orderDate);
+                                      }
+                                      const timeSincePlaced = Date.now() - orderDateObj.getTime();
+                                      const hoursSincePlaced = timeSincePlaced / (1000 * 60 * 60);
+                                      isCanceled = hoursSincePlaced > 24;
+                                    } catch (e) {
+                                      isCanceled = false;
+                                    }
+                                  }
+                                }
+                                const isAwaitingSignature = selectedOrder?.status === 'PLACED' && !selectedOrder?.orderFormSigned && !isCanceled;
                                 
                                 // Check if this is the last stage and order is delivered
                                 const isLastStage = index === 8; // ORDER SHIPPED is the last stage
@@ -2742,7 +2786,7 @@ function ConciergePage() {
                                 const stageDuration = getStageDuration(index, hasCustomization, shippingMethod);
                                 // CANCELED orders should not show progress - freeze at 0% or current progress
                                 let progress = isDeliveredLastStage ? 100 : 
-                                  (selectedOrder?.status === 'CANCELED' ? 0 : getStageProgress(index, selectedOrder?.date, hasCustomization, true));
+                                  (isCanceled ? 0 : getStageProgress(index, selectedOrder?.date, hasCustomization, true));
                                 
                                 // Check if previous stage is complete (100% progress) - needed for upcoming stage logic
                                 let previousStageComplete = false;
@@ -2772,11 +2816,18 @@ function ConciergePage() {
                                 // 1. If it's before the current stage (already passed)
                                 // 2. If progress is 100% AND it's not the current stage
                                 // 3. Special case: confirmed stage (index 0) is completed if form is signed
+                                // 4. CRITICAL: If order is CANCELED, all stages should show red checkmark (completed)
                                 // IMPORTANT: Current stage should NEVER be marked as completed (it should show beeping dot)
+                                // EXCEPTION: Cancelled orders should show red checkmark on all stages
                                 let isCompleted = false;
                                 
-                                // NEVER mark current stage as completed - it should always show beeping dot
-                                if (!isCurrent) {
+                                // CRITICAL: If order is cancelled, mark all stages as completed to show red checkmark
+                                if (isCanceled) {
+                                  isCompleted = true;
+                                } else if (!isCurrent) {
+                                  // NEVER mark current stage as completed - it should always show beeping dot
+                                  // (unless order is cancelled, handled above)
+                                  
                                   // Check if stage is before current stage
                                   if (displayIndex < adjustedCurrentStage) {
                                     isCompleted = true;
@@ -2963,7 +3014,7 @@ function ConciergePage() {
                                           alt="Completed"
                                           style={{ width: '10.5px', height: '10.5px' }}
                                         />
-                                      ) : (isCurrent && !isCompleted) ? (
+                                      ) : (isCurrent && !isCompleted && !isCanceled) ? (
                                         <span 
                                           style={{ 
                                             color: '#EB1C24', 
