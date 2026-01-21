@@ -1818,7 +1818,7 @@ function ConciergePage() {
                         </div>
                       ))
                     ) : mobileMenuActiveTab === 'BRAND' ? (
-                      ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
+                      ['ABOUT US', 'CONTACT', 'CARE + STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
                         <div key={index} className="flex items-center justify-between">
                           <span style={{ 
                             fontFamily: '"Futura PT Book"',
@@ -3696,7 +3696,7 @@ function ConciergePage() {
                       width: '100%',
                                                 height: '7px',
                                                 backgroundColor: '#E0E0E0',
-                                                borderRadius: '0',
+                                                borderRadius: progress > 0 ? '4px' : '0',
                                                 overflow: 'hidden',
                                                 position: 'relative',
                                                 border: progress === 0 ? '1px solid #909090' : 'none'

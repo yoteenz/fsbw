@@ -50,6 +50,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   useEffect(() => {
     if (!isOpen) {
       setViewingDetailsFor(null);
+      // Close currency modal when cart closes
+      setShowCurrencyModal(false);
     }
   }, [isOpen]);
   
