@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRONTAL SLAYER - Brand Infographic</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Space Grotesk', sans-serif;
+            background: #ffffff;
+            color: #000000;
+            line-height: 1.6;
+        }
+        
+        .infographic-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        /* Header Section */
+        .header-section {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: #ffffff;
+            padding: 80px 60px;
+            text-align: center;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(235, 28, 36, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .brand-title {
+            font-size: 96px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 12px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, #EB1C24 0%, #ffffff 50%, #EB1C24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .tagline {
+            font-size: 32px;
+            font-weight: 300;
+            letter-spacing: 4px;
+            color: #cccccc;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .stat-item {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            border: 3px solid #EB1C24;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(235, 28, 36, 0.2);
+        }
+        
+        .stat-number {
+            font-size: 56px;
+            font-weight: 900;
+            color: #EB1C24;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #333;
+        }
+        
+        /* Section Styles */
+        .section {
+            margin: 60px 0;
+            padding: 50px;
+            border-radius: 20px;
+            position: relative;
+        }
+        
+        .section-title {
+            font-size: 48px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            color: #000000;
+            text-align: center;
+            position: relative;
+            padding-bottom: 20px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 5px;
+            background: #EB1C24;
+        }
+        
+        /* Products Grid */
+        .products-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border: 4px solid #EB1C24;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .product-card {
+            background: #ffffff;
+            border: 3px solid #000000;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: #EB1C24;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-name {
+            font-size: 32px;
+            font-weight: 800;
+            color: #EB1C24;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        
+        .product-price {
+            font-size: 36px;
+            font-weight: 900;
+            color: #000000;
+            margin-bottom: 15px;
+        }
+        
+        .product-details {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Features Section */
+        .features-section {
+            background: #000000;
+            color: #ffffff;
+        }
+        
+        .features-section .section-title {
+            color: #ffffff;
+        }
+        
+        .features-section .section-title::after {
+            background: #EB1C24;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .feature-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #EB1C24;
+            border-radius: 15px;
+            padding: 35px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .feature-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #EB1C24;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        
+        .feature-desc {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #cccccc;
+        }
+        
+        /* Membership Tiers */
+        .membership-section {
+            background: linear-gradient(135deg, #EB1C24 0%, #c4161f 100%);
+            color: #ffffff;
+        }
+        
+        .membership-section .section-title {
+            color: #ffffff;
+        }
+        
+        .membership-section .section-title::after {
+            background: #ffffff;
+        }
+        
+        .tiers-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 40px;
+        }
+        
+        .tier-card {
+            background: #ffffff;
+            color: #000000;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            border: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .tier-card:hover {
+            transform: scale(1.05);
+            border-color: #000000;
+        }
+        
+        .tier-name {
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        
+        .tier-silver .tier-name { color: #C0C0C0; }
+        .tier-red .tier-name { color: #EB1C24; }
+        .tier-black .tier-name { color: #000000; }
+        
+        .tier-info {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        /* Technology Stack */
+        .tech-section {
+            background: #f8f9fa;
+            border: 4px solid #000000;
+        }
+        
+        .tech-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+        
+        .tech-badge {
+            background: #000000;
+            color: #ffffff;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 2px solid #EB1C24;
+        }
+        
+        /* Process Flow */
+        .process-section {
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+            color: #ffffff;
+        }
+        
+        .process-section .section-title {
+            color: #ffffff;
+        }
+        
+        .process-section .section-title::after {
+            background: #EB1C24;
+        }
+        
+        .process-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 50px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .process-step {
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: #EB1C24;
+            color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 900;
+            margin: 0 auto 15px;
+            border: 4px solid #ffffff;
+        }
+        
+        .step-label {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #cccccc;
+        }
+        
+        .process-arrow {
+            font-size: 32px;
+            color: #EB1C24;
+            margin: 0 10px;
+        }
+        
+        /* Highlight Box */
+        .highlight-box {
+            background: #EB1C24;
+            color: #ffffff;
+            padding: 50px;
+            border-radius: 20px;
+            margin: 40px 0;
+            text-align: center;
+        }
+        
+        .highlight-title {
+            font-size: 36px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        
+        .highlight-text {
+            font-size: 20px;
+            line-height: 1.8;
+        }
+        
+        /* Status Section */
+        .status-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 4px solid #EB1C24;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-top: 40px;
+        }
+        
+        .status-item {
+            background: #ffffff;
+            border: 3px solid #000000;
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .status-check {
+            font-size: 36px;
+            color: #28a745;
+            font-weight: 900;
+        }
+        
+        .status-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000000;
+            text-transform: uppercase;
+        }
+        
+        /* Contact Section */
+        .contact-section {
+            background: #000000;
+            color: #ffffff;
+            text-align: center;
+        }
+        
+        .contact-section .section-title {
+            color: #ffffff;
+        }
+        
+        .contact-section .section-title::after {
+            background: #EB1C24;
+        }
+        
+        .contact-email {
+            font-size: 32px;
+            color: #EB1C24;
+            font-weight: 700;
+            margin: 30px 0;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .contact-email:hover {
+            text-decoration: underline;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .tiers-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            @media (max-width: 768px) {
+                .tiers-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .brand-title {
+                font-size: 48px;
+            }
+            
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .products-grid,
+            .features-grid,
+            .status-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tiers-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .process-steps {
+                flex-direction: column;
+            }
+            
+            .process-arrow {
+                transform: rotate(90deg);
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="infographic-container">
+        <!-- Header -->
+        <div class="header-section">
+            <div class="brand-title">FRONTAL SLAYER</div>
+            <div class="tagline">LUXURY BESPOKE HAIR EXTENSIONS</div>
+        </div>
+        
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-number">6</div>
+                <div class="stat-label">Product Lines</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Custom Made</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">49+</div>
+                <div class="stat-label">Platform Pages</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Customizations</div>
+            </div>
+        </div>
+        
+        <!-- Products Section -->
+        <div class="section products-section">
+            <h2 class="section-title">PRODUCT PORTFOLIO</h2>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-name">NOIR</div>
+                    <div class="product-price">$740</div>
+                    <div class="product-details">
+                        STRAIGHT / SILKY<br>
+                        Cambodian Hair<br>
+                        24" Length
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-name">BLANCO</div>
+                    <div class="product-price">$820</div>
+                    <div class="product-details">
+                        STRAIGHT / SILKY<br>
+                        Russian Hair<br>
+                        24" Length
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-name">SOFT WAVE</div>
+                    <div class="product-price">$760</div>
+                    <div class="product-details">
+                        WAVY TEXTURE<br>
+                        Indian Hair<br>
+                        24" Length
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-name">BEACH WAVE</div>
+                    <div class="product-price">$760</div>
+                    <div class="product-details">
+                        WAVY TEXTURE<br>
+                        Indonesian Hair<br>
+                        24" Length
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-name">SOFT CURL</div>
+                    <div class="product-price">$780</div>
+                    <div class="product-details">
+                        CURLY TEXTURE<br>
+                        Vietnamese Hair<br>
+                        24" Length
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-name">OCEAN CURL</div>
+                    <div class="product-price">$780</div>
+                    <div class="product-details">
+                        CURLY TEXTURE<br>
+                        Filipino Hair<br>
+                        24" Length
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Features Section -->
+        <div class="section features-section">
+            <h2 class="section-title">CORE PLATFORM FEATURES</h2>
+            <div class="features-grid">
+                <div class="feature-box">
+                    <span class="feature-icon">🎨</span>
+                    <div class="feature-title">Build-A-Wig Customizer</div>
+                    <div class="feature-desc">
+                        Advanced interactive tool for complete wig customization. Configure cap size, length, density, lace, texture, color, hairline, styling, and add-ons with real-time pricing.
+                    </div>
+                </div>
+                <div class="feature-box">
+                    <span class="feature-icon">👑</span>
+                    <div class="feature-title">Membership Tiers</div>
+                    <div class="feature-desc">
+                        Three-tier loyalty system (SILVER $500+, RED $2,000+, BLACK $4,000+) plus PREMIUM subscription. Unlock exclusive benefits and priority services based on spending thresholds.
+                    </div>
+                </div>
+                <div class="feature-box">
+                    <span class="feature-icon">⭐</span>
+                    <div class="feature-title">Loyalty Points System</div>
+                    <div class="feature-desc">
+                        Earn points on every purchase. Track tier progression and unlock exclusive member benefits. Points can be redeemed for discounts and rewards.
+                    </div>
+                </div>
+                <div class="feature-box">
+                    <span class="feature-icon">📸</span>
+                    <div class="feature-title">Affiliate Program</div>
+                    <div class="feature-desc">
+                        Submit photos, videos, and social media content to earn up to 5,000 loyalty points per order. Content submission system with approval workflow.
+                    </div>
+                </div>
+                <div class="feature-box">
+                    <span class="feature-icon">🎯</span>
+                    <div class="feature-title">Concierge Service</div>
+                    <div class="feature-desc">
+                        Exclusive priority messaging and order tracking for PREMIUM members and BLACK tier customers. Direct communication with urgent request handling.
+                    </div>
+                </div>
+                <div class="feature-box">
+                    <span class="feature-icon">📦</span>
+                    <div class="feature-title">Order Tracking</div>
+                    <div class="feature-desc">
+                        8-stage tracking system: Confirmation → Sourcing → Constructing → Shipped to Hub → Arrived at Hub → Prep → Customize → Finalize → Shipped.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Membership Tiers -->
+        <div class="section membership-section">
+            <h2 class="section-title">MEMBERSHIP TIERS</h2>
+            <div class="tiers-grid">
+                <div class="tier-card tier-silver">
+                    <div class="tier-name">SILVER</div>
+                    <div class="tier-info">
+                        $500+ Spending<br>
+                        Entry Level<br>
+                        Standard Benefits
+                    </div>
+                </div>
+                <div class="tier-card tier-red">
+                    <div class="tier-name">RED</div>
+                    <div class="tier-info">
+                        $2,000+ Spending<br>
+                        Premium Benefits<br>
+                        Enhanced Access
+                    </div>
+                </div>
+                <div class="tier-card tier-black">
+                    <div class="tier-name">BLACK</div>
+                    <div class="tier-info">
+                        $4,000+ Spending<br>
+                        Exclusive Tier<br>
+                        Concierge Access
+                    </div>
+                </div>
+            </div>
+            <div class="highlight-box" style="margin-top: 40px; background: rgba(255,255,255,0.2); border: 3px solid #ffffff;">
+                <div class="highlight-title">PREMIUM SUBSCRIPTION</div>
+                <div class="highlight-text">
+                    Monthly subscription membership with exclusive access to concierge services, priority support, and premium features including the exclusive LOBBY experience.
+                </div>
+            </div>
+        </div>
+        
+        <!-- Technology Stack -->
+        <div class="section tech-section">
+            <h2 class="section-title">TECHNOLOGY STACK</h2>
+            <div class="tech-badges">
+                <div class="tech-badge">React 19</div>
+                <div class="tech-badge">TypeScript</div>
+                <div class="tech-badge">Vite</div>
+                <div class="tech-badge">React Router</div>
+                <div class="tech-badge">Tailwind CSS</div>
+                <div class="tech-badge">SPA Architecture</div>
+                <div class="tech-badge">Responsive Design</div>
+                <div class="tech-badge">Modern Stack</div>
+            </div>
+        </div>
+        
+        <!-- Order Process Flow -->
+        <div class="section process-section">
+            <h2 class="section-title">ORDER PROCESS FLOW</h2>
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Confirm</div>
+                </div>
+                <div class="process-arrow">→</div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Source</div>
+                </div>
+                <div class="process-arrow">→</div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Construct</div>
+                </div>
+                <div class="process-arrow">→</div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Hub</div>
+                </div>
+                <div class="process-arrow">→</div>
+                <div class="process-step">
+                    <div class="step-number">5</div>
+                    <div class="step-label">Prep</div>
+                </div>
+                <div class="process-arrow">→</div>
+                <div class="process-step">
+                    <div class="step-number">6</div>
+                    <div class="step-label">Customize</div>
+                </div>
+                <div class="process-arrow">→</div>
+                <div class="process-step">
+                    <div class="step-number">7</div>
+                    <div class="step-label">Finalize</div>
+                </div>
+                <div class="process-arrow">→</div>
+                <div class="process-step">
+                    <div class="step-number">8</div>
+                    <div class="step-label">Shipped</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Platform Status -->
+        <div class="section status-section">
+            <h2 class="section-title">PLATFORM STATUS</h2>
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="status-check">✓</div>
+                    <div class="status-text">Complete E-Commerce Platform</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-check">✓</div>
+                    <div class="status-text">6 Product Lines Live</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-check">✓</div>
+                    <div class="status-text">Build-A-Wig Customizer Active</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-check">✓</div>
+                    <div class="status-text">Membership System Operational</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-check">✓</div>
+                    <div class="status-text">Affiliate Program Live</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-check">✓</div>
+                    <div class="status-text">Concierge Service Active</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-check">✓</div>
+                    <div class="status-text">Order Tracking System</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-check">✓</div>
+                    <div class="status-text">Admin Dashboard Complete</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-check">✓</div>
+                    <div class="status-text">Gift Card System</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-check">✓</div>
+                    <div class="status-text">Account Management</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-check">✓</div>
+                    <div class="status-text">Shopping Cart & Checkout</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-check">✓</div>
+                    <div class="status-text">Fully Responsive Design</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contact Section -->
+        <div class="section contact-section">
+            <h2 class="section-title">CONTACT INFORMATION</h2>
+            <div class="highlight-box" style="background: rgba(235, 28, 36, 0.2); border: 3px solid #EB1C24;">
+                <div class="highlight-title">GET IN TOUCH</div>
+                <a href="mailto:contact@frontalslayer.com" class="contact-email">CONTACT@FRONTALSLAYER.COM</a>
+                <div class="highlight-text">
+                    All inquiries receive responses within 72 hours
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="header-section" style="margin-top: 60px; padding: 60px;">
+            <div class="brand-title" style="font-size: 64px;">FRONTAL SLAYER</div>
+            <div class="tagline" style="font-size: 24px; margin-top: 20px;">
+                LUXURY • BESPOKE • EXCLUSIVE
+            </div>
+        </div>
+    </div>
+</body>
+</html>

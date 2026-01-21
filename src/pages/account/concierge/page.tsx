@@ -3548,13 +3548,44 @@ function ConciergePage() {
                                                             className={`border relative text-center border-black bg-white ${isClickable ? 'cursor-pointer hover:bg-gray-50' : ''}`}
                                                             style={baseStyle}
                                                             onClick={isClickable ? () => {
-                                                              navigate('/shop/order-form', {
-                                                                state: {
-                                                                  orderNumber: selectedOrder?.orderNumber,
+                                                              // Get customer info from current user if signed in
+                                                              let customerData: any = {};
+                                                              // Strip "ORDER " prefix from order number if present
+                                                              const orderNumber = selectedOrder?.orderNumber?.replace(/^ORDER\s+/i, '') || '';
+                                                              
+                                                              // Get current user data
+                                                              try {
+                                                                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                                                                if (currentUser && Object.keys(currentUser).length > 0) {
+                                                                  customerData = {
+                                                                    orderNumber: orderNumber,
+                                                                    orderDate: selectedOrder?.date,
+                                                                    orderId: selectedOrder?.id,
+                                                                    firstName: currentUser.firstName || '',
+                                                                    lastName: currentUser.lastName || '',
+                                                                    email: currentUser.email || '',
+                                                                    shippingAddress: currentUser.defaultAddress?.address || currentUser.shippingAddress?.address || '',
+                                                                    city: currentUser.defaultAddress?.city || currentUser.shippingAddress?.city || '',
+                                                                    state: currentUser.defaultAddress?.state || currentUser.shippingAddress?.state || '',
+                                                                    zip: currentUser.defaultAddress?.zip || currentUser.shippingAddress?.zip || '',
+                                                                    country: currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES'
+                                                                  };
+                                                                } else {
+                                                                  customerData = {
+                                                                    orderNumber: orderNumber,
+                                                                    orderDate: selectedOrder?.date,
+                                                                    orderId: selectedOrder?.id
+                                                                  };
+                                                                }
+                                                              } catch (e) {
+                                                                customerData = {
+                                                                  orderNumber: orderNumber,
                                                                   orderDate: selectedOrder?.date,
                                                                   orderId: selectedOrder?.id
-                                                                }
-                                                              });
+                                                                };
+                                                              }
+                                                              
+                                                              navigate('/shop/order-form', { state: customerData });
                                                             } : undefined}
                                                           >
                                                           <p
