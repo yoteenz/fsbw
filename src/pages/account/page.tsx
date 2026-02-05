@@ -507,8 +507,7 @@ function AccountPage() {
     );
 
     if (isKristinWatson || isKateenaArmstrong) {
-      // For mock users, you can set a mock spending amount
-      // For now, return null to show "MEMBER" text
+      // For mock users, return null to show "MEMBER" text
       return null;
     }
 
@@ -537,7 +536,8 @@ function AccountPage() {
         }
       } catch (e) {
         console.error('Error calculating tier:', e);
-        // If calculation fails, return Silver if they've unlocked it, otherwise null
+        // If calculation fails, return null (base state - shows "MEMBER")
+        // Only return SILVER if they've previously unlocked it
         return highestTierEver === 'SILVER' ? 'SILVER' : null;
       }
     }
@@ -557,12 +557,16 @@ function AccountPage() {
       currentTier = 'SILVER';
     }
 
+    // SILVER is the base tier - everyone gets it on signup
+    // But benefits only unlock when spending thresholds are met
+    
     // Tier retention logic:
-    // - Silver: Once unlocked, always stays at least Silver
-    // - Red: Can drop to Silver if current period < $2k
-    // - Black: Can drop to Red (if current >= $2k) or Silver (if current < $2k)
+    // - No tier (null): Base state until $500 spending - shows "MEMBER"
+    // - Silver: Unlocks at $500+ spending
+    // - Red: Unlocks at $2k+, can drop to Silver if current period < $2k
+    // - Black: Unlocks at $4k+, can drop to Red (if current >= $2k) or Silver (if current < $2k)
     if (highestTierEver === 'SILVER') {
-      // Once Silver is unlocked, always at least Silver
+      // Once Silver is unlocked, always at least Silver tier
       return currentTier || 'SILVER';
     } else if (highestTierEver === 'RED') {
       // Red can drop to Silver if current period doesn't meet $2k
@@ -577,8 +581,53 @@ function AccountPage() {
       }
     }
 
-    // No tier unlocked yet - need to meet current period threshold
+    // No tier unlocked yet - return null to show "BASIC/PREMIUM REWARDS MEMBER"
+    // Only becomes SILVER tier once they reach $500 spending threshold
     return currentTier;
+  };
+
+  // Helper function to check if tier benefits are active (spending threshold met)
+  // Note: This checks if spending meets the threshold for a given tier
+  // Returns true only if spending threshold is met for that tier
+  const hasTierBenefits = (tier: string | null): boolean => {
+    if (!tier || !userData?.email) return false;
+    
+    const period = getCurrentPeriod();
+    let totalSpending = 0;
+    
+    try {
+      const userOrdersKey = `userOrders_${userData.email}`;
+      const storedOrders = localStorage.getItem(userOrdersKey);
+      if (storedOrders) {
+        const orders = JSON.parse(storedOrders);
+        const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
+        
+        // Calculate spending in current period
+        allOrders.forEach((order: any) => {
+          if (order.date) {
+            const [month, day, year] = order.date.split('-').map(Number);
+            const orderDate = new Date(year, month - 1, day);
+            if (orderDate >= period.start && orderDate <= period.end) {
+              totalSpending += order.total || 0;
+            }
+          }
+        });
+      }
+    } catch (e) {
+      console.error('Error calculating spending for benefits:', e);
+      return false;
+    }
+    
+    // Check if spending meets threshold for tier benefits
+    if (tier === 'BLACK') {
+      return totalSpending >= 4000;
+    } else if (tier === 'RED') {
+      return totalSpending >= 2000;
+    } else if (tier === 'SILVER') {
+      return totalSpending >= 500;
+    }
+    
+    return false;
   };
 
   // Helper functions to check for notifications on each card

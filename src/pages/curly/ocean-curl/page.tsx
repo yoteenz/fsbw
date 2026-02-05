@@ -497,35 +497,35 @@ function OceanCurlSelection() {
     setShowChartModal(false);
   };
 
-  // Mannequin images for soft curl product (2D view)
+  // Mannequin images for ocean curl product (2D view)
   const mannequinImages = [
-    '/assets/2D CURLY FRONT.png',  // View 1 (default)
-    '/assets/2D CURLY LEFT.png',  // View 2 (top thumbnail)
-    '/assets/2D CURLY RIGHT.png'  // View 3 (bottom thumbnail)
+    '/assets/OCEAN CURL FRONT.JPG',  // View 1 (default)
+    '/assets/OCEAN CURL LEFT.JPG',   // View 2 (top thumbnail)
+    '/assets/OCEAN CURL RIGHT.JPG'   // View 3 (bottom thumbnail)
   ];
 
   // Get current mannequin images based on selected view
   const getCurrentImages = () => {
     if (selectedMannequinView === 0) {
-      // Default state: 2D CURLY FRONT in hero
+      // Default state: OCEAN CURL FRONT in hero
       return {
-        hero: mannequinImages[0], // 2D CURLY FRONT
-        top: mannequinImages[1], // 2D CURLY LEFT
-        bottom: mannequinImages[2] // 2D CURLY RIGHT
+        hero: mannequinImages[0], // OCEAN CURL FRONT
+        top: mannequinImages[1],   // OCEAN CURL LEFT
+        bottom: mannequinImages[2] // OCEAN CURL RIGHT
       };
     } else if (selectedMannequinView === 1) {
-      // Top thumbnail clicked: 2D CURLY LEFT in hero, 2D CURLY FRONT in top
+      // Top thumbnail clicked: OCEAN CURL LEFT in hero, OCEAN CURL FRONT in top
       return {
-        hero: mannequinImages[1], // 2D CURLY LEFT
-        top: mannequinImages[0], // 2D CURLY FRONT
-        bottom: mannequinImages[2] // 2D CURLY RIGHT (stays in bottom)
+        hero: mannequinImages[1], // OCEAN CURL LEFT
+        top: mannequinImages[0],   // OCEAN CURL FRONT
+        bottom: mannequinImages[2] // OCEAN CURL RIGHT (stays in bottom)
       };
     } else {
-      // Bottom thumbnail clicked: 2D CURLY RIGHT in hero, 2D CURLY FRONT in bottom
+      // Bottom thumbnail clicked: OCEAN CURL RIGHT in hero, OCEAN CURL FRONT in bottom
       return {
-        hero: mannequinImages[2], // 2D CURLY RIGHT
-        top: mannequinImages[1], // 2D CURLY LEFT (stays in top)
-        bottom: mannequinImages[0] // 2D CURLY FRONT
+        hero: mannequinImages[2], // OCEAN CURL RIGHT
+        top: mannequinImages[1],  // OCEAN CURL LEFT (stays in top)
+        bottom: mannequinImages[0] // OCEAN CURL FRONT
       };
     }
   };
@@ -535,25 +535,25 @@ function OceanCurlSelection() {
   // Get current 3D view images based on selected view
   const get3DViewImages = () => {
     if (selectedMannequinView === 0) {
-      // Default state: SOFT-WAVE FRONT in hero
+      // Default state: OCEAN CURL FRONT in hero
       return {
-        hero: 'SOFT-WAVE FRONT.png',
-        top: 'SOFT-WAVE RIGHT.png',
-        bottom: 'SOFT-WAVE LEFT.png'
+        hero: 'OCEAN CURL FRONT.JPG',
+        top: 'OCEAN CURL RIGHT.JPG',
+        bottom: 'OCEAN CURL LEFT.JPG'
       };
     } else if (selectedMannequinView === 1) {
-      // Top thumbnail clicked: SOFT-WAVE RIGHT in hero, SOFT-WAVE FRONT in top
+      // Top thumbnail clicked: OCEAN CURL RIGHT in hero, OCEAN CURL FRONT in top
       return {
-        hero: 'SOFT-WAVE RIGHT.png',
-        top: 'SOFT-WAVE FRONT.png',
-        bottom: 'SOFT-WAVE LEFT.png'
+        hero: 'OCEAN CURL RIGHT.JPG',
+        top: 'OCEAN CURL FRONT.JPG',
+        bottom: 'OCEAN CURL LEFT.JPG'
       };
     } else {
-      // Bottom thumbnail clicked: SOFT-WAVE LEFT in hero, SOFT-WAVE FRONT in bottom
+      // Bottom thumbnail clicked: OCEAN CURL LEFT in hero, OCEAN CURL FRONT in bottom
       return {
-        hero: 'SOFT-WAVE LEFT.png',
-        top: 'SOFT-WAVE RIGHT.png',
-        bottom: 'SOFT-WAVE FRONT.png'
+        hero: 'OCEAN CURL LEFT.JPG',
+        top: 'OCEAN CURL RIGHT.JPG',
+        bottom: 'OCEAN CURL FRONT.JPG'
       };
     }
   };
@@ -1800,16 +1800,16 @@ function OceanCurlSelection() {
                   onTouchEnd={handleTouchEnd}
                 >
                   <img
-                    src="/assets/SOFT-WAVE FRONT.png"
+                    src="/assets/OCEAN CURL FRONT.JPG"
                     alt="OCEAN CURL Front View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/SOFT-WAVE FRONT.png',
-                        '/assets/SOFT-WAVE LEFT.png',
-                        '/assets/SOFT-WAVE RIGHT.png'
+                        '/assets/OCEAN CURL FRONT.JPG',
+                        '/assets/OCEAN CURL LEFT.JPG',
+                        '/assets/OCEAN CURL RIGHT.JPG'
                       ];
                       setViewerImages(productShotImages);
                       setViewerCurrentIndex(0);
@@ -1817,16 +1817,16 @@ function OceanCurlSelection() {
                     }}
                   />
                   <img
-                    src="/assets/SOFT-WAVE LEFT.png"
+                    src="/assets/OCEAN CURL LEFT.JPG"
                     alt="OCEAN CURL Left View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/SOFT-WAVE FRONT.png',
-                        '/assets/SOFT-WAVE LEFT.png',
-                        '/assets/SOFT-WAVE RIGHT.png'
+                        '/assets/OCEAN CURL FRONT.JPG',
+                        '/assets/OCEAN CURL LEFT.JPG',
+                        '/assets/OCEAN CURL RIGHT.JPG'
                       ];
                       setViewerImages(productShotImages);
                       setViewerCurrentIndex(1);
@@ -1834,16 +1834,16 @@ function OceanCurlSelection() {
                     }}
                   />
                   <img
-                    src="/assets/SOFT-WAVE RIGHT.png"
+                    src="/assets/OCEAN CURL RIGHT.JPG"
                     alt="OCEAN CURL Right View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/SOFT-WAVE FRONT.png',
-                        '/assets/SOFT-WAVE LEFT.png',
-                        '/assets/SOFT-WAVE RIGHT.png'
+                        '/assets/OCEAN CURL FRONT.JPG',
+                        '/assets/OCEAN CURL LEFT.JPG',
+                        '/assets/OCEAN CURL RIGHT.JPG'
                       ];
                       setViewerImages(productShotImages);
                       setViewerCurrentIndex(2);

@@ -488,33 +488,33 @@ function SoftCurlSelection() {
 
   // Mannequin images for soft curl product (2D view)
   const mannequinImages = [
-    '/assets/2D CURLY FRONT.png',  // View 1 (default)
-    '/assets/2D CURLY LEFT.png',  // View 2 (top thumbnail)
-    '/assets/2D CURLY RIGHT.png'  // View 3 (bottom thumbnail)
+    '/assets/SOFT CURL FRONT.JPG',  // View 1 (default)
+    '/assets/SOFT CURL LEFT.JPG',   // View 2 (top thumbnail)
+    '/assets/SOFT CURL RIGHT.JPG'   // View 3 (bottom thumbnail)
   ];
 
   // Get current mannequin images based on selected view
   const getCurrentImages = () => {
     if (selectedMannequinView === 0) {
-      // Default state: 2D CURLY FRONT in hero
+      // Default state: SOFT CURL FRONT in hero
       return {
-        hero: mannequinImages[0], // 2D CURLY FRONT
-        top: mannequinImages[1], // 2D CURLY LEFT
-        bottom: mannequinImages[2] // 2D CURLY RIGHT
+        hero: mannequinImages[0], // SOFT CURL FRONT
+        top: mannequinImages[1],  // SOFT CURL LEFT
+        bottom: mannequinImages[2] // SOFT CURL RIGHT
       };
     } else if (selectedMannequinView === 1) {
-      // Top thumbnail clicked: 2D CURLY LEFT in hero, 2D CURLY FRONT in top
+      // Top thumbnail clicked: SOFT CURL LEFT in hero, SOFT CURL FRONT in top
       return {
-        hero: mannequinImages[1], // 2D CURLY LEFT
-        top: mannequinImages[0], // 2D CURLY FRONT
-        bottom: mannequinImages[2] // 2D CURLY RIGHT (stays in bottom)
+        hero: mannequinImages[1], // SOFT CURL LEFT
+        top: mannequinImages[0],  // SOFT CURL FRONT
+        bottom: mannequinImages[2] // SOFT CURL RIGHT (stays in bottom)
       };
     } else {
-      // Bottom thumbnail clicked: 2D CURLY RIGHT in hero, 2D CURLY FRONT in bottom
+      // Bottom thumbnail clicked: SOFT CURL RIGHT in hero, SOFT CURL FRONT in bottom
       return {
-        hero: mannequinImages[2], // 2D CURLY RIGHT
-        top: mannequinImages[1], // 2D CURLY LEFT (stays in top)
-        bottom: mannequinImages[0] // 2D CURLY FRONT
+        hero: mannequinImages[2], // SOFT CURL RIGHT
+        top: mannequinImages[1],  // SOFT CURL LEFT (stays in top)
+        bottom: mannequinImages[0] // SOFT CURL FRONT
       };
     }
   };
@@ -524,25 +524,25 @@ function SoftCurlSelection() {
   // Get current 3D view images based on selected view
   const get3DViewImages = () => {
     if (selectedMannequinView === 0) {
-      // Default state: SOFT-WAVE FRONT in hero
+      // Default state: SOFT CURL FRONT in hero
       return {
-        hero: 'SOFT-WAVE FRONT.png',
-        top: 'SOFT-WAVE RIGHT.png',
-        bottom: 'SOFT-WAVE LEFT.png'
+        hero: 'SOFT CURL FRONT.JPG',
+        top: 'SOFT CURL RIGHT.JPG',
+        bottom: 'SOFT CURL LEFT.JPG'
       };
     } else if (selectedMannequinView === 1) {
-      // Top thumbnail clicked: SOFT-WAVE RIGHT in hero, SOFT-WAVE FRONT in top
+      // Top thumbnail clicked: SOFT CURL RIGHT in hero, SOFT CURL FRONT in top
       return {
-        hero: 'SOFT-WAVE RIGHT.png',
-        top: 'SOFT-WAVE FRONT.png',
-        bottom: 'SOFT-WAVE LEFT.png'
+        hero: 'SOFT CURL RIGHT.JPG',
+        top: 'SOFT CURL FRONT.JPG',
+        bottom: 'SOFT CURL LEFT.JPG'
       };
     } else {
-      // Bottom thumbnail clicked: SOFT-WAVE LEFT in hero, SOFT-WAVE FRONT in bottom
+      // Bottom thumbnail clicked: SOFT CURL LEFT in hero, SOFT CURL FRONT in bottom
       return {
-        hero: 'SOFT-WAVE LEFT.png',
-        top: 'SOFT-WAVE RIGHT.png',
-        bottom: 'SOFT-WAVE FRONT.png'
+        hero: 'SOFT CURL LEFT.JPG',
+        top: 'SOFT CURL RIGHT.JPG',
+        bottom: 'SOFT CURL FRONT.JPG'
       };
     }
   };
@@ -1780,16 +1780,16 @@ function SoftCurlSelection() {
                   onTouchEnd={handleTouchEnd}
                 >
                   <img
-                    src="/assets/SOFT-WAVE FRONT.png"
+                    src="/assets/SOFT CURL FRONT.JPG"
                     alt="SOFT CURL Front View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/SOFT-WAVE FRONT.png',
-                        '/assets/SOFT-WAVE LEFT.png',
-                        '/assets/SOFT-WAVE RIGHT.png'
+                        '/assets/SOFT CURL FRONT.JPG',
+                        '/assets/SOFT CURL LEFT.JPG',
+                        '/assets/SOFT CURL RIGHT.JPG'
                       ];
                       setViewerImages(productShotImages);
                       setViewerCurrentIndex(0);
@@ -1797,16 +1797,16 @@ function SoftCurlSelection() {
                     }}
                   />
                   <img
-                    src="/assets/SOFT-WAVE LEFT.png"
+                    src="/assets/SOFT CURL LEFT.JPG"
                     alt="SOFT CURL Left View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/SOFT-WAVE FRONT.png',
-                        '/assets/SOFT-WAVE LEFT.png',
-                        '/assets/SOFT-WAVE RIGHT.png'
+                        '/assets/SOFT CURL FRONT.JPG',
+                        '/assets/SOFT CURL LEFT.JPG',
+                        '/assets/SOFT CURL RIGHT.JPG'
                       ];
                       setViewerImages(productShotImages);
                       setViewerCurrentIndex(1);
@@ -1814,16 +1814,16 @@ function SoftCurlSelection() {
                     }}
                   />
                   <img
-                    src="/assets/SOFT-WAVE RIGHT.png"
+                    src="/assets/SOFT CURL RIGHT.JPG"
                     alt="SOFT CURL Right View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/SOFT-WAVE FRONT.png',
-                        '/assets/SOFT-WAVE LEFT.png',
-                        '/assets/SOFT-WAVE RIGHT.png'
+                        '/assets/SOFT CURL FRONT.JPG',
+                        '/assets/SOFT CURL LEFT.JPG',
+                        '/assets/SOFT CURL RIGHT.JPG'
                       ];
                       setViewerImages(productShotImages);
                       setViewerCurrentIndex(2);

@@ -336,13 +336,13 @@ function CheckoutConfirmPage() {
       const shippingHandling = 60; // Standard shipping
       const subtotal = calculatedTotal + taxesProcessing + shippingHandling;
       
-      // Determine tier based on points
-      let tier = 'SILVER';
+      // Determine tier based on points (note: actual tier system is based on spending, not points)
+      // This is for display purposes only - actual tier is calculated from total spending
+      let tier = 'SILVER'; // SILVER is base tier for everyone
       if (pointsEarned >= 5000) {
         tier = 'RED';
-      } else if (pointsEarned >= 2000) {
-        tier = 'GOLD';
       }
+      // Note: Tier benefits unlock at spending thresholds: SILVER $500+, RED $2,000+, BLACK $4,000+
       
       // Determine processing time based on order (check if has customizations)
       const hasCustomizations = cartItems.length > 0 && cartItems.some(item => {

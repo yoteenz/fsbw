@@ -516,35 +516,35 @@ function BeachWaveSelection() {
     setShowChartModal(false);
   };
 
-  // Mannequin images for soft wave product (2D view)
+  // Mannequin images for beach wave product (2D view)
   const mannequinImages = [
-    '/assets/2D WAVY FRONT.png',  // View 1 (default)
-    '/assets/2D WAVY LEFT.png',  // View 2 (top thumbnail)
-    '/assets/2D WAVY RIGHT.png'  // View 3 (bottom thumbnail)
+    '/assets/BEACH WAVE FRONT.JPG',  // View 1 (default)
+    '/assets/BEACH WAVE LEFT.JPG',   // View 2 (top thumbnail)
+    '/assets/BEACH WAVE RIGHT.JPG'   // View 3 (bottom thumbnail)
   ];
 
   // Get current mannequin images based on selected view
   const getCurrentImages = () => {
     if (selectedMannequinView === 0) {
-      // Default state: 2D WAVY FRONT in hero
+      // Default state: BEACH WAVE FRONT in hero
       return {
-        hero: mannequinImages[0], // 2D WAVY FRONT
-        top: mannequinImages[1], // 2D WAVY LEFT
-        bottom: mannequinImages[2] // 2D WAVY RIGHT
+        hero: mannequinImages[0], // BEACH WAVE FRONT
+        top: mannequinImages[1],   // BEACH WAVE LEFT
+        bottom: mannequinImages[2] // BEACH WAVE RIGHT
       };
     } else if (selectedMannequinView === 1) {
-      // Top thumbnail clicked: 2D WAVY LEFT in hero, 2D WAVY FRONT in top
+      // Top thumbnail clicked: BEACH WAVE LEFT in hero, BEACH WAVE FRONT in top
       return {
-        hero: mannequinImages[1], // 2D WAVY LEFT
-        top: mannequinImages[0], // 2D WAVY FRONT
-        bottom: mannequinImages[2] // 2D WAVY RIGHT (stays in bottom)
+        hero: mannequinImages[1], // BEACH WAVE LEFT
+        top: mannequinImages[0],  // BEACH WAVE FRONT
+        bottom: mannequinImages[2] // BEACH WAVE RIGHT (stays in bottom)
       };
     } else {
-      // Bottom thumbnail clicked: 2D WAVY RIGHT in hero, 2D WAVY FRONT in bottom
+      // Bottom thumbnail clicked: BEACH WAVE RIGHT in hero, BEACH WAVE FRONT in bottom
       return {
-        hero: mannequinImages[2], // 2D WAVY RIGHT
-        top: mannequinImages[1], // 2D WAVY LEFT (stays in top)
-        bottom: mannequinImages[0] // 2D WAVY FRONT
+        hero: mannequinImages[2], // BEACH WAVE RIGHT
+        top: mannequinImages[1],  // BEACH WAVE LEFT (stays in top)
+        bottom: mannequinImages[0] // BEACH WAVE FRONT
       };
     }
   };
@@ -554,25 +554,25 @@ function BeachWaveSelection() {
   // Get current 3D view images based on selected view
   const get3DViewImages = () => {
     if (selectedMannequinView === 0) {
-      // Default state: SOFT-WAVE FRONT in hero
+      // Default state: BEACH WAVE FRONT in hero
       return {
-        hero: 'SOFT-WAVE FRONT.png',
-        top: 'SOFT-WAVE RIGHT.png',
-        bottom: 'SOFT-WAVE LEFT.png'
+        hero: 'BEACH WAVE FRONT.JPG',
+        top: 'BEACH WAVE RIGHT.JPG',
+        bottom: 'BEACH WAVE LEFT.JPG'
       };
     } else if (selectedMannequinView === 1) {
-      // Top thumbnail clicked: SOFT-WAVE RIGHT in hero, SOFT-WAVE FRONT in top
+      // Top thumbnail clicked: BEACH WAVE RIGHT in hero, BEACH WAVE FRONT in top
       return {
-        hero: 'SOFT-WAVE RIGHT.png',
-        top: 'SOFT-WAVE FRONT.png',
-        bottom: 'SOFT-WAVE LEFT.png'
+        hero: 'BEACH WAVE RIGHT.JPG',
+        top: 'BEACH WAVE FRONT.JPG',
+        bottom: 'BEACH WAVE LEFT.JPG'
       };
     } else {
-      // Bottom thumbnail clicked: SOFT-WAVE LEFT in hero, SOFT-WAVE FRONT in bottom
+      // Bottom thumbnail clicked: BEACH WAVE LEFT in hero, BEACH WAVE FRONT in bottom
       return {
-        hero: 'SOFT-WAVE LEFT.png',
-        top: 'SOFT-WAVE RIGHT.png',
-        bottom: 'SOFT-WAVE FRONT.png'
+        hero: 'BEACH WAVE LEFT.JPG',
+        top: 'BEACH WAVE RIGHT.JPG',
+        bottom: 'BEACH WAVE FRONT.JPG'
       };
     }
   };
@@ -1830,16 +1830,16 @@ function BeachWaveSelection() {
                   onTouchEnd={handleTouchEnd}
                 >
                   <img
-                    src="/assets/SOFT-WAVE FRONT.png"
+                    src="/assets/BEACH WAVE FRONT.JPG"
                     alt="BEACH WAVE Front View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/SOFT-WAVE FRONT.png',
-                        '/assets/SOFT-WAVE LEFT.png',
-                        '/assets/SOFT-WAVE RIGHT.png'
+                        '/assets/BEACH WAVE FRONT.JPG',
+                        '/assets/BEACH WAVE LEFT.JPG',
+                        '/assets/BEACH WAVE RIGHT.JPG'
                       ];
                       setViewerImages(productShotImages);
                       setViewerCurrentIndex(0);
@@ -1847,16 +1847,16 @@ function BeachWaveSelection() {
                     }}
                   />
                   <img
-                    src="/assets/SOFT-WAVE LEFT.png"
+                    src="/assets/BEACH WAVE LEFT.JPG"
                     alt="BEACH WAVE Left View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/SOFT-WAVE FRONT.png',
-                        '/assets/SOFT-WAVE LEFT.png',
-                        '/assets/SOFT-WAVE RIGHT.png'
+                        '/assets/BEACH WAVE FRONT.JPG',
+                        '/assets/BEACH WAVE LEFT.JPG',
+                        '/assets/BEACH WAVE RIGHT.JPG'
                       ];
                       setViewerImages(productShotImages);
                       setViewerCurrentIndex(1);
@@ -1864,16 +1864,16 @@ function BeachWaveSelection() {
                     }}
                   />
                   <img
-                    src="/assets/SOFT-WAVE RIGHT.png"
+                    src="/assets/BEACH WAVE RIGHT.JPG"
                     alt="BEACH WAVE Right View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/SOFT-WAVE FRONT.png',
-                        '/assets/SOFT-WAVE LEFT.png',
-                        '/assets/SOFT-WAVE RIGHT.png'
+                        '/assets/BEACH WAVE FRONT.JPG',
+                        '/assets/BEACH WAVE LEFT.JPG',
+                        '/assets/BEACH WAVE RIGHT.JPG'
                       ];
                       setViewerImages(productShotImages);
                       setViewerCurrentIndex(2);

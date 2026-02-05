@@ -3727,10 +3727,10 @@ function ConciergePage() {
                       width: '100%',
                                                 height: '7px',
                                                 backgroundColor: '#E0E0E0',
-                                                borderRadius: progress > 0 ? '4px' : '0',
+                                                borderRadius: (progress > 0 || (isCanceled && isCompleted)) ? '4px' : '0',
                                                 overflow: 'hidden',
                                                 position: 'relative',
-                                                border: progress === 0 ? '1px solid #909090' : 'none'
+                                                border: (progress === 0 && !isCanceled) ? '1px solid #909090' : 'none'
                                               }}
                                             >
                                               <div
@@ -3739,7 +3739,7 @@ function ConciergePage() {
                                                   height: '100%',
                                                   backgroundColor: isCompleted || isDeliveredLastStage ? '#EB1C24' : '#EB1C24',
                                                   transition: 'width 0.3s ease',
-                                                  borderRadius: '4px'
+                                                  borderRadius: (isCompleted || isDeliveredLastStage || progress > 0) ? '4px' : '0'
                     }}
                   />
                 </div>
