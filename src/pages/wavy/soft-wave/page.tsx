@@ -1278,7 +1278,7 @@ function SoftWaveSelection() {
                     style={{
                       position: 'relative',
                       backgroundSize: 'cover',
-                      backgroundPosition: 'center',
+                      backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -1304,7 +1304,7 @@ function SoftWaveSelection() {
                       style={{ 
                         position: 'absolute',
                         left: '50%',
-                        top: 'calc(50% - 10.601px + 12px)',
+                        top: 'calc(50% - 10.601px + 12px + 5px)',
                         transform: 'translateX(-50%) translateY(-50%)',
                         zIndex: '10',
                         width: '230px',
@@ -1334,13 +1334,13 @@ function SoftWaveSelection() {
                   {/* Top Mannequin */}
                   <div className="flex-shrink-0 relative">
                     <div
-                      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
+                      className="relative bg-cover flex items-center justify-center cursor-pointer"
                       style={{
                         width: '100px',
                         height: '140px',
                         backgroundImage: `url('/assets/${is3DView ? current3DImages.top : 'NOIR/leaf-brick.png'}')`,
                         backgroundSize: 'cover',
-                        backgroundPosition: 'center',
+                        backgroundPosition: is3DView ? 'center calc(50% + 10px)' : 'center',
                         backgroundRepeat: 'no-repeat'
                       }}
                       onClick={handleTopThumbnailClick}
@@ -1366,13 +1366,13 @@ function SoftWaveSelection() {
                   {/* Bottom Mannequin */}
                   <div className="flex-shrink-0 relative">
                     <div
-                      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
+                      className="relative bg-cover flex items-center justify-center cursor-pointer"
                       style={{
                         width: '100px',
                         height: '140px',
                         backgroundImage: `url('/assets/${is3DView ? current3DImages.bottom : 'NOIR/leaf-brick.png'}')`,
                         backgroundSize: 'cover',
-                        backgroundPosition: 'center',
+                        backgroundPosition: is3DView ? 'center calc(50% + 10px)' : 'center',
                         backgroundRepeat: 'no-repeat'
                       }}
                       onClick={handleBottomThumbnailClick}

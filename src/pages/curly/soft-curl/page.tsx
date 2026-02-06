@@ -1314,13 +1314,13 @@ function SoftCurlSelection() {
                   {/* Top Mannequin */}
                   <div className="flex-shrink-0 relative">
                     <div
-                      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
+                      className="relative bg-cover flex items-center justify-center cursor-pointer"
                       style={{
                         width: '100px',
                         height: '140px',
                         backgroundImage: `url('/assets/${is3DView ? current3DImages.top : 'NOIR/leaf-brick.png'}')`,
                         backgroundSize: 'cover',
-                        backgroundPosition: 'center',
+                        backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center',
                         backgroundRepeat: 'no-repeat'
                       }}
                       onClick={handleTopThumbnailClick}
@@ -1346,13 +1346,13 @@ function SoftCurlSelection() {
                   {/* Bottom Mannequin */}
                   <div className="flex-shrink-0 relative">
                     <div
-                      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
+                      className="relative bg-cover flex items-center justify-center cursor-pointer"
                       style={{
                         width: '100px',
                         height: '140px',
                         backgroundImage: `url('/assets/${is3DView ? current3DImages.bottom : 'NOIR/leaf-brick.png'}')`,
                         backgroundSize: 'cover',
-                        backgroundPosition: 'center',
+                        backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center',
                         backgroundRepeat: 'no-repeat'
                       }}
                       onClick={handleBottomThumbnailClick}

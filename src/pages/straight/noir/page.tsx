@@ -2441,7 +2441,7 @@ function NoirSelection() {
                       height: '140px',
                       backgroundImage: `url('/assets/NOIR/${is3DView ? current3DImages.top : 'leaf-brick.png'}')`,
                       backgroundSize: 'cover',
-                      backgroundPosition: 'center',
+                      backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center',
                       backgroundRepeat: 'no-repeat'
                     }}
                     onClick={handleTopThumbnailClick}
@@ -2473,7 +2473,7 @@ function NoirSelection() {
                       height: '140px',
                       backgroundImage: `url('/assets/NOIR/${is3DView ? current3DImages.bottom : 'leaf-brick.png'}')`,
                       backgroundSize: 'cover',
-                      backgroundPosition: 'center',
+                      backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center',
                       backgroundRepeat: 'no-repeat'
                     }}
                     onClick={handleBottomThumbnailClick}

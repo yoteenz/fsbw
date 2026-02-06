@@ -1330,7 +1330,7 @@ function BlancoSelection() {
                         height: '140px',
                         backgroundImage: `url('${is3DView ? current3DImages.top : '/assets/NOIR/leaf-brick.png'}')`,
                         backgroundSize: 'cover',
-                        backgroundPosition: 'center',
+                        backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center',
                         backgroundRepeat: 'no-repeat'
                       }}
                       onClick={handleTopThumbnailClick}
@@ -1362,7 +1362,7 @@ function BlancoSelection() {
                         height: '140px',
                         backgroundImage: `url('${is3DView ? current3DImages.bottom : '/assets/NOIR/leaf-brick.png'}')`,
                         backgroundSize: 'cover',
-                        backgroundPosition: 'center',
+                        backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center',
                         backgroundRepeat: 'no-repeat'
                       }}
                       onClick={handleBottomThumbnailClick}
