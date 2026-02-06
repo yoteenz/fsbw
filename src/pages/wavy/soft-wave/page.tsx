@@ -2517,9 +2517,9 @@ function SoftWaveSelection() {
                   </div>
                 </div>
                 
-                {/* Product 4 - SOFT CURL */}
+                {/* Product 4 - OCEAN CURL */}
                 <div 
-                  onClick={() => navigate('/curly/soft-curl')}
+                  onClick={() => navigate('/curly/ocean-curl')}
                   style={{ 
                     padding: '10px 10px 4px 10px',
                     textAlign: 'center',
@@ -2528,8 +2528,8 @@ function SoftWaveSelection() {
                   }}
                 >
                   <img
-                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/curl-thumb.png"}
-                    alt="SOFT CURL"
+                    src={is3DView ? "/assets/ocean curl thumbnail.png" : "/assets/NOIR/curl-thumb.png"}
+                    alt="OCEAN CURL"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -2546,7 +2546,7 @@ function SoftWaveSelection() {
                     fontWeight: '500',
                     transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}>
-                    SOFT CURL
+                    OCEAN CURL
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2558,7 +2558,7 @@ function SoftWaveSelection() {
                     lineHeight: '0.84',
                     transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}>
-                    24" RAW VIETNAMESE
+                    24" RAW FILIPINO
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2793,9 +2793,9 @@ function SoftWaveSelection() {
                   </div>
                 </div>
                 
-                {/* Product 2 - SOFT CURL */}
+                {/* Product 2 - OCEAN CURL */}
                 <div 
-                  onClick={() => navigate('/curly/soft-curl')}
+                  onClick={() => navigate('/curly/ocean-curl')}
                   style={{ 
                     padding: '10px 10px 4px 10px',
                     textAlign: 'center',
@@ -2804,8 +2804,8 @@ function SoftWaveSelection() {
                   }}
                 >
                   <img
-                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/curl-thumb.png"}
-                    alt="SOFT CURL"
+                    src={is3DView ? "/assets/ocean curl thumbnail.png" : "/assets/NOIR/curl-thumb.png"}
+                    alt="OCEAN CURL"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
                         height: is3DView ? 'calc(auto - 24px)' : 'auto',
@@ -2822,7 +2822,7 @@ function SoftWaveSelection() {
                     fontWeight: '500',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    SOFT CURL
+                    OCEAN CURL
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2834,7 +2834,7 @@ function SoftWaveSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    24" RAW VIETNAMESE
+                    24" RAW FILIPINO
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',

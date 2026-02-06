@@ -2528,7 +2528,7 @@ function OceanCurlSelection() {
                   }}
                 >
                   <img
-                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/curl-thumb.png"}
+                    src={is3DView ? "/assets/ocean curl thumbnail.png" : "/assets/NOIR/curl-thumb.png"}
                     alt="OCEAN CURL"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
@@ -2804,7 +2804,7 @@ function OceanCurlSelection() {
                   }}
                 >
                   <img
-                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/curl-thumb.png"}
+                    src={is3DView ? "/assets/soft curl thumbnail.png" : "/assets/NOIR/curl-thumb.png"}
                     alt="SOFT CURL"
                     style={{ 
                         width: is3DView ? 'calc(100% - 24px)' : '100%', 
