@@ -635,22 +635,6 @@ export default function BuildAWigPage() {
   const [totalPrice, setTotalPrice] = useState(740);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  
-  // Mobile-friendly edit price debugging: show on-screen when ?debug=1 or localStorage.editPriceDebug=1
-  const [editDebugLogs, setEditDebugLogs] = useState<Array<{ tag: string; data: unknown }>>([]);
-  const [editDebugCartPayload, setEditDebugCartPayload] = useState<unknown>(null);
-  const [editDebugPanelOpen, setEditDebugPanelOpen] = useState(false);
-  // Toggle so mobile users can enable debug without URL/console (sync with localStorage)
-  const [editDebugEnabled, setEditDebugEnabled] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return localStorage.getItem('editPriceDebug') === '1';
-  });
-  // Sync from localStorage when navigating (e.g. user turned on debug in cart)
-  useEffect(() => {
-    if (typeof window !== 'undefined' && location.pathname.startsWith('/build-a-wig')) {
-      setEditDebugEnabled(localStorage.getItem('editPriceDebug') === '1');
-    }
-  }, [location.pathname]);
 
   // Ref to track if we're currently loading from localStorage (to prevent sync effect from overwriting)
   const isLoadingFromStorage = useRef(false);
@@ -1822,42 +1806,6 @@ export default function BuildAWigPage() {
             stylingPrice + 
             addOnsPrice;
           
-          // [EDIT PRICE TRIANGULATION] Route effect initial load: compare cart price vs computed total + per-addon breakdown
-          const cartPrice = typeof item.price === 'number' ? item.price : null;
-          const addOnBasePricesRoute: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
-          const discountedLaceRoute = ['2X6', '4X4', '5X5', '6X6', '7X7'];
-          const laceRoute = item.lace || editCustomization.lace || '';
-          const hasLaceDiscRoute = discountedLaceRoute.includes(laceRoute);
-          const addOnsBreakdownRoute: Record<string, number> = {};
-          ((item.addOns || editCustomization.addOns) || []).forEach((id: string) => {
-            let p = addOnBasePricesRoute[id] ?? 0;
-            if (hasLaceDiscRoute && (id === 'BLEACH' || id === 'PLUCK')) p -= 20;
-            addOnsBreakdownRoute[id] = p;
-          });
-          const routeEffectData = {
-            source: 'build-a-wig route change effect',
-            cartItemPrice: cartPrice,
-            computedInitialTotal: initialTotalPrice,
-            difference: cartPrice != null ? initialTotalPrice - cartPrice : 'N/A',
-            currentBasePrice,
-            optionSum: capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice,
-            itemName: item.name,
-            itemId: item.id,
-            addOnsDetail: {
-              selected: item.addOns || editCustomization.addOns || [],
-              lace: laceRoute,
-              laceDiscountApplied: hasLaceDiscRoute,
-              perAddon: addOnsBreakdownRoute,
-              perAddonSum: Object.values(addOnsBreakdownRoute).reduce((a, b) => a + b, 0),
-              addOnsPriceUsed: addOnsPrice
-            }
-          };
-          console.log('[EDIT PRICE TRIANGULATION] Route effect (initial load from cart item)', routeEffectData);
-          const isEditPriceDebugRoute = typeof window !== 'undefined' && (
-            new URLSearchParams(location.search).get('debug') === '1' || localStorage.getItem('editPriceDebug') === '1'
-          );
-          if (isEditPriceDebugRoute) setEditDebugLogs(prev => [...prev.slice(-29), { tag: 'Route effect (initial load)', data: routeEffectData }]);
-          
           setTotalPrice(initialTotalPrice);
           
           // Trigger price recalculation
@@ -2283,31 +2231,6 @@ export default function BuildAWigPage() {
       window.removeEventListener('customStorageChange', handleCustomStorageChange);
     };
   }, [location.pathname]);
-
-  // Mobile-friendly debug: when on edit page with ?debug=1, read cart payload from sessionStorage (set by CartDropdown)
-  useEffect(() => {
-    const isEditPage = location.pathname === '/build-a-wig/edit' ||
-                       location.pathname.startsWith('/build-a-wig/noir/edit') ||
-                       location.pathname.startsWith('/build-a-wig/blanco/edit') ||
-                       location.pathname.startsWith('/build-a-wig/soft-wave/edit') ||
-                       location.pathname.startsWith('/build-a-wig/soft-curl/edit') ||
-                       location.pathname.startsWith('/build-a-wig/beach-wave/edit') ||
-                       location.pathname.startsWith('/build-a-wig/ocean-curl/edit');
-    const isEditPriceDebug = typeof window !== 'undefined' && (
-      new URLSearchParams(location.search).get('debug') === '1' || localStorage.getItem('editPriceDebug') === '1'
-    );
-    if (isEditPage && isEditPriceDebug) {
-      try {
-        const raw = sessionStorage.getItem('editPriceDebugCart');
-        setEditDebugCartPayload(raw ? JSON.parse(raw) : null);
-      } catch {
-        setEditDebugCartPayload(null);
-      }
-    } else if (!isEditPage) {
-      setEditDebugCartPayload(null);
-      setEditDebugLogs([]);
-    }
-  }, [location.pathname, location.search]);
 
   // Listen for editingCartItemChanged event to reload when switching items while on edit page
   useEffect(() => {
@@ -3355,26 +3278,6 @@ export default function BuildAWigPage() {
                               location.pathname.startsWith('/build-a-wig/beach-wave/customize') ||
                               location.pathname.startsWith('/build-a-wig/ocean-curl/customize');
       
-      const isEditPriceDebug = typeof window !== 'undefined' && (
-        new URLSearchParams(location.search).get('debug') === '1' || localStorage.getItem('editPriceDebug') === '1'
-      );
-      
-      // [EDIT PRICE TRIANGULATION] At entry of price effect in edit mode, log what we'll use
-      if (isEditMode && editingCartItem) {
-        try {
-          const item = JSON.parse(editingCartItem);
-          const entryData = {
-            cartItemPrice: typeof item.price === 'number' ? item.price : null,
-            hasChanges,
-            willUseCartPrice: !hasChanges && typeof item.price === 'number' && item.price > 0,
-            itemName: item.name,
-            itemId: item.id
-          };
-          console.log('[EDIT PRICE TRIANGULATION] Price effect entry (edit mode)', entryData);
-          if (isEditPriceDebug) setEditDebugLogs(prev => [...prev.slice(-29), { tag: 'Price effect entry', data: entryData }]);
-        } catch (_) {}
-      }
-      
       // CRITICAL: In edit mode with no changes, use the cart item's price so edit page matches cart.
       // This avoids the $560 (or similar) miscalculation caused by stale editSelected*Price from a
       // previous product or effect order (price effect running before route change populates from item).
@@ -3384,27 +3287,12 @@ export default function BuildAWigPage() {
           const item = JSON.parse(editingCartItem);
           editModeCartPrice = typeof item.price === 'number' ? item.price : null;
           if (!hasChanges && editModeCartPrice !== null && editModeCartPrice > 0) {
-            const useCartData = { cartItemPrice: editModeCartPrice, hasChanges, itemName: item.name, itemId: item.id };
-            console.log('[EDIT PRICE TRIANGULATION] Price effect: USING CART ITEM PRICE (no changes)', useCartData);
-            if (isEditPriceDebug) setEditDebugLogs(prev => [...prev.slice(-29), { tag: 'USING CART PRICE', data: useCartData }]);
             setTotalPrice(editModeCartPrice);
             return;
           }
         } catch (e) {
           // Fall through to calculated total
         }
-      }
-      
-      // [EDIT PRICE TRIANGULATION] When we're in edit mode but did NOT use cart price, log why and full breakdown
-      if (isEditMode && editingCartItem) {
-        const calcReasonData = {
-          reason: !editModeCartPrice ? 'no cart price' : hasChanges ? 'hasChanges=true' : 'cart price invalid or zero',
-          cartItemPrice: editModeCartPrice,
-          hasChanges,
-          pathname: location.pathname
-        };
-        console.log('[EDIT PRICE TRIANGULATION] Price effect: using CALCULATED total (not cart price)', calcReasonData);
-        if (isEditPriceDebug) setEditDebugLogs(prev => [...prev.slice(-29), { tag: 'Using CALCULATED (not cart)', data: calcReasonData }]);
       }
       
       // DEBUGGING: Always log when on edit route to verify detection
@@ -3722,54 +3610,6 @@ export default function BuildAWigPage() {
         total,
         prefix
       });
-      
-      // [EDIT PRICE TRIANGULATION] In edit mode, log calculated vs cart price + per-addon breakdown
-      if (isEditMode && editingCartItem) {
-        try {
-          const parsed = JSON.parse(editingCartItem);
-          const cartPrice = typeof parsed.price === 'number' ? parsed.price : null;
-          // Per-addon price breakdown (same logic as calculatePricesFromSelections)
-          const addOnBasePrices: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
-          const discountedLaceSizes = ['2X6', '4X4', '5X5', '6X6', '7X7'];
-          const laceForAddOn = currentCustomization.lace || '';
-          const hasLaceDiscountAddOn = discountedLaceSizes.includes(laceForAddOn);
-          const addOnsBreakdown: Record<string, number> = {};
-          (currentCustomization.addOns || []).forEach((id: string) => {
-            let p = addOnBasePrices[id] ?? 0;
-            if (hasLaceDiscountAddOn && (id === 'BLEACH' || id === 'PLUCK')) p -= 20;
-            addOnsBreakdown[id] = p;
-          });
-          const addOnsBreakdownSum = Object.values(addOnsBreakdown).reduce((a, b) => a + b, 0);
-          const calcVsCartData = {
-            calculatedTotal: total,
-            cartItemPrice: cartPrice,
-            difference: cartPrice != null ? total - cartPrice : 'N/A',
-            note: 'Option prices are from current selections only; defaults (e.g. 24", 200%, 13X6, NATURAL, NONE) = $0 and are already in base.',
-            breakdown: { basePrice, capSizePrice, colorPrice, lengthPrice, densityPrice, lacePrice, texturePrice, hairlinePrice, stylingPrice, addOnsPrice },
-            addOnsDetail: {
-              selected: currentCustomization.addOns || [],
-              lace: laceForAddOn,
-              laceDiscountApplied: hasLaceDiscountAddOn,
-              perAddon: addOnsBreakdown,
-              perAddonSum: addOnsBreakdownSum,
-              storedAddOnsPrice: addOnsPrice
-            },
-            editSelectedPricesFromStorage: {
-              capSize: localStorage.getItem('editSelectedCapSizePrice'),
-              color: localStorage.getItem('editSelectedColorPrice'),
-              length: localStorage.getItem('editSelectedLengthPrice'),
-              density: localStorage.getItem('editSelectedDensityPrice'),
-              lace: localStorage.getItem('editSelectedLacePrice'),
-              texture: localStorage.getItem('editSelectedTexturePrice'),
-              hairline: localStorage.getItem('editSelectedHairlinePrice'),
-              styling: localStorage.getItem('editSelectedStylingPrice'),
-              addOns: localStorage.getItem('editSelectedAddOnsPrice')
-            }
-          };
-          console.log('[EDIT PRICE TRIANGULATION] Calculated total vs cart', calcVsCartData);
-          if (isEditPriceDebug) setEditDebugLogs(prev => [...prev.slice(-29), { tag: 'Calculated vs cart', data: calcVsCartData }]);
-        } catch (_) {}
-      }
       
       // CRITICAL: Trigger change detection after price calculation (for both edit and non-edit modes)
       // This ensures hasChanges is updated when prices change
@@ -4884,7 +4724,7 @@ export default function BuildAWigPage() {
               )}
             </div>
             
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' }}>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', transform: 'translateY(1px)' }}>
               {showMobileMenu ? (
                 <>
                   <span 
@@ -4991,7 +4831,7 @@ export default function BuildAWigPage() {
               )}
             </p>
             <div className="gap-5 flex absolute" style={{ right: '17px', zIndex: 10 }}>
-              <div style={{ transform: 'translateX(5px)' }}>
+              <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
                   <DynamicCartIcon count={cartCount} width={22} height={19} />
                 </div>
                 <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'auto', zIndex: 11 }}>
@@ -6045,115 +5885,6 @@ export default function BuildAWigPage() {
         cancelText="CANCEL"
         dataAttribute="sign-out-confirm"
       />
-
-      {/* Mobile-friendly: floating toggle to turn price debug ON from the page (no console/URL needed) */}
-      {location.pathname.startsWith('/build-a-wig') && (
-        <button
-          type="button"
-          onClick={() => {
-            const next = !editDebugEnabled;
-            if (typeof window !== 'undefined') localStorage.setItem('editPriceDebug', next ? '1' : '0');
-            setEditDebugEnabled(next);
-          }}
-          style={{
-            position: 'fixed',
-            bottom: 12,
-            left: 12,
-            zIndex: 99998,
-            fontSize: '11px',
-            fontFamily: '"Futura PT Medium", sans-serif',
-            color: editDebugEnabled ? '#EB1C24' : '#666',
-            backgroundColor: 'rgba(255,255,255,0.95)',
-            border: '1px solid #ccc',
-            borderRadius: 6,
-            padding: '6px 10px',
-            cursor: 'pointer',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-            textTransform: 'uppercase'
-          }}
-        >
-          Price debug {editDebugEnabled ? 'ON' : 'off'}
-        </button>
-      )}
-
-      {/* Mobile-friendly edit price debug panel: add ?debug=1 to URL or set localStorage.editPriceDebug=1 or tap "Price debug off" above */}
-      {(() => {
-        const isEditPage = location.pathname === '/build-a-wig/edit' ||
-                           location.pathname.startsWith('/build-a-wig/noir/edit') ||
-                           location.pathname.startsWith('/build-a-wig/blanco/edit') ||
-                           location.pathname.startsWith('/build-a-wig/soft-wave/edit') ||
-                           location.pathname.startsWith('/build-a-wig/soft-curl/edit') ||
-                           location.pathname.startsWith('/build-a-wig/beach-wave/edit') ||
-                           location.pathname.startsWith('/build-a-wig/ocean-curl/edit');
-        const isEditPriceDebug = typeof window !== 'undefined' && (
-          new URLSearchParams(location.search).get('debug') === '1' || localStorage.getItem('editPriceDebug') === '1' || editDebugEnabled
-        );
-        if (!isEditPage || !isEditPriceDebug) return null;
-        return (
-          <div
-            style={{
-              position: 'fixed',
-              bottom: 0,
-              right: 0,
-              zIndex: 99999,
-              maxWidth: '100%',
-              width: editDebugPanelOpen ? 'min(400px, 95vw)' : 'auto',
-              maxHeight: editDebugPanelOpen ? '70vh' : 'auto',
-              backgroundColor: 'rgba(0,0,0,0.92)',
-              color: '#eee',
-              fontSize: '11px',
-              fontFamily: 'monospace',
-              overflow: 'auto',
-              border: '1px solid #666',
-              borderBottomRightRadius: 0,
-              borderTopLeftRadius: 8,
-              padding: editDebugPanelOpen ? 8 : 6,
-              boxShadow: '0 0 12px rgba(0,0,0,0.5)'
-            }}
-          >
-            <button
-              type="button"
-              onClick={() => setEditDebugPanelOpen(prev => !prev)}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#EB1C24',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                padding: '2px 6px',
-                fontSize: '12px'
-              }}
-            >
-              {editDebugPanelOpen ? '▼ Hide' : '▲'} Price debug {editDebugLogs.length > 0 && `(${editDebugLogs.length})`}
-            </button>
-            {editDebugPanelOpen && (
-              <div style={{ marginTop: 6 }}>
-                {editDebugCartPayload != null && (
-                  <div style={{ marginBottom: 8 }}>
-                    <strong style={{ color: '#f88' }}>Cart stored (from EDIT IN BUILD-A-WIG):</strong>
-                    <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: '4px 0', fontSize: '10px' }}>
-                      {JSON.stringify(editDebugCartPayload, null, 2)}
-                    </pre>
-                  </div>
-                )}
-                <strong style={{ color: '#8f8' }}>Edit page logs:</strong>
-                {editDebugLogs.length === 0 ? (
-                  <p style={{ margin: '4px 0' }}>No logs yet. Interact or refresh.</p>
-                ) : (
-                  editDebugLogs.map((log, i) => (
-                    <div key={i} style={{ marginBottom: 6, borderBottom: '1px solid #444', paddingBottom: 4 }}>
-                      <div style={{ color: '#ffc' }}>{log.tag}</div>
-                      <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: '2px 0', fontSize: '10px' }}>
-                        {JSON.stringify(log.data, null, 2)}
-                      </pre>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-          </div>
-        );
-      })()}
     </>
   );
 }

@@ -46,7 +46,7 @@ export default function DynamicCartIcon({ count, size = 23, width, height, class
           minHeight: iconHeight, 
           maxWidth: iconWidth, 
           maxHeight: iconHeight,
-          transform: count === 0 ? 'translateY(-2px)' : 'translateY(1px)',
+          transform: count === 0 ? 'translateY(2px)' : 'translateY(1px)',
           zIndex: 10
         }}
         onClick={(e) => {

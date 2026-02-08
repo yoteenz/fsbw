@@ -16,15 +16,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [viewingDetailsFor, setViewingDetailsFor] = useState<string | null>(null);
-  // Mobile-friendly cart price debugging (?debug=1 or localStorage.editPriceDebug=1)
-  const [cartDebugLogs, setCartDebugLogs] = useState<Array<{ tag: string; data: unknown }>>([]);
-  const [cartDebugPanelOpen, setCartDebugPanelOpen] = useState(false);
-  const [lastAddToBagPayload, setLastAddToBagPayload] = useState<unknown>(null);
-  // Toggle so mobile users can enable debug without URL/console (sync with localStorage)
-  const [debugEnabled, setDebugEnabled] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return localStorage.getItem('editPriceDebug') === '1';
-  });
 
   // Close cart dropdown immediately when route changes (before new page loads)
   useEffect(() => {
@@ -64,27 +55,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     }
   }, [isOpen]);
 
-  // Mobile-friendly debug: when cart opens, respect URL, localStorage, or in-app toggle
-  const isCartPriceDebug = typeof window !== 'undefined' && (
-    new URLSearchParams(location.search).get('debug') === '1' || localStorage.getItem('editPriceDebug') === '1' || debugEnabled
-  );
-  // Keep debugEnabled in sync with localStorage when cart opens (e.g. set from another tab/page)
-  useEffect(() => {
-    if (isOpen && typeof window !== 'undefined') {
-      setDebugEnabled(localStorage.getItem('editPriceDebug') === '1');
-    }
-  }, [isOpen]);
-  useEffect(() => {
-    if (isOpen && isCartPriceDebug) {
-      try {
-        const raw = sessionStorage.getItem('lastAddToBagPayload');
-        setLastAddToBagPayload(raw ? JSON.parse(raw) : null);
-      } catch {
-        setLastAddToBagPayload(null);
-      }
-    }
-  }, [isOpen, isCartPriceDebug]);
-  
   // Currency state - load from localStorage on mount
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
     if (typeof window !== 'undefined') {
@@ -324,42 +294,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
               originalItems: items.map((i: any) => ({ id: i.id, price: i.price })),
               updatedItems: itemsWithCorrectPrices.map((i: any) => ({ id: i.id, price: i.price }))
             });
-          }
-          
-          // [CART PRICE TRIANGULATION] Mobile-friendly: log what we're displaying + per-addon breakdown per item
-          if (typeof window !== 'undefined' && (new URLSearchParams(location.search).get('debug') === '1' || localStorage.getItem('editPriceDebug') === '1' || debugEnabled)) {
-            const addOnBasePrices: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
-            const discountedLaceSizes = ['2X6', '4X4', '5X5', '6X6', '7X7'];
-            const getAddOnsBreakdown = (addOns: string[] | undefined, lace: string | undefined) => {
-              const hasDisc = lace && discountedLaceSizes.includes(lace);
-              const perAddon: Record<string, number> = {};
-              (addOns || []).forEach((id: string) => {
-                let p = addOnBasePrices[id] ?? 0;
-                if (hasDisc && (id === 'BLEACH' || id === 'PLUCK')) p -= 20;
-                perAddon[id] = p;
-              });
-              const sum = Object.values(perAddon).reduce((a, b) => a + b, 0);
-              return { perAddon, perAddonSum: sum, lace: lace || '', laceDiscountApplied: !!hasDisc };
-            };
-            setCartDebugLogs(prev => [...prev.slice(-29), {
-              tag: 'Cart load (prices used)',
-              data: {
-                source: 'CartDropdown loadCartItems',
-                itemCount: itemsWithCorrectPrices.length,
-                items: itemsWithCorrectPrices.map((i: any) => ({
-                  id: i.id,
-                  name: i.name,
-                  price: i.price,
-                  capSize: i.capSize,
-                  length: i.length,
-                  color: i.color,
-                  addOns: i.addOns,
-                  lace: i.lace,
-                  addOnsDetail: getAddOnsBreakdown(i.addOns, i.lace)
-                })),
-                rawFromStorage: items.map((i: any) => ({ id: i.id, name: i.name, price: i.price }))
-              }
-            }]);
           }
           setCartItems(itemsWithCorrectPrices);
         } else {
@@ -794,27 +728,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
               SHOPPING BAG <span style={{ color: '#EB1C24' }}>({cartCount})</span>
             </h3>
               <div className="flex items-center" style={{ gap: '6px', flexWrap: 'wrap' }}>
-            {/* Mobile-friendly: tap to turn price debug on/off (no console needed) */}
-            <button
-              type="button"
-              onClick={() => {
-                const next = !debugEnabled;
-                if (typeof window !== 'undefined') localStorage.setItem('editPriceDebug', next ? '1' : '0');
-                setDebugEnabled(next);
-              }}
-              style={{
-                fontSize: '9px',
-                fontFamily: '"Futura PT Medium", sans-serif',
-                color: debugEnabled ? '#EB1C24' : '#888',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '2px 4px',
-                textTransform: 'uppercase'
-              }}
-            >
-              Price debug {debugEnabled ? 'ON' : 'off'}
-            </button>
             <span
               onClick={() => setShowCurrencyModal(true)}
               style={{ 
@@ -977,38 +890,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               lineHeight: '1.1'
                             }}
                           onClick={() => {
-                            // [EDIT PRICE TRIANGULATION] Log what the cart is storing + per-addon breakdown
-                            const addOnBasePricesCart: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
-                            const discountedLaceSizesCart = ['2X6', '4X4', '5X5', '6X6', '7X7'];
-                            const laceCart = item.lace || '';
-                            const hasLaceDiscCart = discountedLaceSizesCart.includes(laceCart);
-                            const perAddonCart: Record<string, number> = {};
-                            (item.addOns || []).forEach((id: string) => {
-                              let p = addOnBasePricesCart[id] ?? 0;
-                              if (hasLaceDiscCart && (id === 'BLEACH' || id === 'PLUCK')) p -= 20;
-                              perAddonCart[id] = p;
-                            });
-                            const cartDebugPayload = {
-                              source: 'CartDropdown (EDIT IN BUILD-A-WIG click)',
-                              itemId: item.id,
-                              itemName: item.name,
-                              cartItemPrice: item.price,
-                              cartItemPriceType: typeof item.price,
-                              fullItem: { ...item },
-                              addOnsDetail: {
-                                selected: item.addOns || [],
-                                lace: laceCart,
-                                laceDiscountApplied: hasLaceDiscCart,
-                                perAddon: perAddonCart,
-                                perAddonSum: Object.values(perAddonCart).reduce((a, b) => a + b, 0)
-                              }
-                            };
-                            console.log('[EDIT PRICE TRIANGULATION] Cart → Edit: storing item for edit', cartDebugPayload);
-                            // Mobile-friendly: so edit page can show this on-screen when ?debug=1
-                            try {
-                              sessionStorage.setItem('editPriceDebugCart', JSON.stringify(cartDebugPayload));
-                            } catch (_) {}
-                            
                             // Store the current item details for editing
                             localStorage.setItem('editingCartItem', JSON.stringify(item));
                             localStorage.setItem('editingCartItemId', item.id);
@@ -1672,63 +1553,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
               )}
             </div>
           </div>
-
-        {/* Mobile-friendly cart price debug panel (?debug=1 or localStorage.editPriceDebug=1) */}
-        {isCartPriceDebug && (
-          <div
-            style={{
-              borderTop: '1px solid #ccc',
-              backgroundColor: 'rgba(0,0,0,0.88)',
-              color: '#eee',
-              fontSize: '11px',
-              fontFamily: 'monospace',
-              overflow: 'auto',
-              maxHeight: cartDebugPanelOpen ? '45vh' : 'auto',
-              padding: cartDebugPanelOpen ? 8 : 4
-            }}
-          >
-            <button
-              type="button"
-              onClick={() => setCartDebugPanelOpen(prev => !prev)}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#EB1C24',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                padding: '2px 6px',
-                fontSize: '11px'
-              }}
-            >
-              {cartDebugPanelOpen ? '▼ Hide' : '▲'} Cart price debug {cartDebugLogs.length > 0 && `(${cartDebugLogs.length})`}
-            </button>
-            {cartDebugPanelOpen && (
-              <div style={{ marginTop: 6 }}>
-                {lastAddToBagPayload != null && (
-                  <div style={{ marginBottom: 8 }}>
-                    <strong style={{ color: '#f88' }}>Last ADD TO BAG / SAVE (from build-a-wig):</strong>
-                    <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: '4px 0', fontSize: '10px' }}>
-                      {JSON.stringify(lastAddToBagPayload, null, 2)}
-                    </pre>
-                  </div>
-                )}
-                <strong style={{ color: '#8f8' }}>Cart load logs:</strong>
-                {cartDebugLogs.length === 0 ? (
-                  <p style={{ margin: '4px 0' }}>Open cart after adding an item to see logs.</p>
-                ) : (
-                  cartDebugLogs.map((log, i) => (
-                    <div key={i} style={{ marginBottom: 6, borderBottom: '1px solid #444', paddingBottom: 4 }}>
-                      <div style={{ color: '#ffc' }}>{log.tag}</div>
-                      <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: '2px 0', fontSize: '10px' }}>
-                        {JSON.stringify(log.data, null, 2)}
-                      </pre>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Currency Modal */}
         {showCurrencyModal && (
