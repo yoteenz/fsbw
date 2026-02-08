@@ -535,7 +535,7 @@ const LobbyApp: React.FC = () => {
 
   const handleUpgrade = () => {
     setShowUpgradeModal(false);
-    navigate('/account/membership');
+    navigate('/account/rewards');
   };
 
   const handleCancel = () => {

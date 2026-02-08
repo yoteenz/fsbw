@@ -1516,7 +1516,7 @@ function CheckoutPage() {
               ) : (
                 <>
                   <button 
-                    onClick={() => isSubscriptionUpgrade ? navigate('/account/membership') : navigate('/bag')} 
+                    onClick={() => isSubscriptionUpgrade ? navigate('/account/rewards') : navigate('/bag')} 
                     className="cursor-pointer"
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
                   >
@@ -1559,7 +1559,7 @@ function CheckoutPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => isSubscriptionUpgrade ? navigate('/account/membership') : navigate('/bag')}
+                    onClick={() => isSubscriptionUpgrade ? navigate('/account/rewards') : navigate('/bag')}
                   >
                     {isSubscriptionUpgrade ? 'UPGRADE >' : 'BAG >'}
                   </span>{' '}

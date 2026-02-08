@@ -497,35 +497,35 @@ function OceanCurlSelection() {
     setShowChartModal(false);
   };
 
-  // Mannequin images for ocean curl product (2D view)
+  // Mannequin images for ocean curl product (2D view) - use shared 2D curly assets
   const mannequinImages = [
-    '/assets/OCEAN CURL FRONT.JPG',  // View 1 (default)
-    '/assets/OCEAN CURL LEFT.JPG',   // View 2 (top thumbnail)
-    '/assets/OCEAN CURL RIGHT.JPG'   // View 3 (bottom thumbnail)
+    '/assets/2D CURLY FRONT.png',  // View 1 (default)
+    '/assets/2D CURLY LEFT.png',   // View 2 (top thumbnail)
+    '/assets/2D CURLY RIGHT.png'  // View 3 (bottom thumbnail)
   ];
 
   // Get current mannequin images based on selected view
   const getCurrentImages = () => {
     if (selectedMannequinView === 0) {
-      // Default state: OCEAN CURL FRONT in hero
+      // Default state: 2D CURLY FRONT in hero
       return {
-        hero: mannequinImages[0], // OCEAN CURL FRONT
-        top: mannequinImages[1],   // OCEAN CURL LEFT
-        bottom: mannequinImages[2] // OCEAN CURL RIGHT
+        hero: mannequinImages[0], // 2D CURLY FRONT
+        top: mannequinImages[1],   // 2D CURLY LEFT
+        bottom: mannequinImages[2] // 2D CURLY RIGHT
       };
     } else if (selectedMannequinView === 1) {
-      // Top thumbnail clicked: OCEAN CURL LEFT in hero, OCEAN CURL FRONT in top
+      // Top thumbnail clicked: 2D CURLY LEFT in hero, 2D CURLY FRONT in top
       return {
-        hero: mannequinImages[1], // OCEAN CURL LEFT
-        top: mannequinImages[0],   // OCEAN CURL FRONT
-        bottom: mannequinImages[2] // OCEAN CURL RIGHT (stays in bottom)
+        hero: mannequinImages[1], // 2D CURLY LEFT
+        top: mannequinImages[0],   // 2D CURLY FRONT
+        bottom: mannequinImages[2] // 2D CURLY RIGHT (stays in bottom)
       };
     } else {
-      // Bottom thumbnail clicked: OCEAN CURL RIGHT in hero, OCEAN CURL FRONT in bottom
+      // Bottom thumbnail clicked: 2D CURLY RIGHT in hero, 2D CURLY FRONT in bottom
       return {
-        hero: mannequinImages[2], // OCEAN CURL RIGHT
-        top: mannequinImages[1],  // OCEAN CURL LEFT (stays in top)
-        bottom: mannequinImages[0] // OCEAN CURL FRONT
+        hero: mannequinImages[2], // 2D CURLY RIGHT
+        top: mannequinImages[1],  // 2D CURLY LEFT (stays in top)
+        bottom: mannequinImages[0] // 2D CURLY FRONT
       };
     }
   };

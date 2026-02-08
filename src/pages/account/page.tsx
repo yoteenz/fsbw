@@ -801,13 +801,13 @@ function AccountPage() {
     }
     
     defaultCards.push(
+      { title: 'ALERTS', subtitle: 'NOTIFICATIONS + NEWSLETTER', route: '/account/alerts' },
       { 
         title: 'ORDERS', 
         subtitle: activeOrdersCount > 0 ? `${activeOrdersCount} ACTIVE ORDER${activeOrdersCount !== 1 ? 'S' : ''}` : '0 ACTIVE ORDERS', 
         route: '/account/orders' 
       },
-      { title: 'ALERTS', subtitle: 'NOTIFICATIONS + NEWSLETTER', route: '/account/alerts' },
-      { title: 'MEMBERSHIP', subtitle: 'SUBSCRIPTIONS + REWARDS', route: '/account/membership' },
+      { title: 'REWARDS', subtitle: 'MEMBERSHIP + SUBSCRIPTION', route: '/account/rewards' },
       { title: 'AFFILIATE', subtitle: 'SUBMIT CONTENT FOR POINTS', route: '/account/affiliate' },
       { 
         title: 'REVIEWS', 
@@ -850,7 +850,7 @@ function AccountPage() {
       switch (title) {
         case 'ORDERS':
         case 'ALERTS':
-        case 'MEMBERSHIP':
+        case 'REWARDS':
         case 'AFFILIATE':
         case 'REVIEWS':
         case 'PAYMENT METHOD':
@@ -866,7 +866,7 @@ function AccountPage() {
         return hasOrdersNotifications();
       case 'ALERTS':
         return hasAlertsNotifications();
-      case 'MEMBERSHIP':
+      case 'REWARDS':
         return hasMembershipNotifications();
       case 'AFFILIATE':
         return hasAffiliateNotifications();

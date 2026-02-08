@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -10,6 +10,8 @@ export default function AddOnsSelectionPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedView, setSelectedView] = useState(1);
+  const ADDONS_CORRECT_ORDER = ['BLEACH', 'PLUCK', 'BLUNT CUT'];
+
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>(() => {
     const pathname = window.location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
@@ -20,45 +22,65 @@ export default function AddOnsSelectionPage() {
                                pathname.includes('/ocean-curl/customize') ||
                                pathname.includes('/beach-wave/customize');
     
+    let initial: string[] = [];
+    
     // CRITICAL: Check editSelected* keys first when in edit mode
     if (isOnEditRoute) {
       const editSelectedAddOns = localStorage.getItem('editSelectedAddOns');
       if (editSelectedAddOns) {
         try {
-          return JSON.parse(editSelectedAddOns);
+          initial = JSON.parse(editSelectedAddOns);
         } catch (e) {
           // Ignore parse errors
         }
       }
-      // Fallback to editingCartItem
-      const editingCartItem = localStorage.getItem('editingCartItem');
-      if (editingCartItem) {
-        try {
-          const item = JSON.parse(editingCartItem);
-          if (item.addOns && Array.isArray(item.addOns)) {
-            return item.addOns;
+      if (initial.length === 0) {
+        const editingCartItem = localStorage.getItem('editingCartItem');
+        if (editingCartItem) {
+          try {
+            const item = JSON.parse(editingCartItem);
+            if (item.addOns && Array.isArray(item.addOns)) {
+              initial = item.addOns;
+            }
+          } catch (e) {
+            // Ignore parse errors
           }
-        } catch (e) {
-          // Ignore parse errors
         }
       }
-    }
-    
-    // CRITICAL: Check customizeSelected* keys when in customize mode
-    if (isOnCustomizeRoute) {
+    } else if (isOnCustomizeRoute) {
       const customizeSelectedAddOns = localStorage.getItem('customizeSelectedAddOns');
       if (customizeSelectedAddOns) {
         try {
-          return JSON.parse(customizeSelectedAddOns);
+          initial = JSON.parse(customizeSelectedAddOns);
         } catch (e) {
           // Ignore parse errors
         }
       }
+    } else {
+      const saved = localStorage.getItem('selectedAddOns');
+      initial = saved ? JSON.parse(saved) : [];
     }
     
-    // Main mode: use selected* keys
-    const saved = localStorage.getItem('selectedAddOns');
-    return saved ? JSON.parse(saved) : [];
+    // EDIT/CUSTOMIZE: Auto-select BLEACH + PLUCK only when a *styling option* is confirmed (BANGS, CRIMPS, etc.).
+    // Styling the hair requires bleach + pluck, so we add them when the user has chosen a style.
+    // We do NOT auto-select a style when BLEACH/PLUCK are selected — the user may want bleach/pluck without styling.
+    if (isOnEditRoute || isOnCustomizeRoute) {
+      const styleConfirmed = isOnEditRoute
+        ? (localStorage.getItem('editSelectedStyling') && localStorage.getItem('editSelectedStyling') !== 'NONE') ||
+          (() => {
+            try {
+              const item = JSON.parse(localStorage.getItem('editingCartItem') || '{}');
+              return item.styling && item.styling !== 'NONE' && String(item.styling).trim() !== '';
+            } catch { return false; }
+          })()
+        : (localStorage.getItem('customizeSelectedStyling') && localStorage.getItem('customizeSelectedStyling') !== 'NONE' && (localStorage.getItem('customizeSelectedStyling') || '').trim() !== '');
+      if (styleConfirmed && (!initial.includes('BLEACH') || !initial.includes('PLUCK'))) {
+        const merged = [...initial.filter(x => x !== 'BLEACH' && x !== 'PLUCK'), 'BLEACH', 'PLUCK'];
+        initial = merged.sort((a, b) => ADDONS_CORRECT_ORDER.indexOf(a) - ADDONS_CORRECT_ORDER.indexOf(b));
+      }
+    }
+    
+    return initial;
   });
   const [showLoading, setShowLoading] = useState(true);
   
@@ -112,6 +134,77 @@ export default function AddOnsSelectionPage() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  // EDIT/CUSTOMIZE: Auto-select BLEACH + PLUCK only when a styling option is confirmed (styling = mandatory bleach+pluck).
+  // We never auto-select a style when BLEACH/PLUCK are selected — styling is optional.
+  useEffect(() => {
+    const pathname = location.pathname;
+    const isOnEditRoute = pathname.includes('/edit');
+    const isOnCustomizeRoute = pathname.includes('/noir/customize') ||
+                             pathname.includes('/blanco/customize') ||
+                             pathname.includes('/soft-wave/customize') ||
+                             pathname.includes('/soft-curl/customize') ||
+                             pathname.includes('/ocean-curl/customize') ||
+                             pathname.includes('/beach-wave/customize');
+    if (!isOnEditRoute && !isOnCustomizeRoute) return;
+
+    const styleConfirmed = isOnEditRoute
+      ? (localStorage.getItem('editSelectedStyling') && localStorage.getItem('editSelectedStyling') !== 'NONE') ||
+        (() => {
+          try {
+            const item = JSON.parse(localStorage.getItem('editingCartItem') || '{}');
+            return item.styling && item.styling !== 'NONE' && String(item.styling).trim() !== '';
+          } catch { return false; }
+        })()
+      : (localStorage.getItem('customizeSelectedStyling') && (localStorage.getItem('customizeSelectedStyling') || '').trim() !== '' && localStorage.getItem('customizeSelectedStyling') !== 'NONE');
+    if (!styleConfirmed) return;
+
+    setSelectedAddOns(prev => {
+      const hasBleach = prev.includes('BLEACH');
+      const hasPluck = prev.includes('PLUCK');
+      if (hasBleach && hasPluck) return prev;
+      return [...prev.filter(x => x !== 'BLEACH' && x !== 'PLUCK'), 'BLEACH', 'PLUCK']
+        .sort((a, b) => ADDONS_CORRECT_ORDER.indexOf(a) - ADDONS_CORRECT_ORDER.indexOf(b));
+    });
+  }, [location.pathname]);
+
+  // Persist addons when we auto-added BLEACH+PLUCK for styling (so main page sees the update).
+  const hasAutoAppliedBleachPluck = useRef(false);
+  useEffect(() => {
+    const pathname = location.pathname;
+    const isOnEditRoute = pathname.includes('/edit');
+    const isOnCustomizeRoute = pathname.includes('/noir/customize') ||
+                             pathname.includes('/blanco/customize') ||
+                             pathname.includes('/soft-wave/customize') ||
+                             pathname.includes('/soft-curl/customize') ||
+                             pathname.includes('/ocean-curl/customize') ||
+                             pathname.includes('/beach-wave/customize');
+    if (!isOnEditRoute && !isOnCustomizeRoute) return;
+    if (!selectedAddOns.includes('BLEACH') || !selectedAddOns.includes('PLUCK')) return;
+    if (hasAutoAppliedBleachPluck.current) return;
+    hasAutoAppliedBleachPluck.current = true;
+    const selectedLace = localStorage.getItem('selectedLace') || '';
+    const discountedLaceSizes = ['2X6', '4X4', '5X5', '6X6', '7X7'];
+    const hasLaceDiscount = discountedLaceSizes.includes(selectedLace);
+    const addOnPrices: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+    const price = selectedAddOns.reduce((total, addOnId) => {
+      let p = addOnPrices[addOnId] ?? 0;
+      if (hasLaceDiscount && (addOnId === 'BLEACH' || addOnId === 'PLUCK')) p -= 20;
+      return total + p;
+    }, 0);
+    const priceStr = price.toString();
+    localStorage.setItem('selectedAddOns', JSON.stringify(selectedAddOns));
+    localStorage.setItem('selectedAddOnsPrice', priceStr);
+    if (isOnEditRoute) {
+      localStorage.setItem('editSelectedAddOns', JSON.stringify(selectedAddOns));
+      localStorage.setItem('editSelectedAddOnsPrice', priceStr);
+    }
+    if (isOnCustomizeRoute) {
+      localStorage.setItem('customizeSelectedAddOns', JSON.stringify(selectedAddOns));
+      localStorage.setItem('customizeSelectedAddOnsPrice', priceStr);
+    }
+    window.dispatchEvent(new CustomEvent('customStorageChange'));
+  }, [location.pathname, selectedAddOns]);
 
   // Get wig views based on selected hairline from localStorage
   const getWigViews = () => {
@@ -494,6 +587,10 @@ export default function AddOnsSelectionPage() {
     }
     
     navigate(returnRoute);
+    // Dispatch again after navigation so the main page (now visible) can sync add-ons and price from localStorage
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('customStorageChange'));
+    }, 0);
   };
 
   const handleConfirmSelection = () => {

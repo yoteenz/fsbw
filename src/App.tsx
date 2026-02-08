@@ -565,7 +565,7 @@ function App() {
             <ConciergePage />
           </Suspense>
         } />
-        <Route path="/account/membership" element={
+        <Route path="/account/rewards" element={
           <Suspense fallback={<LoadingScreen />}>
             <MembershipPage />
           </Suspense>

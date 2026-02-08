@@ -747,7 +747,7 @@ export default function BuildAWigPage() {
           validStyling = 'NONE'; // If styling is a part selection, set to NONE
         }
         
-        const updatedCustomization = {
+        let updatedCustomization = {
           capSize: savedCapSizeFinal,
           length: savedLength,
           density: savedDensity,
@@ -759,6 +759,43 @@ export default function BuildAWigPage() {
           addOns: savedAddOns ? JSON.parse(savedAddOns) : [],
         };
         
+        // When style is removed (NONE): remove BLEACH + PLUCK only if they were auto-added for styling (not intentionally selected)
+        if ((validStyling === 'NONE' || !validStyling.trim()) && sessionStorage.getItem('bleachPluckAutoAddedForStyling') === 'true' && (updatedCustomization.addOns.includes('BLEACH') || updatedCustomization.addOns.includes('PLUCK'))) {
+          updatedCustomization = { ...updatedCustomization, addOns: updatedCustomization.addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK') };
+          const discountedLaceSizesRm = ['2X6', '4X4', '5X5', '6X6', '7X7'];
+          const hasLaceDiscountRm = discountedLaceSizesRm.includes(updatedCustomization.lace || '');
+          const addOnPricesRm: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+          const addOnsPriceAfterRm = updatedCustomization.addOns.reduce((sum: number, id: string) => {
+            let p = addOnPricesRm[id] ?? 0;
+            if (hasLaceDiscountRm && (id === 'BLEACH' || id === 'PLUCK')) p -= 20;
+            return sum + p;
+          }, 0);
+          localStorage.setItem('customizeSelectedAddOns', JSON.stringify(updatedCustomization.addOns));
+          localStorage.setItem('selectedAddOns', JSON.stringify(updatedCustomization.addOns));
+          localStorage.setItem('customizeSelectedAddOnsPrice', addOnsPriceAfterRm.toString());
+          localStorage.setItem('selectedAddOnsPrice', addOnsPriceAfterRm.toString());
+          sessionStorage.removeItem('bleachPluckAutoAddedForStyling');
+        }
+        
+        // When a style is confirmed, BLEACH + PLUCK are required — auto-add and save price so main page shows correct total
+        if (validStyling !== 'NONE' && validStyling.trim() !== '' && (!updatedCustomization.addOns.includes('BLEACH') || !updatedCustomization.addOns.includes('PLUCK'))) {
+          const addOnsOrder = ['BLEACH', 'PLUCK', 'BLUNT CUT'];
+          const merged = [...updatedCustomization.addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK'), 'BLEACH', 'PLUCK'];
+          updatedCustomization = { ...updatedCustomization, addOns: merged.sort((a: string, b: string) => addOnsOrder.indexOf(a) - addOnsOrder.indexOf(b)) };
+          sessionStorage.setItem('bleachPluckAutoAddedForStyling', 'true');
+          localStorage.setItem('customizeSelectedAddOns', JSON.stringify(updatedCustomization.addOns));
+          localStorage.setItem('selectedAddOns', JSON.stringify(updatedCustomization.addOns));
+          const discountedLaceSizes = ['2X6', '4X4', '5X5', '6X6', '7X7'];
+          const hasLaceDiscount = discountedLaceSizes.includes(updatedCustomization.lace || '');
+          const addOnPrices: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+          const addOnsPriceValue = updatedCustomization.addOns.reduce((sum: number, id: string) => {
+            let p = addOnPrices[id] ?? 0;
+            if (hasLaceDiscount && (id === 'BLEACH' || id === 'PLUCK')) p -= 20;
+            return sum + p;
+          }, 0);
+          localStorage.setItem('customizeSelectedAddOnsPrice', addOnsPriceValue.toString());
+          localStorage.setItem('selectedAddOnsPrice', addOnsPriceValue.toString());
+        }
         
         // CRITICAL: Also save to customizeSelected* keys immediately to ensure they're available
         localStorage.setItem('customizeSelectedCapSize', updatedCustomization.capSize);
@@ -877,7 +914,7 @@ export default function BuildAWigPage() {
             validStyling = 'NONE';
           }
           
-          const initialCustomization = {
+          let initialCustomization = {
             capSize: savedCapSize,
           length: existingLength,
           density: existingDensity,
@@ -888,6 +925,14 @@ export default function BuildAWigPage() {
           styling: validStyling,
           addOns: existingAddOns ? JSON.parse(existingAddOns) : [],
         };
+
+          // When a style is confirmed on first load, BLEACH + PLUCK are required — auto-add so main page shows confirmed without visiting add-ons
+          if (validStyling !== 'NONE' && validStyling.trim() !== '' && (!initialCustomization.addOns.includes('BLEACH') || !initialCustomization.addOns.includes('PLUCK'))) {
+            const addOnsOrder = ['BLEACH', 'PLUCK', 'BLUNT CUT'];
+            const merged = [...initialCustomization.addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK'), 'BLEACH', 'PLUCK'];
+            initialCustomization = { ...initialCustomization, addOns: merged.sort((a: string, b: string) => addOnsOrder.indexOf(a) - addOnsOrder.indexOf(b)) };
+            sessionStorage.setItem('bleachPluckAutoAddedForStyling', 'true');
+          }
         
         
         setCustomization(initialCustomization);
@@ -1039,7 +1084,7 @@ export default function BuildAWigPage() {
           validStyling = 'NONE'; // If styling is a part selection, set to NONE
         }
         
-        const updatedCustomization = {
+        let updatedCustomization = {
           capSize: savedCapSizeFinal,
           length: savedLength,
           density: savedDensity,
@@ -1050,6 +1095,44 @@ export default function BuildAWigPage() {
           styling: validStyling,
           addOns: savedAddOns ? JSON.parse(savedAddOns) : [],
         };
+        
+        // When style is removed (NONE): remove BLEACH + PLUCK only if they were auto-added for styling (not intentionally selected)
+        if ((validStyling === 'NONE' || !validStyling.trim()) && sessionStorage.getItem('bleachPluckAutoAddedForStyling') === 'true' && (updatedCustomization.addOns.includes('BLEACH') || updatedCustomization.addOns.includes('PLUCK'))) {
+          updatedCustomization = { ...updatedCustomization, addOns: updatedCustomization.addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK') };
+          const discountedLaceSizesRmE = ['2X6', '4X4', '5X5', '6X6', '7X7'];
+          const hasLaceDiscountRmE = discountedLaceSizesRmE.includes(updatedCustomization.lace || '');
+          const addOnPricesRmE: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+          const addOnsPriceAfterRmE = updatedCustomization.addOns.reduce((sum: number, id: string) => {
+            let p = addOnPricesRmE[id] ?? 0;
+            if (hasLaceDiscountRmE && (id === 'BLEACH' || id === 'PLUCK')) p -= 20;
+            return sum + p;
+          }, 0);
+          localStorage.setItem('editSelectedAddOns', JSON.stringify(updatedCustomization.addOns));
+          localStorage.setItem('selectedAddOns', JSON.stringify(updatedCustomization.addOns));
+          localStorage.setItem('editSelectedAddOnsPrice', addOnsPriceAfterRmE.toString());
+          localStorage.setItem('selectedAddOnsPrice', addOnsPriceAfterRmE.toString());
+          sessionStorage.removeItem('bleachPluckAutoAddedForStyling');
+        }
+        
+        // When a style is confirmed, BLEACH + PLUCK are required — auto-add and save price so main page shows correct total
+        if (validStyling !== 'NONE' && validStyling.trim() !== '' && (!updatedCustomization.addOns.includes('BLEACH') || !updatedCustomization.addOns.includes('PLUCK'))) {
+          const addOnsOrderEdit = ['BLEACH', 'PLUCK', 'BLUNT CUT'];
+          const mergedEdit = [...updatedCustomization.addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK'), 'BLEACH', 'PLUCK'];
+          updatedCustomization = { ...updatedCustomization, addOns: mergedEdit.sort((a: string, b: string) => addOnsOrderEdit.indexOf(a) - addOnsOrderEdit.indexOf(b)) };
+          sessionStorage.setItem('bleachPluckAutoAddedForStyling', 'true');
+          localStorage.setItem('editSelectedAddOns', JSON.stringify(updatedCustomization.addOns));
+          localStorage.setItem('selectedAddOns', JSON.stringify(updatedCustomization.addOns));
+          const discountedLaceSizesEdit = ['2X6', '4X4', '5X5', '6X6', '7X7'];
+          const hasLaceDiscountEdit = discountedLaceSizesEdit.includes(updatedCustomization.lace || '');
+          const addOnPricesEdit: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+          const addOnsPriceValueEdit = updatedCustomization.addOns.reduce((sum: number, id: string) => {
+            let p = addOnPricesEdit[id] ?? 0;
+            if (hasLaceDiscountEdit && (id === 'BLEACH' || id === 'PLUCK')) p -= 20;
+            return sum + p;
+          }, 0);
+          localStorage.setItem('editSelectedAddOnsPrice', addOnsPriceValueEdit.toString());
+          localStorage.setItem('selectedAddOnsPrice', addOnsPriceValueEdit.toString());
+        }
           
         
         // CRITICAL: Read prices from localStorage (saved by sub-pages) to preserve exact prices BEFORE updating state
@@ -1993,7 +2076,46 @@ export default function BuildAWigPage() {
       }
     }
   }, [location.pathname, routeKey]); // Run when route changes
-  
+
+  // Ensure BLEACH+PLUCK are auto-confirmed on main customize/edit when a style is selected,
+  // so the main page shows the correct total without requiring a visit to the add-ons sub-page.
+  useEffect(() => {
+    if (isLoadingFromStorage.current) return;
+    const pathname = location.pathname;
+    const isMainCustomizePage = pathname.endsWith('/customize') && !pathname.includes('/customize/');
+    const isMainEditPage = pathname.endsWith('/edit') && !pathname.includes('/edit/') && localStorage.getItem('editingCartItem') !== null;
+    if (!isMainCustomizePage && !isMainEditPage) return;
+
+    const styling = customization.styling || 'NONE';
+    const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
+    const validStyling = styling && styling !== 'NONE' && !partSelectionOptions.includes(styling) ? styling : 'NONE';
+    if (validStyling === 'NONE') return;
+
+    const addOns = customization.addOns || [];
+    if (addOns.includes('BLEACH') && addOns.includes('PLUCK')) return;
+
+    const addOnsOrder = ['BLEACH', 'PLUCK', 'BLUNT CUT'];
+    const merged = [...addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK'), 'BLEACH', 'PLUCK'];
+    const updatedCustomization = { ...customization, addOns: merged.sort((a: string, b: string) => addOnsOrder.indexOf(a) - addOnsOrder.indexOf(b)) };
+    const calculatedPrices = calculatePricesFromSelections(updatedCustomization);
+
+    setCustomization(updatedCustomization);
+    sessionStorage.setItem('bleachPluckAutoAddedForStyling', 'true');
+
+    if (isMainCustomizePage) {
+      localStorage.setItem('customizeSelectedAddOns', JSON.stringify(updatedCustomization.addOns));
+      localStorage.setItem('selectedAddOns', JSON.stringify(updatedCustomization.addOns));
+      localStorage.setItem('customizeSelectedAddOnsPrice', calculatedPrices.addOnsPrice.toString());
+      localStorage.setItem('selectedAddOnsPrice', calculatedPrices.addOnsPrice.toString());
+    } else {
+      localStorage.setItem('editSelectedAddOns', JSON.stringify(updatedCustomization.addOns));
+      localStorage.setItem('selectedAddOns', JSON.stringify(updatedCustomization.addOns));
+      localStorage.setItem('editSelectedAddOnsPrice', calculatedPrices.addOnsPrice.toString());
+      localStorage.setItem('selectedAddOnsPrice', calculatedPrices.addOnsPrice.toString());
+    }
+    setRefreshTrigger(prev => prev + 1);
+  }, [customization.styling, customization.addOns, location.pathname]);
+
   // Listen for storage changes (when sub-pages update localStorage)
   // NOTE: This is disabled for main mode - main mode loads from localStorage in the route change effect instead
   // This prevents conflicts when returning from sub-pages
@@ -2004,12 +2126,9 @@ export default function BuildAWigPage() {
         return;
       }
       
-      // Skip if coming from sub-page - route change effect will handle it
-      const comingFromSubPage = sessionStorage.getItem('comingFromSubPage') === 'true';
-      if (comingFromSubPage) {
-        return; // Don't handle storage changes when coming from sub-page - let route change effect handle it
-      }
-      
+      // Do not skip when coming from sub-page: merge from localStorage so auto-selected add-ons (e.g. BLEACH+PLUCK)
+      // and their price are reflected on the main page as soon as we receive the event (after add-ons Back or persist).
+
       // Skip for main mode - main mode handles loading in the route change effect
       const isMainPage = location.pathname === '/build-a-wig';
       if (isMainPage) {

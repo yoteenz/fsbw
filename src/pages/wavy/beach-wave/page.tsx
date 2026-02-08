@@ -516,35 +516,35 @@ function BeachWaveSelection() {
     setShowChartModal(false);
   };
 
-  // Mannequin images for beach wave product (2D view)
+  // Mannequin images for beach wave product (2D view) - use shared 2D wavy assets
   const mannequinImages = [
-    '/assets/BEACH WAVE FRONT.JPG',  // View 1 (default)
-    '/assets/BEACH WAVE LEFT.JPG',   // View 2 (top thumbnail)
-    '/assets/BEACH WAVE RIGHT.JPG'   // View 3 (bottom thumbnail)
+    '/assets/2D WAVY FRONT.png',  // View 1 (default)
+    '/assets/2D WAVY LEFT.png',   // View 2 (top thumbnail)
+    '/assets/2D WAVY RIGHT.png'  // View 3 (bottom thumbnail)
   ];
 
   // Get current mannequin images based on selected view
   const getCurrentImages = () => {
     if (selectedMannequinView === 0) {
-      // Default state: BEACH WAVE FRONT in hero
+      // Default state: 2D WAVY FRONT in hero
       return {
-        hero: mannequinImages[0], // BEACH WAVE FRONT
-        top: mannequinImages[1],   // BEACH WAVE LEFT
-        bottom: mannequinImages[2] // BEACH WAVE RIGHT
+        hero: mannequinImages[0], // 2D WAVY FRONT
+        top: mannequinImages[1],   // 2D WAVY LEFT
+        bottom: mannequinImages[2] // 2D WAVY RIGHT
       };
     } else if (selectedMannequinView === 1) {
-      // Top thumbnail clicked: BEACH WAVE LEFT in hero, BEACH WAVE FRONT in top
+      // Top thumbnail clicked: 2D WAVY LEFT in hero, 2D WAVY FRONT in top
       return {
-        hero: mannequinImages[1], // BEACH WAVE LEFT
-        top: mannequinImages[0],  // BEACH WAVE FRONT
-        bottom: mannequinImages[2] // BEACH WAVE RIGHT (stays in bottom)
+        hero: mannequinImages[1], // 2D WAVY LEFT
+        top: mannequinImages[0],  // 2D WAVY FRONT
+        bottom: mannequinImages[2] // 2D WAVY RIGHT (stays in bottom)
       };
     } else {
-      // Bottom thumbnail clicked: BEACH WAVE RIGHT in hero, BEACH WAVE FRONT in bottom
+      // Bottom thumbnail clicked: 2D WAVY RIGHT in hero, 2D WAVY FRONT in bottom
       return {
-        hero: mannequinImages[2], // BEACH WAVE RIGHT
-        top: mannequinImages[1],  // BEACH WAVE LEFT (stays in top)
-        bottom: mannequinImages[0] // BEACH WAVE FRONT
+        hero: mannequinImages[2], // 2D WAVY RIGHT
+        top: mannequinImages[1],  // 2D WAVY LEFT (stays in top)
+        bottom: mannequinImages[0] // 2D WAVY FRONT
       };
     }
   };

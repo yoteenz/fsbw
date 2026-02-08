@@ -10,6 +10,7 @@ export default function StylingSelectionPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedView, setSelectedView] = useState(1);
+  // We do NOT auto-select a style when BLEACH/PLUCK are selected — styling is optional; user may want bleach/pluck only.
   const [selectedHairStyling, setSelectedHairStyling] = useState<string[]>(() => {
     const pathname = window.location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
@@ -448,6 +449,47 @@ export default function StylingSelectionPage() {
 
   const totalPrice = getTotalStylingPrice();
 
+  // Sync add-ons with styling: when a style is confirmed, BLEACH+PLUCK are required (persist them);
+  // when style is deselected, remove BLEACH+PLUCK if they were auto-added (tandem deselect).
+  const getAddOnsAndPriceForStylingSync = (isEdit: boolean, isCustomize: boolean, styleConfirmed: boolean) => {
+    const addOnsOrder = ['BLEACH', 'PLUCK', 'BLUNT CUT'];
+    const addOnPrices: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+    const discountedLaceSizes = ['2X6', '4X4', '5X5', '6X6', '7X7'];
+
+    const laceKey = isEdit ? 'editSelectedLace' : (isCustomize ? 'customizeSelectedLace' : 'selectedLace');
+    const addOnsKey = isEdit ? 'editSelectedAddOns' : (isCustomize ? 'customizeSelectedAddOns' : 'selectedAddOns');
+    const selectedLace = localStorage.getItem(laceKey) || localStorage.getItem('selectedLace') || '';
+    const hasLaceDiscount = discountedLaceSizes.includes(selectedLace);
+
+    let raw: string | null = null;
+    try {
+      raw = localStorage.getItem(addOnsKey) || localStorage.getItem('selectedAddOns');
+    } catch (_) {}
+    let addOns: string[] = [];
+    if (raw) try { addOns = JSON.parse(raw); } catch (_) {}
+
+    if (styleConfirmed) {
+      if (!addOns.includes('BLEACH') || !addOns.includes('PLUCK')) {
+        const merged = [...addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK'), 'BLEACH', 'PLUCK'];
+        addOns = merged.sort((a: string, b: string) => addOnsOrder.indexOf(a) - addOnsOrder.indexOf(b));
+        sessionStorage.setItem('bleachPluckAutoAddedForStyling', 'true');
+      }
+    } else {
+      if (sessionStorage.getItem('bleachPluckAutoAddedForStyling') === 'true' && (addOns.includes('BLEACH') || addOns.includes('PLUCK'))) {
+        addOns = addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK');
+        sessionStorage.removeItem('bleachPluckAutoAddedForStyling');
+      }
+    }
+
+    const price = addOns.reduce((total: number, id: string) => {
+      let p = addOnPrices[id] ?? 0;
+      if (hasLaceDiscount && (id === 'BLEACH' || id === 'PLUCK')) p -= 20;
+      return total + p;
+    }, 0);
+
+    return { addOns, price };
+  };
+
   // Get dynamic styling note text based on selected styling option
   const getStylingNoteText = () => {
     const hasBangs = selectedHairStyling.includes('BANGS');
@@ -592,6 +634,24 @@ export default function StylingSelectionPage() {
           localStorage.removeItem('customizeSelectedStyling');
         }
         localStorage.setItem('customizeSelectedStylingPrice', price);
+      }
+
+      // Sync add-ons with styling: confirm BLEACH+PLUCK when style is confirmed, deselect when style is NONE (tandem)
+      const styleConfirmed = !!(stylingValue && stylingValue !== 'NONE' && stylingValue.trim() !== '');
+      const { addOns: syncedAddOns, price: addOnsPrice } = getAddOnsAndPriceForStylingSync(
+        isOnProductSpecificEditRoute,
+        isOnProductSpecificCustomizeRoute,
+        styleConfirmed
+      );
+      localStorage.setItem('selectedAddOns', JSON.stringify(syncedAddOns));
+      localStorage.setItem('selectedAddOnsPrice', addOnsPrice.toString());
+      if (isOnProductSpecificEditRoute) {
+        localStorage.setItem('editSelectedAddOns', JSON.stringify(syncedAddOns));
+        localStorage.setItem('editSelectedAddOnsPrice', addOnsPrice.toString());
+      }
+      if (isOnProductSpecificCustomizeRoute) {
+        localStorage.setItem('customizeSelectedAddOns', JSON.stringify(syncedAddOns));
+        localStorage.setItem('customizeSelectedAddOnsPrice', addOnsPrice.toString());
       }
       
       // Set flag to indicate we're returning from a sub-page
@@ -745,6 +805,24 @@ export default function StylingSelectionPage() {
     if (isCustomizeMode) {
       localStorage.setItem('customizeSelectedStyling', stylingValue);
       localStorage.setItem('customizeSelectedStylingPrice', price);
+    }
+
+    // Sync add-ons with styling: confirm BLEACH+PLUCK when style is confirmed, deselect when style is NONE (tandem)
+    const styleConfirmed = !!(stylingValue && stylingValue !== 'NONE' && stylingValue.trim() !== '');
+    const { addOns: syncedAddOnsConfirm, price: addOnsPriceConfirm } = getAddOnsAndPriceForStylingSync(
+      isEditMode,
+      isCustomizeMode,
+      styleConfirmed
+    );
+    localStorage.setItem('selectedAddOns', JSON.stringify(syncedAddOnsConfirm));
+    localStorage.setItem('selectedAddOnsPrice', addOnsPriceConfirm.toString());
+    if (isEditMode) {
+      localStorage.setItem('editSelectedAddOns', JSON.stringify(syncedAddOnsConfirm));
+      localStorage.setItem('editSelectedAddOnsPrice', addOnsPriceConfirm.toString());
+    }
+    if (isCustomizeMode) {
+      localStorage.setItem('customizeSelectedAddOns', JSON.stringify(syncedAddOnsConfirm));
+      localStorage.setItem('customizeSelectedAddOnsPrice', addOnsPriceConfirm.toString());
     }
     
     // Determine the correct route to navigate back to based on current pathname
