@@ -350,10 +350,31 @@ export default function AddOnsSelectionPage() {
     }
   ];
 
+  // When a style is confirmed (edit/customize + styling !== NONE), BLEACH + PLUCK cannot be deselected
+  const isStylingConfirmed = (() => {
+    const pathname = location.pathname;
+    const isEdit = pathname.includes('/edit');
+    const isCustomize = pathname.includes('/noir/customize') || pathname.includes('/blanco/customize') ||
+      pathname.includes('/soft-wave/customize') || pathname.includes('/soft-curl/customize') ||
+      pathname.includes('/ocean-curl/customize') || pathname.includes('/beach-wave/customize');
+    if (!isEdit && !isCustomize) return false;
+    if (isEdit) {
+      const s = localStorage.getItem('editSelectedStyling');
+      if (s && s !== 'NONE' && String(s).trim() !== '') return true;
+      try {
+        const item = JSON.parse(localStorage.getItem('editingCartItem') || '{}');
+        return !!(item.styling && item.styling !== 'NONE' && String(item.styling).trim() !== '');
+      } catch (_) { return false; }
+    }
+    const s = localStorage.getItem('customizeSelectedStyling');
+    return !!(s && s !== 'NONE' && String(s).trim() !== '');
+  })();
+
   const handleAddOnToggle = (addOnId: string) => {
     setSelectedAddOns(prev => {
       if (prev.includes(addOnId)) {
-        // Remove the add-on
+        // Do not allow removing BLEACH or PLUCK when a style is confirmed
+        if (isStylingConfirmed && (addOnId === 'BLEACH' || addOnId === 'PLUCK')) return prev;
         return prev.filter(id => id !== addOnId);
       } else {
         // Add the add-on in the correct order based on sub-page sequence
@@ -1003,6 +1024,7 @@ export default function AddOnsSelectionPage() {
                   imgSize={75}
                   containerSize={60}
                   topPosition={getAddOnsThumbnailTopPosition(option.id)}
+                  isDisabled={isStylingConfirmed && (option.id === 'BLEACH' || option.id === 'PLUCK')}
                 />
               ))}
             </div>
