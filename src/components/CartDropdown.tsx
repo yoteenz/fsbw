@@ -373,6 +373,13 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     };
   }, [cartCount, refreshTrigger, location.search]); // Reload when cart count changes or refresh triggered
 
+  // When the item we're viewing details for is no longer in the cart, close details so we show full list or empty state
+  useEffect(() => {
+    if (viewingDetailsFor && !cartItems.some(item => item.id === viewingDetailsFor)) {
+      setViewingDetailsFor(null);
+    }
+  }, [cartItems, viewingDetailsFor]);
+
   // Save selected currency to localStorage whenever it changes
   useEffect(() => {
     if (selectedCurrency) {
@@ -626,6 +633,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   const confirmRemoveItem = () => {
     if (!itemToRemove) return;
     
+    if (itemToRemove === viewingDetailsFor) {
+      setViewingDetailsFor(null);
+    }
     const updatedItems = cartItems.filter(item => item.id !== itemToRemove);
     setCartItems(updatedItems);
     localStorage.setItem('cartItems', JSON.stringify(updatedItems));
@@ -1003,8 +1013,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         const defaultDensityForCount = item.name === 'BLANCO' ? '250%' : '200%';
                         if (item.density && item.density !== defaultDensityForCount) detailCount++;
                         if (item.lace && item.lace !== '13X6') detailCount++;
-                        const defaultColor = item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
-                        if (item.color && item.color !== defaultColor) detailCount++;
+                        // BLANCO default colors: PLATINUM (build-a-wig/product), OFF WHITE (units page), OFF BLACK (legacy)
+                        const blancoDefaultColors = ['PLATINUM', 'OFF WHITE', 'OFF BLACK'];
+                        const isDefaultBlancoColor = item.name === 'BLANCO' && item.color && blancoDefaultColors.includes(item.color);
+                        const isDefaultOtherColor = item.name !== 'BLANCO' && item.color && item.color === 'OFF BLACK';
+                        if (item.color && !isDefaultBlancoColor && !isDefaultOtherColor) detailCount++;
                         if (item.hairline && item.hairline !== 'NATURAL') detailCount++;
                         const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
                         if (item.styling && item.styling !== 'NONE' && hairStylingOptions.includes(item.styling) && item.partSelection) detailCount++;
@@ -1107,17 +1120,19 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           if (item.density && item.density !== defaultDensityForDetail) items.push({ type: 'density', value: item.density, fullName: `${item.density} density` });
                           if (item.lace && item.lace !== '13X6') items.push({ type: 'lace', value: item.lace, fullName: `${item.lace} lace` });
                           // Texture detail removed - no longer showing curly/wavy texture in cart
-                          // For BLANCO, default color is PLATINUM; for others, default is OFF BLACK
-                          // CRITICAL: Validate BLANCO colors - if item.color is invalid for BLANCO, use PLATINUM
+                          // For BLANCO, default colors (no line in details): PLATINUM, OFF WHITE, OFF BLACK
                           let itemColor = item.color;
                           if (item.name === 'BLANCO') {
                             const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
                             if (!itemColor || !validBlancoColors.includes(itemColor)) {
-                              itemColor = 'PLATINUM'; // Default to PLATINUM for invalid/missing BLANCO colors
+                              itemColor = 'PLATINUM'; // Normalize invalid/missing to PLATINUM for display
                             }
                           }
-                          const defaultColor = item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
-                          if (itemColor && itemColor !== defaultColor) items.push({ type: 'color', value: itemColor, fullName: itemColor });
+                          const blancoDefaultColorsForDetail = ['PLATINUM', 'OFF WHITE', 'OFF BLACK'];
+                          const isDefaultColor = item.name === 'BLANCO'
+                            ? blancoDefaultColorsForDetail.includes(itemColor || '')
+                            : (itemColor === 'OFF BLACK');
+                          if (itemColor && !isDefaultColor) items.push({ type: 'color', value: itemColor, fullName: itemColor });
                           if (item.hairline && item.hairline !== 'NATURAL') items.push({ type: 'hairline', value: item.hairline, fullName: `${item.hairline} hairline` });
                           
                           // Only show styling if it's a valid styling option (BANGS, CRIMPS, etc.), not a part selection (MIDDLE, LEFT, RIGHT)
@@ -1443,8 +1458,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         const isCurlyProduct = item.name === 'SOFT CURL' || item.name === 'OCEAN CURL';
                         const defaultTexture = isWavyProduct ? 'WAVY' : isCurlyProduct ? 'CURLY' : 'SILKY';
                         const hasCustomTexture = item.texture && item.texture !== defaultTexture;
-                        const defaultColor = item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
-                        const hasCustomColor = item.color && item.color !== defaultColor;
+                        // BLANCO default colors: PLATINUM (build-a-wig/product), OFF WHITE (units page), OFF BLACK (legacy)
+                        const blancoDefaultColors = ['PLATINUM', 'OFF WHITE', 'OFF BLACK'];
+                        const hasCustomColor = item.name === 'BLANCO'
+                          ? (item.color && !blancoDefaultColors.includes(item.color))
+                          : (item.color && item.color !== 'OFF BLACK');
                         const hasCustomHairline = item.hairline && item.hairline !== 'NATURAL';
                         // Styling is only valid if it's a valid styling option AND has partSelection
                         const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];

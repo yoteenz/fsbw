@@ -715,7 +715,9 @@ function BlancoSelection() {
       const defaultDensity = localStorage.getItem('selectedDensity') || '250%'; // BLANCO default is 250%
       const defaultLace = localStorage.getItem('selectedLace') || '13X6';
       const defaultTexture = localStorage.getItem('selectedTexture') || 'SILKY';
-      const defaultColor = localStorage.getItem('selectedColor') || 'PLATINUM'; // BLANCO default is PLATINUM
+      const rawColor = localStorage.getItem('selectedColor') || 'PLATINUM';
+      const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+      const defaultColor = validBlancoColors.includes(rawColor) ? rawColor : 'PLATINUM'; // BLANCO default is PLATINUM
       const defaultHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
       const defaultStyling = localStorage.getItem('selectedStyling') || 'NONE';
       const defaultAddOns: string[] = JSON.parse(localStorage.getItem('selectedAddOns') || '[]');

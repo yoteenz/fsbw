@@ -311,7 +311,7 @@ function StraightUnitsPage() {
           capSize: selectedCapSize,
           capSizePrice: capSizePrice,
           length: product.length || '24"',
-          density: '200%',
+          density: product.name === 'BLANCO' ? '250%' : '200%',
           color: product.name === 'NOIR' ? 'OFF BLACK' : product.name === 'BLANCO' ? 'OFF WHITE' : 'OFF BLACK',
           texture: 'SILKY',
           lace: '13X6',

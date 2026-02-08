@@ -757,9 +757,11 @@ export default function BuildAWigPage() {
           addOns: savedAddOns ? JSON.parse(savedAddOns) : [],
         };
         
-        // When style is removed (NONE): remove BLEACH + PLUCK only if they were auto-added for styling (not intentionally selected)
+        // When style is removed (NONE): restore add-ons to what they were before styling auto-added BLEACH+PLUCK
         if ((validStyling === 'NONE' || !validStyling.trim()) && sessionStorage.getItem('bleachPluckAutoAddedForStyling') === 'true' && (updatedCustomization.addOns.includes('BLEACH') || updatedCustomization.addOns.includes('PLUCK'))) {
-          updatedCustomization = { ...updatedCustomization, addOns: updatedCustomization.addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK') };
+          const savedBeforeStyling = sessionStorage.getItem('addOnsBeforeStylingSelection');
+          const restoredAddOns = savedBeforeStyling ? (JSON.parse(savedBeforeStyling) as string[]) : updatedCustomization.addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK');
+          updatedCustomization = { ...updatedCustomization, addOns: restoredAddOns };
           const discountedLaceSizesRm = ['2X6', '4X4', '5X5', '6X6', '7X7'];
           const hasLaceDiscountRm = discountedLaceSizesRm.includes(updatedCustomization.lace || '');
           const addOnPricesRm: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
@@ -773,12 +775,15 @@ export default function BuildAWigPage() {
           localStorage.setItem('customizeSelectedAddOnsPrice', addOnsPriceAfterRm.toString());
           localStorage.setItem('selectedAddOnsPrice', addOnsPriceAfterRm.toString());
           sessionStorage.removeItem('bleachPluckAutoAddedForStyling');
+          sessionStorage.removeItem('addOnsBeforeStylingSelection');
         }
         
         // When a style is confirmed, BLEACH + PLUCK are required — auto-add and save price so main page shows correct total
         if (validStyling !== 'NONE' && validStyling.trim() !== '' && (!updatedCustomization.addOns.includes('BLEACH') || !updatedCustomization.addOns.includes('PLUCK'))) {
+          sessionStorage.setItem('addOnsBeforeStylingSelection', JSON.stringify(updatedCustomization.addOns));
+          const addOnsBeforeStyling = updatedCustomization.addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK');
           const addOnsOrder = ['BLEACH', 'PLUCK', 'BLUNT CUT'];
-          const merged = [...updatedCustomization.addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK'), 'BLEACH', 'PLUCK'];
+          const merged = [...addOnsBeforeStyling, 'BLEACH', 'PLUCK'];
           updatedCustomization = { ...updatedCustomization, addOns: merged.sort((a: string, b: string) => addOnsOrder.indexOf(a) - addOnsOrder.indexOf(b)) };
           sessionStorage.setItem('bleachPluckAutoAddedForStyling', 'true');
           localStorage.setItem('customizeSelectedAddOns', JSON.stringify(updatedCustomization.addOns));
@@ -930,8 +935,10 @@ export default function BuildAWigPage() {
 
           // When a style is confirmed on first load, BLEACH + PLUCK are required — auto-add so main page shows confirmed without visiting add-ons
           if (validStyling !== 'NONE' && validStyling.trim() !== '' && (!initialCustomization.addOns.includes('BLEACH') || !initialCustomization.addOns.includes('PLUCK'))) {
+            sessionStorage.setItem('addOnsBeforeStylingSelection', JSON.stringify(initialCustomization.addOns));
+            const addOnsBeforeFirstLoad = initialCustomization.addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK');
             const addOnsOrder = ['BLEACH', 'PLUCK', 'BLUNT CUT'];
-            const merged = [...initialCustomization.addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK'), 'BLEACH', 'PLUCK'];
+            const merged = [...addOnsBeforeFirstLoad, 'BLEACH', 'PLUCK'];
             initialCustomization = { ...initialCustomization, addOns: merged.sort((a: string, b: string) => addOnsOrder.indexOf(a) - addOnsOrder.indexOf(b)) };
             sessionStorage.setItem('bleachPluckAutoAddedForStyling', 'true');
           }
@@ -1103,9 +1110,11 @@ export default function BuildAWigPage() {
           addOns: savedAddOns ? JSON.parse(savedAddOns) : [],
         };
         
-        // When style is removed (NONE): remove BLEACH + PLUCK only if they were auto-added for styling (not intentionally selected)
+        // When style is removed (NONE): restore add-ons to what they were before styling auto-added BLEACH+PLUCK
         if ((validStyling === 'NONE' || !validStyling.trim()) && sessionStorage.getItem('bleachPluckAutoAddedForStyling') === 'true' && (updatedCustomization.addOns.includes('BLEACH') || updatedCustomization.addOns.includes('PLUCK'))) {
-          updatedCustomization = { ...updatedCustomization, addOns: updatedCustomization.addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK') };
+          const savedBeforeStylingE = sessionStorage.getItem('addOnsBeforeStylingSelection');
+          const restoredAddOnsE = savedBeforeStylingE ? (JSON.parse(savedBeforeStylingE) as string[]) : updatedCustomization.addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK');
+          updatedCustomization = { ...updatedCustomization, addOns: restoredAddOnsE };
           const discountedLaceSizesRmE = ['2X6', '4X4', '5X5', '6X6', '7X7'];
           const hasLaceDiscountRmE = discountedLaceSizesRmE.includes(updatedCustomization.lace || '');
           const addOnPricesRmE: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
@@ -1119,12 +1128,15 @@ export default function BuildAWigPage() {
           localStorage.setItem('editSelectedAddOnsPrice', addOnsPriceAfterRmE.toString());
           localStorage.setItem('selectedAddOnsPrice', addOnsPriceAfterRmE.toString());
           sessionStorage.removeItem('bleachPluckAutoAddedForStyling');
+          sessionStorage.removeItem('addOnsBeforeStylingSelection');
         }
         
         // When a style is confirmed, BLEACH + PLUCK are required — auto-add and save price so main page shows correct total
         if (validStyling !== 'NONE' && validStyling.trim() !== '' && (!updatedCustomization.addOns.includes('BLEACH') || !updatedCustomization.addOns.includes('PLUCK'))) {
+          sessionStorage.setItem('addOnsBeforeStylingSelection', JSON.stringify(updatedCustomization.addOns));
+          const addOnsBeforeStylingE = updatedCustomization.addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK');
           const addOnsOrderEdit = ['BLEACH', 'PLUCK', 'BLUNT CUT'];
-          const mergedEdit = [...updatedCustomization.addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK'), 'BLEACH', 'PLUCK'];
+          const mergedEdit = [...addOnsBeforeStylingE, 'BLEACH', 'PLUCK'];
           updatedCustomization = { ...updatedCustomization, addOns: mergedEdit.sort((a: string, b: string) => addOnsOrderEdit.indexOf(a) - addOnsOrderEdit.indexOf(b)) };
           sessionStorage.setItem('bleachPluckAutoAddedForStyling', 'true');
           localStorage.setItem('editSelectedAddOns', JSON.stringify(updatedCustomization.addOns));

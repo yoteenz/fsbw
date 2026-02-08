@@ -470,14 +470,18 @@ export default function StylingSelectionPage() {
 
     if (styleConfirmed) {
       if (!addOns.includes('BLEACH') || !addOns.includes('PLUCK')) {
-        const merged = [...addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK'), 'BLEACH', 'PLUCK'];
+        sessionStorage.setItem('addOnsBeforeStylingSelection', JSON.stringify(addOns));
+        const addOnsBeforeStyling = addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK');
+        const merged = [...addOnsBeforeStyling, 'BLEACH', 'PLUCK'];
         addOns = merged.sort((a: string, b: string) => addOnsOrder.indexOf(a) - addOnsOrder.indexOf(b));
         sessionStorage.setItem('bleachPluckAutoAddedForStyling', 'true');
       }
     } else {
       if (sessionStorage.getItem('bleachPluckAutoAddedForStyling') === 'true' && (addOns.includes('BLEACH') || addOns.includes('PLUCK'))) {
-        addOns = addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK');
+        const savedBefore = sessionStorage.getItem('addOnsBeforeStylingSelection');
+        addOns = savedBefore ? (JSON.parse(savedBefore) as string[]) : addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK');
         sessionStorage.removeItem('bleachPluckAutoAddedForStyling');
+        sessionStorage.removeItem('addOnsBeforeStylingSelection');
       }
     }
 
