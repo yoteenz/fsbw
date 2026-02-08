@@ -808,10 +808,10 @@ function BlancoSelection() {
       {/* Scrollable Content */}
       <div className="relative z-10">
         <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible' }}>
-          {/* HEADER */}
+          {/* HEADER - responsive height/padding */}
           <div
-            className="border-solid border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm relative"
-            style={{ border: '1.3px solid black' }}
+            className="border-solid border-black flex justify-center items-center w-full mb-5 bg-white/60 backdrop-blur-sm relative"
+            style={{ border: '1.3px solid black', paddingTop: 'clamp(10px, 2vw, 24px)', paddingBottom: 'clamp(10px, 2vw, 24px)', paddingLeft: 'clamp(12px, 2.5vw, 24px)', paddingRight: 'clamp(12px, 2.5vw, 24px)' }}
           >
             <div className="flex gap-5 absolute left-4">
               {showMobileMenu ? (
@@ -919,7 +919,7 @@ function BlancoSelection() {
           </div>
 
           {showMobileMenu ? (
-            /* MENU CONTENT */
+            /* MENU CONTENT - responsive height */
             <div
               className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
               style={{ 
@@ -928,10 +928,10 @@ function BlancoSelection() {
                 maxWidth: 'none', 
                 overflow: 'visible',
                 backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                minHeight: '560px'
+                minHeight: 'clamp(480px, 55vh, 720px)'
               }}
             >
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: 'clamp(16px, 2.5vw, 24px)', minHeight: 'clamp(400px, 45vh, 620px)', position: 'relative', flex: 1 }}>
                 {/* Navigation Links */}
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                   <button
@@ -1188,83 +1188,28 @@ function BlancoSelection() {
           >
             {/* WIG PREVIEW */}
             <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column', marginBottom: '24px', transform: 'translateY(20px)', overflow: 'visible', minWidth: '100%', maxWidth: 'none' }}>
-              {/* ADD TO WISHLIST & 2D/3D VIEW TOGGLE */}
-              <div style={{ position: 'relative', width: '100%', marginBottom: '10px', transform: 'translateY(-31px)' }}>
-                {/* ADD TO WISHLIST - Top Left */}
+              {/* ADD TO WISHLIST & 2D/3D - scale in tandem with mannequin */}
+              <div style={{ position: 'relative', width: '100%', marginBottom: 'clamp(6px, 1.2vw, 12px)', transform: 'translateY(-31px)' }}>
                 <p 
                   onClick={handleToggleWishlist}
-                  style={{ 
-                    position: 'absolute', 
-                    left: '8px', 
-                    top: '2px', 
-                    color: '#909090', 
-                    fontFamily: '"Futura PT Demi"',
-                    fontSize: '10px',
-                    fontWeight: '600',
-                    margin: '0',
-                    cursor: 'pointer',
-                    userSelect: 'none'
-                  }}
+                  style={{ position: 'absolute', left: 'clamp(6px, 1.5vw, 16px)', top: 'clamp(1px, 0.3vw, 4px)', color: '#909090', fontFamily: '"Futura PT Demi"', fontSize: 'clamp(8px, 1.1vw, 13px)', fontWeight: '600', margin: '0', cursor: 'pointer', userSelect: 'none' }}
                 >
                   {isInWishlist ? '- REMOVE FROM WISHLIST' : '+ ADD TO WISHLIST'}
                 </p>
-                
-                {/* 2D VIEW/3D VIEW TOGGLE - Top Right */}
                 <div 
-                  style={{ 
-                    position: 'absolute', 
-                    right: '8px', 
-                    top: '1px', 
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '2px',
-                    cursor: 'pointer'
-                  }}
+                  style={{ position: 'absolute', right: 'clamp(6px, 1.5vw, 16px)', top: 'clamp(1px, 0.3vw, 4px)', display: 'flex', alignItems: 'center', gap: 'clamp(2px, 0.4vw, 6px)', cursor: 'pointer' }}
                 onClick={() => {
                   const new3DView = !is3DView;
                   setIs3DView(new3DView);
                   localStorage.setItem('product-3d-view', new3DView.toString());
                 }}
                 >
-                  <span 
-                    style={{ 
-                      color: is3DView ? '#000000' : '#EB1C24', 
-                      fontFamily: is3DView ? '"Futura PT Book"' : '"Futura PT Medium"',
-                      fontSize: '11px',
-                      fontWeight: is3DView ? '400' : '500',
-                      margin: '0'
-                    }}
-                  >
-                    2D VIEW
-                  </span>
-                  <span 
-                    style={{ 
-                      color: '#000000', 
-                      fontFamily: '"Futura PT Book"',
-                      fontSize: '11px',
-                      fontWeight: '400',
-                      margin: '0'
-                    }}
-                  >
-                    /
-                  </span>
-                  <span 
-                    style={{ 
-                      color: is3DView ? '#EB1C24' : '#000000', 
-                      fontFamily: is3DView ? '"Futura PT Medium"' : '"Futura PT Book"',
-                      fontSize: '11px',
-                      fontWeight: is3DView ? '500' : '400',
-                      margin: '0'
-                    }}
-                  >
-                    3D VIEW
-                  </span>
+                  <span style={{ color: is3DView ? '#000000' : '#EB1C24', fontFamily: is3DView ? '"Futura PT Book"' : '"Futura PT Medium"', fontSize: 'clamp(9px, 1.2vw, 14px)', fontWeight: is3DView ? '400' : '500', margin: '0' }}>2D VIEW</span>
+                  <span style={{ color: '#000000', fontFamily: '"Futura PT Book"', fontSize: 'clamp(9px, 1.2vw, 14px)', fontWeight: '400', margin: '0' }}>/</span>
+                  <span style={{ color: is3DView ? '#EB1C24' : '#000000', fontFamily: is3DView ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: 'clamp(9px, 1.2vw, 14px)', fontWeight: is3DView ? '500' : '400', margin: '0' }}>3D VIEW</span>
                 </div>
               </div>
-              
-              {/* MANNEQUIN LAYOUT - Hero on left, Top + Bottom stacked on right */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: is3DView ? '10px' : '5px', marginBottom: '16px', overflow: 'visible', margin: '0 auto', transform: 'translateY(-19px)' }}>
-                {/* Hero Mannequin - Left Side */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: is3DView ? 'clamp(6px, 1.2vw, 12px)' : 'clamp(4px, 0.8vw, 8px)', marginBottom: 'clamp(10px, 2vw, 18px)', overflow: 'visible', margin: '0 auto', transform: 'translateY(-19px)' }}>
                 <div style={{ position: 'relative', overflow: 'visible', flexShrink: '0' }}>
                   <div
                     style={{
@@ -1274,8 +1219,8 @@ function BlancoSelection() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      width: '200px',
-                      height: '290px',
+                      width: 'clamp(160px, 42vw, 280px)',
+                      height: 'clamp(232px, 61vw, 406px)',
                       backgroundImage: `url('${is3DView ? current3DImages.hero : '/assets/NOIR/leaf-brick.png'}')`,
                       backgroundRepeat: 'repeat',
                       overflow: 'visible',
@@ -1299,10 +1244,10 @@ function BlancoSelection() {
                         top: 'calc(50% - 10.601px + 12px)',
                         transform: 'translateX(-50%) translateY(-50%)',
                         zIndex: '10',
-                        width: '230px',
+                        width: 'clamp(184px, 48vw, 322px)',
                         height: 'auto',
-                        maxHeight: '610px',
-                        minWidth: '230px',
+                        maxHeight: 'min(610px, 85vh)',
+                        minWidth: 'clamp(184px, 48vw, 322px)',
                         minHeight: 'auto',
                         display: is3DView ? 'none' : 'block',
                         cursor: 'pointer',
@@ -1322,68 +1267,23 @@ function BlancoSelection() {
                 </div>
                 
                 {/* Top and Bottom Mannequins - Right Side */}
-                <div className="flex flex-col" style={{ height: '290px', justifyContent: 'space-between', gap: '10px' }}>
-                  {/* Top Mannequin */}
+                <div className="flex flex-col" style={{ height: 'clamp(232px, 61vw, 406px)', justifyContent: 'space-between', gap: 'clamp(6px, 1.2vw, 12px)' }}>
                   <div className="flex-shrink-0 relative">
                     <div
                       className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
-                      style={{
-                        width: '100px',
-                        height: '140px',
-                        backgroundImage: `url('${is3DView ? current3DImages.top : '/assets/NOIR/leaf-brick.png'}')`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center',
-                        backgroundRepeat: 'no-repeat'
-                      }}
+                      style={{ width: 'clamp(80px, 21vw, 140px)', height: 'clamp(112px, 29vw, 203px)', backgroundImage: `url('${is3DView ? current3DImages.top : '/assets/NOIR/leaf-brick.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
                       onClick={handleTopThumbnailClick}
                     >
-                      <img
-                        src={currentImages.top}
-                        alt=""
-                        className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
-                        style={{ 
-                          top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px)',
-                          width: '112px',
-                          height: '137px',
-                          maxWidth: 'none',
-                          maxHeight: 'none',
-                          minWidth: '112px',
-                          minHeight: '137px',
-                          display: is3DView ? 'none' : 'block'
-                        }}
-                      />
+                      <img src={currentImages.top} alt="" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px)', width: 'clamp(90px, 24vw, 157px)', height: 'auto', maxWidth: 'none', maxHeight: 'none', minWidth: 'clamp(90px, 24vw, 157px)', display: is3DView ? 'none' : 'block' }} />
                     </div>
                   </div>
-                  
-                  {/* Bottom Mannequin */}
                   <div className="flex-shrink-0 relative">
                     <div
                       className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
-                      style={{
-                        width: '100px',
-                        height: '140px',
-                        backgroundImage: `url('${is3DView ? current3DImages.bottom : '/assets/NOIR/leaf-brick.png'}')`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center',
-                        backgroundRepeat: 'no-repeat'
-                      }}
+                      style={{ width: 'clamp(80px, 21vw, 140px)', height: 'clamp(112px, 29vw, 203px)', backgroundImage: `url('${is3DView ? current3DImages.bottom : '/assets/NOIR/leaf-brick.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
                       onClick={handleBottomThumbnailClick}
                     >
-                      <img
-                        src={currentImages.bottom}
-                        alt=""
-                        className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
-                        style={{ 
-                          top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px)',
-                          width: '112px',
-                          height: '137px',
-                          maxWidth: 'none',
-                          maxHeight: 'none',
-                          minWidth: '112px',
-                          minHeight: '137px',
-                          display: is3DView ? 'none' : 'block'
-                        }}
-                      />
+                      <img src={currentImages.bottom} alt="" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px)', width: 'clamp(90px, 24vw, 157px)', height: 'auto', maxWidth: 'none', maxHeight: 'none', minWidth: 'clamp(90px, 24vw, 157px)', display: is3DView ? 'none' : 'block' }} />
                     </div>
                   </div>
                 </div>
@@ -1533,8 +1433,10 @@ function BlancoSelection() {
                       borderWidth: '1.3px',
                       fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
-                      minWidth: '60px',
-                      fontSize: '11px'
+                      minWidth: 'clamp(50px, 12vw, 75px)',
+                      fontSize: 'clamp(10px, 1.2vw, 12px)',
+                      paddingLeft: 'clamp(12px, 1.5vw, 24px)',
+                      paddingRight: 'clamp(12px, 1.5vw, 24px)'
                     }}
                   >
                     XS
@@ -1546,8 +1448,10 @@ function BlancoSelection() {
                       borderWidth: '1.3px',
                       fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
-                      minWidth: '60px',
-                      fontSize: '11px'
+                      minWidth: 'clamp(50px, 12vw, 75px)',
+                      fontSize: 'clamp(10px, 1.2vw, 12px)',
+                      paddingLeft: 'clamp(12px, 1.5vw, 24px)',
+                      paddingRight: 'clamp(12px, 1.5vw, 24px)'
                     }}
                   >
                     S
@@ -1559,8 +1463,10 @@ function BlancoSelection() {
                       borderWidth: '1.3px',
                       fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
-                      minWidth: '60px',
-                      fontSize: '11px'
+                      minWidth: 'clamp(50px, 12vw, 75px)',
+                      fontSize: 'clamp(10px, 1.2vw, 12px)',
+                      paddingLeft: 'clamp(12px, 1.5vw, 24px)',
+                      paddingRight: 'clamp(12px, 1.5vw, 24px)'
                     }}
                   >
                     M
@@ -1572,8 +1478,10 @@ function BlancoSelection() {
                       borderWidth: '1.3px',
                       fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
-                      minWidth: '60px',
-                      fontSize: '11px'
+                      minWidth: 'clamp(50px, 12vw, 75px)',
+                      fontSize: 'clamp(10px, 1.2vw, 12px)',
+                      paddingLeft: 'clamp(12px, 1.5vw, 24px)',
+                      paddingRight: 'clamp(12px, 1.5vw, 24px)'
                     }}
                   >
                     L
@@ -1599,16 +1507,15 @@ function BlancoSelection() {
                     onClick={() => handleFlexibleCapSelect('XXS/XS/S')}
                     style={{ 
                       border: '1.3px solid black',
-                      paddingTop: '4px',
-                      paddingBottom: '4px',
-                      paddingLeft: '8px',
-                      paddingRight: '8px',
+                      paddingTop: 'clamp(4px, 0.5vw, 8px)',
+                      paddingBottom: 'clamp(4px, 0.5vw, 8px)',
+                      paddingLeft: 'clamp(8px, 1vw, 12px)',
+                      paddingRight: 'clamp(8px, 1vw, 12px)',
                       fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
-                      width: '108px',
-                      minWidth: '108px',
-                      maxWidth: '108px',
-                      fontSize: '11px',
+                      width: 'clamp(90px, 18vw, 130px)',
+                      minWidth: 'clamp(90px, 18vw, 130px)',
+                      fontSize: 'clamp(10px, 1.2vw, 12px)',
                       boxSizing: 'border-box' as const,
                       backgroundColor: 'white',
                       color: selectedFlexibleCap === 'XXS/XS/S' ? '#EB1C24' : 'black',
@@ -1625,16 +1532,15 @@ function BlancoSelection() {
                     onClick={() => handleFlexibleCapSelect('S/M/L')}
                     style={{ 
                       border: '1.3px solid black',
-                      paddingTop: '4px',
-                      paddingBottom: '4px',
-                      paddingLeft: '8px',
-                      paddingRight: '8px',
+                      paddingTop: 'clamp(4px, 0.5vw, 8px)',
+                      paddingBottom: 'clamp(4px, 0.5vw, 8px)',
+                      paddingLeft: 'clamp(8px, 1vw, 12px)',
+                      paddingRight: 'clamp(8px, 1vw, 12px)',
                       fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
-                      width: '108px',
-                      minWidth: '108px',
-                      maxWidth: '108px',
-                      fontSize: '11px',
+                      width: 'clamp(90px, 18vw, 130px)',
+                      minWidth: 'clamp(90px, 18vw, 130px)',
+                      fontSize: 'clamp(10px, 1.2vw, 12px)',
                       boxSizing: 'border-box' as const,
                       backgroundColor: 'white',
                       color: selectedFlexibleCap === 'S/M/L' ? '#EB1C24' : 'black',
@@ -1661,14 +1567,15 @@ function BlancoSelection() {
                     borderLeft: '1.3px solid black', 
                     borderBottom: '1.3px solid black',
                     borderRight: 'none',
-                    height: '27px',
-                    minHeight: '27px',
-                    maxHeight: '27px',
+                    height: 'clamp(27px, 4vw, 36px)',
+                    minHeight: 'clamp(27px, 4vw, 36px)',
                     boxSizing: 'border-box',
-                    outline: 'none'
+                    outline: 'none',
+                    paddingLeft: 'clamp(8px, 1vw, 14px)',
+                    paddingRight: 'clamp(8px, 1vw, 14px)'
                   }}
                 >
-                  <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '11px' }}>-</span>
+                  <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: 'clamp(10px, 1.2vw, 13px)' }}>-</span>
                 </button>
                 <div 
                   className="px-4 py-1 text-black bg-white flex items-center justify-center relative" 
@@ -1679,11 +1586,12 @@ function BlancoSelection() {
                     borderRight: 'none',
                     fontFamily: '"Futura PT Medium"', 
                     fontWeight: '500', 
-                    fontSize: '12px', 
-                    height: '27px',
-                    minHeight: '27px',
-                    maxHeight: '27px',
-                    boxSizing: 'border-box'
+                    fontSize: 'clamp(11px, 1.3vw, 14px)', 
+                    height: 'clamp(27px, 4vw, 36px)',
+                    minHeight: 'clamp(27px, 4vw, 36px)',
+                    boxSizing: 'border-box',
+                    paddingLeft: 'clamp(12px, 1.5vw, 18px)',
+                    paddingRight: 'clamp(12px, 1.5vw, 18px)'
                   }}
                 >
                   <div className="absolute left-0 top-0 bottom-0 w-px bg-black"></div>
@@ -1699,23 +1607,25 @@ function BlancoSelection() {
                     borderRight: '1.3px solid black',
                     borderBottom: '1.3px solid black',
                     borderLeft: 'none',
-                    height: '27px',
-                    minHeight: '27px',
-                    maxHeight: '27px',
+                    height: 'clamp(27px, 4vw, 36px)',
+                    minHeight: 'clamp(27px, 4vw, 36px)',
                     boxSizing: 'border-box',
-                    outline: 'none'
+                    outline: 'none',
+                    paddingLeft: 'clamp(8px, 1vw, 14px)',
+                    paddingRight: 'clamp(8px, 1vw, 14px)'
                   }}
                 >
-                  <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '11px' }}>+</span>
+                  <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: 'clamp(10px, 1.2vw, 13px)' }}>+</span>
                 </button>
               </div>
 
-              {/* CAP SIZE CHART IMAGE */}
-              <div className="flex justify-center mt-4" style={{ transform: 'translateX(4px) translateY(-21px)' }}>
+              {/* CAP SIZE CHART IMAGE - responsive: scales up on larger screens */}
+              <div className="flex justify-center mt-4 w-full" style={{ transform: 'translateX(4px) translateY(-21px)' }}>
                 <img
                   src="/assets/NOIR/cap-size-chart.png"
                   alt="Cap Size Chart"
-                  style={{ maxWidth: '194px', maxHeight: '154px', cursor: 'pointer' }}
+                  className="max-w-full h-auto object-contain"
+                  style={{ maxWidth: 'clamp(214px, 22vw, 300px)', maxHeight: 'clamp(174px, 18vw, 244px)', width: '100%', cursor: 'pointer' }}
                   onClick={handleChartClick}
                 />
               </div>
@@ -2532,7 +2442,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}>
-                    24" RAW FILIPINO
+                    24" RAW VIETNAMESE
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2798,7 +2708,7 @@ function BlancoSelection() {
                     lineHeight: '0.84',
                     transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    24" RAW FILIPINO
+                    24" RAW VIETNAMESE
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',

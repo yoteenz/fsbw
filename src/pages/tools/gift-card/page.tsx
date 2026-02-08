@@ -1295,7 +1295,7 @@ function GiftCardPage() {
                           lineHeight: '0.84',
                           transform: 'translateX(10px)'
                         }}>
-                          24" RAW VIETNAMESE
+                          24" RAW FILIPINO
                         </p>
                         <p style={{ 
                           fontFamily: '"Futura PT Medium"',
@@ -1553,7 +1553,7 @@ function GiftCardPage() {
                           lineHeight: '0.84',
                           transform: 'translateX(10px)'
                         }}>
-                          24" RAW VIETNAMESE
+                          24" RAW FILIPINO
                         </p>
                         <p style={{ 
                           fontFamily: '"Futura PT Medium"',

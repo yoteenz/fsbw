@@ -1071,9 +1071,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               case 'BLANCO':
                                 return 'RUSSIAN';
                               case 'SOFT CURL':
-                                return 'VIETNAMESE';
-                              case 'OCEAN CURL':
                                 return 'FILIPINO';
+                              case 'OCEAN CURL':
+                                return 'VIETNAMESE';
                               case 'SOFT WAVE':
                                 return 'INDIAN';
                               case 'BEACH WAVE':

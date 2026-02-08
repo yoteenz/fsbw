@@ -3723,3 +3723,24 @@ img.natural-front-mobile {
   position: absolute !important;
 }
 
+/* ========== Product page & site-wide responsiveness ========== */
+img.object-contain {
+  max-width: 100%;
+  height: auto;
+}
+@media (max-width: 767px) {
+  .max-w-full {
+    max-width: 100% !important;
+  }
+  .flex.justify-center.gap-3 {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+}
+@media (min-width: 1200px) {
+  img[alt="Cap Size Chart"] {
+    max-width: min(300px, 22vw) !important;
+    height: auto !important;
+  }
+}

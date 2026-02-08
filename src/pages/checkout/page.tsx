@@ -69,6 +69,7 @@ function CheckoutPage() {
     return true;
   });
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [addressConfirmed, setAddressConfirmed] = useState(false);
   const [showTermsRequiredModal, setShowTermsRequiredModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
@@ -1956,9 +1957,9 @@ function CheckoutPage() {
                               case 'BLANCO':
                                 return 'RUSSIAN';
                               case 'SOFT CURL':
-                                return 'VIETNAMESE';
-                              case 'OCEAN CURL':
                                 return 'FILIPINO';
+                              case 'OCEAN CURL':
+                                return 'VIETNAMESE';
                               case 'SOFT WAVE':
                                 return 'INDIAN';
                               case 'BEACH WAVE':
@@ -4324,6 +4325,46 @@ function CheckoutPage() {
                       SUBSCRIBE TO EMAIL NEWSLETTER
                     </label>
                   </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div
+                      onClick={() => setAddressConfirmed(!addressConfirmed)}
+                      style={{
+                        width: '16px',
+                        height: '16px',
+                        minWidth: '16px',
+                        minHeight: '16px',
+                        flexShrink: 0,
+                        boxSizing: 'border-box',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: '1.3px solid #000000',
+                        backgroundColor: 'transparent',
+                        position: 'relative'
+                      }}
+                    >
+                      {addressConfirmed && (
+                        <img 
+                          src="/assets/checkbox.svg" 
+                          alt="checked" 
+                          style={{ width: '16px', height: '16px', position: 'absolute' }}
+                        />
+                      )}
+                    </div>
+                    <label 
+                      onClick={() => setAddressConfirmed(!addressConfirmed)}
+                      style={{ 
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '10px',
+                        color: '#000000',
+                        cursor: 'pointer',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      I HAVE CONFIRMED THAT MY <span style={{ color: '#EB1C24' }}>SHIPPING ADDRESS</span> IS ACCURATE & CAN NOT BE CHANGED BEYOND THIS POINT.<span style={{ color: '#EB1C24' }}>*</span>
+                    </label>
+                  </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                     <div
                       onClick={() => setAgreeToTerms(!agreeToTerms)}
@@ -4495,6 +4536,13 @@ function CheckoutPage() {
                   // Check if shipping method is selected (skip for subscription upgrades and digital-only carts)
                   if (!isSubscriptionUpgrade && !isOnlyDigitalProducts && !selectedShippingMethod) {
                     setValidationMessage('SHIPPING METHOD IS REQUIRED.');
+                    setShowValidationModal(true);
+                    return;
+                  }
+                  
+                  // Check if address is confirmed (required before checkout)
+                  if (!addressConfirmed) {
+                    setValidationMessage('PLEASE CONFIRM THAT YOUR ADDRESS IS ACCURATE.');
                     setShowValidationModal(true);
                     return;
                   }

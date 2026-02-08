@@ -168,8 +168,8 @@ function ProductsUnitsPage() {
       { id: 'beach-wave', name: 'BEACH WAVE', price: 760, image: '/assets/NOIR/wave-thumb.png', length: '24"', hairOrigin: 'INDONESIAN', inCart: false, selectedSize: 'M', route: '/wavy/beach-wave' },
     ],
     curly: [
-      { id: 'soft-curl', name: 'SOFT CURL', price: 780, image: '/assets/NOIR/curl-thumb.png', length: '24"', hairOrigin: 'VIETNAMESE', inCart: false, selectedSize: 'M', route: '/curly/soft-curl' },
-      { id: 'ocean-curl', name: 'OCEAN CURL', price: 780, image: '/assets/NOIR/curl-thumb.png', length: '24"', hairOrigin: 'FILIPINO', inCart: false, selectedSize: 'M', route: '/curly/ocean-curl' },
+      { id: 'soft-curl', name: 'SOFT CURL', price: 780, image: '/assets/NOIR/curl-thumb.png', length: '24"', hairOrigin: 'FILIPINO', inCart: false, selectedSize: 'M', route: '/curly/soft-curl' },
+      { id: 'ocean-curl', name: 'OCEAN CURL', price: 780, image: '/assets/NOIR/curl-thumb.png', length: '24"', hairOrigin: 'VIETNAMESE', inCart: false, selectedSize: 'M', route: '/curly/ocean-curl' },
     ],
   });
 

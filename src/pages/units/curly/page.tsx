@@ -149,7 +149,7 @@ function CurlyUnitsPage() {
       price: 780,
       image: '/assets/NOIR/curl-thumb.png',
       length: '24"',
-      hairOrigin: 'VIETNAMESE',
+      hairOrigin: 'FILIPINO',
       inCart: false,
       selectedSize: 'M'
     },
@@ -159,7 +159,7 @@ function CurlyUnitsPage() {
       price: 780,
       image: '/assets/NOIR/curl-thumb.png',
       length: '24"',
-      hairOrigin: 'FILIPINO',
+      hairOrigin: 'VIETNAMESE',
       inCart: false,
       selectedSize: 'M'
     }
