@@ -636,8 +636,22 @@ export default function BuildAWigPage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   
-  
-  
+  // Mobile-friendly edit price debugging: show on-screen when ?debug=1 or localStorage.editPriceDebug=1
+  const [editDebugLogs, setEditDebugLogs] = useState<Array<{ tag: string; data: unknown }>>([]);
+  const [editDebugCartPayload, setEditDebugCartPayload] = useState<unknown>(null);
+  const [editDebugPanelOpen, setEditDebugPanelOpen] = useState(false);
+  // Toggle so mobile users can enable debug without URL/console (sync with localStorage)
+  const [editDebugEnabled, setEditDebugEnabled] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('editPriceDebug') === '1';
+  });
+  // Sync from localStorage when navigating (e.g. user turned on debug in cart)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && location.pathname.startsWith('/build-a-wig')) {
+      setEditDebugEnabled(localStorage.getItem('editPriceDebug') === '1');
+    }
+  }, [location.pathname]);
+
   // Ref to track if we're currently loading from localStorage (to prevent sync effect from overwriting)
   const isLoadingFromStorage = useRef(false);
 
@@ -852,11 +866,15 @@ export default function BuildAWigPage() {
           ? parseFloat(savedCapSizePriceForCustomize) 
           : calculatedPrices.capSizePrice;
         // For other prices, use saved prices if they exist, otherwise use calculated prices
+        // CRITICAL: Blanco default density is 250% (included in base = $0). Never use stored $80 from Noir.
+        const densityPriceForCustomize = (isBlancoCustomizeRoute && updatedCustomization.density === '250%')
+          ? calculatedPrices.densityPrice
+          : ((savedDensityPrice && savedDensityPrice !== '' && !isNaN(parseFloat(savedDensityPrice))) ? parseFloat(savedDensityPrice) : calculatedPrices.densityPrice);
         const pricesToSave = {
           capSizePrice: capSizePriceToUseForCustomize, // Preserve from localStorage if exists, otherwise use calculated
           colorPrice: (savedColorPrice && savedColorPrice !== '' && !isNaN(parseFloat(savedColorPrice))) ? parseFloat(savedColorPrice) : calculatedPrices.colorPrice,
           lengthPrice: (savedLengthPrice && savedLengthPrice !== '' && !isNaN(parseFloat(savedLengthPrice))) ? parseFloat(savedLengthPrice) : calculatedPrices.lengthPrice,
-          densityPrice: (savedDensityPrice && savedDensityPrice !== '' && !isNaN(parseFloat(savedDensityPrice))) ? parseFloat(savedDensityPrice) : calculatedPrices.densityPrice,
+          densityPrice: densityPriceForCustomize,
           lacePrice: (savedLacePrice && savedLacePrice !== '' && !isNaN(parseFloat(savedLacePrice))) ? parseFloat(savedLacePrice) : calculatedPrices.lacePrice,
           texturePrice: (savedTexturePrice && savedTexturePrice !== '' && !isNaN(parseFloat(savedTexturePrice))) ? parseFloat(savedTexturePrice) : calculatedPrices.texturePrice,
           hairlinePrice: (savedHairlinePrice && savedHairlinePrice !== '' && !isNaN(parseFloat(savedHairlinePrice))) ? parseFloat(savedHairlinePrice) : calculatedPrices.hairlinePrice,
@@ -979,11 +997,16 @@ export default function BuildAWigPage() {
         const capSizePriceToUse = (existingCapSizePrice && existingCapSizePrice !== '' && !isNaN(parseFloat(existingCapSizePrice))) 
           ? parseFloat(existingCapSizePrice) 
           : calculatedPrices.capSizePrice;
+        // Blanco default density is 250% (included in base = $0). Never use stored $80 from Noir.
+        const isBlancoCustomizeFirstLoad = location.pathname.startsWith('/build-a-wig/blanco');
+        const densityPriceToUse = (isBlancoCustomizeFirstLoad && initialCustomization.density === '250%')
+          ? calculatedPrices.densityPrice
+          : ((existingDensityPrice && existingDensityPrice !== '' && !isNaN(parseFloat(existingDensityPrice))) ? parseFloat(existingDensityPrice) : calculatedPrices.densityPrice);
         const pricesToSave = {
           capSizePrice: capSizePriceToUse, // Preserve from localStorage if exists, otherwise use calculated
           colorPrice: (existingColorPrice && existingColorPrice !== '' && !isNaN(parseFloat(existingColorPrice))) ? parseFloat(existingColorPrice) : calculatedPrices.colorPrice,
           lengthPrice: (existingLengthPrice && existingLengthPrice !== '' && !isNaN(parseFloat(existingLengthPrice))) ? parseFloat(existingLengthPrice) : calculatedPrices.lengthPrice,
-          densityPrice: (existingDensityPrice && existingDensityPrice !== '' && !isNaN(parseFloat(existingDensityPrice))) ? parseFloat(existingDensityPrice) : calculatedPrices.densityPrice,
+          densityPrice: densityPriceToUse,
           lacePrice: (existingLacePrice && existingLacePrice !== '' && !isNaN(parseFloat(existingLacePrice))) ? parseFloat(existingLacePrice) : calculatedPrices.lacePrice,
           texturePrice: (existingTexturePrice && existingTexturePrice !== '' && !isNaN(parseFloat(existingTexturePrice))) ? parseFloat(existingTexturePrice) : calculatedPrices.texturePrice,
           hairlinePrice: (existingHairlinePrice && existingHairlinePrice !== '' && !isNaN(parseFloat(existingHairlinePrice))) ? parseFloat(existingHairlinePrice) : calculatedPrices.hairlinePrice,
@@ -1154,12 +1177,17 @@ export default function BuildAWigPage() {
         const capSizePriceToUse = (savedCapSizePrice && savedCapSizePrice !== '' && !isNaN(parseFloat(savedCapSizePrice))) 
           ? parseFloat(savedCapSizePrice) 
           : calculatedPrices.capSizePrice;
+        // CRITICAL: Blanco default density is 250% (included in base = $0). Never use stored $80 from Noir.
+        const isBlancoEditRoute = location.pathname.startsWith('/build-a-wig/blanco');
+        const densityPriceForEdit = (isBlancoEditRoute && updatedCustomization.density === '250%')
+          ? calculatedPrices.densityPrice
+          : ((savedDensityPrice && savedDensityPrice !== '' && !isNaN(parseFloat(savedDensityPrice))) ? parseFloat(savedDensityPrice) : calculatedPrices.densityPrice);
         // For other prices, use saved prices if they exist, otherwise use calculated prices
         const pricesToSave = {
           capSizePrice: capSizePriceToUse, // Preserve from localStorage if exists, otherwise use calculated
           colorPrice: (savedColorPrice && savedColorPrice !== '' && !isNaN(parseFloat(savedColorPrice))) ? parseFloat(savedColorPrice) : calculatedPrices.colorPrice,
           lengthPrice: (savedLengthPrice && savedLengthPrice !== '' && !isNaN(parseFloat(savedLengthPrice))) ? parseFloat(savedLengthPrice) : calculatedPrices.lengthPrice,
-          densityPrice: (savedDensityPrice && savedDensityPrice !== '' && !isNaN(parseFloat(savedDensityPrice))) ? parseFloat(savedDensityPrice) : calculatedPrices.densityPrice,
+          densityPrice: densityPriceForEdit,
           lacePrice: (savedLacePrice && savedLacePrice !== '' && !isNaN(parseFloat(savedLacePrice))) ? parseFloat(savedLacePrice) : calculatedPrices.lacePrice,
           texturePrice: (savedTexturePrice && savedTexturePrice !== '' && !isNaN(parseFloat(savedTexturePrice))) ? parseFloat(savedTexturePrice) : calculatedPrices.texturePrice,
           hairlinePrice: (savedHairlinePrice && savedHairlinePrice !== '' && !isNaN(parseFloat(savedHairlinePrice))) ? parseFloat(savedHairlinePrice) : calculatedPrices.hairlinePrice,
@@ -1682,7 +1710,11 @@ export default function BuildAWigPage() {
             capSizePrice = getPreservedPrice('CapSize', calculatedPrices.capSizePrice);
             colorPrice = getPreservedPrice('Color', calculatedPrices.colorPrice);
             lengthPrice = getPreservedPrice('Length', calculatedPrices.lengthPrice);
-            densityPrice = getPreservedPrice('Density', calculatedPrices.densityPrice);
+            // Blanco default density is 250% (included in base = $0). Never use preserved $80 from Noir.
+            const isBlancoEditRoute = location.pathname.startsWith('/build-a-wig/blanco');
+            densityPrice = (isBlancoEditRoute && editCustomizationWithPreservedCapSize.density === '250%')
+              ? calculatedPrices.densityPrice
+              : getPreservedPrice('Density', calculatedPrices.densityPrice);
             lacePrice = getPreservedPrice('Lace', calculatedPrices.lacePrice);
             texturePrice = getPreservedPrice('Texture', calculatedPrices.texturePrice);
             hairlinePrice = getPreservedPrice('Hairline', calculatedPrices.hairlinePrice);
@@ -1710,45 +1742,21 @@ export default function BuildAWigPage() {
             
             savePricesToLocalStorage(pricesToSave);
           } else {
-            // Not coming from sub-page: use cart item's stored prices if available, otherwise use calculated prices
-            // CRITICAL: The cart item may have stored prices (e.g., capSizePrice) that should be preserved
-            // This ensures the displayed price matches the cart item's price
+            // Not coming from sub-page (initial load from cart): use CALCULATED prices only.
+            // Do NOT read from localStorage here — stale editSelected*Price/selected*Price from another
+            // product or session can be non-zero for "default" options (24", 200%, 13X6, etc.) that are
+            // already included in base price, which doubles or miscalculates the total.
+            capSizePrice = calculatedPrices.capSizePrice;
+            colorPrice = calculatedPrices.colorPrice;
+            lengthPrice = calculatedPrices.lengthPrice;
+            densityPrice = calculatedPrices.densityPrice;
+            lacePrice = calculatedPrices.lacePrice;
+            texturePrice = calculatedPrices.texturePrice;
+            hairlinePrice = calculatedPrices.hairlinePrice;
+            stylingPrice = calculatedPrices.stylingPrice;
+            addOnsPrice = calculatedPrices.addOnsPrice;
             
-            // Helper to get price from cart item or use calculated value
-            const getPriceFromCartOrCalculated = (key: string, calculatedValue: number) => {
-              // Check if cart item has stored price (only capSizePrice is stored in cart item currently)
-              if (key === 'CapSize' && item.capSizePrice !== undefined && item.capSizePrice !== null) {
-                return item.capSizePrice;
-              }
-              
-              // Check localStorage first (may have been set previously)
-              const editKey = `editSelected${key}Price`;
-              const selectedKey = `selected${key}Price`;
-              const editValue = localStorage.getItem(editKey);
-              const selectedValue = localStorage.getItem(selectedKey);
-              
-              if (editValue !== null && editValue !== undefined && editValue !== '' && !isNaN(parseFloat(editValue))) {
-                return parseFloat(editValue);
-              } else if (selectedValue !== null && selectedValue !== undefined && selectedValue !== '' && !isNaN(parseFloat(selectedValue))) {
-                return parseFloat(selectedValue);
-              }
-              
-              // Fallback to calculated value
-              return calculatedValue;
-            };
-            
-            // Get prices using cart item's stored values when available
-            capSizePrice = getPriceFromCartOrCalculated('CapSize', calculatedPrices.capSizePrice);
-            colorPrice = getPriceFromCartOrCalculated('Color', calculatedPrices.colorPrice);
-            lengthPrice = getPriceFromCartOrCalculated('Length', calculatedPrices.lengthPrice);
-            densityPrice = getPriceFromCartOrCalculated('Density', calculatedPrices.densityPrice);
-            lacePrice = getPriceFromCartOrCalculated('Lace', calculatedPrices.lacePrice);
-            texturePrice = getPriceFromCartOrCalculated('Texture', calculatedPrices.texturePrice);
-            hairlinePrice = getPriceFromCartOrCalculated('Hairline', calculatedPrices.hairlinePrice);
-            stylingPrice = getPriceFromCartOrCalculated('Styling', calculatedPrices.stylingPrice);
-            addOnsPrice = getPriceFromCartOrCalculated('AddOns', calculatedPrices.addOnsPrice);
-            
-            // Save all prices to localStorage
+            // Save these calculated prices to localStorage so sub-pages and price effect see correct values
             localStorage.setItem('editSelectedCapSizePrice', capSizePrice.toString());
             localStorage.setItem('selectedCapSizePrice', capSizePrice.toString());
             localStorage.setItem('editSelectedColorPrice', colorPrice.toString());
@@ -1813,6 +1821,43 @@ export default function BuildAWigPage() {
             hairlinePrice + 
             stylingPrice + 
             addOnsPrice;
+          
+          // [EDIT PRICE TRIANGULATION] Route effect initial load: compare cart price vs computed total + per-addon breakdown
+          const cartPrice = typeof item.price === 'number' ? item.price : null;
+          const addOnBasePricesRoute: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+          const discountedLaceRoute = ['2X6', '4X4', '5X5', '6X6', '7X7'];
+          const laceRoute = item.lace || editCustomization.lace || '';
+          const hasLaceDiscRoute = discountedLaceRoute.includes(laceRoute);
+          const addOnsBreakdownRoute: Record<string, number> = {};
+          ((item.addOns || editCustomization.addOns) || []).forEach((id: string) => {
+            let p = addOnBasePricesRoute[id] ?? 0;
+            if (hasLaceDiscRoute && (id === 'BLEACH' || id === 'PLUCK')) p -= 20;
+            addOnsBreakdownRoute[id] = p;
+          });
+          const routeEffectData = {
+            source: 'build-a-wig route change effect',
+            cartItemPrice: cartPrice,
+            computedInitialTotal: initialTotalPrice,
+            difference: cartPrice != null ? initialTotalPrice - cartPrice : 'N/A',
+            currentBasePrice,
+            optionSum: capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice,
+            itemName: item.name,
+            itemId: item.id,
+            addOnsDetail: {
+              selected: item.addOns || editCustomization.addOns || [],
+              lace: laceRoute,
+              laceDiscountApplied: hasLaceDiscRoute,
+              perAddon: addOnsBreakdownRoute,
+              perAddonSum: Object.values(addOnsBreakdownRoute).reduce((a, b) => a + b, 0),
+              addOnsPriceUsed: addOnsPrice
+            }
+          };
+          console.log('[EDIT PRICE TRIANGULATION] Route effect (initial load from cart item)', routeEffectData);
+          const isEditPriceDebugRoute = typeof window !== 'undefined' && (
+            new URLSearchParams(location.search).get('debug') === '1' || localStorage.getItem('editPriceDebug') === '1'
+          );
+          if (isEditPriceDebugRoute) setEditDebugLogs(prev => [...prev.slice(-29), { tag: 'Route effect (initial load)', data: routeEffectData }]);
+          
           setTotalPrice(initialTotalPrice);
           
           // Trigger price recalculation
@@ -2031,12 +2076,17 @@ export default function BuildAWigPage() {
         const capSizePriceToUse = (savedCapSizePrice && savedCapSizePrice !== '' && !isNaN(parseFloat(savedCapSizePrice))) 
           ? parseFloat(savedCapSizePrice) 
           : calculatedPrices.capSizePrice;
+        // CRITICAL: Blanco default density is 250% (included in base = $0). Never use stored $80 from Noir.
+        const isBlancoStorage = location.pathname.startsWith('/build-a-wig/blanco');
+        const densityPriceToUse = (isBlancoStorage && updatedCustomization.density === '250%')
+          ? calculatedPrices.densityPrice
+          : ((savedDensityPrice && savedDensityPrice !== '' && !isNaN(parseFloat(savedDensityPrice))) ? parseFloat(savedDensityPrice) : calculatedPrices.densityPrice);
         // For other prices, use saved prices if they exist, otherwise use calculated prices
         const pricesToSave = {
           capSizePrice: capSizePriceToUse, // Preserve from localStorage if exists, otherwise use calculated
           colorPrice: (savedColorPrice && savedColorPrice !== '' && !isNaN(parseFloat(savedColorPrice))) ? parseFloat(savedColorPrice) : calculatedPrices.colorPrice,
           lengthPrice: (savedLengthPrice && savedLengthPrice !== '' && !isNaN(parseFloat(savedLengthPrice))) ? parseFloat(savedLengthPrice) : calculatedPrices.lengthPrice,
-          densityPrice: (savedDensityPrice && savedDensityPrice !== '' && !isNaN(parseFloat(savedDensityPrice))) ? parseFloat(savedDensityPrice) : calculatedPrices.densityPrice,
+          densityPrice: densityPriceToUse,
           lacePrice: (savedLacePrice && savedLacePrice !== '' && !isNaN(parseFloat(savedLacePrice))) ? parseFloat(savedLacePrice) : calculatedPrices.lacePrice,
           texturePrice: (savedTexturePrice && savedTexturePrice !== '' && !isNaN(parseFloat(savedTexturePrice))) ? parseFloat(savedTexturePrice) : calculatedPrices.texturePrice,
           hairlinePrice: (savedHairlinePrice && savedHairlinePrice !== '' && !isNaN(parseFloat(savedHairlinePrice))) ? parseFloat(savedHairlinePrice) : calculatedPrices.hairlinePrice,
@@ -2233,6 +2283,31 @@ export default function BuildAWigPage() {
       window.removeEventListener('customStorageChange', handleCustomStorageChange);
     };
   }, [location.pathname]);
+
+  // Mobile-friendly debug: when on edit page with ?debug=1, read cart payload from sessionStorage (set by CartDropdown)
+  useEffect(() => {
+    const isEditPage = location.pathname === '/build-a-wig/edit' ||
+                       location.pathname.startsWith('/build-a-wig/noir/edit') ||
+                       location.pathname.startsWith('/build-a-wig/blanco/edit') ||
+                       location.pathname.startsWith('/build-a-wig/soft-wave/edit') ||
+                       location.pathname.startsWith('/build-a-wig/soft-curl/edit') ||
+                       location.pathname.startsWith('/build-a-wig/beach-wave/edit') ||
+                       location.pathname.startsWith('/build-a-wig/ocean-curl/edit');
+    const isEditPriceDebug = typeof window !== 'undefined' && (
+      new URLSearchParams(location.search).get('debug') === '1' || localStorage.getItem('editPriceDebug') === '1'
+    );
+    if (isEditPage && isEditPriceDebug) {
+      try {
+        const raw = sessionStorage.getItem('editPriceDebugCart');
+        setEditDebugCartPayload(raw ? JSON.parse(raw) : null);
+      } catch {
+        setEditDebugCartPayload(null);
+      }
+    } else if (!isEditPage) {
+      setEditDebugCartPayload(null);
+      setEditDebugLogs([]);
+    }
+  }, [location.pathname, location.search]);
 
   // Listen for editingCartItemChanged event to reload when switching items while on edit page
   useEffect(() => {
@@ -3280,6 +3355,58 @@ export default function BuildAWigPage() {
                               location.pathname.startsWith('/build-a-wig/beach-wave/customize') ||
                               location.pathname.startsWith('/build-a-wig/ocean-curl/customize');
       
+      const isEditPriceDebug = typeof window !== 'undefined' && (
+        new URLSearchParams(location.search).get('debug') === '1' || localStorage.getItem('editPriceDebug') === '1'
+      );
+      
+      // [EDIT PRICE TRIANGULATION] At entry of price effect in edit mode, log what we'll use
+      if (isEditMode && editingCartItem) {
+        try {
+          const item = JSON.parse(editingCartItem);
+          const entryData = {
+            cartItemPrice: typeof item.price === 'number' ? item.price : null,
+            hasChanges,
+            willUseCartPrice: !hasChanges && typeof item.price === 'number' && item.price > 0,
+            itemName: item.name,
+            itemId: item.id
+          };
+          console.log('[EDIT PRICE TRIANGULATION] Price effect entry (edit mode)', entryData);
+          if (isEditPriceDebug) setEditDebugLogs(prev => [...prev.slice(-29), { tag: 'Price effect entry', data: entryData }]);
+        } catch (_) {}
+      }
+      
+      // CRITICAL: In edit mode with no changes, use the cart item's price so edit page matches cart.
+      // This avoids the $560 (or similar) miscalculation caused by stale editSelected*Price from a
+      // previous product or effect order (price effect running before route change populates from item).
+      let editModeCartPrice: number | null = null;
+      if (isEditMode && editingCartItem) {
+        try {
+          const item = JSON.parse(editingCartItem);
+          editModeCartPrice = typeof item.price === 'number' ? item.price : null;
+          if (!hasChanges && editModeCartPrice !== null && editModeCartPrice > 0) {
+            const useCartData = { cartItemPrice: editModeCartPrice, hasChanges, itemName: item.name, itemId: item.id };
+            console.log('[EDIT PRICE TRIANGULATION] Price effect: USING CART ITEM PRICE (no changes)', useCartData);
+            if (isEditPriceDebug) setEditDebugLogs(prev => [...prev.slice(-29), { tag: 'USING CART PRICE', data: useCartData }]);
+            setTotalPrice(editModeCartPrice);
+            return;
+          }
+        } catch (e) {
+          // Fall through to calculated total
+        }
+      }
+      
+      // [EDIT PRICE TRIANGULATION] When we're in edit mode but did NOT use cart price, log why and full breakdown
+      if (isEditMode && editingCartItem) {
+        const calcReasonData = {
+          reason: !editModeCartPrice ? 'no cart price' : hasChanges ? 'hasChanges=true' : 'cart price invalid or zero',
+          cartItemPrice: editModeCartPrice,
+          hasChanges,
+          pathname: location.pathname
+        };
+        console.log('[EDIT PRICE TRIANGULATION] Price effect: using CALCULATED total (not cart price)', calcReasonData);
+        if (isEditPriceDebug) setEditDebugLogs(prev => [...prev.slice(-29), { tag: 'Using CALCULATED (not cart)', data: calcReasonData }]);
+      }
+      
       // DEBUGGING: Always log when on edit route to verify detection
       console.log('[EDIT MODE DETECTION]', {
         pathname: location.pathname,
@@ -3468,8 +3595,8 @@ export default function BuildAWigPage() {
           });
         }
         
-        // CRITICAL: For cap size price, check if localStorage value is incorrect (0 for flexible cap)
-        // If so, use calculated value instead to prevent overwriting correct price
+        // CRITICAL: For cap size price, use current selection — never apply stored price from another product/session.
+        // Non-flexible cap (e.g. M) = $0; flexible (XXS/XS/S, S/M/L) = $40.
         if (key === 'CapSize') {
           const currentCapSize = currentCustomization.capSize || 'M';
           const isFlexibleCap = currentCapSize === 'XXS/XS/S' || currentCapSize === 'S/M/L';
@@ -3485,32 +3612,31 @@ export default function BuildAWigPage() {
             timestamp: new Date().toISOString()
           });
           
-          // Use localStorage value if it exists and is valid
+          // For default cap (non-flexible), always use calculated value (0). Stored 40 from a previous flex selection must not apply.
+          if (!isFlexibleCap) {
+            console.log('[FLEX_CAP_DEBUG] GET_PRICE - Non-flexible cap, using calculated:', calculatedValue);
+            return calculatedValue;
+          }
+          // Flexible cap: use stored value if valid, else calculated (40)
           if (primaryValue !== null && primaryValue !== undefined && primaryValue !== '' && !isNaN(parseFloat(primaryValue))) {
             const parsedValue = parseFloat(primaryValue);
-            // If flexible cap but price is 0, use calculated value instead (should be 40)
-            if (isFlexibleCap && parsedValue === 0 && calculatedValue === 40) {
-              console.log('[FLEX_CAP_DEBUG] GET_PRICE - FIX: localStorage has 0 for flexible cap, using calculated 40');
-              return calculatedValue;
-            }
-            // For default cap sizes (non-flexible), always use localStorage value (should be 0)
-            // This ensures default cap sizes are recognized correctly
-            console.log('[FLEX_CAP_DEBUG] GET_PRICE - Using primary value:', parsedValue);
+            if (parsedValue === 0 && calculatedValue === 40) return calculatedValue;
             return parsedValue;
-          } else if (fallbackValue !== null && fallbackValue !== undefined && fallbackValue !== '' && !isNaN(parseFloat(fallbackValue))) {
+          }
+          if (fallbackValue !== null && fallbackValue !== undefined && fallbackValue !== '' && !isNaN(parseFloat(fallbackValue))) {
             const parsedValue = parseFloat(fallbackValue);
-            // If flexible cap but price is 0, use calculated value instead (should be 40)
-            if (isFlexibleCap && parsedValue === 0 && calculatedValue === 40) {
-              console.log('[FLEX_CAP_DEBUG] GET_PRICE - FIX: localStorage has 0 for flexible cap (fallback), using calculated 40');
-              return calculatedValue;
-            }
-            // For default cap sizes (non-flexible), always use localStorage value (should be 0)
-            console.log('[FLEX_CAP_DEBUG] GET_PRICE - Using fallback value:', parsedValue);
+            if (parsedValue === 0 && calculatedValue === 40) return calculatedValue;
             return parsedValue;
-          } else {
-            // Fallback to calculated price
-            console.log('[FLEX_CAP_DEBUG] GET_PRICE - Using calculated value:', calculatedValue);
-            return calculatedValue;
+          }
+          return calculatedValue;
+        }
+
+        // CRITICAL: Blanco default density is 250% (included in base price = $0). Do not use a stored $80 from Noir/other products.
+        if (key === 'Density') {
+          const isBlancoRoute = location.pathname.startsWith('/build-a-wig/blanco');
+          const density = currentCustomization.density || '';
+          if (isBlancoRoute && density === '250%') {
+            return calculatedValue; // Always 0 for Blanco 250%
           }
         }
         
@@ -3530,10 +3656,10 @@ export default function BuildAWigPage() {
         }
       };
       
-      // CRITICAL: Use getPrice helper for all prices to read from localStorage when available
-      // This ensures prices persist when navigating away
-      // Works for both edit mode (editSelected*) and customize mode (customizeSelected*)
-      const capSizePrice = getPrice('CapSize', calculatedPrices.capSizePrice);
+      // CRITICAL: In edit mode, use CALCULATED prices only (from current selections). Do NOT read from localStorage
+      // for the total. Stale editSelected*Price from another product or session can contain full total or wrong sum,
+      // causing the displayed/saved price to double or be wrong.
+      const capSizePrice = isEditMode ? calculatedPrices.capSizePrice : getPrice('CapSize', calculatedPrices.capSizePrice);
       
       console.log('[FLEX_CAP_DEBUG] CALCULATE_PRICE - After getPrice:', {
         capSizePrice,
@@ -3547,15 +3673,27 @@ export default function BuildAWigPage() {
         timestamp: new Date().toISOString()
       });
       
-      const colorPrice = getPrice('Color', calculatedPrices.colorPrice);
-      const lengthPrice = getPrice('Length', calculatedPrices.lengthPrice);
-      const densityPrice = getPrice('Density', calculatedPrices.densityPrice);
-      const lacePrice = getPrice('Lace', calculatedPrices.lacePrice);
-      const texturePrice = getPrice('Texture', calculatedPrices.texturePrice);
-      const hairlinePrice = getPrice('Hairline', calculatedPrices.hairlinePrice);
-      const stylingPrice = getPrice('Styling', calculatedPrices.stylingPrice);
-      const addOnsPrice = getPrice('AddOns', calculatedPrices.addOnsPrice);
+      const colorPrice = isEditMode ? calculatedPrices.colorPrice : getPrice('Color', calculatedPrices.colorPrice);
+      const lengthPrice = isEditMode ? calculatedPrices.lengthPrice : getPrice('Length', calculatedPrices.lengthPrice);
+      const densityPrice = isEditMode ? calculatedPrices.densityPrice : getPrice('Density', calculatedPrices.densityPrice);
+      const lacePrice = isEditMode ? calculatedPrices.lacePrice : getPrice('Lace', calculatedPrices.lacePrice);
+      const texturePrice = isEditMode ? calculatedPrices.texturePrice : getPrice('Texture', calculatedPrices.texturePrice);
+      const hairlinePrice = isEditMode ? calculatedPrices.hairlinePrice : getPrice('Hairline', calculatedPrices.hairlinePrice);
+      const stylingPrice = isEditMode ? calculatedPrices.stylingPrice : getPrice('Styling', calculatedPrices.stylingPrice);
+      const addOnsPrice = isEditMode ? calculatedPrices.addOnsPrice : getPrice('AddOns', calculatedPrices.addOnsPrice);
       
+      // Per-addon breakdown for debug (edit/customize)
+      const addOnBasePricesForLog: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+      const discountedLaceForLog = ['2X6', '4X4', '5X5', '6X6', '7X7'];
+      const laceForLog = currentCustomization.lace || '';
+      const hasLaceDiscForLog = discountedLaceForLog.includes(laceForLog);
+      const addOnsBreakdownForLog: Record<string, number> = {};
+      (currentCustomization.addOns || []).forEach((id: string) => {
+        let p = addOnBasePricesForLog[id] ?? 0;
+        if (hasLaceDiscForLog && (id === 'BLEACH' || id === 'PLUCK')) p -= 20;
+        addOnsBreakdownForLog[id] = p;
+      });
+      const addOnsBreakdownSumForLog = Object.values(addOnsBreakdownForLog).reduce((a, b) => a + b, 0);
       // DEBUGGING: Log all prices being used
       const modeLabel = isEditMode ? 'EDIT MODE' : isCustomizeMode ? 'CUSTOMIZE MODE' : 'NON-EDIT MODE';
       console.log(`[${modeLabel}] All prices:`, {
@@ -3569,6 +3707,7 @@ export default function BuildAWigPage() {
         hairlinePrice,
         stylingPrice,
         addOnsPrice,
+        addOnsDetail: { selected: currentCustomization.addOns || [], lace: laceForLog, laceDiscount: hasLaceDiscForLog, perAddon: addOnsBreakdownForLog, perAddonSum: addOnsBreakdownSumForLog },
         sum: capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice,
         prefix
       });
@@ -3583,6 +3722,54 @@ export default function BuildAWigPage() {
         total,
         prefix
       });
+      
+      // [EDIT PRICE TRIANGULATION] In edit mode, log calculated vs cart price + per-addon breakdown
+      if (isEditMode && editingCartItem) {
+        try {
+          const parsed = JSON.parse(editingCartItem);
+          const cartPrice = typeof parsed.price === 'number' ? parsed.price : null;
+          // Per-addon price breakdown (same logic as calculatePricesFromSelections)
+          const addOnBasePrices: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+          const discountedLaceSizes = ['2X6', '4X4', '5X5', '6X6', '7X7'];
+          const laceForAddOn = currentCustomization.lace || '';
+          const hasLaceDiscountAddOn = discountedLaceSizes.includes(laceForAddOn);
+          const addOnsBreakdown: Record<string, number> = {};
+          (currentCustomization.addOns || []).forEach((id: string) => {
+            let p = addOnBasePrices[id] ?? 0;
+            if (hasLaceDiscountAddOn && (id === 'BLEACH' || id === 'PLUCK')) p -= 20;
+            addOnsBreakdown[id] = p;
+          });
+          const addOnsBreakdownSum = Object.values(addOnsBreakdown).reduce((a, b) => a + b, 0);
+          const calcVsCartData = {
+            calculatedTotal: total,
+            cartItemPrice: cartPrice,
+            difference: cartPrice != null ? total - cartPrice : 'N/A',
+            note: 'Option prices are from current selections only; defaults (e.g. 24", 200%, 13X6, NATURAL, NONE) = $0 and are already in base.',
+            breakdown: { basePrice, capSizePrice, colorPrice, lengthPrice, densityPrice, lacePrice, texturePrice, hairlinePrice, stylingPrice, addOnsPrice },
+            addOnsDetail: {
+              selected: currentCustomization.addOns || [],
+              lace: laceForAddOn,
+              laceDiscountApplied: hasLaceDiscountAddOn,
+              perAddon: addOnsBreakdown,
+              perAddonSum: addOnsBreakdownSum,
+              storedAddOnsPrice: addOnsPrice
+            },
+            editSelectedPricesFromStorage: {
+              capSize: localStorage.getItem('editSelectedCapSizePrice'),
+              color: localStorage.getItem('editSelectedColorPrice'),
+              length: localStorage.getItem('editSelectedLengthPrice'),
+              density: localStorage.getItem('editSelectedDensityPrice'),
+              lace: localStorage.getItem('editSelectedLacePrice'),
+              texture: localStorage.getItem('editSelectedTexturePrice'),
+              hairline: localStorage.getItem('editSelectedHairlinePrice'),
+              styling: localStorage.getItem('editSelectedStylingPrice'),
+              addOns: localStorage.getItem('editSelectedAddOnsPrice')
+            }
+          };
+          console.log('[EDIT PRICE TRIANGULATION] Calculated total vs cart', calcVsCartData);
+          if (isEditPriceDebug) setEditDebugLogs(prev => [...prev.slice(-29), { tag: 'Calculated vs cart', data: calcVsCartData }]);
+        } catch (_) {}
+      }
       
       // CRITICAL: Trigger change detection after price calculation (for both edit and non-edit modes)
       // This ensures hasChanges is updated when prices change
@@ -3686,7 +3873,7 @@ export default function BuildAWigPage() {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('customStorageChange', handleCustomStorageChange);
     };
-  }, [customization, basePrice, refreshTrigger, location, calculatePricesFromSelections, savePricesToLocalStorage]);
+  }, [customization, basePrice, refreshTrigger, location, calculatePricesFromSelections, savePricesToLocalStorage, hasChanges]);
 
   // Load selected currency from localStorage
   useEffect(() => {
@@ -4081,67 +4268,20 @@ export default function BuildAWigPage() {
       // Calculate prices from current selections first
       const calculatedPrices = calculatePricesFromSelections(customization);
       
-      // Get prices from localStorage with fallback to calculated prices
-      // CRITICAL: Use the same logic as calculatePrice function to ensure consistency
-      const getPrice = (key: string, calculatedValue: number) => {
-        const editSelectedKey = `editSelected${key}Price`;
-        const selectedKey = `selected${key}Price`;
-        const editValue = localStorage.getItem(editSelectedKey);
-        const selectedValue = localStorage.getItem(selectedKey);
-        
-        // Special handling for cap size price - check if localStorage value is incorrect
-        if (key === 'CapSize') {
-          const currentCapSize = customization.capSize || 'M';
-          const isFlexibleCap = currentCapSize === 'XXS/XS/S' || currentCapSize === 'S/M/L';
-          
-          // Use localStorage value if it exists and is valid
-          if (editValue !== null && editValue !== undefined && editValue !== '' && !isNaN(parseFloat(editValue))) {
-            const parsedValue = parseFloat(editValue);
-            // If flexible cap but price is 0, use calculated value instead (should be 40)
-            if (isFlexibleCap && parsedValue === 0 && calculatedValue === 40) {
-              return calculatedValue;
-            }
-            return parsedValue;
-          } else if (selectedValue !== null && selectedValue !== undefined && selectedValue !== '' && !isNaN(parseFloat(selectedValue))) {
-            const parsedValue = parseFloat(selectedValue);
-            // If flexible cap but price is 0, use calculated value instead (should be 40)
-            if (isFlexibleCap && parsedValue === 0 && calculatedValue === 40) {
-              return calculatedValue;
-            }
-            return parsedValue;
-          } else {
-            // Fallback to calculated price
-            return calculatedValue;
-          }
-        }
-        
-        // For other prices, use localStorage value if it exists and is valid, otherwise use calculated value
-        if (editValue !== null && editValue !== undefined && editValue !== '' && !isNaN(parseFloat(editValue))) {
-          return parseFloat(editValue);
-        } else if (selectedValue !== null && selectedValue !== undefined && selectedValue !== '' && !isNaN(parseFloat(selectedValue))) {
-          return parseFloat(selectedValue);
-        } else {
-          // Fallback to calculated price to ensure accuracy (especially for density)
-          return calculatedValue;
-        }
-      };
+      // CRITICAL (edit save): Use CALCULATED prices only. Do NOT read from localStorage for finalPrice.
+      // Stale editSelected*Price / selected*Price can hold a full total or wrong sum from another product/session,
+      // which doubles or corrupts the saved price.
+      const capSizePrice = calculatedPrices.capSizePrice;
+      const colorPrice = calculatedPrices.colorPrice;
+      const lengthPrice = calculatedPrices.lengthPrice;
+      const densityPrice = calculatedPrices.densityPrice;
+      const lacePrice = calculatedPrices.lacePrice;
+      const texturePrice = calculatedPrices.texturePrice;
+      const hairlinePrice = calculatedPrices.hairlinePrice;
+      const stylingPrice = calculatedPrices.stylingPrice;
+      const addOnsPrice = calculatedPrices.addOnsPrice;
       
-      // CRITICAL: Use getPrice helper for capSizePrice to match display logic
-      // This ensures the saved price matches the displayed price
-      const capSizePrice = getPrice('CapSize', calculatedPrices.capSizePrice);
-      
-      // CRITICAL: Use calculated prices as fallback to ensure density/other prices are correct
-      // This ensures that if localStorage prices are missing or incorrect, we use the calculated values
-      const colorPrice = getPrice('Color', calculatedPrices.colorPrice);
-      const lengthPrice = getPrice('Length', calculatedPrices.lengthPrice);
-      const densityPrice = getPrice('Density', calculatedPrices.densityPrice);
-      const lacePrice = getPrice('Lace', calculatedPrices.lacePrice);
-      const texturePrice = getPrice('Texture', calculatedPrices.texturePrice);
-      const hairlinePrice = getPrice('Hairline', calculatedPrices.hairlinePrice);
-      const stylingPrice = getPrice('Styling', calculatedPrices.stylingPrice);
-      const addOnsPrice = getPrice('AddOns', calculatedPrices.addOnsPrice);
-      
-      // Calculate final price
+      // Calculate final price (always base + calculated options in edit mode)
       const finalPrice = basePrice + capSizePrice + colorPrice + lengthPrice + densityPrice + lacePrice + texturePrice + hairlinePrice + stylingPrice + addOnsPrice;
       
       // DEBUGGING: Log save operation
@@ -4175,14 +4315,9 @@ export default function BuildAWigPage() {
         validStyling = 'NONE'; // If styling is a part selection, set to NONE
       }
       
-      // CRITICAL: Preserve capSizePrice from localStorage before updating cart item
-      // This ensures flexible cap price is preserved even if capSize selection gets reset
-      const preservedCapSizePrice = localStorage.getItem('editSelectedCapSizePrice') || localStorage.getItem('selectedCapSizePrice') || '0';
-      const capSizePriceValue = parseInt(preservedCapSizePrice);
-      
-      console.log('[FLEX_CAP_DEBUG] handleAddToBag Save - Preserving capSizePrice:', {
-        preservedCapSizePrice,
-        capSizePriceValue,
+      // Use calculated capSizePrice for the cart item (same as finalPrice calculation)
+      console.log('[FLEX_CAP_DEBUG] handleAddToBag Save - Using calculated capSizePrice:', {
+        capSizePrice,
         customizationCapSize: customization.capSize,
         isFlexible: customization.capSize === 'XXS/XS/S' || customization.capSize === 'S/M/L',
         timestamp: new Date().toISOString()
@@ -4196,7 +4331,7 @@ export default function BuildAWigPage() {
         price: finalPrice, // Use recalculated price, not state
         capSize: customization.capSize,
         // CRITICAL: Store capSizePrice in cart item for future reference
-        capSizePrice: capSizePriceValue,
+        capSizePrice: capSizePrice,
         length: customization.length,
         density: customization.density,
         color: customization.color,
@@ -4230,7 +4365,7 @@ export default function BuildAWigPage() {
         price: finalPrice,
         capSize: customization.capSize,
         // CRITICAL: Include capSizePrice in editingCartItem
-        capSizePrice: capSizePriceValue,
+        capSizePrice: capSizePrice,
         length: customization.length,
         density: customization.density,
         color: customization.color,
@@ -4242,7 +4377,7 @@ export default function BuildAWigPage() {
         addOns: customization.addOns
       };
       
-      console.log('[FLEX_CAP_DEBUG] handleAddToBag Save - Updated editingCartItem capSizePrice:', capSizePriceValue);
+      console.log('[FLEX_CAP_DEBUG] handleAddToBag Save - Updated editingCartItem capSizePrice:', capSizePrice);
       localStorage.setItem('editingCartItem', JSON.stringify(updatedEditingCartItem));
       
       // CRITICAL: Also update editSelected* keys to match saved state
@@ -4283,6 +4418,39 @@ export default function BuildAWigPage() {
       // DEBUGGING: Log updated editingCartItem
       console.log('[EDIT MODE SAVE] Updated editingCartItem in localStorage:', updatedEditingCartItem);
       console.log('[EDIT MODE SAVE] Updated editSelected* keys with latest selections');
+      
+      // [CART PRICE TRIANGULATION] Mobile-friendly: so cart dropdown can show what was saved when ?debug=1
+      const isEditSaveDebug = typeof window !== 'undefined' && (
+        new URLSearchParams(location.search).get('debug') === '1' || localStorage.getItem('editPriceDebug') === '1'
+      );
+      if (isEditSaveDebug) {
+        try {
+          const addOnBasePricesSave: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+          const discountedLaceSave = ['2X6', '4X4', '5X5', '6X6', '7X7'];
+          const laceSave = customization.lace || '';
+          const hasLaceDiscSave = discountedLaceSave.includes(laceSave);
+          const perAddonSave: Record<string, number> = {};
+          (customization.addOns || []).forEach((id: string) => {
+            let p = addOnBasePricesSave[id] ?? 0;
+            if (hasLaceDiscSave && (id === 'BLEACH' || id === 'PLUCK')) p -= 20;
+            perAddonSave[id] = p;
+          });
+          sessionStorage.setItem('lastAddToBagPayload', JSON.stringify({
+            source: 'Edit mode save',
+            finalPrice,
+            customization: { ...customization },
+            updatedItem: { ...updatedItem },
+            addOnsDetail: {
+              selected: customization.addOns || [],
+              lace: laceSave,
+              laceDiscountApplied: hasLaceDiscSave,
+              perAddon: perAddonSave,
+              perAddonSum: Object.values(perAddonSave).reduce((a, b) => a + b, 0),
+              addOnsPriceInFinal: addOnsPrice
+            }
+          }));
+        } catch (_) {}
+      }
       
       // Update totalPrice state to match saved price
       setTotalPrice(finalPrice);
@@ -4359,6 +4527,40 @@ export default function BuildAWigPage() {
         partSelection: localStorage.getItem('selectedPartSelection') || 'MIDDLE',
         addOns: customization.addOns
       };
+
+      // [CART PRICE TRIANGULATION] Mobile-friendly: so cart dropdown can show what was added when ?debug=1
+      const isAddToBagDebug = typeof window !== 'undefined' && (
+        new URLSearchParams(location.search).get('debug') === '1' || localStorage.getItem('editPriceDebug') === '1'
+      );
+      if (isAddToBagDebug) {
+        try {
+          const addOnBasePricesPayload: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+          const discountedLacePayload = ['2X6', '4X4', '5X5', '6X6', '7X7'];
+          const lacePayload = customization.lace || '';
+          const hasLaceDiscPayload = discountedLacePayload.includes(lacePayload);
+          const perAddonPayload: Record<string, number> = {};
+          (customization.addOns || []).forEach((id: string) => {
+            let p = addOnBasePricesPayload[id] ?? 0;
+            if (hasLaceDiscPayload && (id === 'BLEACH' || id === 'PLUCK')) p -= 20;
+            perAddonPayload[id] = p;
+          });
+          sessionStorage.setItem('lastAddToBagPayload', JSON.stringify({
+            source: 'Add to bag (new item)',
+            totalPrice,
+            pathname: location.pathname,
+            productName,
+            customization: { ...customization },
+            cartItem: { ...cartItem },
+            addOnsDetail: {
+              selected: customization.addOns || [],
+              lace: lacePayload,
+              laceDiscountApplied: hasLaceDiscPayload,
+              perAddon: perAddonPayload,
+              perAddonSum: Object.values(perAddonPayload).reduce((a, b) => a + b, 0)
+            }
+          }));
+        } catch (_) {}
+      }
 
       // Get existing cart items and add new item at the beginning (newest first)
       const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
@@ -5843,6 +6045,115 @@ export default function BuildAWigPage() {
         cancelText="CANCEL"
         dataAttribute="sign-out-confirm"
       />
+
+      {/* Mobile-friendly: floating toggle to turn price debug ON from the page (no console/URL needed) */}
+      {location.pathname.startsWith('/build-a-wig') && (
+        <button
+          type="button"
+          onClick={() => {
+            const next = !editDebugEnabled;
+            if (typeof window !== 'undefined') localStorage.setItem('editPriceDebug', next ? '1' : '0');
+            setEditDebugEnabled(next);
+          }}
+          style={{
+            position: 'fixed',
+            bottom: 12,
+            left: 12,
+            zIndex: 99998,
+            fontSize: '11px',
+            fontFamily: '"Futura PT Medium", sans-serif',
+            color: editDebugEnabled ? '#EB1C24' : '#666',
+            backgroundColor: 'rgba(255,255,255,0.95)',
+            border: '1px solid #ccc',
+            borderRadius: 6,
+            padding: '6px 10px',
+            cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            textTransform: 'uppercase'
+          }}
+        >
+          Price debug {editDebugEnabled ? 'ON' : 'off'}
+        </button>
+      )}
+
+      {/* Mobile-friendly edit price debug panel: add ?debug=1 to URL or set localStorage.editPriceDebug=1 or tap "Price debug off" above */}
+      {(() => {
+        const isEditPage = location.pathname === '/build-a-wig/edit' ||
+                           location.pathname.startsWith('/build-a-wig/noir/edit') ||
+                           location.pathname.startsWith('/build-a-wig/blanco/edit') ||
+                           location.pathname.startsWith('/build-a-wig/soft-wave/edit') ||
+                           location.pathname.startsWith('/build-a-wig/soft-curl/edit') ||
+                           location.pathname.startsWith('/build-a-wig/beach-wave/edit') ||
+                           location.pathname.startsWith('/build-a-wig/ocean-curl/edit');
+        const isEditPriceDebug = typeof window !== 'undefined' && (
+          new URLSearchParams(location.search).get('debug') === '1' || localStorage.getItem('editPriceDebug') === '1' || editDebugEnabled
+        );
+        if (!isEditPage || !isEditPriceDebug) return null;
+        return (
+          <div
+            style={{
+              position: 'fixed',
+              bottom: 0,
+              right: 0,
+              zIndex: 99999,
+              maxWidth: '100%',
+              width: editDebugPanelOpen ? 'min(400px, 95vw)' : 'auto',
+              maxHeight: editDebugPanelOpen ? '70vh' : 'auto',
+              backgroundColor: 'rgba(0,0,0,0.92)',
+              color: '#eee',
+              fontSize: '11px',
+              fontFamily: 'monospace',
+              overflow: 'auto',
+              border: '1px solid #666',
+              borderBottomRightRadius: 0,
+              borderTopLeftRadius: 8,
+              padding: editDebugPanelOpen ? 8 : 6,
+              boxShadow: '0 0 12px rgba(0,0,0,0.5)'
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setEditDebugPanelOpen(prev => !prev)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#EB1C24',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                padding: '2px 6px',
+                fontSize: '12px'
+              }}
+            >
+              {editDebugPanelOpen ? '▼ Hide' : '▲'} Price debug {editDebugLogs.length > 0 && `(${editDebugLogs.length})`}
+            </button>
+            {editDebugPanelOpen && (
+              <div style={{ marginTop: 6 }}>
+                {editDebugCartPayload != null && (
+                  <div style={{ marginBottom: 8 }}>
+                    <strong style={{ color: '#f88' }}>Cart stored (from EDIT IN BUILD-A-WIG):</strong>
+                    <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: '4px 0', fontSize: '10px' }}>
+                      {JSON.stringify(editDebugCartPayload, null, 2)}
+                    </pre>
+                  </div>
+                )}
+                <strong style={{ color: '#8f8' }}>Edit page logs:</strong>
+                {editDebugLogs.length === 0 ? (
+                  <p style={{ margin: '4px 0' }}>No logs yet. Interact or refresh.</p>
+                ) : (
+                  editDebugLogs.map((log, i) => (
+                    <div key={i} style={{ marginBottom: 6, borderBottom: '1px solid #444', paddingBottom: 4 }}>
+                      <div style={{ color: '#ffc' }}>{log.tag}</div>
+                      <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: '2px 0', fontSize: '10px' }}>
+                        {JSON.stringify(log.data, null, 2)}
+                      </pre>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })()}
     </>
   );
 }

@@ -38,6 +38,7 @@ function ShoppingBagPage() {
   });
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [showEmptyBagConfirm, setShowEmptyBagConfirm] = useState(false);
   const [deleteItemConfirm, setDeleteItemConfirm] = useState<{ itemId: string; type: 'cart' | 'saved'; previousQuantity?: number } | null>(null);
   const deleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -437,6 +438,20 @@ function ShoppingBagPage() {
       setShowClearConfirm(false);
     } catch (e) {
       console.error('Error clearing saved items:', e);
+    }
+  };
+
+  const confirmEmptyBag = () => {
+    try {
+      setCartItems([]);
+      setCartCount(0);
+      localStorage.setItem('cartItems', JSON.stringify([]));
+      localStorage.setItem('cartCount', '0');
+      window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: 0 }));
+      window.dispatchEvent(new CustomEvent('cartUpdated'));
+      setShowEmptyBagConfirm(false);
+    } catch (e) {
+      console.error('Error emptying bag:', e);
     }
   };
 
@@ -1372,9 +1387,22 @@ function ShoppingBagPage() {
             )}
           </div>
 
-          {/* PROCEED TO CHECKOUT BUTTON - Only show when menu is closed and there are cart items */}
+          {/* EMPTY BAG & PROCEED TO CHECKOUT - Only show when menu is closed and there are cart items */}
           {!showMobileMenu && cartItems.length > 0 && (
             <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
+              <button
+                onClick={() => setShowEmptyBagConfirm(true)}
+                className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 mb-2"
+                style={{ 
+                  borderWidth: '1.3px', 
+                  color: '#EB1C24',
+                  fontFamily: '"Futura PT Medium"',
+                  backgroundColor: '#FFFFFF'
+                }}
+                type="button"
+              >
+                EMPTY BAG
+              </button>
               <button
                 onClick={() => navigate('/checkout')}
                 className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
@@ -1810,6 +1838,18 @@ function ShoppingBagPage() {
             confirmText="CONFIRM"
             cancelText="CANCEL"
             dataAttribute="clear-saved-items-confirm"
+          />
+
+          {/* Empty Bag Confirmation Modal */}
+          <ConfirmationModal
+            isOpen={showEmptyBagConfirm}
+            onClose={() => setShowEmptyBagConfirm(false)}
+            onConfirm={confirmEmptyBag}
+            title="EMPTY BAG?"
+            message="ARE YOU SURE YOU WANT TO REMOVE ALL ITEMS FROM YOUR BAG?"
+            confirmText="CONFIRM"
+            cancelText="CANCEL"
+            dataAttribute="empty-bag-confirm"
           />
 
           {/* Delete Item Confirmation Modal */}

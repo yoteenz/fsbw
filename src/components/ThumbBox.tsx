@@ -44,7 +44,8 @@ export default function ThumbBox({
         height: `${containerSize + 20}px`,
         boxSizing: 'border-box',
         padding: '0',
-        overflow: 'visible'
+        overflow: 'visible',
+        pointerEvents: isDisabled ? 'none' : 'auto'
       }}
       onClick={isDisabled ? undefined : onClick}
     >

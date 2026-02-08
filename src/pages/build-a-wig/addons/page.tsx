@@ -1,10 +1,19 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
 import ConfirmationModal from '../../../components/ConfirmationModal';
+
+// Only these count as "styling confirmed" (BLEACH+PLUCK required). NONE or empty = user can select BLEACH+PLUCK alone.
+const VALID_STYLING_OPTIONS = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
+function isStylingValueConfirmed(raw: string | null): boolean {
+  if (!raw || typeof raw !== 'string') return false;
+  const v = raw.trim();
+  if (!v || v === 'NONE') return false;
+  const first = v.split(',')[0]?.trim();
+  return !!first && VALID_STYLING_OPTIONS.includes(first);
+}
 
 export default function AddOnsSelectionPage() {
   const navigate = useNavigate();
@@ -61,19 +70,22 @@ export default function AddOnsSelectionPage() {
       initial = saved ? JSON.parse(saved) : [];
     }
     
-    // EDIT/CUSTOMIZE: Auto-select BLEACH + PLUCK only when a *styling option* is confirmed (BANGS, CRIMPS, etc.).
-    // Styling the hair requires bleach + pluck, so we add them when the user has chosen a style.
-    // We do NOT auto-select a style when BLEACH/PLUCK are selected — the user may want bleach/pluck without styling.
+    // EDIT/CUSTOMIZE: Auto-select BLEACH + PLUCK only when a real styling option is confirmed (same whitelist as lock).
     if (isOnEditRoute || isOnCustomizeRoute) {
       const styleConfirmed = isOnEditRoute
-        ? (localStorage.getItem('editSelectedStyling') && localStorage.getItem('editSelectedStyling') !== 'NONE') ||
-          (() => {
+        ? (() => {
+            const s = localStorage.getItem('editSelectedStyling') || localStorage.getItem('selectedStyling');
+            if (isStylingValueConfirmed(s)) return true;
             try {
               const item = JSON.parse(localStorage.getItem('editingCartItem') || '{}');
-              return item.styling && item.styling !== 'NONE' && String(item.styling).trim() !== '';
+              return isStylingValueConfirmed(item.styling);
             } catch { return false; }
           })()
-        : (localStorage.getItem('customizeSelectedStyling') && localStorage.getItem('customizeSelectedStyling') !== 'NONE' && (localStorage.getItem('customizeSelectedStyling') || '').trim() !== '');
+        : isStylingValueConfirmed(
+            localStorage.getItem('customizeSelectedStyling') ||
+            localStorage.getItem('selectedStyling') ||
+            localStorage.getItem('selectedHairStyling')
+          );
       if (styleConfirmed && (!initial.includes('BLEACH') || !initial.includes('PLUCK'))) {
         const merged = [...initial.filter(x => x !== 'BLEACH' && x !== 'PLUCK'), 'BLEACH', 'PLUCK'];
         initial = merged.sort((a, b) => ADDONS_CORRECT_ORDER.indexOf(a) - ADDONS_CORRECT_ORDER.indexOf(b));
@@ -135,8 +147,7 @@ export default function AddOnsSelectionPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  // EDIT/CUSTOMIZE: Auto-select BLEACH + PLUCK only when a styling option is confirmed (styling = mandatory bleach+pluck).
-  // We never auto-select a style when BLEACH/PLUCK are selected — styling is optional.
+  // EDIT/CUSTOMIZE: Auto-select BLEACH + PLUCK only when a real styling option is confirmed (uses module-level isStylingValueConfirmed).
   useEffect(() => {
     const pathname = location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
@@ -149,14 +160,21 @@ export default function AddOnsSelectionPage() {
     if (!isOnEditRoute && !isOnCustomizeRoute) return;
 
     const styleConfirmed = isOnEditRoute
-      ? (localStorage.getItem('editSelectedStyling') && localStorage.getItem('editSelectedStyling') !== 'NONE') ||
-        (() => {
+      ? (() => {
+          const s = localStorage.getItem('editSelectedStyling') || localStorage.getItem('selectedStyling');
+          if (isStylingValueConfirmed(s)) return true;
           try {
             const item = JSON.parse(localStorage.getItem('editingCartItem') || '{}');
-            return item.styling && item.styling !== 'NONE' && String(item.styling).trim() !== '';
+            return isStylingValueConfirmed(item.styling);
           } catch { return false; }
         })()
-      : (localStorage.getItem('customizeSelectedStyling') && (localStorage.getItem('customizeSelectedStyling') || '').trim() !== '' && localStorage.getItem('customizeSelectedStyling') !== 'NONE');
+      : (() => {
+          const s = localStorage.getItem('customizeSelectedStyling') ||
+            localStorage.getItem('selectedStyling') ||
+            localStorage.getItem('selectedHairStyling');
+          return isStylingValueConfirmed(s);
+        })();
+
     if (!styleConfirmed) return;
 
     setSelectedAddOns(prev => {
@@ -167,6 +185,37 @@ export default function AddOnsSelectionPage() {
         .sort((a, b) => ADDONS_CORRECT_ORDER.indexOf(a) - ADDONS_CORRECT_ORDER.indexOf(b));
     });
   }, [location.pathname]);
+
+  // Lock BLEACH+PLUCK when we're on edit/customize AND styling is confirmed (derive every render — no effect timing).
+  const isOnEditOrCustomize =
+    location.pathname.includes('/edit') ||
+    location.pathname.includes('/noir/customize') ||
+    location.pathname.includes('/blanco/customize') ||
+    location.pathname.includes('/soft-wave/customize') ||
+    location.pathname.includes('/soft-curl/customize') ||
+    location.pathname.includes('/ocean-curl/customize') ||
+    location.pathname.includes('/beach-wave/customize');
+  // Lock BLEACH+PLUCK only when a real styling option is selected (uses same isStylingValueConfirmed as effect).
+  const stylingConfirmedForLock =
+    location.pathname.includes('/edit')
+      ? (() => {
+          const s = localStorage.getItem('editSelectedStyling') || localStorage.getItem('selectedStyling');
+          if (isStylingValueConfirmed(s)) return true;
+          try {
+            const item = JSON.parse(localStorage.getItem('editingCartItem') || '{}');
+            return isStylingValueConfirmed(item.styling);
+          } catch { return false; }
+        })()
+      : (() => {
+          const s =
+            localStorage.getItem('customizeSelectedStyling') ||
+            localStorage.getItem('selectedStyling') ||
+            localStorage.getItem('selectedHairStyling');
+          return isStylingValueConfirmed(s);
+        })();
+  const lockBleachPluck = isOnEditOrCustomize && stylingConfirmedForLock;
+  const isStylingConfirmed = lockBleachPluck;
+  const getIsStylingConfirmed = () => lockBleachPluck;
 
   // Persist addons when we auto-added BLEACH+PLUCK for styling (so main page sees the update).
   const hasAutoAppliedBleachPluck = useRef(false);
@@ -350,31 +399,15 @@ export default function AddOnsSelectionPage() {
     }
   ];
 
-  // When a style is confirmed (edit/customize + styling !== NONE), BLEACH + PLUCK cannot be deselected
-  const isStylingConfirmed = (() => {
-    const pathname = location.pathname;
-    const isEdit = pathname.includes('/edit');
-    const isCustomize = pathname.includes('/noir/customize') || pathname.includes('/blanco/customize') ||
-      pathname.includes('/soft-wave/customize') || pathname.includes('/soft-curl/customize') ||
-      pathname.includes('/ocean-curl/customize') || pathname.includes('/beach-wave/customize');
-    if (!isEdit && !isCustomize) return false;
-    if (isEdit) {
-      const s = localStorage.getItem('editSelectedStyling');
-      if (s && s !== 'NONE' && String(s).trim() !== '') return true;
-      try {
-        const item = JSON.parse(localStorage.getItem('editingCartItem') || '{}');
-        return !!(item.styling && item.styling !== 'NONE' && String(item.styling).trim() !== '');
-      } catch (_) { return false; }
-    }
-    const s = localStorage.getItem('customizeSelectedStyling');
-    return !!(s && s !== 'NONE' && String(s).trim() !== '');
-  })();
-
   const handleAddOnToggle = (addOnId: string) => {
+    // Block BLEACH/PLUCK deselect when styling is confirmed (check at call time, not in setState)
+    if ((addOnId === 'BLEACH' || addOnId === 'PLUCK') && getIsStylingConfirmed()) {
+      const current = selectedAddOns;
+      if (current.includes(addOnId)) return; // do not allow remove
+    }
     setSelectedAddOns(prev => {
       if (prev.includes(addOnId)) {
-        // Do not allow removing BLEACH or PLUCK when a style is confirmed
-        if (isStylingConfirmed && (addOnId === 'BLEACH' || addOnId === 'PLUCK')) return prev;
+        if ((addOnId === 'BLEACH' || addOnId === 'PLUCK') && getIsStylingConfirmed()) return prev;
         return prev.filter(id => id !== addOnId);
       } else {
         // Add the add-on in the correct order based on sub-page sequence
@@ -1013,20 +1046,30 @@ export default function AddOnsSelectionPage() {
 
             {/* ADDON OPTIONS */}
             <div className="grid grid-cols-3 gap-4 mx-auto justify-center mb-6 max-w-[240px]" style={{ marginTop: '13px' }}>
-              {addOnOptions.map((option) => (
-                <ThumbBox
-                  key={option.id}
-                  image={option.image}
-                  title="ADD-ONS"
-                  label={option.name}
-                  isSelected={selectedAddOns.includes(option.id)}
-                  onClick={() => handleAddOnToggle(option.id)}
-                  imgSize={75}
-                  containerSize={60}
-                  topPosition={getAddOnsThumbnailTopPosition(option.id)}
-                  isDisabled={isStylingConfirmed && (option.id === 'BLEACH' || option.id === 'PLUCK')}
-                />
-              ))}
+              {addOnOptions.map((option) => {
+                const isLocked = isStylingConfirmed && (option.id === 'BLEACH' || option.id === 'PLUCK');
+                const box = (
+                  <ThumbBox
+                    key={option.id}
+                    image={option.image}
+                    title="ADD-ONS"
+                    label={option.name}
+                    isSelected={selectedAddOns.includes(option.id)}
+                    onClick={isLocked ? undefined : () => handleAddOnToggle(option.id)}
+                    imgSize={75}
+                    containerSize={60}
+                    topPosition={getAddOnsThumbnailTopPosition(option.id)}
+                    isDisabled={isLocked}
+                  />
+                );
+                return isLocked ? (
+                  <div key={option.id} style={{ pointerEvents: 'none' }} aria-disabled="true">
+                    {box}
+                  </div>
+                ) : (
+                  box
+                );
+              })}
             </div>
 
             {/* NOTE AND TOTAL PRICE SECTION */}
