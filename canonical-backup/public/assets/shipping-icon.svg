@@ -1,0 +1,26 @@
+<svg width="57" height="80" viewBox="0 0 57 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Airplane (profile view, angled upwards towards top-right, positioned above and slightly to left) -->
+  <!-- Fuselage: rounded nose, tapering to tail -->
+  <path d="M 12 28 Q 10 28, 8 30 Q 6 32, 6 35 L 6 38 Q 6 40, 8 41 L 10 41 Q 12 41, 14 40 L 16 40 Q 18 40, 20 41 L 22 41 Q 24 41, 26 40 L 28 40 Q 30 40, 32 41 L 34 41 Q 36 40, 36 38 L 36 35 Q 36 32, 34 30 Q 32 28, 30 28 L 28 28 Q 26 28, 24 27 L 22 27 Q 20 27, 18 26 L 16 26 Q 14 26, 12 27 Z" stroke="black" stroke-width="1.5" fill="none"/>
+  <!-- Left wing (forward, extending from main body with rounded tip) -->
+  <path d="M 16 33 Q 13 31, 10 29 Q 8 27, 6 25" stroke="black" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Right wing (slightly backward, with rounded tip) -->
+  <path d="M 26 35 Q 28 37, 30 39 Q 32 41, 34 43" stroke="black" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Vertical stabilizer (tail) -->
+  <line x1="20" y1="40" x2="20" y2="45" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Horizontal stabilizers (angular outlines) -->
+  <line x1="18" y1="43" x2="22" y2="43" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
+  
+  <!-- Parcel Box (three-dimensional rectangular prism with perspective, lower-right position) -->
+  <!-- Front face -->
+  <path d="M 18 52 L 18 67 L 30 67 L 30 52 Z" stroke="black" stroke-width="1.5" fill="none"/>
+  <!-- Top face (showing perspective) -->
+  <path d="M 18 52 L 22 49 L 34 49 L 30 52" stroke="black" stroke-width="1.5" fill="none"/>
+  <!-- Right face -->
+  <path d="M 30 52 L 34 49 L 34 64 L 30 67" stroke="black" stroke-width="1.5" fill="none"/>
+  <!-- Top parallel lines (closed flaps/seams) -->
+  <line x1="20" y1="50" x2="28" y2="50" stroke="black" stroke-width="1.5"/>
+  <line x1="22" y1="51" x2="30" y2="51" stroke="black" stroke-width="1.5"/>
+  <!-- Small inverted V/M-shaped tag/label on front-right corner (loose flap of ribbon/tape) -->
+  <path d="M 28 54 L 29 56 L 30 54" stroke="black" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+</svg>

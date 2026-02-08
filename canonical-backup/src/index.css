@@ -1,0 +1,3725 @@
+
+/* Covered By Your Grace Font Import with preload for immediate loading */
+@import url('https://fonts.googleapis.com/css2?family=Covered+By+Your+Grace&display=block');
+
+/* Futura PT Book Font */
+@font-face {
+  font-family: 'Futura PT Book';
+  src: url('/assets/Futura%20PT%20Book.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Futura PT Medium Font */
+@font-face {
+  font-family: 'Futura PT Medium';
+  src: url('/assets/Futura%20PT%20Medium.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Futura PT Demi Font */
+@font-face {
+  font-family: 'Futura PT Demi';
+  src: url('/assets/fonnts.com-Futura_PT_Demi.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Bohemy Font */
+@font-face {
+  font-family: 'Bohemy';
+  src: url('/assets/Bohemy.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Styling Text Display - Force Futura PT Book */
+.styling-text-display {
+  font-family: 'Futura PT Book' !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Styling Text Selected - Force Futura PT Medium */
+.styling-text-selected {
+  font-family: 'Futura PT Medium' !important;
+  font-weight: 500 !important;
+  font-style: normal !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* More specific targeting for styling text */
+div.styling-text-display {
+  font-family: 'Futura PT Book' !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+div.styling-text-selected {
+  font-family: 'Futura PT Medium' !important;
+  font-weight: 500 !important;
+  font-style: normal !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override body font for styling text specifically */
+.border.relative.text-center div[style*="fontSize: '24px'"] {
+  font-family: 'Futura PT Book' !important;
+  font-weight: normal !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Alternative approach - target by content */
+div:has-text("L"), div:has-text("M"), div:has-text("R") {
+  font-family: 'Futura PT Book' !important;
+  font-weight: normal !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Most specific approach - target the exact structure */
+.border.relative.text-center.cursor-pointer.bg-white div.absolute.left-1\/2.transform div {
+  font-family: 'Futura PT Book' !important;
+  font-weight: normal !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Data attribute approach */
+[data-font="futura-pt-book"] {
+  font-family: 'Futura PT Book' !important;
+  font-weight: normal !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Futura PT Demi Font Stack */
+.font-futura {
+  font-family: 'Futura PT Demi';
+  font-weight: 600;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* NOIR text specific styling - FIXED with preload and immediate rendering */
+.noir-text {
+  font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+  font-display: block !important;
+  /* Force immediate font rendering without flash */
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Prevent font substitution */
+  font-variant-caps: normal;
+  font-variant-ligatures: normal;
+  font-variant-numeric: lining-nums;
+  /* Ensure consistent rendering */
+  text-rendering: geometricPrecision;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Preload the font immediately on page load */
+@font-face {
+  font-family: 'Covered By Your Grace Preload';
+  src: url('https://fonts.gstatic.com/s/coveredbyyourgrace/v13/QGYwz-AZahWOJJI9kykWW9mD6opopoqXSOS0FgItq6bFIg.woff2') format('woff2');
+  font-display: block;
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Loading Screen Container - Prevents size flash and movement */
+.loading-container {
+  width: 405px !important;
+  height: 405px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* Prevent any size adjustments */
+  flex-shrink: 0;
+  flex-grow: 0;
+  position: relative;
+  /* Force stable positioning */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: auto;
+  /* Lock container size completely */
+  min-width: 405px !important;
+  max-width: 405px !important;
+  min-height: 405px !important;
+  max-height: 405px !important;
+  /* Prevent any layout shifts */
+  contain: layout style paint !important;
+  isolation: isolate !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+.loading-container img {
+  width: 405px !important;
+  height: 405px !important;
+  object-fit: contain !important;
+  display: block !important;
+  /* Prevent any size adjustments */
+  max-width: 405px !important;
+  max-height: 405px !important;
+  min-width: 405px !important;
+  min-height: 405px !important;
+  /* Prevent layout shifts and movement */
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  outline: none !important;
+  /* Force hardware acceleration and prevent flickering */
+  transform: translateZ(0) !important;
+  backface-visibility: hidden !important;
+  will-change: auto !important;
+  /* Prevent any browser default image behaviors */
+  image-rendering: auto !important;
+  image-orientation: none !important;
+  /* Lock image size completely */
+  contain: layout style paint !important;
+  isolation: isolate !important;
+  /* Prevent GIF animation from affecting layout */
+  image-rendering: pixelated !important;
+  image-rendering: -moz-crisp-edges !important;
+  image-rendering: crisp-edges !important;
+  /* Force stable rendering */
+  transform-origin: 0 0 !important;
+  /* Prevent any scaling or movement */
+  scale: 1 !important;
+  rotate: 0deg !important;
+  translate: 0 0 !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Maximum specificity override for loading screen - prevents any interference */
+div.loading-container img[src*="load-screen.gif"],
+div.loading-container img[alt*="Loading"],
+.loading-container img[src*="load-screen.gif"],
+.loading-container img[alt*="Loading"] {
+  width: 405px !important;
+  height: 405px !important;
+  min-width: 405px !important;
+  max-width: 405px !important;
+  min-height: 405px !important;
+  max-height: 405px !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  outline: none !important;
+  transform: translateZ(0) !important;
+  backface-visibility: hidden !important;
+  will-change: auto !important;
+  contain: layout style paint !important;
+  isolation: isolate !important;
+  transform-origin: 0 0 !important;
+  scale: 1 !important;
+  rotate: 0deg !important;
+  translate: 0 0 !important;
+  image-rendering: pixelated !important;
+  object-fit: contain !important;
+  display: block !important;
+  /* Completely disable all transitions and animations */
+  transition: none !important;
+  animation: none !important;
+  transition-property: none !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+  transition-timing-function: none !important;
+  /* Force immediate rendering */
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  animation-fill-mode: none !important;
+  animation-play-state: paused !important;
+  /* Prevent any browser optimizations */
+  will-change: auto !important;
+  transform-style: flat !important;
+  perspective: none !important;
+  perspective-origin: 50% 50% !important;
+  /* Lock all properties */
+  box-sizing: border-box !important;
+  vertical-align: baseline !important;
+  text-align: left !important;
+  direction: ltr !important;
+  unicode-bidi: normal !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  text-combine-upright: none !important;
+  text-emphasis: none !important;
+  text-indent: 0 !important;
+  text-shadow: none !important;
+  text-transform: none !important;
+  text-decoration: none !important;
+  text-underline-position: auto !important;
+  text-decoration-skip-ink: auto !important;
+  text-decoration-thickness: auto !important;
+  text-underline-offset: auto !important;
+  /* Force stable layout */
+  float: none !important;
+  clear: none !important;
+  z-index: auto !important;
+  overflow: visible !important;
+  clip: auto !important;
+  clip-path: none !important;
+  mask: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  mix-blend-mode: normal !important;
+  isolation: isolate !important;
+  /* Prevent any size changes */
+  resize: none !important;
+  cursor: default !important;
+  user-select: none !important;
+  pointer-events: none !important;
+  touch-action: none !important;
+  /* Force hardware acceleration without side effects */
+  transform: translate3d(0, 0, 0) !important;
+  /* Lock the element completely */
+  position: fixed !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate3d(-50%, -50%, 0) !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Enhanced Covered By Your Grace Font Class with maximum specificity */
+.font-covered,
+.font-covered-by-your-grace,
+.covered-by-your-grace-font,
+[data-font="covered-by-your-grace"],
+.noir-text,
+p[class*="noir"],
+div[class*="noir"] {
+  font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+  font-display: block !important;
+  font-synthesis: none !important;
+}
+
+/* ULTIMATE OVERRIDE for NOIR product name - highest specificity */
+.noir-product-name,
+p.noir-product-name,
+.text-center.noir-product-name {
+  font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
+  font-size: 50px !important;
+  font-weight: 400 !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  text-align: center !important;
+  height: auto !important;
+  max-height: none !important;
+  width: 100% !important;
+  min-width: auto !important;
+  max-width: none !important;
+  overflow: visible !important;
+  white-space: nowrap !important;
+  position: relative !important;
+  z-index: 999 !important;
+  transform: translateY(-3px) !important;
+  scale: 1 !important;
+  zoom: 1 !important;
+}
+
+/* ULTIMATE OVERRIDE for GIFT CARD product name - highest specificity */
+.gift-card-product-name,
+p.gift-card-product-name,
+.text-center.gift-card-product-name {
+  font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
+  font-size: 38px !important;
+  font-weight: 400 !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  text-align: center !important;
+  height: auto !important;
+  max-height: none !important;
+  width: 100% !important;
+  min-width: auto !important;
+  max-width: none !important;
+  overflow: visible !important;
+  white-space: nowrap !important;
+  position: relative !important;
+  z-index: 999 !important;
+  transform: translateY(-128px) !important;
+  scale: 1 !important;
+  zoom: 1 !important;
+}
+
+/* Override for SOFT CURL product name - specific class to avoid noir-product-name override */
+.soft-curl-product-name,
+p.soft-curl-product-name,
+.text-center.soft-curl-product-name {
+  font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
+  font-size: 42px !important;
+  transform: translateY(-8px) !important;
+}
+
+/* Ensure SOFT WAVE product name uses Covered By Your Grace font */
+.soft-wave-product-name,
+p.soft-wave-product-name,
+.text-center.soft-wave-product-name {
+  font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
+  font-size: 42px !important;
+  transform: translateY(-8px) !important;
+}
+
+/* Ensure OCEAN CURL product name uses Covered By Your Grace font */
+.ocean-curl-product-name,
+p.ocean-curl-product-name,
+.text-center.ocean-curl-product-name {
+  font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
+  font-size: 42px !important;
+  transform: translateY(-7px) !important;
+}
+
+/* Ensure BEACH WAVE product name uses Covered By Your Grace font */
+.beach-wave-product-name,
+p.beach-wave-product-name,
+.text-center.beach-wave-product-name {
+  font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
+  font-size: 42px !important;
+  transform: translateY(-8px) !important;
+}
+
+/* Cart product name - remove any "WIG" text added by global styles */
+.cart-product-name::after,
+.cart-product-name::before {
+  content: '' !important;
+  display: none !important;
+}
+
+/* Ensure noir price display shows full text including USD */
+.noir-price-display,
+p.noir-price-display,
+.text-center.noir-price-display {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: none !important;
+  overflow: visible !important;
+  white-space: nowrap !important;
+  text-overflow: clip !important;
+  display: block !important;
+}
+
+/* Ensure noir raw text (24" RAW CAMBODIAN) font size is not constrained */
+.noir-raw-text,
+p.noir-raw-text,
+.text-center.noir-raw-text {
+  font-size: 11px;
+  font-family: "Futura PT Medium", sans-serif;
+}
+
+/* ULTIMATE OVERRIDE for quantity selector borders - highest specificity */
+.quantity-minus-btn,
+.quantity-plus-btn,
+.quantity-number {
+  border-top: 1.3px solid black !important;
+  border-bottom: 1.3px solid black !important;
+  border-left: 1.3px solid black !important;
+  border-right: 1.3px solid black !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+}
+
+/* ULTIMATE OVERRIDE for flexible cap buttons - highest specificity */
+.flexible-cap-button {
+  width: 108px !important;
+  min-width: 108px !important;
+  max-width: 108px !important;
+  box-sizing: border-box !important;
+}
+
+.quantity-minus-btn {
+  border-right: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.quantity-plus-btn {
+  border-left: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.quantity-number {
+  border-left: none !important;
+  border-right: none !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any thumbnail header fonts with maximum specificity */
+.thumbnail-header,
+.thumbnail-header p,
+.thumbnail-container p,
+[class*="thumbnail"] p,
+div[class*="border"] p[class*="absolute"][class*="top"] {
+  font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override global reset for Tailwind margin classes */
+.mt-4 {
+  margin-top: 1rem !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+.mt-3 {
+  margin-top: 0.75rem !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+.mt-2 {
+  margin-top: 0.5rem !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+.mt-1 {
+  margin-top: 0.25rem !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+.mt-0 {
+  margin-top: 0 !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+.mt-negative-3px {
+  margin-top: -3px !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+body {
+  font-family: 'Futura PT Medium';
+  line-height: 1.6;
+  color: #333;
+  background-color: #f5f5f5;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Hide scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Ensure page content is scrollable but hide scrollbar */
+html, body {
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+.logo-font {
+  font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Frontalslayer.com Coming Soon Page Styles */
+.lading-page {
+  height: 100vh;
+  position: relative;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+.bg-desktop {
+  background-image: url('./public/assets/CS desktop-background.webp');
+  background-color: #e2e2e2;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Alternative background sizing options */
+.bg-desktop.cover {
+  background-size: cover;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+.bg-desktop.auto {
+  background-size: auto;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+.bg-desktop.full {
+  background-size: 100% 100%;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Full image display option */
+.bg-desktop.full-image {
+  background-size: contain;
+  background-attachment: scroll;
+  min-height: auto;
+  height: 100vh;
+  background-position: center top;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Allow scrolling for full image */
+.bg-desktop.scrollable {
+  background-attachment: scroll;
+  min-height: auto;
+  height: auto;
+  padding-bottom: 50vh; /* Extra space to show full image */
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+.bg-image {
+  background-image: url('./reference/CSLP/b1.webp');
+  background-color: #e2e2e2;
+  background-size: cover;
+  background-position: unset;
+  background-repeat: no-repeat;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+.bg-footer-image {
+  background-image: url('./reference/CSLP/m1.webp');
+  background-color: #e2e2e2;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+.blur-box {
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 12px;
+  border: 1.5px solid #000000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 310px; /* Desktop width - reduced by 10px */
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Mobile-specific blur-box width */
+@media (max-width: 640px) {
+  .blur-box {
+    width: 365px; /* Mobile width - current size */
+  }
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Tablet-specific blur-box width */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .blur-box {
+    width: 240px !important; /* Tablet width - compact size */
+    max-width: 240px !important; /* Override max-width constraint */
+    padding: 4px !important; /* Increase padding for card height */
+    gap: 6px !important; /* Increase gap between elements */
+    backdrop-filter: blur(3px) !important; /* Reduce blur effect for more transparency */
+    -webkit-backdrop-filter: blur(3px) !important; /* WebKit support */
+    background-color: rgba(255, 255, 255, 0.05) !important; /* More transparent background */
+    transform: translateY(6px) !important; /* Move entire tablet card down 6px total */
+  }
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+  }
+  
+  /* Auto-adjust content for tablet */
+  .blur-box h1:first-child,
+  .blur-box h2 {
+    font-size: 9px !important; /* Reduce text size for tablet */
+    line-height: 12px !important; /* Adjust line height */
+    padding: 0 4px !important; /* Add small padding to prevent overflow */
+  }
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+  }
+  
+  /* Move all content down 4px and allow line wrapping for red text on tablet */
+  .blur-box h1:first-child {
+    margin-top: 4px !important; /* Push all content down 4px */
+    white-space: normal !important; /* Override whitespace-nowrap for tablet */
+  }
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+  }
+  
+  /* Remove line break between "awaits!" and "3d" on tablet */
+  .blur-box h1:first-child br {
+    display: none !important; /* Hide the line break on tablet */
+  }
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+  }
+  
+  .blur-box h1.font-covered {
+    font-size: 20px !important; /* Reduce "SUBSCRIBE NOW!" text */
+  }
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+  }
+  
+  .blur-box input[type="email"] {
+    width: calc(100% - 16px) !important; /* Reduce input width */
+    padding: 4px 8px !important; /* Reduce input padding - smaller height */
+    font-size: 10px !important; /* Reduce input text size by 2px */
+    height: 25px !important; /* Reduce input box height */
+  }
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+  }
+  
+  .blur-box button {
+    padding: 8px 16px !important; /* Reduce button padding */
+    font-size: 12px !important; /* Reduce button text size */
+  }
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+  }
+  
+  .blur-box input[type="submit"] {
+    font-size: 9px !important; /* Increase "SIGN UP" text size by 1px for tablet */
+    margin-top: -6px !important; /* Move "SIGN UP" text upwards by 6px */
+  }
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Mobile-specific text size increase */
+@media (max-width: 767px) {
+  .blur-box h1:first-child,
+  .blur-box h2 {
+    font-size: 11px !important; /* 10px + 1px for mobile only */
+  }
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Desktop-specific email input width reduction */
+@media (min-width: 1200px) {
+  .blur-box input[type="email"] {
+    width: calc(100% - 20px) !important; /* Reduce by 20px while keeping centered */
+  }
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Tablet background override - Force background size */
+.tablet-bg-override {
+  background-size: 0px auto !important;
+  background-position: center top !important;
+  background-repeat: no-repeat !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Force tablet background image */
+.tablet-bg-force {
+  background-image: url('/assets/tablet header.webp') !important;
+  background-color: #e2e2e2 !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Force tablet card positioning */
+.tablet-card-position {
+  left: calc(50% - 447px) !important;
+  bottom: 162px !important;
+  position: absolute !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+.wrapWidth {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+@media (max-width: 640px) {
+  .wrapWidth {
+    padding: 0 15px;
+  }
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Leaf brick background styling - Updated with new image */
+.leaf-stack {
+  position: relative;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+.leaf-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('https://static.readdy.ai/image/315e13a2042f092242ff6698f0b32192/87419bce0a659a5e48f3f424c968afde.jfif');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #f8f9fa;
+  z-index: -1;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Layered/Double stroke effect for selected leaf-bg */
+.leaf-bg.border-black {
+  border: 3px solid white !important;
+  box-shadow: 0 0 0 1.1px black !important;
+  box-sizing: border-box !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+.leaf-bg.border-transparent {
+  border: 3px solid #F8F8F8 !important;
+  box-shadow: 0 0 0 1.3px transparent !important;
+  box-sizing: border-box !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+.hero-thumb .leaf-bg {
+  width: 250px;
+  height: 350px;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+.thumb .leaf-bg {
+  width: 72px;
+  height: 95px;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Allow inline styles to override default thumb leaf-bg dimensions */
+.thumb .leaf-bg[style*="width"] {
+  width: var(--leaf-width, 64px) !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+.thumb .leaf-bg[style*="height"] {
+  height: var(--leaf-height, 84px) !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Hero mannequin image size override - Must override Tailwind base styles */
+.hero-mannequin-img {
+  width: var(--hero-width, 282px) !important;
+  height: var(--hero-height, 387px) !important;
+  max-width: none !important;
+  max-height: none !important;
+  min-width: var(--hero-width, 282px) !important;
+  min-height: var(--hero-height, 387px) !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Thumbnail mannequin image position override - Must override container constraints */
+.thumbnail-mannequin-img {
+  top: var(--thumb-top, calc(50% - 6.1px)) !important;
+  position: absolute !important;
+  z-index: 10 !important;
+  transform: translateX(-50%) translateY(-50%) !important;
+  left: 50% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Back button height override - Force specific dimensions */
+button.cursor-pointer img[alt="Back"] {
+  height: 15px !important;
+  width: 21px !important;
+  object-fit: fill !important;
+  display: block !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+button.cursor-pointer img[src*="back-button.svg"] {
+  height: 15px !important;
+  width: 21px !important;
+  object-fit: fill !important;
+  display: block !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Mobile marble background overrides for sub-pages */
+@media (max-width: 768px) {
+  .baw-page {
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    min-height: calc(100vh + 60px) !important;
+  }
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* FINAL OVERRIDE: Thumbnail positioning - Must be at the end to override ALL constraints */
+/* Override ALL possible flex, transform, and positioning constraints for first thumbnail */
+div[data-thumb-index="0"],
+.thumb div[data-thumb-index="0"],
+div.leaf-stack.thumb div[data-thumb-index="0"],
+.flex.justify-center div[data-thumb-index="0"],
+.flex div[data-thumb-index="0"]:first-child,
+div[data-thumb-index="0"]:first-child,
+.relative.bg-cover.bg-center[data-thumb-index="0"] {
+  transform: translateX(0px) !important;
+  position: relative !important;
+  translate: none !important;
+  scale: none !important;
+  rotate: none !important;
+  left: auto !important;
+  right: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  align-self: auto !important;
+  justify-self: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override ALL possible constraints for second thumbnail */
+div[data-thumb-index="1"],
+.thumb div[data-thumb-index="1"],
+div.leaf-stack.thumb div[data-thumb-index="1"],
+.flex.justify-center div[data-thumb-index="1"],
+.flex div[data-thumb-index="1"],
+.relative.bg-cover.bg-center[data-thumb-index="1"] {
+  transform: translateX(-2px) !important;
+  position: relative !important;
+  translate: none !important;
+  scale: none !important;
+  rotate: none !important;
+  left: auto !important;
+  right: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  align-self: auto !important;
+  justify-self: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override ALL possible constraints for third thumbnail */
+div[data-thumb-index="2"],
+.thumb div[data-thumb-index="2"],
+div.leaf-stack.thumb div[data-thumb-index="2"],
+.flex.justify-center div[data-thumb-index="2"],
+.flex div[data-thumb-index="2"],
+.relative.bg-cover.bg-center[data-thumb-index="2"] {
+  transform: translateX(-4px) !important;
+  position: relative !important;
+  translate: none !important;
+  scale: none !important;
+  rotate: none !important;
+  left: auto !important;
+  right: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  align-self: auto !important;
+  justify-self: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
+/* Override any constraints for natural front mobile image */
+.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+}
+
+/* ULTIMATE OVERRIDE for natural front mobile image */
+img.natural-front-mobile {
+  width: 460px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 560px !important;
+  min-width: 460px !important;
+  min-height: auto !important;
+  display: block !important;
+  position: absolute !important;
+}
+
