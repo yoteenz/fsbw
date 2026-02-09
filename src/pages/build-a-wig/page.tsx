@@ -4157,9 +4157,6 @@ export default function BuildAWigPage() {
         timestamp: new Date().toISOString()
       });
       
-      // Update existing cart item
-      const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      
       // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
       let validStyling = customization.styling;
       const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
@@ -4175,14 +4172,11 @@ export default function BuildAWigPage() {
         timestamp: new Date().toISOString()
       });
       
-      // CRITICAL: Remove the old item and add updated item at the beginning (newest first)
-      // This makes the updated item appear at the top of the cart as the most recent item
       const updatedItem = {
         ...JSON.parse(editingCartItem),
         id: editingCartItemId, // Keep the same ID
         price: finalPrice, // Use recalculated price, not state
         capSize: customization.capSize,
-        // CRITICAL: Store capSizePrice in cart item for future reference
         capSizePrice: capSizePrice,
         length: customization.length,
         density: customization.density,
@@ -4195,20 +4189,31 @@ export default function BuildAWigPage() {
         addOns: customization.addOns
       };
       
-      // DEBUGGING: Log updated item
-      console.log('[EDIT MODE SAVE] Updated cart item:', updatedItem);
-      console.log('[FLEX_CAP_DEBUG] handleAddToBag Save - Cart item capSizePrice:', updatedItem.capSizePrice);
+      console.log('[EDIT MODE SAVE] Updated item (for cart or saved for later):', updatedItem);
       
-      // Remove the old item and add updated item at the beginning
-      const filteredCartItems = existingCartItems.filter((item: any) => item.id !== editingCartItemId);
-      const updatedCartItems = [updatedItem, ...filteredCartItems];
+      // CRITICAL: If the item was in SAVED FOR LATER, update it there in place. Do NOT add to cart.
+      const savedForLaterRaw = localStorage.getItem('savedForLater');
+      const savedForLaterList: any[] = savedForLaterRaw ? (JSON.parse(savedForLaterRaw) || []) : [];
+      const isFromSavedForLater = Array.isArray(savedForLaterList) && savedForLaterList.some((i: any) => i.id === editingCartItemId);
       
-      localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
-      
-      // DEBUGGING: Verify save
-      const savedItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      const savedItem = savedItems.find((item: any) => item.id === editingCartItemId);
-      console.log('[EDIT MODE SAVE] Verification - saved item:', savedItem);
+      if (isFromSavedForLater) {
+        // Update the item in saved for later in place; do not touch the cart
+        const newSavedForLater = savedForLaterList.map((i: any) =>
+          i.id === editingCartItemId ? updatedItem : i
+        );
+        localStorage.setItem('savedForLater', JSON.stringify(newSavedForLater));
+        window.dispatchEvent(new CustomEvent('savedItemsChanged'));
+        console.log('[EDIT MODE SAVE] Updated item in Saved for Later (in place), did not add to cart');
+      } else {
+        // Item was in the cart: update cart only
+        const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+        const filteredCartItems = existingCartItems.filter((item: any) => item.id !== editingCartItemId);
+        const updatedCartItems = [updatedItem, ...filteredCartItems];
+        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+        const newCartCount = updatedCartItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
+        localStorage.setItem('cartCount', newCartCount.toString());
+        console.log('[EDIT MODE SAVE] Updated item in cart');
+      }
       
       // CRITICAL: Update editingCartItem in localStorage to reflect saved changes
       // This ensures subsequent edits start from the latest saved state, not the initial edit
