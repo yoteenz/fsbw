@@ -457,10 +457,55 @@ function ShoppingBagPage() {
 
   const handleEdit = (item: any) => {
     try {
+      // Match CartDropdown: set both editingCartItem and editingCartItemId so build-a-wig loads correct item
       localStorage.setItem('editingCartItem', JSON.stringify(item));
-      
-      // Determine the correct edit route based on product name
-      let editRoute = '/build-a-wig/edit'; // Default fallback
+      localStorage.setItem('editingCartItemId', item.id);
+
+      // Store individual customization options (same as CartDropdown) so edit mode loads correct selections
+      const capSize = item.capSize || 'M';
+      const length = item.length || '24"';
+      const density = item.density || '200%';
+      let color = item.color;
+      if (item.name === 'BLANCO') {
+        const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+        if (!color || !validBlancoColors.includes(color)) color = 'PLATINUM';
+      } else {
+        color = color || 'OFF BLACK';
+      }
+      const texture = item.texture || 'SILKY';
+      const lace = item.lace || '13X6';
+      const hairline = item.hairline || 'NATURAL';
+      const partSelection = item.partSelection || 'MIDDLE';
+      const styling = item.styling || 'NONE';
+      const addOns = item.addOns || [];
+      const capSizePrice = (capSize === 'XXS/XS/S' || capSize === 'S/M/L') ? '40' : '0';
+
+      localStorage.setItem('selectedCapSize', capSize);
+      localStorage.setItem('selectedCapSizePrice', capSizePrice);
+      localStorage.setItem('selectedLength', length);
+      localStorage.setItem('selectedDensity', density);
+      localStorage.setItem('selectedColor', color);
+      localStorage.setItem('selectedTexture', texture);
+      localStorage.setItem('selectedLace', lace);
+      localStorage.setItem('selectedHairline', hairline);
+      localStorage.setItem('selectedPartSelection', partSelection);
+      localStorage.setItem('selectedStyling', styling);
+      localStorage.setItem('selectedAddOns', JSON.stringify(addOns));
+
+      localStorage.setItem('editSelectedCapSize', capSize);
+      localStorage.setItem('editSelectedCapSizePrice', capSizePrice);
+      localStorage.setItem('editSelectedLength', length);
+      localStorage.setItem('editSelectedDensity', density);
+      localStorage.setItem('editSelectedColor', color);
+      localStorage.setItem('editSelectedTexture', texture);
+      localStorage.setItem('editSelectedLace', lace);
+      localStorage.setItem('editSelectedHairline', hairline);
+      localStorage.setItem('editSelectedStyling', styling);
+      localStorage.setItem('editSelectedAddOns', JSON.stringify(addOns));
+
+      window.dispatchEvent(new CustomEvent('editingCartItemChanged', { detail: { itemId: item.id } }));
+
+      let editRoute = '/build-a-wig/edit';
       if (item.name === 'NOIR') {
         editRoute = '/build-a-wig/noir/edit';
       } else if (item.name === 'BLANCO') {
@@ -474,7 +519,7 @@ function ShoppingBagPage() {
       } else if (item.name === 'OCEAN CURL') {
         editRoute = '/build-a-wig/ocean-curl/edit';
       }
-      
+
       navigate(editRoute);
     } catch (e) {
       console.error('Error setting edit item:', e);
