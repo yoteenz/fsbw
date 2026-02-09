@@ -928,7 +928,7 @@ function OceanCurlSelection() {
           </div>
 
           {showMobileMenu ? (
-            /* MENU CONTENT - responsive height so it expands on larger screens */}
+            /* MENU CONTENT - responsive height so it expands on larger screens */
             <div
               className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
               style={{ 
