@@ -4193,13 +4193,19 @@ export default function BuildAWigPage() {
       
       // CRITICAL: If the item was in SAVED FOR LATER, update it there in place. Do NOT add to cart.
       const savedForLaterRaw = localStorage.getItem('savedForLater');
-      const savedForLaterList: any[] = savedForLaterRaw ? (JSON.parse(savedForLaterRaw) || []) : [];
-      const isFromSavedForLater = Array.isArray(savedForLaterList) && savedForLaterList.some((i: any) => i.id === editingCartItemId);
+      let savedForLaterList: any[] = [];
+      try {
+        savedForLaterList = savedForLaterRaw ? (JSON.parse(savedForLaterRaw) || []) : [];
+      } catch (_) {
+        savedForLaterList = [];
+      }
+      const idStr = String(editingCartItemId);
+      const isFromSavedForLater = Array.isArray(savedForLaterList) && savedForLaterList.some((i: any) => String(i.id) === idStr);
       
       if (isFromSavedForLater) {
         // Update the item in saved for later in place; do not touch the cart
         const newSavedForLater = savedForLaterList.map((i: any) =>
-          i.id === editingCartItemId ? updatedItem : i
+          String(i.id) === idStr ? updatedItem : i
         );
         localStorage.setItem('savedForLater', JSON.stringify(newSavedForLater));
         window.dispatchEvent(new CustomEvent('savedItemsChanged'));

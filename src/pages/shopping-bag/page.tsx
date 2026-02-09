@@ -136,6 +136,14 @@ function ShoppingBagPage() {
     loadSavedForLater();
   }, []);
 
+  // When user lands on or returns to /bag, always refresh from localStorage so edits from build-a-wig are shown
+  useEffect(() => {
+    if (location.pathname === '/bag') {
+      loadSavedForLater();
+      loadCartItems();
+    }
+  }, [location.pathname]);
+
   // Sync cart items and saved items when localStorage changes (for real-time updates)
   useEffect(() => {
     const handleCartItemsChange = () => {
