@@ -937,7 +937,8 @@ p.soft-curl-product-name,
 .text-center.soft-curl-product-name {
   font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
   font-size: 42px !important;
-  transform: translateY(-8px) !important;
+  transform: translateY(-3px) !important;
+  margin-top: 4px !important;
 }
 
 /* Ensure SOFT WAVE product name uses Covered By Your Grace font */
@@ -946,7 +947,8 @@ p.soft-wave-product-name,
 .text-center.soft-wave-product-name {
   font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
   font-size: 42px !important;
-  transform: translateY(-8px) !important;
+  transform: translateY(-3px) !important;
+  margin-top: 4px !important;
 }
 
 /* Ensure OCEAN CURL product name uses Covered By Your Grace font */
@@ -955,7 +957,8 @@ p.ocean-curl-product-name,
 .text-center.ocean-curl-product-name {
   font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
   font-size: 42px !important;
-  transform: translateY(-7px) !important;
+  transform: translateY(-3px) !important;
+  margin-top: 4px !important;
 }
 
 /* Ensure BEACH WAVE product name uses Covered By Your Grace font */
@@ -964,7 +967,8 @@ p.beach-wave-product-name,
 .text-center.beach-wave-product-name {
   font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
   font-size: 42px !important;
-  transform: translateY(-8px) !important;
+  transform: translateY(-3px) !important;
+  margin-top: 4px !important;
 }
 
 /* Cart product name - remove any "WIG" text added by global styles */
@@ -3740,7 +3744,25 @@ img.object-contain {
 }
 @media (min-width: 1200px) {
   img[alt="Cap Size Chart"] {
-    max-width: min(300px, 22vw) !important;
+    max-width: min(286px, 21vw) !important;
     height: auto !important;
   }
+}
+
+/* Product pages: lock spacing above/below 2D/3D block - overrides any other margin/padding so no excess */
+.product-wig-preview {
+  margin-bottom: 8px !important;
+  transform: translateY(12px) !important;
+}
+.product-wig-preview-images {
+  margin-bottom: 4px !important;
+}
+/* Prevent disclaimer from overlapping images - lock spacing below 2D/3D block */
+.product-wig-disclaimer {
+  transform: translateY(0) !important;
+  margin-top: 0 !important;
+}
+/* Reduce top padding of main build area when it contains wig preview so 2D/3D block isn't pushed down */
+.border.border-black.flex-col.pt-6:has(.product-wig-preview) {
+  padding-top: 0.75rem !important; /* was pt-6 (1.5rem); reduce excess above 2D/3D */
 }

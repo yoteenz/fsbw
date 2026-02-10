@@ -1218,81 +1218,54 @@ function BeachWaveSelection() {
               paddingBottom: '34px'
             }}
           >
-            {/* WIG PREVIEW */}
-            <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column', marginBottom: '24px', transform: 'translateY(20px)', overflow: 'visible', minWidth: '100%', maxWidth: 'none' }}>
-              {/* ADD TO WISHLIST & 2D/3D - scale in tandem with mannequin */}
-              <div style={{ position: 'relative', width: '100%', marginBottom: 'clamp(6px, 1.2vw, 12px)', transform: 'translateY(-31px)' }}>
-                <p 
-                  onClick={handleToggleWishlist}
-                  style={{ position: 'absolute', left: 'clamp(6px, 1.5vw, 16px)', top: 'clamp(1px, 0.3vw, 4px)', color: '#909090', fontFamily: '"Futura PT Demi"', fontSize: 'clamp(8px, 1.1vw, 13px)', fontWeight: '600', margin: '0', cursor: 'pointer', userSelect: 'none' }}
-                >
-                  {isInWishlist ? '- REMOVE FROM WISHLIST' : '+ ADD TO WISHLIST'}
-                </p>
-                <div 
-                  style={{ position: 'absolute', right: 'clamp(6px, 1.5vw, 16px)', top: 'clamp(1px, 0.3vw, 4px)', display: 'flex', alignItems: 'center', gap: 'clamp(2px, 0.4vw, 6px)', cursor: 'pointer' }}
-                  onClick={() => {
-                    const new3DView = !is3DView;
-                    setIs3DView(new3DView);
-                    if (typeof window !== 'undefined') {
-                      try {
-                        localStorage.setItem('product-3d-view', new3DView.toString());
-                      } catch (e) {
-                        console.error('Error saving 3D view:', e);
-                      }
-                    }
-                  }}
-                >
-                  <span style={{ color: is3DView ? '#000000' : '#EB1C24', fontFamily: is3DView ? '"Futura PT Book"' : '"Futura PT Medium"', fontSize: 'clamp(9px, 1.2vw, 14px)', fontWeight: is3DView ? '400' : '500', margin: '0' }}>2D VIEW</span>
-                  <span style={{ color: '#000000', fontFamily: '"Futura PT Book"', fontSize: 'clamp(9px, 1.2vw, 14px)', fontWeight: '400', margin: '0' }}>/</span>
-                  <span style={{ color: is3DView ? '#EB1C24' : '#000000', fontFamily: is3DView ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: 'clamp(9px, 1.2vw, 14px)', fontWeight: is3DView ? '500' : '400', margin: '0' }}>3D VIEW</span>
-                </div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: is3DView ? 'clamp(6px, 1.2vw, 12px)' : 'clamp(4px, 0.8vw, 8px)', marginBottom: 'clamp(10px, 2vw, 18px)', overflow: 'visible', margin: '0 auto', transform: 'translateY(-19px)' }}>
-                <div style={{ position: 'relative', overflow: 'visible', flexShrink: '0' }}>
-                  <div
-                    style={{
-                      position: 'relative',
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: 'clamp(160px, 42vw, 280px)',
-                      height: 'clamp(232px, 61vw, 406px)',
-                      backgroundImage: `url('/assets/${is3DView ? current3DImages.hero : 'NOIR/leaf-brick.png'}')`,
-                      backgroundRepeat: 'repeat',
-                      overflow: 'visible',
-                      cursor: 'pointer'
-                    }}
+            {/* WIG PREVIEW - wishlist/2D-3D text hamburgered with images; text near hero & thumbnail edges */}
+            <div className="product-wig-preview" style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column', marginBottom: '24px', transform: 'translateY(20px)', overflow: 'visible', minWidth: '100%', maxWidth: 'none' }}>
+              <div style={{ transform: 'translateY(-4px)', marginBottom: '12px' }}>
+              <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'stretch' }}>
+                <div style={{ position: 'relative', width: '100%', marginBottom: '4px', transform: 'translateY(0)', minHeight: 'clamp(18px, 2.2vw, 26px)' }}>
+                  <p 
+                    onClick={handleToggleWishlist}
+                    style={{ position: 'absolute', left: 'clamp(4px, 1vw, 12px)', top: '0', color: '#909090', fontFamily: '"Futura PT Demi"', fontSize: 'clamp(10px, 1.2vw, 15px)', fontWeight: '600', margin: '0', cursor: 'pointer', userSelect: 'none' }}
+                  >
+                    {isInWishlist ? '- REMOVE FROM WISHLIST' : '+ ADD TO WISHLIST'}
+                  </p>
+                  <div 
+                    style={{ position: 'absolute', right: 'clamp(4px, 1vw, 12px)', top: '0', display: 'flex', alignItems: 'center', gap: 'clamp(2px, 0.4vw, 6px)', cursor: 'pointer' }}
                     onClick={() => {
-                      const allImages = is3DView 
-                        ? [`/assets/${current3DImages.hero}`, `/assets/${current3DImages.top}`, `/assets/${current3DImages.bottom}`]
-                        : [currentImages.hero, currentImages.top, currentImages.bottom];
-                      setViewerImages(allImages);
-                      setViewerCurrentIndex(0);
-                      setShowImageViewer(true);
+                      const new3DView = !is3DView;
+                      setIs3DView(new3DView);
+                      if (typeof window !== 'undefined') {
+                        try {
+                          localStorage.setItem('product-3d-view', new3DView.toString());
+                        } catch (e) {
+                          console.error('Error saving 3D view:', e);
+                        }
+                      }
                     }}
                   >
-                    <img
-                      src={currentImages.hero}
-                      alt=""
-                      style={{ 
-                        position: 'absolute',
-                        left: '50%',
-                        top: 'calc(50% - 10.601px + 12px)',
-                        transform: 'translateX(-50%) translateY(-50%)',
-                        zIndex: '10',
-                        width: 'clamp(184px, 48vw, 322px)',
-                        height: 'auto',
-                        maxHeight: 'min(610px, 85vh)',
-                        minWidth: 'clamp(184px, 48vw, 322px)',
-                        minHeight: 'auto',
-                        display: is3DView ? 'none' : 'block',
-                        cursor: 'pointer',
-                        pointerEvents: is3DView ? 'none' : 'auto'
+                    <span style={{ color: is3DView ? '#000000' : '#EB1C24', fontFamily: is3DView ? '"Futura PT Book"' : '"Futura PT Medium"', fontSize: 'clamp(10px, 1.2vw, 15px)', fontWeight: is3DView ? '400' : '500', margin: '0' }}>2D VIEW</span>
+                    <span style={{ color: '#000000', fontFamily: '"Futura PT Book"', fontSize: 'clamp(10px, 1.2vw, 15px)', fontWeight: '400', margin: '0' }}>/</span>
+                    <span style={{ color: is3DView ? '#EB1C24' : '#000000', fontFamily: is3DView ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: 'clamp(10px, 1.2vw, 15px)', fontWeight: is3DView ? '500' : '400', margin: '0' }}>3D VIEW</span>
+                  </div>
+                </div>
+                <div className="product-wig-preview-images" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: is3DView ? 'clamp(6px, 1.2vw, 12px)' : 'clamp(4px, 0.8vw, 8px)', marginBottom: 'clamp(12px, 1.5vw, 16px)', overflow: 'visible', transform: 'translateY(0)' }}>
+                  <div style={{ position: 'relative', overflow: 'visible', flexShrink: '0' }}>
+                    <div
+                      style={{
+                        position: 'relative',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 'clamp(200px, 50vw, 320px)',
+                        height: 'clamp(290px, 72.5vw, 464px)',
+                        backgroundImage: `url('/assets/${is3DView ? current3DImages.hero : 'NOIR/leaf-brick.png'}')`,
+                        backgroundRepeat: 'repeat',
+                        overflow: 'visible',
+                        cursor: 'pointer'
                       }}
-                      onClick={(e) => {
-                        e.stopPropagation();
+                      onClick={() => {
                         const allImages = is3DView 
                           ? [`/assets/${current3DImages.hero}`, `/assets/${current3DImages.top}`, `/assets/${current3DImages.bottom}`]
                           : [currentImages.hero, currentImages.top, currentImages.bottom];
@@ -1300,28 +1273,55 @@ function BeachWaveSelection() {
                         setViewerCurrentIndex(0);
                         setShowImageViewer(true);
                       }}
-                    />
-                  </div>
-                </div>
-                
-                {/* Top and Bottom Mannequins - Right Side */}
-                <div className="flex flex-col" style={{ height: 'clamp(232px, 61vw, 406px)', justifyContent: 'space-between', gap: 'clamp(6px, 1.2vw, 12px)' }}>
-                  <div className="flex-shrink-0 relative">
-                    <div
-                      className="relative bg-cover flex items-center justify-center cursor-pointer"
-                      style={{ width: 'clamp(80px, 21vw, 140px)', height: 'clamp(112px, 29vw, 203px)', backgroundImage: `url('/assets/${is3DView ? current3DImages.top : 'NOIR/leaf-brick.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
-                      onClick={handleTopThumbnailClick}
                     >
-                      <img src={currentImages.top} alt="" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px)', width: 'clamp(90px, 24vw, 157px)', height: 'auto', maxWidth: 'none', maxHeight: 'none', minWidth: 'clamp(90px, 24vw, 157px)', display: is3DView ? 'none' : 'block' }} />
+                      <img
+                        src={currentImages.hero}
+                        alt=""
+                        style={{ 
+                          position: 'absolute',
+                          left: '50%',
+                          top: 'calc(50% - 10.601px + 12px)',
+                          transform: 'translateX(-50%) translateY(-50%)',
+                          zIndex: '10',
+width: 'clamp(230px, 57.5vw, 368px)',
+                        height: 'auto',
+                        maxHeight: 'min(610px, 85vh)',
+                        minWidth: 'clamp(230px, 57.5vw, 368px)',
+                          minHeight: 'auto',
+                          display: is3DView ? 'none' : 'block',
+                          cursor: 'pointer',
+                          pointerEvents: is3DView ? 'none' : 'auto'
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const allImages = is3DView 
+                            ? [`/assets/${current3DImages.hero}`, `/assets/${current3DImages.top}`, `/assets/${current3DImages.bottom}`]
+                            : [currentImages.hero, currentImages.top, currentImages.bottom];
+                          setViewerImages(allImages);
+                          setViewerCurrentIndex(0);
+                          setShowImageViewer(true);
+                        }}
+                      />
                     </div>
                   </div>
-                  <div className="flex-shrink-0 relative">
-                    <div
-                      className="relative bg-cover flex items-center justify-center cursor-pointer"
-                      style={{ width: 'clamp(80px, 21vw, 140px)', height: 'clamp(112px, 29vw, 203px)', backgroundImage: `url('/assets/${is3DView ? current3DImages.bottom : 'NOIR/leaf-brick.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
-                      onClick={handleBottomThumbnailClick}
-                    >
-                      <img src={currentImages.bottom} alt="" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px)', width: 'clamp(90px, 24vw, 157px)', height: 'auto', maxWidth: 'none', maxHeight: 'none', minWidth: 'clamp(90px, 24vw, 157px)', display: is3DView ? 'none' : 'block' }} />
+                  <div className="flex flex-col" style={{ height: 'clamp(290px, 72.5vw, 464px)', justifyContent: 'space-between', gap: 'clamp(6px, 1.2vw, 12px)' }}>
+                    <div className="flex-shrink-0 relative">
+                      <div
+                        className="relative bg-cover flex items-center justify-center cursor-pointer"
+                        style={{ width: 'clamp(100px, 26vw, 175px)', height: 'clamp(140px, 36vw, 245px)', backgroundImage: `url('/assets/${is3DView ? current3DImages.top : 'NOIR/leaf-brick.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
+                        onClick={handleTopThumbnailClick}
+                      >
+                        <img src={currentImages.top} alt="" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px - 1px - 0.5px - 0.5px)', width: 'clamp(112px, 29vw, 196px)', height: 'auto', maxWidth: 'none', maxHeight: 'none', minWidth: 'clamp(112px, 29vw, 196px)', display: is3DView ? 'none' : 'block' }} />
+                      </div>
+                    </div>
+                    <div className="flex-shrink-0 relative">
+                      <div
+                        className="relative bg-cover flex items-center justify-center cursor-pointer"
+                        style={{ width: 'clamp(100px, 26vw, 175px)', height: 'clamp(140px, 36vw, 245px)', backgroundImage: `url('/assets/${is3DView ? current3DImages.bottom : 'NOIR/leaf-brick.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
+                        onClick={handleBottomThumbnailClick}
+                      >
+                        <img src={currentImages.bottom} alt="" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px - 1px - 0.5px - 0.5px)', width: 'clamp(112px, 29vw, 196px)', height: 'auto', maxWidth: 'none', maxHeight: 'none', minWidth: 'clamp(112px, 29vw, 196px)', display: is3DView ? 'none' : 'block' }} />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1329,17 +1329,18 @@ function BeachWaveSelection() {
 
               {/* DISCLAIMER TEXT */}
               <p
-                className="text-center uppercase mb-2"
+                className="text-center uppercase mb-2 product-wig-disclaimer"
                 style={{ 
                   fontFamily: '"Futura PT Book"',
                   fontSize: '11px',
                   fontWeight: '400',
-                  transform: 'translateY(-13px)',
+                  transform: 'translateY(0)',
                   color: 'black'
                 }}
               >
                 (2D MODEL IS FOR <span style={{ color: '#909090', fontFamily: '"Futura PT Demi"' }}>VISUAL & AESTHETIC</span> PURPOSES ONLY)
               </p>
+            </div>
             </div>
 
             {/* PRODUCT NAME */}
@@ -1664,7 +1665,7 @@ function BeachWaveSelection() {
                   src="/assets/NOIR/cap-size-chart.png"
                   alt="Cap Size Chart"
                   className="max-w-full h-auto object-contain"
-                  style={{ maxWidth: 'clamp(214px, 22vw, 300px)', maxHeight: 'clamp(174px, 18vw, 244px)', width: '100%', cursor: 'pointer' }}
+                  style={{ maxWidth: 'clamp(136px, 14.85vw, 180px)', maxHeight: 'clamp(106px, 11.8vw, 140px)', width: '100%', cursor: 'pointer' }}
                   onClick={handleChartClick}
                 />
               </div>
@@ -1690,7 +1691,7 @@ function BeachWaveSelection() {
                   <div 
                     style={{
                       position: 'relative',
-                      maxWidth: '90vw',
+                      maxWidth: 'calc(90vw - 4px)',
                       maxHeight: '90vh',
                       display: 'flex',
                       alignItems: 'center',
@@ -1700,7 +1701,7 @@ function BeachWaveSelection() {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <img
-                      src="/assets/cap-chart.svg"
+                      src="/assets/wig-chart.png"
                       alt="Enlarged Cap Size Chart"
                       style={{ 
                         maxWidth: '100%',
