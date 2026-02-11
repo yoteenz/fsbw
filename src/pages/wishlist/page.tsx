@@ -518,16 +518,17 @@ function WishlistSelection() {
             </div>
           </div>
 
-          {/* MAIN BUILD AREA */}
+          {/* MAIN BUILD AREA - only apply menu-toggle-card when menu is open so main card height is not forced when showing wishlist */}
           <div
-            className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
+            className={showMobileMenu ? 'menu-toggle-card border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out' : 'border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out'}
             style={{ 
               borderWidth: '1.3px', 
               minWidth: '100%', 
               maxWidth: 'none', 
               overflow: 'visible',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              minHeight: showMobileMenu ? '560px' : 'auto'
+              minHeight: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto',
+              height: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto'
             }}
           >
             {showMobileMenu ? (
@@ -954,7 +955,8 @@ function WishlistSelection() {
                               border: 'none',
                               cursor: 'pointer',
                               padding: '0',
-                              textTransform: 'uppercase'
+                              textTransform: 'uppercase',
+                              whiteSpace: 'nowrap'
                             }}
                             type="button"
                           >
@@ -973,7 +975,8 @@ function WishlistSelection() {
                               margin: '8px 0 0 0',
                               cursor: 'pointer',
                               textTransform: 'uppercase',
-                              textDecoration: 'underline'
+                              textDecoration: 'underline',
+                              whiteSpace: 'nowrap'
                             }}
                             role="button"
                             tabIndex={0}

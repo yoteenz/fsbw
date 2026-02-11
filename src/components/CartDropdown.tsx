@@ -695,6 +695,19 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
 
   if (!isOpen) return null;
 
+  // Dropdown 2px higher (86px) on pages with shared header layout for symmetry
+  const path = location.pathname;
+  const useDropdown2pxUp =
+    /^\/(straight|wavy|curly)\//.test(path) ||
+    path.startsWith('/wishlist') ||
+    path.startsWith('/build-a-wig') ||
+    path.startsWith('/account') ||
+    path.startsWith('/shop') ||
+    path.startsWith('/home') ||
+    path.startsWith('/bag') ||
+    path.startsWith('/checkout');
+  const dropdownTop = useDropdown2pxUp ? '86px' : '88px';
+
   const dropdownContent = (
     <div 
       className="fixed inset-0 pointer-events-auto" 
@@ -707,7 +720,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
         }
       }}
     >
-      <div className="absolute left-4 right-4 pointer-events-auto" style={{ top: '86px' }}>
+      <div className="absolute left-4 right-4 pointer-events-auto" style={{ top: dropdownTop }}>
         <div
           data-dropdown-content
           className="bg-white/60 backdrop-blur-md border border-black shadow-lg hover:shadow-xl transition-all duration-300 ease-out flex flex-col"
@@ -1530,7 +1543,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     textTransform: 'uppercase'
                   }}
                   dangerouslySetInnerHTML={{
-                    __html: `<span style="font-weight: 600; font-family: 'Futura PT Book', sans-serif;">SUBTOTAL: ${formatPrice(getTotalPrice()).__html}</span>`
+                    __html: `<span style="font-weight: 600; font-family: 'Futura PT Book', 'Futura PT Medium', 'Covered By Your Grace', 'Covered By Your Grace Preload';">SUBTOTAL: ${formatPrice(getTotalPrice()).__html}</span>`
                   }}
                 />
               </div>

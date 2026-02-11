@@ -1916,10 +1916,10 @@ function NoirSelection() {
       {/* Scrollable Content */}
       <div className="relative z-10">
         <div className="flex flex-col py-5 px-4 mx-auto" style={{ minWidth: '100%', maxWidth: '1200px', overflow: 'visible' }}>
-{/* HEADER - responsive height/padding */}
+{/* HEADER - same height as concierge for cart dropdown alignment */}
           <div
-            className="border-solid border-black flex justify-center items-center w-full mb-5 bg-white/60 backdrop-blur-sm relative"
-            style={{ border: '1.3px solid black', paddingTop: 'clamp(10px, 2vw, 24px)', paddingBottom: 'clamp(10px, 2vw, 24px)', paddingLeft: 'clamp(12px, 2.5vw, 24px)', paddingRight: 'clamp(12px, 2.5vw, 24px)' }}
+            className="border-solid border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm relative"
+            style={{ border: '1.3px solid black' }}
           >
           <div className="flex gap-5 absolute left-4">
             {showMobileMenu ? (
@@ -2039,17 +2039,18 @@ function NoirSelection() {
           {showMobileMenu ? (
             /* MENU CONTENT */
             <div
-              className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
+              className="menu-toggle-card border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
               style={{ 
                 borderWidth: '1.3px', 
                 minWidth: '100%', 
                 maxWidth: 'none', 
                 overflow: 'visible',
                 backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                minHeight: '560px'
+                minHeight: 'calc(100dvh - 80px)',
+                height: 'calc(100dvh - 80px)'
               }}
             >
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                 {/* Navigation Links */}
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                   <button
@@ -2303,21 +2304,21 @@ function NoirSelection() {
               <div style={{ position: 'relative', width: '100%', marginBottom: '4px', transform: 'translateY(0)', minHeight: 'clamp(18px, 2.2vw, 26px)' }}>
                 <p 
                   onClick={handleToggleWishlist}
-                  style={{ position: 'absolute', left: 'clamp(4px, 1vw, 12px)', top: '0', color: '#909090', fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: 'clamp(10px, 1.2vw, 15px)', fontWeight: '600', margin: '0', cursor: 'pointer', userSelect: 'none' }}
+                  className="product-wishlist-text" style={{ position: 'absolute', left: 'clamp(4px, 1vw, 12px)', top: '0', color: '#909090', fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', fontWeight: '600', margin: '0', cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap' }}
                 >
                   {isInWishlist ? '- REMOVE FROM WISHLIST' : '+ ADD TO WISHLIST'}
                 </p>
                 <div 
-                  style={{ position: 'absolute', right: 'clamp(4px, 1vw, 12px)', top: '0', display: 'flex', alignItems: 'center', gap: 'clamp(2px, 0.4vw, 6px)', cursor: 'pointer' }}
+                  style={{ position: 'absolute', right: 'clamp(4px, 1vw, 12px)', top: '0', display: 'flex', alignItems: 'center', gap: 'clamp(2px, 0.4vw, 6px)', cursor: 'pointer', whiteSpace: 'nowrap' }}
                   onClick={() => {
                     const new3DView = !is3DView;
                     setIs3DView(new3DView);
                     localStorage.setItem('noir-3d-view', new3DView.toString());
                   }}
                 >
-                  <span style={{ color: is3DView ? '#000000' : '#EB1C24', fontFamily: is3DView ? '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: 'clamp(10px, 1.2vw, 15px)', fontWeight: is3DView ? '400' : '500', margin: '0' }}>2D VIEW</span>
-                  <span style={{ color: '#000000', fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: 'clamp(10px, 1.2vw, 15px)', fontWeight: '400', margin: '0' }}>/</span>
-                  <span style={{ color: is3DView ? '#EB1C24' : '#000000', fontFamily: is3DView ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: 'clamp(10px, 1.2vw, 15px)', fontWeight: is3DView ? '500' : '400', margin: '0' }}>3D VIEW</span>
+                  <span className="product-view-toggle-text" style={{ color: is3DView ? '#000000' : '#EB1C24', fontFamily: is3DView ? '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', fontWeight: is3DView ? '400' : '500', margin: '0' }}>2D VIEW</span>
+                  <span className="product-view-toggle-text" style={{ color: '#000000', fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', fontWeight: '400', margin: '0' }}>/</span>
+                  <span className="product-view-toggle-text" style={{ color: is3DView ? '#EB1C24' : '#000000', fontFamily: is3DView ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', fontWeight: is3DView ? '500' : '400', margin: '0' }}>3D VIEW</span>
                 </div>
               </div>
               <div className="product-wig-preview-images" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: is3DView ? 'clamp(6px, 1.2vw, 12px)' : 'clamp(4px, 0.8vw, 8px)', marginBottom: 'clamp(12px, 1.5vw, 16px)', overflow: 'visible', transform: 'translateY(0)' }}>
@@ -2607,13 +2608,13 @@ width: 'clamp(230px, 57.5vw, 368px)',
             <div className="flex justify-center gap-3" style={{ transform: 'translateY(-24px)' }}>
               <button 
                 onClick={() => handleCustomCapSelect('XS')}
-                className={`border border-black px-6 py-1 ${selectedCustomCap === 'XS' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
+                className={`product-cap-btn border border-black px-6 py-1 ${selectedCustomCap === 'XS' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
                 style={{ 
                   borderWidth: '1.3px',
                   fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                   fontWeight: '500',
                   minWidth: 'clamp(50px, 12vw, 75px)',
-                  fontSize: 'clamp(10px, 1.2vw, 12px)',
+                  fontSize: '11px',
                   paddingLeft: 'clamp(12px, 1.5vw, 24px)',
                   paddingRight: 'clamp(12px, 1.5vw, 24px)'
                 }}
@@ -2622,13 +2623,13 @@ width: 'clamp(230px, 57.5vw, 368px)',
               </button>
               <button 
                 onClick={() => handleCustomCapSelect('S')}
-                className={`border border-black px-6 py-1 ${selectedCustomCap === 'S' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
+                className={`product-cap-btn border border-black px-6 py-1 ${selectedCustomCap === 'S' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
                 style={{ 
                   borderWidth: '1.3px',
                   fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                   fontWeight: '500',
                   minWidth: 'clamp(50px, 12vw, 75px)',
-                  fontSize: 'clamp(10px, 1.2vw, 12px)',
+                  fontSize: '11px',
                   paddingLeft: 'clamp(12px, 1.5vw, 24px)',
                   paddingRight: 'clamp(12px, 1.5vw, 24px)'
                 }}
@@ -2637,13 +2638,13 @@ width: 'clamp(230px, 57.5vw, 368px)',
               </button>
               <button 
                 onClick={() => handleCustomCapSelect('M')}
-                className={`border border-black px-6 py-1 ${selectedCustomCap === 'M' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
+                className={`product-cap-btn border border-black px-6 py-1 ${selectedCustomCap === 'M' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
                 style={{ 
                   borderWidth: '1.3px',
                   fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                   fontWeight: '500',
                   minWidth: 'clamp(50px, 12vw, 75px)',
-                  fontSize: 'clamp(10px, 1.2vw, 12px)',
+                  fontSize: '11px',
                   paddingLeft: 'clamp(12px, 1.5vw, 24px)',
                   paddingRight: 'clamp(12px, 1.5vw, 24px)'
                 }}
@@ -2652,13 +2653,13 @@ width: 'clamp(230px, 57.5vw, 368px)',
               </button>
               <button 
                 onClick={() => handleCustomCapSelect('L')}
-                className={`border border-black px-6 py-1 ${selectedCustomCap === 'L' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
+                className={`product-cap-btn border border-black px-6 py-1 ${selectedCustomCap === 'L' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
                 style={{ 
                   borderWidth: '1.3px',
                   fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                   fontWeight: '500',
                   minWidth: 'clamp(50px, 12vw, 75px)',
-                  fontSize: 'clamp(10px, 1.2vw, 12px)',
+                  fontSize: '11px',
                   paddingLeft: 'clamp(12px, 1.5vw, 24px)',
                   paddingRight: 'clamp(12px, 1.5vw, 24px)'
                 }}
@@ -2694,7 +2695,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   fontWeight: '500',
                   width: 'clamp(90px, 18vw, 130px)',
                   minWidth: 'clamp(90px, 18vw, 130px)',
-                  fontSize: 'clamp(10px, 1.2vw, 12px)',
+                  fontSize: '11px',
                   boxSizing: 'border-box' as const,
                   backgroundColor: selectedFlexibleCap === 'XXS/XS/S' ? 'white' : 'white',
                   color: selectedFlexibleCap === 'XXS/XS/S' ? '#EB1C24' : 'black',
@@ -2719,7 +2720,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   fontWeight: '500',
                   width: 'clamp(90px, 18vw, 130px)',
                   minWidth: 'clamp(90px, 18vw, 130px)',
-                  fontSize: 'clamp(10px, 1.2vw, 12px)',
+                  fontSize: '11px',
                   boxSizing: 'border-box' as const,
                   backgroundColor: selectedFlexibleCap === 'S/M/L' ? 'white' : 'white',
                   color: selectedFlexibleCap === 'S/M/L' ? '#EB1C24' : 'black',
@@ -2758,7 +2759,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 paddingRight: 'clamp(8px, 1vw, 14px)'
               }}
             >
-              <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: 'clamp(10px, 1.2vw, 13px)' }}>-</span>
+              <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '11px' }}>-</span>
             </button>
             <div 
               className="px-4 py-1 text-black bg-white flex items-center justify-center relative quantity-number" 
@@ -2769,7 +2770,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 borderRight: 'none !important',
                 fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', 
                 fontWeight: '500', 
-                fontSize: 'clamp(11px, 1.3vw, 14px)', 
+                fontSize: '12px', 
                 height: 'clamp(27px, 4vw, 36px)',
                 minHeight: 'clamp(27px, 4vw, 36px)',
                 boxSizing: 'border-box',
@@ -2803,7 +2804,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 paddingRight: 'clamp(8px, 1vw, 14px)'
               }}
             >
-              <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: 'clamp(10px, 1.2vw, 13px)' }}>+</span>
+              <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '11px' }}>+</span>
             </button>
         </div>
 

@@ -567,13 +567,13 @@ function OrderFormPage() {
       <style>{`
         input::placeholder,
         textarea::placeholder {
-          font-family: "Futura PT Demi", "Futura PT", Futura, Inter, sans-serif !important;
+          font-family: "Futura PT Demi", "Futura PT Medium", "Futura PT Book", "Covered By Your Grace", "Covered By Your Grace Preload" !important;
           font-weight: 500;
           color: #909090 !important;
         }
         input,
         textarea {
-          font-family: "Futura PT Demi", "Futura PT", Futura, Inter, sans-serif !important;
+          font-family: "Futura PT Demi", "Futura PT Medium", "Futura PT Book", "Covered By Your Grace", "Covered By Your Grace Preload" !important;
           font-weight: 500 !important;
           color: #909090 !important;
           text-transform: uppercase !important;
@@ -725,21 +725,22 @@ function OrderFormPage() {
             </div>
           </div>
 
-          {/* MAIN CARD */}
+          {/* MAIN CARD - only apply menu-toggle-card when menu is open so main card height is not forced when showing order form */}
           <div
-            className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
+            className={showMobileMenu ? 'menu-toggle-card border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out' : 'border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out'}
             style={{ 
               borderWidth: '1.3px', 
               minWidth: '100%', 
               maxWidth: 'none', 
               overflow: 'visible',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              minHeight: showMobileMenu ? '560px' : 'auto'
+              minHeight: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto',
+              height: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto'
             }}
           >
             {showMobileMenu ? (
               /* MENU CONTENT */
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                 {/* Navigation Links */}
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                   <button

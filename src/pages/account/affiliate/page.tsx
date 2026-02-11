@@ -1646,7 +1646,7 @@ function AffiliatePage() {
       <style>{`
         input::placeholder {
           font-size: 10px !important;
-          font-family: "Futura PT Book", futuristic-pt, Futura, Inter, sans-serif !important;
+          font-family: "Futura PT Book", "Futura PT Medium", "Covered By Your Grace", "Covered By Your Grace Preload" !important;
         }
       `}</style>
       {/* Marble Background */}
@@ -1778,23 +1778,24 @@ function AffiliatePage() {
               minWidth: '100%', 
               maxWidth: 'none', 
               overflow: 'visible',
-              minHeight: showMobileMenu ? '560px' : 'auto'
+              minHeight: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto',
+              height: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto'
             }}
           >
             {showMobileMenu ? (
               /* MENU CONTENT */
               <div
-                className="border border-black flex flex-col pt-6 pb-4 px-5 bg-white/60 backdrop-blur-sm w-full"
+                className="menu-toggle-card border border-black flex flex-col pt-6 pb-4 px-5 bg-white/60 backdrop-blur-sm w-full"
                 style={{ 
                   borderWidth: '1.3px', 
                   minWidth: '100%', 
                   maxWidth: 'none', 
                   overflow: 'visible',
                   backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                  minHeight: '560px'
+                  minHeight: 'calc(100dvh - 80px)'
                 }}
               >
-                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                 {/* Navigation Links */}
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                   <button
@@ -2169,7 +2170,7 @@ function AffiliatePage() {
                                    </p>
                                   <p
                                     style={{
-                                      fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                      fontFamily: '"Futura PT Book", "Futura PT Medium", "Covered By Your Grace", "Covered By Your Grace Preload"',
                                       fontSize: '10px',
                                       color: '#000000',
                                       margin: '4px 0 0 0',
@@ -3801,7 +3802,7 @@ function AffiliatePage() {
                   <div style={{ marginBottom: '24px' }}>
                     <p
                       style={{
-                        fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                        fontFamily: '"Futura PT Book", "Futura PT Medium", "Covered By Your Grace", "Covered By Your Grace Preload"',
                         color: '#000000',
                         fontSize: '10px',
                         margin: '-4px 0 24px 0',

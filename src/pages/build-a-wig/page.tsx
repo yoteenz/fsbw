@@ -4885,7 +4885,7 @@ export default function BuildAWigPage() {
 
         {/* BUILD AREA */}
         <div
-          className="border border-black flex flex-col pt-6 pb-4 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
+          className={showMobileMenu ? 'menu-toggle-card border border-black flex flex-col pt-6 pb-4 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out' : 'border border-black flex flex-col pt-6 pb-4 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out'}
           style={{ 
             borderWidth: '1.3px',
             paddingLeft: (() => {
@@ -4902,7 +4902,8 @@ export default function BuildAWigPage() {
               }
               return '20px'; // Default padding (px-5 = 1.25rem = 20px)
             })(),
-            minHeight: showMobileMenu ? '560px' : 'auto'
+            minHeight: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto',
+            height: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto'
           }}
         >
           {showMobileMenu ? (
@@ -5841,7 +5842,7 @@ export default function BuildAWigPage() {
               <button
                 onClick={handleAddToBag}
                 disabled={addToBagState === 'adding' || (location.pathname === '/build-a-wig/edit' && !hasChanges)}
-                className={`border border-black font-futura w-full md:max-w-sm lg:max-w-md text-center py-2 md:py-3 lg:py-4 text-[12px] md:text-sm lg:text-base font-semibold ${
+                className={`border border-black font-futura w-full md:max-w-sm lg:max-w-md text-center py-2 md:py-3 lg:py-4 text-[12px] md:text-sm lg:text-base font-semibold whitespace-nowrap ${
                   addToBagState === 'adding' ? 'bg-gray-100 cursor-not-allowed' : 'bg-white cursor-pointer hover:bg-gray-50'
                 }`}
                 style={{ 

@@ -817,10 +817,10 @@ function OceanCurlSelection() {
       {/* Scrollable Content */}
       <div className="relative z-10">
         <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible' }}>
-          {/* HEADER - responsive height/padding for larger and smaller screens */}
+          {/* HEADER - same height as concierge for cart dropdown alignment */}
           <div
-            className="border-solid border-black flex justify-center items-center w-full mb-5 bg-white/60 backdrop-blur-sm relative"
-            style={{ border: '1.3px solid black', paddingTop: 'clamp(10px, 2vw, 24px)', paddingBottom: 'clamp(10px, 2vw, 24px)', paddingLeft: 'clamp(12px, 2.5vw, 24px)', paddingRight: 'clamp(12px, 2.5vw, 24px)' }}
+            className="border-solid border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm relative"
+            style={{ border: '1.3px solid black' }}
           >
             <div className="flex gap-5 absolute left-4">
               {showMobileMenu ? (
@@ -930,17 +930,18 @@ function OceanCurlSelection() {
           {showMobileMenu ? (
             /* MENU CONTENT - responsive height so it expands on larger screens */
             <div
-              className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
+              className="menu-toggle-card border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
               style={{ 
                 borderWidth: '1.3px', 
                 minWidth: '100%', 
                 maxWidth: 'none', 
                 overflow: 'visible',
                 backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                minHeight: 'clamp(480px, 55vh, 720px)'
+                minHeight: 'calc(100dvh - 80px)',
+                height: 'calc(100dvh - 80px)'
               }}
             >
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: 'clamp(16px, 2.5vw, 24px)', minHeight: 'clamp(400px, 45vh, 620px)', position: 'relative', flex: 1 }}>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: 'clamp(16px, 2.5vw, 24px)', minHeight: 0, position: 'relative', flex: 1 }}>
                 {/* Navigation Links */}
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                   <button
@@ -1201,12 +1202,12 @@ function OceanCurlSelection() {
                 <div style={{ position: 'relative', width: '100%', marginBottom: '4px', transform: 'translateY(0)', minHeight: 'clamp(18px, 2.2vw, 26px)' }}>
                   <p 
                     onClick={handleToggleWishlist}
-                    style={{ position: 'absolute', left: 'clamp(4px, 1vw, 12px)', top: '0', color: '#909090', fontFamily: '"Futura PT Demi"', fontSize: 'clamp(10px, 1.2vw, 15px)', fontWeight: '600', margin: '0', cursor: 'pointer', userSelect: 'none' }}
+                    style={{ position: 'absolute', left: 'clamp(4px, 1vw, 12px)', top: '0', color: '#909090', fontFamily: '"Futura PT Demi"', fontSize: '10px', fontWeight: '600', margin: '0', cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap' }}
                   >
                     {isInWishlist ? '- REMOVE FROM WISHLIST' : '+ ADD TO WISHLIST'}
                   </p>
                   <div 
-                    style={{ position: 'absolute', right: 'clamp(4px, 1vw, 12px)', top: '0', display: 'flex', alignItems: 'center', gap: 'clamp(2px, 0.4vw, 6px)', cursor: 'pointer' }}
+                    style={{ position: 'absolute', right: 'clamp(4px, 1vw, 12px)', top: '0', display: 'flex', alignItems: 'center', gap: 'clamp(2px, 0.4vw, 6px)', cursor: 'pointer', whiteSpace: 'nowrap' }}
                     onClick={() => {
                       const new3DView = !is3DView;
                       setIs3DView(new3DView);
@@ -1217,7 +1218,7 @@ function OceanCurlSelection() {
                     style={{ 
                       color: is3DView ? '#000000' : '#EB1C24', 
                       fontFamily: is3DView ? '"Futura PT Book"' : '"Futura PT Medium"',
-                      fontSize: 'clamp(10px, 1.2vw, 15px)',
+                      fontSize: '11px',
                       fontWeight: is3DView ? '400' : '500',
                       margin: '0'
                     }}
@@ -1228,7 +1229,7 @@ function OceanCurlSelection() {
                     style={{ 
                       color: '#000000', 
                       fontFamily: '"Futura PT Book"',
-                      fontSize: 'clamp(10px, 1.2vw, 15px)',
+                      fontSize: '11px',
                       fontWeight: '400',
                       margin: '0'
                     }}
@@ -1239,7 +1240,7 @@ function OceanCurlSelection() {
                     style={{ 
                       color: is3DView ? '#EB1C24' : '#000000', 
                       fontFamily: is3DView ? '"Futura PT Medium"' : '"Futura PT Book"',
-                      fontSize: 'clamp(10px, 1.2vw, 15px)',
+                      fontSize: '11px',
                       fontWeight: is3DView ? '500' : '400',
                       margin: '0'
                     }}
@@ -1522,7 +1523,7 @@ function OceanCurlSelection() {
                       fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
                       minWidth: 'clamp(50px, 12vw, 75px)',
-                      fontSize: 'clamp(10px, 1.2vw, 12px)',
+                      fontSize: '11px',
                       paddingLeft: 'clamp(12px, 1.5vw, 24px)',
                       paddingRight: 'clamp(12px, 1.5vw, 24px)'
                     }}
@@ -1537,7 +1538,7 @@ function OceanCurlSelection() {
                       fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
                       minWidth: 'clamp(50px, 12vw, 75px)',
-                      fontSize: 'clamp(10px, 1.2vw, 12px)',
+                      fontSize: '11px',
                       paddingLeft: 'clamp(12px, 1.5vw, 24px)',
                       paddingRight: 'clamp(12px, 1.5vw, 24px)'
                     }}
@@ -1552,7 +1553,7 @@ function OceanCurlSelection() {
                       fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
                       minWidth: 'clamp(50px, 12vw, 75px)',
-                      fontSize: 'clamp(10px, 1.2vw, 12px)',
+                      fontSize: '11px',
                       paddingLeft: 'clamp(12px, 1.5vw, 24px)',
                       paddingRight: 'clamp(12px, 1.5vw, 24px)'
                     }}
@@ -1567,7 +1568,7 @@ function OceanCurlSelection() {
                       fontFamily: '"Futura PT Medium"',
                       fontWeight: '500',
                       minWidth: 'clamp(50px, 12vw, 75px)',
-                      fontSize: 'clamp(10px, 1.2vw, 12px)',
+                      fontSize: '11px',
                       paddingLeft: 'clamp(12px, 1.5vw, 24px)',
                       paddingRight: 'clamp(12px, 1.5vw, 24px)'
                     }}
@@ -1603,7 +1604,7 @@ function OceanCurlSelection() {
                       fontWeight: '500',
                       width: 'clamp(90px, 18vw, 130px)',
                       minWidth: 'clamp(90px, 18vw, 130px)',
-                      fontSize: 'clamp(10px, 1.2vw, 12px)',
+                      fontSize: '11px',
                       boxSizing: 'border-box' as const,
                       backgroundColor: 'white',
                       color: selectedFlexibleCap === 'XXS/XS/S' ? '#EB1C24' : 'black',
@@ -1628,7 +1629,7 @@ function OceanCurlSelection() {
                       fontWeight: '500',
                       width: 'clamp(90px, 18vw, 130px)',
                       minWidth: 'clamp(90px, 18vw, 130px)',
-                      fontSize: 'clamp(10px, 1.2vw, 12px)',
+                      fontSize: '11px',
                       boxSizing: 'border-box' as const,
                       backgroundColor: 'white',
                       color: selectedFlexibleCap === 'S/M/L' ? '#EB1C24' : 'black',
@@ -1663,7 +1664,7 @@ function OceanCurlSelection() {
                     paddingRight: 'clamp(8px, 1vw, 14px)'
                   }}
                 >
-                  <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: 'clamp(10px, 1.2vw, 13px)' }}>-</span>
+                  <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '11px' }}>-</span>
                 </button>
                 <div 
                   className="px-4 py-1 text-black bg-white flex items-center justify-center relative" 
@@ -1674,7 +1675,7 @@ function OceanCurlSelection() {
                     borderRight: 'none',
                     fontFamily: '"Futura PT Medium"', 
                     fontWeight: '500', 
-                    fontSize: 'clamp(11px, 1.3vw, 14px)', 
+                    fontSize: '12px', 
                     height: 'clamp(27px, 4vw, 36px)',
                     minHeight: 'clamp(27px, 4vw, 36px)',
                     boxSizing: 'border-box',
@@ -1703,7 +1704,7 @@ function OceanCurlSelection() {
                     paddingRight: 'clamp(8px, 1vw, 14px)'
                   }}
                 >
-                  <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: 'clamp(10px, 1.2vw, 13px)' }}>+</span>
+                  <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '11px' }}>+</span>
                 </button>
               </div>
 

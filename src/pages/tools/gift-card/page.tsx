@@ -472,17 +472,18 @@ function GiftCardPage() {
           {showMobileMenu ? (
             /* MENU CONTENT */
             <div
-              className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
+              className="menu-toggle-card border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
               style={{ 
                 borderWidth: '1.3px', 
                 minWidth: '100%', 
                 maxWidth: 'none', 
                 overflow: 'visible',
                 backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                minHeight: '560px'
+                minHeight: 'calc(100dvh - 80px)',
+                height: 'calc(100dvh - 80px)'
               }}
             >
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                 {/* Navigation Links */}
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                   <button
@@ -920,7 +921,7 @@ function GiftCardPage() {
             </div>
           </div>
 
-          {/* ADD TO BAG BUTTON */}
+          {/* ADD TO BAG BUTTON - match product page (text-[11px], no single-line-btn) */}
           <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
             <button
               onClick={handleAddToBag}
@@ -932,7 +933,7 @@ function GiftCardPage() {
               style={{ 
                 borderWidth: '1.3px', 
                 color: '#EB1C24',
-                fontFamily: '"Futura PT Medium"',
+                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                 backgroundColor: '#FFFFFF'
               }}
             >

@@ -779,18 +779,19 @@ function ShoppingBagPage() {
 
           {/* MAIN BUILD AREA */}
           <div
-            className={`border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm overflow-hidden transition-all duration-300 ease-out ${showMobileMenu || cartItems.length > 1 ? 'min-h-[360px]' : ''}`}
+            className={`${showMobileMenu ? 'menu-toggle-card ' : ''}border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm overflow-hidden transition-all duration-300 ease-out ${showMobileMenu || cartItems.length > 1 ? 'min-h-[360px]' : ''}`}
             style={{ 
               borderWidth: '1.3px', 
               minWidth: '100%', 
               maxWidth: 'none', 
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              minHeight: showMobileMenu ? '560px' : (cartItems.length > 1 ? '360px' : 'auto')
+              minHeight: showMobileMenu ? 'calc(100dvh - 80px)' : (cartItems.length > 1 ? '360px' : 'auto'),
+              height: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto'
             }}
           >
             {showMobileMenu ? (
               /* MENU CONTENT */
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                 {/* Navigation Links */}
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                   <button
