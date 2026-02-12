@@ -933,7 +933,7 @@ function OrdersPage() {
   }, []);
 
   const formatPrice = (price: number) => {
-    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
     if (!currency) {
       const formatted = price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
       return `$${formatted}`;

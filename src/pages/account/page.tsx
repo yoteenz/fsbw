@@ -142,7 +142,7 @@ function AccountPage() {
 
   // Format price with currency
   const formatPrice = React.useCallback((price: number): string => {
-    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
     const convertedPrice = (price || 0) * currency.rate;
     
     // Convert HTML entities to actual symbols

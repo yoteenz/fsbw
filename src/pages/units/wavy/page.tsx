@@ -246,10 +246,10 @@ function WavyUnitsPage() {
   // Format price with currency
   const formatPrice = React.useCallback((price: number): { __html: string } => {
     if (!price || isNaN(price)) {
-      const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+      const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
       return { __html: currency.symbol + '0 ' + selectedCurrency };
     }
-    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
     const convertedPrice = price * currency.rate;
     return {
       __html: currency.symbol + convertedPrice.toLocaleString('en-US', {

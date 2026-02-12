@@ -559,10 +559,10 @@ function CheckoutPage() {
 
   const formatPrice = useCallback((price: number) => {
     if (!price || isNaN(price)) {
-      const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+      const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
       return { __html: currency.symbol + '0 ' + selectedCurrency };
     }
-    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
     const convertedPrice = price * currency.rate;
     return {
       __html: currency.symbol + convertedPrice.toLocaleString('en-US', {
@@ -1186,7 +1186,7 @@ function CheckoutPage() {
 
   // Prepare payment data for payment handlers
   const preparePaymentData = (): PaymentData => {
-    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
     const convertedOrderAmount = orderAmount * currency.rate;
     const convertedTaxes = taxesProcessing * currency.rate;
     const convertedShipping = shippingHandling * currency.rate;
@@ -2171,7 +2171,7 @@ function CheckoutPage() {
                         
                         if (isNumeric) {
                           // Format as dollar amount
-                          const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+                          const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
                           const symbol = currency ? currency.symbol.replace('&#36;', '$').replace('&euro;', '€').replace('&pound;', '£').replace('&yen;', '¥').replace('&#8377;', '₹') : '$';
                           const formatted = symbol + numericValue + '.00';
                           setDiscountCodeDisplay(formatted);
@@ -2198,7 +2198,7 @@ function CheckoutPage() {
                         setIsDiscountCodeFocused(false);
                         // Format numeric values on blur
                         if (discountCode && /^\d+$/.test(discountCode)) {
-                          const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+                          const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
                           const symbol = currency ? currency.symbol.replace('&#36;', '$').replace('&euro;', '€').replace('&pound;', '£').replace('&yen;', '¥').replace('&#8377;', '₹') : '$';
                           setDiscountCodeDisplay(symbol + discountCode + '.00');
                         } else {
@@ -4016,7 +4016,7 @@ function CheckoutPage() {
                           // Format the display value when user leaves the field (keep commas)
                           if (customTipAmount > 0) {
                             const formattedAmount = customTipAmount.toLocaleString('en-US');
-                            const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+                            const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
                             if (!currency) {
                               setCustomTipDisplay('$' + formattedAmount + '.00');
                             } else {
@@ -4060,7 +4060,7 @@ function CheckoutPage() {
                               setTipPercentage(null);
                               // Format the display value with currency symbol, commas, and .00
                               const formattedAmount = customTipAmount.toLocaleString('en-US');
-                              const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+                              const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
                               if (!currency) {
                                 setCustomTipDisplay('$' + formattedAmount + '.00');
                               } else {
@@ -4183,7 +4183,7 @@ function CheckoutPage() {
                       </span>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>
                         ({(() => {
-                          const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+                          const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
                           const convertedAmount = giftCardDiscount * currency.rate;
                           const formattedAmount = convertedAmount.toLocaleString('en-US', {
                             minimumFractionDigits: 2,

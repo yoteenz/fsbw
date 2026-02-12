@@ -3755,7 +3755,7 @@ export default function BuildAWigPage() {
 
   // Format price with currency
   const formatPrice = useCallback((price: number) => {
-    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
     const convertedPrice = price * currency.rate;
     return {
       __html: currency.symbol + convertedPrice.toLocaleString('en-US', {

@@ -55,7 +55,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     }
   }, [isOpen]);
 
-  // Currency state - load from localStorage on mount
+  // Currency state - load from localStorage on mount; invalid codes are corrected in useEffect below
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -387,15 +387,17 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     }
   }, [selectedCurrency]);
 
-  // Load selected currency from localStorage on mount (only once)
-  // This ensures we load the saved currency when the component first mounts
+  // Load selected currency from localStorage on mount; validate so invalid/stale codes don't stick
   useEffect(() => {
     const savedCurrency = localStorage.getItem('selectedCurrency');
-    if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
-      // Only update if different to avoid unnecessary re-renders and prevent overwriting
-      if (savedCurrency !== selectedCurrency) {
-        setSelectedCurrency(savedCurrency);
-      }
+    const isValid = savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates];
+    if (isValid && savedCurrency !== selectedCurrency) {
+      setSelectedCurrency(savedCurrency);
+    } else if (!isValid && savedCurrency) {
+      // Stale or invalid saved code (e.g. from old build) – reset to USD and persist
+      localStorage.setItem('selectedCurrency', 'USD');
+      setSelectedCurrency('USD');
+      window.dispatchEvent(new CustomEvent('currencyChanged', { detail: 'USD' }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only run on mount, not when currencyRates changes
@@ -613,7 +615,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
 
   // Format price with currency (for main cart prices, not detail prices in red)
   const formatPrice = useCallback((price: number) => {
-    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates];
+    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
     const convertedPrice = price * currency.rate;
     return {
       __html: currency.symbol + convertedPrice.toLocaleString('en-US', {
