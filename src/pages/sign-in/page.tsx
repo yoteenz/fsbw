@@ -1626,6 +1626,15 @@ function SignInPage() {
                       const updatedUsers = [...existingUsers, newUser];
                       localStorage.setItem('registeredUsers', JSON.stringify(updatedUsers));
                       
+                      // New account: empty cart and empty orders (no mock/pre-existing content)
+                      localStorage.setItem('cartItems', '[]');
+                      localStorage.setItem('cartCount', '0');
+                      try {
+                        localStorage.setItem(`userOrders_${newUser.email.trim().toLowerCase()}`, JSON.stringify({ activeOrders: [], pastOrders: [] }));
+                      } catch (_) {}
+                      window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: 0 }));
+                      window.dispatchEvent(new CustomEvent('cartUpdated'));
+                      
                       // Set current user session
                       localStorage.setItem('currentUser', JSON.stringify(newUser));
                       localStorage.setItem('isSignedIn', 'true');

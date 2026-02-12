@@ -147,9 +147,15 @@ function ConciergePage() {
         const userOrdersKey = `userOrders_${userData.email}`;
         let storedOrders = localStorage.getItem(userOrdersKey);
         
-        // If no orders exist, create test orders for UI testing
+        // If no orders exist: only seed test orders for Kateena (admin/testing). New/other accounts start empty.
         if (!storedOrders) {
-          // Create order date 13 days ago to show 20% progress in CONSTRUCTING UNIT stage
+          if (!isKateenaArmstrong()) {
+            const emptyOrders = { activeOrders: [], pastOrders: [] };
+            localStorage.setItem(userOrdersKey, JSON.stringify(emptyOrders));
+            setActiveOrders([]);
+            return;
+          }
+          // Create order date 13 days ago to show 20% progress in CONSTRUCTING UNIT stage (Kateena test only)
           // Constructing starts at day 5 (after sourcing ends: 2 + 3 = 5), takes 28 days. To be at 20%: 5 + (28 * 0.2) = 10.6 days ? 11 days
           const constructingOrderDate = new Date();
           constructingOrderDate.setDate(constructingOrderDate.getDate() - 13);
