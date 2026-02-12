@@ -784,12 +784,9 @@ function AccountPage() {
 
   // Helper function to get default card order
   const getDefaultCardOrder = (): Array<{ title: string; subtitle: string; route: string | null }> => {
-    const tier = calculateTier();
-    const isBlackTier = tier === 'BLACK';
     const userMembershipType = userData?.membershipType || membershipType;
     const isPremium = userMembershipType === 'PREMIUM' || userMembershipType === 'Premium';
-    const showConcierge = isBlackTier || isPremium;
-    
+    const showConcierge = isPremium; // Concierge is only for premium members, not standard
     const defaultCards: Array<{ title: string; subtitle: string; route: string | null }> = [];
     
     if (showConcierge) {
