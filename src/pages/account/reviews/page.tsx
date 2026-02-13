@@ -84,7 +84,6 @@ const mockToolReviews: Review[] = [
 
 const REVIEWS_PER_PAGE = 4;
 const TOTAL_SHOP_REVIEWS = 9;
-const TOTAL_TOOL_REVIEWS = 2;
 
 function StarRating({ rating }: { rating: number }) {
   return (

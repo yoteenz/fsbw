@@ -233,7 +233,7 @@ function MembershipPage() {
       spendRemaining,
       pointsRemaining: spendRemaining,
       progressPercent,
-      currentTierName: currentTierName ?? 'MEMBER',
+      currentTierName: currentTierName ?? 'PENDING',
       nextTierName
     };
   };
@@ -1555,6 +1555,7 @@ fontFamily: '"Futura PT Book"',
                                     {(() => {
                                       const t = getNextTierProgress().currentTierName;
                                       const welcomeAmount = getWelcomeDiscountAmount(t);
+                                      if (t === 'PENDING') return <>REACH SILVER TO UNLOCK BENEFITS</>;
                                       if (t === 'BLACK') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 1X STYLING VOUCHER <br /> 1,000 LOYALTY POINTS</>;
                                       if (t === 'RED') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 1X COLOR VOUCHER <br /> 500 LOYALTY POINTS</>;
                                       return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 50 LOYALTY POINTS</>;
@@ -1641,6 +1642,42 @@ fontFamily: '"Futura PT Book"',
                           </div>
                         </div>
 
+                        {/* MORE WAYS TO EARN - Card */}
+                            <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
+                              <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
+                                <h3
+                                  style={{
+                                    fontFamily: '"Futura PT Medium"',
+                                    color: '#EB1C24',
+                                    fontSize: '11px',
+                                    margin: '0',
+                                    textTransform: 'uppercase',
+                                    fontWeight: '500',
+                                    textAlign: 'left'
+                                  }}
+                                >
+                                  MORE WAYS TO EARN
+                                </h3>
+                              </div>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                {EARN_TASKS.map((item) => {
+                                  const isEarned = earnedTaskIds.includes(item.id);
+                                  return (
+                                    <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                        {item.action === 'LIKE OUR FACEBOOK' ? <>LIKE OUR <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>FACEBOOK</a></> : item.action === 'FOLLOW OUR INSTAGRAM' ? <>FOLLOW OUR <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>INSTAGRAM</a></> : item.action === 'FOLLOW OUR TIK TOK' ? <>FOLLOW OUR <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>TIK TOK</a></> : item.action === 'FOLLOW OUR TWITTER' ? <>FOLLOW OUR <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>TWITTER</a></> : item.action}
+                                      </p>
+                                      {isEarned ? (
+                                        <img src="/assets/premium-check.svg" alt="Earned" style={{ width: '8.4px', height: '8.4px', flexShrink: 0 }} />
+                                      ) : (
+                                        <span style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: '#EB1C24' }}>+{item.points}</span>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+
                         {hasPremiumSubscription && (
                           <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
                             <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
@@ -1678,126 +1715,81 @@ fontFamily: '"Futura PT Book"',
                           </div>
                         )}
 
-                        {/* MORE WAYS TO EARN - Card */}
-                            <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
-                              <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
-                                <h3
-                                  style={{
-                                    fontFamily: '"Futura PT Medium"',
-                                    color: '#EB1C24',
-                                    fontSize: '11px',
-                                    margin: '0',
-                                    textTransform: 'uppercase',
-                                    fontWeight: '500',
-                                    textAlign: 'left'
-                                  }}
-                                >
-                                  MORE WAYS TO EARN
-                                </h3>
-                              </div>
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                {EARN_TASKS.map((item) => {
-                                  const isEarned = earnedTaskIds.includes(item.id);
-                                  return (
-                                    <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                        {item.action === 'LIKE OUR FACEBOOK' ? <>LIKE OUR <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>FACEBOOK</a></> : item.action === 'FOLLOW OUR INSTAGRAM' ? <>FOLLOW OUR <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>INSTAGRAM</a></> : item.action === 'FOLLOW OUR TIK TOK' ? <>FOLLOW OUR <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>TIK TOK</a></> : item.action === 'FOLLOW OUR TWITTER' ? <>FOLLOW OUR <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>TWITTER</a></> : item.action}
-                                      </p>
-                                      {isEarned ? (
-                                        <img src="/assets/premium-check.svg" alt="Earned" style={{ width: '8.4px', height: '8.4px', flexShrink: 0 }} />
-                                      ) : (
-                                        <span style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: '#EB1C24' }}>+{item.points}</span>
-                                      )}
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </div>
-
-
                       {/* UPGRADE YOUR BASIC MEMBERSHIP - Only show when loyalty rewards is not active (premium members see additional features in loyalty view) */}
                       {!showLoyaltyRewards && (
                       <>
                         {!hasPremiumSubscription && (
                             <>
-                <div style={{ marginBottom: '24px' }}>
-                  <p
-                    style={{
-                      fontFamily: '"Futura PT Medium"',
-                      color: '#EB1C24',
-                      fontSize: '10px',
-                      margin: '0 0 8px 0',
-                      textTransform: 'uppercase',
-                      fontWeight: '500'
-                    }}
-                  >
-                    UPGRADE YOUR BASIC MEMBERSHIP TO
-                  </p>
-                  <p
-                    style={{
-                      fontFamily: '"Futura PT Book"',
-                      color: '#000000',
-                      fontSize: '10px',
-                      margin: '0 0 20px 0',
-                      textTransform: 'uppercase'
-                    }}
-                  >
-                    UNLOCK THE FOLLOWING FEATURES PLUS MORE:
-                  </p>
+                <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
+                  <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        color: '#EB1C24',
+                        fontSize: '11px',
+                        margin: '0',
+                        textTransform: 'uppercase',
+                        fontWeight: '500',
+                        textAlign: 'left'
+                      }}
+                    >
+                      UNLOCK PREMIUM REWARDS
+                    </p>
+                  </div>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
+                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
                         UNLIMITED ACCESS TO VIRTUAL 3D WIG GENERATOR
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '9px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
                         ADDITIONAL, MORE EXTENSIVE CUSTOMIZATION OPTIONS
                       </p>
                     </div>
                     <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
+                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
                         ENTRY PASS TO MEMBERS ONLY LOUNGE
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '9px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
                         EARLY ACCESS TO SALES, NEW DROPS, RESTOCKS + BRAND RELATED CONTENT
                       </p>
                     </div>
                     <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
+                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
                         FAST TRACK CUSTOMER SUPPORT
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '9px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
                         PRIORITIZED CUSTOMER SUPPORT WITH A SIGNIFICANTLY REDUCED RESPONSE TIME
                       </p>
                     </div>
                     <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
+                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
                         PRIORITY BOOKING + ORDER PROCESSING
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '9px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
                         OPTION TO BOOK APPOINTMENTS IN ADVANCE, YOUR CUSTOM ORDERS GET HANDLED FIRST
                       </p>
                     </div>
                     <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
+                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
                         SPECIAL GIFT WITH PURCHASE + FREE GIVEAWAYS
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '9px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
                         ELIGIBLE FOR A CHANCE TO WIN RANDOM DISCOUNTS, STYLING VOUCHERS + EXCLUSIVE ITEMS
                       </p>
                     </div>
                     <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
+                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
                         REDUCED SHIPPING FEE
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '9px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
                         DISCOUNT APPLIED AUTOMATICALLY TO DOMESTIC + INTERNATIONAL ORDERS
                       </p>
                     </div>
                     <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
+                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
                         DOUBLE YOUR POINTS
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '9px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
                         EARN 2X LOYALTY POINTS FOR EACH ORDER, UNLOCKING DISCOUNTS & REWARDS FASTER
                       </p>
                     </div>
@@ -1853,7 +1845,7 @@ fontFamily: '"Futura PT Book"',
             )}
                     </>
                   ) : (
-                    <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
+                    <div className="px-0 md:px-0" style={{ marginTop: '-2px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
                       <button
                         onClick={handleUpgradeButtonClick}
                         className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"

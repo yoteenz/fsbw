@@ -37,9 +37,11 @@ export default defineConfig({
     host: '0.0.0.0', // Explicitly bind to all interfaces for mobile access
     open: false,
     strictPort: true, // Force port 3001, don't fall back to other ports
-    hmr: {
-      host: 'localhost',
-      clientPort: 3001,
+    // Let HMR use the same host/port as the page so live reload works (e.g. whether you open localhost or 127.0.0.1 or a network IP)
+    hmr: true,
+    watch: {
+      // On Windows, polling can help if file changes aren't detected
+      usePolling: false,
     },
     // Ensure SPA routing works - all routes serve index.html
     middlewareMode: false,
