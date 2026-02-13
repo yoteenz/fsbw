@@ -5,6 +5,7 @@ import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
 import ConfirmationModal from '../../../components/ConfirmationModal';
+import BrandMenuLinks from '../../../components/BrandMenuLinks';
 
 interface DensityOption {
   id: string;
@@ -1179,20 +1180,7 @@ function DensitySelection() {
                       </div>
                     ))
                   ) : mobileMenuActiveTab === 'BRAND' ? (
-                    ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
-                      <div key={index} className="flex items-center justify-between">
-                        <span style={{ 
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '14px',
-                          color: 'black',
-                          fontWeight: '500',
-                          textTransform: 'uppercase',
-                          transform: 'translateX(7px)'
-                        }}>
-                          {item}
-                        </span>
-                      </div>
-                    ))
+                    <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />
                   ) : (
                     // SHOP tab with dropdown functionality
                     [

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
+import BrandMenuLinks from '../../../components/BrandMenuLinks';
 
 // Add pulsating animation style (recording indicator style)
 const pulsateStyle = `
@@ -1824,20 +1825,7 @@ function ConciergePage() {
                         </div>
                       ))
                     ) : mobileMenuActiveTab === 'BRAND' ? (
-                      ['ABOUT US', 'CONTACT', 'CARE + STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
-                        <div key={index} className="flex items-center justify-between">
-                          <span style={{ 
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '14px',
-                            color: 'black',
-                            fontWeight: '500',
-                            textTransform: 'uppercase',
-                            transform: 'translateX(7px)'
-                          }}>
-                            {item}
-                          </span>
-                        </div>
-                      ))
+                      <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />
                     ) : (
                       // SHOP tab with dropdown functionality
                       [

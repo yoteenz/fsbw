@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import ImageViewerModal from '../../../components/ImageViewerModal';
+import BrandMenuLinks from '../../../components/BrandMenuLinks';
 
 function SoftCurlSelection() {
   const navigate = useNavigate();
@@ -1017,20 +1018,7 @@ function SoftCurlSelection() {
                         </div>
                       ))
                     ) : mobileMenuActiveTab === 'BRAND' ? (
-                      ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
-                        <div key={index} className="flex items-center justify-between">
-                          <span style={{ 
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '14px',
-                            color: 'black',
-                            fontWeight: '500',
-                            textTransform: 'uppercase',
-                            transform: 'translateX(7px)'
-                          }}>
-                            {item}
-                          </span>
-                        </div>
-                      ))
+                      <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />
                     ) : (
                       // SHOP tab with dropdown functionality
                       [
@@ -1790,11 +1778,11 @@ function SoftCurlSelection() {
                     POLICY
                   </button>
                   <button
-                    onClick={() => handleTabClick('CARE & STORAGE')}
-                    className={`py-1 text-xs font-medium ${activeTab === 'CARE & STORAGE' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', borderBottom: activeTab === 'CARE & STORAGE' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
+                    onClick={() => handleTabClick('CARE + STORAGE')}
+                    className={`py-1 text-xs font-medium ${activeTab === 'CARE + STORAGE' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', borderBottom: activeTab === 'CARE + STORAGE' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
                   >
-                    CARE & STORAGE
+                    CARE + STORAGE
                   </button>
                   <button
                     onClick={() => handleTabClick('REVIEWS')}
@@ -1867,7 +1855,7 @@ function SoftCurlSelection() {
                     </>
                   )}
                   
-                  {activeTab === 'CARE & STORAGE' && (
+                  {activeTab === 'CARE + STORAGE' && (
                     <>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         WASH WITH MILD SHAMPOO, AVOID GETTING CONDITIONER DIRECTLY ON THE LACE.

@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../constants/tiers';
+import BrandMenuLinks from '../../components/BrandMenuLinks';
 
 function AccountPage() {
   const navigate = useNavigate();
@@ -860,24 +861,24 @@ function AccountPage() {
         route: '/account/orders' 
       },
       { title: 'REWARDS', subtitle: 'MEMBERSHIP + SUBSCRIPTION', route: '/account/rewards' },
-      { title: 'REFERRALS', subtitle: 'SHARE YOUR DISCOUNT CODE', route: '/account/referrals' },
       { title: 'AFFILIATE', subtitle: 'SUBMIT CONTENT FOR POINTS', route: '/account/affiliate' },
+      { title: 'REFERRALS', subtitle: 'SHARE YOUR DISCOUNT CODE', route: '/account/referrals' },
       { 
         title: 'REVIEWS', 
         subtitle: userData && userData.email?.toLowerCase() !== 'bruno203@gmail.com' ? '0 TOTAL REVIEWS' : '4 TOTAL REVIEWS', 
-        route: null 
+        route: '/account/reviews' 
       },
       { 
         title: 'SHIPPING ADDRESS', 
         subtitle: userData && userData.email?.toLowerCase() !== 'bruno203@gmail.com' ? '0 ADDRESSES ON FILE' : '2 ADDRESSES ON FILE', 
-        route: null 
+        route: '/account/shipping' 
       },
       { 
         title: 'PAYMENT METHOD', 
         subtitle: userData && userData.email?.toLowerCase() !== 'bruno203@gmail.com' ? '0 CARDS ON FILE' : '2 CARDS ON FILE', 
-        route: null 
+        route: '/account/payment' 
       },
-      { title: 'SETTINGS', subtitle: 'PASSWORD + CONTROLS', route: null }
+      { title: 'SETTINGS', subtitle: 'PASSWORD + CONTROLS', route: '/account/settings' }
     );
     
     return defaultCards;
@@ -1537,20 +1538,7 @@ function AccountPage() {
                         </div>
                       ))
                     ) : mobileMenuActiveTab === 'BRAND' ? (
-                      ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
-                        <div key={index} className="flex items-center justify-between">
-                          <span style={{ 
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '14px',
-                            color: 'black',
-                            fontWeight: '500',
-                            textTransform: 'uppercase',
-                            transform: 'translateX(7px)'
-                          }}>
-                            {item}
-                          </span>
-                        </div>
-                      ))
+                      <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />
                     ) : (
                       // SHOP tab with dropdown functionality
                       [
@@ -1858,7 +1846,7 @@ function AccountPage() {
                         transform: 'translateY(2px)'
                       }}
                     >
-                      LOAD CASH BALANCE
+                      LOAD GIFT CARD
                     </p>
                   </div>
                 </div>

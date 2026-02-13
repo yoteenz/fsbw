@@ -4,6 +4,7 @@ import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
 import ConfirmationModal from '../../../components/ConfirmationModal';
+import BrandMenuLinks from '../../../components/BrandMenuLinks';
 
 // Only these count as "styling confirmed" (BLEACH+PLUCK required). NONE or empty = user can select BLEACH+PLUCK alone.
 const VALID_STYLING_OPTIONS = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
@@ -1284,20 +1285,7 @@ export default function AddOnsSelectionPage() {
                         </div>
                       ))
                     ) : mobileMenuActiveTab === 'BRAND' ? (
-                      ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
-                        <div key={index} className="flex items-center justify-between">
-                          <span style={{ 
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '14px',
-                            color: 'black',
-                            fontWeight: '500',
-                            textTransform: 'uppercase',
-                            transform: 'translateX(7px)'
-                          }}>
-                            {item}
-                          </span>
-                        </div>
-                      ))
+                      <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />
                     ) : (
                       // SHOP tab with dropdown functionality
                       [

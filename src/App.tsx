@@ -95,6 +95,10 @@ const ReferralsPage = lazyWithLogging(() => import('./pages/account/referrals/pa
 const AffiliatePage = lazyWithLogging(() => import('./pages/account/affiliate/page'), 'AffiliatePage');
 const NotificationsPage = lazyWithLogging(() => import('./pages/account/notifications/page'), 'NotificationsPage');
 const LoadCardPage = lazyWithLogging(() => import('./pages/account/load-card/page'), 'LoadCardPage');
+const ReviewsPage = lazyWithLogging(() => import('./pages/account/reviews/page'), 'ReviewsPage');
+import ShippingPage from './pages/account/shipping/page';
+const PaymentPage = lazyWithLogging(() => import('./pages/account/payment/page'), 'PaymentPage');
+const SettingsPage = lazyWithLogging(() => import('./pages/account/settings/page'), 'SettingsPage');
 const OrdersPage = lazyWithLogging(() => import('./pages/orders/page'), 'OrdersPage');
 const SignInPage = lazyWithLogging(() => import('./pages/sign-in/page'), 'SignInPage');
 const ShoppingBagPage = lazyWithLogging(() => import('./pages/shopping-bag/page'), 'ShoppingBagPage');
@@ -108,6 +112,7 @@ const ProductsUnitsPage = lazyWithLogging(() => import('./pages/products/units/p
 const ToolsPage = lazyWithLogging(() => import('./pages/tools/page'), 'ToolsPage');
 const GiftCardPage = lazyWithLogging(() => import('./pages/tools/gift-card/page'), 'GiftCardPage');
 const OrderFormPage = lazyWithLogging(() => import('./pages/shop/order-form/page'), 'OrderFormPage');
+const BrandPage = lazyWithLogging(() => import('./pages/brand/page'), 'BrandPage');
 
 // Error Boundary to catch component errors with auto-recovery
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null; retryCount: number }> {
@@ -557,6 +562,15 @@ function App() {
             <GiftCardPage />
           </Suspense>
         } />
+        {/* Brand pages: /brand/about, /brand/contact, /brand/care, /brand/member, /brand/faq, /brand/payment, /brand/reviews, /brand/terms */}
+        <Route path="/brand/about" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
+        <Route path="/brand/contact" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
+        <Route path="/brand/care" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
+        <Route path="/brand/member" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
+        <Route path="/brand/faq" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
+        <Route path="/brand/payment" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
+        <Route path="/brand/reviews" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
+        <Route path="/brand/terms" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
         <Route path="/wishlist" element={
           <Suspense fallback={<LoadingScreen />}>
             <WishlistPage />
@@ -590,6 +604,26 @@ function App() {
         <Route path="/account/alerts" element={
           <Suspense fallback={<LoadingScreen />}>
             <NotificationsPage />
+          </Suspense>
+        } />
+        <Route path="/account/reviews" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ReviewsPage />
+          </Suspense>
+        } />
+        <Route path="/account/shipping" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ShippingPage />
+          </Suspense>
+        } />
+        <Route path="/account/payment" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <PaymentPage />
+          </Suspense>
+        } />
+        <Route path="/account/settings" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <SettingsPage />
           </Suspense>
         } />
         <Route path="/account/orders" element={

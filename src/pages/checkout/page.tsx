@@ -4,6 +4,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { handlePaymentOption, PaymentProvider, PaymentData } from '../../utils/paymentHandlers';
 import { createRouteProtection, prepareRouteProtectionData } from '../../utils/routeProtection';
+import BrandMenuLinks from '../../components/BrandMenuLinks';
 
 function CheckoutPage() {
   const navigate = useNavigate();
@@ -1771,20 +1772,7 @@ function CheckoutPage() {
                         </div>
                       ))
                     ) : mobileMenuActiveTab === 'BRAND' ? (
-                      ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
-                        <div key={index} className="flex items-center justify-between">
-                          <span style={{ 
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '14px',
-                            color: 'black',
-                            fontWeight: '500',
-                            textTransform: 'uppercase',
-                            transform: 'translateX(7px)'
-                          }}>
-                            {item}
-                          </span>
-                        </div>
-                      ))
+                      <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />
                     ) : (
                       [
                         { label: 'UNITS', hasArrow: true, isExpandable: true, subItems: ['STRAIGHT', 'WAVY', 'CURLY'] },
@@ -5101,7 +5089,7 @@ function CheckoutPage() {
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', textTransform: 'uppercase' }}>Current balance</span>
+                <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', textTransform: 'uppercase' }}>Remaining balance</span>
                 <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', fontWeight: 500 }}>${Math.max(0, giftCardBalance - digitalCashModalAmount)}</span>
               </div>
               <input

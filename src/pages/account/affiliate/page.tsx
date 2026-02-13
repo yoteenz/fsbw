@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import ImageViewerModal from '../../../components/ImageViewerModal';
+import BrandMenuLinks from '../../../components/BrandMenuLinks';
 
 interface Order {
   id: string;
@@ -1880,20 +1881,7 @@ function AffiliatePage() {
                         </div>
                       ))
                     ) : mobileMenuActiveTab === 'BRAND' ? (
-                      ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
-                        <div key={index} className="flex items-center justify-between">
-                          <span style={{ 
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '14px',
-                            color: 'black',
-                            fontWeight: '500',
-                            textTransform: 'uppercase',
-                            transform: 'translateX(7px)'
-                          }}>
-                            {item}
-                          </span>
-                        </div>
-                      ))
+                      <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />
                     ) : (
                       // SHOP tab with dropdown functionality
                       [
@@ -2029,17 +2017,10 @@ function AffiliatePage() {
                 </div>
               </div>
             ) : (
-              <>
-                 {/* AFFILIATE CONTENT */}
-                 <div
-                   className="border border-black bg-white/60 backdrop-blur-sm w-full pt-6 pb-4 px-5 mb-2 transition-all duration-300 ease-out"
-                   style={{
-                     borderWidth: '1.3px',
-                     backgroundColor: 'rgba(255, 255, 255, 0.6)'
-                   }}
-                 >
+              <div style={{ display: 'contents' }}>
+                 {/* AFFILIATE CONTENT - cards are direct siblings; wrapper has display:contents so it doesn't affect layout */}
                    {expandedOrderId ? (
-                     /* EXPANDED SUBMIT CONTENT VIEW */
+                     /* EXPANDED SUBMIT CONTENT VIEW - single card */
                      (() => {
                        const expandedOrder = deliveredOrders.find(o => o.id === expandedOrderId);
                        if (!expandedOrder) return null;
@@ -2061,7 +2042,10 @@ function AffiliatePage() {
                            : `YOU'VE EARNED ${totalEarned.toLocaleString()} LOYALTY POINTS!`;
                        
                        return (
-                         <>
+                         <div
+                           className="border border-black bg-white/60 backdrop-blur-sm w-full pt-6 pb-4 px-5 mb-2 transition-all duration-300 ease-out"
+                           style={{ borderWidth: '1.3px', backgroundColor: 'rgba(255, 255, 255, 0.6)' }}
+                         >
                            {/* SUBMIT CONTENT Header */}
                            <div style={{ marginBottom: '8px' }}>
                              <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '0' }}>
@@ -3690,13 +3674,13 @@ function AffiliatePage() {
                                )}
                              </div>
                            </div>
-                         </>
+                         </div>
                        );
                      })()
                    ) : (
                      <>
-                       {/* BECOME AN AFFILIATE Section */}
-                  <div style={{ marginBottom: '32px' }}>
+                       {/* Card 1: BECOME AN AFFILIATE */}
+                  <div className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out" style={{ borderWidth: '1.3px', padding: '20px', backgroundColor: 'rgba(255, 255, 255, 0.6)' }}>
                     <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
                       <h2
                         style={{
@@ -3796,7 +3780,6 @@ function AffiliatePage() {
                         *VIDEO MUST BE AT LEAST 10-60 SECONDS IN DURATION, PER APPROVAL
                       </p>
                     </div>
-                  </div>
 
                   {/* Content Approval Instructions */}
                   <div style={{ marginBottom: '24px' }}>
@@ -3815,9 +3798,10 @@ function AffiliatePage() {
                       IN ORDER TO HAVE THE HIGHEST CHANCE FOR CONTENT APPROVAL PLEASE SUBMIT CLEAR, WELL LIT PHOTOS/VIDEOS. PREFERABLY WITH NO FILTERS OR EDITS IN ORDER TO SHOWCASE THE PRODUCT IN ITS MOST AUTHENTIC STATE. ALLOW UP TO 72 HOURS FOR YOUR CONTENT TO BE REVIEWED AND APPROVED.
                     </p>
                   </div>
+                  </div>
 
-                  {/* SUBMIT CONTENT Section */}
-                  <div style={{ marginBottom: '8px' }}>
+                  {/* Card 2: AFFILIATE PROGRAM */}
+                  <div className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out" style={{ borderWidth: '1.3px', padding: '20px', backgroundColor: 'rgba(255, 255, 255, 0.6)' }}>
                     <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
                       <h2
                         style={{
@@ -3969,11 +3953,9 @@ function AffiliatePage() {
                      )}
                    </div>
                  </>
-               )}
+                   )}
                  </div>
-               </>
              )}
-           </div>
          </div>
        </div>
        
@@ -4179,10 +4161,11 @@ function AffiliatePage() {
          onClose={() => setShowImageViewer(false)}
          images={viewerImages}
          currentIndex={viewerCurrentIndex}
-         onNavigate={setViewerCurrentIndex}
+        onNavigate={setViewerCurrentIndex}
        />
      </div>
+     </div>
    );
- }
+}
  
  export default AffiliatePage;

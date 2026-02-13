@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../../constants/tiers';
+import BrandMenuLinks from '../../../components/BrandMenuLinks';
 
 const BRAND_GRAY = '#808080';
 
@@ -477,7 +478,7 @@ function MembershipPage() {
   };
 
   return (
-    <div className="min-h-screen" style={{ position: 'relative' }}>
+    <div className="min-h-screen membership-page-rewards" style={{ position: 'relative' }} data-page="membership">
       {/* Marble Background */}
       <div 
         className="fixed inset-0 -z-10"
@@ -490,9 +491,9 @@ function MembershipPage() {
         }}
       />
       
-      {/* Scrollable Content */}
-      <div className="relative z-10">
-        <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible' }}>
+      {/* Scrollable Content - container has no border so rewards cards are not inside an "outer card" */}
+      <div className="relative z-10" style={{ border: 'none', backgroundColor: 'transparent' }}>
+        <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible', border: 'none', backgroundColor: 'transparent', boxShadow: 'none' }}>
           {/* NAV BAR CONTAINER */}
           <div
             className="border-solid border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm relative"
@@ -600,18 +601,13 @@ function MembershipPage() {
             </div>
           </div>
 
-          {/* CONTENT */}
-          <div
-            className="flex flex-col pb-4 mb-2 w-full"
-            style={{ 
-              minWidth: '100%', 
-              maxWidth: 'none', 
-              overflow: 'visible',
-              minHeight: showMobileMenu ? '560px' : 'auto'
-            }}
-          >
+          {/* CONTENT - only wraps menu when open; rewards content is NOT inside this div (no main card) */}
             {showMobileMenu ? (
-              /* MENU CONTENT */
+              <div
+                className="flex flex-col pb-4 mb-2 w-full"
+                style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible', minHeight: '560px' }}
+              >
+              {/* MENU CONTENT */}
               <div
                 className="border border-black flex flex-col pt-6 pb-4 px-5 bg-white/60 backdrop-blur-sm w-full"
                 style={{ 
@@ -708,20 +704,7 @@ function MembershipPage() {
                         </div>
                       ))
                     ) : mobileMenuActiveTab === 'BRAND' ? (
-                      ['ABOUT US', 'CONTACT', 'CARE & STORAGE', 'BECOME A MEMBER', 'FAQ', 'PAYMENT + SHIPPING', 'REVIEWS', 'TERMS OF SERVICE'].map((item, index) => (
-                        <div key={index} className="flex items-center justify-between">
-                          <span style={{ 
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '14px',
-                            color: 'black',
-                            fontWeight: '500',
-                            textTransform: 'uppercase',
-                            transform: 'translateX(7px)'
-                          }}>
-                            {item}
-                          </span>
-                        </div>
-                      ))
+                      <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />
                     ) : (
                       // SHOP tab with dropdown functionality
                       [
@@ -856,24 +839,16 @@ function MembershipPage() {
                 </div>
                 </div>
               </div>
+              </div>
             ) : (
               <>
-                {/* MEMBERSHIP CONTENT */}
-              <div
-                className="border border-black bg-white/60 backdrop-blur-sm w-full transition-all duration-300 ease-out"
-                style={{
-                  borderWidth: '1.3px',
-                  padding: '20px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.6)'
-                }}
-              >
+                {/* MEMBERSHIP CONTENT - no outer wrapper; cards are direct siblings (removes extra outer div/card) */}
                 {showLoyaltyRewards ? (
-                  /* LOYALTY POINTS VIEW */
                   <>
-                    {/* LOYALTY POINTS Header */}
-                <div style={{ marginBottom: '32px' }}>
-                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
-                    <h2
+                    {/* Inner card only: LOYALTY POINTS (header + points + discount codes) - no outer card wrapping this */}
+                    <div className="border border-black bg-white/60 backdrop-blur-sm w-full mb-4 transition-all duration-300 ease-out" style={{ borderWidth: '1.3px', paddingTop: '20px', paddingLeft: '20px', paddingRight: '20px', paddingBottom: '16px', backgroundColor: 'rgba(255, 255, 255, 0.6)' }}>
+                      <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
+                        <h2
                       style={{
                         fontFamily: '"Futura PT Medium"',
                         color: '#EB1C24',
@@ -885,6 +860,17 @@ function MembershipPage() {
                     >
                           LOYALTY POINTS
                     </h2>
+                    <div className="flex items-center gap-2">
+                        <img
+                          src="/assets/rewards-icon.svg"
+                          alt=""
+                          style={{
+                            width: '19.76px',
+                            height: '19.76px',
+                            objectFit: 'contain',
+                            filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
+                          }}
+                        />
                         <img
                           src="/assets/close-icon.svg"
                           alt="Close"
@@ -896,12 +882,13 @@ function MembershipPage() {
                             filter: 'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)'
                           }}
                         />
+                    </div>
                       </div>
-
-                      {/* LOYALTY POINTS Content */}
+                      {/* LOYALTY POINTS Content - main card */}
                       <div>
                         {/* Current Points */}
                         <div style={{ textAlign: 'center', marginBottom: '12px', marginTop: '10px' }}>
+                          <img src="/assets/points-icon.svg" alt="" style={{ width: '31.68px', height: '31.68px', marginTop: '20px', marginBottom: '6px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
                           <p
                             style={{
                               fontFamily: '"Futura PT Medium"',
@@ -930,26 +917,16 @@ function MembershipPage() {
                           </p>
                           <p
                             style={{
-                              fontFamily: '"Futura PT Book"',
+                              fontFamily: '"Futura PT Medium"',
                               color: '#EB1C24',
                               fontSize: '9px',
                               margin: '0 0 8px 0',
                               textTransform: 'uppercase'
                             }}
                           >
-                            EXCLUDES TAXES + SHIPPING FEES
+                            (EXCLUDES TAXES + SHIPPING FEES)
                           </p>
-                          <p
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              color: '#000000',
-                              fontSize: '10px',
-                              margin: '40px 0 0 0',
-                              textTransform: 'uppercase',
-                              textAlign: 'left'
-                            }}
-                          >
-                            {(() => {
+                          {(() => {
                               const basePoints = userData?.loyaltyPoints || 200;
                               const affiliatePoints = calculateTotalAffiliatePoints();
                               const totalPoints = basePoints + affiliatePoints;
@@ -961,14 +938,44 @@ function MembershipPage() {
                                 { discount: '50% OFF UNIT', points: 50000 }
                               ];
                               const nextReward = rewards.find((r) => totalPoints < r.points);
-                              if (!nextReward) return '0 MORE PTS TO EARN';
-                              return `${(nextReward.points - totalPoints).toLocaleString()} MORE PTS TO EARN ${nextReward.discount}`;
+                              const progressPercent = nextReward
+                                ? Math.min(100, Math.max(0, (totalPoints / nextReward.points) * 100))
+                                : 100;
+                              return (
+                                <div style={{ marginTop: '40px', paddingBottom: '20px' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0' }}>
+                                    <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
+                                      NEXT REWARD: <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{nextReward ? nextReward.discount : '—'}</span>
+                                    </p>
+                                    <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
+                                      {totalPoints.toLocaleString()}{nextReward ? ` / ${nextReward.points.toLocaleString()}` : ''} PTS
+                                    </p>
+                                  </div>
+                                  <div style={{ marginTop: '8px', marginBottom: '8px' }}>
+                                    <div style={{ width: '100%', height: '8px', backgroundColor: '#E5E5E5', borderRadius: '4px', overflow: 'hidden' }}>
+                                      <div
+                                        style={{
+                                          width: `${progressPercent}%`,
+                                          height: '100%',
+                                          backgroundColor: '#EB1C24',
+                                          borderRadius: '4px',
+                                          transition: 'width 0.3s ease'
+                                        }}
+                                      />
+                                    </div>
+                                  </div>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', color: BRAND_GRAY, fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
+                                    {nextReward
+                                      ? `${(nextReward.points - totalPoints).toLocaleString()} MORE PTS TO EARN ${nextReward.discount}`
+                                      : 'MAX REWARD REACHED'}
+                                  </p>
+                                </div>
+                              );
                             })()}
-                          </p>
                         </div>
 
                         {/* Discount Codes */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: 0, paddingBottom: '5px' }}>
                           {[
                             { discount: '10% OFF', points: 10000 },
                             { discount: '15% OFF', points: 15000 },
@@ -981,13 +988,13 @@ function MembershipPage() {
                             const currentPoints = basePoints + affiliatePoints;
                             const canRedeem = currentPoints >= reward.points;
                             return (
-                              <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: index < 4 ? '1px solid #E5E5E5' : 'none' }}>
+                              <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: index < 4 ? '8px 0' : '8px 0 0 0', borderBottom: index < 4 ? '1px solid #E5E5E5' : 'none' }}>
                                 <div>
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: BRAND_GRAY, margin: '0 0 2px 0', textTransform: 'uppercase', fontWeight: '500' }}>
                                     DISCOUNT CODE
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#000000', margin: '0', fontWeight: '500' }}>
-                                    {reward.discount} AT <span style={{ color: BRAND_GRAY }}>{reward.points.toLocaleString()} PTS</span>
+                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', margin: '0' }}>
+                                    {reward.discount} AT <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{reward.points.toLocaleString()} PTS</span>
                                   </p>
                                 </div>
                                 <button
@@ -1018,191 +1025,20 @@ function MembershipPage() {
                             );
                           })}
                         </div>
-
-                        {/* MEMBERSHIP STATUS */}
-                        <div style={{ marginBottom: '20px', marginTop: '20px' }}>
-                          <div style={{ marginBottom: '20px' }}>
-                            <div>
-                              <p
-                                style={{
-                                  fontFamily: '"Futura PT Book"',
-                                  color: '#000000',
-                                  fontSize: '10px',
-                                  margin: '0 0 4px 0',
-                                  textTransform: 'uppercase'
-                                }}
-                              >
-                                CURRENT TIER: <span style={{ color: (() => { const t = getNextTierProgress().currentTierName; return t === 'RED' ? '#EB1C24' : t === 'BLACK' ? '#000000' : BRAND_GRAY; })(), fontFamily: '"Futura PT Medium"' }}>{(() => getNextTierProgress().currentTierName)()}</span>
-                              </p>
-                              <p
-                                style={{
-                                  fontFamily: '"Futura PT Book"',
-                                  color: '#000000',
-                                  fontSize: '10px',
-                                  margin: '0 0 4px 0',
-                                  textTransform: 'uppercase'
-                                }}
-                              >
-                                {(() => {
-                                  const t = getNextTierProgress().currentTierName;
-                                  const welcomeAmount = getWelcomeDiscountAmount(t);
-                                  if (t === 'BLACK') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 1X STYLING VOUCHER <br /> 1,000 LOYALTY POINTS</>;
-                                  if (t === 'RED') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 1X COLOR VOUCHER <br /> 500 LOYALTY POINTS</>;
-                                  return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 50 LOYALTY POINTS</>;
-                                })()}
-                              </p>
-                              {(() => {
-                                const { currentSpend, spendRemaining, progressPercent, nextTier, nextTierName } = getNextTierProgress();
-                                const nextTierColor = nextTierName === 'BLACK' ? '#000000' : '#EB1C24';
-                                return (
-                                  <>
-                                    <div style={{ marginTop: '20px' }}>
-                                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0' }}>
-                                        <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
-                                          NEXT TIER: <span style={{ color: nextTierColor, fontFamily: '"Futura PT Medium"' }}>{nextTierName != null ? nextTierName : '—'}</span>
-                                        </p>
-                                        <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
-                                          {currentSpend.toLocaleString()} PTS
-                                        </p>
-                                      </div>
-                                    </div>
-                                    <div style={{ marginTop: '8px', marginBottom: '8px' }}>
-                                      <div style={{ width: '100%', height: '8px', backgroundColor: '#E5E5E5', borderRadius: '4px', overflow: 'hidden' }}>
-                                        <div
-                                          style={{
-                                            width: `${progressPercent}%`,
-                                            height: '100%',
-                                            backgroundColor: '#EB1C24',
-                                            borderRadius: '4px',
-                                            transition: 'width 0.3s ease'
-                                          }}
-                                        />
-                                      </div>
-                                    </div>
-                                    <p
-                                      style={{
-                                        fontFamily: '"Futura PT Book"',
-                                        color: '#000000',
-                                        fontSize: '10px',
-                                        margin: '0',
-                                        textTransform: 'uppercase'
-                                      }}
-                                    >
-                                      {nextTier != null ? <>EARN <span style={{ color: '#EB1C24' }}>{spendRemaining.toLocaleString()}</span> MORE POINTS TO REACH!</> : 'MAX TIER REACHED'}
-                                    </p>
-                                  </>
-                                );
-                              })()}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Points History */}
-                        <div style={{ marginTop: '30px', marginBottom: '0' }}>
-                          <p
-                            style={{
-                              fontFamily: '"Futura PT Medium"',
-                              color: '#EB1C24',
-                              fontSize: '11px',
-                              margin: '0 0 12px 0',
-                              textTransform: 'uppercase',
-                              fontWeight: '500',
-                              textAlign: 'center'
-                            }}
-                          >
-                            POINTS HISTORY
-                          </p>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            {[
-                              { date: '02-14-2026', discount: 'DISCOUNT CODE', points: '-2,500 PTS' },
-                              { date: '01-05-2026', discount: 'DISCOUNT CODE', points: '-10,000 PTS' }
-                            ].map((row, i) => (
-                              <div key={i} style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase' }}>
-                                <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left', color: '#000000', fontFamily: '"Futura PT Book"' }}>{row.date}</span>
-                                <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center', color: '#808080', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.discount}</span>
-                                <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right', color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.points}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        {hasPremiumSubscription && (
-                          <div style={{ marginTop: '40px' }}>
-                            <p
-                              style={{
-                                fontFamily: '"Futura PT Medium"',
-                                color: BRAND_GRAY,
-                                fontSize: '11px',
-                                margin: '0 0 12px 0',
-                                textTransform: 'uppercase',
-                                fontWeight: '500',
-                                textAlign: 'left'
-                              }}
-                            >
-                              ADDITIONAL FEATURES INCLUDED:
-                            </p>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                              {[
-                                'EXCLUSIVE ACCESS TO PREMIUM 3D WIG GENERATOR',
-                                'ACCESS TO VIP LOUNGE + MEMBERS ONLY EVENTS',
-                                'FAST TRACK CUSTOMER SUPPORT',
-                                'PRIORITY BOOKING',
-                                'FREE GIVEAWAYS',
-                                'DISCOUNTED SHIPPING'
-                              ].map((label, i) => (
-                                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8.4px', height: '8.4px', marginTop: '4px', flexShrink: 0 }} />
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                    {label}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* MORE WAYS TO EARN */}
-                        <div style={{ marginTop: '30px', marginBottom: '-30px' }}>
-                          <h3
-                            style={{
-                              fontFamily: '"Futura PT Medium"',
-                              color: BRAND_GRAY,
-                              fontSize: '11px',
-                              margin: '0 0 12px 0',
-                              textTransform: 'uppercase',
-                              fontWeight: '500',
-                              textAlign: 'left'
-                            }}
-                          >
-                            MORE WAYS TO EARN:
-                          </h3>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            {[
-                              { action: 'NEWSLETTER SIGN UP', points: 50 },
-                              { action: 'REFER A FRIEND', points: 100 },
-                              { action: 'LEAVE A CONTENT REVIEW', points: 150 },
-                              { action: 'PHOTO + VIDEO TAGS', points: 200 },
-                              { action: 'LIKE OUR FACEBOOK', points: 250 },
-                              { action: 'FOLLOW OUR INSTAGRAM', points: 250 },
-                              { action: 'FOLLOW OUR TIK TOK', points: 250 },
-                              { action: 'FOLLOW OUR TWITTER', points: 250 }
-                            ].map((item, index) => (
-                              <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                  {item.action === 'LIKE OUR FACEBOOK' ? <>LIKE OUR <span style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>FACEBOOK</span></> : item.action === 'FOLLOW OUR INSTAGRAM' ? <>FOLLOW OUR <span style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>INSTAGRAM</span></> : item.action === 'FOLLOW OUR TIK TOK' ? <>FOLLOW OUR <span style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>TIK TOK</span></> : item.action === 'FOLLOW OUR TWITTER' ? <>FOLLOW OUR <span style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>TWITTER</span></> : item.action}
-                                </p>
-                                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '0' }}>
-                                  +{item.points}
-                                </p>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </>
-                ) : showPremiumView ? (
-                  /* PREMIUM MEMBERSHIP VIEW */
+                ) : (
+                  showPremiumView ? (
+                  <div
+                    className="border border-black bg-white/60 backdrop-blur-sm w-full transition-all duration-300 ease-out"
+                    style={{
+                      borderWidth: '1.3px',
+                      padding: '20px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.6)'
+                    }}
+                  >
+                  {/* PREMIUM MEMBERSHIP VIEW */}
                   <>
                     {/* PREMIUM MEMBERSHIP Header */}
                     <div style={{ marginBottom: '32px' }}>
@@ -1213,10 +1049,10 @@ function MembershipPage() {
                             color: '#EB1C24',
                             fontSize: '12px',
                             fontWeight: '500',
-                        margin: '0',
-                        textTransform: 'uppercase'
-                      }}
-                    >
+                            margin: '0',
+                            textTransform: 'uppercase'
+                          }}
+                        >
                           PREMIUM MEMBERSHIP
                         </h2>
                         <img
@@ -1521,11 +1357,12 @@ function MembershipPage() {
                         </div>
                       </div>
                     </>
+                  </div>
                   ) : (
-                    /* REGULAR MEMBERSHIP CONTENT */
                     <>
-                      {/* LOYALTY POINTS Section */}
-                <div style={{ marginBottom: '32px' }}>
+                      {/* REGULAR MEMBERSHIP CONTENT - cards outside any main card (concierge style) */}
+                      {/* Card 1: LOYALTY POINTS only */}
+                <div className="border border-black bg-white/60 backdrop-blur-sm w-full mb-4 transition-all duration-300 ease-out" style={{ borderWidth: '1.3px', paddingTop: '20px', paddingLeft: '20px', paddingRight: '20px', paddingBottom: '16px', backgroundColor: 'rgba(255, 255, 255, 0.6)' }}>
                   <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
                     <h2
                       style={{
@@ -1539,11 +1376,23 @@ function MembershipPage() {
                     >
                       LOYALTY POINTS
                     </h2>
+                    <img
+                      src="/assets/rewards-icon.svg"
+                      alt=""
+                      style={{
+                        width: '19.76px',
+                        height: '19.76px',
+                        objectFit: 'contain',
+                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
+                      }}
+                    />
                   </div>
-                  
+
+                  {/* Balance + discount codes (no inner border) */}
                   <div>
                         {/* Current Points */}
                             <div style={{ textAlign: 'center', marginBottom: '12px', marginTop: '10px' }}>
+                              <img src="/assets/points-icon.svg" alt="" style={{ width: '31.68px', height: '31.68px', marginTop: '20px', marginBottom: '6px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
                               <p
                                 style={{
                                   fontFamily: '"Futura PT Medium"',
@@ -1572,26 +1421,16 @@ fontFamily: '"Futura PT Book"',
                               </p>
                               <p
                                 style={{
-                                  fontFamily: '"Futura PT Book"',
+                                  fontFamily: '"Futura PT Medium"',
                                   color: '#EB1C24',
                                   fontSize: '9px',
                                   margin: '0 0 8px 0',
                                   textTransform: 'uppercase'
                                 }}
                               >
-                                EXCLUDES TAXES + SHIPPING FEES
+                                (EXCLUDES TAXES + SHIPPING FEES)
                               </p>
-                              <p
-                                style={{
-                                  fontFamily: '"Futura PT Book"',
-                                  color: '#000000',
-                                  fontSize: '10px',
-                                  margin: '40px 0 0 0',
-                                  textTransform: 'uppercase',
-                                  textAlign: 'left'
-                                }}
-                              >
-                                {(() => {
+                              {(() => {
                                   const basePoints = userData?.loyaltyPoints || 200;
                                   const affiliatePoints = calculateTotalAffiliatePoints();
                                   const totalPoints = basePoints + affiliatePoints;
@@ -1603,14 +1442,44 @@ fontFamily: '"Futura PT Book"',
                                     { discount: '50% OFF UNIT', points: 50000 }
                                   ];
                                   const nextReward = rewards.find((r) => totalPoints < r.points);
-                                  if (!nextReward) return '0 MORE PTS TO EARN';
-                                  return `${(nextReward.points - totalPoints).toLocaleString()} MORE PTS TO EARN ${nextReward.discount}`;
+                                  const progressPercent = nextReward
+                                    ? Math.min(100, Math.max(0, (totalPoints / nextReward.points) * 100))
+                                    : 100;
+                                  return (
+                                    <div style={{ marginTop: '40px', paddingBottom: '20px' }}>
+                                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0' }}>
+                                        <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
+                                          NEXT REWARD: <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{nextReward ? nextReward.discount : '—'}</span>
+                                        </p>
+                                        <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
+                                          {totalPoints.toLocaleString()}{nextReward ? ` / ${nextReward.points.toLocaleString()}` : ''} PTS
+                                        </p>
+                                      </div>
+                                      <div style={{ marginTop: '8px', marginBottom: '8px' }}>
+                                        <div style={{ width: '100%', height: '8px', backgroundColor: '#E5E5E5', borderRadius: '4px', overflow: 'hidden' }}>
+                                          <div
+                                            style={{
+                                              width: `${progressPercent}%`,
+                                              height: '100%',
+                                              backgroundColor: '#EB1C24',
+                                              borderRadius: '4px',
+                                              transition: 'width 0.3s ease'
+                                            }}
+                                          />
+                                        </div>
+                                      </div>
+                                      <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', color: BRAND_GRAY, fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
+                                        {nextReward
+                                          ? `${(nextReward.points - totalPoints).toLocaleString()} MORE PTS TO EARN ${nextReward.discount}`
+                                          : 'MAX REWARD REACHED'}
+                                      </p>
+                                    </div>
+                                  );
                                 })()}
-                              </p>
                             </div>
 
                             {/* Discount Codes */}
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: 0, paddingBottom: '5px' }}>
                               {[
                                 { discount: '10% OFF', points: 10000 },
                                 { discount: '15% OFF', points: 15000 },
@@ -1623,13 +1492,13 @@ fontFamily: '"Futura PT Book"',
                                 const currentPoints = basePoints + affiliatePoints;
                                 const canRedeem = currentPoints >= reward.points;
                                 return (
-                                  <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: index < 4 ? '1px solid #E5E5E5' : 'none' }}>
+                                  <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: index < 4 ? '8px 0' : '8px 0 0 0', borderBottom: index < 4 ? '1px solid #E5E5E5' : 'none' }}>
                                     <div>
-                                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }}>
+                                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: BRAND_GRAY, margin: '0 0 2px 0', textTransform: 'uppercase', fontWeight: '500' }}>
                                         DISCOUNT CODE
                                       </p>
-                                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#000000', margin: '0', fontWeight: '500' }}>
-                                        {reward.discount} AT <span style={{ color: BRAND_GRAY }}>{reward.points.toLocaleString()} PTS</span>
+                                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', margin: '0' }}>
+                                        {reward.discount} AT <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{reward.points.toLocaleString()} PTS</span>
                                       </p>
                                     </div>
                                     <button
@@ -1657,14 +1526,15 @@ fontFamily: '"Futura PT Book"',
                                       REDEEM
                                     </button>
                                   </div>
-                                );
-                              })}
-                            </div>
+                            );
+                          })}
+                        </div>
+                  </div>
+                </div>
 
-                            {/* MEMBERSHIP STATUS */}
-                            <div style={{ marginBottom: '20px', marginTop: '20px' }}>
-                              <div style={{ marginBottom: '20px' }}>
-                                <div>
+                {/* Card 2: MEMBERSHIP STATUS */}
+                <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
+                  <div>
                                   <p
                                     style={{
                                       fontFamily: '"Futura PT Book"',
@@ -1735,25 +1605,31 @@ fontFamily: '"Futura PT Book"',
                                   </>
                                 );
                               })()}
+                              </div>
                             </div>
-                          </div>
-                        </div>
 
-                        {/* Points History */}
-                        <div style={{ marginTop: '30px', marginBottom: '0' }}>
-                          <p
-                            style={{
-                              fontFamily: '"Futura PT Medium"',
-                              color: '#EB1C24',
-                              fontSize: '11px',
-                              margin: '0 0 12px 0',
-                              textTransform: 'uppercase',
-                              fontWeight: '500',
-                              textAlign: 'center'
-                            }}
-                          >
-                            POINTS HISTORY
-                          </p>
+                        {/* Points History - Card */}
+                        <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
+                          <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
+                            <p
+                              style={{
+                                fontFamily: '"Futura PT Medium"',
+                                color: '#EB1C24',
+                                fontSize: '11px',
+                                margin: '0',
+                                textTransform: 'uppercase',
+                                fontWeight: '500',
+                                textAlign: 'left'
+                              }}
+                            >
+                              POINTS HISTORY
+                            </p>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase', marginBottom: '8px', fontFamily: '"Futura PT Medium"', fontWeight: '500', color: '#000000' }}>
+                            <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left' }}>DATE</span>
+                            <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center' }}>REWARD</span>
+                            <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right' }}>SPENT</span>
+                          </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                             {[
                               { date: '02-14-2026', discount: 'DISCOUNT CODE', points: '-2,500 PTS' },
@@ -1769,20 +1645,22 @@ fontFamily: '"Futura PT Book"',
                         </div>
 
                         {hasPremiumSubscription && (
-                          <div style={{ marginTop: '40px' }}>
-                            <p
-                              style={{
-                                fontFamily: '"Futura PT Medium"',
-                                color: BRAND_GRAY,
-                                fontSize: '11px',
-                                margin: '0 0 12px 0',
-                                textTransform: 'uppercase',
-                                fontWeight: '500',
-                                textAlign: 'left'
-                              }}
-                            >
-                              ADDITIONAL FEATURES INCLUDED:
-                            </p>
+                          <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
+                            <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
+                              <p
+                                style={{
+                                  fontFamily: '"Futura PT Medium"',
+                                  color: '#EB1C24',
+                                  fontSize: '11px',
+                                  margin: '0',
+                                  textTransform: 'uppercase',
+                                  fontWeight: '500',
+                                  textAlign: 'left'
+                                }}
+                              >
+                                ADDITIONAL FEATURES INCLUDED
+                              </p>
+                            </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                               {[
                                 'EXCLUSIVE ACCESS TO PREMIUM 3D WIG GENERATOR',
@@ -1803,21 +1681,23 @@ fontFamily: '"Futura PT Book"',
                           </div>
                         )}
 
-                        {/* MORE WAYS TO EARN */}
-                            <div style={{ marginTop: '30px', marginBottom: '-30px' }}>
-                              <h3
-                                style={{
-                                  fontFamily: '"Futura PT Medium"',
-                                  color: BRAND_GRAY,
-                                  fontSize: '11px',
-                                  margin: '0 0 12px 0',
-                                  textTransform: 'uppercase',
-                                  fontWeight: '500',
-                                  textAlign: 'left'
-                                }}
-                              >
-                                MORE WAYS TO EARN:
-                              </h3>
+                        {/* MORE WAYS TO EARN - Card */}
+                            <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
+                              <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
+                                <h3
+                                  style={{
+                                    fontFamily: '"Futura PT Medium"',
+                                    color: '#EB1C24',
+                                    fontSize: '11px',
+                                    margin: '0',
+                                    textTransform: 'uppercase',
+                                    fontWeight: '500',
+                                    textAlign: 'left'
+                                  }}
+                                >
+                                  MORE WAYS TO EARN
+                                </h3>
+                              </div>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                 {[
                                   { action: 'NEWSLETTER SIGN UP', points: 50 },
@@ -1833,22 +1713,20 @@ fontFamily: '"Futura PT Book"',
                                     <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
                                       {item.action === 'LIKE OUR FACEBOOK' ? <>LIKE OUR <span style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>FACEBOOK</span></> : item.action === 'FOLLOW OUR INSTAGRAM' ? <>FOLLOW OUR <span style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>INSTAGRAM</span></> : item.action === 'FOLLOW OUR TIK TOK' ? <>FOLLOW OUR <span style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>TIK TOK</span></> : item.action === 'FOLLOW OUR TWITTER' ? <>FOLLOW OUR <span style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>TWITTER</span></> : item.action}
                                     </p>
-                                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '0' }}>
+                                    <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: '#EB1C24', margin: '0' }}>
                                       +{item.points}
                                     </p>
                                   </div>
                                 ))}
                               </div>
                             </div>
-                          </div>
-                </div>
 
 
                       {/* UPGRADE YOUR BASIC MEMBERSHIP - Only show when loyalty rewards is not active (premium members see additional features in loyalty view) */}
                       {!showLoyaltyRewards && (
                       <>
                         {!hasPremiumSubscription && (
-                            /* BASIC MEMBER - Upgrade Section */
+                            <>
                 <div style={{ marginBottom: '24px' }}>
                   <p
                     style={{
@@ -1932,20 +1810,22 @@ fontFamily: '"Futura PT Book"',
                     </div>
                   </div>
                             </div>
+                            </>
                           )}
                         </>
                       )}
                     </>
-                  )}
-                </div>
+                  )
+                  )
+                }
 
-              {/* UPGRADE/CHANGE/CANCEL SUBSCRIPTION Buttons - Below main card, only show when loyalty rewards is not active */}
+                {/* UPGRADE/CHANGE/CANCEL SUBSCRIPTION Buttons - Below main card, only show when loyalty rewards is not active */}
               {!showLoyaltyRewards && (
                       <>
                         {hasPremiumSubscription ? (
                     <>
                       {/* CHANGE SUBSCRIPTION Button */}
-                      <div className="px-0 md:px-0" style={{ marginTop: '12px', marginBottom: '10px', transform: 'translateY(-2px)' }}>
+                      <div className="px-0 md:px-0" style={{ marginTop: '-2px', marginBottom: '10px', transform: 'translateY(-2px)' }}>
                 <button
                           onClick={showPremiumView ? handleUpgradeButtonClick : handleChangeSubscription}
                   className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
@@ -1980,7 +1860,7 @@ fontFamily: '"Futura PT Book"',
             )}
                     </>
                   ) : (
-                    <div className="px-0 md:px-0" style={{ marginTop: '12px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
+                    <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
                       <button
                         onClick={handleUpgradeButtonClick}
                         className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
@@ -1998,10 +1878,9 @@ fontFamily: '"Futura PT Book"',
                   )}
                       </>
               )}
-                    </>
+              </>
             )}
         </div>
-      </div>
       </div>
 
       {/* Validation Modal */}
@@ -2032,4 +1911,3 @@ fontFamily: '"Futura PT Book"',
 }
 
 export default MembershipPage;
-
