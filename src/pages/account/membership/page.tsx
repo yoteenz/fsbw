@@ -179,66 +179,6 @@ function MembershipPage() {
     '12months': { name: '12 MONTHS PREMIUM', price: 960 }
   };
 
-  // Generate referral code from user data with conflict checking
-  const generateReferralCode = (): string => {
-    // If user already has a referral code stored, use it
-    if (userData?.referralCode) {
-      return userData.referralCode;
-    }
-
-    if (!userData) {
-      return 'KA3047'; // Default/example code
-    }
-
-    // Get first initial of first name
-    const firstInitial = userData.firstName && userData.firstName.length > 0 
-      ? userData.firstName.charAt(0).toUpperCase() 
-      : 'K';
-
-    // Get first initial of last name
-    const lastInitial = userData.lastName && userData.lastName.length > 0 
-      ? userData.lastName.charAt(0).toUpperCase() 
-      : 'A';
-
-    // Extract day from birthday (format: MM/DD/YYYY)
-    let day = '30'; // Default
-    if (userData.birthday) {
-      const birthdayParts = userData.birthday.split('/');
-      if (birthdayParts.length >= 2) {
-        day = birthdayParts[1].padStart(2, '0'); // Ensure 2 digits
-      }
-    }
-
-    // Extract phone number digits
-    let phoneDigits = '2647'; // Default
-    if (userData.phoneNumber) {
-      // Remove all non-digit characters
-      phoneDigits = userData.phoneNumber.replace(/\D/g, '');
-    }
-
-    // Try primary code (last 2 digits)
-    let lastTwoDigits = phoneDigits.length >= 2 ? phoneDigits.slice(-2) : '47';
-    let primaryCode = `${firstInitial}${lastInitial}${day}${lastTwoDigits}`;
-
-    // Check if code already exists in registeredUsers
-    try {
-      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-      const codeExists = registeredUsers.some((user: any) => 
-        user.referralCode === primaryCode && user.email !== userData.email
-      );
-
-      // If code is taken, use alternative (2 digits before last 2)
-      if (codeExists && phoneDigits.length >= 4) {
-        const alternativeDigits = phoneDigits.slice(-4, -2); // 2 digits before last 2
-        return `${firstInitial}${lastInitial}${day}${alternativeDigits}`;
-      }
-    } catch (e) {
-      // If error checking, just return primary code
-    }
-
-    return primaryCode;
-  };
-
   // Reset premium view when navigating away from membership page
   useEffect(() => {
     return () => {
@@ -1017,6 +957,58 @@ function MembershipPage() {
                           </p>
                         </div>
 
+                        {/* MEMBERSHIP STATUS */}
+                        <div style={{ marginBottom: '20px' }}>
+                          <div style={{ marginBottom: '20px' }}>
+                            <div>
+                              <p
+                                style={{
+                                  fontFamily: '"Futura PT Book"',
+                                  color: '#000000',
+                                  fontSize: '10px',
+                                  margin: '0 0 4px 0',
+                                  textTransform: 'uppercase'
+                                }}
+                              >
+                                CURRENT TIER: <span style={{ color: '#EB1C24' }}>SILVER</span>
+                              </p>
+                              <p
+                                style={{
+                                  fontFamily: '"Futura PT Book"',
+                                  color: '#000000',
+                                  fontSize: '10px',
+                                  margin: '0 0 4px 0',
+                                  textTransform: 'uppercase'
+                                }}
+                              >
+                                BENEFITS INCLUDE: WELCOME DISCOUNT, BIRTHDAY GIFT
+                              </p>
+                              <p
+                                style={{
+                                  fontFamily: '"Futura PT Book"',
+                                  color: '#000000',
+                                  fontSize: '10px',
+                                  margin: '0',
+                                  textTransform: 'uppercase'
+                                }}
+                              >
+                                NEXT TIER: <span style={{ color: '#EB1C24' }}>RED</span>
+                              </p>
+                              <p
+                                style={{
+                                  fontFamily: '"Futura PT Book"',
+                                  color: '#000000',
+                                  fontSize: '10px',
+                                  margin: '4px 0 0 0',
+                                  textTransform: 'uppercase'
+                                }}
+                              >
+                                EARN 2,500 MORE POINTS TO REACH
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
                         {/* MORE WAYS TO EARN */}
                         <div>
                           <h3
@@ -1379,205 +1371,6 @@ function MembershipPage() {
                   ) : (
                     /* REGULAR MEMBERSHIP CONTENT */
                     <>
-                      {/* REFERRAL CODE Section */}
-                      <div style={{ marginBottom: '32px' }}>
-                        <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
-                          <h2
-                            style={{
-                              fontFamily: '"Futura PT Medium"',
-                              color: '#EB1C24',
-                              fontSize: '12px',
-                              fontWeight: '500',
-                              margin: '0',
-                              textTransform: 'uppercase'
-                            }}
-                          >
-                            REFERRAL CODE
-                          </h2>
-                          <p
-                            style={{
-                              fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                              color: '#000000',
-                              fontSize: '13px',
-                              margin: '0',
-                              textTransform: 'uppercase'
-                            }}
-                          >
-                            {generateReferralCode()}
-                          </p>
-                        </div>
-                    
-                        <div style={{ marginBottom: '12px' }}>
-                          <p
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              color: '#000000',
-                              fontSize: '10px',
-                              margin: '0 0 12px 0',
-                              textTransform: 'uppercase'
-                            }}
-                          >
-                            ONCE YOU CREATE AN ACCOUNT, YOU'RE ASSIGNED A UNIQUE REFERRAL CODE. SHARE THIS CODE WITH FRIENDS & FAMILY TO EARN DIGITAL CASH EVERY TIME SOMEONE USES YOUR CODE AT CHECKOUT.
-                          </p>
-                        </div>
-
-                        <div style={{ marginBottom: '12px' }}>
-                          <p
-                            style={{
-                              fontFamily: '"Futura PT Medium"',
-                              color: '#EB1C24',
-                              fontSize: '10px',
-                              margin: '0 0 8px 0',
-                              textTransform: 'uppercase',
-                              fontWeight: '500'
-                            }}
-                          >
-                            HOW IT WORKS:
-                          </p>
-                          <p
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              color: '#000000',
-                              fontSize: '10px',
-                              margin: '0 0 12px 0',
-                              textTransform: 'uppercase'
-                            }}
-                          >
-                            WHEN SOMEONE MAKES A PURCHASE USING YOUR REFERRAL CODE, THEY RECEIVE <span style={{ color: '#EB1C24' }}>$20 OFF</span> THEIR ORDER AND YOU RECEIVE <span style={{ color: '#EB1C24' }}>$20</span> DEPOSITED INTO YOUR GIFT CARD BALANCE AFTER THEIR PURCHASE HAS BEEN CONFIRMED.
-                          </p>
-                        </div>
-
-                        <div style={{ marginBottom: '12px' }}>
-                          <p
-                            style={{
-                              fontFamily: '"Futura PT Medium"',
-                              color: '#EB1C24',
-                              fontSize: '10px',
-                              margin: '0 0 8px 0',
-                              textTransform: 'uppercase',
-                              fontWeight: '500'
-                            }}
-                          >
-                            IMPORTANT NOTES:
-                          </p>
-                          <p
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              color: '#000000',
-                              fontSize: '10px',
-                              margin: '0 0 4px 0',
-                              textTransform: 'uppercase'
-                            }}
-                          >
-                            • REFERRAL CODES CAN ONLY BE APPLIED ONCE PER ACCOUNT
-                          </p>
-                          <p
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              color: '#000000',
-                              fontSize: '10px',
-                              margin: '0 0 4px 0',
-                              textTransform: 'uppercase'
-                            }}
-                          >
-                            • YOU CANNOT USE YOUR OWN REFERRAL CODE UNDER YOUR ACCOUNT
-                          </p>
-                          <p
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              color: '#000000',
-                              fontSize: '10px',
-                              margin: '0 0 12px 0',
-                              textTransform: 'uppercase'
-                            }}
-                          >
-                            • YOU MUST CREATE AN ACCOUNT OR BE SIGNED IN TO CHECKOUT WITH A REFERRAL CODE (FOR TRACKING PURPOSES)
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* REWARDS PROGRAM / LOYALTY POINTS Section */}
-                <div style={{ marginBottom: '32px' }}>
-                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
-                    <h2
-                      style={{
-                        fontFamily: '"Futura PT Medium"',
-                        color: '#EB1C24',
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        margin: '0',
-                        textTransform: 'uppercase'
-                      }}
-                    >
-                      MEMBERSHIP STATUS
-                    </h2>
-                  </div>
-                  
-                  {/* BASIC MEMBERSHIP Content */}
-                        {!showLoyaltyRewards && (
-                  <div style={{ marginBottom: '20px' }}>
-                    <p
-                      style={{
-                        fontFamily: '"Futura PT Medium"',
-                        color: '#000000',
-                        fontSize: '11px',
-                        margin: '0 0 8px 0',
-                        textTransform: 'uppercase',
-                        fontWeight: '500'
-                      }}
-                    >
-                      BASIC MEMBERSHIP
-                    </p>
-                            <div>
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Book"',
-                            color: '#000000',
-                            fontSize: '10px',
-                            margin: '0 0 4px 0',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          CURRENT TIER: <span style={{ color: '#EB1C24' }}>SILVER</span>
-                        </p>
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Book"',
-                            color: '#000000',
-                            fontSize: '10px',
-                            margin: '0 0 4px 0',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          BENEFITS INCLUDE: WELCOME DISCOUNT, BIRTHDAY GIFT
-                        </p>
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Book"',
-                            color: '#000000',
-                            fontSize: '10px',
-                            margin: '0',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          NEXT TIER: <span style={{ color: '#EB1C24' }}>RED</span>
-                        </p>
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Book"',
-                            color: '#000000',
-                            fontSize: '10px',
-                            margin: '4px 0 0 0',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          EARN 2,500 MORE POINTS TO REACH
-                        </p>
-                      </div>
-                      </div>
-                        )}
-                </div>
-
                       {/* LOYALTY POINTS Section */}
                 <div style={{ marginBottom: '32px' }}>
                   <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
@@ -1732,6 +1525,58 @@ function MembershipPage() {
                               >
                                 REWARDS UPDATED ROUTINELY WITH NEW DROPS
                               </p>
+                            </div>
+
+                            {/* MEMBERSHIP STATUS */}
+                            <div style={{ marginBottom: '20px' }}>
+                              <div style={{ marginBottom: '20px' }}>
+                                <div>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Book"',
+                                      color: '#000000',
+                                      fontSize: '10px',
+                                      margin: '0 0 4px 0',
+                                      textTransform: 'uppercase'
+                                    }}
+                                  >
+                                    CURRENT TIER: <span style={{ color: '#EB1C24' }}>SILVER</span>
+                                  </p>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Book"',
+                                      color: '#000000',
+                                      fontSize: '10px',
+                                      margin: '0 0 4px 0',
+                                      textTransform: 'uppercase'
+                                    }}
+                                  >
+                                    BENEFITS INCLUDE: WELCOME DISCOUNT, BIRTHDAY GIFT
+                                  </p>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Book"',
+                                      color: '#000000',
+                                      fontSize: '10px',
+                                      margin: '0',
+                                      textTransform: 'uppercase'
+                                    }}
+                                  >
+                                    NEXT TIER: <span style={{ color: '#EB1C24' }}>RED</span>
+                                  </p>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Book"',
+                                      color: '#000000',
+                                      fontSize: '10px',
+                                      margin: '4px 0 0 0',
+                                      textTransform: 'uppercase'
+                                    }}
+                                  >
+                                    EARN 2,500 MORE POINTS TO REACH
+                                  </p>
+                                </div>
+                              </div>
                             </div>
 
                             {/* MORE WAYS TO EARN */}

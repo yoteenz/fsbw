@@ -117,6 +117,9 @@ function CheckoutPage() {
   // Gift card balance state
   const [giftCardBalance, setGiftCardBalance] = useState(0);
   const [appliedGiftCardBalance, setAppliedGiftCardBalance] = useState(0);
+  const userSelectedDigitalCashRef = useRef<number | null>(null);
+  const [showDigitalCashModal, setShowDigitalCashModal] = useState(false);
+  const [digitalCashModalAmount, setDigitalCashModalAmount] = useState(0);
   
   // Tip state - store percentage (0-100) or custom dollar amount (negative values indicate custom dollar amount)
   const [tipPercentage, setTipPercentage] = useState<number | null>(null);
@@ -1016,25 +1019,30 @@ function CheckoutPage() {
   // Update applied gift card balance when order amount changes (cap at order total)
   // NOT applied to subscription upgrades
   // Cannot be combined with referral codes or discount codes
+  // Note: Adding a gift card (code) at checkout replaces the digital cash line; digital cash (account balance) and gift card code cannot be applied together.
+  // When user has chosen an amount in the digital cash modal, we cap that choice by the new max but do not reset to full cap.
   useEffect(() => {
-    // Don't apply gift card to subscription upgrades
     if (isSubscriptionUpgrade) {
       setAppliedGiftCardBalance(0);
+      userSelectedDigitalCashRef.current = null;
       return;
     }
-    
-    // Don't apply gift card if referral code or discount code is active
     if (appliedReferralCode || appliedDiscount > 0) {
       setAppliedGiftCardBalance(0);
+      userSelectedDigitalCashRef.current = null;
       return;
     }
-    
-    if (giftCardBalance > 0) {
-      // Calculate the maximum discountable amount (order + taxes + shipping + rush + protection)
-      // Calculate protection fee for max discountable amount
-      const protectionFeeForDiscount = packageProtection ? calculateProtectionFee(orderAmount) : 0;
-      const maxDiscountable = orderAmount + taxesProcessing + shippingHandling + (selectedProcessing === 'rush' ? 100 : 0) + protectionFeeForDiscount;
-      const cappedBalance = Math.min(giftCardBalance, maxDiscountable);
+    if (giftCardBalance <= 0) {
+      setAppliedGiftCardBalance(0);
+      userSelectedDigitalCashRef.current = null;
+      return;
+    }
+    const protectionFeeForDiscount = packageProtection ? calculateProtectionFee(orderAmount) : 0;
+    const maxDiscountable = orderAmount + taxesProcessing + shippingHandling + (selectedProcessing === 'rush' ? 100 : 0) + protectionFeeForDiscount;
+    const cappedBalance = Math.min(giftCardBalance, maxDiscountable);
+    if (userSelectedDigitalCashRef.current !== null) {
+      setAppliedGiftCardBalance(Math.min(userSelectedDigitalCashRef.current, cappedBalance));
+    } else {
       setAppliedGiftCardBalance(cappedBalance);
     }
   }, [giftCardBalance, orderAmount, taxesProcessing, shippingHandling, selectedProcessing, packageProtection, isSubscriptionUpgrade, appliedReferralCode, appliedDiscount]);
@@ -1173,9 +1181,9 @@ function CheckoutPage() {
   };
   
   const discount = appliedDiscount;
-  // Gift card discount should NOT be applied to subscription upgrades
-  const giftCardDiscount = isSubscriptionUpgrade ? 0 : appliedGiftCardBalance; // Automatically applied gift card balance
-  const totalDiscount = discount + referralDiscount + giftCardDiscount; // Combined discount from codes, referral codes, and gift card
+  // Gift card discount should NOT be applied to subscription upgrades. When applied, this is shown as "DIGITAL CASH" (account balance). If a gift card code is applied instead, that replaces this line (label "GIFT CARD"); both cannot be applied together.
+  const giftCardDiscount = isSubscriptionUpgrade ? 0 : appliedGiftCardBalance; // Automatically applied gift card balance (digital cash)
+  const totalDiscount = discount + referralDiscount + giftCardDiscount; // Combined discount from codes, referral codes, and gift card / digital cash
   const rushProcessing = selectedProcessing === 'rush' ? 120 : 0;
   // Always calculate the protection fee amount (for display), but only add to total if selected
   const protectionFeeAmount = calculateProtectionFee(orderAmount);
@@ -1899,13 +1907,14 @@ function CheckoutPage() {
                         <div
                           className="flex"
                           style={{
-                            transform: `translateX(${scrollPosition}px)`,
+                            transform: cartItems.length === 1 ? 'none' : `translateX(${scrollPosition}px)`,
                             transition: 'none',
                             gap: '20px',
                             height: '100%',
                             alignItems: 'center',
+                            justifyContent: cartItems.length === 1 ? 'center' : undefined,
                             willChange: 'transform',
-                            paddingRight: '10px'
+                            paddingRight: cartItems.length === 1 ? 0 : '10px'
                           }}
                         >
                           {cartItems.map((item, index) => {
@@ -4176,23 +4185,58 @@ function CheckoutPage() {
                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(tipAmount)}></span>
                       </div>
                     )}
-                    {giftCardDiscount > 0 && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
-                        DISCOUNT: <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080' }}>GIFT CARD</span>
+                    {/* Digital cash (account balance) or gift card code—only one can apply; adding a gift card replaces this line. Edit opens modal to choose amount (0 = line still shows with ($0)). */}
+                    {giftCardBalance > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        DISCOUNT: <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => {
+                            const protectionFeeForOpen = packageProtection ? calculateProtectionFee(orderAmount) : 0;
+                            const maxDisc = orderAmount + taxesProcessing + shippingHandling + (selectedProcessing === 'rush' ? 100 : 0) + protectionFeeForOpen;
+                            const maxA = Math.min(giftCardBalance, Math.round(maxDisc));
+                            setDigitalCashModalAmount(Math.min(appliedGiftCardBalance, maxA));
+                            setShowDigitalCashModal(true);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              const protectionFeeForOpen = packageProtection ? calculateProtectionFee(orderAmount) : 0;
+                              const maxDisc = orderAmount + taxesProcessing + shippingHandling + (selectedProcessing === 'rush' ? 100 : 0) + protectionFeeForOpen;
+                              const maxA = Math.min(giftCardBalance, Math.round(maxDisc));
+                              setDigitalCashModalAmount(Math.min(appliedGiftCardBalance, maxA));
+                              setShowDigitalCashModal(true);
+                            }
+                          }}
+                          style={{ fontFamily: '"Futura PT Demi"', color: '#808080', cursor: 'pointer' }}
+                        >DIGITAL CASH</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                          const protectionFeeForOpen = packageProtection ? calculateProtectionFee(orderAmount) : 0;
+                          const maxDisc = orderAmount + taxesProcessing + shippingHandling + (selectedProcessing === 'rush' ? 100 : 0) + protectionFeeForOpen;
+                          const maxA = Math.min(giftCardBalance, Math.round(maxDisc));
+                          setDigitalCashModalAmount(Math.min(appliedGiftCardBalance, maxA));
+                          setShowDigitalCashModal(true);
+                        }}
+                          style={{ padding: 0, border: 'none', background: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
+                          aria-label="Edit digital cash amount"
+                        >
+                          <img src="/assets/edit-icon.svg" alt="" width={9} height={9} style={{ display: 'block', filter: 'brightness(0) saturate(0%)', opacity: 0.6, transform: 'translateY(-1px)' }} />
+                        </button>
                       </span>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>
-                        ({(() => {
+                        {(() => {
                           const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
-                          const convertedAmount = giftCardDiscount * currency.rate;
-                          const formattedAmount = convertedAmount.toLocaleString('en-US', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                          });
-                          // Extract symbol and format as -$70.00
                           const symbol = currency.symbol.replace(/&#36;/g, '$').replace(/&euro;/g, '€').replace(/&pound;/g, '£').replace(/&yen;/g, '¥').replace(/&#8377;/g, '₹');
-                          return `-${symbol}${formattedAmount}`;
-                        })()})
+                          if (appliedGiftCardBalance <= 0) {
+                            return `(${symbol}0)`;
+                          }
+                          const convertedAmount = appliedGiftCardBalance * currency.rate;
+                          const wholeAmount = Math.round(convertedAmount);
+                          return `(-${symbol}${wholeAmount.toLocaleString('en-US')})`;
+                        })()}
                       </span>
                     </div>
                     )}
@@ -4363,7 +4407,7 @@ function CheckoutPage() {
                         textTransform: 'uppercase'
                       }}
                     >
-                      I HAVE CONFIRMED THAT MY <span style={{ color: '#EB1C24' }}>SHIPPING ADDRESS</span> IS ACCURATE & CAN NOT BE CHANGED BEYOND THIS POINT.<span style={{ color: '#EB1C24' }}>*</span>
+                      I ACKNOWLEDGE MY <span style={{ color: '#EB1C24' }}>SHIPPING ADDRESS</span> IS CORRECT & CAN NOT BE CHANGED BEYOND THIS POINT.<span style={{ color: '#EB1C24' }}>*</span>
                     </label>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -4870,6 +4914,101 @@ function CheckoutPage() {
         </div>
       </div>
     
+      {/* Digital Cash amount modal */}
+      {showDigitalCashModal && (() => {
+        const protectionFeeForDiscount = packageProtection ? calculateProtectionFee(orderAmount) : 0;
+        const maxDiscountable = orderAmount + taxesProcessing + shippingHandling + (selectedProcessing === 'rush' ? 100 : 0) + protectionFeeForDiscount;
+        const maxApplicable = Math.min(giftCardBalance, Math.round(maxDiscountable));
+        return (
+        <div
+          className="fixed z-50 backdrop-blur-md"
+          style={{
+            top: 0, left: 0, right: 0, bottom: 0,
+            zIndex: 999999999,
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            backdropFilter: 'blur(3px)',
+            WebkitBackdropFilter: 'blur(3px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowDigitalCashModal(false);
+          }}
+        >
+          <div
+            className="p-6 bg-white border border-black"
+            style={{ width: 'calc(100vw - 32px)', maxWidth: 'none', borderWidth: '1.3px', boxSizing: 'border-box' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', fontWeight: 500, marginBottom: '16px', color: '#EB1C24', textTransform: 'uppercase', textAlign: 'center' }}>
+              DIGITAL CASH
+            </h3>
+            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', marginBottom: '16px', textTransform: 'uppercase' }}>
+              Select the amount of digital cash to apply to your order.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', textTransform: 'uppercase' }}>Current balance</span>
+                <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', fontWeight: 500 }}>${Math.max(0, giftCardBalance - digitalCashModalAmount)}</span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={maxApplicable}
+                step={1}
+                value={digitalCashModalAmount}
+                onChange={(e) => setDigitalCashModalAmount(Math.max(0, Math.min(maxApplicable, parseInt(e.target.value, 10) || 0)))}
+                style={{
+                  width: '100%',
+                  height: '6px',
+                  accentColor: '#EB1C24',
+                  cursor: 'pointer'
+                }}
+              />
+            </div>
+            {/* Buttons inside container - APPLY left, CANCEL right */}
+            <div className="flex space-x-3" style={{ marginTop: '24px' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  const amount = Math.max(0, Math.min(maxApplicable, digitalCashModalAmount));
+                  setAppliedGiftCardBalance(amount);
+                  userSelectedDigitalCashRef.current = amount;
+                  setShowDigitalCashModal(false);
+                }}
+                className="flex-1 py-2 px-4 border border-black font-medium hover:bg-gray-50 transition-colors"
+                style={{
+                  borderWidth: '1.3px',
+                  fontSize: '11px',
+                  fontFamily: '"Futura PT Medium"',
+                  backgroundColor: '#FFFFFF',
+                  color: '#EB1C24',
+                  textTransform: 'uppercase'
+                }}
+              >
+                APPLY
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowDigitalCashModal(false)}
+                className="flex-1 py-2 px-4 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
+                style={{
+                  borderWidth: '1.3px',
+                  fontSize: '11px',
+                  fontFamily: '"Futura PT Medium"',
+                  color: '#000000',
+                  textTransform: 'uppercase'
+                }}
+              >
+                CANCEL
+              </button>
+            </div>
+          </div>
+        </div>
+        );
+      })()}
+
       {/* Terms & Conditions Modal */}
       {showTermsModal && (
         <div 

@@ -90,6 +90,7 @@ const WishlistPage = lazyWithLogging(() => import('./pages/wishlist/page'), 'Wis
 const AccountPage = lazyWithLogging(() => import('./pages/account/page'), 'AccountPage');
 const ConciergePage = lazyWithLogging(() => import('./pages/account/concierge/page'), 'ConciergePage');
 const MembershipPage = lazyWithLogging(() => import('./pages/account/membership/page'), 'MembershipPage');
+const ReferralsPage = lazyWithLogging(() => import('./pages/account/referrals/page'), 'ReferralsPage');
 const AffiliatePage = lazyWithLogging(() => import('./pages/account/affiliate/page'), 'AffiliatePage');
 const NotificationsPage = lazyWithLogging(() => import('./pages/account/notifications/page'), 'NotificationsPage');
 const LoadCardPage = lazyWithLogging(() => import('./pages/account/load-card/page'), 'LoadCardPage');
@@ -568,6 +569,11 @@ function App() {
         <Route path="/account/rewards" element={
           <Suspense fallback={<LoadingScreen />}>
             <MembershipPage />
+          </Suspense>
+        } />
+        <Route path="/account/referrals" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ReferralsPage />
           </Suspense>
         } />
         <Route path="/account/affiliate" element={

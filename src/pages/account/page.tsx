@@ -805,6 +805,7 @@ function AccountPage() {
         route: '/account/orders' 
       },
       { title: 'REWARDS', subtitle: 'MEMBERSHIP + SUBSCRIPTION', route: '/account/rewards' },
+      { title: 'REFERRALS', subtitle: 'SHARE YOUR CODE', route: '/account/referrals' },
       { title: 'AFFILIATE', subtitle: 'SUBMIT CONTENT FOR POINTS', route: '/account/affiliate' },
       { 
         title: 'REVIEWS', 
@@ -848,6 +849,7 @@ function AccountPage() {
         case 'ORDERS':
         case 'ALERTS':
         case 'REWARDS':
+        case 'REFERRALS':
         case 'AFFILIATE':
         case 'REVIEWS':
         case 'PAYMENT METHOD':
@@ -865,6 +867,8 @@ function AccountPage() {
         return hasAlertsNotifications();
       case 'REWARDS':
         return hasMembershipNotifications();
+      case 'REFERRALS':
+        return false;
       case 'AFFILIATE':
         return hasAffiliateNotifications();
       case 'REVIEWS':
@@ -1783,7 +1787,7 @@ function AccountPage() {
                         transform: 'translateY(9px)'
                       }}
                     >
-                      GIFT CARD BALANCE: {formatPrice(userData?.giftCardBalance || 0)}
+                      DIGITAL CASH: {formatPrice(userData?.giftCardBalance || 0)}
                     </p>
 
                     <p
