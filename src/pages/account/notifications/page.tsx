@@ -587,7 +587,7 @@ function NotificationsPage() {
                       }`}
                       style={{ 
                         fontFamily: '"Futura PT Medium"', 
-                        color: activeTab === 'NEW' ? '#EB1C24' : '#909090', 
+                        color: activeTab === 'NEW' ? '#EB1C24' : '#808080', 
                         fontSize: '12px', 
                         fontWeight: '500',
                         border: 'none',
@@ -606,7 +606,7 @@ function NotificationsPage() {
                       }`}
                       style={{ 
                         fontFamily: '"Futura PT Medium"', 
-                        color: activeTab === 'SEEN' ? '#EB1C24' : '#909090', 
+                        color: activeTab === 'SEEN' ? '#EB1C24' : '#808080', 
                         fontSize: '12px', 
                         fontWeight: '500',
                         border: 'none',
@@ -628,7 +628,7 @@ function NotificationsPage() {
                           style={{
                             fontFamily: '"Futura PT Medium"',
                             fontSize: '12px',
-                            color: '#909090',
+                            color: '#808080',
                             margin: 0,
                             textTransform: 'uppercase',
                             fontWeight: '500'
@@ -756,7 +756,7 @@ function NotificationsPage() {
                                 style={{
                                   fontFamily: '"Futura PT Demi"',
                                   fontSize: '10px',
-                                  color: '#909090',
+                                  color: '#808080',
                                   margin: '0 0 3px 0',
                                   lineHeight: '1.3'
                                 }}

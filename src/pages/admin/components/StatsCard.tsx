@@ -131,13 +131,13 @@ export default function StatsCard({ data, onCardClick }: StatsCardProps) {
 
   // Helper: convert color class to actual color value
   const getColorValue = (colorClass?: string) => {
-    if (!colorClass) return "#909090";
+    if (!colorClass) return "#808080";
     
     if (colorClass === "text-red-500") return "#EB1C24";
     if (colorClass === "text-black") return "#000000";
-    if (colorClass === "text-gray-500") return "#909090";
+    if (colorClass === "text-gray-500") return "#808080";
     
-    return "#909090"; // default fallback
+    return "#808080"; // default fallback
   };
 
   // Helper: navigation handler for title clicks
@@ -233,7 +233,7 @@ export default function StatsCard({ data, onCardClick }: StatsCardProps) {
                   {item.label}:{" "}
                   {item.label === 'INVENTORY' ? (
                     <>
-                      <span className="font-medium font-futura" style={{ fontWeight: "515", color: parseInt(item.value.split('/')[0]) <= 20 ? '#EB1C24' : '#909090' }}>
+                      <span className="font-medium font-futura" style={{ fontWeight: "515", color: parseInt(item.value.split('/')[0]) <= 20 ? '#EB1C24' : '#808080' }}>
                         {item.value.split('/')[0]}
                       </span>
                       <span className="font-medium font-futura" style={{ fontWeight: "515", color: getColorValue(item.color) }}>
@@ -252,12 +252,12 @@ export default function StatsCard({ data, onCardClick }: StatsCardProps) {
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1">
-                    <span className="text-[8px] font-futura" style={{ fontWeight: "515", color: "#909090" }}>
+                    <span className="text-[8px] font-futura" style={{ fontWeight: "515", color: "#808080" }}>
                       {(item as any).highlight}
                     </span>
                   </div>
                   <div className="flex items-center">
-                    <span className="text-[8px] font-futura" style={ { fontWeight: "515", color: "#909090" }}>
+                    <span className="text-[8px] font-futura" style={ { fontWeight: "515", color: "#808080" }}>
                       {(item as any).activity}
                     </span>
                   </div>
@@ -336,7 +336,7 @@ export default function StatsCard({ data, onCardClick }: StatsCardProps) {
                   }}
                 >
                   <span style={{ 
-                    color: tier.label === 'PREM' ? '#000000' : tier.label === 'STD' ? '#EB1C24' : tier.label === 'STANDARD' ? '#909090' : '#909090' 
+                    color: tier.label === 'PREM' ? '#000000' : tier.label === 'STD' ? '#EB1C24' : tier.label === 'STANDARD' ? '#808080' : '#808080' 
                   }}>
                     {tier.label === 'PREM' ? 'BLACK' : tier.label === 'STD' ? 'RED' : tier.label === 'STANDARD' ? 'SILVER' : tier.label}:
                   </span>

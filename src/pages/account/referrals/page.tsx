@@ -43,6 +43,65 @@ function ReferralsPage() {
     }
     return null;
   });
+  const [referralStats, setReferralStats] = useState<{ invitees: number; earned: number }>({ invitees: 0, earned: 0 });
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [inviteCopied, setInviteCopied] = useState<'link' | 'code' | null>(null);
+  const [codeStatus, setCodeStatus] = useState<'active' | 'inactive'>('inactive');
+  const [referralList, setReferralList] = useState<Array<{ referredEmail: string; orderNumber?: string; date: string; amount: number }>>([]);
+  const [statusTab, setStatusTab] = useState<'active' | 'past'>('active');
+
+  useEffect(() => {
+    try {
+      const log = JSON.parse(localStorage.getItem('referralEarnings') || '[]');
+      const email = (userData?.email || '').trim().toLowerCase();
+      if (!email) {
+        setReferralStats({ invitees: 0, earned: 0 });
+        setReferralList([]);
+        return;
+      }
+      const mine = log.filter((e: { referrerEmail?: string; status?: string }) =>
+        (e.referrerEmail || '').trim().toLowerCase() === email && (e.status === 'confirmed')
+      );
+      setReferralStats({ invitees: mine.length, earned: mine.reduce((sum: number, e: { amount?: number }) => sum + (e.amount || 0), 0) });
+      setReferralList(mine.map((e: any) => ({
+        referredEmail: e.referredEmail || '-',
+        orderNumber: e.orderNumber,
+        date: e.date || '',
+        amount: e.amount || 0
+      })).sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+    } catch {
+      setReferralStats({ invitees: 0, earned: 0 });
+      setReferralList([]);
+    }
+  }, [userData?.email]);
+
+  // Code is active when user has at least one DELIVERED order, or (existing user) has orders but no hasMadeFirstPurchase
+  useEffect(() => {
+    const email = (userData?.email || '').trim().toLowerCase();
+    if (!email) {
+      setCodeStatus('inactive');
+      return;
+    }
+    try {
+      const key = `userOrders_${email}`;
+      const raw = localStorage.getItem(key);
+      if (!raw) {
+        setCodeStatus(userData?.hasMadeFirstPurchase ? 'inactive' : 'inactive');
+        return;
+      }
+      const data = JSON.parse(raw);
+      const allOrders = [...(data.activeOrders || []), ...(data.pastOrders || [])];
+      const hasDelivered = allOrders.some((o: any) => o.status === 'DELIVERED');
+      if (hasDelivered) {
+        setCodeStatus('active');
+        return;
+      }
+      const existingUser = !userData?.hasMadeFirstPurchase && allOrders.length > 0;
+      setCodeStatus(existingUser ? 'active' : 'inactive');
+    } catch {
+      setCodeStatus('inactive');
+    }
+  }, [userData?.email, userData?.hasMadeFirstPurchase]);
 
   // Generate referral code from user data with conflict checking (same as rewards page)
   const generateReferralCode = (): string => {
@@ -83,6 +142,32 @@ function ReferralsPage() {
       // ignore
     }
     return primaryCode;
+  };
+
+  const getInviteLink = () => {
+    const code = generateReferralCode();
+    const base = typeof window !== 'undefined' ? window.location.origin : '';
+    return `${base}/build-a-wig?ref=${encodeURIComponent(code)}`;
+  };
+
+  const handleCopyCode = () => {
+    const code = generateReferralCode();
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(code).then(() => {
+        setInviteCopied('code');
+        setTimeout(() => setInviteCopied(null), 2000);
+      });
+    }
+  };
+
+  const handleCopyLink = () => {
+    const link = getInviteLink();
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(link).then(() => {
+        setInviteCopied('link');
+        setTimeout(() => setInviteCopied(null), 2000);
+      });
+    }
   };
 
   useEffect(() => {
@@ -305,39 +390,184 @@ function ReferralsPage() {
                 </div>
               </div>
             ) : (
-              /* MAIN CARD - Referral code section (same as top of /rewards page) */
+              <>
+              {/* MAIN CARD - Refer friends: eligibility, rewards, status, rules, code, CTA */}
               <div
                 className="border border-black bg-white/60 backdrop-blur-sm w-full pt-6 pb-4 px-5 mb-2 transition-all duration-300 ease-out"
                 style={{ borderWidth: '1.3px', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: '560px' }}
               >
-                <div style={{ marginBottom: '32px' }}>
-                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
-                    <h2 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500', margin: '0', textTransform: 'uppercase' }}>
-                      REFERRAL CODE
-                    </h2>
-                    <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', color: '#000000', fontSize: '13px', margin: '0', textTransform: 'uppercase' }}>
-                      {generateReferralCode()}
-                    </p>
+                <h2 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '14px', fontWeight: '500', margin: '0 0 10px 0', textTransform: 'uppercase' }}>
+                  REFER FRIENDS
+                </h2>
+                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: '0 0 16px 0', textTransform: 'uppercase' }}>
+                  Invite friends who are new. Referral codes apply to first purchase only.
+                </p>
+                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px', margin: '0 0 16px 0', textTransform: 'uppercase' }}>
+                  Give friends <span style={{ color: '#EB1C24' }}>$20 off</span> their first order. You get <span style={{ color: '#EB1C24' }}>$20 digital cash</span> when their order is confirmed.
+                </p>
+                {/* Status */}
+                <div className="border border-black bg-white/80 py-4 px-4 mb-4" style={{ borderWidth: '1px' }}>
+                  <div className="flex items-center justify-between flex-wrap gap-1" style={{ marginBottom: '12px' }}>
+                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '11px', fontWeight: '500', margin: 0, textTransform: 'uppercase' }}>Status</h3>
+                    <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', fontWeight: '500', textTransform: 'uppercase', color: codeStatus === 'active' ? '#000000' : '#EB1C24' }}>
+                      Your code: {codeStatus === 'active' ? 'Active' : 'Inactive'}
+                    </span>
                   </div>
-                  <div style={{ marginBottom: '12px' }}>
-                    <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: '0 0 12px 0', textTransform: 'uppercase' }}>
-                      ONCE YOU CREATE AN ACCOUNT, YOU'RE ASSIGNED A UNIQUE REFERRAL CODE. SHARE THIS CODE WITH FRIENDS & FAMILY TO EARN DIGITAL CASH EVERY TIME SOMEONE USES YOUR CODE AT CHECKOUT.
-                    </p>
+                  <div className="flex justify-between">
+                    <div>
+                      <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: '0 0 4px 0', textTransform: 'uppercase' }}>Invitees</p>
+                      <p style={{ fontFamily: '"Covered By Your Grace", sans-serif', color: '#000000', fontSize: '18px', margin: 0 }}>{referralStats.invitees}</p>
+                    </div>
+                    <div style={{ borderLeft: '1px solid #ccc', paddingLeft: '16px' }}>
+                      <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: '0 0 4px 0', textTransform: 'uppercase' }}>You earned</p>
+                      <p style={{ fontFamily: '"Covered By Your Grace", sans-serif', color: '#000000', fontSize: '18px', margin: 0 }}>${referralStats.earned}</p>
+                    </div>
                   </div>
-                  <div style={{ marginBottom: '12px' }}>
-                    <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: '0 0 8px 0', textTransform: 'uppercase', fontWeight: '500' }}>HOW IT WORKS:</p>
-                    <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: '0 0 12px 0', textTransform: 'uppercase' }}>
-                      WHEN SOMEONE MAKES A PURCHASE USING YOUR REFERRAL CODE, THEY RECEIVE <span style={{ color: '#EB1C24' }}>$20 OFF</span> THEIR ORDER AND YOU RECEIVE <span style={{ color: '#EB1C24' }}>$20</span> DEPOSITED INTO YOUR GIFT CARD BALANCE AFTER THEIR PURCHASE HAS BEEN CONFIRMED.
-                    </p>
-                  </div>
-                  <div style={{ marginBottom: '12px' }}>
-                    <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: '0 0 8px 0', textTransform: 'uppercase', fontWeight: '500' }}>IMPORTANT NOTES:</p>
-                    <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: '0 0 4px 0', textTransform: 'uppercase' }}>• REFERRAL CODES CAN ONLY BE APPLIED ONCE PER ACCOUNT</p>
-                    <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: '0 0 4px 0', textTransform: 'uppercase' }}>• YOU CANNOT USE YOUR OWN REFERRAL CODE UNDER YOUR ACCOUNT</p>
-                    <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: '0 0 12px 0', textTransform: 'uppercase' }}>• YOU MUST CREATE AN ACCOUNT OR BE SIGNED IN TO CHECKOUT WITH A REFERRAL CODE (FOR TRACKING PURPOSES)</p>
+                  {/* Active / Past Invites tabs */}
+                  <div className="mt-4 pt-3 border-t border-gray-200">
+                    <div className="flex gap-4 mb-3">
+                      <button
+                        type="button"
+                        onClick={() => setStatusTab('active')}
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '10px',
+                          fontWeight: '500',
+                          textTransform: 'uppercase',
+                          color: statusTab === 'active' ? '#000000' : '#666',
+                          borderBottom: statusTab === 'active' ? '2px solid #000' : 'none',
+                          paddingBottom: 4,
+                          background: 'none',
+                          borderTop: 'none',
+                          borderLeft: 'none',
+                          borderRight: 'none',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Active invites
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setStatusTab('past')}
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '10px',
+                          fontWeight: '500',
+                          textTransform: 'uppercase',
+                          color: statusTab === 'past' ? '#000000' : '#666',
+                          borderBottom: statusTab === 'past' ? '2px solid #000' : 'none',
+                          paddingBottom: 4,
+                          background: 'none',
+                          borderTop: 'none',
+                          borderLeft: 'none',
+                          borderRight: 'none',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Past invites
+                      </button>
+                    </div>
+                    {statusTab === 'active' ? (
+                      <div className="text-center py-6">
+                        <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '11px', margin: '0 0 8px 0', textTransform: 'uppercase' }}>No active invitations</p>
+                        <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: '0 0 12px 0', textTransform: 'uppercase' }}>Invite your friends and earn. When your friends sign up, they will show up here.</p>
+                        <button
+                          type="button"
+                          onClick={() => document.querySelector('.referral-rules-para')?.scrollIntoView({ behavior: 'smooth' })}
+                          className="border border-black px-4 py-2 uppercase font-futura text-xs"
+                          style={{ borderWidth: '1px', background: 'transparent', cursor: 'pointer' }}
+                        >
+                          Learn more
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="min-h-[80px]">
+                        {referralList.length === 0 ? (
+                          <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>No past invites yet.</p>
+                        ) : (
+                          <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                            {referralList.map((item, i) => (
+                              <li key={i} className="flex justify-between items-center py-2 border-b border-gray-100" style={{ borderBottomWidth: '1px' }}>
+                                <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>{item.referredEmail}</span>
+                                <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24' }}>${item.amount} · {item.orderNumber || item.date ? new Date(item.date).toLocaleDateString() : '-'}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
+                <p className="referral-rules-para" style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '9px', margin: '0 0 14px 0', textTransform: 'uppercase' }}>
+                  Your code is active only after your order has been marked complete & delivered. If a referred friend&apos;s order is canceled, you won&apos;t receive the $20. Terms apply.
+                </p>
+                <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
+                  <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500', margin: '0', textTransform: 'uppercase' }}>Your code</h3>
+                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', color: '#000000', fontSize: '13px', margin: '0', textTransform: 'uppercase' }}>
+                    {generateReferralCode()}
+                  </p>
+                </div>
               </div>
+
+              {/* Invite button - below main card, same style as cancel/upgrade subscription */}
+              <div className="w-full px-0" style={{ marginTop: '12px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowInviteModal(true)}
+                  className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                  style={{
+                    borderWidth: '1.3px',
+                    color: '#EB1C24',
+                    fontFamily: '"Futura PT Medium"',
+                    backgroundColor: '#FFFFFF'
+                  }}
+                >
+                  INVITE
+                </button>
+              </div>
+
+              {/* Invite modal: share link, copy code, cancel */}
+              {showInviteModal && (
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4" style={{ backgroundColor: 'rgba(0,0,0,0.4)' }} onClick={() => setShowInviteModal(false)}>
+                  <div
+                    className="border border-black bg-white p-5 w-full max-w-md"
+                    style={{ borderWidth: '1.3px' }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '12px', fontWeight: '500', margin: '0 0 10px 0', textTransform: 'uppercase' }}>Invite</h3>
+                    <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: '0 0 16px 0', textTransform: 'uppercase' }}>
+                      Share your link to invite friends. They can also enter your code at checkout.
+                    </p>
+                    <div className="flex flex-col gap-3">
+                      <button
+                        type="button"
+                        onClick={handleCopyLink}
+                        className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                        style={{ borderWidth: '1.3px', color: '#EB1C24', fontFamily: '"Futura PT Medium"', backgroundColor: '#FFFFFF' }}
+                      >
+                        {inviteCopied === 'link' ? 'LINK COPIED' : 'SHARE YOUR LINK'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleCopyCode}
+                        className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                        style={{ borderWidth: '1.3px', color: '#EB1C24', fontFamily: '"Futura PT Medium"', backgroundColor: '#FFFFFF' }}
+                      >
+                        {inviteCopied === 'code' ? 'CODE COPIED' : 'COPY CODE'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowInviteModal(false)}
+                        className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                        style={{ borderWidth: '1.3px', color: '#EB1C24', fontFamily: '"Futura PT Medium"', backgroundColor: '#FFFFFF' }}
+                      >
+                        CANCEL
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              </>
             )}
           </div>
         </div>

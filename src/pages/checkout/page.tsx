@@ -1052,10 +1052,54 @@ function CheckoutPage() {
     try {
       const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
       const upperCode = code.trim().toUpperCase();
-      // Check if code matches any user's referral code
-      return registeredUsers.some((user: any) => 
+      return registeredUsers.some((user: any) =>
         user.referralCode && user.referralCode.toUpperCase() === upperCode
       );
+    } catch (e) {
+      return false;
+    }
+  };
+
+  // Referral codes are inactive until the owner has an order marked complete & delivered. Existing users with orders but no hasMadeFirstPurchase flag are treated as active.
+  const getReferralCodeOwner = (code: string): { user: any; isActive: boolean } | null => {
+    try {
+      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const upperCode = code.trim().toUpperCase();
+      const owner = registeredUsers.find((user: any) =>
+        user.referralCode && user.referralCode.toUpperCase() === upperCode
+      );
+      if (!owner) return null;
+      let isActive = false;
+      if (owner.email) {
+        const key = `userOrders_${String(owner.email).trim().toLowerCase()}`;
+        const raw = localStorage.getItem(key);
+        if (raw) {
+          const data = JSON.parse(raw);
+          const activeOrders = data.activeOrders || [];
+          const pastOrders = data.pastOrders || [];
+          const allOrders = [...activeOrders, ...pastOrders];
+          const hasDelivered = allOrders.some((o: any) => o.status === 'DELIVERED');
+          if (hasDelivered) isActive = true;
+          if (!isActive && owner.hasMadeFirstPurchase !== true && allOrders.length > 0) isActive = true;
+        }
+      }
+      return { user: owner, isActive };
+    } catch (e) {
+      return null;
+    }
+  };
+
+  // Check if current user has ever completed a purchase (referral codes only valid on first purchase)
+  const currentUserHasExistingOrders = (): boolean => {
+    if (!isSignedIn || !email) return false;
+    try {
+      const key = `userOrders_${email.trim().toLowerCase()}`;
+      const raw = localStorage.getItem(key);
+      if (!raw) return false;
+      const data = JSON.parse(raw);
+      const active = (data.activeOrders || []).length;
+      const past = (data.pastOrders || []).length;
+      return active + past > 0;
     } catch (e) {
       return false;
     }
@@ -1104,7 +1148,10 @@ function CheckoutPage() {
     
     // Check if it's a referral code
     if (isReferralCode(code)) {
-      // Check if discount code or gift card is already applied
+      if (!isSignedIn) {
+        setDiscountCodeError('SIGN IN OR CREATE AN ACCOUNT TO USE A REFERRAL CODE.');
+        return;
+      }
       if (appliedDiscount > 0) {
         setDiscountCodeError('REFERRAL CODES CANNOT BE COMBINED WITH DISCOUNT CODES.');
         setAppliedReferralCode('');
@@ -1117,8 +1164,28 @@ function CheckoutPage() {
         setReferralDiscount(0);
         return;
       }
-      // Apply referral code ($20 discount)
-      // Clear gift card balance if applied
+      // Referral code is only valid (shareable/redeemable) once the code owner has made their first purchase
+      const ownerResult = getReferralCodeOwner(code);
+      if (!ownerResult) {
+        setDiscountCodeError('THIS REFERRAL CODE IS NOT VALID.');
+        return;
+      }
+      if (!ownerResult.isActive) {
+        setDiscountCodeError('THIS REFERRAL CODE IS NOT YET ACTIVE.');
+        return;
+      }
+      // Referrer cannot use their own code
+      const buyerEmail = (email || '').trim().toLowerCase();
+      const ownerEmail = (ownerResult.user?.email || '').trim().toLowerCase();
+      if (buyerEmail && ownerEmail && buyerEmail === ownerEmail) {
+        setDiscountCodeError('YOU CANNOT USE YOUR OWN REFERRAL CODE.');
+        return;
+      }
+      // Referral codes can only be used on the referred customer's first purchase
+      if (currentUserHasExistingOrders()) {
+        setDiscountCodeError('REFERRAL CODES CAN ONLY BE USED ON YOUR FIRST PURCHASE.');
+        return;
+      }
       if (appliedGiftCardBalance > 0) {
         setAppliedGiftCardBalance(0);
       }
@@ -1181,7 +1248,7 @@ function CheckoutPage() {
   };
   
   const discount = appliedDiscount;
-  // Gift card discount should NOT be applied to subscription upgrades. When applied, this is shown as "DIGITAL CASH" (account balance). If a gift card code is applied instead, that replaces this line (label "GIFT CARD"); both cannot be applied together.
+  // Gift card discount should NOT be applied to subscription upgrades. When applied, this is shown as "DIGITAL CASH" (account balance). This balance includes tier welcome discount (Silver $10, Red $40, Black $80) credited when the user reaches each spend tier. If a gift card code is applied instead, that replaces this line (label "GIFT CARD"); both cannot be applied together.
   const giftCardDiscount = isSubscriptionUpgrade ? 0 : appliedGiftCardBalance; // Automatically applied gift card balance (digital cash)
   const totalDiscount = discount + referralDiscount + giftCardDiscount; // Combined discount from codes, referral codes, and gift card / digital cash
   const rushProcessing = selectedProcessing === 'rush' ? 120 : 0;
@@ -1398,13 +1465,13 @@ function CheckoutPage() {
         textarea::placeholder {
           font-family: "Futura PT Demi", "Futura PT Medium", "Futura PT Book", "Covered By Your Grace", "Covered By Your Grace Preload" !important;
           font-weight: 500;
-          color: #909090 !important;
+          color: #808080 !important;
         }
         input,
         textarea {
           font-family: "Futura PT Demi", "Futura PT Medium", "Futura PT Book", "Covered By Your Grace", "Covered By Your Grace Preload" !important;
           font-weight: 500 !important;
-          color: #909090 !important;
+          color: #808080 !important;
           text-transform: uppercase !important;
           background-color: #FFFFFF !important;
         }
@@ -1418,7 +1485,7 @@ function CheckoutPage() {
         input:-webkit-autofill:focus,
         input:-webkit-autofill:active {
           -webkit-box-shadow: 0 0 0 30px #FFFFFF inset !important;
-          -webkit-text-fill-color: #909090 !important;
+          -webkit-text-fill-color: #808080 !important;
           box-shadow: 0 0 0 30px #FFFFFF inset !important;
           background-color: #FFFFFF !important;
         }
@@ -1449,12 +1516,12 @@ function CheckoutPage() {
         .shipping-calculator-select {
           font-family: "Futura PT Demi", "Futura PT Medium", "Futura PT Book", "Covered By Your Grace", "Covered By Your Grace Preload" !important;
           font-weight: 500 !important;
-          color: #909090 !important;
+          color: #808080 !important;
         }
         .shipping-calculator-input::placeholder {
           font-family: "Futura PT Demi", "Futura PT Medium", "Futura PT Book", "Covered By Your Grace", "Covered By Your Grace Preload" !important;
           font-weight: 500 !important;
-          color: #909090 !important;
+          color: #808080 !important;
         }
         .shipping-calculator-select {
           appearance: none !important;
@@ -1469,7 +1536,7 @@ function CheckoutPage() {
         .shipping-calculator-select option {
           font-family: "Futura PT Demi", "Futura PT Medium", "Futura PT Book", "Covered By Your Grace", "Covered By Your Grace Preload" !important;
           font-weight: 500 !important;
-          color: #909090 !important;
+          color: #808080 !important;
         }
       `}</style>
       <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -1603,17 +1670,18 @@ function CheckoutPage() {
             </div>
           </div>
 
-          {/* MAIN CARD - only apply menu-toggle-card when menu is open so main card height is not forced when showing checkout form */}
+          {/* MAIN CARD - only apply menu-toggle-card when menu is open so main card height is not forced when showing checkout form. Inset box-shadow used for even border on all sides (avoids subpixel unevenness with flex + % width). */}
           <div
-            className={showMobileMenu ? 'menu-toggle-card border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out' : 'border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out'}
+            className={showMobileMenu ? 'menu-toggle-card flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out' : 'flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out'}
             style={{ 
-              borderWidth: '1.3px', 
+              boxShadow: 'inset 0 0 0 1px #000000',
               minWidth: '100%', 
               maxWidth: 'none', 
               overflow: 'visible',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
               minHeight: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto',
-              height: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto'
+              height: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto',
+              boxSizing: 'border-box'
             }}
           >
             {showMobileMenu ? (
@@ -2072,7 +2140,7 @@ function CheckoutPage() {
                                       style={{
                                       fontFamily: '"Futura PT Demi"',
                                       fontSize: '9px',
-                                      color: '#909090',
+                                      color: '#808080',
                                       margin: '7px 0 0 0',
                                         textTransform: 'uppercase',
                                       lineHeight: '1.1',
@@ -2470,7 +2538,7 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
-                          color: '#909090',
+                          color: '#808080',
                             boxSizing: 'border-box',
                             borderRadius: '0',
                           outline: 'none'
@@ -2512,7 +2580,7 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
-                          color: '#909090',
+                          color: '#808080',
                             boxSizing: 'border-box',
                             borderRadius: '0',
                           outline: 'none'
@@ -2555,7 +2623,7 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
-                          color: '#909090',
+                          color: '#808080',
                           boxSizing: 'border-box',
                           borderRadius: '0',
                           outline: 'none'
@@ -2585,7 +2653,7 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
-                          color: '#909090',
+                          color: '#808080',
                           boxSizing: 'border-box',
                           borderRadius: '0'
                         }}
@@ -2627,7 +2695,7 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
-                          color: '#909090',
+                          color: '#808080',
                             boxSizing: 'border-box',
                             borderRadius: '0',
                           outline: 'none'
@@ -2669,7 +2737,7 @@ function CheckoutPage() {
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
                             backgroundColor: '#FFFFFF',
-                            color: '#909090',
+                            color: '#808080',
                             boxSizing: 'border-box',
                             borderRadius: '0',
                             outline: 'none'
@@ -2711,7 +2779,7 @@ function CheckoutPage() {
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
                             backgroundColor: '#FFFFFF',
-                            color: '#909090',
+                            color: '#808080',
                             boxSizing: 'border-box',
                             borderRadius: '0',
                             outline: 'none'
@@ -2754,7 +2822,7 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
-                          color: '#909090',
+                          color: '#808080',
                           boxSizing: 'border-box',
                           borderRadius: '0',
                           outline: 'none'
@@ -2796,7 +2864,7 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
-                          color: '#909090',
+                          color: '#808080',
                           boxSizing: 'border-box',
                           borderRadius: '0',
                           outline: 'none'
@@ -2922,7 +2990,7 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                             backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
-                            color: '#909090',
+                            color: '#808080',
                           boxSizing: 'border-box',
                             borderRadius: '0',
                             cursor: sameAsBilling ? 'not-allowed' : 'text'
@@ -2955,7 +3023,7 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                             backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
-                            color: '#909090',
+                            color: '#808080',
                           boxSizing: 'border-box',
                             borderRadius: '0',
                             cursor: sameAsBilling ? 'not-allowed' : 'text'
@@ -2999,7 +3067,7 @@ function CheckoutPage() {
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
                           backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
-                          color: '#909090',
+                          color: '#808080',
                           boxSizing: 'border-box',
                           borderRadius: '0',
                           cursor: sameAsBilling ? 'not-allowed' : 'text',
@@ -3033,7 +3101,7 @@ function CheckoutPage() {
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
                           backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
-                          color: '#909090',
+                          color: '#808080',
                           boxSizing: 'border-box',
                           borderRadius: '0',
                           cursor: sameAsBilling ? 'not-allowed' : 'text'
@@ -3077,7 +3145,7 @@ function CheckoutPage() {
                               fontFamily: '"Futura PT Book"',
                               fontSize: '11px',
                             backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
-                            color: '#909090',
+                            color: '#808080',
                               boxSizing: 'border-box',
                             borderRadius: '0',
                             cursor: sameAsBilling ? 'not-allowed' : 'text',
@@ -3121,7 +3189,7 @@ function CheckoutPage() {
                               fontFamily: '"Futura PT Book"',
                               fontSize: '11px',
                                 backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
-                                color: '#909090',
+                                color: '#808080',
                               boxSizing: 'border-box',
                                 borderRadius: '0',
                                 cursor: sameAsBilling ? 'not-allowed' : 'text',
@@ -3165,7 +3233,7 @@ function CheckoutPage() {
                               fontFamily: '"Futura PT Book"',
                               fontSize: '11px',
                               backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
-                              color: '#909090',
+                              color: '#808080',
                                 boxSizing: 'border-box',
                               borderRadius: '0',
                               cursor: sameAsBilling ? 'not-allowed' : 'text',
@@ -3420,7 +3488,7 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                             backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
-                            color: '#909090',
+                            color: '#808080',
                             boxSizing: 'border-box',
                             borderRadius: '0',
                             cursor: sameAsBilling ? 'not-allowed' : 'text'
@@ -3540,7 +3608,7 @@ function CheckoutPage() {
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Demi"',
                           fontSize: '11px',
-                          color: '#909090',
+                          color: '#808080',
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
                           boxSizing: 'border-box',
                           borderRadius: '0'
@@ -3572,7 +3640,7 @@ function CheckoutPage() {
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Demi"',
                           fontSize: '11px',
-                          color: '#909090',
+                          color: '#808080',
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
                             boxSizing: 'border-box',
                             borderRadius: '0'
@@ -3652,7 +3720,7 @@ function CheckoutPage() {
                             border: '1.3px solid #000000',
                             fontFamily: '"Futura PT Demi"',
                             fontSize: '11px',
-                            color: '#909090',
+                            color: '#808080',
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
                           boxSizing: 'border-box',
                           borderRadius: '0'
@@ -4185,7 +4253,7 @@ function CheckoutPage() {
                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(tipAmount)}></span>
                       </div>
                     )}
-                    {/* Digital cash (account balance) or gift card code—only one can apply; adding a gift card replaces this line. Edit opens modal to choose amount (0 = line still shows with ($0)). */}
+                    {/* Digital cash (account balance; includes tier welcome discount). Or gift card code—only one can apply; adding a gift card replaces this line. Edit opens modal to choose amount (0 = line still shows with ($0)). */}
                     {giftCardBalance > 0 && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -4834,6 +4902,90 @@ function CheckoutPage() {
                       }
                     } catch (error) {
                       console.error('Error deducting gift card balance:', error);
+                    }
+                  }
+                  
+                  // Referral: credit code owner $20 digital cash when order is confirmed (only when buyer is signed in; if order is canceled later, that would need separate handling)
+                  if (appliedReferralCode && appliedReferralCode.trim() && isSignedIn && email) {
+                    try {
+                      const ownerResult = getReferralCodeOwner(appliedReferralCode);
+                      const buyerEmailNorm = (email || '').trim().toLowerCase();
+                      const referrerEmailNorm = (ownerResult?.user?.email || '').trim().toLowerCase();
+                      if (ownerResult && ownerResult.user?.email && buyerEmailNorm !== referrerEmailNorm) {
+                        const referrer = ownerResult.user;
+                        const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                        const refIndex = registeredUsers.findIndex((u: any) => u.email === referrer.email);
+                        if (refIndex !== -1) {
+                          const currentBalance = referrer.giftCardBalance || 0;
+                          const updatedReferrer = { ...referrer, giftCardBalance: currentBalance + 20 };
+                          registeredUsers[refIndex] = updatedReferrer;
+                          localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                          if (isSignedIn) {
+                            const cur = localStorage.getItem('currentUser');
+                            if (cur) {
+                              const parsed = JSON.parse(cur);
+                              if (parsed.email === referrer.email) {
+                                localStorage.setItem('currentUser', JSON.stringify(updatedReferrer));
+                              }
+                            }
+                          }
+                          const referralLog = JSON.parse(localStorage.getItem('referralEarnings') || '[]');
+                          referralLog.push({
+                            referrerEmail: referrer.email,
+                            referredEmail: email || '',
+                            orderId: `order-${nextOrderNumber}`,
+                            orderNumber,
+                            amount: 20,
+                            status: 'confirmed',
+                            date: new Date().toISOString()
+                          });
+                          localStorage.setItem('referralEarnings', JSON.stringify(referralLog));
+                        }
+                      }
+                    } catch (error) {
+                      console.error('Error crediting referrer:', error);
+                    }
+                  }
+                  
+                  // Persist order to user's order history and mark first purchase (so their referral code becomes active)
+                  if (isSignedIn && email) {
+                    try {
+                      const userOrdersKey = `userOrders_${email.trim().toLowerCase()}`;
+                      const existing = localStorage.getItem(userOrdersKey);
+                      const ordersData = existing ? JSON.parse(existing) : { activeOrders: [], pastOrders: [] };
+                      const activeOrders = ordersData.activeOrders || [];
+                      const wasFirstOrder = activeOrders.length === 0 && (ordersData.pastOrders || []).length === 0;
+                      const firstItem = cartItems[0];
+                      const productName = firstItem?.name || 'Order';
+                      const newOrder = {
+                        id: `order-${nextOrderNumber}`,
+                        orderNumber: `ORDER ${orderNumber}`,
+                        date: orderDate,
+                        status: 'PREPARING',
+                        productName,
+                        productImage: '/assets/natural front.png',
+                        total: subtotal,
+                        items: cartItems.reduce((sum: number, i: any) => sum + (i.quantity || 1), 0),
+                        placedAt: Date.now()
+                      };
+                      activeOrders.push(newOrder);
+                      localStorage.setItem(userOrdersKey, JSON.stringify({ ...ordersData, activeOrders }));
+                      if (wasFirstOrder) {
+                        const currentUser = localStorage.getItem('currentUser');
+                        if (currentUser) {
+                          const user = JSON.parse(currentUser);
+                          const updatedUser = { ...user, hasMadeFirstPurchase: true };
+                          localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                          const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                          const uIndex = registeredUsers.findIndex((u: any) => u.email === user.email);
+                          if (uIndex !== -1) {
+                            registeredUsers[uIndex] = updatedUser;
+                            localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                          }
+                        }
+                      }
+                    } catch (error) {
+                      console.error('Error saving order / first purchase:', error);
                     }
                   }
                   

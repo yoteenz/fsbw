@@ -1570,7 +1570,7 @@ function OrdersPage() {
                                  <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                    ORDER DATE
                                  </span>
-                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                                    {expandedOrder.date}
                                  </span>
                                </div>
@@ -1578,7 +1578,7 @@ function OrdersPage() {
                                  <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                    ORDER TOTAL
                                  </span>
-                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                                    {formatPrice(expandedOrder.total)} {selectedCurrency}
                                  </span>
                                </div>
@@ -1586,7 +1586,7 @@ function OrdersPage() {
                                  <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                    ORDER NUMBER
                                  </span>
-                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                                    {expandedOrder.orderNumber}
                                  </span>
                                </div>
@@ -1629,7 +1629,7 @@ function OrdersPage() {
                                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                          TRACKING NUMBER
                                        </span>
-                                       <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                       <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                                          {expandedOrder.trackingNumber}
                                        </span>
                                      </div>
@@ -1637,7 +1637,7 @@ function OrdersPage() {
                                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                          CARRIER
                                        </span>
-                                       <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                       <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                                          {expandedOrder.trackingCarrier}
                                        </span>
                                      </div>
@@ -1669,7 +1669,7 @@ function OrdersPage() {
                                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                      CONFIRMATION EMAIL
                                    </span>
-                                   <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                   <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                                      {currentUser.email || ''}
                                    </span>
                                  </div>
@@ -1685,7 +1685,7 @@ function OrdersPage() {
                          style={{
                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                            fontSize: '11px',
-                           color: '#909090',
+                           color: '#808080',
                            margin: 0,
                            textTransform: 'uppercase',
                            textAlign: 'center',
@@ -1744,13 +1744,13 @@ function OrdersPage() {
                            >
                              {order.orderNumber}
                            </p>
-                           <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#909090', margin: 0, lineHeight: '1.2' }}>
+                           <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#808080', margin: 0, lineHeight: '1.2' }}>
                              {formatPrice(order.total)} {selectedCurrency}
                            </p>
                            <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2' }}>
                              <span style={{ color: '#EB1C24' }}>STATUS: </span>
                              <span style={{ 
-                               color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'CANCELED') ? '#EB1C24' : '#909090',
+                               color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'CANCELED') ? '#EB1C24' : '#808080',
                                fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'CANCELED') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
                              }}>{order.status}</span>
                            </p>
@@ -1796,7 +1796,7 @@ function OrdersPage() {
                                <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10.5px', color: '#000000', margin: 0, lineHeight: '1.2', transform: 'translateY(-1px)' }}>
                                  {order.trackingNumber}
                                </p>
-                               <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '9px', color: '#909090', margin: 0, lineHeight: '1.2', transform: 'translateY(3px)' }}>
+                               <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '9px', color: '#808080', margin: 0, lineHeight: '1.2', transform: 'translateY(3px)' }}>
                                  TRACK VIA {order.trackingCarrier}
                                </p>
                              </div>
@@ -1951,7 +1951,7 @@ function OrdersPage() {
                               {order.orderNumber}:{' '}
                             </span>
                             <span style={{ 
-                              color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED') ? '#EB1C24' : '#909090',
+                              color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED') ? '#EB1C24' : '#808080',
                               fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
                             }}>
                               {order.status === 'PLACED' && order.orderFormSigned ? 'ORDER FORM IN REVIEW' : order.status}
@@ -2121,7 +2121,7 @@ function OrdersPage() {
                                  <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                    ORDER DATE
                                  </span>
-                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                                    {expandedOrder.date}
                                  </span>
                                </div>
@@ -2129,7 +2129,7 @@ function OrdersPage() {
                                  <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                    ORDER TOTAL
                                  </span>
-                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                                    {formatPrice(expandedOrder.total)} {selectedCurrency}
                                  </span>
                                </div>
@@ -2137,7 +2137,7 @@ function OrdersPage() {
                                  <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                    ORDER NUMBER
                                  </span>
-                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                                    {expandedOrder.orderNumber}
                                  </span>
                                </div>
@@ -2180,7 +2180,7 @@ function OrdersPage() {
                                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                          TRACKING NUMBER
                                        </span>
-                                       <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                       <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                                          {expandedOrder.trackingNumber}
                                        </span>
                                      </div>
@@ -2188,7 +2188,7 @@ function OrdersPage() {
                                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                          CARRIER
                                        </span>
-                                       <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                       <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                                          {expandedOrder.trackingCarrier}
                                        </span>
                                      </div>
@@ -2220,7 +2220,7 @@ function OrdersPage() {
                                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                      CONFIRMATION EMAIL
                                    </span>
-                                   <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                                   <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                                      {currentUser.email || ''}
                                    </span>
                                  </div>
@@ -2279,13 +2279,13 @@ function OrdersPage() {
                            >
                              {order.orderNumber}
                            </p>
-                           <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#909090', margin: 0, lineHeight: '1.2' }}>
+                           <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#808080', margin: 0, lineHeight: '1.2' }}>
                              {formatPrice(order.total)} {selectedCurrency}
                            </p>
                            <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2' }}>
                              <span style={{ color: '#EB1C24' }}>STATUS: </span>
                              <span style={{ 
-                               color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'CANCELED') ? '#EB1C24' : '#909090',
+                               color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'CANCELED') ? '#EB1C24' : '#808080',
                                fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'CANCELED') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
                              }}>{order.status}</span>
                            </p>
@@ -2299,7 +2299,7 @@ function OrdersPage() {
                                <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10.5px', color: '#000000', margin: 0, lineHeight: '1.2', transform: 'translateY(-1px)' }}>
                                  {order.trackingNumber}
                                </p>
-                               <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '9px', color: '#909090', margin: 0, lineHeight: '1.2', transform: 'translateY(3px)' }}>
+                               <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '9px', color: '#808080', margin: 0, lineHeight: '1.2', transform: 'translateY(3px)' }}>
                                  TRACK VIA {order.trackingCarrier}
                                </p>
                              </div>

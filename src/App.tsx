@@ -80,6 +80,7 @@ const AdminMeetings = lazyWithLogging(() => import('./pages/admin/meetings/page'
 const AdminPending = lazyWithLogging(() => import('./pages/admin/pending/page'), 'AdminPending');
 const AdminRevenue = lazyWithLogging(() => import('./pages/admin/revenue/page'), 'AdminRevenue');
 const AdminReviews = lazyWithLogging(() => import('./pages/admin/reviews/page'), 'AdminReviews');
+const AdminReferrals = lazyWithLogging(() => import('./pages/admin/referrals/page'), 'AdminReferrals');
 const NoirUnitPage = lazyWithLogging(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
 const BlancoUnitPage = lazyWithLogging(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
 const SoftCurlUnitPage = lazyWithLogging(() => import('./pages/curly/soft-curl/page'), 'SoftCurlUnitPage');
@@ -310,6 +311,11 @@ function App() {
         <Route path="/admin/reviews" element={
           <Suspense fallback={<LoadingScreen />}>
             <AdminReviews />
+          </Suspense>
+        } />
+        <Route path="/admin/referrals" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <AdminReferrals />
           </Suspense>
         } />
         {/* Unit page routes - placed early to ensure proper matching */}

@@ -1383,7 +1383,7 @@ function ShoppingBagPage() {
                                 style={{
                                   fontFamily: '"Futura PT Demi"',
                                   fontSize: '9px',
-                                  color: '#909090',
+                                  color: '#808080',
                                   background: 'none',
                                   border: 'none',
                                   cursor: 'pointer',
@@ -1808,7 +1808,7 @@ function ShoppingBagPage() {
                              style={{
                                fontFamily: '"Futura PT Demi"',
                                fontSize: '9px',
-                               color: '#909090',
+                               color: '#808080',
                                background: 'none',
                                border: 'none',
                                cursor: 'pointer',

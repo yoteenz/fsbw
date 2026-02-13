@@ -306,6 +306,18 @@ export default function AdminDashboard() {
         { label: 'GROWTH RATE', value: '+15%', color: 'text-gray-500' }
       ],
       highlight: 'BRAND GROWTH STRONG - EXCELLENT CLIENT RETENTION'
+    },
+
+    {
+      title: 'REFERRALS',
+      count: stats.referralCount,
+      items: [
+        { label: 'INVITEES', value: stats.referralCount.toString(), color: 'text-gray-500' },
+        { label: 'CODE STATUS', value: 'Active/Inactive', color: 'text-red-500' },
+        { label: 'EARNINGS TRACKING', value: 'Digital cash', color: 'text-gray-500' },
+        { label: 'VIEW DETAILS', value: 'Referrals', color: 'text-red-500' }
+      ],
+      activity: 'REFERRAL PROGRAM - TRACK INVITEES & EARNINGS'
     }
   ];
 
@@ -328,7 +340,10 @@ export default function AdminDashboard() {
         navigate('/admin/reviews');
         break;
       case 'BRAND':
-        navigate('/admin/product-editor');
+        navigate('/admin/brand');
+        break;
+      case 'REFERRALS':
+        navigate('/admin/referrals');
         break;
       default:
         break;

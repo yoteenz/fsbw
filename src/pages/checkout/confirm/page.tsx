@@ -690,13 +690,13 @@ function CheckoutConfirmPage() {
         textarea::placeholder {
           font-family: "Futura PT Demi", "Futura PT Medium", "Futura PT Book", "Covered By Your Grace", "Covered By Your Grace Preload" !important;
           font-weight: 500;
-          color: #909090 !important;
+          color: #808080 !important;
         }
         input,
         textarea {
           font-family: "Futura PT Demi", "Futura PT Medium", "Futura PT Book", "Covered By Your Grace", "Covered By Your Grace Preload" !important;
           font-weight: 500 !important;
-          color: #909090 !important;
+          color: #808080 !important;
           text-transform: uppercase !important;
           background-color: #FFFFFF !important;
         }
@@ -1251,7 +1251,7 @@ function CheckoutConfirmPage() {
                               style={{
                               fontFamily: '"Futura PT Demi"',
                               fontSize: '9px',
-                              color: '#909090',
+                              color: '#808080',
                               margin: '7px 0 0 0',
                                 textTransform: 'uppercase',
                               lineHeight: '1.1',
@@ -1373,7 +1373,7 @@ function CheckoutConfirmPage() {
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                       ORDER DATE
                     </span>
-                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                       {orderData.orderDate}
                     </span>
                   </div>
@@ -1381,13 +1381,13 @@ function CheckoutConfirmPage() {
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                       ORDER TOTAL
                     </span>
-                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }} dangerouslySetInnerHTML={formatPrice(orderData.orderTotal || 0)} />
+                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }} dangerouslySetInnerHTML={formatPrice(orderData.orderTotal || 0)} />
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                       ORDER NUMBER
                     </span>
-                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                       {orderData.orderNumber}
                     </span>
                   </div>
@@ -1427,7 +1427,7 @@ function CheckoutConfirmPage() {
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                       COMPLETION TIMELINE
                     </span>
-                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                       {orderData.orderDate ? calculateProcessingTimeline(orderData.orderDate, orderData.processingTime || '6-8 WEEKS') : (orderData.processingTime || '6-8 WEEKS')}
                     </span>
                   </div>
@@ -1464,7 +1464,7 @@ function CheckoutConfirmPage() {
                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                           {methodName}
                         </span>
-                        <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                        <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                           {shippingTime}
                         </span>
                       </div>
@@ -1502,7 +1502,7 @@ function CheckoutConfirmPage() {
                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                           {methodName}
                         </span>
-                        <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                        <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                           ENDING IN {endingNumber}
                         </span>
                       </div>
@@ -1512,7 +1512,7 @@ function CheckoutConfirmPage() {
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                       CONFIRMATION EMAIL
                     </span>
-                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                       {orderData.email || 'ASHLEYEVANS@GMAIL.COM'}
                     </span>
                   </div>
@@ -1520,7 +1520,7 @@ function CheckoutConfirmPage() {
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                       CONFIRMATION NUMBER
                     </span>
-                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textTransform: 'uppercase' }}>
+                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                       #{orderData.confirmationNumber || (() => {
                         // Retrieve confirmation number from localStorage if order number exists
                         if (orderData.orderNumber) {
@@ -1584,9 +1584,9 @@ function CheckoutConfirmPage() {
                         color: (() => {
                           const tier = (orderData.tier || 'SILVER').toUpperCase();
                           if (tier === 'RED') return '#EB1C24';
-                          if (tier === 'SILVER') return '#909090';
+                          if (tier === 'SILVER') return '#808080';
                           if (tier === 'GOLD') return '#000000';
-                          return '#909090'; // Default to gray
+                          return '#808080'; // Default to gray
                         })(),
                         textTransform: 'uppercase' 
                       }}>

@@ -178,7 +178,7 @@ export default function ActivityFeed() {
         return '#ffa500'; // Orange for medium
       case 'low':
       default:
-        return '#909090'; // Gray for low or default
+        return '#808080'; // Gray for low or default
     }
   };
 
@@ -212,7 +212,7 @@ export default function ActivityFeed() {
                   <div className="flex-1 min-w-0">
                     <div 
                       className="uppercase text-xs tracking-wider font-futura"
-                      style={{ color: '#909090', fontWeight: '600', fontSize: '9px' }}
+                      style={{ color: '#808080', fontWeight: '600', fontSize: '9px' }}
                     >
                       {activity.title}
                     </div>
@@ -226,7 +226,7 @@ export default function ActivityFeed() {
                     <div className="text-xs font-futura" style={{ color: '#000000', fontSize: '9px', fontWeight: '500' }}>
                       {activity.exactTime.replace(' ', '')}
                     </div>
-                    <div className="text-xs font-covered-by-your-grace" style={{ color: '#909090' }}>
+                    <div className="text-xs font-covered-by-your-grace" style={{ color: '#808080' }}>
                       {activity.timestamp}
                     </div>
                   </div>

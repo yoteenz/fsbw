@@ -1208,7 +1208,7 @@ export default function StylingSelectionPage() {
 
             {/* TOTAL PRICE */}
             <div className="text-center mb-4">
-              <p className="font-futura text-[12px] font-medium" style={{ color: '#909090' }}>
+              <p className="font-futura text-[12px] font-medium" style={{ color: '#808080' }}>
                 TOTAL DUE
               </p>
               <p 

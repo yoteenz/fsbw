@@ -1674,7 +1674,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                 className="text-center mb-1"
                 style={{ 
                   fontSize: '9px',
-                  color: '#909090',
+                  color: '#808080',
                   fontFamily: '"Futura PT Book"',
                   transform: 'translateY(-1px)'
                 }}

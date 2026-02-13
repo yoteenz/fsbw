@@ -942,7 +942,7 @@ function GiftCardPage() {
               {addToBagState === 'added' && (
                 <span className="flex items-center justify-center gap-1">
                   <img src="/assets/check.svg" alt="Check" width="9" height="9" />
-                  <span style={{ color: '#909090' }}>IN THE BAG</span>
+                  <span style={{ color: '#808080' }}>IN THE BAG</span>
                 </span>
               )}
             </button>

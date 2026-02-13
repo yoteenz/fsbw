@@ -2161,7 +2161,7 @@ function AffiliatePage() {
                                      style={{
                                        fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
                                        fontSize: '11px',
-                                       color: '#909090',
+                                       color: '#808080',
                                        margin: '2px 0 -2px 0',
                                        textTransform: 'uppercase'
                                      }}
@@ -2257,7 +2257,7 @@ function AffiliatePage() {
                                      fontFamily: '"Futura PT Book"',
                                      fontSize: '11px',
                                      backgroundColor: '#FFFFFF',
-                                     color: photo1File ? '#909090' : '#EB1C24',
+                                     color: photo1File ? '#808080' : '#EB1C24',
                                      boxSizing: 'border-box',
                                      borderRadius: '0',
                                      cursor: hasPhotoContent(expandedOrder.id, 1) ? 'not-allowed' : 'pointer',
@@ -2274,7 +2274,7 @@ function AffiliatePage() {
                                     <div style={{ display: 'flex', alignItems: 'center', width: '100%', minWidth: 0 }}>
                                       <span style={{ 
                                         padding: '4px 8px',
-                                        border: '1px solid #909090',
+                                        border: '1px solid #808080',
                                         borderRadius: '4px',
                                         backgroundColor: '#F5F5F5',
                                         color: '#000000',
@@ -2330,7 +2330,7 @@ function AffiliatePage() {
                                     <div style={{ display: 'flex', alignItems: 'center', width: '100%', minWidth: 0 }}>
                                       <span style={{ 
                                         padding: '4px 8px',
-                                        border: '1px solid #909090',
+                                        border: '1px solid #808080',
                                         borderRadius: '4px',
                                         backgroundColor: '#F5F5F5',
                                         color: '#000000',
@@ -2342,7 +2342,7 @@ function AffiliatePage() {
                                       }}>
                                         CHOOSE FILE
                                       </span>
-                                      <span style={{ marginLeft: '8px', color: '#909090', fontFamily: '"Futura PT Book"', fontSize: '10px', whiteSpace: 'nowrap' }}>
+                                      <span style={{ marginLeft: '8px', color: '#808080', fontFamily: '"Futura PT Book"', fontSize: '10px', whiteSpace: 'nowrap' }}>
                                         NO FILE SELECTED
                                       </span>
                                     </div>
@@ -2390,7 +2390,7 @@ function AffiliatePage() {
                                      fontFamily: '"Futura PT Book"',
                                      fontSize: '11px',
                                      backgroundColor: '#FFFFFF',
-                                     color: photo2File ? '#909090' : '#EB1C24',
+                                     color: photo2File ? '#808080' : '#EB1C24',
                                      boxSizing: 'border-box',
                                      borderRadius: '0',
                                      cursor: hasPhotoContent(expandedOrder.id, 2) ? 'not-allowed' : 'pointer',
@@ -2407,7 +2407,7 @@ function AffiliatePage() {
                                     <div style={{ display: 'flex', alignItems: 'center', width: '100%', minWidth: 0 }}>
                                       <span style={{ 
                                         padding: '4px 8px',
-                                        border: '1px solid #909090',
+                                        border: '1px solid #808080',
                                         borderRadius: '4px',
                                         backgroundColor: '#F5F5F5',
                                         color: '#000000',
@@ -2463,7 +2463,7 @@ function AffiliatePage() {
                                      <div style={{ display: 'flex', alignItems: 'center' }}>
                                        <span style={{ 
                                          padding: '4px 8px',
-                                         border: '1px solid #909090',
+                                         border: '1px solid #808080',
                                          borderRadius: '4px',
                                          backgroundColor: '#F5F5F5',
                                          color: '#000000',
@@ -2473,7 +2473,7 @@ function AffiliatePage() {
                                        }}>
                                          CHOOSE FILE
                                        </span>
-                                       <span style={{ marginLeft: '8px', color: '#909090', fontFamily: '"Futura PT Book"', fontSize: '10px' }}>
+                                       <span style={{ marginLeft: '8px', color: '#808080', fontFamily: '"Futura PT Book"', fontSize: '10px' }}>
                                          NO FILE SELECTED
                                        </span>
                                      </div>
@@ -2557,7 +2557,7 @@ function AffiliatePage() {
                                      fontFamily: '"Futura PT Book"',
                                      fontSize: '11px',
                                      backgroundColor: '#FFFFFF',
-                                     color: video1File ? '#909090' : '#EB1C24',
+                                     color: video1File ? '#808080' : '#EB1C24',
                                      boxSizing: 'border-box',
                                      borderRadius: '0',
                                      cursor: hasVideoContent(expandedOrder.id, 1) ? 'not-allowed' : 'pointer',
@@ -2574,7 +2574,7 @@ function AffiliatePage() {
                                      <div style={{ display: 'flex', alignItems: 'center', width: '100%', minWidth: 0 }}>
                                        <span style={{ 
                                          padding: '4px 8px',
-                                         border: '1px solid #909090',
+                                         border: '1px solid #808080',
                                          borderRadius: '4px',
                                          backgroundColor: '#F5F5F5',
                                          color: '#000000',
@@ -2630,7 +2630,7 @@ function AffiliatePage() {
                                      <div style={{ display: 'flex', alignItems: 'center', width: '100%', minWidth: 0 }}>
                                        <span style={{ 
                                          padding: '4px 8px',
-                                         border: '1px solid #909090',
+                                         border: '1px solid #808080',
                                          borderRadius: '4px',
                                          backgroundColor: '#F5F5F5',
                                          color: '#000000',
@@ -2642,7 +2642,7 @@ function AffiliatePage() {
                                        }}>
                                          CHOOSE FILE
                                        </span>
-                                       <span style={{ marginLeft: '8px', color: '#909090', fontFamily: '"Futura PT Book"', fontSize: '10px', whiteSpace: 'nowrap' }}>
+                                       <span style={{ marginLeft: '8px', color: '#808080', fontFamily: '"Futura PT Book"', fontSize: '10px', whiteSpace: 'nowrap' }}>
                                          NO FILE SELECTED
                                        </span>
                                      </div>
@@ -2690,7 +2690,7 @@ function AffiliatePage() {
                                      fontFamily: '"Futura PT Book"',
                                      fontSize: '11px',
                                      backgroundColor: '#FFFFFF',
-                                     color: video2File ? '#909090' : '#EB1C24',
+                                     color: video2File ? '#808080' : '#EB1C24',
                                      boxSizing: 'border-box',
                                      borderRadius: '0',
                                      cursor: hasVideoContent(expandedOrder.id, 2) ? 'not-allowed' : 'pointer',
@@ -2707,7 +2707,7 @@ function AffiliatePage() {
                                      <div style={{ display: 'flex', alignItems: 'center', width: '100%', minWidth: 0 }}>
                                        <span style={{ 
                                          padding: '4px 8px',
-                                         border: '1px solid #909090',
+                                         border: '1px solid #808080',
                                          borderRadius: '4px',
                                          backgroundColor: '#F5F5F5',
                                          color: '#000000',
@@ -2763,7 +2763,7 @@ function AffiliatePage() {
                                      <div style={{ display: 'flex', alignItems: 'center', width: '100%', minWidth: 0 }}>
                                        <span style={{ 
                                          padding: '4px 8px',
-                                         border: '1px solid #909090',
+                                         border: '1px solid #808080',
                                          borderRadius: '4px',
                                          backgroundColor: '#F5F5F5',
                                          color: '#000000',
@@ -2775,7 +2775,7 @@ function AffiliatePage() {
                                        }}>
                                          CHOOSE FILE
                                        </span>
-                                       <span style={{ marginLeft: '8px', color: '#909090', fontFamily: '"Futura PT Book"', fontSize: '10px', whiteSpace: 'nowrap' }}>
+                                       <span style={{ marginLeft: '8px', color: '#808080', fontFamily: '"Futura PT Book"', fontSize: '10px', whiteSpace: 'nowrap' }}>
                                          NO FILE SELECTED
                                        </span>
                                      </div>
@@ -2856,7 +2856,7 @@ function AffiliatePage() {
                                     fontFamily: '"Futura PT Book"',
                                     fontSize: '10px',
                                     backgroundColor: '#FFFFFF',
-                                    color: hasSocialContent(expandedOrder.id, 'Twitter') ? '#EB1C24' : '#909090',
+                                    color: hasSocialContent(expandedOrder.id, 'Twitter') ? '#EB1C24' : '#808080',
                                     boxSizing: 'border-box',
                                     borderRadius: '0',
                                     textTransform: 'uppercase',
@@ -2961,7 +2961,7 @@ function AffiliatePage() {
                                     fontFamily: '"Futura PT Book"',
                                     fontSize: '10px',
                                     backgroundColor: '#FFFFFF',
-                                    color: hasSocialContent(expandedOrder.id, 'Instagram') ? '#EB1C24' : '#909090',
+                                    color: hasSocialContent(expandedOrder.id, 'Instagram') ? '#EB1C24' : '#808080',
                                     boxSizing: 'border-box',
                                     borderRadius: '0',
                                     textTransform: 'uppercase',
@@ -3066,7 +3066,7 @@ function AffiliatePage() {
                                     fontFamily: '"Futura PT Book"',
                                     fontSize: '10px',
                                     backgroundColor: '#FFFFFF',
-                                    color: hasSocialContent(expandedOrder.id, 'TikTok') ? '#EB1C24' : '#909090',
+                                    color: hasSocialContent(expandedOrder.id, 'TikTok') ? '#EB1C24' : '#808080',
                                     boxSizing: 'border-box',
                                     borderRadius: '0',
                                     textTransform: 'uppercase',
@@ -3171,7 +3171,7 @@ function AffiliatePage() {
                                     fontFamily: '"Futura PT Book"',
                                     fontSize: '10px',
                                     backgroundColor: '#FFFFFF',
-                                    color: hasSocialContent(expandedOrder.id, 'YouTube') ? '#EB1C24' : '#909090',
+                                    color: hasSocialContent(expandedOrder.id, 'YouTube') ? '#EB1C24' : '#808080',
                                     boxSizing: 'border-box',
                                     borderRadius: '0',
                                     textTransform: 'uppercase',
@@ -3274,7 +3274,7 @@ function AffiliatePage() {
                                   fontFamily: '"Futura PT Book"',
                                   fontSize: '10px',
                                   backgroundColor: '#FFFFFF',
-                                  color: hasSocialContent(expandedOrder.id, 'Facebook') ? '#EB1C24' : '#909090',
+                                  color: hasSocialContent(expandedOrder.id, 'Facebook') ? '#EB1C24' : '#808080',
                                   boxSizing: 'border-box',
                                   borderRadius: '0',
                                   textTransform: 'uppercase',
@@ -3370,7 +3370,7 @@ function AffiliatePage() {
                                      
                                      if (photos.length === 0) {
                                        return (
-                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#909090', textTransform: 'uppercase', margin: '20px 0', textAlign: 'center', width: '100%' }}>
+                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', textTransform: 'uppercase', margin: '20px 0', textAlign: 'center', width: '100%' }}>
                                            NO PHOTOS SUBMITTED YET.
                                          </p>
                                        );
@@ -3487,7 +3487,7 @@ function AffiliatePage() {
                                             }}
                                           />
                                          </div>
-                                         <p style={{ fontFamily: photo.status === 'pending' ? '"Futura PT Demi"' : photo.status === 'rejected' ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '10px', color: photo.status === 'approved' ? '#000000' : photo.status === 'rejected' ? '#EB1C24' : '#909090', textTransform: 'uppercase', margin: '8px 0 0 0', whiteSpace: 'nowrap', width: 'max-content', position: 'relative', left: '50%', transform: 'translateX(-50%)' }}>
+                                         <p style={{ fontFamily: photo.status === 'pending' ? '"Futura PT Demi"' : photo.status === 'rejected' ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '10px', color: photo.status === 'approved' ? '#000000' : photo.status === 'rejected' ? '#EB1C24' : '#808080', textTransform: 'uppercase', margin: '8px 0 0 0', whiteSpace: 'nowrap', width: 'max-content', position: 'relative', left: '50%', transform: 'translateX(-50%)' }}>
                                            {photo.status === 'pending' ? 'PENDING: IN REVIEW' : photo.status === 'approved' ? (
                                              <>APPROVED: <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{photo.points || 400} POINTS</span></>
                                            ) : <>REJECTED: {photo.rejectionReason || 'LIGHTING'}</>}
@@ -3507,7 +3507,7 @@ function AffiliatePage() {
                                      
                                      if (videos.length === 0) {
                                        return (
-                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#909090', textTransform: 'uppercase', margin: '20px 0', textAlign: 'center' }}>
+                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', textTransform: 'uppercase', margin: '20px 0', textAlign: 'center' }}>
                                            NO VIDEOS SUBMITTED YET.
                                          </p>
                                        );
@@ -3609,7 +3609,7 @@ function AffiliatePage() {
                                             }}
                                           />
                                          </div>
-                                         <p style={{ fontFamily: video.status === 'pending' ? '"Futura PT Demi"' : video.status === 'rejected' ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '10px', color: video.status === 'approved' ? '#000000' : video.status === 'rejected' ? '#EB1C24' : '#909090', textTransform: 'uppercase', margin: '8px 0 0 0', whiteSpace: 'nowrap', width: 'max-content', position: 'relative', left: '50%', transform: 'translateX(-50%)' }}>
+                                         <p style={{ fontFamily: video.status === 'pending' ? '"Futura PT Demi"' : video.status === 'rejected' ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '10px', color: video.status === 'approved' ? '#000000' : video.status === 'rejected' ? '#EB1C24' : '#808080', textTransform: 'uppercase', margin: '8px 0 0 0', whiteSpace: 'nowrap', width: 'max-content', position: 'relative', left: '50%', transform: 'translateX(-50%)' }}>
                                            {video.status === 'pending' ? 'PENDING: IN REVIEW' : video.status === 'approved' ? (
                                              <>APPROVED: <span style={{ color: '#EB1C24' }}>{video.points || 600} POINTS</span></>
                                            ) : <>REJECTED: {video.rejectionReason || 'LIGHTING'}</>}
@@ -3628,7 +3628,7 @@ function AffiliatePage() {
                                      
                                      if (socials.length === 0) {
                                        return (
-                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#909090', textTransform: 'uppercase', margin: '20px 0', textAlign: 'center' }}>
+                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', textTransform: 'uppercase', margin: '20px 0', textAlign: 'center' }}>
                                            NO SOCIAL TAGS SUBMITTED YET.
                                          </p>
                                        );
@@ -3674,11 +3674,11 @@ function AffiliatePage() {
                                            href={social.link} 
                                            target="_blank" 
                                            rel="noopener noreferrer"
-                                           style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#909090', textDecoration: 'underline', wordBreak: 'break-all', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}
+                                           style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textDecoration: 'underline', wordBreak: 'break-all', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}
                                          >
                                            {social.link.toUpperCase()}
                                          </a>
-                                         <p style={{ fontFamily: social.status === 'pending' ? '"Futura PT Demi"' : social.status === 'rejected' ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '10px', color: social.status === 'approved' ? '#000000' : social.status === 'rejected' ? '#EB1C24' : '#909090', textTransform: 'uppercase', margin: '0', textAlign: 'left', whiteSpace: 'nowrap' }}>
+                                         <p style={{ fontFamily: social.status === 'pending' ? '"Futura PT Demi"' : social.status === 'rejected' ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '10px', color: social.status === 'approved' ? '#000000' : social.status === 'rejected' ? '#EB1C24' : '#808080', textTransform: 'uppercase', margin: '0', textAlign: 'left', whiteSpace: 'nowrap' }}>
                                            {social.status === 'pending' ? 'PENDING: IN REVIEW' : social.status === 'approved' ? (
                                              <>APPROVED: <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{social.points || 600} POINTS</span></>
                                            ) : <>REJECTED: {social.rejectionReason || 'LIGHTING'}</>}
@@ -3839,7 +3839,7 @@ function AffiliatePage() {
                           style={{
                             fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                             fontSize: '11px',
-                            color: '#909090',
+                            color: '#808080',
                             margin: 0,
                             textTransform: 'uppercase',
                             textAlign: 'center',
@@ -3907,7 +3907,7 @@ function AffiliatePage() {
                                   }
                                 })()}
                               </p>
-                              <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#909090', margin: 0, lineHeight: '1.2' }}>
+                              <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#808080', margin: 0, lineHeight: '1.2' }}>
                                 {(() => {
                                   // Calculate total points (photo/video + social) with period reset
                                   const effectivePoints = getEffectivePoints(order);

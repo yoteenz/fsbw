@@ -200,13 +200,13 @@ function SignInPage() {
         textarea::placeholder {
           font-family: "Futura PT Demi", "Futura PT Medium", "Futura PT Book", "Covered By Your Grace", "Covered By Your Grace Preload" !important;
           font-weight: 500;
-          color: #909090 !important;
+          color: #808080 !important;
         }
         input,
         textarea {
           font-family: "Futura PT Demi", "Futura PT Medium", "Futura PT Book", "Covered By Your Grace", "Covered By Your Grace Preload" !important;
           font-weight: 500 !important;
-          color: #909090 !important;
+          color: #808080 !important;
           text-transform: uppercase !important;
           background-color: #FFFFFF !important;
         }
@@ -219,7 +219,7 @@ function SignInPage() {
         input:-webkit-autofill:focus,
         input:-webkit-autofill:active {
           -webkit-box-shadow: 0 0 0 30px #FFFFFF inset !important;
-          -webkit-text-fill-color: #909090 !important;
+          -webkit-text-fill-color: #808080 !important;
           box-shadow: 0 0 0 30px #FFFFFF inset !important;
           background-color: #FFFFFF !important;
         }
@@ -1618,6 +1618,7 @@ function SignInPage() {
                         membershipType: 'STANDARD',
                         referralCode: referralCode,
                         giftCardBalance: 10, // Welcome gift card balance for new accounts
+                        hasMadeFirstPurchase: false, // Referral code becomes active after first purchase
                         unlockedDiscounts: ['signup'], // Track which discounts have been unlocked
                         createdAt: new Date().toISOString()
                       };

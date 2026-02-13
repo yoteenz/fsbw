@@ -1533,7 +1533,7 @@ function ColorSelection() {
 
             {/* TOTAL PRICE */}
             <div className="text-center">
-              <p className="font-futura text-[12px] font-medium" style={{ color: '#909090' }}>
+              <p className="font-futura text-[12px] font-medium" style={{ color: '#808080' }}>
                 TOTAL DUE
               </p>
               <p 

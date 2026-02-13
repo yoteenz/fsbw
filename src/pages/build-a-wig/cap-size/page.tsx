@@ -941,7 +941,7 @@ function CapSizeSelection() {
 
           {/* TOTAL DUE - Hidden on mobile to match reference */}
           <div className="text-center hidden md:block">
-            <p className="text-sm font-medium" style={{ color: '#909090', fontFamily: '"Futura PT Medium"' }}>
+            <p className="text-sm font-medium" style={{ color: '#808080', fontFamily: '"Futura PT Medium"' }}>
               TOTAL DUE
             </p>
             <p 
@@ -1020,7 +1020,7 @@ function CapSizeSelection() {
 
             {/* TOTAL PRICE */}
             <div className="text-center">
-              <p className="font-futura text-[12px] font-medium" style={{ color: '#909090' }}>
+              <p className="font-futura text-[12px] font-medium" style={{ color: '#808080' }}>
                 TOTAL DUE
               </p>
               <p 

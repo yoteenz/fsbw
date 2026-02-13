@@ -778,7 +778,7 @@ function WishlistSelection() {
               /* WISHLIST PRODUCT CARDS */
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px', paddingTop: '20px' }}>
                 {wishlistItems.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '40px 20px', color: '#909090' }}>
+                  <div style={{ textAlign: 'center', padding: '40px 20px', color: '#808080' }}>
                     <p style={{ fontFamily: '"Futura PT Book"', fontSize: '14px' }}>
                       Your wishlist is empty
                     </p>
@@ -950,7 +950,7 @@ function WishlistSelection() {
                             style={{
                               fontFamily: '"Futura PT Book"',
                               fontSize: '12px',
-                              color: '#909090',
+                              color: '#808080',
                               background: 'none',
                               border: 'none',
                               cursor: 'pointer',

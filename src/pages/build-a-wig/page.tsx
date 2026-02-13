@@ -5622,7 +5622,7 @@ export default function BuildAWigPage() {
                       style={{
                         width: '100%',
                         height: '100%',
-                          backgroundColor: '#909090',
+                          backgroundColor: '#808080',
                           borderRadius: '50%',
                           display: 'flex',
                           alignItems: 'center',
@@ -5822,7 +5822,7 @@ export default function BuildAWigPage() {
 
             {/* TOTAL PRICE */}
             <div className="text-center">
-              <p className="font-futura text-[12px] md:text-sm lg:text-base font-medium" style={{ color: '#909090' }}>
+              <p className="font-futura text-[12px] md:text-sm lg:text-base font-medium" style={{ color: '#808080' }}>
                 TOTAL DUE
               </p>
               <p
@@ -5871,7 +5871,7 @@ export default function BuildAWigPage() {
                       return (
                         <span className="flex items-center justify-center gap-1">
                           <img src="/assets/check.svg" alt="Check" width="9" height="9" />
-                          <span style={{ color: '#909090' }}>IN THE BAG</span>
+                          <span style={{ color: '#808080' }}>IN THE BAG</span>
                         </span>
                       );
                     }
@@ -5884,7 +5884,7 @@ export default function BuildAWigPage() {
                     return (
                       <span className="flex items-center justify-center gap-1">
                         <img src="/assets/check.svg" alt="Check" width="9" height="9" />
-                        <span style={{ color: '#909090' }}>IN THE BAG</span>
+                        <span style={{ color: '#808080' }}>IN THE BAG</span>
                       </span>
                     );
                   }

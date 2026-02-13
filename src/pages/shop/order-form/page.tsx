@@ -569,13 +569,13 @@ function OrderFormPage() {
         textarea::placeholder {
           font-family: "Futura PT Demi", "Futura PT Medium", "Futura PT Book", "Covered By Your Grace", "Covered By Your Grace Preload" !important;
           font-weight: 500;
-          color: #909090 !important;
+          color: #808080 !important;
         }
         input,
         textarea {
           font-family: "Futura PT Demi", "Futura PT Medium", "Futura PT Book", "Covered By Your Grace", "Covered By Your Grace Preload" !important;
           font-weight: 500 !important;
-          color: #909090 !important;
+          color: #808080 !important;
           text-transform: uppercase !important;
           background-color: #FFFFFF !important;
         }
@@ -589,7 +589,7 @@ function OrderFormPage() {
         input:-webkit-autofill:focus,
         input:-webkit-autofill:active {
           -webkit-box-shadow: 0 0 0 30px #FFFFFF inset !important;
-          -webkit-text-fill-color: #909090 !important;
+          -webkit-text-fill-color: #808080 !important;
           box-shadow: 0 0 0 30px #FFFFFF inset !important;
           background-color: #FFFFFF !important;
         }
@@ -1071,7 +1071,7 @@ function OrderFormPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
-                          color: '#909090',
+                          color: '#808080',
                           boxSizing: 'border-box',
                           borderRadius: '0',
                           outline: 'none'
@@ -1107,7 +1107,7 @@ function OrderFormPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
-                          color: '#909090',
+                          color: '#808080',
                           boxSizing: 'border-box',
                           borderRadius: '0',
                           outline: 'none'
@@ -1146,7 +1146,7 @@ function OrderFormPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
-                          color: '#909090',
+                          color: '#808080',
                           boxSizing: 'border-box',
                           borderRadius: '0',
                           outline: 'none'
@@ -1182,7 +1182,7 @@ function OrderFormPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
                           backgroundColor: '#FFFFFF',
-                          color: '#909090',
+                          color: '#808080',
                           boxSizing: 'border-box',
                           borderRadius: '0',
                           outline: 'none'
@@ -1220,7 +1220,7 @@ function OrderFormPage() {
                         fontFamily: '"Futura PT Book"',
                         fontSize: '11px',
                         backgroundColor: '#FFFFFF',
-                        color: '#909090',
+                        color: '#808080',
                         boxSizing: 'border-box',
                         borderRadius: '0',
                         outline: 'none'
@@ -1353,7 +1353,7 @@ function OrderFormPage() {
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
                             backgroundColor: '#FFFFFF',
-                            color: photoIdFile ? '#909090' : '#EB1C24',
+                            color: photoIdFile ? '#808080' : '#EB1C24',
                             boxSizing: 'border-box',
                             borderRadius: '0',
                             cursor: 'pointer',
@@ -1380,7 +1380,7 @@ function OrderFormPage() {
                             <div style={{ display: 'flex', alignItems: 'center' }}>
                               <span style={{ 
                                 padding: '4px 8px',
-                                border: '1px solid #909090',
+                                border: '1px solid #808080',
                                 borderRadius: '4px',
                                 backgroundColor: '#F5F5F5',
                                 color: '#000000',
@@ -1390,7 +1390,7 @@ function OrderFormPage() {
                               }}>
                                 CHOOSE FILE
                               </span>
-                              <span style={{ marginLeft: '8px', color: '#909090', fontFamily: '"Futura PT Book"', fontSize: '10px' }}>
+                              <span style={{ marginLeft: '8px', color: '#808080', fontFamily: '"Futura PT Book"', fontSize: '10px' }}>
                                 NO FILE SELECTED
                               </span>
                             </div>
@@ -1442,7 +1442,7 @@ function OrderFormPage() {
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
                             backgroundColor: '#FFFFFF',
-                            color: lastFourDigitsFile ? '#909090' : '#EB1C24',
+                            color: lastFourDigitsFile ? '#808080' : '#EB1C24',
                             boxSizing: 'border-box',
                             borderRadius: '0',
                             cursor: 'pointer',
@@ -1469,7 +1469,7 @@ function OrderFormPage() {
                             <>
                               <span style={{ 
                                 padding: '4px 8px',
-                                border: '1px solid #909090',
+                                border: '1px solid #808080',
                                 borderRadius: '4px',
                                 backgroundColor: '#F5F5F5',
                                 color: '#000000',
@@ -1479,7 +1479,7 @@ function OrderFormPage() {
                               }}>
                                 CHOOSE FILE
                               </span>
-                              <span style={{ marginLeft: '8px', color: '#909090', fontFamily: '"Futura PT Book"', fontSize: '10px' }}>
+                              <span style={{ marginLeft: '8px', color: '#808080', fontFamily: '"Futura PT Book"', fontSize: '10px' }}>
                                 NO FILE SELECTED
                               </span>
                             </>

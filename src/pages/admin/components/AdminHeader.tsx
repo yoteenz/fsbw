@@ -304,12 +304,12 @@ export default function AdminHeader({
   // Get urgency color for notification items
   const getUrgencyColor = (urgent: boolean, unread: boolean) => {
     if (urgent) return '#EB1C24';
-    return unread ? '#FF8C00' : '#909090';
+    return unread ? '#FF8C00' : '#808080';
   };
 
   // Get priority color
   const getPriorityColor = (priority: string, unread: boolean) => {
-    if (!unread) return '#909090';
+    if (!unread) return '#808080';
     switch (priority) {
       case 'urgent':
         return '#EB1C24';
@@ -319,7 +319,7 @@ export default function AdminHeader({
         return '#4CAF50';
       case 'low':
       default:
-        return '#909090';
+        return '#808080';
     }
   };
 
@@ -329,7 +329,7 @@ export default function AdminHeader({
       case 'BLACK TIER':
         return '#000000';
       default:
-        return '#909090';
+        return '#808080';
     }
   };
 
@@ -661,7 +661,7 @@ export default function AdminHeader({
                         </div>
 
                         <div className="flex items-center space-x-2">
-                          <span className="text-xs font-futura uppercase" style={{ color: '#909090', fontSize: '8px' }}>
+                          <span className="text-xs font-futura uppercase" style={{ color: '#808080', fontSize: '8px' }}>
                             {message.timestamp}
                           </span>
                           {isUnread && <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#EB1C24' }} />}
@@ -750,7 +750,7 @@ export default function AdminHeader({
                         <div className="flex items-center space-x-2">
                           <span
                             className="text-xs font-futura uppercase"
-                            style={{ color: '#909090', fontSize: '9px' }}
+                            style={{ color: '#808080', fontSize: '9px' }}
                           >
                             {notification.timestamp}
                           </span>

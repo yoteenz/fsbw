@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
+import { getWelcomeDiscountAmount } from '../../constants/tiers';
 
 function AccountPage() {
   const navigate = useNavigate();
@@ -322,6 +323,60 @@ function AccountPage() {
       window.removeEventListener('ordersUpdated', handleStorageChange);
     };
   }, [userData]);
+
+  // Credit tier welcome discount (digital cash) when user reaches each spend tier.
+  // Once per tier per 6-month cycle; when tiers reset each period they can earn benefits again.
+  // This balance is shown as DIGITAL CASH on account profile and applied at checkout.
+  useEffect(() => {
+    if (!userData?.email) return;
+    try {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      if (!currentUser.email || currentUser.email !== userData.email) return;
+      const now = new Date();
+      const periodKey = now.getMonth() < 6
+        ? `${now.getFullYear()}-Jan-Jun`
+        : `${now.getFullYear()}-Jul-Dec`;
+      const byPeriod = currentUser.welcomeDiscountTiersCreditedByPeriod || {};
+      const creditedThisPeriod: string[] = byPeriod[periodKey] || [];
+      // Migrate old format: if they had a flat list, treat as already credited this period
+      if (creditedThisPeriod.length === 0 && Array.isArray(currentUser.welcomeDiscountTiersCredited)) {
+        byPeriod[periodKey] = currentUser.welcomeDiscountTiersCredited;
+        const updatedForMigration = { ...currentUser, welcomeDiscountTiersCreditedByPeriod: byPeriod };
+        delete (updatedForMigration as any).welcomeDiscountTiersCredited;
+        localStorage.setItem('currentUser', JSON.stringify(updatedForMigration));
+        setUserData(updatedForMigration);
+        const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+        const idx = registeredUsers.findIndex((u: any) => u.email === currentUser.email);
+        if (idx !== -1) {
+          registeredUsers[idx] = updatedForMigration;
+          localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+        }
+        return;
+      }
+      const currentTier = calculateTier();
+      if (!currentTier || !['SILVER', 'RED', 'BLACK'].includes(currentTier)) return;
+      if (creditedThisPeriod.includes(currentTier)) return;
+      const amount = getWelcomeDiscountAmount(currentTier);
+      const currentBalance = (currentUser.giftCardBalance ?? 0) as number;
+      const updatedCreditedThisPeriod = [...(byPeriod[periodKey] || []), currentTier];
+      const updatedUser = {
+        ...currentUser,
+        giftCardBalance: currentBalance + amount,
+        welcomeDiscountTiersCreditedByPeriod: { ...byPeriod, [periodKey]: updatedCreditedThisPeriod }
+      };
+      delete (updatedUser as any).welcomeDiscountTiersCredited;
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      setUserData(updatedUser);
+      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const idx = registeredUsers.findIndex((u: any) => u.email === currentUser.email);
+      if (idx !== -1) {
+        registeredUsers[idx] = updatedUser;
+        localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+      }
+    } catch (e) {
+      console.error('Error crediting tier welcome discount:', e);
+    }
+  }, [userData?.email]);
 
   const handleMobileMenuToggle = () => {
     setShowMobileMenu(!showMobileMenu);
@@ -805,7 +860,7 @@ function AccountPage() {
         route: '/account/orders' 
       },
       { title: 'REWARDS', subtitle: 'MEMBERSHIP + SUBSCRIPTION', route: '/account/rewards' },
-      { title: 'REFERRALS', subtitle: 'SHARE YOUR CODE', route: '/account/referrals' },
+      { title: 'REFERRALS', subtitle: 'SHARE YOUR DISCOUNT CODE', route: '/account/referrals' },
       { title: 'AFFILIATE', subtitle: 'SUBMIT CONTENT FOR POINTS', route: '/account/affiliate' },
       { 
         title: 'REVIEWS', 
@@ -1744,9 +1799,9 @@ function AccountPage() {
                       const displayMembershipType = userMembershipType === 'PREMIUM' ? 'PREMIUM' : 'BASIC';
                       // For BASIC: always use gray regardless of tier
                       // For PREMIUM: always use black
-                      const membershipTextColor = displayMembershipType === 'PREMIUM' ? '#000000' : '#909090';
+                      const membershipTextColor = displayMembershipType === 'PREMIUM' ? '#000000' : '#808080';
                       // Tier color is independent: silver = gray, red = red, black = black
-                      const tierColor = tier === 'SILVER' ? '#909090' : tier === 'RED' ? '#EB1C24' : tier === 'BLACK' ? '#000000' : '#000000';
+                      const tierColor = tier === 'SILVER' ? '#808080' : tier === 'RED' ? '#EB1C24' : tier === 'BLACK' ? '#000000' : '#000000';
                       return (
                         <p
                           style={{
@@ -1803,7 +1858,7 @@ function AccountPage() {
                         transform: 'translateY(2px)'
                       }}
                     >
-                      LOAD GIFT CARD
+                      LOAD CASH BALANCE
                     </p>
                   </div>
                 </div>

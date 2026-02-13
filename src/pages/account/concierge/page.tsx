@@ -2329,7 +2329,7 @@ function ConciergePage() {
                                     <p
                                       style={{
                                         fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
-                                        color: '#909090',
+                                        color: '#808080',
                                         fontSize: '12px',
                                         margin: '0 0 2px 0',
                                         textTransform: 'uppercase'
@@ -2463,7 +2463,7 @@ function ConciergePage() {
                                   <p
                                     style={{
                                       fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
-                                      color: '#909090',
+                                      color: '#808080',
                                       fontSize: '12px',
                                       margin: '0 0 2px 0',
                                       textTransform: 'uppercase'
@@ -2559,7 +2559,7 @@ function ConciergePage() {
                                     <p
                     style={{
                                         fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
-                                        color: '#909090',
+                                        color: '#808080',
                                         fontSize: '12px',
                                         margin: '0 0 2px 0',
                                         textTransform: 'uppercase'
@@ -2680,7 +2680,7 @@ function ConciergePage() {
                                   <p
                     style={{
                                       fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
-                                      color: '#909090',
+                                      color: '#808080',
                                       fontSize: '12px',
                                       margin: '0 0 2px 0',
                                       textTransform: 'uppercase'
@@ -3043,7 +3043,7 @@ function ConciergePage() {
                                         <p
                                           style={{
                                             fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                            color: isCompleted ? '#000000' : (isCurrent ? '#EB1C24' : '#909090'),
+                                            color: isCompleted ? '#000000' : (isCurrent ? '#EB1C24' : '#808080'),
                       fontSize: '10px',
                                             margin: '0',
                                             textTransform: 'uppercase',
@@ -3086,7 +3086,7 @@ function ConciergePage() {
                                             alignItems: 'flex-start'
                                           }}
                                         >
-                                          <span style={{ fontFamily: '"Futura PT Book"', color: '#909090' }}>{stage.description}</span>
+                                          <span style={{ fontFamily: '"Futura PT Book"', color: '#808080' }}>{stage.description}</span>
                                           {(() => {
                                             const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
                                             const processingTime = selectedOrder?.processingTime || '6-8 WEEKS';
@@ -3383,7 +3383,7 @@ function ConciergePage() {
                                                       style={{
                                                         width: '100%',
                                                         height: '100%',
-                                                        backgroundColor: '#909090',
+                                                        backgroundColor: '#808080',
                                                         borderRadius: '50%',
                                                         display: 'flex',
                                                         alignItems: 'center',
@@ -3716,7 +3716,7 @@ function ConciergePage() {
                                         <p
                                           style={{
                                             fontFamily: '"Futura PT Book"',
-                                            color: '#909090',
+                                            color: '#808080',
                                             fontSize: '9px',
                                             margin: '0 0 5px 0',
                       textTransform: 'uppercase'
@@ -3736,7 +3736,7 @@ function ConciergePage() {
                                                 borderRadius: (progress > 0 || (isCanceled && isCompleted)) ? '4px' : '0',
                                                 overflow: 'hidden',
                                                 position: 'relative',
-                                                border: (progress === 0 && !isCanceled) ? '1px solid #909090' : 'none'
+                                                border: (progress === 0 && !isCanceled) ? '1px solid #808080' : 'none'
                                               }}
                                             >
                                               <div
@@ -3828,7 +3828,7 @@ function ConciergePage() {
                                           <p
                                             style={{
                                               fontFamily: '"Futura PT Book"',
-                                              color: '#909090',
+                                              color: '#808080',
                                               fontSize: '9px',
                                               margin: '8px 0 0 0',
                                               textTransform: 'uppercase'
@@ -3865,7 +3865,7 @@ function ConciergePage() {
                                                   <p
                                                     style={{
                                                       fontFamily: '"Futura PT Book"',
-                                                      color: isCurrent ? '#EB1C24' : '#909090',
+                                                      color: isCurrent ? '#EB1C24' : '#808080',
                                                       fontSize: '9px',
                                                       margin: '4px 0 0 0',
                                                       textTransform: 'uppercase'
@@ -3919,7 +3919,7 @@ function ConciergePage() {
                     <p
                       style={{
                         fontFamily: '"Futura PT Book"',
-                        color: '#909090',
+                        color: '#808080',
                       fontSize: '11px',
                         margin: '0 0 16px 0',
                         textTransform: 'uppercase',

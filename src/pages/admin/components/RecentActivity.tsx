@@ -416,7 +416,7 @@ export default function RecentActivity({ onViewModeChange }: RecentActivityProps
         'REVIEW REMINDER - CLIENT FEEDBACK'
       ],
       urgency: 'low',
-      icon: <i className="ri-notification-line text-lg" style={{ color: '#909090' }}></i>,
+      icon: <i className="ri-notification-line text-lg" style={{ color: '#808080' }}></i>,
     },
     {
       category: 'OPERATIONAL',
@@ -474,7 +474,7 @@ export default function RecentActivity({ onViewModeChange }: RecentActivityProps
   };
 
   const getUrgencyLineColor = (urgency: string, viewed: boolean) => {
-    if (viewed) return '#909090';
+    if (viewed) return '#808080';
     switch (urgency) {
       case 'urgent':
         return '#EB1C24';
@@ -482,7 +482,7 @@ export default function RecentActivity({ onViewModeChange }: RecentActivityProps
         return '#ffa500';
       case 'low':
       default:
-        return '#909090';
+        return '#808080';
     }
   };
 
@@ -952,7 +952,7 @@ export default function RecentActivity({ onViewModeChange }: RecentActivityProps
                           }}
                         >
                           <div className="flex items-center">
-                            <span className="font-covered-by-your-grace mr-2 flex-shrink-0 tracking-wider" style={{ color: '#909090', opacity: 1, fontSize: '12px', fontWeight: '500' }}>
+                            <span className="font-covered-by-your-grace mr-2 flex-shrink-0 tracking-wider" style={{ color: '#808080', opacity: 1, fontSize: '12px', fontWeight: '500' }}>
                               {groupDates[groupName]}
                             </span>
                             <span className="font-covered-by-your-grace" style={{ opacity: 1 }}>
@@ -980,7 +980,7 @@ export default function RecentActivity({ onViewModeChange }: RecentActivityProps
                     <div className="flex items-center space-x-1 flex-1 min-w-0">
                       <span
                         className="px-2 py-0.5 text-sm font-bold flex-shrink-0 font-covered-by-your-grace tracking-wider"
-                        style={{ color: '#909090', opacity: 1, marginLeft: '-8px', fontSize: '12px', fontWeight: 'normal' }}
+                        style={{ color: '#808080', opacity: 1, marginLeft: '-8px', fontSize: '12px', fontWeight: 'normal' }}
                       >
                         {notification.date}
                       </span>

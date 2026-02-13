@@ -1182,7 +1182,7 @@ function SoftCurlSelection() {
                 <div style={{ position: 'relative', width: '100%', marginBottom: '4px', transform: 'translateY(0)', minHeight: 'clamp(18px, 2.2vw, 26px)' }}>
                   <p 
                     onClick={handleToggleWishlist}
-                    style={{ position: 'absolute', left: 'clamp(4px, 1vw, 12px)', top: '0', color: '#909090', fontFamily: '"Futura PT Demi"', fontSize: '10px', fontWeight: '600', margin: '0', cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap' }}
+                    style={{ position: 'absolute', left: 'clamp(4px, 1vw, 12px)', top: '0', color: '#808080', fontFamily: '"Futura PT Demi"', fontSize: '10px', fontWeight: '600', margin: '0', cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap' }}
                   >
                     {isInWishlist ? '- REMOVE FROM WISHLIST' : '+ ADD TO WISHLIST'}
                   </p>
@@ -1289,7 +1289,7 @@ function SoftCurlSelection() {
                   color: 'black'
                 }}
               >
-                (2D MODEL IS FOR <span style={{ color: '#909090', fontFamily: '"Futura PT Demi"' }}>VISUAL & AESTHETIC</span> PURPOSES ONLY)
+                (2D MODEL IS FOR <span style={{ color: '#808080', fontFamily: '"Futura PT Demi"' }}>VISUAL & AESTHETIC</span> PURPOSES ONLY)
               </p>
             </div>
             </div>
@@ -1373,7 +1373,7 @@ function SoftCurlSelection() {
                 fontFamily: '"Futura PT Demi"',
                 fontSize: '10px',
                 fontWeight: '600',
-                color: '#909090',
+                color: '#808080',
                 transform: 'translateY(-34px)'
               }}
             >
@@ -1928,7 +1928,7 @@ function SoftCurlSelection() {
                           <p style={{ 
                             fontFamily: '"Futura PT Demi"', 
                             fontSize: '9px', 
-                            color: '#909090',
+                            color: '#808080',
                             textTransform: 'uppercase',
                             margin: '0',
                             transform: 'translateY(3px)'
@@ -1969,7 +1969,7 @@ function SoftCurlSelection() {
               {addToBagState === 'added' && (
                 <span className="flex items-center justify-center gap-1">
                   <img src="/assets/check.svg" alt="Check" width="9" height="9" />
-                  <span style={{ color: '#909090' }}>IN THE BAG</span>
+                  <span style={{ color: '#808080' }}>IN THE BAG</span>
                 </span>
               )}
             </button>
