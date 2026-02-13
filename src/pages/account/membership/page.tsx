@@ -4,8 +4,20 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../../constants/tiers';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
+import SocialMenuIcons from '../../../components/SocialMenuIcons';
 
 const BRAND_GRAY = '#808080';
+
+const EARN_TASKS = [
+  { id: 'newsletter_signup', action: 'NEWSLETTER SIGN UP', points: 50 },
+  { id: 'refer_friend', action: 'REFER A FRIEND', points: 100 },
+  { id: 'content_review', action: 'LEAVE A CONTENT REVIEW', points: 150 },
+  { id: 'photo_video_tags', action: 'PHOTO + VIDEO TAGS', points: 200 },
+  { id: 'facebook', action: 'LIKE OUR FACEBOOK', points: 250, link: 'https://www.facebook.com/bookfrontalslayer?utm_source=membership&utm_medium=earn&utm_campaign=like_facebook' },
+  { id: 'instagram', action: 'FOLLOW OUR INSTAGRAM', points: 250, link: 'https://www.instagram.com/frontalslayer/?utm_source=membership&utm_medium=earn&utm_campaign=follow_instagram' },
+  { id: 'tiktok', action: 'FOLLOW OUR TIK TOK', points: 250, link: 'https://www.tiktok.com/@frontalslayer?utm_source=membership&utm_medium=earn&utm_campaign=follow_tiktok' },
+  { id: 'twitter', action: 'FOLLOW OUR TWITTER', points: 250, link: 'https://x.com/frontalslayer?utm_source=membership&utm_medium=earn&utm_campaign=follow_twitter' }
+] as const;
 
 function MembershipPage() {
   const navigate = useNavigate();
@@ -48,6 +60,9 @@ function MembershipPage() {
     }
     return null;
   });
+
+  // Earn-task completion: backend only. Set userData.earnedEarnTaskIds when verified: newsletter list, first referral; content_review = from reviews tab/page; photo_video_tags = from affiliate page (social tags); social tasks = tracked links + follow.
+  const earnedTaskIds: string[] = Array.isArray(userData?.earnedEarnTaskIds) ? userData.earnedEarnTaskIds : [];
 
   // Calculate total approved affiliate points
   const calculateTotalAffiliatePoints = (): number => {
@@ -818,25 +833,7 @@ function MembershipPage() {
                 </div>
 
                 {/* Social Media Icons - Fixed at bottom */}
-                <div className="flex justify-center" style={{ marginBottom: '0' }}>
-                  <div className="flex" style={{ gap: '19px' }}>
-                    <img
-                      src="/assets/instagram-icon.svg"
-                      alt="Instagram"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                    <img
-                      src="/assets/twitter-icon.svg"
-                      alt="Twitter"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                    <img
-                      src="/assets/facebook-icon.svg"
-                      alt="Facebook"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                  </div>
-                </div>
+                <SocialMenuIcons />
                 </div>
               </div>
               </div>
@@ -1699,25 +1696,21 @@ fontFamily: '"Futura PT Book"',
                                 </h3>
                               </div>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                {[
-                                  { action: 'NEWSLETTER SIGN UP', points: 50 },
-                                  { action: 'REFER A FRIEND', points: 100 },
-                                  { action: 'LEAVE A CONTENT REVIEW', points: 150 },
-                                  { action: 'PHOTO + VIDEO TAGS', points: 200 },
-                                  { action: 'LIKE OUR FACEBOOK', points: 250 },
-                                  { action: 'FOLLOW OUR INSTAGRAM', points: 250 },
-                                  { action: 'FOLLOW OUR TIK TOK', points: 250 },
-                                  { action: 'FOLLOW OUR TWITTER', points: 250 }
-                                ].map((item, index) => (
-                                  <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                      {item.action === 'LIKE OUR FACEBOOK' ? <>LIKE OUR <span style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>FACEBOOK</span></> : item.action === 'FOLLOW OUR INSTAGRAM' ? <>FOLLOW OUR <span style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>INSTAGRAM</span></> : item.action === 'FOLLOW OUR TIK TOK' ? <>FOLLOW OUR <span style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>TIK TOK</span></> : item.action === 'FOLLOW OUR TWITTER' ? <>FOLLOW OUR <span style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>TWITTER</span></> : item.action}
-                                    </p>
-                                    <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: '#EB1C24', margin: '0' }}>
-                                      +{item.points}
-                                    </p>
-                                  </div>
-                                ))}
+                                {EARN_TASKS.map((item) => {
+                                  const isEarned = earnedTaskIds.includes(item.id);
+                                  return (
+                                    <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                        {item.action === 'LIKE OUR FACEBOOK' ? <>LIKE OUR <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>FACEBOOK</a></> : item.action === 'FOLLOW OUR INSTAGRAM' ? <>FOLLOW OUR <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>INSTAGRAM</a></> : item.action === 'FOLLOW OUR TIK TOK' ? <>FOLLOW OUR <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>TIK TOK</a></> : item.action === 'FOLLOW OUR TWITTER' ? <>FOLLOW OUR <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>TWITTER</a></> : item.action}
+                                      </p>
+                                      {isEarned ? (
+                                        <img src="/assets/premium-check.svg" alt="Earned" style={{ width: '8.4px', height: '8.4px', flexShrink: 0 }} />
+                                      ) : (
+                                        <span style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: '#EB1C24' }}>+{item.points}</span>
+                                      )}
+                                    </div>
+                                  );
+                                })}
                               </div>
                             </div>
 
