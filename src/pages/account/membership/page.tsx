@@ -1529,8 +1529,59 @@ fontFamily: '"Futura PT Book"',
                   </div>
                 </div>
 
+                {/* Points History - Card */}
+                        <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
+                          <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
+                            <p
+                              style={{
+                                fontFamily: '"Futura PT Medium"',
+                                color: '#EB1C24',
+                                fontSize: '11px',
+                                margin: '0',
+                                textTransform: 'uppercase',
+                                fontWeight: '500',
+                                textAlign: 'left'
+                              }}
+                            >
+                              POINTS HISTORY
+                            </p>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase', marginBottom: '8px', fontFamily: '"Futura PT Medium"', fontWeight: '500', color: '#000000' }}>
+                            <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left' }}>DATE</span>
+                            <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center' }}>REWARD</span>
+                            <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right' }}>SPENT</span>
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            {[
+                              { date: '02-14-2026', discount: 'DISCOUNT CODE', points: '-2,500 PTS' },
+                              { date: '01-05-2026', discount: 'DISCOUNT CODE', points: '-10,000 PTS' }
+                            ].map((row, i) => (
+                              <div key={i} style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase' }}>
+                                <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left', color: '#000000', fontFamily: '"Futura PT Book"' }}>{row.date}</span>
+                                <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center', color: '#808080', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.discount}</span>
+                                <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right', color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.points}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
                 {/* Card 2: MEMBERSHIP STATUS */}
                 <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
+                  <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        color: '#EB1C24',
+                        fontSize: '11px',
+                        margin: '0',
+                        textTransform: 'uppercase',
+                        fontWeight: '500',
+                        textAlign: 'left'
+                      }}
+                    >
+                      MEMBERSHIP STATUS
+                    </p>
+                  </div>
                   <div>
                                   <p
                                     style={{
@@ -1563,7 +1614,7 @@ fontFamily: '"Futura PT Book"',
                                   </p>
                                   {(() => {
                                 const { currentSpend, spendRemaining, progressPercent, nextTier, nextTierName } = getNextTierProgress();
-                                const nextTierColor = nextTierName === 'BLACK' ? '#000000' : '#EB1C24';
+                                const nextTierColor = nextTierName === 'BLACK' ? '#000000' : nextTierName === 'SILVER' ? BRAND_GRAY : '#EB1C24';
                                 return (
                                   <>
                                     <div style={{ marginTop: '20px' }}>
@@ -1605,42 +1656,6 @@ fontFamily: '"Futura PT Book"',
                               })()}
                               </div>
                             </div>
-
-                        {/* Points History - Card */}
-                        <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
-                          <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
-                            <p
-                              style={{
-                                fontFamily: '"Futura PT Medium"',
-                                color: '#EB1C24',
-                                fontSize: '11px',
-                                margin: '0',
-                                textTransform: 'uppercase',
-                                fontWeight: '500',
-                                textAlign: 'left'
-                              }}
-                            >
-                              POINTS HISTORY
-                            </p>
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase', marginBottom: '8px', fontFamily: '"Futura PT Medium"', fontWeight: '500', color: '#000000' }}>
-                            <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left' }}>DATE</span>
-                            <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center' }}>REWARD</span>
-                            <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right' }}>SPENT</span>
-                          </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            {[
-                              { date: '02-14-2026', discount: 'DISCOUNT CODE', points: '-2,500 PTS' },
-                              { date: '01-05-2026', discount: 'DISCOUNT CODE', points: '-10,000 PTS' }
-                            ].map((row, i) => (
-                              <div key={i} style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase' }}>
-                                <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left', color: '#000000', fontFamily: '"Futura PT Book"' }}>{row.date}</span>
-                                <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center', color: '#808080', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.discount}</span>
-                                <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right', color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.points}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
 
                         {/* MORE WAYS TO EARN - Card */}
                             <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
@@ -1697,12 +1712,12 @@ fontFamily: '"Futura PT Book"',
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                               {[
-                                'EXCLUSIVE ACCESS TO PREMIUM 3D WIG GENERATOR',
+                                'EXCLUSIVE ACCESS TO PREMIUM 3D WIG SELECTIONS',
                                 'ACCESS TO VIP LOUNGE + MEMBERS ONLY EVENTS',
                                 'FAST TRACK CUSTOMER SUPPORT',
                                 'PRIORITY BOOKING',
                                 'FREE GIVEAWAYS',
-                                'DISCOUNTED SHIPPING'
+                                'DISCOUNTED SHIPPING (DOMESTIC + INTERNATIONAL)'
                               ].map((label, i) => (
                                 <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                                   <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8.4px', height: '8.4px', marginTop: '4px', flexShrink: 0 }} />
@@ -1739,7 +1754,7 @@ fontFamily: '"Futura PT Book"',
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        UNLIMITED ACCESS TO VIRTUAL 3D WIG GENERATOR
+                        EXCLUSIVE ACCESS TO PREMIUM 3D WIG SELECTIONS
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '9px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
                         ADDITIONAL, MORE EXTENSIVE CUSTOMIZATION OPTIONS
@@ -1758,7 +1773,7 @@ fontFamily: '"Futura PT Book"',
                         FAST TRACK CUSTOMER SUPPORT
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '9px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        PRIORITIZED CUSTOMER SUPPORT WITH A SIGNIFICANTLY REDUCED RESPONSE TIME
+                        PRIORITIZED SUPPORT WITH A SIGNIFICANTLY REDUCED RESPONSE TIME
                       </p>
                     </div>
                     <div>

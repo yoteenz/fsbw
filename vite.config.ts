@@ -1,9 +1,37 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import http from 'node:http'
+
+const LIVE_RELOAD_PORT = 3002
+
+/** Separate server for reload token so it works from mobile (no Vite middleware order issues). */
+function liveReloadPolling() {
+  let reloadToken = 0
+  return {
+    name: 'live-reload-polling',
+    configureServer(server: any) {
+      console.log('[vite] live-reload plugin: starting...')
+      server.watcher.on('change', () => { reloadToken++ })
+      const reloadServer = http.createServer((_req, res) => {
+        res.setHeader('Content-Type', 'text/plain')
+        res.setHeader('Cache-Control', 'no-store')
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.end(String(reloadToken))
+      })
+      reloadServer.on('error', (err: NodeJS.ErrnoException) => {
+        console.error('[vite] live-reload port', LIVE_RELOAD_PORT, 'failed:', err.message)
+        if (err.code === 'EADDRINUSE') console.error('[vite] Try closing whatever is using port', LIVE_RELOAD_PORT)
+      })
+      reloadServer.listen(LIVE_RELOAD_PORT, '0.0.0.0', () => {
+        console.log(`[vite] live-reload: http://localhost:${LIVE_RELOAD_PORT} (or http://<your-ip>:${LIVE_RELOAD_PORT}) — page auto-reloads when you save a file`)
+      })
+    },
+  }
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [liveReloadPolling(), react()],
   base: '/',
   build: {
     outDir: 'dist',
@@ -37,11 +65,12 @@ export default defineConfig({
     host: '0.0.0.0', // Explicitly bind to all interfaces for mobile access
     open: false,
     strictPort: true, // Force port 3001, don't fall back to other ports
-    // Let HMR use the same host/port as the page so live reload works (e.g. whether you open localhost or 127.0.0.1 or a network IP)
+    // HMR uses the same host as the page (localhost or your IP on mobile) so live reload works
     hmr: true,
     watch: {
-      // On Windows, polling can help if file changes aren't detected
-      usePolling: false,
+      // Polling: server reliably sees file changes (helps on Windows / paths with spaces)
+      usePolling: true,
+      interval: 300,
     },
     // Ensure SPA routing works - all routes serve index.html
     middlewareMode: false,
