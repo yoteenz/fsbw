@@ -942,7 +942,7 @@ function MembershipPage() {
                                 <div style={{ marginTop: '40px', paddingBottom: '20px' }}>
                                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0' }}>
                                     <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
-                                      NEXT REWARD: <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{nextReward ? nextReward.discount : '—'}</span>
+                                      NEXT REWARD: <span style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{nextReward ? 'DISCOUNT CODE' : '—'}</span>
                                     </p>
                                     <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
                                       {totalPoints.toLocaleString()}{nextReward ? ` / ${nextReward.points.toLocaleString()}` : ''} PTS
@@ -1446,7 +1446,7 @@ fontFamily: '"Futura PT Book"',
                                     <div style={{ marginTop: '40px', paddingBottom: '20px' }}>
                                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0' }}>
                                         <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
-                                          NEXT REWARD: <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{nextReward ? nextReward.discount : '—'}</span>
+                                          NEXT REWARD: <span style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{nextReward ? 'DISCOUNT CODE' : '—'}</span>
                                         </p>
                                         <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
                                           {totalPoints.toLocaleString()}{nextReward ? ` / ${nextReward.points.toLocaleString()}` : ''} PTS
