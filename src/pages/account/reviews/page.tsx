@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
+import { clearNewReviewApproved, getUserSubmittedReviewsKey, getMockShopReviewCount, getMockToolReviewCount, setLastSeenShopCount, setLastSeenToolCount } from '../../../constants/reviews';
 
 interface Review {
   id: string;
@@ -25,7 +26,7 @@ const mockShopReviews: Review[] = [
     body: 'WIG SHIPPED QUICKER THAN I ANTICIPATED WHICH WAS GREAT! ALSO OBSESSED WITH THE QUALITY OF THIS HAIR. 10/10 WILL BE PURCHASING ANOTHER UNIT FROM HERE AGAIN.',
     rating: 5,
     reviewCount: 35,
-    thumbnail: '/assets/profile-thumb.png'
+    thumbnail: '/assets/natural front.png'
   },
   {
     id: '2',
@@ -35,7 +36,7 @@ const mockShopReviews: Review[] = [
     body: 'I AM IN LOVE WITH THIS UNIT! VERSATILE & MAKES IT EASY TO SWITCH UP MY STYLE.',
     rating: 5,
     reviewCount: 33,
-    thumbnail: '/assets/profile-thumb.png'
+    thumbnail: '/assets/2D WAVY FRONT.png'
   },
   {
     id: '3',
@@ -43,9 +44,9 @@ const mockShopReviews: Review[] = [
     productName: 'BLANCO',
     subtitle: 'EXACTLY AS DESCRIBED',
     body: 'BEAUTIFUL HAIR AND ARRIVED ON TIME. WILL ORDER AGAIN.',
-    rating: 5,
+    rating: 3,
     reviewCount: 28,
-    thumbnail: '/assets/profile-thumb.png'
+    thumbnail: '/assets/2D BLANCO FRONT.png'
   },
   {
     id: '4',
@@ -55,7 +56,57 @@ const mockShopReviews: Review[] = [
     body: 'PERFECT FOR SUMMER. EASY TO STYLE AND HOLDS UP WELL.',
     rating: 4,
     reviewCount: 22,
-    thumbnail: '/assets/profile-thumb.png'
+    thumbnail: '/assets/2D WAVY FRONT.png'
+  },
+  {
+    id: '5',
+    date: '02-10-2024',
+    productName: 'NOIR',
+    subtitle: 'GOOD BUT NOT PERFECT',
+    body: 'NICE UNIT OVERALL. QUALITY IS FINE, SHIPPING WAS SLOW. WOULD CONSIDER ORDERING AGAIN.',
+    rating: 3,
+    reviewCount: 18,
+    thumbnail: '/assets/natural front.png'
+  },
+  {
+    id: '6',
+    date: '02-12-2024',
+    productName: 'SOFT WAVE',
+    subtitle: 'VERY PLEASED',
+    body: 'GREAT WAVE PATTERN AND EASY TO MAINTAIN. MINOR FRIZZ AFTER A FEW WEEKS BUT STILL RECOMMEND.',
+    rating: 4,
+    reviewCount: 14,
+    thumbnail: '/assets/2D WAVY FRONT.png'
+  },
+  {
+    id: '7',
+    date: '02-13-2025',
+    productName: 'BLANCO',
+    subtitle: 'NEW REVIEW FOR ALERTS TEST',
+    body: 'ADDED SO YOU CAN VERIFY THE REVIEWS CARD ALERT CLEARS WHEN YOU VISIT THE REVIEWS PAGE.',
+    rating: 5,
+    reviewCount: 7,
+    thumbnail: '/assets/2D BLANCO FRONT.png'
+  },
+  {
+    id: '8',
+    date: '02-13-2025',
+    productName: 'NOIR',
+    subtitle: 'LATEST REVIEW FOR ALERTS CHECK',
+    body: 'SECOND NEW REVIEW SO YOU CAN CATCH THE REVIEWS CARD ALERT WHEN YOU NAVIGATE TO ACCOUNT THEN OPEN REVIEWS.',
+    rating: 4,
+    reviewCount: 9,
+    thumbnail: '/assets/natural front.png'
+  },
+  {
+    id: '9',
+    date: '02-14-2025',
+    productName: 'BEACH WAVE',
+    subtitle: 'NINTH MOCK FOR ALERT + COUNT',
+    body: 'ADDED SO MOCK COUNT BECOMES 11; ACCOUNT PAGE SHOWS ALERT UNTIL YOU VISIT REVIEWS, THEN CARD COUNT UPDATES TO 11.',
+    rating: 5,
+    reviewCount: 11,
+    thumbnail: '/assets/2D WAVY FRONT.png'
   }
 ];
 
@@ -69,7 +120,7 @@ const mockToolReviews: Review[] = [
     body: 'KEEPS MY WIG IN PLACE OVERNIGHT. GREAT QUALITY.',
     rating: 5,
     reviewCount: 12,
-    thumbnail: '/assets/profile-thumb.png'
+    thumbnail: '/assets/natural front.png'
   },
   {
     id: 't2',
@@ -79,31 +130,81 @@ const mockToolReviews: Review[] = [
     body: 'PERFECT SIZE FOR TRAVEL. DOES THE JOB.',
     rating: 4,
     reviewCount: 8,
-    thumbnail: '/assets/profile-thumb.png'
+    thumbnail: '/assets/natural front.png'
+  },
+  {
+    id: 't3',
+    date: '02-14-2025',
+    productName: 'WIG STAND',
+    subtitle: 'NEW TOOL REVIEW FOR ALERT TEST',
+    body: 'ADDED SO MOCK COUNT GOES TO 12; ACCOUNT REVIEWS CARD SHOULD SHOW ALERT UNTIL YOU VISIT THE REVIEWS PAGE.',
+    rating: 5,
+    reviewCount: 5,
+    thumbnail: '/assets/natural front.png'
   }
 ];
 
-const REVIEWS_PER_PAGE = 4;
-const TOTAL_SHOP_REVIEWS = 9;
+const REVIEWS_INITIAL = 3; // max products shown on scroll; "load more" shows all, "show less" reverts to 3
 
+/** Product thumbnails matching affiliate/orders (2D mannequin / unit images). Tools use generic product fallback; profile photo is only used on alerts page. */
+function getProductThumbnail(productName: string): string {
+  switch (productName.toUpperCase()) {
+    case 'BLANCO':
+      return '/assets/2D BLANCO FRONT.png';
+    case 'SOFT WAVE':
+    case 'BEACH WAVE':
+      return '/assets/2D WAVY FRONT.png';
+    case 'SOFT CURL':
+    case 'OCEAN CURL':
+      return '/assets/2D CURLY FRONT.png';
+    case 'NOIR':
+      return '/assets/natural front.png';
+    default:
+      return '/assets/natural front.png';
+  }
+}
+
+/** Route to unit page for shop products; tools/default go to straight/noir. */
+function getProductRoute(productName: string): string {
+  switch (productName.toUpperCase()) {
+    case 'NOIR':
+      return '/straight/noir';
+    case 'BLANCO':
+      return '/straight/blanco';
+    case 'SOFT WAVE':
+      return '/wavy/soft-wave';
+    case 'BEACH WAVE':
+      return '/wavy/beach-wave';
+    case 'SOFT CURL':
+      return '/curly/soft-curl';
+    case 'OCEAN CURL':
+      return '/curly/ocean-curl';
+    default:
+      return '/straight/noir';
+  }
+}
+
+/** Product-page style: all 5 stars; filled = red with black stroke (filled-star), unfilled = white with black stroke (star-symbol). */
 function StarRating({ rating }: { rating: number }) {
+  const starSizePx = 9.11;
+  const strokeFilter = 'drop-shadow(0 0 0 1px black)';
   return (
-    <div style={{ display: 'flex', gap: '2px', marginBottom: '4px' }}>
-      {[1, 2, 3, 4, 5].map((star) => (
-        <svg
-          key={star}
-          width="12"
-          height="12"
-          viewBox="0 0 12 12"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M6 1L7.5 4.5L11 5L8.5 8L9 11.5L6 9.5L3 11.5L3.5 8L1 5L4.5 4.5L6 1Z"
-            fill={star <= rating ? '#EB1C24' : '#E5E5E5'}
+    <div style={{ display: 'flex', gap: '2px', marginTop: '8px', marginBottom: '4px', justifyContent: 'center' }}>
+      {[0, 1, 2, 3, 4].map((index) => {
+        const filled = index < rating;
+        return (
+          <img
+            key={index}
+            src={filled ? '/assets/NOIR/filled-star.png' : '/assets/NOIR/star-symbol.png'}
+            alt=""
+            style={{
+              width: `${starSizePx}px`,
+              height: `${starSizePx}px`,
+              filter: strokeFilter
+            }}
           />
-        </svg>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -139,8 +240,9 @@ function ReviewsPage() {
     return false;
   });
   const [activeTab, setActiveTab] = useState<'SHOP' | 'TOOLS'>('SHOP');
-  const [shopVisibleCount, setShopVisibleCount] = useState(REVIEWS_PER_PAGE);
-  const [toolVisibleCount, setToolVisibleCount] = useState(REVIEWS_PER_PAGE);
+  const [shopVisibleCount, setShopVisibleCount] = useState(REVIEWS_INITIAL);
+  const [toolVisibleCount, setToolVisibleCount] = useState(REVIEWS_INITIAL);
+  const [userSubmittedReviews, setUserSubmittedReviews] = useState<Review[]>([]);
 
   useEffect(() => {
     const handleCartCountUpdate = (event: CustomEvent) => {
@@ -165,6 +267,51 @@ function ReviewsPage() {
     };
   }, []);
 
+  // Load user-submitted reviews (synced with account page count). Clear only the user-submitted alert on visit.
+  useEffect(() => {
+    const load = () => {
+      try {
+        const currentUser = localStorage.getItem('currentUser');
+        const user = currentUser ? JSON.parse(currentUser) : null;
+        if (!user?.email) {
+          setUserSubmittedReviews([]);
+          return;
+        }
+        const raw = localStorage.getItem(getUserSubmittedReviewsKey(user.email));
+        const list = raw ? JSON.parse(raw) : [];
+        setUserSubmittedReviews(Array.isArray(list) ? list : []);
+        clearNewReviewApproved(user.email);
+        window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+      } catch (_) {
+        setUserSubmittedReviews([]);
+      }
+    };
+    load();
+    window.addEventListener('storage', load);
+    window.addEventListener('reviewsUpdated', load);
+    return () => {
+      window.removeEventListener('storage', load);
+      window.removeEventListener('reviewsUpdated', load);
+    };
+  }, []);
+
+  // Clear shop/tool alert only when that tab is viewed (so tool alert isn't cleared when only shop tab is open).
+  useEffect(() => {
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      const user = currentUser ? JSON.parse(currentUser) : null;
+      if (!user?.email) return;
+      if (activeTab === 'SHOP') {
+        setLastSeenShopCount(user.email, getMockShopReviewCount());
+      } else if (activeTab === 'TOOLS') {
+        setLastSeenToolCount(user.email, getMockToolReviewCount());
+      }
+      window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+    } catch (_) {
+      // ignore
+    }
+  }, [activeTab]);
+
   const handleMobileMenuToggle = () => setShowMobileMenu(!showMobileMenu);
   const handleMobileMenuTabClick = (tab: string) => setMobileMenuActiveTab(tab);
   const handleMobileMenuItemToggle = (item: string) => {
@@ -183,15 +330,20 @@ function ReviewsPage() {
   };
 
   const handleBack = () => navigate('/account');
-  const handleLoadMoreShop = () => setShopVisibleCount(prev => Math.min(prev + REVIEWS_PER_PAGE, TOTAL_SHOP_REVIEWS));
-  const handleLoadMoreTool = () => setToolVisibleCount(prev => Math.min(prev + REVIEWS_PER_PAGE, mockToolReviews.length));
+  const allShopReviews = [...userSubmittedReviews, ...mockShopReviews];
+  const totalShop = allShopReviews.length;
+  const handleLoadMoreShop = () => setShopVisibleCount(totalShop);
+  const handleLoadMoreTool = () => setToolVisibleCount(mockToolReviews.length);
+  const handleShowLessShop = () => setShopVisibleCount(REVIEWS_INITIAL);
+  const handleShowLessTool = () => setToolVisibleCount(REVIEWS_INITIAL);
 
-  const displayedShopReviews = mockShopReviews.slice(0, shopVisibleCount);
+  const displayedShopReviews = allShopReviews.slice(0, shopVisibleCount);
   const displayedToolReviews = mockToolReviews.slice(0, toolVisibleCount);
-  const hasMoreShop = shopVisibleCount < TOTAL_SHOP_REVIEWS;
+  const hasMoreShop = shopVisibleCount < totalShop;
   const hasMoreTool = toolVisibleCount < mockToolReviews.length;
-  const totalShop = TOTAL_SHOP_REVIEWS;
   const totalTool = mockToolReviews.length;
+
+  const BRAND_GRAY = '#808080';
 
   const renderReviewRow = (review: Review) => (
     <div
@@ -199,36 +351,48 @@ function ReviewsPage() {
       className="flex items-start gap-3"
       style={{ marginBottom: '24px' }}
     >
-      <div className="flex-shrink-0" style={{ width: '80px' }}>
-        <div
-          className="border border-black overflow-hidden bg-gray-100"
+      <div
+        className="flex-shrink-0"
+        style={{
+          width: '102px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          marginTop: '-6px'
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => navigate(getProductRoute(review.productName))}
           style={{
-            width: '80px',
-            height: '80px',
-            borderWidth: '1px'
+            background: 'none',
+            border: 'none',
+            padding: 0,
+            cursor: 'pointer'
           }}
         >
           <img
-            src={review.thumbnail}
+            src={getProductThumbnail(review.productName)}
             alt={review.productName}
             style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover'
+              width: '102px',
+              height: '102px',
+              objectFit: 'contain'
             }}
             onError={(e) => {
-              e.currentTarget.src = '/assets/profile-thumb.png';
+              e.currentTarget.src = '/assets/natural front.png';
             }}
           />
-        </div>
+        </button>
         <StarRating rating={review.rating} />
         <p
           style={{
             fontFamily: '"Futura PT Book"',
             fontSize: '9px',
             color: '#000000',
-            margin: 0,
-            textTransform: 'uppercase'
+            margin: '2px 0 0 0',
+            textTransform: 'uppercase',
+            textAlign: 'center'
           }}
         >
           {review.reviewCount} REVIEWS
@@ -248,8 +412,8 @@ function ReviewsPage() {
         <p
           style={{
             fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-            fontSize: '16px',
-            color: '#000000',
+            fontSize: review.productName.toUpperCase() === 'NOIR' ? '17px' : '16px',
+            color: BRAND_GRAY,
             margin: '0 0 4px 0',
             lineHeight: '1.2'
           }}
@@ -261,7 +425,7 @@ function ReviewsPage() {
             fontFamily: '"Futura PT Medium"',
             fontSize: '10px',
             color: '#EB1C24',
-            margin: '0 0 6px 0',
+            margin: '0 0 3px 0',
             textTransform: 'uppercase',
             fontWeight: '500'
           }}
@@ -473,7 +637,7 @@ function ReviewsPage() {
             </div>
           ) : (
             <div className="flex flex-col gap-4 mb-5">
-              <div className="bg-white/60 backdrop-blur-sm border border-black p-4 flex flex-col overflow-hidden" style={{ borderWidth: '1.3px', minHeight: '560px' }}>
+              <div className="bg-white/60 backdrop-blur-sm border border-black p-4 flex flex-col overflow-hidden" style={{ borderWidth: '1.3px', minHeight: '566px' }}>
                 {/* Tabs: SHOP REVIEWS | TOOL REVIEWS */}
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
                   <button
@@ -514,8 +678,8 @@ function ReviewsPage() {
                   </button>
                 </div>
 
-                {/* Review list */}
-                <div className="flex-1 flex flex-col overflow-y-auto mt-4" style={{ maxHeight: 'calc(560px - 120px)', scrollBehavior: 'smooth', width: '100%' }}>
+                {/* Review list - scrollable; LOAD MORE + count live below */}
+                <div className="flex-1 flex flex-col overflow-y-auto mt-4 min-h-0" style={{ maxHeight: 'calc(566px - 120px)', scrollBehavior: 'smooth', width: '100%' }}>
                   {activeTab === 'SHOP' && (
                     <>
                       {displayedShopReviews.length === 0 ? (
@@ -525,37 +689,7 @@ function ReviewsPage() {
                           </p>
                         </div>
                       ) : (
-                        <>
-                          {displayedShopReviews.map(renderReviewRow)}
-                          {hasMoreShop && (
-                            <div style={{ marginTop: '8px' }}>
-                              <button
-                                onClick={handleLoadMoreShop}
-                                style={{
-                                  fontFamily: '"Futura PT Medium"',
-                                  fontSize: '11px',
-                                  color: '#EB1C24',
-                                  fontWeight: '500',
-                                  textTransform: 'uppercase',
-                                  border: 'none',
-                                  background: 'none',
-                                  cursor: 'pointer',
-                                  padding: 0
-                                }}
-                              >
-                                LOAD MORE
-                              </button>
-                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 0 0' }}>
-                                {displayedShopReviews.length} OF {totalShop} REVIEWS
-                              </p>
-                            </div>
-                          )}
-                          {!hasMoreShop && displayedShopReviews.length > 0 && (
-                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '8px 0 0 0' }}>
-                              {displayedShopReviews.length} OF {totalShop} REVIEWS
-                            </p>
-                          )}
-                        </>
+                        displayedShopReviews.map(renderReviewRow)
                       )}
                     </>
                   )}
@@ -568,41 +702,111 @@ function ReviewsPage() {
                           </p>
                         </div>
                       ) : (
-                        <>
-                          {displayedToolReviews.map(renderReviewRow)}
-                          {hasMoreTool && (
-                            <div style={{ marginTop: '8px' }}>
-                              <button
-                                onClick={handleLoadMoreTool}
-                                style={{
-                                  fontFamily: '"Futura PT Medium"',
-                                  fontSize: '11px',
-                                  color: '#EB1C24',
-                                  fontWeight: '500',
-                                  textTransform: 'uppercase',
-                                  border: 'none',
-                                  background: 'none',
-                                  cursor: 'pointer',
-                                  padding: 0
-                                }}
-                              >
-                                LOAD MORE
-                              </button>
-                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 0 0' }}>
-                                {displayedToolReviews.length} OF {totalTool} REVIEWS
-                              </p>
-                            </div>
-                          )}
-                          {!hasMoreTool && displayedToolReviews.length > 0 && (
-                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '8px 0 0 0' }}>
-                              {displayedToolReviews.length} OF {totalTool} REVIEWS
-                            </p>
-                          )}
-                        </>
+                        displayedToolReviews.map(renderReviewRow)
                       )}
                     </>
                   )}
                 </div>
+
+                {/* Below scroll - always visible */}
+                {activeTab === 'SHOP' && displayedShopReviews.length > 0 && (
+                  <div style={{ marginTop: '14px', marginBottom: '-4px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', flexShrink: 0 }}>
+                    {hasMoreShop ? (
+                      <>
+                        <button
+                          onClick={handleLoadMoreShop}
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '11px',
+                            color: '#EB1C24',
+                            fontWeight: '500',
+                            textTransform: 'uppercase',
+                            border: 'none',
+                            background: 'none',
+                            cursor: 'pointer',
+                            padding: 0
+                          }}
+                        >
+                          LOAD MORE
+                        </button>
+                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0' }}>
+                          {displayedShopReviews.length} OF {totalShop} REVIEWS
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={handleShowLessShop}
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '11px',
+                            color: '#EB1C24',
+                            fontWeight: '500',
+                            textTransform: 'uppercase',
+                            border: 'none',
+                            background: 'none',
+                            cursor: 'pointer',
+                            padding: 0
+                          }}
+                        >
+                          SHOW LESS
+                        </button>
+                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0', textAlign: 'center' }}>
+                          {displayedShopReviews.length} OF {totalShop} REVIEWS
+                        </p>
+                      </>
+                    )}
+                  </div>
+                )}
+                {activeTab === 'TOOLS' && displayedToolReviews.length > 0 && (
+                  <div style={{ marginTop: '14px', marginBottom: '-4px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', flexShrink: 0 }}>
+                    {hasMoreTool ? (
+                      <>
+                        <button
+                          onClick={handleLoadMoreTool}
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '11px',
+                            color: '#EB1C24',
+                            fontWeight: '500',
+                            textTransform: 'uppercase',
+                            border: 'none',
+                            background: 'none',
+                            cursor: 'pointer',
+                            padding: 0
+                          }}
+                        >
+                          LOAD MORE
+                        </button>
+                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0' }}>
+                          {displayedToolReviews.length} OF {totalTool} REVIEWS
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={handleShowLessTool}
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '11px',
+                            color: '#EB1C24',
+                            fontWeight: '500',
+                            textTransform: 'uppercase',
+                            border: 'none',
+                            background: 'none',
+                            cursor: 'pointer',
+                            padding: 0
+                          }}
+                        >
+                          SHOW LESS
+                        </button>
+                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0', textAlign: 'center' }}>
+                          {displayedToolReviews.length} OF {totalTool} REVIEWS
+                        </p>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           )}

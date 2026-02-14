@@ -120,6 +120,22 @@ function NotificationsPage() {
   const newNotifications = notifications.filter(n => !n.isRead);
   const seenNotifications = notifications.filter(n => n.isRead);
 
+  // Clear alerts card notification when user visits alerts page (they've seen it)
+  useEffect(() => {
+    try {
+      localStorage.setItem('hasUnreadNotifications', 'false');
+      const raw = localStorage.getItem('notifications');
+      if (raw) {
+        const list = JSON.parse(raw);
+        if (Array.isArray(list)) {
+          const updated = list.map((n: Notification) => ({ ...n, isRead: true }));
+          localStorage.setItem('notifications', JSON.stringify(updated));
+        }
+      }
+      window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+    } catch (_) {}
+  }, []);
+
   // Listen for cart count changes and profile image updates
   useEffect(() => {
     const handleCartCountUpdate = (event: CustomEvent) => {
@@ -548,7 +564,7 @@ function NotificationsPage() {
               /* NOTIFICATIONS CONTENT */
               <div className="flex flex-col gap-4 mb-5">
                 {/* Notifications Card */}
-                <div className="bg-white/60 backdrop-blur-sm border border-black p-4 flex flex-col overflow-hidden shadow-lg transition-all duration-300 ease-out" style={{ borderWidth: '1.3px', minHeight: '560px' }}>
+                <div className="bg-white/60 backdrop-blur-sm border border-black p-4 flex flex-col overflow-hidden transition-all duration-300 ease-out" style={{ borderWidth: '1.3px', minHeight: '560px' }}>
                   {/* Header with tabs */}
                   <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
                     <button

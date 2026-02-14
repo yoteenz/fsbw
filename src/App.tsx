@@ -98,6 +98,7 @@ const AffiliatePage = lazyWithLogging(() => import('./pages/account/affiliate/pa
 const NotificationsPage = lazyWithLogging(() => import('./pages/account/notifications/page'), 'NotificationsPage');
 const LoadCardPage = lazyWithLogging(() => import('./pages/account/load-card/page'), 'LoadCardPage');
 const ReviewsPage = lazyWithLogging(() => import('./pages/account/reviews/page'), 'ReviewsPage');
+const LeaveReviewOrderPage = lazyWithLogging(() => import('./pages/account/reviews/leave-review-order/page'), 'LeaveReviewOrderPage');
 import ShippingPage from './pages/account/shipping/page';
 const PaymentPage = lazyWithLogging(() => import('./pages/account/payment/page'), 'PaymentPage');
 const SettingsPage = lazyWithLogging(() => import('./pages/account/settings/page'), 'SettingsPage');
@@ -614,6 +615,11 @@ function App() {
         <Route path="/account/alerts" element={
           <Suspense fallback={<LoadingScreen />}>
             <NotificationsPage />
+          </Suspense>
+        } />
+        <Route path="/account/orders/:orderId/review" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <LeaveReviewOrderPage />
           </Suspense>
         } />
         <Route path="/account/reviews" element={

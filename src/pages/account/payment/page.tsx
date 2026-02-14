@@ -70,6 +70,28 @@ function PaymentPage() {
     };
   }, []);
 
+  // Clear payment-method card "new card" alerts when user visits payment page (they've seen the cards).
+  // Always dispatch so account profile re-evaluates and the alert doesn't persist.
+  useEffect(() => {
+    try {
+      const user = localStorage.getItem('currentUser');
+      const parsed = user ? JSON.parse(user) : null;
+      const email = parsed?.email;
+      if (email) {
+        const raw = localStorage.getItem(`savedCards_${email}`);
+        if (raw) {
+          const cards = JSON.parse(raw);
+          if (Array.isArray(cards)) {
+            cards.forEach((card: { id?: string }) => {
+              if (card.id) localStorage.setItem(`cardSeen_${card.id}`, 'true');
+            });
+          }
+        }
+      }
+      window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+    } catch (_) {}
+  }, []);
+
   const handleMobileMenuToggle = () => setShowMobileMenu(!showMobileMenu);
   const handleMobileMenuTabClick = (tab: string) => setMobileMenuActiveTab(tab);
   const handleMobileMenuItemToggle = (item: string) => {

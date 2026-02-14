@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../constants/tiers';
+import { getTotalReviewCount, hasNewReviewApproved } from '../../constants/reviews';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 
@@ -52,6 +53,16 @@ function AccountPage() {
     // Will be calculated by getActiveOrdersCount
     return 0;
   });
+  const [reviewCount, setReviewCount] = useState(() => {
+    if (typeof window === 'undefined') return 0;
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      const user = currentUser ? JSON.parse(currentUser) : null;
+      return getTotalReviewCount(user?.email);
+    } catch {
+      return 0;
+    }
+  });
   const [membershipType, _setMembershipType] = useState<'STANDARD' | 'PREMIUM'>('STANDARD'); // Will be set dynamically later
   const [profileImage, setProfileImage] = useState(() => {
     // Load from localStorage on mount
@@ -69,6 +80,7 @@ function AccountPage() {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showCropModal, setShowCropModal] = useState(false);
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [, setAlertsRefreshKey] = useState(0);
   const [showEnlargedImage, setShowEnlargedImage] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [cropPosition, setCropPosition] = useState({ x: 0, y: 0 });
@@ -325,6 +337,37 @@ function AccountPage() {
       window.removeEventListener('ordersUpdated', handleStorageChange);
     };
   }, [userData]);
+
+  // Update review count when user data or stored reviews change (synced with reviews page); also re-run when landing on account so count is current
+  useEffect(() => {
+    const updateReviewCount = () => {
+      const count = getTotalReviewCount(userData?.email);
+      setReviewCount(count);
+    };
+
+    updateReviewCount();
+
+    const handleStorageChange = () => updateReviewCount();
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('reviewsUpdated', handleStorageChange);
+    window.addEventListener('focus', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('reviewsUpdated', handleStorageChange);
+      window.removeEventListener('focus', handleStorageChange);
+    };
+  }, [userData, location.pathname]);
+
+  // REVIEWS card alert is derived from hasNewReviewApproved (user-submitted flag + shop/tool last-seen counts); no effect needed.
+
+  // When any account child page (reviews, orders, alerts, payment, etc.) clears its card alert,
+  // re-render so card notification badges update and alerts don't persist.
+  useEffect(() => {
+    const onAlertsViewed = () => setAlertsRefreshKey((k) => k + 1);
+    window.addEventListener('accountCardAlertsViewed', onAlertsViewed);
+    return () => window.removeEventListener('accountCardAlertsViewed', onAlertsViewed);
+  }, []);
 
   // Credit tier welcome discount (digital cash) when user reaches each spend tier.
   // Once per tier per 6-month cycle; when tiers reset each period they can earn benefits again.
@@ -772,33 +815,8 @@ function AccountPage() {
   };
 
   const hasReviewsNotifications = (): boolean => {
-    if (!userData) return false;
-    try {
-      const userOrdersKey = `userOrders_${userData.email}`;
-      const storedOrders = localStorage.getItem(userOrdersKey);
-      if (!storedOrders) return false;
-      
-      const orders = JSON.parse(storedOrders);
-      const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
-      
-      // Check for delivered orders that are ready for review (delivered more than 24 hours ago, no review yet)
-      const now = Date.now();
-      const twentyFourHours = 24 * 60 * 60 * 1000;
-      
-      return allOrders.some((order: any) => {
-        if (order.status !== 'DELIVERED') return false;
-        if (!order.deliveredAt) return false;
-        
-        const timeSinceDelivered = now - order.deliveredAt;
-        if (timeSinceDelivered < twentyFourHours) return false; // Not ready yet
-        
-        // Check if review has been submitted
-        const reviewKey = `reviewSubmitted_${order.id}`;
-        return !localStorage.getItem(reviewKey);
-      });
-    } catch (e) {
-      return false;
-    }
+    // Rose icon shows when a new review has been approved/added/posted to the reviews page
+    return hasNewReviewApproved(userData?.email) ?? false;
   };
 
   const hasPaymentMethodNotifications = (): boolean => {
@@ -866,7 +884,7 @@ function AccountPage() {
       { title: 'REFERRALS', subtitle: 'SHARE YOUR DISCOUNT CODE', route: '/account/referrals' },
       { 
         title: 'REVIEWS', 
-        subtitle: userData && userData.email?.toLowerCase() !== 'bruno203@gmail.com' ? '0 TOTAL REVIEWS' : '4 TOTAL REVIEWS', 
+        subtitle: reviewCount === 1 ? '1 TOTAL REVIEW' : `${reviewCount} TOTAL REVIEWS`, 
         route: '/account/reviews' 
       },
       { 
@@ -901,16 +919,17 @@ function AccountPage() {
     );
     
     if (isKateenaArmstrong) {
-      // Admin account shows notifications on all cards for testing
+      // Admin account shows notifications on all cards for testing (REVIEWS uses actual flag so visiting reviews page clears it)
       switch (title) {
         case 'ORDERS':
         case 'ALERTS':
         case 'REWARDS':
         case 'REFERRALS':
         case 'AFFILIATE':
-        case 'REVIEWS':
         case 'PAYMENT METHOD':
           return true;
+        case 'REVIEWS':
+          return hasReviewsNotifications();
         default:
           return false;
       }

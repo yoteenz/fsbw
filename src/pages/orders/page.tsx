@@ -5,6 +5,11 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 
+interface OrderLineItem {
+  productName: string;
+  options?: Record<string, string>; // e.g. { color: 'OFF BLACK', length: '24"' } for uniqueness
+}
+
 interface Order {
   id: string;
   orderNumber: string;
@@ -21,6 +26,7 @@ interface Order {
   placedAt?: number; // Timestamp when order was placed (for 24-hour authorization countdown)
   canceledAt?: number; // Timestamp when order was canceled (for 24-hour archive logic)
   orderFormSigned?: boolean; // Whether the order form has been signed
+  lineItems?: OrderLineItem[]; // Optional per-item detail for review eligibility (unique by product + options)
 }
 
 function OrdersPage() {
@@ -413,7 +419,12 @@ function OrdersPage() {
       items: 2,
       reviewInfo: 'REVIEW MISSING',
       trackingNumber: '9400136106023046913338',
-      trackingCarrier: 'DHL'
+      trackingCarrier: 'DHL',
+      deliveredAt: Date.now() - (42 * 24 * 60 * 60 * 1000),
+      lineItems: [
+        { productName: 'NOIR', options: { color: 'OFF BLACK', length: '24"' } },
+        { productName: 'NOIR', options: { color: 'PLATINUM', length: '22"' } }
+      ]
     },
     {
       id: '5',
@@ -426,7 +437,8 @@ function OrdersPage() {
       items: 1,
       reviewInfo: 'POINTS TO EARN',
       trackingNumber: '9400136106023046913326',
-      trackingCarrier: 'FEDEX'
+      trackingCarrier: 'FEDEX',
+      deliveredAt: Date.now() - (58 * 24 * 60 * 60 * 1000)
     },
     {
       id: '6',
@@ -439,7 +451,8 @@ function OrdersPage() {
       items: 1,
       reviewInfo: 'REVIEW MISSING',
       trackingNumber: '9400136106023046913338',
-      trackingCarrier: 'DHL'
+      trackingCarrier: 'DHL',
+      deliveredAt: Date.now() - (75 * 24 * 60 * 60 * 1000)
     },
     {
       id: '7',
@@ -452,7 +465,8 @@ function OrdersPage() {
       items: 1,
       reviewInfo: 'POINTS TO EARN',
       trackingNumber: '9400136106023046913326',
-      trackingCarrier: 'FEDEX'
+      trackingCarrier: 'FEDEX',
+      deliveredAt: Date.now() - (92 * 24 * 60 * 60 * 1000)
     }
   ];
 
@@ -581,7 +595,7 @@ function OrdersPage() {
       reviewInfo: 'REVIEW MISSING',
       trackingNumber: '1Z888AA10123456784',
       trackingCarrier: 'FEDEX',
-      deliveredAt: Date.now() - (1 * 24 * 60 * 60 * 1000), // Delivered 1 day ago
+      deliveredAt: Date.now() - (25 * 60 * 60 * 1000), // Delivered 25 hours ago (24+ for leave review)
       placedAt: Date.now() - (13 * 24 * 60 * 60 * 1000), // 13 days ago
       orderFormSigned: true
     },
@@ -662,6 +676,28 @@ function OrdersPage() {
       window.removeEventListener('storage', updateUser);
       window.removeEventListener('focus', updateUser);
     };
+  }, []);
+
+  // Clear order-status alerts when user visits orders page (they've seen the updates)
+  useEffect(() => {
+    try {
+      const user = localStorage.getItem('currentUser');
+      const parsed = user ? JSON.parse(user) : null;
+      const email = parsed?.email;
+      if (!email) return;
+      const key = `userOrders_${email}`;
+      const stored = localStorage.getItem(key);
+      if (!stored) return;
+      const data = JSON.parse(stored);
+      const all = [...(data.activeOrders || []), ...(data.pastOrders || [])];
+      const statusUpdates = ['SHIPPED', 'PREPARING', 'CONFIRMED'];
+      all.forEach((order: Order) => {
+        if (order.status && order.id && statusUpdates.includes(order.status)) {
+          localStorage.setItem(`orderStatusSeen_${order.id}_${order.status}`, 'true');
+        }
+      });
+      window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+    } catch (_) {}
   }, []);
 
   // Listen for cart count changes
@@ -1388,7 +1424,7 @@ function OrdersPage() {
           <div className="flex flex-col gap-4 mb-5">
             {/* Active Orders Card - Hide when archived order is expanded */}
             {!(expandedOrderId && pastOrders.find(o => o.id === expandedOrderId)) && (
-            <div className="bg-white/60 backdrop-blur-sm border border-black p-4 min-h-[360px] flex flex-col overflow-hidden shadow-lg transition-all duration-300 ease-out" style={{ borderWidth: '1.3px' }}>
+            <div className="bg-white/60 backdrop-blur-sm border border-black p-4 min-h-[360px] flex flex-col overflow-hidden transition-all duration-300 ease-out" style={{ borderWidth: '1.3px' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
                   {expandedOrderId ? (
@@ -1443,21 +1479,18 @@ function OrdersPage() {
 
                  {/* Body */}
                  <div className="flex-1 flex flex-col overflow-hidden mt-2">
-                   {expandedOrderId ? (
-                     // Expanded Order View
-                     (() => {
-                       const expandedOrder = activeOrders.find(o => o.id === expandedOrderId) || pastOrders.find(o => o.id === expandedOrderId);
-                       if (!expandedOrder) return null;
-                       
+                   {(() => {
+                     const expandedOrder = activeOrders.find(o => o.id === expandedOrderId) || pastOrders.find(o => o.id === expandedOrderId);
+                     if (expandedOrderId && expandedOrder) {
                        // Create mock products array for horizontal scroll (based on order.items)
-                       const orderProducts = Array.from({ length: expandedOrder.items }, (_, i) => ({
-                         id: `${expandedOrder.id}-product-${i}`,
-                         name: expandedOrder.productName,
-                         image: expandedOrder.productImage,
-                         price: expandedOrder.total / expandedOrder.items
-                       }));
-                       
-                       return (
+                       return (() => {
+                         const orderProducts = Array.from({ length: expandedOrder.items }, (_, i) => ({
+                           id: `${expandedOrder.id}-product-${i}`,
+                           name: expandedOrder.productName,
+                           image: expandedOrder.productImage,
+                           price: expandedOrder.total / expandedOrder.items
+                         }));
+                         return (
                          <div className="flex flex-col gap-6" style={{ marginTop: '10px' }}>
                            {/* Products Horizontal Scroll */}
                            <div 
@@ -1473,6 +1506,7 @@ function OrdersPage() {
                                  gap: '20px',
                                  height: '100%',
                                  alignItems: 'center',
+                                 justifyContent: orderProducts.length === 1 ? 'center' : 'flex-start',
                                  paddingRight: '10px'
                                }}
                              >
@@ -1558,7 +1592,7 @@ function OrdersPage() {
                                    ORDER NUMBER
                                  </span>
                                  <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
-                                   {expandedOrder.orderNumber}
+                                   {expandedOrder.orderNumber.replace(/^ORDER\s+/i, '')}
                                  </span>
                                </div>
                              </div>
@@ -1649,8 +1683,10 @@ function OrdersPage() {
                            )}
                          </div>
                        );
-                     })()
-                   ) : activeOrders.length === 0 ? (
+                     })();
+                   }
+                   if (activeOrders.length === 0) {
+                     return (
                      <div className="flex flex-col justify-center items-center my-2 flex-shrink-0" style={{ minHeight: '200px' }}>
                        <p
                          style={{
@@ -1666,7 +1702,9 @@ function OrdersPage() {
                          YOU HAVE NO ACTIVE ORDERS.<br />LET'S GO SHOPPING!
                        </p>
                      </div>
-                   ) : (
+                     );
+                   }
+                   return (
                    <div className="flex flex-col justify-start items-start gap-4 my-2 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '265px', scrollBehavior: 'smooth' }}>
                      {activeOrders.map((order) => (
                        <div key={order.id} className="flex items-center gap-3" style={{ flexShrink: 0 }}>
@@ -1823,7 +1861,8 @@ function OrdersPage() {
                        </div>
                      ))}
                    </div>
-                   )}
+                   );
+                  })()}
                  </div>
 
                 {/* Scrolling Order Information - Bottom of card */}
@@ -1937,9 +1976,9 @@ function OrdersPage() {
               </div>
             )}
 
-              {/* Past Orders Card - Only show when there are archived orders */}
-              {pastOrders.length > 0 && (
-              <div className={`bg-white/60 backdrop-blur-sm border border-black p-4 flex flex-col shadow-lg transition-all duration-300 ease-out ${pastOrders.length > 1 ? 'min-h-[360px] overflow-hidden' : ''}`} style={{ borderWidth: '1.3px', minHeight: pastOrders.length > 1 ? '360px' : 'auto' }}>
+              {/* Past Orders Card - Only show when there are archived orders; hide when an active order is expanded */}
+              {pastOrders.length > 0 && !(expandedOrderId && activeOrders.find(o => o.id === expandedOrderId)) && (
+              <div className={`bg-white/60 backdrop-blur-sm border border-black p-4 flex flex-col transition-all duration-300 ease-out ${pastOrders.length > 1 ? 'min-h-[360px] overflow-hidden' : ''}`} style={{ borderWidth: '1.3px', minHeight: pastOrders.length > 1 ? '360px' : 'auto' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
                   {expandedOrderId && pastOrders.find(o => o.id === expandedOrderId) ? (
@@ -1992,23 +2031,19 @@ function OrdersPage() {
                   )}
                 </div>
 
-                 {/* Body */}
-                 <div className={`${pastOrders.length > 1 ? 'flex-1' : ''} flex flex-col ${pastOrders.length > 1 ? 'overflow-hidden' : ''} mt-2`}>
-                   {expandedOrderId && pastOrders.find(o => o.id === expandedOrderId) ? (
-                     // Expanded Order View for Archived Orders
-                     (() => {
-                       const expandedOrder = pastOrders.find(o => o.id === expandedOrderId);
-                       if (!expandedOrder) return null;
-                       
-                       // Create mock products array for horizontal scroll (based on order.items)
-                       const orderProducts = Array.from({ length: expandedOrder.items }, (_, i) => ({
-                         id: `${expandedOrder.id}-product-${i}`,
-                         name: expandedOrder.productName,
-                         image: expandedOrder.productImage,
-                         price: expandedOrder.total / expandedOrder.items
-                       }));
-                       
-                       return (
+                 {/* Body: when an archived order is expanded show only that order (list hidden); otherwise show list - same pattern as Active Orders */}
+                 {(() => {
+                   const isArchivedOrderExpanded = Boolean(expandedOrderId && pastOrders.some(o => o.id === expandedOrderId));
+                   const expandedOrder = pastOrders.find(o => o.id === expandedOrderId) ?? null;
+                   if (isArchivedOrderExpanded && expandedOrder) {
+                     const orderProducts = Array.from({ length: expandedOrder.items }, (_, i) => ({
+                       id: `${expandedOrder.id}-product-${i}`,
+                       name: expandedOrder.productName,
+                       image: expandedOrder.productImage,
+                       price: expandedOrder.total / expandedOrder.items
+                     }));
+                     return (
+                       <div key="archived-expanded" className={`${pastOrders.length > 1 ? 'flex-1' : ''} flex flex-col overflow-hidden mt-2`}>
                          <div className="flex flex-col gap-6" style={{ marginTop: '10px' }}>
                            {/* Products Horizontal Scroll */}
                            <div 
@@ -2024,6 +2059,7 @@ function OrdersPage() {
                                  gap: '20px',
                                  height: '100%',
                                  alignItems: 'center',
+                                 justifyContent: orderProducts.length === 1 ? 'center' : 'flex-start',
                                  paddingRight: '10px'
                                }}
                              >
@@ -2109,7 +2145,7 @@ function OrdersPage() {
                                    ORDER NUMBER
                                  </span>
                                  <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
-                                   {expandedOrder.orderNumber}
+                                   {expandedOrder.orderNumber.replace(/^ORDER\s+/i, '')}
                                  </span>
                                </div>
                              </div>
@@ -2199,9 +2235,11 @@ function OrdersPage() {
                              </div>
                            )}
                          </div>
-                       );
-                     })()
-                   ) : (
+                       </div>
+                     );
+                   }
+                   return (
+                     <div key="archived-list" className={`${pastOrders.length > 1 ? 'flex-1' : ''} flex flex-col overflow-hidden mt-2`}>
                    <div className={`flex flex-col justify-start items-start gap-4 my-2 flex-shrink-0 ${pastOrders.length > 1 ? 'overflow-y-auto' : ''}`} style={{ maxHeight: pastOrders.length > 1 ? '265px' : 'auto', scrollBehavior: 'smooth' }}>
                      {pastOrders.map((order) => (
                        <div key={order.id} className="flex items-center gap-3" style={{ flexShrink: 0 }}>
@@ -2326,11 +2364,12 @@ function OrdersPage() {
                        </div>
                      ))}
                    </div>
-                   )}
-                </div>
+                     </div>
+                 );
+                 })()}
 
-                {/* Scrolling Order Information - Bottom of card */}
-                {pastOrders.length > 0 && !expandedOrderId && (
+                {/* Scrolling Order Information - Bottom of card - hide when an archived order is expanded */}
+                {pastOrders.length > 0 && !(expandedOrderId && pastOrders.some(o => o.id === expandedOrderId)) && (
                 <div className="overflow-hidden mt-auto pt-2">
                   {/* Gray line separator */}
                   <div className="border-t border-gray-200" style={{ paddingTop: '2px', marginTop: '1px' }}></div>
@@ -2358,6 +2397,27 @@ function OrdersPage() {
                 )}
               </div>
               )}
+
+              {/* Leave a review - below Past Orders card, only when an archived order is expanded and delivered 24+ hours (same placement as other action buttons) */}
+              {(() => {
+                const expandedArchived = expandedOrderId ? pastOrders.find(o => o.id === expandedOrderId) : null;
+                const showLeaveReview = expandedArchived?.status === 'DELIVERED' &&
+                  expandedArchived.deliveredAt != null &&
+                  (Date.now() - expandedArchived.deliveredAt >= 24 * 60 * 60 * 1000);
+                if (!showLeaveReview || !expandedArchived) return null;
+                return (
+                  <div className="px-0 w-full" style={{ marginTop: '-5px', marginBottom: '20px' }}>
+                    <button
+                      type="button"
+                      className="relative z-10 border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 uppercase"
+                      style={{ borderWidth: '1.3px', color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}
+                      onClick={() => navigate(`/account/orders/${expandedArchived.id}/review`, { state: { order: expandedArchived } })}
+                    >
+                      LEAVE A REVIEW
+                    </button>
+                  </div>
+                );
+              })()}
             </div>
             )}
           </div>

@@ -1563,6 +1563,25 @@ function AffiliatePage() {
     }
   };
 
+  // Clear affiliate card alerts when user visits affiliate page (they've seen approvals/rejections)
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('affiliateSubmittedContent');
+      if (!raw) return;
+      const submitted = JSON.parse(raw);
+      for (const orderId of Object.keys(submitted)) {
+        const content = submitted[orderId];
+        const items = [...(content.photos || []), ...(content.videos || []), ...(content.socials || [])];
+        items.forEach((item: { id?: string; status?: string }) => {
+          if (item.id && (item.status === 'approved' || item.status === 'rejected')) {
+            localStorage.setItem(`affiliateSeen_${orderId}_${item.id}`, 'true');
+          }
+        });
+      }
+      window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+    } catch (_) {}
+  }, []);
+
   // Listen for cart count changes
   useEffect(() => {
     const handleCartCountUpdate = (event: CustomEvent) => {

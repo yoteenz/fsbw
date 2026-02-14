@@ -113,7 +113,7 @@ function BrandPage() {
                     <img alt="Account" width="16" height="16" src="/assets/NOIR/account-icon.svg" />
                   </button>
                   <button onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} className="cursor-pointer" style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}>
-                    <img alt="Wishlist" width="18" height="18" src="/assets/wishlist-heart.svg" />
+                    <img alt="Wishlist" width="18" height="18" src="/assets/NOIR/account-wishlist.svg" />
                   </button>
                 </>
               ) : (

@@ -309,6 +309,19 @@ function MembershipPage() {
   const [showLoyaltyRewards, setShowLoyaltyRewards] = useState(false);
   const [showBenefitsModal, setShowBenefitsModal] = useState(false);
 
+  // Clear rewards card alerts when user visits rewards page (they've seen tier/subscription updates)
+  useEffect(() => {
+    try {
+      if (!userData?.email) return;
+      const { currentTierName } = getNextTierProgress();
+      if (currentTierName && currentTierName !== 'PENDING') {
+        localStorage.setItem(`lastKnownTier_${userData.email}`, currentTierName);
+      }
+      localStorage.removeItem(`subscriptionUpdate_${userData.email}`);
+      window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+    } catch (_) {}
+  }, [userData?.email]);
+
   // Subscription tier data
   const subscriptionTiers = {
     '3months': { name: '3 MONTHS PREMIUM', price: 280 },
@@ -1590,14 +1603,14 @@ function MembershipPage() {
                   </div>
                   ) : showBenefitsModal ? (
                   <div
-                    className="border border-black bg-white/60 backdrop-blur-sm w-full transition-all duration-300 ease-out flex flex-col"
+                    className="border border-black bg-white/60 backdrop-blur-sm w-full transition-all duration-300 ease-out flex flex-col overflow-hidden"
                     style={{
                       borderWidth: '1.3px',
                       padding: '20px 20px 20px 20px',
                       backgroundColor: 'rgba(255, 255, 255, 0.6)',
                       minHeight: '560px',
-                      height: '100vh',
-                      maxHeight: '100vh'
+                      height: '560px',
+                      maxHeight: '560px'
                     }}
                   >
                     <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', flexShrink: 0 }}>
