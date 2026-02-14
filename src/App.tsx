@@ -77,6 +77,7 @@ const AdminDashboard = lazyWithLogging(() => import('./pages/admin/dashboard/pag
 const AdminBrand = lazyWithLogging(() => import('./pages/admin/brand/page'), 'AdminBrand');
 const AdminClients = lazyWithLogging(() => import('./pages/admin/clients/page'), 'AdminClients');
 const AdminClientsAccount = lazyWithLogging(() => import('./pages/admin/clients/account/page'), 'AdminClientsAccount');
+const AdminDeletedAccounts = lazyWithLogging(() => import('./pages/admin/clients/deleted/page'), 'AdminDeletedAccounts');
 const AdminMeetings = lazyWithLogging(() => import('./pages/admin/meetings/page'), 'AdminMeetings');
 const AdminPending = lazyWithLogging(() => import('./pages/admin/pending/page'), 'AdminPending');
 const AdminRevenue = lazyWithLogging(() => import('./pages/admin/revenue/page'), 'AdminRevenue');
@@ -296,6 +297,11 @@ function App() {
           <Route path="clients/account" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminClientsAccount />
+            </Suspense>
+          } />
+          <Route path="clients/deleted" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminDeletedAccounts />
             </Suspense>
           } />
           <Route path="clients" element={

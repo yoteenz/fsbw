@@ -58,6 +58,23 @@ function ShippingPage() {
   });
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  // Clear shipping address card badge when user visits this page
+  useEffect(() => {
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      const user = currentUser ? JSON.parse(currentUser) : null;
+      const email = user?.email;
+      if (email) {
+        localStorage.removeItem(`shippingAddressAlert_${email}`);
+        window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+      }
+    } catch (_) {}
+  }, []);
+
+  useEffect(() => {
     const handleCartCountUpdate = (event: CustomEvent) => setCartCount(event.detail);
     const handleStorageChange = () => {
       try {
@@ -228,10 +245,7 @@ function ShippingPage() {
             </div>
             <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               {showMobileMenu ? (
-                <>
-                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => navigate('/build-a-wig')}>HOME &gt;</span>{' '}
-                  <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>
-                </>
+                <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>
               ) : (
                 <>
                   <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => navigate('/account')}>ACCOUNT &gt;</span>{' '}
@@ -365,20 +379,22 @@ function ShippingPage() {
             <div className="flex flex-col gap-4 mb-5">
               <div
                 className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full"
-                style={{ borderWidth: '1.3px', minHeight: '200px' }}
+                style={{ borderWidth: '1.3px', minHeight: '560px' }}
               >
-                <p
-                  style={{
-                    fontFamily: '"Futura PT Medium"',
-                    fontSize: '11px',
-                    color: '#EB1C24',
-                    margin: '0 0 16px 0',
-                    textTransform: 'uppercase',
-                    fontWeight: '500'
-                  }}
-                >
-                  SHIPPING ADDRESS{addressList.length !== 1 ? 'ES' : ''} ON FILE
-                </p>
+                <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
+                  <h2
+                    style={{
+                      fontFamily: '"Futura PT Medium"',
+                      color: '#EB1C24',
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      margin: 0,
+                      textTransform: 'uppercase'
+                    }}
+                  >
+                    SHIPPING ADDRESS
+                  </h2>
+                </div>
                 {addressList.length === 0 ? (
                   <>
                     <p style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000000', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
@@ -408,27 +424,6 @@ function ShippingPage() {
                 ) : (
                   addressList.map((addr, i) => renderAddress(addr, i))
                 )}
-              </div>
-
-              <div
-                className="border border-black flex justify-center items-center py-3 w-full bg-white/60 backdrop-blur-sm"
-                style={{ borderWidth: '1.3px' }}
-              >
-                <button
-                  onClick={() => navigate('/build-a-wig')}
-                  style={{
-                    fontFamily: '"Futura PT Medium"',
-                    fontSize: '12px',
-                    color: '#EB1C24',
-                    fontWeight: '500',
-                    textTransform: 'uppercase',
-                    border: 'none',
-                    background: 'none',
-                    cursor: 'pointer'
-                  }}
-                >
-                  HOME
-                </button>
               </div>
             </div>
           )}

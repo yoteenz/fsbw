@@ -3,14 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
+import ConfirmationModal from '../../../components/ConfirmationModal';
 
 const inputBaseStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Book"',
-  fontSize: '14px',
+  fontSize: '11px',
   color: 'black',
   width: '100%',
-  padding: '10px 12px',
-  border: '1px solid black',
+  height: '36px',
+  padding: '8px',
+  border: '1.3px solid black',
+  borderRadius: 0,
   background: 'white',
   boxSizing: 'border-box'
 };
@@ -25,14 +28,17 @@ const labelStyle: React.CSSProperties = {
   display: 'block'
 };
 
-const sectionHeadingStyle: React.CSSProperties = {
-  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-  fontSize: '22px',
-  color: 'black',
-  margin: '0 0 16px 0',
-  lineHeight: '1.2',
+const sectionHeaderWrapperStyle = { marginBottom: '16px' };
+const sectionHeaderTextStyle: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium"',
+  color: '#EB1C24',
+  fontSize: '12px',
+  fontWeight: '500',
+  margin: 0,
   textTransform: 'uppercase'
 };
+// Alias for backwards compatibility (e.g. if referenced elsewhere as sectionHeadingStyle)
+const sectionHeadingStyle = sectionHeaderTextStyle;
 
 function SettingsPage() {
   const navigate = useNavigate();
@@ -68,6 +74,10 @@ function SettingsPage() {
     }
   });
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const [name, setName] = useState('');
   const [birthday, setBirthday] = useState('');
   const [email, setEmail] = useState('');
@@ -79,18 +89,189 @@ function SettingsPage() {
   const [newsletter, setNewsletter] = useState(true);
   const [sales, setSales] = useState(true);
   const [orderTracking, setOrderTracking] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showResetPasswordForm, setShowResetPasswordForm] = useState(false);
+  const [socialViewMode, setSocialViewMode] = useState<Record<string, boolean>>({ facebook: false, instagram: false, youtube: false, tiktok: false, twitter: false });
+  const [resetOldPassword, setResetOldPassword] = useState('');
+  const [resetNewPassword, setResetNewPassword] = useState('');
+  const [resetConfirmPassword, setResetConfirmPassword] = useState('');
+  const [resetPasswordError, setResetPasswordError] = useState('');
+  const [showDeleteAccountConfirm, setShowDeleteAccountConfirm] = useState(false);
+
+  const socialPrefixes: Record<string, string> = {
+    facebook: 'FACEBOOK.COM/',
+    instagram: 'INSTAGRAM.COM/',
+    youtube: 'YOUTUBE.COM/',
+    tiktok: 'TIKTOK.COM/',
+    twitter: 'X.COM/'
+  };
+
+  const persistSocials = () => {
+    try {
+      const email = (userData?.email || '').trim().toLowerCase();
+      if (!email) return;
+      const stripAt = (s: string) => s.trim().replace(/^@/, '');
+      const payload = {
+        facebook: stripAt(facebook) ? `facebook.com/${stripAt(facebook)}` : '',
+        instagram: stripAt(instagram) ? `instagram.com/${stripAt(instagram)}` : '',
+        youtube: stripAt(youtube) ? `youtube.com/${stripAt(youtube)}` : '',
+        tiktok: stripAt(tiktok) ? `tiktok.com/${stripAt(tiktok)}` : '',
+        twitter: stripAt(twitter) ? `x.com/${stripAt(twitter)}` : ''
+      };
+      const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const idx = registered.findIndex((u: any) => (u.email || '').trim().toLowerCase() === email);
+      if (idx !== -1) {
+        registered[idx] = { ...registered[idx], ...payload };
+        localStorage.setItem('registeredUsers', JSON.stringify(registered));
+      }
+      const current = localStorage.getItem('currentUser');
+      if (current) {
+        const parsed = JSON.parse(current);
+        if ((parsed.email || '').trim().toLowerCase() === email) {
+          localStorage.setItem('currentUser', JSON.stringify({ ...parsed, ...payload }));
+        }
+      }
+      setUserData((prev: any) => (prev ? { ...prev, ...payload } : prev));
+    } catch (_) {}
+  };
+
+  const handleResetPasswordSubmit = () => {
+    setResetPasswordError('');
+    if (resetOldPassword.trim() !== accountPassword) {
+      setResetPasswordError('Current password is incorrect.');
+      return;
+    }
+    if (resetNewPassword.trim().length === 0) {
+      setResetPasswordError('Enter a new password.');
+      return;
+    }
+    if (resetNewPassword.trim() !== resetConfirmPassword.trim()) {
+      setResetPasswordError('New password and confirm do not match.');
+      return;
+    }
+    try {
+      const email = (userData?.email || '').trim().toLowerCase();
+      if (!email) return;
+      const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const idx = registered.findIndex((u: any) => (u.email || '').trim().toLowerCase() === email);
+      if (idx === -1) return;
+      const newPassword = resetNewPassword.trim();
+      registered[idx] = { ...registered[idx], password: newPassword };
+      localStorage.setItem('registeredUsers', JSON.stringify(registered));
+      const current = localStorage.getItem('currentUser');
+      if (current) {
+        const parsed = JSON.parse(current);
+        if ((parsed.email || '').trim().toLowerCase() === email) {
+          localStorage.setItem('currentUser', JSON.stringify({ ...parsed, password: newPassword }));
+        }
+      }
+      setResetOldPassword('');
+      setResetNewPassword('');
+      setResetConfirmPassword('');
+      setShowResetPasswordForm(false);
+    } catch (e) {
+      setResetPasswordError('Failed to update password.');
+    }
+  };
+
+  const handleDeleteAccount = () => {
+    try {
+      const currentUser = userData ? userData : (() => {
+        try {
+          const raw = localStorage.getItem('currentUser');
+          return raw ? JSON.parse(raw) : null;
+        } catch {
+          return null;
+        }
+      })();
+      const email = currentUser?.email;
+      if (email) {
+        const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+        const userToDelete = registeredUsers.find((u: any) => (u.email || '').toLowerCase() === email.toLowerCase());
+        if (userToDelete) {
+          const deletedUsers = JSON.parse(localStorage.getItem('deletedUsers') || '[]');
+          deletedUsers.push({
+            ...userToDelete,
+            deletedAt: new Date().toISOString()
+          });
+          localStorage.setItem('deletedUsers', JSON.stringify(deletedUsers));
+        }
+        const filtered = registeredUsers.filter((u: any) => (u.email || '').toLowerCase() !== email.toLowerCase());
+        localStorage.setItem('registeredUsers', JSON.stringify(filtered));
+      }
+      localStorage.setItem('isSignedIn', 'false');
+      localStorage.removeItem('currentUser');
+      window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+      setShowDeleteAccountConfirm(false);
+      navigate('/sign-in');
+    } catch (e) {
+      console.error('Delete account failed', e);
+      setShowDeleteAccountConfirm(false);
+      navigate('/sign-in');
+    }
+  };
+
+  // Actual account password (from current user or registeredUsers) for "Show password"
+  const accountPassword = (() => {
+    if (userData?.password) return String(userData.password);
+    try {
+      const email = userData?.email || (typeof window !== 'undefined' && (() => {
+        const u = localStorage.getItem('currentUser');
+        return u ? JSON.parse(u)?.email : null;
+      })());
+      if (email) {
+        const raw = localStorage.getItem('registeredUsers');
+        const list = raw ? JSON.parse(raw) : [];
+        const user = list.find((u: any) => (u.email || '').toLowerCase() === String(email).toLowerCase());
+        return user?.password != null ? String(user.password) : '';
+      }
+    } catch (_) {}
+    return '';
+  })();
+
+  // Parse stored social value to handle only (strip domain prefix and any leading @)
+  const parseSocialHandle = (key: string, raw: string): string => {
+    const v = (raw || '').trim();
+    const prefixes: Record<string, RegExp> = {
+      facebook: /^facebook\.com\/?/i,
+      instagram: /^instagram\.com\/?/i,
+      youtube: /^youtube\.com\/?/i,
+      tiktok: /^tiktok\.com\/?/i,
+      twitter: /^(?:twitter|x)\.com\/?/i
+    };
+    return v.replace(prefixes[key] || /^@/, '').replace(/^@/, '').trim();
+  };
 
   useEffect(() => {
     if (userData) {
       const fullName = [userData.firstName, userData.lastName].filter(Boolean).join(' ').toUpperCase();
       setName(fullName || '');
-      setEmail(userData.email || '');
+      setEmail((userData.email || '').toUpperCase());
+      setBirthday(userData.birthday || '');
+      setFacebook(parseSocialHandle('facebook', userData.facebook || ''));
+      setInstagram(parseSocialHandle('instagram', userData.instagram || ''));
+      setYoutube(parseSocialHandle('youtube', userData.youtube || ''));
+      setTiktok(parseSocialHandle('tiktok', userData.tiktok || ''));
+      setTwitter(parseSocialHandle('twitter', userData.twitter || ''));
     } else {
       setEmail('BRUNO203@GMAIL.COM');
       setName('KRISTIN WATSON');
       setBirthday('08/30/1989');
     }
   }, [userData]);
+
+  // Clear settings card badge when user visits this page
+  useEffect(() => {
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      const user = currentUser ? JSON.parse(currentUser) : null;
+      const email = user?.email;
+      if (email) {
+        localStorage.removeItem(`settingsAlert_${email}`);
+        window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+      }
+    } catch (_) {}
+  }, []);
 
   useEffect(() => {
     const handleCartCountUpdate = (event: CustomEvent) => setCartCount(event.detail);
@@ -167,6 +348,12 @@ function SettingsPage() {
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
+      <style>{`
+        .social-input-no-focus-ring:focus {
+          outline: none !important;
+          box-shadow: none !important;
+        }
+      `}</style>
       <div
         className="fixed inset-0 -z-10"
         style={{
@@ -347,52 +534,206 @@ function SettingsPage() {
                 style={{ borderWidth: '1.3px' }}
               >
                 {/* Personal Information */}
-                <p style={sectionHeadingStyle}>PERSONAL INFORMATION</p>
+                <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={sectionHeaderWrapperStyle}>
+                  <h2 style={sectionHeaderTextStyle}>PERSONAL INFORMATION</h2>
+                </div>
                 <div style={{ marginBottom: '20px' }}>
                   <label style={labelStyle}>NAME</label>
-                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} style={inputBaseStyle} />
+                  <input type="text" value={name} readOnly style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080' }} />
                 </div>
                 <div style={{ marginBottom: '20px' }}>
                   <label style={labelStyle}>BIRTHDAY</label>
-                  <input type="text" value={birthday} onChange={(e) => setBirthday(e.target.value)} placeholder="MM/DD/YYYY" style={inputBaseStyle} />
+                  <input type="text" value={birthday} readOnly placeholder="MM/DD/YYYY" style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080' }} />
                 </div>
                 <div style={{ marginBottom: '20px' }}>
                   <label style={labelStyle}>EMAIL</label>
-                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ ...inputBaseStyle, color: '#EB1C24' }} />
+                  <input type="email" value={email} readOnly placeholder="EMAIL@EXAMPLE.COM" style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080', textTransform: 'uppercase' }} />
                 </div>
                 <div style={{ marginBottom: '20px' }}>
-                  <label style={labelStyle}>PASSWORD</label>
-                  <input type="password" defaultValue="••••••••••" style={inputBaseStyle} />
-                  <button
-                    type="button"
-                    onClick={() => {}}
-                    style={{
-                      fontFamily: '"Futura PT Book"',
-                      fontSize: '11px',
-                      color: '#EB1C24',
-                      textTransform: 'uppercase',
-                      fontWeight: '500',
-                      marginTop: '6px',
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: 0
-                    }}
-                  >
-                    RESET PASSWORD
-                  </button>
+                  {!showResetPasswordForm && <label style={labelStyle}>PASSWORD</label>}
+                  {!showResetPasswordForm ? (
+                    <>
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        readOnly
+                        value={showPassword ? accountPassword : '••••••••••'}
+                        style={inputBaseStyle}
+                      />
+                      <div className="flex justify-between items-center" style={{ marginTop: '6px' }}>
+                        <button
+                          type="button"
+                          onClick={() => setShowResetPasswordForm(true)}
+                          style={{
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '11px',
+                            color: '#EB1C24',
+                            textTransform: 'uppercase',
+                            fontWeight: '500',
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            padding: 0,
+                            transform: 'translateX(2px)'
+                          }}
+                        >
+                          RESET PASSWORD
+                        </button>
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => setShowPassword((p) => !p)}
+                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setShowPassword((p) => !p); }}
+                          style={{
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '11px',
+                            color: '#EB1C24',
+                            textTransform: 'uppercase',
+                            fontWeight: '500',
+                            cursor: 'pointer',
+                            padding: 0,
+                            transform: 'translateX(-2px)'
+                          }}
+                        >
+                          {showPassword ? 'HIDE PASSWORD' : 'SHOW PASSWORD'}
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <label style={{ ...labelStyle, marginBottom: '4px' }}>CURRENT PASSWORD</label>
+                      <input
+                        type="text"
+                        value={resetOldPassword}
+                        onChange={(e) => setResetOldPassword(e.target.value)}
+                        style={{ ...inputBaseStyle, marginBottom: '12px' }}
+                      />
+                      <div style={{ marginBottom: '12px' }}>
+                        <label style={{ ...labelStyle, marginBottom: '4px' }}>NEW PASSWORD</label>
+                        <input
+                          type="text"
+                          value={resetNewPassword}
+                          onChange={(e) => setResetNewPassword(e.target.value)}
+                          style={inputBaseStyle}
+                        />
+                      </div>
+                      <div style={{ marginBottom: '12px' }}>
+                        <label style={{ ...labelStyle, marginBottom: '4px' }}>CONFIRM PASSWORD</label>
+                        <input
+                          type="text"
+                          value={resetConfirmPassword}
+                          onChange={(e) => setResetConfirmPassword(e.target.value)}
+                          style={inputBaseStyle}
+                        />
+                      </div>
+                      {resetPasswordError && (
+                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '0 0 8px 0' }}>
+                          {resetPasswordError}
+                        </p>
+                      )}
+                      <div className="flex justify-between items-center" style={{ marginTop: '8px', transform: 'translateY(-5px)' }}>
+                        <button
+                          type="button"
+                          onClick={handleResetPasswordSubmit}
+                          style={{
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '11px',
+                            color: '#EB1C24',
+                            textTransform: 'uppercase',
+                            fontWeight: '500',
+                            border: 'none',
+                            background: 'none',
+                            cursor: 'pointer',
+                            padding: 0,
+                            transform: 'translateX(2px)'
+                          }}
+                        >
+                          RESET PASSWORD
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowResetPasswordForm(false);
+                            setResetOldPassword('');
+                            setResetNewPassword('');
+                            setResetConfirmPassword('');
+                            setResetPasswordError('');
+                          }}
+                          style={{
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '11px',
+                            color: '#EB1C24',
+                            textTransform: 'uppercase',
+                            fontWeight: '500',
+                            border: 'none',
+                            background: 'none',
+                            cursor: 'pointer',
+                            padding: 0,
+                            transform: 'translateX(-2px)'
+                          }}
+                        >
+                          CANCEL
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
                 <div style={{ marginBottom: '24px' }}>
                   <label style={labelStyle}>SOCIALS</label>
-                  <input type="text" value={facebook} onChange={(e) => setFacebook(e.target.value)} placeholder="FACEBOOK.COM/" style={{ ...inputBaseStyle, marginBottom: '10px' }} />
-                  <input type="text" value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="@INSTAGRAM" style={{ ...inputBaseStyle, marginBottom: '10px' }} />
-                  <input type="text" value={youtube} onChange={(e) => setYoutube(e.target.value)} placeholder="@YOUTUBE" style={{ ...inputBaseStyle, marginBottom: '10px' }} />
-                  <input type="text" value={tiktok} onChange={(e) => setTiktok(e.target.value)} placeholder="@TIKTOK" style={{ ...inputBaseStyle, marginBottom: '10px' }} />
-                  <input type="text" value={twitter} onChange={(e) => setTwitter(e.target.value)} placeholder="@TWITTER" style={inputBaseStyle} />
+                  {(['instagram', 'twitter', 'tiktok', 'facebook', 'youtube'] as const).map((key) => {
+                    const prefix = socialPrefixes[key];
+                    const value = key === 'facebook' ? facebook : key === 'instagram' ? instagram : key === 'youtube' ? youtube : key === 'tiktok' ? tiktok : twitter;
+                    const setValue = key === 'facebook' ? setFacebook : key === 'instagram' ? setInstagram : key === 'youtube' ? setYoutube : key === 'tiktok' ? setTiktok : setTwitter;
+                    const isView = socialViewMode[key];
+                    return (
+                      <div key={key} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center', border: '1.3px solid black', background: 'white', boxSizing: 'border-box', minHeight: '36px', paddingLeft: '8px', paddingRight: '8px' }}>
+                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', flexShrink: 0, textTransform: 'uppercase' }}>{prefix}</span>
+                        {isView ? (
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => setSocialViewMode((s) => ({ ...s, [key]: false }))}
+                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSocialViewMode((s) => ({ ...s, [key]: false })); }}
+                            style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24', flex: 1, cursor: 'pointer', padding: '8px 0', minHeight: '36px', display: 'flex', alignItems: 'center', textTransform: 'uppercase' }}
+                          >
+                            {value ? value.replace(/^@/, '').toUpperCase() : '\u00A0'}
+                          </span>
+                        ) : (
+                          <input
+                            type="text"
+                            value={value.replace(/^@/, '')}
+                            onChange={(e) => setValue(e.target.value.replace(/^@/, '').toUpperCase())}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                persistSocials();
+                                setSocialViewMode((s) => ({ ...s, [key]: true }));
+                              }
+                            }}
+                            onBlur={() => { persistSocials(); setSocialViewMode((s) => ({ ...s, [key]: true })); }}
+                            placeholder=""
+                            style={{
+                              ...inputBaseStyle,
+                              border: 'none',
+                              marginBottom: 0,
+                              paddingLeft: 0,
+                              flex: 1,
+                              minWidth: 0,
+                              color: '#EB1C24',
+                              textTransform: 'uppercase',
+                              outline: 'none',
+                              boxShadow: 'none'
+                            }}
+                            className="social-input-no-focus-ring"
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
 
                 {/* Notifications */}
-                <p style={{ ...sectionHeadingStyle, marginTop: '8px' }}>NOTIFICATIONS</p>
+                <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ ...sectionHeaderWrapperStyle, marginTop: '8px' }}>
+                  <h2 style={sectionHeaderTextStyle}>NOTIFICATIONS</h2>
+                </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '24px' }}>
                   <div className="flex items-center justify-between" style={{ width: '100%' }}>
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: 'black', textTransform: 'uppercase', fontWeight: '500' }}>Newsletter</span>
@@ -409,8 +750,10 @@ function SettingsPage() {
                 </div>
 
                 {/* Help Center */}
-                <p style={{ ...sectionHeadingStyle, marginTop: '8px' }}>HELP CENTER</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
+                <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ ...sectionHeaderWrapperStyle, marginTop: '8px' }}>
+                  <h2 style={sectionHeaderTextStyle}>HELP CENTER</h2>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '6px' }}>
                   <button
                     type="button"
                     onClick={() => navigate('/brand/faq')}
@@ -466,22 +809,19 @@ function SettingsPage() {
                     TERMS OF SERVICE
                   </button>
                 </div>
+              </div>
 
-                {/* Delete Account */}
+              {/* Delete Account - below main card, matches account profile sign out button */}
+              <div className="px-0 md:px-0" style={{ marginTop: '-4px', marginBottom: '20px' }}>
                 <button
                   type="button"
-                  onClick={() => {}}
+                  onClick={() => setShowDeleteAccountConfirm(true)}
+                  className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                   style={{
-                    width: '100%',
-                    padding: '12px',
-                    fontFamily: '"Futura PT Book"',
-                    fontSize: '12px',
+                    borderWidth: '1.3px',
                     color: '#EB1C24',
-                    textTransform: 'uppercase',
-                    fontWeight: '500',
-                    background: 'white',
-                    border: '1px solid #EB1C24',
-                    cursor: 'pointer'
+                    fontFamily: '"Futura PT Medium"',
+                    backgroundColor: '#FFFFFF'
                   }}
                 >
                   DELETE ACCOUNT
@@ -491,6 +831,17 @@ function SettingsPage() {
           )}
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={showDeleteAccountConfirm}
+        onClose={() => setShowDeleteAccountConfirm(false)}
+        onConfirm={handleDeleteAccount}
+        title="DELETE ACCOUNT"
+        message={<>ARE YOU SURE YOU WANT TO DELETE YOUR ACCOUNT?<br />THIS ACTION IS PERMANENT & CANNOT BE UNDONE.</>}
+        confirmText="CONFIRM"
+        cancelText="CANCEL"
+        dataAttribute="delete-account-confirm"
+      />
     </div>
   );
 }

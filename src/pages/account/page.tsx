@@ -758,19 +758,6 @@ function AccountPage() {
 
   const hasAffiliateNotifications = (): boolean => {
     if (!userData) return false;
-    
-    // For admin account (Kateena), show notifications for testing
-    const isKateenaArmstrong = userData && (
-      (userData.firstName?.toLowerCase() === 'kateena' && userData.lastName?.toLowerCase() === 'armstrong') ||
-      userData.email?.toLowerCase().includes('kateena') ||
-      userData.email?.toLowerCase().includes('armstrong')
-    );
-    
-    // Admin account always shows affiliate notifications for testing
-    if (isKateenaArmstrong) {
-      return true;
-    }
-    
     try {
       const submittedContentStr = localStorage.getItem('affiliateSubmittedContent');
       if (!submittedContentStr) return false;
@@ -784,9 +771,12 @@ function AccountPage() {
         const videos = content.videos || [];
         const socials = content.socials || [];
         
-        // Check for pending approvals
-        const hasPending = [...photos, ...videos, ...socials].some((item: any) => item.status === 'pending');
-        
+        // Check for pending approvals (not yet seen on affiliate page)
+        const hasPending = [...photos, ...videos, ...socials].some((item: any) => {
+          if (item.status !== 'pending') return false;
+          const seenKey = item.id ? `affiliateSeen_${orderId}_${item.id}` : null;
+          return !seenKey || !localStorage.getItem(seenKey);
+        });
         // Check for new approvals (approved but not seen)
         const hasNewApprovals = [...photos, ...videos, ...socials].some((item: any) => {
           if (item.status === 'approved' && item.approvedDate) {
@@ -795,7 +785,6 @@ function AccountPage() {
           }
           return false;
         });
-        
         // Check for rejected content (rejected but not seen)
         const hasNewRejections = [...photos, ...videos, ...socials].some((item: any) => {
           if (item.status === 'rejected' && item.rejectedDate) {
@@ -859,6 +848,16 @@ function AccountPage() {
     return hasNewReviewApproved(userData?.email) ?? false;
   };
 
+  const hasShippingAddressNotifications = (): boolean => {
+    if (!userData?.email) return false;
+    return localStorage.getItem(`shippingAddressAlert_${userData.email}`) === 'true';
+  };
+
+  const hasSettingsNotifications = (): boolean => {
+    if (!userData?.email) return false;
+    return localStorage.getItem(`settingsAlert_${userData.email}`) === 'true';
+  };
+
   const hasPaymentMethodNotifications = (): boolean => {
     if (!userData) return false;
     try {
@@ -872,24 +871,21 @@ function AccountPage() {
       const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
       
       return savedCards.some((card: any) => {
-        // Check if card is about to expire
+        const seenKey = card.id ? `cardSeen_${card.id}` : null;
+        const hasSeen = seenKey ? localStorage.getItem(seenKey) : null;
+        // Card about to expire: show badge only until user has visited payment page (then cardSeen is set)
         if (card.expiryDate) {
           const expiryDate = new Date(card.expiryDate);
           if (expiryDate <= thirtyDaysFromNow && expiryDate > now) {
-            return true; // Expiring soon
+            return !hasSeen;
           }
         }
-        
-        // Check if card is new (added within last 7 days and not seen)
+        // Card new (added within last 7 days): show badge until seen
         if (card.addedAt) {
           const addedDate = new Date(card.addedAt);
           const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-          if (addedDate > sevenDaysAgo) {
-            const seenKey = `cardSeen_${card.id}`;
-            return !localStorage.getItem(seenKey);
-          }
+          if (addedDate > sevenDaysAgo) return !hasSeen;
         }
-        
         return false;
       });
     } catch (e) {
@@ -903,7 +899,16 @@ function AccountPage() {
     const isPremium = userMembershipType === 'PREMIUM' || userMembershipType === 'Premium';
     const showConcierge = isPremium; // Concierge is only for premium members, not standard
     const defaultCards: Array<{ title: string; subtitle: string; route: string | null }> = [];
-    
+
+    let referralInvitesUsed = 0;
+    if (userData?.email) {
+      try {
+        const log = JSON.parse(localStorage.getItem('referralEarnings') || '[]');
+        const email = (userData.email || '').trim().toLowerCase();
+        referralInvitesUsed = log.filter((e: { referrerEmail?: string }) => (e.referrerEmail || '').trim().toLowerCase() === email).length;
+      } catch (_) {}
+    }
+
     if (showConcierge) {
       defaultCards.push({
         title: 'CONCIERGE',
@@ -921,7 +926,11 @@ function AccountPage() {
       },
       { title: 'REWARDS', subtitle: 'MEMBERSHIP + SUBSCRIPTION', route: '/account/rewards' },
       { title: 'AFFILIATE', subtitle: 'SUBMIT CONTENT FOR POINTS', route: '/account/affiliate' },
-      { title: 'REFERRALS', subtitle: 'SHARE YOUR DISCOUNT CODE', route: '/account/referrals' },
+      {
+        title: 'REFERRALS',
+        subtitle: referralInvitesUsed === 1 ? '1 INVITE USED' : `${referralInvitesUsed} INVITES USED`,
+        route: '/account/referrals'
+      },
       { 
         title: 'REVIEWS', 
         subtitle: reviewCount === 1 ? '1 TOTAL REVIEW' : `${reviewCount} TOTAL REVIEWS`, 
@@ -949,37 +958,8 @@ function AccountPage() {
   };
 
 
-  // Helper function to check if a specific card has notifications
+  // Helper function to check if a specific card has notifications (admin uses same logic so badges clear on visit)
   const cardHasNotifications = (title: string): boolean => {
-    // For admin account (Kateena), show notifications on all cards for testing
-    const isKateenaArmstrong = userData && (
-      (userData.firstName?.toLowerCase() === 'kateena' && userData.lastName?.toLowerCase() === 'armstrong') ||
-      userData.email?.toLowerCase().includes('kateena') ||
-      userData.email?.toLowerCase().includes('armstrong')
-    );
-    
-    if (isKateenaArmstrong) {
-      // Admin account: some cards use real logic so badges clear on visit; others stay true for testing
-      switch (title) {
-        case 'ORDERS':
-        case 'REWARDS':
-        case 'AFFILIATE':
-        case 'PAYMENT METHOD':
-          return true;
-        case 'CONCIERGE':
-          return hasConciergeNotifications();
-        case 'ALERTS':
-          return hasAlertsNotifications();
-        case 'REFERRALS':
-          return hasReferralsNotifications();
-        case 'REVIEWS':
-          return hasReviewsNotifications();
-        default:
-          return false;
-      }
-    }
-    
-    // Regular users - check actual notifications
     switch (title) {
       case 'CONCIERGE':
         return hasConciergeNotifications();
@@ -997,6 +977,10 @@ function AccountPage() {
         return hasReviewsNotifications();
       case 'PAYMENT METHOD':
         return hasPaymentMethodNotifications();
+      case 'SHIPPING ADDRESS':
+        return hasShippingAddressNotifications();
+      case 'SETTINGS':
+        return hasSettingsNotifications();
       default:
         return false;
     }

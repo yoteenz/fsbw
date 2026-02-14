@@ -1,10 +1,11 @@
+import type { ReactNode } from 'react';
 
 interface ConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
   title: string;
-  message: string;
+  message: string | ReactNode;
   confirmText?: string;
   cancelText?: string;
   dataAttribute?: string;
@@ -84,7 +85,7 @@ export default function ConfirmationModal({
               textTransform: messageTextTransform,
               textAlign: 'center',
               transform: 'translateY(-1px)',
-              whiteSpace: 'nowrap',
+              whiteSpace: 'normal',
               margin: 0
             }}
           >

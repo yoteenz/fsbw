@@ -665,7 +665,7 @@ function ConciergePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
 
-  // Mark selected order's tracking status as seen and refresh badge (badge clears only when all alerts seen)
+  // Mark selected order's tracking status as seen when user views it (so badge can clear as they view each)
   useEffect(() => {
     if (!selectedOrderId) return;
     const order = activeOrders.find((o: any) => o.id === selectedOrderId);
@@ -675,6 +675,31 @@ function ConciergePage() {
       window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
     } catch (_) {}
   }, [selectedOrderId, activeOrders]);
+
+  // On visit: mark all orders with tracking status as seen so the Concierge card badge clears (same as Referrals/Affiliate)
+  useEffect(() => {
+    try {
+      const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      const email = userData?.email;
+      if (!email) return;
+      const userOrdersKey = `userOrders_${email}`;
+      const stored = localStorage.getItem(userOrdersKey);
+      if (!stored) return;
+      const orders = JSON.parse(stored);
+      const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
+      let anyMarked = false;
+      allOrders.forEach((order: any) => {
+        if (order?.id && order?.status && CONCIERGE_TRACKING_STATUSES.includes(order.status)) {
+          const key = `conciergeOrderSeen_${order.id}_${order.status}`;
+          if (!localStorage.getItem(key)) {
+            localStorage.setItem(key, 'true');
+            anyMarked = true;
+          }
+        }
+      });
+      if (anyMarked) window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+    } catch (_) {}
+  }, []);
 
   // Get current order's tracking stage
   const getOrderTrackingStage = (orderId: string): number => {

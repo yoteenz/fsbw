@@ -47,6 +47,10 @@ function BrandPage() {
   }, [slug, navigate]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  useEffect(() => {
     const handleCartCountUpdate = (event: CustomEvent) => setCartCount(event.detail);
     const handleStorageChange = () => {
       try {
@@ -113,7 +117,7 @@ function BrandPage() {
                     <img alt="Account" width="16" height="16" src="/assets/NOIR/account-icon.svg" />
                   </button>
                   <button onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} className="cursor-pointer" style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}>
-                    <img alt="Wishlist" width="18" height="18" src="/assets/NOIR/account-wishlist.svg" />
+                    <img alt="Wishlist" width="18" height="18" src="/assets/wishlist-heart.svg" />
                   </button>
                 </>
               ) : (
@@ -129,7 +133,10 @@ function BrandPage() {
             </div>
             <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               {showMobileMenu ? (
-                <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>
+                <>
+                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => navigate('/build-a-wig')}>HOME &gt;</span>{' '}
+                  <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>
+                </>
               ) : (
                 <>
                   <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400' }}>BRAND &gt;</span>{' '}

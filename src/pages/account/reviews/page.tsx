@@ -184,14 +184,15 @@ function getProductRoute(productName: string): string {
   }
 }
 
-/** Product-page style: all 5 stars; filled = red with black stroke (filled-star), unfilled = white with black stroke (star-symbol). */
+/** Product-page style: all 5 stars; filled = red with black stroke (filled-star), unfilled = white with black stroke (star-symbol). Reviews require at least 1 star, so treat 0/missing as 1. */
 function StarRating({ rating }: { rating: number }) {
   const starSizePx = 9.11;
   const strokeFilter = 'drop-shadow(0 0 0 1px black)';
+  const effectiveRating = Math.min(5, Math.max(1, Number(rating) || 1));
   return (
     <div style={{ display: 'flex', gap: '2px', marginTop: '8px', marginBottom: '4px', justifyContent: 'center' }}>
       {[0, 1, 2, 3, 4].map((index) => {
-        const filled = index < rating;
+        const filled = index < effectiveRating;
         return (
           <img
             key={index}
@@ -401,7 +402,7 @@ function ReviewsPage() {
       <div className="flex-1 min-w-0" style={{ paddingTop: '2px' }}>
         <p
           style={{
-            fontFamily: '"Futura PT Book"',
+            fontFamily: '"Futura PT Medium"',
             fontSize: '10px',
             color: '#000000',
             margin: '0 0 4px 0'
@@ -501,10 +502,7 @@ function ReviewsPage() {
             </div>
             <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               {showMobileMenu ? (
-                <>
-                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => navigate('/build-a-wig')}>HOME &gt;</span>{' '}
-                  <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>
-                </>
+                <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>
               ) : (
                 <>
                   <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => navigate('/account')}>ACCOUNT &gt;</span>{' '}
@@ -808,30 +806,6 @@ function ReviewsPage() {
                   </div>
                 )}
               </div>
-            </div>
-          )}
-
-          {/* HOME footer bar */}
-          {!showMobileMenu && (
-            <div
-              className="border border-black flex justify-center items-center py-3 w-full bg-white/60 backdrop-blur-sm"
-              style={{ borderWidth: '1.3px' }}
-            >
-              <button
-                onClick={() => navigate('/build-a-wig')}
-                style={{
-                  fontFamily: '"Futura PT Medium"',
-                  fontSize: '12px',
-                  color: '#EB1C24',
-                  fontWeight: '500',
-                  textTransform: 'uppercase',
-                  border: 'none',
-                  background: 'none',
-                  cursor: 'pointer'
-                }}
-              >
-                HOME
-              </button>
             </div>
           )}
         </div>

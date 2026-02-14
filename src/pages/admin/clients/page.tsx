@@ -133,6 +133,16 @@ export default function AdminClients() {
                 <StatsCard key={index} data={stat} onCardClick={handleCardClick} />
               ))}
             </div>
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={() => navigate('/admin/clients/deleted')}
+                className="w-full py-3 border border-black bg-white/60 backdrop-blur-sm font-medium hover:bg-white/80 transition-colors text-sm"
+                style={{ borderWidth: '1.3px', color: '#EB1C24', textTransform: 'uppercase' }}
+              >
+                View deleted accounts
+              </button>
+            </div>
           </div>
         </div>
       </div>
