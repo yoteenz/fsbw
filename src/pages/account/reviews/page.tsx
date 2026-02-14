@@ -395,7 +395,7 @@ function ReviewsPage() {
             textAlign: 'center'
           }}
         >
-          {review.reviewCount} REVIEWS
+          {review.reviewCount} {review.reviewCount === 1 ? 'REVIEW' : 'REVIEWS'}
         </p>
       </div>
       <div className="flex-1 min-w-0" style={{ paddingTop: '2px' }}>
@@ -730,7 +730,7 @@ function ReviewsPage() {
                           LOAD MORE
                         </button>
                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0' }}>
-                          {displayedShopReviews.length} OF {totalShop} REVIEWS
+                          {displayedShopReviews.length} OF {totalShop} {totalShop === 1 ? 'REVIEW' : 'REVIEWS'}
                         </p>
                       </>
                     ) : (
@@ -752,7 +752,7 @@ function ReviewsPage() {
                           SHOW LESS
                         </button>
                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0', textAlign: 'center' }}>
-                          {displayedShopReviews.length} OF {totalShop} REVIEWS
+                          {displayedShopReviews.length} OF {totalShop} {totalShop === 1 ? 'REVIEW' : 'REVIEWS'}
                         </p>
                       </>
                     )}
@@ -779,7 +779,7 @@ function ReviewsPage() {
                           LOAD MORE
                         </button>
                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0' }}>
-                          {displayedToolReviews.length} OF {totalTool} REVIEWS
+                          {displayedToolReviews.length} OF {totalTool} {totalTool === 1 ? 'REVIEW' : 'REVIEWS'}
                         </p>
                       </>
                     ) : (
@@ -801,7 +801,7 @@ function ReviewsPage() {
                           SHOW LESS
                         </button>
                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0', textAlign: 'center' }}>
-                          {displayedToolReviews.length} OF {totalTool} REVIEWS
+                          {displayedToolReviews.length} OF {totalTool} {totalTool === 1 ? 'REVIEW' : 'REVIEWS'}
                         </p>
                       </>
                     )}

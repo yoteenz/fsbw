@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
@@ -7,7 +7,9 @@ import SocialMenuIcons from '../../components/SocialMenuIcons';
 
 interface OrderLineItem {
   productName: string;
-  options?: Record<string, string>; // e.g. { color: 'OFF BLACK', length: '24"' } for uniqueness
+  options?: Record<string, string>; // e.g. { color: 'OFF BLACK', length: '24"', capSize: 'M' } for uniqueness
+  /** Per-item pre-tax amount (when set, used for this line's price instead of splitting order total) */
+  subtotal?: number;
 }
 
 interface Order {
@@ -18,6 +20,8 @@ interface Order {
   productName: string;
   productImage: string;
   total: number;
+  /** Pre-tax subtotal (product amounts as on checkout); when set, used for per-product price instead of total */
+  subtotal?: number;
   items: number;
   reviewInfo?: string; // Optional review/points information
   trackingNumber?: string; // Optional tracking number
@@ -31,6 +35,7 @@ interface Order {
 
 function OrdersPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [cartCount, setCartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
@@ -141,6 +146,52 @@ function OrdersPage() {
     }
   };
 
+  // Hair origin by product (matches cart for "X RAW Y" line)
+  const getHairOrigin = (productName: string): string => {
+    switch (productName.toUpperCase()) {
+      case 'NOIR': return 'CAMBODIAN';
+      case 'BLANCO': return 'RUSSIAN';
+      case 'SOFT CURL': return 'FILIPINO';
+      case 'OCEAN CURL': return 'VIETNAMESE';
+      case 'SOFT WAVE': return 'INDIAN';
+      case 'BEACH WAVE': return 'INDONESIAN';
+      default: return 'CAMBODIAN';
+    }
+  };
+
+  /** Details for expanded order: cap size always first (e.g. cap size: m, cap size: xxs/xs/s); then only non-default options. */
+  const getNonDefaultDetailLines = (productName: string, options: Record<string, string> | undefined): string[] => {
+    const fmt = (label: string, value: string) => `${label}: ${value.toLowerCase()}`;
+    const opts = options ? Object.fromEntries(Object.entries(options).filter(([k]) => !k.startsWith('_'))) : {};
+    const name = productName.toUpperCase();
+    const lines: string[] = [];
+    // Cap size is always the first line (only "default" selection we always list)
+    const capSize = opts.capSize || 'M';
+    lines.push(fmt('cap size', capSize.replace(/\//g, ' / ')));
+    if (Object.keys(opts).length === 0 && !options) return lines;
+    const defaultDensity = name === 'BLANCO' ? '250%' : '200%';
+    if (opts.density && opts.density !== defaultDensity) {
+      lines.push(fmt('density', opts.density));
+    }
+    if (opts.lace && opts.lace !== '13X6') {
+      lines.push(fmt('lace', opts.lace));
+    }
+    let color = opts.color;
+    // BLANCO only: GOLDEN, PLATINUM, ASH (default PLATINUM). NOIR/others: OFF BLACK default, JET BLACK, ESPRESSO, HONEY, etc. (no PLATINUM)
+    if (name === 'BLANCO' && color && !['GOLDEN', 'PLATINUM', 'ASH'].includes(color)) color = 'PLATINUM';
+    const isDefaultColor = name === 'BLANCO' ? (color === 'PLATINUM') : (color === 'OFF BLACK');
+    if (color && !isDefaultColor) lines.push(fmt('color', color));
+    if (opts.hairline && opts.hairline !== 'NATURAL') {
+      lines.push(fmt('hairline', opts.hairline)); // e.g. "hairline: lagos" or "hairline: lagos + peak"
+    }
+    const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
+    if (opts.styling && opts.styling !== 'NONE' && hairStylingOptions.includes(opts.styling)) {
+      lines.push(fmt('styling', opts.styling));
+    }
+    if (opts.addOns) lines.push(fmt('add-ons', opts.addOns));
+    return lines;
+  };
+
   // Helper function to get unit page route based on product name
   const getProductRoute = (productName: string): string => {
     switch (productName.toUpperCase()) {
@@ -206,12 +257,17 @@ function OrdersPage() {
       status: 'PREPARING',
       productName: 'NOIR',
       productImage: getProductImage('NOIR'),
-      total: 1480,
+      total: 1635,
+      subtotal: 1635,
       items: 2,
       trackingNumber: undefined,
       trackingCarrier: undefined,
       placedAt: Date.now() - (20 * 24 * 60 * 60 * 1000), // 20 days ago
-      orderFormSigned: true
+      orderFormSigned: true,
+      lineItems: [
+        { productName: 'NOIR', options: { capSize: 'M', color: 'ESPRESSO', length: '22"' }, subtotal: 835 },
+        { productName: 'NOIR', options: { capSize: 'M', color: 'OFF BLACK', length: '24"', hairline: 'LAGOS' }, subtotal: 800 }
+      ]
     },
     {
       id: 'test-order-4',
@@ -415,15 +471,16 @@ function OrdersPage() {
       status: 'DELIVERED',
       productName: 'NOIR',
       productImage: getProductImage('NOIR'),
-      total: 1480,
+      total: 1575,
+      subtotal: 1575,
       items: 2,
       reviewInfo: 'REVIEW MISSING',
       trackingNumber: '9400136106023046913338',
       trackingCarrier: 'DHL',
       deliveredAt: Date.now() - (42 * 24 * 60 * 60 * 1000),
       lineItems: [
-        { productName: 'NOIR', options: { color: 'OFF BLACK', length: '24"' } },
-        { productName: 'NOIR', options: { color: 'PLATINUM', length: '22"' } }
+        { productName: 'NOIR', options: { capSize: 'M', color: 'OFF BLACK', length: '24"' }, subtotal: 740 },
+        { productName: 'NOIR', options: { capSize: 'M', color: 'ESPRESSO', length: '22"' }, subtotal: 835 }
       ]
     },
     {
@@ -503,12 +560,17 @@ function OrdersPage() {
       status: 'PREPARING',
       productName: 'NOIR',
       productImage: getProductImage('NOIR'),
-      total: 1480,
+      total: 1635,
+      subtotal: 1635,
       items: 2,
       trackingNumber: undefined,
       trackingCarrier: undefined,
       placedAt: Date.now() - (20 * 24 * 60 * 60 * 1000), // 20 days ago
-      orderFormSigned: true
+      orderFormSigned: true,
+      lineItems: [
+        { productName: 'NOIR', options: { capSize: 'M', color: 'ESPRESSO', length: '22"' }, subtotal: 835 },
+        { productName: 'NOIR', options: { capSize: 'M', color: 'OFF BLACK', length: '24"', hairline: 'LAGOS' }, subtotal: 800 }
+      ]
     },
     {
       id: 'test-order-4',
@@ -583,6 +645,50 @@ function OrdersPage() {
   ];
 
   const kateenaMockPastOrders: Order[] = [
+    // Mock order with one product showing 6 lines of detail (cap size, density, lace, color, hairline, styling)
+    {
+      id: 'detail-lines-test',
+      orderNumber: 'ORDER #351',
+      date: getDateDaysAgo(14),
+      status: 'DELIVERED',
+      productName: 'NOIR',
+      productImage: getProductImage('NOIR'),
+      total: 1000,
+      subtotal: 1000,
+      items: 1,
+      reviewInfo: 'REVIEW MISSING',
+      trackingNumber: '1Z351AA10123456789',
+      trackingCarrier: 'FEDEX',
+      deliveredAt: Date.now() - (14 * 24 * 60 * 60 * 1000),
+      placedAt: Date.now() - (14 * 24 * 60 * 60 * 1000),
+      orderFormSigned: true,
+      lineItems: [
+        { productName: 'NOIR', options: { capSize: 'M', density: '250%', lace: '13X4', color: 'ESPRESSO', hairline: 'LAGOS', styling: 'BANGS', length: '24"' }, subtotal: 1000 }
+      ]
+    },
+    // Mock order with multiple different products – for testing NEXT ITEM and product details in expanded summary
+    {
+      id: 'multi-product-test',
+      orderNumber: 'ORDER #350',
+      date: getDateDaysAgo(5),
+      status: 'DELIVERED',
+      productName: 'NOIR',
+      productImage: getProductImage('NOIR'),
+      total: 2405,
+      subtotal: 2405,
+      items: 3,
+      reviewInfo: 'REVIEW MISSING',
+      trackingNumber: '1Z350AA10123456789',
+      trackingCarrier: 'FEDEX',
+      deliveredAt: Date.now() - (30 * 60 * 60 * 1000), // 30 hours ago – eligible for leave review
+      placedAt: Date.now() - (5 * 24 * 60 * 60 * 1000),
+      orderFormSigned: true,
+      lineItems: [
+        { productName: 'NOIR', options: { capSize: 'M', color: 'ESPRESSO', length: '24"' }, subtotal: 840 },
+        { productName: 'BLANCO', options: { capSize: 'M', color: 'GOLDEN', length: '22"' }, subtotal: 795 },
+        { productName: 'SOFT CURL', options: { capSize: 'M', color: 'HONEY', length: '20"' }, subtotal: 770 }
+      ]
+    },
     {
       id: 'test-order-1',
       orderNumber: 'ORDER #888',
@@ -954,7 +1060,12 @@ function OrdersPage() {
         });
 
         if (toArchive.length > 0) {
-          setPastOrders(prevPast => [...prevPast, ...toArchive]);
+          setPastOrders(prevPast => {
+            const existingIds = new Set(prevPast.map(o => o.id));
+            const newOrders = toArchive.filter(o => !existingIds.has(o.id));
+            if (newOrders.length === 0) return prevPast;
+            return [...prevPast, ...newOrders];
+          });
         }
 
         return toKeep;
@@ -1032,6 +1143,15 @@ function OrdersPage() {
       window.removeEventListener('signInStateChanged', handleSignInStateChange as EventListener);
     };
   }, []);
+
+  // Expand order when returning from leave-review page (single-item REVIEW SUBMITTED)
+  useEffect(() => {
+    const expandId = (location.state as { expandOrderId?: string } | null)?.expandOrderId;
+    if (expandId) {
+      setExpandedOrderId(expandId);
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state, location.pathname, navigate]);
 
   // Update mobile menu active tab based on current pathname when menu opens
   useEffect(() => {
@@ -1482,21 +1602,31 @@ function OrdersPage() {
                    {(() => {
                      const expandedOrder = activeOrders.find(o => o.id === expandedOrderId) || pastOrders.find(o => o.id === expandedOrderId);
                      if (expandedOrderId && expandedOrder) {
-                       // Create mock products array for horizontal scroll (based on order.items)
-                       return (() => {
-                         const orderProducts = Array.from({ length: expandedOrder.items }, (_, i) => ({
-                           id: `${expandedOrder.id}-product-${i}`,
-                           name: expandedOrder.productName,
-                           image: expandedOrder.productImage,
-                           price: expandedOrder.total / expandedOrder.items
-                         }));
+                       // Products for horizontal scroll: use lineItems when present (with options), else one per order.items
+                         const orderAmount = (expandedOrder.subtotal != null ? expandedOrder.subtotal : expandedOrder.total);
+const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length > 0
+                          ? expandedOrder.lineItems.map((line, i) => ({
+                              id: `${expandedOrder.id}-product-${i}`,
+                              name: line.productName,
+                              image: getProductImage(line.productName),
+                              price: line.subtotal != null ? line.subtotal : orderAmount / expandedOrder.lineItems!.length,
+                              options: line.options
+                            }))
+                           : Array.from({ length: expandedOrder.items }, (_, i) => ({
+                               id: `${expandedOrder.id}-product-${i}`,
+                               name: expandedOrder.productName,
+                               image: expandedOrder.productImage,
+                               price: orderAmount / expandedOrder.items,
+                               options: undefined as Record<string, string> | undefined
+                             }));
                          return (
                          <div className="flex flex-col gap-6" style={{ marginTop: '10px' }}>
-                           {/* Products Horizontal Scroll */}
+                           {/* Products Horizontal Scroll: black product name, red RAW line, gray price, black details (non-default only) */}
                            <div 
                              className="relative overflow-x-auto"
                              style={{ 
-                               height: '180px',
+                               minHeight: '180px',
+                               height: 'auto',
                                marginBottom: '20px'
                              }}
                            >
@@ -1504,19 +1634,23 @@ function OrdersPage() {
                                className="flex"
                                style={{
                                  gap: '20px',
-                                 height: '100%',
-                                 alignItems: 'center',
+                                 minHeight: '180px',
+                                 alignItems: 'flex-start',
                                  justifyContent: orderProducts.length === 1 ? 'center' : 'flex-start',
                                  paddingRight: '10px'
                                }}
                              >
-                              {orderProducts.map((product) => (
+                              {orderProducts.map((product) => {
+                                const opts = product.options || {};
+                                const lengthVal = opts.length || '24"';
+                                const nonDefaultDetails = getNonDefaultDetailLines(product.name, opts);
+                                return (
                                 <div
                                   key={product.id}
                                   className="flex-shrink-0"
                                   style={{
                                      width: '150px',
-                                     height: '150px',
+                                     minHeight: '150px',
                                      display: 'flex',
                                      flexDirection: 'column',
                                      alignItems: 'center',
@@ -1538,19 +1672,67 @@ function OrdersPage() {
                                    <p
                                      style={{
                                        fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                                       fontSize: '16.8px',
+                                       fontSize: product.name === 'NOIR' ? '22px' : '21px',
                                        color: '#000000',
                                        marginTop: '4px',
                                        marginBottom: '0',
                                        textTransform: 'uppercase',
                                        textAlign: 'center',
-                                       lineHeight: '1.2'
+                                       lineHeight: '1.1'
                                      }}
                                    >
-                                     {product.name}
+                                     {product.name.replace(/WIG/gi, '').trim()}
                                    </p>
+                                   <p
+                                     style={{
+                                       fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif',
+                                       fontSize: '9px',
+                                       color: '#EB1C24',
+                                       marginTop: '3px',
+                                       marginBottom: 0,
+                                       textTransform: 'uppercase',
+                                       textAlign: 'center',
+                                       lineHeight: '1.1'
+                                     }}
+                                   >
+                                     {`${lengthVal} RAW ${getHairOrigin(product.name)}`}
+                                   </p>
+                                   <p
+                                     style={{
+fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
+                                      fontSize: '9px',
+                                      color: '#808080',
+                                      marginTop: '6px',
+                                       marginBottom: 0,
+                                       textTransform: 'uppercase',
+                                       textAlign: 'center',
+                                       lineHeight: '1.1'
+                                     }}
+                                   >
+                                     {formatPrice(product.price)} {selectedCurrency}
+                                   </p>
+{nonDefaultDetails.length > 0 ? (
+                                    <div style={{ marginTop: '4px', textAlign: 'center' }}>
+                                      {nonDefaultDetails.map((line, idx) => (
+                                        <div
+                                          key={idx}
+                                          style={{
+                                            fontFamily: '"Futura PT Book", Futura, Inter, sans-serif',
+                                            fontSize: '9px',
+                                            color: '#000000',
+                                            marginTop: idx === 0 ? 0 : '4px',
+                                            marginBottom: 0,
+                                            textTransform: 'uppercase',
+                                            lineHeight: '1.2'
+                                          }}
+                                        >
+                                          {line}
+                                        </div>
+                                      ))}
+                                    </div>
+                                   ) : null}
                                  </div>
-                               ))}
+                               ); })}
                              </div>
                            </div>
                            
@@ -1683,7 +1865,6 @@ function OrdersPage() {
                            )}
                          </div>
                        );
-                     })();
                    }
                    if (activeOrders.length === 0) {
                      return (
@@ -2036,20 +2217,31 @@ function OrdersPage() {
                    const isArchivedOrderExpanded = Boolean(expandedOrderId && pastOrders.some(o => o.id === expandedOrderId));
                    const expandedOrder = pastOrders.find(o => o.id === expandedOrderId) ?? null;
                    if (isArchivedOrderExpanded && expandedOrder) {
-                     const orderProducts = Array.from({ length: expandedOrder.items }, (_, i) => ({
-                       id: `${expandedOrder.id}-product-${i}`,
-                       name: expandedOrder.productName,
-                       image: expandedOrder.productImage,
-                       price: expandedOrder.total / expandedOrder.items
-                     }));
+                     const orderAmountArchived = (expandedOrder.subtotal != null ? expandedOrder.subtotal : expandedOrder.total);
+const orderProductsArchived = expandedOrder.lineItems && expandedOrder.lineItems.length > 0
+                        ? expandedOrder.lineItems.map((line, i) => ({
+                            id: `${expandedOrder.id}-product-${i}`,
+                            name: line.productName,
+                            image: getProductImage(line.productName),
+                            price: line.subtotal != null ? line.subtotal : orderAmountArchived / expandedOrder.lineItems!.length,
+                            options: line.options
+                          }))
+                       : Array.from({ length: expandedOrder.items }, (_, i) => ({
+                           id: `${expandedOrder.id}-product-${i}`,
+                           name: expandedOrder.productName,
+                           image: expandedOrder.productImage,
+                           price: orderAmountArchived / expandedOrder.items,
+                           options: undefined as Record<string, string> | undefined
+                         }));
                      return (
                        <div key="archived-expanded" className={`${pastOrders.length > 1 ? 'flex-1' : ''} flex flex-col overflow-hidden mt-2`}>
                          <div className="flex flex-col gap-6" style={{ marginTop: '10px' }}>
-                           {/* Products Horizontal Scroll */}
+                           {/* Products Horizontal Scroll: black product name, red RAW line, gray price, black details (non-default only) */}
                            <div 
                              className="relative overflow-x-auto"
                              style={{ 
-                               height: '180px',
+                               minHeight: '180px',
+                               height: 'auto',
                                marginBottom: '20px'
                              }}
                            >
@@ -2057,19 +2249,23 @@ function OrdersPage() {
                                className="flex"
                                style={{
                                  gap: '20px',
-                                 height: '100%',
-                                 alignItems: 'center',
-                                 justifyContent: orderProducts.length === 1 ? 'center' : 'flex-start',
+                                 minHeight: '180px',
+                                 alignItems: 'flex-start',
+                                 justifyContent: orderProductsArchived.length === 1 ? 'center' : 'flex-start',
                                  paddingRight: '10px'
                                }}
                              >
-                              {orderProducts.map((product) => (
+                              {orderProductsArchived.map((product) => {
+                                const opts = product.options || {};
+                                const lengthVal = opts.length || '24"';
+                                const nonDefaultDetails = getNonDefaultDetailLines(product.name, opts);
+                                return (
                                 <div
                                   key={product.id}
                                   className="flex-shrink-0"
                                   style={{
                                      width: '150px',
-                                     height: '150px',
+                                     minHeight: '150px',
                                      display: 'flex',
                                      flexDirection: 'column',
                                      alignItems: 'center',
@@ -2091,19 +2287,67 @@ function OrdersPage() {
                                    <p
                                      style={{
                                        fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                                       fontSize: '16.8px',
+                                       fontSize: product.name === 'NOIR' ? '22px' : '21px',
                                        color: '#000000',
                                        marginTop: '4px',
                                        marginBottom: '0',
                                        textTransform: 'uppercase',
                                        textAlign: 'center',
-                                       lineHeight: '1.2'
+                                       lineHeight: '1.1'
                                      }}
                                    >
-                                     {product.name}
+                                     {product.name.replace(/WIG/gi, '').trim()}
                                    </p>
+                                   <p
+                                     style={{
+                                       fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif',
+                                       fontSize: '9px',
+                                       color: '#EB1C24',
+                                       marginTop: '3px',
+                                       marginBottom: 0,
+                                       textTransform: 'uppercase',
+                                       textAlign: 'center',
+                                       lineHeight: '1.1'
+                                     }}
+                                   >
+                                     {`${lengthVal} RAW ${getHairOrigin(product.name)}`}
+                                   </p>
+                                   <p
+                                     style={{
+fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
+                                      fontSize: '9px',
+                                      color: '#808080',
+                                      marginTop: '6px',
+                                       marginBottom: 0,
+                                       textTransform: 'uppercase',
+                                       textAlign: 'center',
+                                       lineHeight: '1.1'
+                                     }}
+                                   >
+                                     {formatPrice(product.price)} {selectedCurrency}
+                                   </p>
+{nonDefaultDetails.length > 0 ? (
+                                    <div style={{ marginTop: '4px', textAlign: 'center' }}>
+                                      {nonDefaultDetails.map((line, idx) => (
+                                        <div
+                                          key={idx}
+                                          style={{
+                                            fontFamily: '"Futura PT Book", Futura, Inter, sans-serif',
+                                            fontSize: '9px',
+                                            color: '#000000',
+                                            marginTop: idx === 0 ? 0 : '4px',
+                                            marginBottom: 0,
+                                            textTransform: 'uppercase',
+                                            lineHeight: '1.2'
+                                          }}
+                                        >
+                                          {line}
+                                        </div>
+                                      ))}
+                                    </div>
+                                   ) : null}
                                  </div>
-                               ))}
+                               ); })}
                              </div>
                            </div>
                            

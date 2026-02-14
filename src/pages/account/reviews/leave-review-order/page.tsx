@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../../components/BrandMenuLinks';
+import SocialMenuIcons from '../../../../components/SocialMenuIcons';
+import ConfirmationModal from '../../../../components/ConfirmationModal';
 import { getUserSubmittedReviewsKey, getReviewsNewApprovedKey } from '../../../../constants/reviews';
 
 interface OrderLineItem {
@@ -38,7 +40,7 @@ function getProductImage(productName: string): string {
   }
 }
 
-/** Build list of items eligible for review: delivered orders only; unique by product + options (no duplicates). */
+/** Build list of items eligible for review: delivered orders only; unique by product + options (no duplicates). When no lineItems, one reviewable item per order.items so multi-item orders show PREV/NEXT. */
 function getEligibleReviewItems(order: Order): OrderLineItem[] {
   if (order.status !== 'DELIVERED') return [];
   if (order.lineItems && order.lineItems.length > 0) {
@@ -50,7 +52,12 @@ function getEligibleReviewItems(order: Order): OrderLineItem[] {
       return true;
     });
   }
-  return [{ productName: order.productName, options: {} }];
+  // No lineItems: one eligible item per quantity so "NEXT ITEM" appears for multi-item orders
+  const count = Math.max(1, order.items);
+  return Array.from({ length: count }, (_, i) => ({
+    productName: order.productName,
+    options: count > 1 ? { _item: String(i) } : {}
+  }));
 }
 
 const BRAND_RED = '#EB1C24';
@@ -80,6 +87,16 @@ function LeaveReviewOrderPage() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState<'SHOP' | 'TOOLS' | 'BRAND'>('BRAND');
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
+  const [isSignedIn, setIsSignedIn] = useState(() => {
+    try {
+      return typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true';
+    } catch (e) {
+      return false;
+    }
+  });
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [showRequiredFieldsModal, setShowRequiredFieldsModal] = useState(false);
+  const [requiredFieldsMessage, setRequiredFieldsMessage] = useState('');
   const [currentUser, setCurrentUser] = useState<any>(() => {
     try {
       const user = localStorage.getItem('currentUser');
@@ -124,12 +141,40 @@ function LeaveReviewOrderPage() {
     };
   }, []);
 
+  useEffect(() => {
+    const handleSignInStateChange = (event: CustomEvent) => {
+      setIsSignedIn(event.detail === 'true');
+    };
+    window.addEventListener('signInStateChanged', handleSignInStateChange as EventListener);
+    return () => {
+      window.removeEventListener('signInStateChanged', handleSignInStateChange as EventListener);
+    };
+  }, []);
+
   const handleMobileMenuToggle = () => setShowMobileMenu(!showMobileMenu);
   const handleMobileMenuTabClick = (tab: 'SHOP' | 'TOOLS' | 'BRAND') => setMobileMenuActiveTab(tab);
   const handleMobileMenuItemToggle = (item: string) => {
     setMobileMenuExpandedItems((prev) =>
       prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
     );
+  };
+
+  const handleMobileMenuSignInToggle = () => {
+    if (isSignedIn) {
+      setShowSignOutConfirm(true);
+    } else {
+      navigate('/sign-in');
+    }
+  };
+
+  const handleSignOut = () => {
+    setIsSignedIn(false);
+    localStorage.setItem('isSignedIn', 'false');
+    localStorage.removeItem('currentUser');
+    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    setShowSignOutConfirm(false);
+    setShowMobileMenu(false);
+    navigate('/sign-in');
   };
 
   const eligibleItems = order ? getEligibleReviewItems(order) : [];
@@ -142,6 +187,22 @@ function LeaveReviewOrderPage() {
   const itemPrice = order && itemCount > 0 ? Math.round(order.total / itemCount) : 0;
 
   const handleSubmitReview = () => {
+    if (rating < 1) {
+      setRequiredFieldsMessage('PLEASE SELECT A STAR RATING.');
+      setShowRequiredFieldsModal(true);
+      return;
+    }
+    if (!(subject || '').trim()) {
+      setRequiredFieldsMessage('PLEASE FILL IN A SUBJECT.');
+      setShowRequiredFieldsModal(true);
+      return;
+    }
+    if (!(reviewText || '').trim()) {
+      setRequiredFieldsMessage('PLEASE FILL IN A REVIEW.');
+      setShowRequiredFieldsModal(true);
+      return;
+    }
+
     setSubmittedForIndex((prev) => new Set(prev).add(currentItemIndex));
 
     // Persist as approved/posted so it appears on reviews page and account card updates
@@ -182,6 +243,8 @@ function LeaveReviewOrderPage() {
       setRating(0);
       setSubject('');
       setReviewText('');
+      setPhotoUploadFile(null);
+      setVideoUploadFile(null);
     }
   };
 
@@ -191,6 +254,8 @@ function LeaveReviewOrderPage() {
       setRating(0);
       setSubject('');
       setReviewText('');
+      setPhotoUploadFile(null);
+      setVideoUploadFile(null);
     }
   };
 
@@ -252,6 +317,7 @@ function LeaveReviewOrderPage() {
   }
 
   return (
+    <>
     <div className="min-h-screen" style={{ position: 'relative' }}>
       <div
         className="fixed inset-0 -z-10"
@@ -357,8 +423,139 @@ function LeaveReviewOrderPage() {
                   ))}
                 </div>
                 <div style={{ flex: '1', overflowY: 'auto', marginBottom: '20px', minHeight: '0' }}>
-                  {mobileMenuActiveTab === 'BRAND' && <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
+                    {mobileMenuActiveTab === 'TOOLS' ? (
+                      ['GIFT CARD'].map((item, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between cursor-pointer"
+                          onClick={() => navigate('/tools/gift-card')}
+                        >
+                          <span style={{
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '14px',
+                            color: 'black',
+                            fontWeight: '500',
+                            textTransform: 'uppercase',
+                            transform: 'translateX(7px)'
+                          }}>
+                            {item}
+                          </span>
+                        </div>
+                      ))
+                    ) : mobileMenuActiveTab === 'BRAND' ? (
+                      <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />
+                    ) : (
+                      [
+                        { label: 'UNITS', hasArrow: true, isExpandable: true, subItems: ['STRAIGHT', 'WAVY', 'CURLY'] },
+                        { label: 'BOOKING', hasArrow: true, isExpandable: true, subItems: ['APPOINTMENT', 'CONSULTATION'] },
+                        { label: 'BUILD-A-WIG', hasArrow: false },
+                        { label: 'ORDER AUTHORIZATION FORM', hasArrow: false }
+                      ].map((item, index) => (
+                        <div key={index}>
+                          <div
+                            className="flex items-center justify-between"
+                            style={{ alignItems: 'center' }}
+                          >
+                            <span
+                              style={{
+                                fontFamily: '"Futura PT Book"',
+                                fontSize: '14px',
+                                color: 'black',
+                                fontWeight: '500',
+                                textTransform: 'uppercase',
+                                cursor: 'pointer',
+                                transform: 'translateX(7px)'
+                              }}
+                              onClick={() => {
+                                if (item.isExpandable) {
+                                  if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
+                                    navigate('/shop/units');
+                                  } else {
+                                    handleMobileMenuItemToggle(item.label);
+                                  }
+                                } else if (item.label === 'ORDER AUTHORIZATION FORM') {
+                                  navigate('/shop/order-form');
+                                }
+                              }}
+                            >
+                              {item.label}
+                            </span>
+                            {item.hasArrow && (
+                              <img
+                                src="/assets/NOIR/closed-arrow.svg"
+                                alt="Arrow"
+                                style={{
+                                  width: '16px',
+                                  height: '16px',
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-5px) translateY(-4px) rotate(90deg)' : 'translateX(-5px) translateY(-4px) rotate(0deg)'}`,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  cursor: 'pointer'
+                                }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (item.isExpandable) {
+                                    handleMobileMenuItemToggle(item.label);
+                                  }
+                                }}
+                              />
+                            )}
+                          </div>
+                          {item.isExpandable && mobileMenuExpandedItems.includes(item.label) && item.subItems && (
+                            <div className="ml-4 mt-2 space-y-2">
+                              {item.subItems.map((subItem, subIndex) => (
+                                <div
+                                  key={subIndex}
+                                  className="flex items-center cursor-pointer"
+                                  onClick={() => {
+                                    if (subItem === 'STRAIGHT') {
+                                      navigate('/units/straight');
+                                    } else if (subItem === 'WAVY') {
+                                      navigate('/units/wavy');
+                                    } else if (subItem === 'CURLY') {
+                                      navigate('/units/curly');
+                                    }
+                                  }}
+                                >
+                                  <span style={{
+                                    fontFamily: '"Futura PT Book"',
+                                    fontSize: '14px',
+                                    color: '#EB1C24',
+                                    fontWeight: '500',
+                                    textTransform: 'uppercase'
+                                  }}>
+                                    {subItem}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
                 </div>
+
+                {/* Sign In/Out - Fixed at bottom */}
+                <div className="flex justify-center" style={{ marginBottom: '20px', marginTop: 'auto' }}>
+                  <span
+                    onClick={handleMobileMenuSignInToggle}
+                    style={{
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '14px',
+                      color: BRAND_RED,
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {isSignedIn ? 'SIGN OUT' : 'SIGN IN'}
+                  </span>
+                </div>
+
+                {/* Social Media Icons - Fixed at bottom */}
+                <SocialMenuIcons />
               </div>
             </div>
           ) : (
@@ -367,45 +564,21 @@ function LeaveReviewOrderPage() {
               className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full"
               style={{ borderWidth: '1.3px', boxShadow: 'none' }}
             >
-              {/* RATE + REVIEW title */}
-              <h1
-                style={{
-                  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                  fontSize: '28px',
-                  color: '#000000',
-                  margin: '0 0 8px 0',
-                  textAlign: 'center',
-                  lineHeight: 1.2
-                }}
-              >
-                RATE + REVIEW
-              </h1>
-              {/* ORDER #xxx (red) */}
-              <p
-                style={{
-                  fontFamily: '"Futura PT Medium"',
-                  fontSize: '12px',
-                  color: BRAND_RED,
-                  margin: '0 0 4px 0',
-                  textAlign: 'center',
-                  textTransform: 'uppercase'
-                }}
-              >
-                ORDER #{(order.orderNumber || '').replace(/^#|\s*ORDER\s*#?/gi, '').trim() || order.id}
-              </p>
-              {/* N ITEM(S) (gray) */}
-              <p
-                style={{
-                  fontFamily: '"Futura PT Book"',
-                  fontSize: '11px',
-                  color: BRAND_GRAY,
-                  margin: '0 0 20px 0',
-                  textAlign: 'center',
-                  textTransform: 'uppercase'
-                }}
-              >
-                {itemCount} {itemCount === 1 ? 'ITEM' : 'ITEMS'}
-              </p>
+              {/* Order # header - same design as concierge (red text, left-aligned, gray-200 underline) */}
+              <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '20px' }}>
+                <h2
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    color: '#EB1C24',
+                    fontSize: '12px',
+                    fontWeight: '500',
+                    margin: '0',
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  ORDER #{(order.orderNumber || '').replace(/^#|\s*ORDER\s*#?/gi, '').trim() || order.id}
+                </h2>
+              </div>
 
               {currentItem && (
                 <>
@@ -463,8 +636,8 @@ function LeaveReviewOrderPage() {
                             src={filled ? '/assets/NOIR/filled-star.png' : '/assets/NOIR/star-symbol.png'}
                             alt=""
                             style={{
-                              width: '12.75px',
-                              height: '12.75px',
+                              width: '16.58px',
+                              height: '16.58px',
                               filter: 'drop-shadow(0 0 0 1px black)'
                             }}
                           />
@@ -490,11 +663,11 @@ function LeaveReviewOrderPage() {
                     type="text"
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
-                    placeholder="ENTER PRODUCT SUMMARY"
                     disabled={isSubmittedForCurrent}
                     style={{
                       width: '100%',
-                      padding: '10px 12px',
+                      height: '36px',
+                      padding: '8px',
                       fontFamily: '"Futura PT Book"',
                       fontSize: '12px',
                       color: '#000',
@@ -523,7 +696,6 @@ function LeaveReviewOrderPage() {
                   <textarea
                     value={reviewText}
                     onChange={(e) => setReviewText(e.target.value)}
-                    placeholder="LEAVE DETAILED REVIEW HERE."
                     disabled={isSubmittedForCurrent}
                     rows={4}
                     style={{
@@ -542,7 +714,7 @@ function LeaveReviewOrderPage() {
                     }}
                   />
 
-                  {/* UPLOAD PHOTO - same as order form choose file */}
+                  {/* UPLOAD A PHOTO: - same as order form choose file */}
                   <label
                     style={{
                       display: 'block',
@@ -553,7 +725,7 @@ function LeaveReviewOrderPage() {
                       textTransform: 'uppercase'
                     }}
                   >
-                    UPLOAD PHOTO
+                    UPLOAD A PHOTO:
                   </label>
                   <div style={{ position: 'relative', marginBottom: '16px' }}>
                     <input
@@ -609,7 +781,7 @@ function LeaveReviewOrderPage() {
                     </div>
                   </div>
 
-                  {/* UPLOAD VIDEO - same as order form choose file */}
+                  {/* UPLOAD A VIDEO: - same as order form choose file */}
                   <label
                     style={{
                       display: 'block',
@@ -620,7 +792,7 @@ function LeaveReviewOrderPage() {
                       textTransform: 'uppercase'
                     }}
                   >
-                    UPLOAD VIDEO
+                    UPLOAD A VIDEO:
                   </label>
                   <div style={{ position: 'relative', marginBottom: '24px' }}>
                     <input
@@ -676,41 +848,6 @@ function LeaveReviewOrderPage() {
                     </div>
                   </div>
 
-                  {/* Prev/Next item buttons - inside card */}
-                  {!isSingle && (
-                      <div className="flex gap-3">
-                        {!isFirst && (
-                          <button
-                            type="button"
-                            onClick={goPrev}
-                            className="border border-black flex-1 text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                            style={{
-                              borderWidth: '1.3px',
-                              color: BRAND_RED,
-                              fontFamily: '"Futura PT Medium"',
-                              backgroundColor: '#FFFFFF'
-                            }}
-                          >
-                            PREVIOUS ITEM
-                          </button>
-                        )}
-                        {!isLast && (
-                          <button
-                            type="button"
-                            onClick={goNext}
-                            className="border border-black flex-1 text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                            style={{
-                              borderWidth: '1.3px',
-                              color: BRAND_RED,
-                              fontFamily: '"Futura PT Medium"',
-                              backgroundColor: '#FFFFFF'
-                            }}
-                          >
-                            NEXT ITEM
-                          </button>
-                        )}
-                      </div>
-                    )}
                 </>
               )}
 
@@ -721,14 +858,14 @@ function LeaveReviewOrderPage() {
               )}
             </div>
 
-            {/* Submit Review - below card, same styling as "Leave a review" on orders page */}
+            {/* Submit Review - below card; single item "REVIEW SUBMITTED" returns to expanded order */}
             {currentItem && (
               <div className="px-0 w-full" style={{ marginTop: '11px', marginBottom: '20px' }}>
                 {isSubmittedForCurrent ? (
                   <button
                     type="button"
-                    disabled
-                    className="relative z-10 border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-default uppercase"
+                    onClick={() => isSingle && order && navigate('/account/orders', { state: { expandOrderId: order.id }, replace: true })}
+                    className={`relative z-10 border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white uppercase ${isSingle ? 'cursor-pointer hover:bg-gray-50' : 'cursor-default'}`}
                     style={{ borderWidth: '1.3px', color: BRAND_RED, fontFamily: '"Futura PT Medium"' }}
                   >
                     REVIEW SUBMITTED
@@ -743,6 +880,31 @@ function LeaveReviewOrderPage() {
                     SUBMIT REVIEW
                   </button>
                 )}
+                {/* Next/Previous item - below submit button for multi-item orders; PREVIOUS above, NEXT below */}
+                {!isSingle && (
+                  <div className="flex flex-col gap-3" style={{ marginTop: '12px' }}>
+                    {!isFirst && (
+                      <button
+                        type="button"
+                        onClick={goPrev}
+                        className="relative z-10 border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 uppercase"
+                        style={{ borderWidth: '1.3px', color: BRAND_RED, fontFamily: '"Futura PT Medium"' }}
+                      >
+                        PREVIOUS ITEM
+                      </button>
+                    )}
+                    {!isLast && (
+                      <button
+                        type="button"
+                        onClick={goNext}
+                        className="relative z-10 border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 uppercase"
+                        style={{ borderWidth: '1.3px', color: BRAND_RED, fontFamily: '"Futura PT Medium"' }}
+                      >
+                        NEXT ITEM
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             )}
             </>
@@ -750,6 +912,27 @@ function LeaveReviewOrderPage() {
         </div>
       </div>
     </div>
+
+    <ConfirmationModal
+      isOpen={showSignOutConfirm}
+      onClose={() => setShowSignOutConfirm(false)}
+      onConfirm={handleSignOut}
+      title="SIGN OUT?"
+      message="ARE YOU SURE YOU WANT TO SIGN OUT?"
+      confirmText="SIGN OUT"
+      cancelText="CANCEL"
+    />
+
+    <ConfirmationModal
+      isOpen={showRequiredFieldsModal}
+      onClose={() => setShowRequiredFieldsModal(false)}
+      onConfirm={() => setShowRequiredFieldsModal(false)}
+      title="REQUIRED FIELD"
+      message={requiredFieldsMessage}
+      confirmText="OK"
+      cancelText=""
+    />
+  </>
   );
 }
 

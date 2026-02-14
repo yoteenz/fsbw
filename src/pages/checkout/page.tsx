@@ -4911,6 +4911,8 @@ function CheckoutPage() {
                             date: new Date().toISOString()
                           });
                           localStorage.setItem('referralEarnings', JSON.stringify(referralLog));
+                          const referrerKey = `referralNewActivity_${(referrer.email || '').trim().toLowerCase()}`;
+                          localStorage.setItem(referrerKey, 'true');
                         }
                       }
                     } catch (error) {
@@ -4936,6 +4938,7 @@ function CheckoutPage() {
                         productName,
                         productImage: '/assets/natural front.png',
                         total: subtotal,
+                        subtotal: orderAmount,
                         items: cartItems.reduce((sum: number, i: any) => sum + (i.quantity || 1), 0),
                         placedAt: Date.now()
                       };

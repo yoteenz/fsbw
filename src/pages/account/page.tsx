@@ -814,8 +814,48 @@ function AccountPage() {
     }
   };
 
+  const hasReferralsNotifications = (): boolean => {
+    if (!userData?.email) return false;
+    try {
+      const key = `referralNewActivity_${(userData.email || '').trim().toLowerCase()}`;
+      if (localStorage.getItem(key) === 'true') return true;
+      const log = JSON.parse(localStorage.getItem('referralEarnings') || '[]');
+      const email = (userData.email || '').trim().toLowerCase();
+      const lastSeenKey = `referralLastSeenCount_${email}`;
+      const lastSeen = parseInt(localStorage.getItem(lastSeenKey) || '0', 10);
+      const myCount = log.filter((e: { referrerEmail?: string }) => (e.referrerEmail || '').trim().toLowerCase() === email).length;
+      return myCount > lastSeen;
+    } catch {
+      return false;
+    }
+  };
+
+  // All order statuses that have a tracking stage on Concierge (badge for any unseen update)
+  const CONCIERGE_TRACKING_STATUSES = [
+    'PLACED', 'CONFIRMED', 'PREPARING', 'SHIPPED_TO_HUB', 'IN_TRANSIT',
+    'PROCESSING', 'CUSTOMIZING', 'FINALIZING', 'SHIPPED', 'DELIVERED'
+  ];
+
+  const hasConciergeNotifications = (): boolean => {
+    if (!userData?.email) return false;
+    try {
+      const userOrdersKey = `userOrders_${userData.email}`;
+      const stored = localStorage.getItem(userOrdersKey);
+      if (!stored) return false;
+      const orders = JSON.parse(stored);
+      const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
+      return allOrders.some((order: any) => {
+        if (!order?.id || !order?.status) return false;
+        if (!CONCIERGE_TRACKING_STATUSES.includes(order.status)) return false;
+        return !localStorage.getItem(`conciergeOrderSeen_${order.id}_${order.status}`);
+      });
+    } catch {
+      return false;
+    }
+  };
+
   const hasReviewsNotifications = (): boolean => {
-    // Rose icon shows when a new review has been approved/added/posted to the reviews page
+    // Alert when user's review is posted or new shop/tool reviews; clears when they visit reviews page and view shop/tool tab
     return hasNewReviewApproved(userData?.email) ?? false;
   };
 
@@ -919,15 +959,19 @@ function AccountPage() {
     );
     
     if (isKateenaArmstrong) {
-      // Admin account shows notifications on all cards for testing (REVIEWS uses actual flag so visiting reviews page clears it)
+      // Admin account: some cards use real logic so badges clear on visit; others stay true for testing
       switch (title) {
         case 'ORDERS':
-        case 'ALERTS':
         case 'REWARDS':
-        case 'REFERRALS':
         case 'AFFILIATE':
         case 'PAYMENT METHOD':
           return true;
+        case 'CONCIERGE':
+          return hasConciergeNotifications();
+        case 'ALERTS':
+          return hasAlertsNotifications();
+        case 'REFERRALS':
+          return hasReferralsNotifications();
         case 'REVIEWS':
           return hasReviewsNotifications();
         default:
@@ -937,6 +981,8 @@ function AccountPage() {
     
     // Regular users - check actual notifications
     switch (title) {
+      case 'CONCIERGE':
+        return hasConciergeNotifications();
       case 'ORDERS':
         return hasOrdersNotifications();
       case 'ALERTS':
@@ -944,7 +990,7 @@ function AccountPage() {
       case 'REWARDS':
         return hasMembershipNotifications();
       case 'REFERRALS':
-        return false;
+        return hasReferralsNotifications();
       case 'AFFILIATE':
         return hasAffiliateNotifications();
       case 'REVIEWS':

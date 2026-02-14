@@ -77,6 +77,20 @@ function ReferralsPage() {
     }
   }, [userData?.email]);
 
+  // Clear referrals card badge when user visits (they've seen code-used / invite / payout)
+  useEffect(() => {
+    try {
+      const email = (userData?.email || '').trim().toLowerCase();
+      if (email) {
+        localStorage.removeItem(`referralNewActivity_${email}`);
+        const log = JSON.parse(localStorage.getItem('referralEarnings') || '[]');
+        const myCount = log.filter((e: { referrerEmail?: string }) => (e.referrerEmail || '').trim().toLowerCase() === email).length;
+        localStorage.setItem(`referralLastSeenCount_${email}`, String(myCount));
+      }
+      window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+    } catch (_) {}
+  }, [userData?.email]);
+
   // Code is active when user has at least one DELIVERED order, or (existing user) has orders but no hasMadeFirstPurchase
   useEffect(() => {
     const email = (userData?.email || '').trim().toLowerCase();
@@ -397,17 +411,18 @@ function ReferralsPage() {
                 <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px', margin: '0 0 16px 0', textTransform: 'uppercase' }}>
                   Give friends <span style={{ color: '#EB1C24' }}>$20 off</span> their first order. You get <span style={{ color: '#EB1C24' }}>$20 digital cash</span> when their order is confirmed.
                 </p>
-                {/* Status */}
                 <div className="border border-black bg-white/80 py-4 px-4 mb-4" style={{ borderWidth: '1px' }}>
                   <div className="flex items-center justify-between flex-wrap gap-1" style={{ marginBottom: '12px' }}>
-                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '11px', fontWeight: '500', margin: 0, textTransform: 'uppercase' }}>Status</h3>
-                    <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', fontWeight: '500', textTransform: 'uppercase', color: codeStatus === 'active' ? '#000000' : '#EB1C24' }}>
-                      Your code: {codeStatus === 'active' ? 'Active' : 'Inactive'}
+                    <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', fontWeight: '500', textTransform: 'uppercase' }}>
+                      STATUS: <span style={{ color: '#EB1C24' }}>{codeStatus === 'active' ? 'ACTIVE' : 'INACTIVE'}</span>
+                    </span>
+                    <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', fontWeight: '500', textTransform: 'uppercase' }}>
+                      CODE: <span style={{ color: '#EB1C24' }}>{generateReferralCode()}</span>
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <div>
-                      <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: '0 0 4px 0', textTransform: 'uppercase' }}>Invitees</p>
+                      <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: '0 0 4px 0', textTransform: 'uppercase' }}>Invites</p>
                       <p style={{ fontFamily: '"Covered By Your Grace", sans-serif', color: '#000000', fontSize: '18px', margin: 0 }}>{referralStats.invitees}</p>
                     </div>
                     <div style={{ borderLeft: '1px solid #ccc', paddingLeft: '16px' }}>
@@ -493,16 +508,10 @@ function ReferralsPage() {
                 <p className="referral-rules-para" style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '9px', margin: '0 0 14px 0', textTransform: 'uppercase' }}>
                   Your code is active only after your order has been marked complete & delivered. If a referred friend&apos;s order is canceled, you won&apos;t receive the $20. Terms apply.
                 </p>
-                <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
-                  <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500', margin: '0', textTransform: 'uppercase' }}>Your code</h3>
-                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', color: '#000000', fontSize: '13px', margin: '0', textTransform: 'uppercase' }}>
-                    {generateReferralCode()}
-                  </p>
-                </div>
               </div>
 
               {/* Invite button - below main card, same style as cancel/upgrade subscription */}
-              <div className="w-full px-0" style={{ marginTop: '12px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
+              <div className="w-full px-0" style={{ marginTop: '8px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
                 <button
                   type="button"
                   onClick={() => setShowInviteModal(true)}

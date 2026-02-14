@@ -135,7 +135,12 @@ function ConciergePage() {
   const [selectedOrderId, setSelectedOrderId] = useState<string>('');
   const [activeOrders, setActiveOrders] = useState<any[]>([]);
   const [expandedStages, setExpandedStages] = useState<Set<number>>(new Set());
-  
+
+  const CONCIERGE_TRACKING_STATUSES = [
+    'PLACED', 'CONFIRMED', 'PREPARING', 'SHIPPED_TO_HUB', 'IN_TRANSIT',
+    'PROCESSING', 'CUSTOMIZING', 'FINALIZING', 'SHIPPED', 'DELIVERED'
+  ];
+
   // Get active orders for tracking
   useEffect(() => {
     const getActiveOrders = () => {
@@ -596,6 +601,13 @@ function ConciergePage() {
           };
           localStorage.setItem(userOrdersKey, JSON.stringify(updatedOrders));
           
+          // Orders with unseen tracking alerts (for auto-select and badge)
+          const allOrdersForAlerts = [...active, ...past];
+          const unseen = allOrdersForAlerts.filter(
+            (o: any) => o?.id != null && o?.status && CONCIERGE_TRACKING_STATUSES.includes(o.status) && !localStorage.getItem(`conciergeOrderSeen_${o.id}_${o.status}`)
+          );
+          unseen.sort((a: any, b: any) => (a.placedAt || 0) - (b.placedAt || 0));
+
           // Check if orderId is in URL query params (from orders page click)
           const urlParams = new URLSearchParams(location.search);
           const orderIdFromUrl = urlParams.get('orderId');
@@ -610,6 +622,13 @@ function ConciergePage() {
               }
               setSelectedOrderId(orderIdFromUrl);
             }
+          } else if (unseen.length > 0) {
+            // Auto-select order with oldest unread tracking update so it appears in dropdown
+            const oldestUnseen = unseen[0];
+            if (past.find((o: any) => o.id === oldestUnseen.id)) {
+              active.push(oldestUnseen);
+            }
+            setSelectedOrderId(oldestUnseen.id);
           } else if (!selectedOrderId) {
             // Auto-select order 999 (completed) if it exists and user is Kateena admin, otherwise first active order
             // Only auto-load order 999 for Kateena admin account (for mock order testing)
@@ -645,7 +664,18 @@ function ConciergePage() {
     getActiveOrders();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
-  
+
+  // Mark selected order's tracking status as seen and refresh badge (badge clears only when all alerts seen)
+  useEffect(() => {
+    if (!selectedOrderId) return;
+    const order = activeOrders.find((o: any) => o.id === selectedOrderId);
+    if (!order?.id || !order?.status || !CONCIERGE_TRACKING_STATUSES.includes(order.status)) return;
+    try {
+      localStorage.setItem(`conciergeOrderSeen_${order.id}_${order.status}`, 'true');
+      window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+    } catch (_) {}
+  }, [selectedOrderId, activeOrders]);
+
   // Get current order's tracking stage
   const getOrderTrackingStage = (orderId: string): number => {
     if (!orderId) return 0;
