@@ -4,6 +4,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
+import { isAdminKateenaAccount } from '../../utils/adminAuth';
 
 interface OrderLineItem {
   productName: string;
@@ -88,18 +89,8 @@ function OrdersPage() {
     return user?.email?.toLowerCase() === 'bruno203@gmail.com' || (!user && !signedIn);
   };
 
-  // Helper function to check if current user is Kateena Armstrong (mock account)
-  const isKateenaArmstrong = () => {
-    const user = currentUser;
-    if (!user) return false;
-    const firstName = user.firstName?.toLowerCase() || '';
-    const lastName = user.lastName?.toLowerCase() || '';
-    const email = user.email?.toLowerCase() || '';
-    // Check if user is Kateena Armstrong by name or email
-    return (firstName === 'kateena' && lastName === 'armstrong') || 
-           email.includes('kateena') || 
-           email.includes('armstrong');
-  };
+  // Admin Kateena account only (by email) – gets mock orders
+  const isKateenaArmstrong = () => isAdminKateenaAccount(currentUser);
 
   // Currency state - load from localStorage on mount
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {

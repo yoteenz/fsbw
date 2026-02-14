@@ -22,6 +22,15 @@ const DEFAULT_ADMIN_EMAILS = [
   'ayoteenz@yahoo.com',
 ];
 
+/** Single admin Kateena account (mock data, premium, test orders). Only this email gets the exception; same-name OAuth accounts do not. */
+export const ADMIN_KATEENA_EMAIL = 'kateena.armstrong@frontalslayer.com';
+
+/** True if user is the one admin Kateena account (by email only). Use for mock/premium exception only; other "Kateena Armstrong" accounts (e.g. OAuth with different email) are not included. */
+export function isAdminKateenaAccount(user: { email?: string } | null): boolean {
+  if (!user?.email) return false;
+  return (user.email || '').trim().toLowerCase() === ADMIN_KATEENA_EMAIL;
+}
+
 const allowedEmails = ADMIN_EMAILS.length > 0 ? ADMIN_EMAILS : DEFAULT_ADMIN_EMAILS;
 
 /** Preview-only admin emails (env REACT_APP_PREVIEW_ADMIN_EMAILS). Only get admin on preview/local, never on Vercel production. */

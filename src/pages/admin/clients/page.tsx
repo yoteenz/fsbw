@@ -10,9 +10,16 @@ export default function AdminClients() {
 
   const loadData = useCallback(() => {
     try {
-      const reg = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      let reg = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      if (!Array.isArray(reg)) reg = [];
+      const currentUserRaw = localStorage.getItem('currentUser');
+      const currentUser = currentUserRaw ? JSON.parse(currentUserRaw) : null;
+      if (currentUser?.email && !reg.some((u: any) => (u.email || '').toLowerCase() === (currentUser.email || '').toLowerCase())) {
+        reg = [...reg, currentUser];
+        localStorage.setItem('registeredUsers', JSON.stringify(reg));
+      }
       const del = JSON.parse(localStorage.getItem('deletedUsers') || '[]');
-      setRegisteredUsers(Array.isArray(reg) ? reg : []);
+      setRegisteredUsers(reg);
       setDeletedUsers(Array.isArray(del) ? del : []);
     } catch {
       setRegisteredUsers([]);
@@ -134,6 +141,31 @@ export default function AdminClients() {
               >
                 View deleted accounts
               </button>
+            </div>
+
+            {/* Client list: all registered users (email + OAuth). Stored per browser – sign in with each account in this browser to see them here. */}
+            <div className="mt-6 bg-white/60 backdrop-blur-sm border border-black p-4" style={{ borderWidth: '1.3px' }}>
+              <h3 className="text-sm font-semibold mb-3" style={{ color: '#EB1C24' }}>All active clients ({registeredUsers.length})</h3>
+              <p className="text-xs text-gray-600 mb-3">List is per browser. To see an OAuth account (e.g. yoteenz@gmail.com), sign in with Google or Facebook in this same browser once, then sign back in as admin.</p>
+              {registeredUsers.length === 0 ? (
+                <p className="text-sm text-gray-600">No registered clients yet.</p>
+              ) : (
+                <ul className="space-y-2 max-h-80 overflow-y-auto">
+                  {registeredUsers.map((u: any) => (
+                    <li key={u.email || u.id} className="text-sm border-b border-gray-200 pb-2 last:border-0">
+                      <span className="font-medium">{(u.firstName || '') + ' ' + (u.lastName || '')}</span>
+                      {((u.firstName || u.lastName) && (u.email || u.authProvider)) && ' · '}
+                      <span className="text-gray-700">{u.email || '(no email)'}</span>
+                      {u.authProvider && (
+                        <span className="ml-1 text-xs" style={{ color: '#EB1C24' }}>({u.authProvider})</span>
+                      )}
+                      <span className="block text-xs text-gray-500 mt-0.5">
+                        {(u.membershipType || 'STANDARD')} · joined {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
         </div>

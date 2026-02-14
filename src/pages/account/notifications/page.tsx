@@ -65,57 +65,29 @@ function NotificationsPage() {
     return '/assets/profile-thumb.png';
   });
 
-  // Mock notifications data
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: '1',
-      title: 'SATIN BONNET IS NOW ON SALE',
-      message: 'SHOP THIS DEAL WHILE SUPPLIES LAST.',
-      actionText: 'VIEW PRODUCT',
-      actionRoute: '/shop/units',
-      date: 'TODAY',
-      isRead: false,
-      icon: 'f'
-    },
-    {
-      id: '2',
-      title: 'ORDER #344 HAS BEEN DELIVERED',
-      message: 'YOU CAN NOW LEAVE A REVIEW FOR THIS ORDER.',
-      actionText: 'SUBMIT REVIEW',
-      actionRoute: '/account/orders',
-      date: 'YESTERDAY',
-      isRead: false,
-      icon: 'f'
-    },
-    {
-      id: '3',
-      title: 'ORDER #344 HAS SHIPPED',
-      message: 'PROCESSING FOR THIS ORDER IS NOW COMPLETE.',
-      actionText: 'TRACK DELIVERY',
-      actionRoute: '/account/orders',
-      date: '2 DAYS AGO',
-      isRead: false,
-      icon: 'fc'
-    },
-    {
-      id: '4',
-      title: 'NEW DROP COMING SOON',
-      message: 'TRAVEL SIZE FOAM RELEASING ON 4/22.',
-      date: '3 DAYS AGO',
-      isRead: false,
-      icon: 'f'
-    },
-    {
-      id: '5',
-      title: 'ORDER #344 HAS BEEN CONFIRMED',
-      message: "WE'RE PROCESSING YOUR ORDER, SIT TIGHT.",
-      actionText: 'VIEW DETAILS',
-      actionRoute: '/account/orders',
-      date: '1 WEEK AGO',
-      isRead: true,
-      icon: 'f'
+  const mockNotificationsList: Notification[] = [
+    { id: '1', title: 'SATIN BONNET IS NOW ON SALE', message: 'SHOP THIS DEAL WHILE SUPPLIES LAST.', actionText: 'VIEW PRODUCT', actionRoute: '/shop/units', date: 'TODAY', isRead: false, icon: 'f' },
+    { id: '2', title: 'ORDER #344 HAS BEEN DELIVERED', message: 'YOU CAN NOW LEAVE A REVIEW FOR THIS ORDER.', actionText: 'SUBMIT REVIEW', actionRoute: '/account/orders', date: 'YESTERDAY', isRead: false, icon: 'f' },
+    { id: '3', title: 'ORDER #344 HAS SHIPPED', message: 'PROCESSING FOR THIS ORDER IS NOW COMPLETE.', actionText: 'TRACK DELIVERY', actionRoute: '/account/orders', date: '2 DAYS AGO', isRead: false, icon: 'fc' },
+    { id: '4', title: 'NEW DROP COMING SOON', message: 'TRAVEL SIZE FOAM RELEASING ON 4/22.', date: '3 DAYS AGO', isRead: false, icon: 'f' },
+    { id: '5', title: 'ORDER #344 HAS BEEN CONFIRMED', message: "WE'RE PROCESSING YOUR ORDER, SIT TIGHT.", actionText: 'VIEW DETAILS', actionRoute: '/account/orders', date: '1 WEEK AGO', isRead: true, icon: 'f' }
+  ];
+
+  const [notifications, setNotifications] = useState<Notification[]>(() => {
+    try {
+      const raw = localStorage.getItem('currentUser');
+      const user = raw ? JSON.parse(raw) : null;
+      const key = user?.authProvider && user?.email ? `notifications_${user.email}` : 'notifications';
+      const stored = localStorage.getItem(key);
+      if (stored) {
+        const list = JSON.parse(stored);
+        return Array.isArray(list) ? list : (user?.authProvider ? [] : mockNotificationsList);
+      }
+      return user?.authProvider ? [] : mockNotificationsList;
+    } catch {
+      return mockNotificationsList;
     }
-  ]);
+  });
 
   const newNotifications = notifications.filter(n => !n.isRead);
   const seenNotifications = notifications.filter(n => n.isRead);
@@ -124,15 +96,18 @@ function NotificationsPage() {
   useEffect(() => {
     try {
       localStorage.setItem('hasUnreadNotifications', 'false');
-      const raw = localStorage.getItem('notifications');
+      const rawUser = localStorage.getItem('currentUser');
+      const user = rawUser ? JSON.parse(rawUser) : null;
+      const key = user?.authProvider && user?.email ? `notifications_${user.email}` : 'notifications';
+      const raw = localStorage.getItem(key);
       if (raw) {
         const list = JSON.parse(raw);
         if (Array.isArray(list)) {
           const updated = list.map((n: Notification) => ({ ...n, isRead: true }));
-          localStorage.setItem('notifications', JSON.stringify(updated));
+          localStorage.setItem(key, JSON.stringify(updated));
         }
-      } else {
-        // No stored notifications (e.g. first visit or admin): persist initial mock list as all read so badge stays clear
+      } else if (!user?.authProvider) {
+        // No stored notifications (non-OAuth): persist initial mock list as all read so badge stays clear
         const initialAllRead = [
           { id: '1', title: 'SATIN BONNET IS NOW ON SALE', message: 'SHOP THIS DEAL WHILE SUPPLIES LAST.', actionText: 'VIEW PRODUCT', actionRoute: '/shop/units', date: 'TODAY', isRead: true, icon: 'f' as const },
           { id: '2', title: 'ORDER #344 HAS BEEN DELIVERED', message: 'YOU CAN NOW LEAVE A REVIEW FOR THIS ORDER.', actionText: 'SUBMIT REVIEW', actionRoute: '/account/orders', date: 'YESTERDAY', isRead: true, icon: 'f' as const },
@@ -140,7 +115,7 @@ function NotificationsPage() {
           { id: '4', title: 'NEW DROP COMING SOON', message: 'TRAVEL SIZE FOAM RELEASING ON 4/22.', date: '3 DAYS AGO', isRead: true, icon: 'f' as const },
           { id: '5', title: 'ORDER #344 HAS BEEN CONFIRMED', message: "WE'RE PROCESSING YOUR ORDER, SIT TIGHT.", actionText: 'VIEW DETAILS', actionRoute: '/account/orders', date: '1 WEEK AGO', isRead: true, icon: 'f' as const }
         ];
-        localStorage.setItem('notifications', JSON.stringify(initialAllRead));
+        localStorage.setItem(key, JSON.stringify(initialAllRead));
       }
       window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
     } catch (_) {}

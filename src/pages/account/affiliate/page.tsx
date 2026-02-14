@@ -7,6 +7,7 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import moreWaysIcon from '../../../assets/icons/more-ways.svg?url';
 import affiliateIcon from '../../../assets/icons/affiliate-icon.svg?url';
+import { isAdminKateenaAccount } from '../../../utils/adminAuth';
 
 interface Order {
   id: string;
@@ -98,21 +99,10 @@ function AffiliatePage() {
     }
   };
 
-  // Helper function to check if current user is Kristin Watson (mock account)
+  // Helper function to check if current user is Kristin Watson (mock account) – OAuth users never use mock
   const isKristinWatson = () => {
-    if (!userData) return false;
+    if (!userData || userData.authProvider) return false;
     return userData.email?.toLowerCase() === 'bruno203@gmail.com';
-  };
-
-  // Helper function to check if current user is Kateena Armstrong (admin account)
-  const isKateenaArmstrong = () => {
-    if (!userData) return false;
-    const firstName = userData.firstName?.toLowerCase() || '';
-    const lastName = userData.lastName?.toLowerCase() || '';
-    const email = userData.email?.toLowerCase() || '';
-    return (firstName === 'kateena' && lastName === 'armstrong') || 
-           email.includes('kateena') || 
-           email.includes('armstrong');
   };
 
   // Helper function to get a date X days ago
@@ -359,7 +349,7 @@ function AffiliatePage() {
     // Return mock orders for Kristin Watson or Kateena Armstrong
     if (isKristinWatson()) {
       return kristinMockDeliveredOrders;
-    } else if (isKateenaArmstrong()) {
+    } else if (isAdminKateenaAccount(userData)) {
       return kateenaMockDeliveredOrders;
     }
 
@@ -418,6 +408,16 @@ function AffiliatePage() {
       }
     } catch (e) {
       console.error('❌ Error loading submitted content from localStorage:', e);
+    }
+
+    const currentUser = (() => {
+      try {
+        const raw = localStorage.getItem('currentUser');
+        return raw ? JSON.parse(raw) : null;
+      } catch { return null; }
+    })();
+    if (currentUser?.authProvider) {
+      return { ...storedContent };
     }
     
     // Mock data for admin account (Kateena Armstrong) orders only - merge with stored content

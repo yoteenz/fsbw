@@ -11,6 +11,7 @@ import pointsHistoryIcon from '../../../assets/icons/points-history.svg?url';
 import membershipIcon from '../../../assets/icons/membership-icon.svg?url';
 import moreWaysIcon from '../../../assets/icons/more-ways.svg?url';
 import additionalFeaturesIcon from '../../../assets/icons/additional-features.svg?url';
+import { isAdminKateenaAccount } from '../../../utils/adminAuth';
 
 const BRAND_GRAY = '#808080';
 const CHART_BORDER = '0.8px solid #000';
@@ -85,15 +86,9 @@ function MembershipPage() {
       // Get user's email to find their orders
       if (!userData?.email) return 0;
 
-      // Check if this is Kateena Armstrong (uses mock data)
-      const isKateenaArmstrong = (userData.firstName?.toLowerCase().includes('kateena') && 
-                                  userData.lastName?.toLowerCase().includes('armstrong')) ||
-                                  userData.email?.toLowerCase().includes('kateena') ||
-                                  userData.email?.toLowerCase().includes('armstrong');
-
       let deliveredOrders: any[] = [];
 
-      if (isKateenaArmstrong) {
+      if (isAdminKateenaAccount(userData)) {
         // Use mock data for Kateena (same as affiliate page)
         // Mock orders with approved content
         deliveredOrders = [
@@ -225,12 +220,7 @@ function MembershipPage() {
         nextTierName: 'RED' as const
       };
     }
-    const isAdmin = userData && (
-      (userData.firstName?.toLowerCase() === 'kateena' && userData.lastName?.toLowerCase() === 'armstrong') ||
-      userData.email?.toLowerCase().includes('kateena') ||
-      userData.email?.toLowerCase().includes('armstrong')
-    );
-    if (isAdmin) {
+    if (isAdminKateenaAccount(userData)) {
       // Admin: show RED tier with 700 pts; threshold 2,000 to remain Red → "EARN 1,300 MORE TO REMAIN RED TIER!"
       const adminCurrentSpend = 700;
       const adminBarMax = SPEND_TIER_THRESHOLDS.RED; // 2000 = remain Red
@@ -475,14 +465,9 @@ function MembershipPage() {
   };
 
   // Check if user has existing premium subscription
-  // Includes users with subscriptionTier OR admin accounts with PREMIUM membership (like Kateena)
-  const isKateenaArmstrong = userData && (
-    (userData.firstName?.toLowerCase() === 'kateena' && userData.lastName?.toLowerCase() === 'armstrong') ||
-    userData.email?.toLowerCase().includes('kateena') ||
-    userData.email?.toLowerCase().includes('armstrong')
-  );
+  // Includes users with subscriptionTier OR the one admin Kateena account (by email) with PREMIUM
   const hasPremiumSubscription = (userData?.subscriptionTier && userData?.membershipType === 'PREMIUM') || 
-                                  (isKateenaArmstrong && (userData?.membershipType === 'PREMIUM' || userData?.membershipType === 'Premium'));
+                                  (isAdminKateenaAccount(userData) && (userData?.membershipType === 'PREMIUM' || userData?.membershipType === 'Premium'));
 
   const handleUpgradeButtonClick = () => {
     if (showPremiumView) {
@@ -532,8 +517,8 @@ function MembershipPage() {
     
     // Pre-select current subscription tier
     let currentTier = userData?.subscriptionTier;
-    // For Kateena's admin account, set to 12months
-    if (isKateenaArmstrong && !currentTier) {
+    // For admin Kateena account only (by email), set to 12months
+    if (isAdminKateenaAccount(userData) && !currentTier) {
       currentTier = '12months';
     }
     setSelectedTier(currentTier || null);
@@ -581,8 +566,8 @@ function MembershipPage() {
 
   // Get subscription end date and format it
   const getSubscriptionEndDate = () => {
-    // Check if this is Kateena's admin account (12 months from 1/4/2026)
-    if (isKateenaArmstrong) {
+    // Check if this is the admin Kateena account (12 months from 1/4/2026)
+    if (isAdminKateenaAccount(userData)) {
       const startDate = new Date('2026-01-04');
       const endDate = new Date(startDate);
       endDate.setMonth(endDate.getMonth() + 12);
@@ -605,8 +590,8 @@ function MembershipPage() {
 
   // Get subscription tier name (3, 6, or 12 MONTHS)
   const getSubscriptionTierName = () => {
-    // Kateena's admin account is 12 months premium
-    if (isKateenaArmstrong) return '12 MONTH';
+    // Admin Kateena account is 12 months premium
+    if (isAdminKateenaAccount(userData)) return '12 MONTH';
     
     if (!userData?.subscriptionTier) return '';
     const tier = userData.subscriptionTier;
@@ -2194,7 +2179,7 @@ fontFamily: '"Futura PT Book"',
                   }}
                   type="button"
                 >
-                          {showPremiumView ? 'CONFIRM SUBSCRIPTION' : ((userData?.subscriptionTier === '12months' || (isKateenaArmstrong && !userData?.subscriptionTier)) ? 'CHANGE SUBSCRIPTION' : 'UPGRADE SUBSCRIPTION')}
+                          {showPremiumView ? 'CONFIRM SUBSCRIPTION' : ((userData?.subscriptionTier === '12months' || (isAdminKateenaAccount(userData) && !userData?.subscriptionTier)) ? 'CHANGE SUBSCRIPTION' : 'UPGRADE SUBSCRIPTION')}
                         </button>
                       </div>
                       {/* CANCEL SUBSCRIPTION Button - Hidden when chart is open */}

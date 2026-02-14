@@ -286,12 +286,12 @@ function ReviewsPage() {
     };
   }, []);
 
-  // Clear shop/tool alert only when that tab is viewed (so tool alert isn't cleared when only shop tab is open).
+  // Clear shop/tool alert only when that tab is viewed. OAuth users have no mock reviews so skip last-seen updates.
   useEffect(() => {
     try {
       const currentUser = localStorage.getItem('currentUser');
       const user = currentUser ? JSON.parse(currentUser) : null;
-      if (!user?.email) return;
+      if (!user?.email || user?.authProvider) return;
       if (activeTab === 'SHOP') {
         setLastSeenShopCount(user.email, getMockShopReviewCount());
       } else if (activeTab === 'TOOLS') {
@@ -321,18 +321,29 @@ function ReviewsPage() {
   };
 
   const handleBack = () => navigate('/account');
-  const allShopReviews = [...userSubmittedReviews, ...mockShopReviews];
-  const totalShop = allShopReviews.length;
+  const isOAuth = (() => {
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      const user = currentUser ? JSON.parse(currentUser) : null;
+      return !!(user?.authProvider);
+    } catch { return false; }
+  })();
+  const shopReviewsList = isOAuth ? userSubmittedReviews : [...userSubmittedReviews, ...mockShopReviews];
+  const toolReviewsList = isOAuth ? [] : mockToolReviews;
+  const totalShop = shopReviewsList.length;
   const handleLoadMoreShop = () => setShopVisibleCount(totalShop);
-  const handleLoadMoreTool = () => setToolVisibleCount(mockToolReviews.length);
+  const handleLoadMoreTool = () => setToolVisibleCount(toolReviewsList.length);
   const handleShowLessShop = () => setShopVisibleCount(REVIEWS_INITIAL);
   const handleShowLessTool = () => setToolVisibleCount(REVIEWS_INITIAL);
 
-  const displayedShopReviews = allShopReviews.slice(0, shopVisibleCount);
-  const displayedToolReviews = mockToolReviews.slice(0, toolVisibleCount);
+  const displayedShopReviews = shopReviewsList.slice(0, shopVisibleCount);
+  const displayedToolReviews = toolReviewsList.slice(0, toolVisibleCount);
   const hasMoreShop = shopVisibleCount < totalShop;
-  const hasMoreTool = toolVisibleCount < mockToolReviews.length;
-  const totalTool = mockToolReviews.length;
+  const hasMoreTool = toolVisibleCount < toolReviewsList.length;
+  const totalTool = toolReviewsList.length;
+  // Only show "SHOW LESS" when there are more than 3 products (so collapsing makes sense). For ≤3, all fit in viewport.
+  const showShowLessShop = totalShop > REVIEWS_INITIAL && !hasMoreShop;
+  const showShowLessTool = totalTool > REVIEWS_INITIAL && !hasMoreTool;
 
   const BRAND_GRAY = '#808080';
 
@@ -721,7 +732,7 @@ function ReviewsPage() {
                           {displayedShopReviews.length} OF {totalShop} {totalShop === 1 ? 'REVIEW' : 'REVIEWS'}
                         </p>
                       </>
-                    ) : (
+                    ) : showShowLessShop ? (
                       <>
                         <button
                           onClick={handleShowLessShop}
@@ -739,6 +750,13 @@ function ReviewsPage() {
                         >
                           SHOW LESS
                         </button>
+                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0', textAlign: 'center' }}>
+                          {displayedShopReviews.length} OF {totalShop} {totalShop === 1 ? 'REVIEW' : 'REVIEWS'}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <span style={{ display: 'block', height: '11px', lineHeight: '11px', fontSize: '11px', visibility: 'hidden', fontFamily: '"Futura PT Medium"' }} aria-hidden="true">SHOW LESS</span>
                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0', textAlign: 'center' }}>
                           {displayedShopReviews.length} OF {totalShop} {totalShop === 1 ? 'REVIEW' : 'REVIEWS'}
                         </p>
@@ -770,7 +788,7 @@ function ReviewsPage() {
                           {displayedToolReviews.length} OF {totalTool} {totalTool === 1 ? 'REVIEW' : 'REVIEWS'}
                         </p>
                       </>
-                    ) : (
+                    ) : showShowLessTool ? (
                       <>
                         <button
                           onClick={handleShowLessTool}
@@ -788,6 +806,13 @@ function ReviewsPage() {
                         >
                           SHOW LESS
                         </button>
+                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0', textAlign: 'center' }}>
+                          {displayedToolReviews.length} OF {totalTool} {totalTool === 1 ? 'REVIEW' : 'REVIEWS'}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <span style={{ display: 'block', height: '11px', lineHeight: '11px', fontSize: '11px', visibility: 'hidden', fontFamily: '"Futura PT Medium"' }} aria-hidden="true">SHOW LESS</span>
                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0', textAlign: 'center' }}>
                           {displayedToolReviews.length} OF {totalTool} {totalTool === 1 ? 'REVIEW' : 'REVIEWS'}
                         </p>

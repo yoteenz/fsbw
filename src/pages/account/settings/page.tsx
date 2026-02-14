@@ -267,12 +267,38 @@ function SettingsPage() {
     return v.replace(prefixes[key] || /^@/, '').replace(/^@/, '').trim();
   };
 
+  // Format birthday as MM/DD/YYYY (same as sign-in page)
+  const formatBirthday = (value: string): string => {
+    const numbers = (value || '').replace(/\D/g, '');
+    const limited = numbers.slice(0, 8);
+    if (limited.length <= 2) return limited;
+    if (limited.length <= 4) return `${limited.slice(0, 2)}/${limited.slice(2)}`;
+    return `${limited.slice(0, 2)}/${limited.slice(2, 4)}/${limited.slice(4)}`;
+  };
+
+  // Normalize stored birthday (e.g. "083089" or "08301989") to MM/DD/YYYY for display
+  const normalizeBirthdayDisplay = (raw: string): string => {
+    const v = (raw || '').trim();
+    if (!v) return '';
+    const numbers = v.replace(/\D/g, '');
+    if (numbers.length === 6) {
+      const mm = numbers.slice(0, 2);
+      const dd = numbers.slice(2, 4);
+      const yy = numbers.slice(4, 6);
+      const year = parseInt(yy, 10) >= 50 ? `19${yy}` : `20${yy}`;
+      return `${mm}/${dd}/${year}`;
+    }
+    if (numbers.length === 8) return formatBirthday(numbers);
+    return v;
+  };
+
   useEffect(() => {
     if (userData) {
       const fullName = [userData.firstName, userData.lastName].filter(Boolean).join(' ').toUpperCase();
       setName(fullName || '');
       setEmail((userData.email || '').toUpperCase());
-      setBirthday(userData.birthday || '');
+      const normalizedBirthday = normalizeBirthdayDisplay(userData.birthday || '');
+      setBirthday(normalizedBirthday);
       setFacebook(parseSocialHandle('facebook', userData.facebook || ''));
       setInstagram(parseSocialHandle('instagram', userData.instagram || ''));
       setYoutube(parseSocialHandle('youtube', userData.youtube || ''));
@@ -602,7 +628,7 @@ function SettingsPage() {
                     readOnly={!isOAuthUser}
                     placeholder="MM/DD/YYYY"
                     className="settings-personal-input"
-                    onChange={isOAuthUser ? (e) => setBirthday(e.target.value) : undefined}
+                    onChange={isOAuthUser ? (e) => setBirthday(formatBirthday(e.target.value)) : undefined}
                     onBlur={isOAuthUser ? () => persistPersonalInfo({ birthday }) : undefined}
                     style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080' }}
                   />
@@ -621,6 +647,14 @@ function SettingsPage() {
                 <div style={{ marginBottom: '20px' }}>
                   {!showResetPasswordForm && <label style={labelStyle}>PASSWORD</label>}
                   {!showResetPasswordForm ? (
+                    isOAuthUser ? (
+                      <input
+                        type="text"
+                        readOnly
+                        value={userData?.authProvider === 'google' ? 'SIGNED IN WITH GOOGLE' : userData?.authProvider === 'facebook' ? 'SIGNED IN WITH FACEBOOK' : 'SIGNED IN WITH SOCIAL'}
+                        style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080' }}
+                      />
+                    ) : (
                     <>
                       <input
                         type={showPassword ? 'text' : 'password'}
@@ -667,7 +701,8 @@ function SettingsPage() {
                         </span>
                       </div>
                     </>
-                  ) : (
+                    )
+                  ) : !isOAuthUser ? (
                     <>
                       <label style={{ ...labelStyle, marginBottom: '4px' }}>CURRENT PASSWORD</label>
                       <input
@@ -744,6 +779,13 @@ function SettingsPage() {
                         </button>
                       </div>
                     </>
+                  ) : (
+                    <input
+                      type="text"
+                      readOnly
+                      value={userData?.authProvider === 'google' ? 'SIGNED IN WITH GOOGLE' : userData?.authProvider === 'facebook' ? 'SIGNED IN WITH FACEBOOK' : 'SIGNED IN WITH SOCIAL'}
+                      style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080' }}
+                    />
                   )}
                 </div>
                 <div style={{ marginBottom: '24px' }}>

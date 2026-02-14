@@ -4,6 +4,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
+import { getCurrentUser, isAdminKateenaAccount } from '../../../utils/adminAuth';
 
 // Add pulsating animation style (recording indicator style)
 const pulsateStyle = `
@@ -115,21 +116,8 @@ function ConciergePage() {
   // @ts-ignore - intentionally unused, may be used in future
   const _eligibleForBirthdayGift = isEligibleForBirthdayGift();
   
-  // Helper function to check if current user is Kateena Armstrong (admin account)
-  const isKateenaArmstrong = () => {
-    try {
-      const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
-      if (!userData) return false;
-      const firstName = userData.firstName?.toLowerCase() || '';
-      const lastName = userData.lastName?.toLowerCase() || '';
-      const email = userData.email?.toLowerCase() || '';
-      return (firstName === 'kateena' && lastName === 'armstrong') || 
-             email.includes('kateena') || 
-             email.includes('armstrong');
-    } catch (e) {
-      return false;
-    }
-  };
+  // Admin Kateena account only (by email) – gets mock/test orders
+  const isKateenaArmstrong = () => isAdminKateenaAccount(getCurrentUser());
   
   // Order tracking state
   const [selectedOrderId, setSelectedOrderId] = useState<string>('');

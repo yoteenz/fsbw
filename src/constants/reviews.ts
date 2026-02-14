@@ -33,21 +33,35 @@ export function getMockReviewCount(): number {
   return MOCK_REVIEWS_BASE_COUNT;
 }
 
+function isOAuthUser(email: string | undefined): boolean {
+  if (!email) return false;
+  try {
+    const raw = localStorage.getItem('currentUser');
+    const user = raw ? JSON.parse(raw) : null;
+    return !!(user?.authProvider && user?.email);
+  } catch {
+    return false;
+  }
+}
+
 export function getTotalReviewCount(email: string | undefined): number {
   if (!email) return MOCK_REVIEWS_BASE_COUNT;
   try {
     const raw = localStorage.getItem(getUserSubmittedReviewsKey(email));
     const list = raw ? JSON.parse(raw) : [];
-    return MOCK_REVIEWS_BASE_COUNT + (Array.isArray(list) ? list.length : 0);
+    const userCount = Array.isArray(list) ? list.length : 0;
+    if (isOAuthUser(email)) return userCount;
+    return MOCK_REVIEWS_BASE_COUNT + userCount;
   } catch {
     return MOCK_REVIEWS_BASE_COUNT;
   }
 }
 
-/** Alert shows until ALL are seen: user-submitted flag cleared, shop tab viewed, tool tab viewed. Does not clear until both shop and tool have been loaded if both have new reviews. */
+/** Alert shows until ALL are seen: user-submitted flag cleared, shop tab viewed, tool tab viewed. OAuth users: only user-submitted flag (no mock shop/tool). */
 export function hasNewReviewApproved(email: string | undefined): boolean {
   if (!email || !String(email).trim()) return false;
   const userSubmitted = localStorage.getItem(getReviewsNewApprovedKey(email)) === 'true';
+  if (isOAuthUser(email)) return userSubmitted;
   const shopUnseen = getMockShopReviewCount() > getLastSeenShopCount(email);
   const toolUnseen = getMockToolReviewCount() > getLastSeenToolCount(email);
   return userSubmitted || shopUnseen || toolUnseen;

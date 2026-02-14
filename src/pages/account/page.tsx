@@ -4,6 +4,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../constants/tiers';
 import { getTotalReviewCount, hasNewReviewApproved } from '../../constants/reviews';
+import { isAdminKateenaAccount } from '../../utils/adminAuth';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 
@@ -259,16 +260,9 @@ function AccountPage() {
     }
   }, [showMobileMenu, location.pathname]);
 
-  // Initialize Kateena's admin account with proper gift card balance and unlocked discounts
+  // Initialize admin Kateena account only (by email) with proper gift card balance and unlocked discounts
   useEffect(() => {
-    if (userData) {
-      const isKateenaArmstrong = userData && (
-        (userData.firstName?.toLowerCase() === 'kateena' && userData.lastName?.toLowerCase() === 'armstrong') ||
-        userData.email?.toLowerCase().includes('kateena') ||
-        userData.email?.toLowerCase().includes('armstrong')
-      );
-
-      if (isKateenaArmstrong) {
+    if (userData && isAdminKateenaAccount(userData)) {
         try {
           const currentUser = localStorage.getItem('currentUser');
           if (currentUser) {
@@ -314,7 +308,6 @@ function AccountPage() {
         } catch (e) {
           console.error('Error initializing Kateena account:', e);
         }
-      }
     }
   }, [userData]);
 
@@ -602,17 +595,14 @@ function AccountPage() {
     let totalSpending = 0;
     const highestTierEver = getHighestTierEver();
 
-    // Check for mock users first
-    const isKristinWatson = userData?.email?.toLowerCase() === 'bruno203@gmail.com' || !userData;
-    const isKateenaArmstrong = userData && (
-      (userData.firstName?.toLowerCase() === 'kateena' && userData.lastName?.toLowerCase() === 'armstrong') ||
-      userData.email?.toLowerCase().includes('kateena') ||
-      userData.email?.toLowerCase().includes('armstrong')
-    );
-
-    if (isKristinWatson || isKateenaArmstrong) {
-      // For mock users, return null to show "MEMBER" text
-      return null;
+    // OAuth users always use real data (no mock)
+    if (userData?.authProvider) {
+      // fall through to real calculation below
+    } else {
+      const isKristinWatson = userData?.email?.toLowerCase() === 'bruno203@gmail.com';
+      if (isKristinWatson || isAdminKateenaAccount(userData)) {
+        return null;
+      }
     }
 
     // For real users, calculate from orders
@@ -724,16 +714,12 @@ function AccountPage() {
 
   const hasAlertsNotifications = (): boolean => {
     try {
-      // Check for unread notifications in localStorage
-      const notificationsStr = localStorage.getItem('notifications');
+      const key = userData?.authProvider && userData?.email ? `notifications_${userData.email}` : 'notifications';
+      const notificationsStr = localStorage.getItem(key);
       if (notificationsStr) {
         const notifications = JSON.parse(notificationsStr);
-        // Check for unread notifications
-        return notifications.some((n: any) => !n.isRead);
+        return Array.isArray(notifications) && notifications.some((n: any) => !n.isRead);
       }
-      
-      // If no stored notifications, check if there are default unread notifications
-      // (This would be set when notifications are first created)
       const hasUnreadNotifications = localStorage.getItem('hasUnreadNotifications') === 'true';
       return hasUnreadNotifications;
     } catch (e) {
@@ -992,27 +978,15 @@ function AccountPage() {
 
   // Helper function to get active orders count (excluding DELIVERED status)
   const getActiveOrdersCount = (): number => {
-    // Check for mock users first
-    const isKristinWatson = userData?.email?.toLowerCase() === 'bruno203@gmail.com' || !userData;
-    const isKateenaArmstrong = userData && (
-      (userData.firstName?.toLowerCase() === 'kateena' && userData.lastName?.toLowerCase() === 'armstrong') ||
-      userData.email?.toLowerCase().includes('kateena') ||
-      userData.email?.toLowerCase().includes('armstrong')
-    );
-
-    if (isKristinWatson) {
-      // Mock data for Kristin Watson: 2 active orders (excluding delivered)
-      // Based on mockActiveOrders in orders page, excluding DELIVERED status
-      return 2;
+    // OAuth users always use real stored data (no mock)
+    if (userData?.authProvider) {
+      // fall through to localStorage below
+    } else {
+      const isKristinWatson = userData?.email?.toLowerCase() === 'bruno203@gmail.com';
+      if (isKristinWatson || isAdminKateenaAccount(userData)) return 2;
     }
 
-    if (isKateenaArmstrong) {
-      // Mock data for Kateena Armstrong: 2 active orders (ORDER #345 SHIPPED, ORDER #346 PREPARING)
-      // ORDER #344 is DELIVERED, so it's excluded
-      return 2;
-    }
-
-    // For other users, get from localStorage
+    // Real users (and OAuth): get from localStorage
     if (userData?.email) {
       try {
         const userOrdersKey = `userOrders_${userData.email}`;
@@ -1236,11 +1210,12 @@ function AccountPage() {
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
+      // Output same size as crop circle so profile display matches OAuth logic (cover + center in circle)
       const outputSize = 200;
       canvas.width = outputSize;
       canvas.height = outputSize;
 
-      // Create circular clipping path
+      // Create circular clipping path (captures exactly what's inside the modal crop circle)
       ctx.beginPath();
       ctx.arc(outputSize / 2, outputSize / 2, outputSize / 2, 0, Math.PI * 2);
       ctx.clip();
@@ -1286,10 +1261,9 @@ function AccountPage() {
       // 1. Inverse scale
       ctx.scale(1 / cropScale, 1 / cropScale);
       
-      // 2. Image center in container: (100 + cropPosition.x, 100 + cropPosition.y)
-      //    Crop center: (100, 100)
-      //    Offset: (100 - (100 + cropPosition.x), 100 - (100 + cropPosition.y)) = (-cropPosition.x, -cropPosition.y)
-      ctx.translate(-cropPosition.x, -cropPosition.y);
+      // 2. So that crop center (100,100) shows the image point (-cropPosition.x, -cropPosition.y) from image center:
+      //    place that point at output center → translate by (cropPosition.x, cropPosition.y)
+      ctx.translate(cropPosition.x, cropPosition.y);
       
       // 3. Translate to image center (150px from image top-left)
       ctx.translate(-displayImageSize / 2, -displayImageSize / 2);
@@ -1738,7 +1712,9 @@ function AccountPage() {
                         style={{
                           width: '100%',
                           height: '100%',
-                          objectFit: isImageChanged ? 'contain' : 'fill',
+                          // Match OAuth display: custom images (URL or cropped data URL) fill the circle, centered
+                          objectFit: isImageChanged ? 'cover' : 'fill',
+                          objectPosition: 'center',
                           borderRadius: '50%',
                           border: '1.3px solid #000'
                         }}
@@ -1799,7 +1775,7 @@ function AccountPage() {
                         transform: 'translateY(3px)'
                       }}
                       >
-                      {userData ? `${userData.firstName.toUpperCase()} ${userData.lastName.toUpperCase()}` : 'KRISTIN WATSON'}
+                      {userData ? `${(userData.firstName || '').toUpperCase()} ${(userData.lastName || '').toUpperCase()}`.trim() || 'ACCOUNT' : (isSignedIn ? '' : 'KRISTIN WATSON')}
                     </p>
 
                     <p
@@ -1813,7 +1789,7 @@ function AccountPage() {
                         transform: 'translateY(-2px)'
                       }}
                     >
-                      {userData ? userData.email.toUpperCase() : 'BRUNO203@GMAIL.COM'}
+                      {userData ? (userData.email || '').toUpperCase() : (isSignedIn ? '' : 'BRUNO203@GMAIL.COM')}
                     </p>
 
                     {(() => {
@@ -2272,7 +2248,8 @@ function AccountPage() {
               style={{
                 maxWidth: '100%',
                 maxHeight: '100%',
-                objectFit: 'contain',
+                objectFit: 'cover',
+                objectPosition: 'center',
                 borderRadius: '50%',
                 border: '1.3px solid #000'
               }}
