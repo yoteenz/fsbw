@@ -37,8 +37,6 @@ const sectionHeaderTextStyle: React.CSSProperties = {
   margin: 0,
   textTransform: 'uppercase'
 };
-// Alias for backwards compatibility (e.g. if referenced elsewhere as sectionHeadingStyle)
-const sectionHeadingStyle = sectionHeaderTextStyle;
 
 function SettingsPage() {
   const navigate = useNavigate();
