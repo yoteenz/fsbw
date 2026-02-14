@@ -133,6 +133,34 @@ function SettingsPage() {
     } catch (_) {}
   };
 
+  const isOAuthUser = userData?.authProvider === 'google' || userData?.authProvider === 'facebook';
+
+  const persistPersonalInfo = (updates: { birthday?: string; firstName?: string; lastName?: string }) => {
+    try {
+      const email = (userData?.email || '').trim().toLowerCase();
+      if (!email) return;
+      const payload: Record<string, string> = {};
+      if (updates.birthday !== undefined) payload.birthday = updates.birthday.trim();
+      if (updates.firstName !== undefined) payload.firstName = updates.firstName.trim();
+      if (updates.lastName !== undefined) payload.lastName = updates.lastName.trim();
+      if (Object.keys(payload).length === 0) return;
+      const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const idx = registered.findIndex((u: any) => (u.email || '').trim().toLowerCase() === email);
+      if (idx !== -1) {
+        registered[idx] = { ...registered[idx], ...payload };
+        localStorage.setItem('registeredUsers', JSON.stringify(registered));
+      }
+      const current = localStorage.getItem('currentUser');
+      if (current) {
+        const parsed = JSON.parse(current);
+        if ((parsed.email || '').trim().toLowerCase() === email) {
+          localStorage.setItem('currentUser', JSON.stringify({ ...parsed, ...payload }));
+        }
+      }
+      setUserData((prev: any) => (prev ? { ...prev, ...payload } : prev));
+    } catch (_) {}
+  };
+
   const handleResetPasswordSubmit = () => {
     setResetPasswordError('');
     if (resetOldPassword.trim() !== accountPassword) {
@@ -182,19 +210,18 @@ function SettingsPage() {
           return null;
         }
       })();
-      const email = currentUser?.email;
+      const email = (currentUser?.email || '').trim().toLowerCase();
       if (email) {
         const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-        const userToDelete = registeredUsers.find((u: any) => (u.email || '').toLowerCase() === email.toLowerCase());
-        if (userToDelete) {
-          const deletedUsers = JSON.parse(localStorage.getItem('deletedUsers') || '[]');
-          deletedUsers.push({
-            ...userToDelete,
-            deletedAt: new Date().toISOString()
-          });
-          localStorage.setItem('deletedUsers', JSON.stringify(deletedUsers));
-        }
-        const filtered = registeredUsers.filter((u: any) => (u.email || '').toLowerCase() !== email.toLowerCase());
+        const userToDelete = registeredUsers.find((u: any) => (u.email || '').toLowerCase() === email);
+        const userRecord = userToDelete || currentUser;
+        const deletedUsers = JSON.parse(localStorage.getItem('deletedUsers') || '[]');
+        deletedUsers.push({
+          ...userRecord,
+          deletedAt: new Date().toISOString()
+        });
+        localStorage.setItem('deletedUsers', JSON.stringify(deletedUsers));
+        const filtered = registeredUsers.filter((u: any) => (u.email || '').toLowerCase() !== email);
         localStorage.setItem('registeredUsers', JSON.stringify(filtered));
       }
       localStorage.setItem('isSignedIn', 'false');
@@ -251,12 +278,21 @@ function SettingsPage() {
       setYoutube(parseSocialHandle('youtube', userData.youtube || ''));
       setTiktok(parseSocialHandle('tiktok', userData.tiktok || ''));
       setTwitter(parseSocialHandle('twitter', userData.twitter || ''));
-    } else {
+    } else if (!isSignedIn) {
       setEmail('BRUNO203@GMAIL.COM');
       setName('KRISTIN WATSON');
       setBirthday('08/30/1989');
+    } else {
+      setName('');
+      setEmail('');
+      setBirthday('');
+      setFacebook('');
+      setInstagram('');
+      setYoutube('');
+      setTiktok('');
+      setTwitter('');
     }
-  }, [userData]);
+  }, [userData, isSignedIn]);
 
   // Clear settings card badge when user visits this page
   useEffect(() => {
@@ -350,6 +386,11 @@ function SettingsPage() {
         .social-input-no-focus-ring:focus {
           outline: none !important;
           box-shadow: none !important;
+        }
+        .settings-personal-input::placeholder {
+          color: #808080;
+          font-family: "Futura PT Medium", sans-serif;
+          opacity: 1;
         }
       `}</style>
       <div
@@ -537,15 +578,45 @@ function SettingsPage() {
                 </div>
                 <div style={{ marginBottom: '20px' }}>
                   <label style={labelStyle}>NAME</label>
-                  <input type="text" value={name} readOnly style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080' }} />
+                  <input
+                    type="text"
+                    value={name}
+                    readOnly={!isOAuthUser}
+                    placeholder="FULL NAME"
+                    className="settings-personal-input"
+                    onChange={isOAuthUser ? (e) => setName(e.target.value.toUpperCase()) : undefined}
+                    onBlur={isOAuthUser ? () => {
+                      const parts = name.trim().split(/\s+/).filter(Boolean);
+                      const firstName = parts[0] || '';
+                      const lastName = parts.slice(1).join(' ') || '';
+                      persistPersonalInfo({ firstName, lastName });
+                    } : undefined}
+                    style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080', textTransform: 'uppercase' }}
+                  />
                 </div>
                 <div style={{ marginBottom: '20px' }}>
                   <label style={labelStyle}>BIRTHDAY</label>
-                  <input type="text" value={birthday} readOnly placeholder="MM/DD/YYYY" style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080' }} />
+                  <input
+                    type="text"
+                    value={birthday}
+                    readOnly={!isOAuthUser}
+                    placeholder="MM/DD/YYYY"
+                    className="settings-personal-input"
+                    onChange={isOAuthUser ? (e) => setBirthday(e.target.value) : undefined}
+                    onBlur={isOAuthUser ? () => persistPersonalInfo({ birthday }) : undefined}
+                    style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080' }}
+                  />
                 </div>
                 <div style={{ marginBottom: '20px' }}>
                   <label style={labelStyle}>EMAIL</label>
-                  <input type="email" value={email} readOnly placeholder="EMAIL@EXAMPLE.COM" style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080', textTransform: 'uppercase' }} />
+                  <input
+                    type="email"
+                    value={email}
+                    readOnly
+                    placeholder="EMAIL@EXAMPLE.COM"
+                    className="settings-personal-input"
+                    style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080', textTransform: 'uppercase' }}
+                  />
                 </div>
                 <div style={{ marginBottom: '20px' }}>
                   {!showResetPasswordForm && <label style={labelStyle}>PASSWORD</label>}

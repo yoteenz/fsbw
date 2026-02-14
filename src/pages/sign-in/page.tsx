@@ -176,7 +176,7 @@ function SignInPage() {
         profileImage: profile.picture || '/assets/profile-thumb.png',
         membershipType: 'STANDARD',
         referralCode,
-        giftCardBalance: 10,
+        giftCardBalance: 10, // Standard member welcome discount $10 USD (per premium chart)
         hasMadeFirstPurchase: false,
         unlockedDiscounts: ['signup'],
         authProvider: profile.provider,
@@ -186,6 +186,17 @@ function SignInPage() {
       try {
         localStorage.setItem(`userOrders_${email}`, JSON.stringify({ activeOrders: [], pastOrders: [] }));
       } catch (_) {}
+      // New account: clear cart, wishlist, bag state so they don't see previous guest data
+      localStorage.setItem('cartItems', '[]');
+      localStorage.setItem('cartCount', '0');
+      localStorage.setItem('wishlistItems', '[]');
+      localStorage.removeItem('addToBagButtonState');
+      localStorage.removeItem('lastAddedItemId');
+      localStorage.removeItem('editingCartItem');
+      localStorage.removeItem('editingCartItemId');
+      window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: 0 }));
+      window.dispatchEvent(new CustomEvent('cartUpdated'));
+      window.dispatchEvent(new CustomEvent('wishlistUpdated'));
     }
     localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
     localStorage.setItem('currentUser', JSON.stringify(user));
@@ -1800,7 +1811,7 @@ function SignInPage() {
                         profileImage: '/assets/profile-thumb.png',
                         membershipType: 'STANDARD',
                         referralCode: referralCode,
-                        giftCardBalance: 10, // Welcome gift card balance for new accounts
+                        giftCardBalance: 10, // Standard member welcome discount $10 USD (per premium chart)
                         hasMadeFirstPurchase: false, // Referral code becomes active after first purchase
                         unlockedDiscounts: ['signup'], // Track which discounts have been unlocked
                         createdAt: new Date().toISOString()
@@ -1810,14 +1821,20 @@ function SignInPage() {
                       const updatedUsers = [...existingUsers, newUser];
                       localStorage.setItem('registeredUsers', JSON.stringify(updatedUsers));
                       
-                      // New account: empty cart and empty orders (no mock/pre-existing content)
+                      // New account: clear cart, wishlist, bag state, orders (no mock or guest data)
                       localStorage.setItem('cartItems', '[]');
                       localStorage.setItem('cartCount', '0');
+                      localStorage.setItem('wishlistItems', '[]');
+                      localStorage.removeItem('addToBagButtonState');
+                      localStorage.removeItem('lastAddedItemId');
+                      localStorage.removeItem('editingCartItem');
+                      localStorage.removeItem('editingCartItemId');
                       try {
                         localStorage.setItem(`userOrders_${newUser.email.trim().toLowerCase()}`, JSON.stringify({ activeOrders: [], pastOrders: [] }));
                       } catch (_) {}
                       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: 0 }));
                       window.dispatchEvent(new CustomEvent('cartUpdated'));
+                      window.dispatchEvent(new CustomEvent('wishlistUpdated'));
                       
                       // Set current user session
                       localStorage.setItem('currentUser', JSON.stringify(newUser));

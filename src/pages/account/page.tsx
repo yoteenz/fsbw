@@ -273,6 +273,10 @@ function AccountPage() {
           const currentUser = localStorage.getItem('currentUser');
           if (currentUser) {
             const user = JSON.parse(currentUser);
+            const isPremium = user.membershipType === 'PREMIUM' || (user.unlockedDiscounts || []).includes('12months');
+            // Only top up to $70 for premium (12-month) members; standard members keep $10 welcome discount only
+            if (!isPremium) return;
+
             let needsUpdate = false;
             const updatedUser = { ...user };
 

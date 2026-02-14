@@ -1,104 +1,96 @@
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import StatsCard from '../components/StatsCard';
 
 export default function AdminClients() {
   const navigate = useNavigate();
+  const [registeredUsers, setRegisteredUsers] = useState<any[]>([]);
+  const [deletedUsers, setDeletedUsers] = useState<any[]>([]);
+
+  const loadData = useCallback(() => {
+    try {
+      const reg = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const del = JSON.parse(localStorage.getItem('deletedUsers') || '[]');
+      setRegisteredUsers(Array.isArray(reg) ? reg : []);
+      setDeletedUsers(Array.isArray(del) ? del : []);
+    } catch {
+      setRegisteredUsers([]);
+      setDeletedUsers([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  useEffect(() => {
+    const onStorage = () => loadData();
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('focus', onStorage);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('focus', onStorage);
+    };
+  }, [loadData]);
+
+  const activeCount = registeredUsers.length;
+  const deletedCount = deletedUsers.length;
+  const totalEver = activeCount + deletedCount;
+  const premiumCount = registeredUsers.filter((u: any) => (u.membershipType || '').toUpperCase() === 'PREMIUM').length;
+  const standardCount = registeredUsers.filter((u: any) => (u.membershipType || '').toUpperCase() === 'STANDARD').length;
+  const now = Date.now();
+  const oneMonthMs = 30 * 24 * 60 * 60 * 1000;
+  const newThisMonth = registeredUsers.filter((u: any) => {
+    const created = u.createdAt ? new Date(u.createdAt).getTime() : 0;
+    return created && created >= now - oneMonthMs;
+  }).length;
 
   const clientStats = [
     {
       title: 'TOTAL CLIENTS',
-      count: '89',
+      count: String(totalEver),
       items: [
-        { label: 'ACTIVE CLIENTS', value: '76', color: 'text-gray-500' },
-        { label: 'NEW CLIENTS', value: '13', color: 'text-red-500' },
-        { label: 'VIP MEMBERS', value: '23', color: 'text-red-500' },
-        { label: 'BLACK TIER', value: '8', color: 'text-gray-500' }
+        { label: 'ACTIVE CLIENTS', value: String(activeCount), color: 'text-gray-500' },
+        { label: 'DELETED', value: String(deletedCount), color: deletedCount > 0 ? 'text-red-500' : 'text-gray-500' },
+        { label: 'NEW THIS MONTH', value: String(newThisMonth), color: 'text-red-500' },
+        { label: 'PREMIUM', value: String(premiumCount), color: 'text-red-500' }
       ],
-      highlight: 'CLIENT BASE GROWING - HIGH RETENTION RATE',
+      highlight: deletedCount > 0 ? `${deletedCount} DELETED – VIEW BELOW` : 'LIVE DATA FROM REGISTERED & DELETED ACCOUNTS',
       tiers: [
-        { label: 'VIP', value: '23', color: 'text-red-500' },
-        { label: 'PREM', value: '34', color: 'text-red-500' },
-        { label: 'STANDARD', value: '32', color: 'text-gray-500' }
+        { label: 'PREMIUM', value: String(premiumCount), color: 'text-red-500' },
+        { label: 'STANDARD', value: String(standardCount), color: 'text-gray-500' }
       ]
     },
     {
-      title: 'CLIENT ACTIVITY',
-      count: '156',
-      items: [
-        { label: 'ORDERS THIS MONTH', value: '47', color: 'text-gray-500' },
-        { label: 'CONSULTATIONS', value: '23', color: 'text-red-500' },
-        { label: 'FOLLOW-UPS', value: '34', color: 'text-red-500' },
-        { label: 'REFERRALS', value: '12', color: 'text-gray-500' }
-      ],
-      activity: 'HIGH CLIENT ENGAGEMENT - STRONG ACTIVITY LEVELS'
-    },
-    {
       title: 'MEMBERSHIP TIERS',
-      count: '3',
+      count: '2',
       items: [
-        { label: 'BLACK TIER', value: '8 clients', color: 'text-gray-500' },
-        { label: 'VIP MEMBERS', value: '23 clients', color: 'text-red-500' },
-        { label: 'PREMIUM', value: '34 clients', color: 'text-red-500' },
-        { label: 'STANDARD', value: '32 clients', color: 'text-gray-500' }
+        { label: 'PREMIUM', value: `${premiumCount} clients`, color: 'text-red-500' },
+        { label: 'STANDARD', value: `${standardCount} clients`, color: 'text-gray-500' }
       ],
-      highlight: 'TIER DISTRIBUTION OPTIMAL - PREMIUM FOCUS'
+      highlight: 'LIVE DATA FROM REGISTERED ACCOUNTS'
     },
     {
-      title: 'CLIENT SATISFACTION',
-      count: '4.8',
+      title: 'DELETED ACCOUNTS',
+      count: String(deletedCount),
       items: [
-        { label: 'AVERAGE RATING', value: '4.8/5', color: 'text-gray-500' },
-        { label: 'POSITIVE REVIEWS', value: '94%', color: 'text-red-500' },
-        { label: 'RETENTION RATE', value: '87%', color: 'text-red-500' },
-        { label: 'REFERRAL RATE', value: '23%', color: 'text-gray-500' }
+        { label: 'TOTAL DELETED', value: String(deletedCount), color: deletedCount > 0 ? 'text-red-500' : 'text-gray-500' }
       ],
-      activity: 'EXCELLENT CLIENT SATISFACTION - HIGH RETENTION'
-    },
-    {
-      title: 'RECENT ACTIVITY',
-      count: '12',
-      items: [
-        { label: 'NEW SIGNUPS', value: '5 today', color: 'text-gray-500' },
-        { label: 'BOOKINGS', value: '8 this week', color: 'text-red-500' },
-        { label: 'ORDERS', value: '12 pending', color: 'text-red-500' },
-        { label: 'FOLLOW-UPS', value: '6 due', color: 'text-gray-500' }
-      ],
-      highlight: 'ACTIVE CLIENT INTERACTION - REGULAR ENGAGEMENT'
-    },
-    {
-      title: 'CLIENT VALUE',
-      count: '$2.1K',
-      items: [
-        { label: 'AVERAGE ORDER', value: '$861', color: 'text-gray-500' },
-        { label: 'LIFETIME VALUE', value: '$2,100', color: 'text-red-500' },
-        { label: 'MONTHLY REVENUE', value: '$45.7K', color: 'text-red-500' },
-        { label: 'GROWTH RATE', value: '+15%', color: 'text-gray-500' }
-      ],
-      activity: 'HIGH CLIENT VALUE - STRONG REVENUE GENERATION'
+      activity: 'USE BUTTON BELOW TO VIEW AND RESTORE'
     }
   ];
 
-  // Handle card click navigation
   const handleCardClick = (cardTitle: string) => {
     switch (cardTitle) {
       case 'TOTAL CLIENTS':
         navigate('/admin/clients/account');
         break;
-      case 'CLIENT ACTIVITY':
-        navigate('/admin/meetings');
-        break;
       case 'MEMBERSHIP TIERS':
-    navigate('/admin/clients/account');
+        navigate('/admin/clients/account');
         break;
-      case 'CLIENT SATISFACTION':
-        navigate('/admin/reviews');
-        break;
-      case 'RECENT ACTIVITY':
-        navigate('/admin/meetings');
-        break;
-      case 'CLIENT VALUE':
-        navigate('/admin/revenue');
+      case 'DELETED ACCOUNTS':
+        navigate('/admin/clients/deleted');
         break;
       default:
         break;
