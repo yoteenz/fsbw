@@ -6,6 +6,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
+import SocialMenuIcons from '../../../components/SocialMenuIcons';
 
 interface DensityOption {
   id: string;
@@ -1294,25 +1295,7 @@ function DensitySelection() {
               </div>
 
               {/* Social Media Icons - Fixed at bottom */}
-              <div className="flex justify-center" style={{ marginBottom: '0' }}>
-                <div className="flex" style={{ gap: '19px' }}>
-                  <img
-                    src="/assets/instagram-icon.svg"
-                    alt="Instagram"
-                    style={{ width: '20px', height: '20px' }}
-                  />
-                  <img
-                    src="/assets/twitter-icon.svg"
-                    alt="Twitter"
-                    style={{ width: '20px', height: '20px' }}
-                  />
-                  <img
-                    src="/assets/facebook-icon.svg"
-                    alt="Facebook"
-                    style={{ width: '20px', height: '20px' }}
-                  />
-                </div>
-              </div>
+              <SocialMenuIcons />
             </div>
           ) : (
             <>

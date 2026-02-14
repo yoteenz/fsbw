@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../../constants/tiers';
+import { SOCIAL_EARN_LINKS } from '../../../constants/socialLinks';
+import { recordSocialClick } from '../../../utils/socialAnalytics';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import pointsHistoryIcon from '../../../assets/icons/points-history.svg?url';
@@ -18,10 +20,10 @@ const EARN_TASKS = [
   { id: 'refer_friend', action: 'REFER A FRIEND', points: 100 },
   { id: 'content_review', action: 'LEAVE A CONTENT REVIEW', points: 150 },
   { id: 'photo_video_tags', action: 'TAG US ON SOCIALS', points: 200 },
-  { id: 'facebook', action: 'LIKE OUR FACEBOOK', points: 250, link: 'https://www.facebook.com/bookfrontalslayer?utm_source=membership&utm_medium=earn&utm_campaign=like_facebook' },
-  { id: 'instagram', action: 'FOLLOW OUR INSTAGRAM', points: 250, link: 'https://www.instagram.com/frontalslayer/?utm_source=membership&utm_medium=earn&utm_campaign=follow_instagram' },
-  { id: 'tiktok', action: 'FOLLOW OUR TIK TOK', points: 250, link: 'https://www.tiktok.com/@frontalslayer?utm_source=membership&utm_medium=earn&utm_campaign=follow_tiktok' },
-  { id: 'twitter', action: 'FOLLOW OUR TWITTER', points: 250, link: 'https://x.com/frontalslayer?utm_source=membership&utm_medium=earn&utm_campaign=follow_twitter' }
+  { id: 'facebook', action: 'LIKE OUR FACEBOOK', points: 250, link: SOCIAL_EARN_LINKS.facebook },
+  { id: 'instagram', action: 'FOLLOW OUR INSTAGRAM', points: 250, link: SOCIAL_EARN_LINKS.instagram },
+  { id: 'tiktok', action: 'FOLLOW OUR TIK TOK', points: 250, link: SOCIAL_EARN_LINKS.tiktok },
+  { id: 'twitter', action: 'FOLLOW OUR TWITTER', points: 250, link: SOCIAL_EARN_LINKS.twitter }
 ] as const;
 
 function MembershipPage() {
@@ -2020,7 +2022,7 @@ fontFamily: '"Futura PT Book"',
                                   return (
                                     <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                       <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                        {item.action === 'LIKE OUR FACEBOOK' ? <>LIKE OUR <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>FACEBOOK</a></> : item.action === 'FOLLOW OUR INSTAGRAM' ? <>FOLLOW OUR <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>INSTAGRAM</a></> : item.action === 'FOLLOW OUR TIK TOK' ? <>FOLLOW OUR <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>TIK TOK</a></> : item.action === 'FOLLOW OUR TWITTER' ? <>FOLLOW OUR <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>TWITTER</a></> : item.action}
+                                        {item.action === 'LIKE OUR FACEBOOK' ? <>LIKE OUR <a href={item.link} target="_blank" rel="noopener noreferrer" onClick={() => recordSocialClick('facebook', 'more_ways_to_earn')} style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>FACEBOOK</a></> : item.action === 'FOLLOW OUR INSTAGRAM' ? <>FOLLOW OUR <a href={item.link} target="_blank" rel="noopener noreferrer" onClick={() => recordSocialClick('instagram', 'more_ways_to_earn')} style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>INSTAGRAM</a></> : item.action === 'FOLLOW OUR TIK TOK' ? <>FOLLOW OUR <a href={item.link} target="_blank" rel="noopener noreferrer" onClick={() => recordSocialClick('tiktok', 'more_ways_to_earn')} style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>TIK TOK</a></> : item.action === 'FOLLOW OUR TWITTER' ? <>FOLLOW OUR <a href={item.link} target="_blank" rel="noopener noreferrer" onClick={() => recordSocialClick('twitter', 'more_ways_to_earn')} style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500', textDecoration: 'underline' }}>TWITTER</a></> : item.action}
                                       </p>
                                       {isEarned ? (
                                         <img src="/assets/premium-check.svg" alt="Earned" style={{ width: '8.4px', height: '8.4px', flexShrink: 0 }} />

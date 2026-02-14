@@ -318,6 +318,17 @@ export default function AdminDashboard() {
         { label: 'VIEW DETAILS', value: 'Referrals', color: 'text-red-500' }
       ],
       activity: 'REFERRAL PROGRAM - TRACK INVITEES & EARNINGS'
+    },
+
+    {
+      title: 'ANALYTICS',
+      count: 'Social',
+      items: [
+        { label: 'SOCIAL CLICKS', value: 'Menu & earn', color: 'text-red-500' },
+        { label: 'FOLLOW TRACKING', value: 'Instagram, Twitter, Facebook, TikTok', color: 'text-gray-500' },
+        { label: 'VIEW ANALYTICS', value: 'Clicks by source', color: 'text-red-500' }
+      ],
+      activity: 'TRACK SOCIAL LINK CLICKS - MENU TOGGLE & MORE WAYS TO EARN'
     }
   ];
 
@@ -344,6 +355,9 @@ export default function AdminDashboard() {
         break;
       case 'REFERRALS':
         navigate('/admin/referrals');
+        break;
+      case 'ANALYTICS':
+        navigate('/admin/analytics');
         break;
       default:
         break;

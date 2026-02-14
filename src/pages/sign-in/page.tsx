@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
+import SocialMenuIcons from '../../components/SocialMenuIcons';
+import { isAdminEmail, isPreviewEnvironment } from '../../utils/adminAuth';
 
 function SignInPage() {
   const navigate = useNavigate();
@@ -590,25 +592,7 @@ function SignInPage() {
                 </div>
 
                 {/* Social Media Icons - Fixed at bottom */}
-                <div className="flex justify-center" style={{ marginBottom: '0' }}>
-                  <div className="flex" style={{ gap: '19px' }}>
-                    <img
-                      src="/assets/instagram-icon.svg"
-                      alt="Instagram"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                    <img
-                      src="/assets/twitter-icon.svg"
-                      alt="Twitter"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                    <img
-                      src="/assets/facebook-icon.svg"
-                      alt="Facebook"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                  </div>
-                </div>
+                <SocialMenuIcons />
               </div>
             </div>
           ) : (
@@ -814,6 +798,10 @@ function SignInPage() {
                         // Authentication successful
                         // Create a copy to avoid mutating the original
                         const userToSet = { ...user };
+                        // Grant admin role only if email is in the allowed admin list
+                        if (isAdminEmail(user.email || '')) {
+                          userToSet.role = 'admin';
+                        }
                         
                         // Check if there's an existing currentUser with updated membership type
                         const existingCurrentUser = localStorage.getItem('currentUser');
@@ -851,8 +839,9 @@ function SignInPage() {
                         
                         if (returnTo === 'checkout') {
                           navigate('/checkout');
+                        } else if (returnTo && returnTo.startsWith('/admin') && (userToSet.role === 'admin' || isPreviewEnvironment())) {
+                          navigate(returnTo);
                         } else {
-                          // Default to account page (menu)
                           navigate('/account');
                         }
                       } else {

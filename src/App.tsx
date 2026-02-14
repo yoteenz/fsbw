@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { Component, ErrorInfo, ReactNode, useEffect } from 'react';
 import LobbyPage from './pages/lobby/page';
 import BuildAWigPage from './pages/build-a-wig/page';
@@ -13,6 +13,7 @@ import StylingPage from './pages/build-a-wig/styling/page';
 import AddOnsPage from './pages/build-a-wig/addons/page';
 import { lazy, Suspense } from 'react';
 import LoadingScreen from './components/base/LoadingScreen';
+import AdminGuard from './components/AdminGuard';
 
 // Helper to wrap lazy imports with retry logic and logging
 const lazyWithLogging = (importFn: () => Promise<any>, componentName: string) => {
@@ -81,6 +82,7 @@ const AdminPending = lazyWithLogging(() => import('./pages/admin/pending/page'),
 const AdminRevenue = lazyWithLogging(() => import('./pages/admin/revenue/page'), 'AdminRevenue');
 const AdminReviews = lazyWithLogging(() => import('./pages/admin/reviews/page'), 'AdminReviews');
 const AdminReferrals = lazyWithLogging(() => import('./pages/admin/referrals/page'), 'AdminReferrals');
+const AdminAnalytics = lazyWithLogging(() => import('./pages/admin/analytics/page'), 'AdminAnalytics');
 const NoirUnitPage = lazyWithLogging(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
 const BlancoUnitPage = lazyWithLogging(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
 const SoftCurlUnitPage = lazyWithLogging(() => import('./pages/curly/soft-curl/page'), 'SoftCurlUnitPage');
@@ -277,52 +279,60 @@ function App() {
       <Routes>
         <Route index element={<LobbyPage />} />
         <Route path="/" element={<LobbyPage />} />
-        {/* Admin routes - placed before build-a-wig routes for proper matching */}
-        <Route path="/admin/dashboard" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <AdminDashboard />
-          </Suspense>
-        } />
-        <Route path="/admin/brand" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <AdminBrand />
-          </Suspense>
-        } />
-        <Route path="/admin/clients/account" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <AdminClientsAccount />
-          </Suspense>
-        } />
-        <Route path="/admin/clients" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <AdminClients />
-          </Suspense>
-        } />
-        <Route path="/admin/meetings" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <AdminMeetings />
-          </Suspense>
-        } />
-        <Route path="/admin/pending" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <AdminPending />
-          </Suspense>
-        } />
-        <Route path="/admin/revenue" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <AdminRevenue />
-          </Suspense>
-        } />
-        <Route path="/admin/reviews" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <AdminReviews />
-          </Suspense>
-        } />
-        <Route path="/admin/referrals" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <AdminReferrals />
-          </Suspense>
-        } />
+        {/* Admin routes - protected by AdminGuard (sign-in required, admin role only) */}
+        <Route path="/admin" element={<AdminGuard />}>
+          <Route index element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="dashboard" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminDashboard />
+            </Suspense>
+          } />
+          <Route path="brand" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminBrand />
+            </Suspense>
+          } />
+          <Route path="clients/account" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminClientsAccount />
+            </Suspense>
+          } />
+          <Route path="clients" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminClients />
+            </Suspense>
+          } />
+          <Route path="meetings" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminMeetings />
+            </Suspense>
+          } />
+          <Route path="pending" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminPending />
+            </Suspense>
+          } />
+          <Route path="revenue" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminRevenue />
+            </Suspense>
+          } />
+          <Route path="reviews" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminReviews />
+            </Suspense>
+          } />
+          <Route path="referrals" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminReferrals />
+            </Suspense>
+          } />
+          <Route path="analytics" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminAnalytics />
+            </Suspense>
+          } />
+        </Route>
         {/* Unit page routes - placed early to ensure proper matching */}
         <Route path="/curly/soft-curl" element={
           <Suspense fallback={<LoadingScreen />}>

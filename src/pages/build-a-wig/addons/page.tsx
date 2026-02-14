@@ -5,6 +5,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
+import SocialMenuIcons from '../../../components/SocialMenuIcons';
 
 // Only these count as "styling confirmed" (BLEACH+PLUCK required). NONE or empty = user can select BLEACH+PLUCK alone.
 const VALID_STYLING_OPTIONS = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
@@ -1398,23 +1399,7 @@ export default function AddOnsSelectionPage() {
 
                 {/* Social Media Icons */}
                 <div className="absolute left-1/2 transform -translate-x-1/2 z-10" style={{ bottom: '37px' }}>
-                  <div className="flex" style={{ gap: '19px' }}>
-                    <img
-                      src="/assets/instagram-icon.svg"
-                      alt="Instagram"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                    <img
-                      src="/assets/twitter-icon.svg"
-                      alt="Twitter"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                    <img
-                      src="/assets/facebook-icon.svg"
-                      alt="Facebook"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                  </div>
+                  <SocialMenuIcons />
                 </div>
               </div>
             </div>

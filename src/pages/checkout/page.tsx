@@ -5,6 +5,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import { handlePaymentOption, PaymentProvider, PaymentData } from '../../utils/paymentHandlers';
 import { createRouteProtection, prepareRouteProtectionData } from '../../utils/routeProtection';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
+import SocialMenuIcons from '../../components/SocialMenuIcons';
 
 function CheckoutPage() {
   const navigate = useNavigate();
@@ -1892,25 +1893,7 @@ function CheckoutPage() {
                 </div>
 
                 {/* Social Media Icons */}
-                <div className="flex justify-center" style={{ marginBottom: '0' }}>
-                  <div className="flex" style={{ gap: '19px' }}>
-                    <img
-                      src="/assets/instagram-icon.svg"
-                      alt="Instagram"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                    <img
-                      src="/assets/twitter-icon.svg"
-                      alt="Twitter"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                    <img
-                      src="/assets/facebook-icon.svg"
-                      alt="Facebook"
-                      style={{ width: '20px', height: '20px' }}
-                    />
-                  </div>
-                </div>
+                <SocialMenuIcons />
               </div>
             ) : (
               /* CHECKOUT CONTENT */
