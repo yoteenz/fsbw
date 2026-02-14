@@ -56,7 +56,7 @@ function getEligibleReviewItems(order: Order): OrderLineItem[] {
   const count = Math.max(1, order.items);
   return Array.from({ length: count }, (_, i) => ({
     productName: order.productName,
-    options: count > 1 ? { _item: String(i) } : {}
+    options: count > 1 ? { _item: String(i) } : undefined
   }));
 }
 
