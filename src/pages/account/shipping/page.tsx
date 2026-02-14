@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
+import SocialMenuIcons from '../../../components/SocialMenuIcons';
 
 interface AddressEntry {
   firstName?: string;
@@ -152,32 +153,32 @@ function ShippingPage() {
           </p>
         )}
         {name && (
-          <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '18px', color: '#000000', margin: '0 0 6px 0', lineHeight: '1.2' }}>
+          <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '18px', color: '#000000', margin: '0 0 6px 0', lineHeight: '1.2', textTransform: 'uppercase' }}>
             {name}
           </p>
         )}
         {line1 && (
-          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', lineHeight: '1.4' }}>
+          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', lineHeight: '1.4', textTransform: 'uppercase' }}>
             {line1}
           </p>
         )}
         {cityStateZip && (
-          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', lineHeight: '1.4' }}>
+          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', lineHeight: '1.4', textTransform: 'uppercase' }}>
             {cityStateZip}
           </p>
         )}
         {country && (
-          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', lineHeight: '1.4' }}>
+          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000000', margin: '0 0 4px 0', lineHeight: '1.4', textTransform: 'uppercase' }}>
             {country}
           </p>
         )}
         {phone && (
-          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', margin: '0 0 2px 0' }}>
+          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }}>
             {phone}
           </p>
         )}
         {email && (
-          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', margin: 0 }}>
+          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', margin: 0, textTransform: 'uppercase' }}>
             {email}
           </p>
         )}
@@ -357,13 +358,7 @@ function ShippingPage() {
                     {isSignedIn ? 'SIGN OUT' : 'SIGN IN'}
                   </span>
                 </div>
-                <div className="flex justify-center" style={{ marginBottom: '0' }}>
-                  <div className="flex" style={{ gap: '19px' }}>
-                    <img src="/assets/instagram-icon.svg" alt="Instagram" style={{ width: '20px', height: '20px' }} />
-                    <img src="/assets/twitter-icon.svg" alt="Twitter" style={{ width: '20px', height: '20px' }} />
-                    <img src="/assets/facebook-icon.svg" alt="Facebook" style={{ width: '20px', height: '20px' }} />
-                  </div>
-                </div>
+                <SocialMenuIcons />
               </div>
             </div>
           ) : (
@@ -386,10 +381,10 @@ function ShippingPage() {
                 </p>
                 {addressList.length === 0 ? (
                   <>
-                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000000', margin: '0 0 8px 0' }}>
+                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000000', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
                       NO ADDRESSES ON FILE
                     </p>
-                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080', margin: 0 }}>
+                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080', margin: 0, textTransform: 'uppercase' }}>
                       You can add or update an address when you checkout.
                     </p>
                     <button

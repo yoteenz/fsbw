@@ -536,7 +536,7 @@ function AccountPage() {
           highestTier = 'BLACK';
         } else if (spending >= 2000 && (!highestTier || highestTier === 'SILVER')) {
           highestTier = 'RED';
-        } else if (spending >= 500 && !highestTier) {
+        } else if (spending >= 1000 && !highestTier) {
           highestTier = 'SILVER';
         }
       });
@@ -609,7 +609,7 @@ function AccountPage() {
       currentTier = 'BLACK';
     } else if (totalSpending >= 2000) {
       currentTier = 'RED';
-    } else if (totalSpending >= 500) {
+    } else if (totalSpending >= 1000) {
       currentTier = 'SILVER';
     }
 
@@ -617,8 +617,8 @@ function AccountPage() {
     // But benefits only unlock when spending thresholds are met
     
     // Tier retention logic:
-    // - No tier (null): Base state until $500 spending - shows "MEMBER"
-    // - Silver: Unlocks at $500+ spending
+    // - No tier (null): Base state until $1k spending - shows "MEMBER"
+    // - Silver: Unlocks at $1k+ spending
     // - Red: Unlocks at $2k+, can drop to Silver if current period < $2k
     // - Black: Unlocks at $4k+, can drop to Red (if current >= $2k) or Silver (if current < $2k)
     if (highestTierEver === 'SILVER') {
@@ -638,7 +638,7 @@ function AccountPage() {
     }
 
     // No tier unlocked yet - return null to show "BASIC/PREMIUM REWARDS MEMBER"
-    // Only becomes SILVER tier once they reach $500 spending threshold
+    // Only becomes SILVER tier once they reach $1k spending threshold
     return currentTier;
   };
 

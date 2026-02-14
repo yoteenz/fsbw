@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
+import SocialMenuIcons from '../../../components/SocialMenuIcons';
 
 interface PaymentEntry {
   cardholder?: string;
@@ -124,16 +125,16 @@ function PaymentPage() {
             DEFAULT
           </p>
         )}
-        <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '18px', color: '#000000', margin: '0 0 4px 0', lineHeight: '1.2' }}>
+        <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '18px', color: '#000000', margin: '0 0 4px 0', lineHeight: '1.2', textTransform: 'uppercase' }}>
           {name}
         </p>
         {last4 && (
-          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000000', margin: '0 0 2px 0' }}>
+          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }}>
             {last4}
           </p>
         )}
         {expiry && (
-          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080', margin: 0 }}>
+          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080', margin: 0, textTransform: 'uppercase' }}>
             {expiry}
           </p>
         )}
@@ -313,13 +314,7 @@ function PaymentPage() {
                     {isSignedIn ? 'SIGN OUT' : 'SIGN IN'}
                   </span>
                 </div>
-                <div className="flex justify-center" style={{ marginBottom: '0' }}>
-                  <div className="flex" style={{ gap: '19px' }}>
-                    <img src="/assets/instagram-icon.svg" alt="Instagram" style={{ width: '20px', height: '20px' }} />
-                    <img src="/assets/twitter-icon.svg" alt="Twitter" style={{ width: '20px', height: '20px' }} />
-                    <img src="/assets/facebook-icon.svg" alt="Facebook" style={{ width: '20px', height: '20px' }} />
-                  </div>
-                </div>
+                <SocialMenuIcons />
               </div>
             </div>
           ) : (
@@ -342,10 +337,10 @@ function PaymentPage() {
                 </p>
                 {paymentList.length === 0 ? (
                   <>
-                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000000', margin: '0 0 8px 0' }}>
+                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000000', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
                       NO CARDS ON FILE
                     </p>
-                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080', margin: '0 0 16px 0' }}>
+                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080', margin: '0 0 16px 0', textTransform: 'uppercase' }}>
                       Add a payment method at checkout and check “Save payment method” to store it here.
                     </p>
                   </>
@@ -370,7 +365,7 @@ function PaymentPage() {
                 >
                   ADD PAYMENT METHOD
                 </button>
-                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '8px 0 0 0' }}>
+                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '8px 0 0 0', textTransform: 'uppercase' }}>
                   You can add or update a card when you checkout. Check “Save payment method” to keep it on file.
                 </p>
               </div>

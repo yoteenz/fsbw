@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
+import SocialMenuIcons from '../../../components/SocialMenuIcons';
 
 const inputBaseStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Book"',
@@ -29,7 +30,8 @@ const sectionHeadingStyle: React.CSSProperties = {
   fontSize: '22px',
   color: 'black',
   margin: '0 0 16px 0',
-  lineHeight: '1.2'
+  lineHeight: '1.2',
+  textTransform: 'uppercase'
 };
 
 function SettingsPage() {
@@ -335,13 +337,7 @@ function SettingsPage() {
                     {isSignedIn ? 'SIGN OUT' : 'SIGN IN'}
                   </span>
                 </div>
-                <div className="flex justify-center" style={{ marginBottom: '0' }}>
-                  <div className="flex" style={{ gap: '19px' }}>
-                    <img src="/assets/instagram-icon.svg" alt="Instagram" style={{ width: '20px', height: '20px' }} />
-                    <img src="/assets/twitter-icon.svg" alt="Twitter" style={{ width: '20px', height: '20px' }} />
-                    <img src="/assets/facebook-icon.svg" alt="Facebook" style={{ width: '20px', height: '20px' }} />
-                  </div>
-                </div>
+                <SocialMenuIcons />
               </div>
             </div>
           ) : (
@@ -353,19 +349,19 @@ function SettingsPage() {
                 {/* Personal Information */}
                 <p style={sectionHeadingStyle}>PERSONAL INFORMATION</p>
                 <div style={{ marginBottom: '20px' }}>
-                  <label style={labelStyle}>Name</label>
+                  <label style={labelStyle}>NAME</label>
                   <input type="text" value={name} onChange={(e) => setName(e.target.value)} style={inputBaseStyle} />
                 </div>
                 <div style={{ marginBottom: '20px' }}>
-                  <label style={labelStyle}>Birthday</label>
+                  <label style={labelStyle}>BIRTHDAY</label>
                   <input type="text" value={birthday} onChange={(e) => setBirthday(e.target.value)} placeholder="MM/DD/YYYY" style={inputBaseStyle} />
                 </div>
                 <div style={{ marginBottom: '20px' }}>
-                  <label style={labelStyle}>Email</label>
+                  <label style={labelStyle}>EMAIL</label>
                   <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ ...inputBaseStyle, color: '#EB1C24' }} />
                 </div>
                 <div style={{ marginBottom: '20px' }}>
-                  <label style={labelStyle}>Password</label>
+                  <label style={labelStyle}>PASSWORD</label>
                   <input type="password" defaultValue="••••••••••" style={inputBaseStyle} />
                   <button
                     type="button"
@@ -387,7 +383,7 @@ function SettingsPage() {
                   </button>
                 </div>
                 <div style={{ marginBottom: '24px' }}>
-                  <label style={labelStyle}>Socials</label>
+                  <label style={labelStyle}>SOCIALS</label>
                   <input type="text" value={facebook} onChange={(e) => setFacebook(e.target.value)} placeholder="FACEBOOK.COM/" style={{ ...inputBaseStyle, marginBottom: '10px' }} />
                   <input type="text" value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="@INSTAGRAM" style={{ ...inputBaseStyle, marginBottom: '10px' }} />
                   <input type="text" value={youtube} onChange={(e) => setYoutube(e.target.value)} placeholder="@YOUTUBE" style={{ ...inputBaseStyle, marginBottom: '10px' }} />

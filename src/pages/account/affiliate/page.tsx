@@ -4,6 +4,8 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import ImageViewerModal from '../../../components/ImageViewerModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
+import moreWaysIcon from '../../../assets/icons/more-ways.svg?url';
+import affiliateIcon from '../../../assets/icons/affiliate-icon.svg?url';
 
 interface Order {
   id: string;
@@ -3680,7 +3682,8 @@ function AffiliatePage() {
                    ) : (
                      <>
                        {/* Card 1: BECOME AN AFFILIATE */}
-                  <div className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out" style={{ borderWidth: '1.3px', padding: '20px', backgroundColor: 'rgba(255, 255, 255, 0.6)' }}>
+                  <div className="w-full mb-4 transition-all duration-300 ease-out overflow-hidden" style={{ borderWidth: '1.3px', borderStyle: 'solid', borderColor: '#000', boxSizing: 'border-box' }}>
+                    <div className="bg-white/60 backdrop-blur-sm w-full" style={{ padding: '20px', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: '100%' }}>
                     <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
                       <h2
                         style={{
@@ -3694,6 +3697,7 @@ function AffiliatePage() {
                       >
                         BECOME AN AFFILIATE
                       </h2>
+                      <img src={moreWaysIcon} alt="" style={{ width: '18px', height: '18px', flexShrink: 0, objectFit: 'contain' }} />
                     </div>
                     
                     <div style={{ marginBottom: '12px' }}>
@@ -3799,9 +3803,11 @@ function AffiliatePage() {
                     </p>
                   </div>
                   </div>
+                  </div>
 
                   {/* Card 2: AFFILIATE PROGRAM */}
-                  <div className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out" style={{ borderWidth: '1.3px', padding: '20px', backgroundColor: 'rgba(255, 255, 255, 0.6)' }}>
+                  <div className="w-full mb-4 transition-all duration-300 ease-out overflow-hidden" style={{ borderWidth: '1.3px', borderStyle: 'solid', borderColor: '#000', boxSizing: 'border-box' }}>
+                    <div className="bg-white/60 backdrop-blur-sm w-full" style={{ padding: '20px', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: '100%' }}>
                     <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
                       <h2
                         style={{
@@ -3815,6 +3821,7 @@ function AffiliatePage() {
                       >
                         AFFILIATE PROGRAM
                       </h2>
+                      <img src={affiliateIcon} alt="" style={{ width: '17px', height: '17px', flexShrink: 0, objectFit: 'contain' }} />
                     </div>
                     
                     {deliveredOrders.length === 0 ? (
@@ -3951,6 +3958,7 @@ function AffiliatePage() {
                         ))}
                       </div>
                      )}
+                   </div>
                    </div>
                  </>
                    )}

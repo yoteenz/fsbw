@@ -386,7 +386,7 @@ export default function AdminHeader({
       );
 
   return (
-    <header className="px-4 py-4 relative">
+    <header className="px-4 py-4 relative" style={{ textTransform: 'uppercase' }}>
       <div className="max-w-md mx-auto">
         <div
           className="bg-white/60 backdrop-blur-sm border border-black px-4 py-2 flex items-center justify-center h-10 relative"

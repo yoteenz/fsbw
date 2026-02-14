@@ -135,7 +135,7 @@ export default function AdminDashboard() {
           }}
         ></div>
         <div className="bg-white/60 backdrop-blur-sm border border-black px-6 py-4" style={{ borderWidth: '1.4px' }}>
-          <p className="text-sm font-bold">Loading dashboard data...</p>
+          <p className="text-sm font-bold" style={{ textTransform: 'uppercase' }}>Loading dashboard data...</p>
         </div>
       </div>
     );
@@ -158,7 +158,7 @@ export default function AdminDashboard() {
           }}
         ></div>
         <div className="bg-white/60 backdrop-blur-sm border border-red-500 px-6 py-4" style={{ borderWidth: '1.4px' }}>
-          <p className="text-sm font-bold text-red-500">Error: {error}</p>
+          <p className="text-sm font-bold text-red-500" style={{ textTransform: 'uppercase' }}>Error: {error}</p>
         </div>
       </div>
     );
@@ -368,7 +368,7 @@ export default function AdminDashboard() {
       ></div>
       
       {/* Scrollable Content */}
-      <div className="relative z-10">
+      <div className="relative z-10" style={{ textTransform: 'uppercase' }}>
         <AdminHeader title="DASHBOARD" />
         
         <div className="pb-6 px-4">

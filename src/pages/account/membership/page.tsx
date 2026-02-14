@@ -17,7 +17,7 @@ const EARN_TASKS = [
   { id: 'newsletter_signup', action: 'NEWSLETTER SIGN UP', points: 50 },
   { id: 'refer_friend', action: 'REFER A FRIEND', points: 100 },
   { id: 'content_review', action: 'LEAVE A CONTENT REVIEW', points: 150 },
-  { id: 'photo_video_tags', action: 'SOCIAL MEDIA CONTENT TAG', points: 200 },
+  { id: 'photo_video_tags', action: 'TAG US ON SOCIALS', points: 200 },
   { id: 'facebook', action: 'LIKE OUR FACEBOOK', points: 250, link: 'https://www.facebook.com/bookfrontalslayer?utm_source=membership&utm_medium=earn&utm_campaign=like_facebook' },
   { id: 'instagram', action: 'FOLLOW OUR INSTAGRAM', points: 250, link: 'https://www.instagram.com/frontalslayer/?utm_source=membership&utm_medium=earn&utm_campaign=follow_instagram' },
   { id: 'tiktok', action: 'FOLLOW OUR TIK TOK', points: 250, link: 'https://www.tiktok.com/@frontalslayer?utm_source=membership&utm_medium=earn&utm_campaign=follow_tiktok' },
@@ -167,8 +167,8 @@ function MembershipPage() {
   };
 
   // Tier is based on money spent in current 6‑month period (matches account/page.tsx).
-  // Spend thresholds: Silver $500, Red $2,000, Black $4,000.
-  const SPEND_TIER_THRESHOLDS = { SILVER: 500, RED: 2000, BLACK: 4000 };
+  // Spend thresholds per 6-month cycle: Silver 1,000, Red 2,000 to remain Red, Black 4,000 to unlock Black.
+  const SPEND_TIER_THRESHOLDS = { SILVER: 1000, RED: 2000, BLACK: 4000 };
   // Welcome discount (digital cash) credited to account balance and used at checkout — see constants/tiers.ts
 
   const getCurrentPeriod = (): { start: Date; end: Date } => {
@@ -208,19 +208,17 @@ function MembershipPage() {
 
   // Progress toward next tier based on spend (Silver → Red → Black).
   const getNextTierProgress = () => {
-    // When no one is signed in, show mock design: Silver tier with bar progressing toward Red (not full)
+    // When no one is signed in, show mock: Silver tier with 300 pts → "EARN 200 MORE TO REMAIN SILVER TIER!"
     if (!userData) {
-      const mockCurrentSpend = SPEND_TIER_THRESHOLDS.SILVER; // 500, at Silver
-      const mockNextTier = SPEND_TIER_THRESHOLDS.RED;        // 2000, bar fills toward Red
-      const mockRemaining = mockNextTier - mockCurrentSpend;
-      const mockProgressPercent = Math.min(100, (mockCurrentSpend / mockNextTier) * 100); // 500 pts count toward Red = 25%
+      const mockCurrentSpend = 300;
+      const mockNextTier = SPEND_TIER_THRESHOLDS.SILVER; // 1000 = remain Silver
       return {
         currentSpend: mockCurrentSpend,
         currentPoints: mockCurrentSpend,
         nextTier: mockNextTier,
         nextTierSpend: mockNextTier,
-        spendRemaining: mockRemaining,
-        progressPercent: mockProgressPercent,
+        spendRemaining: mockNextTier - mockCurrentSpend,
+        progressPercent: Math.min(100, (mockCurrentSpend / mockNextTier) * 100),
         currentTierName: 'SILVER' as const,
         nextTierName: 'RED' as const
       };
@@ -231,9 +229,9 @@ function MembershipPage() {
       userData.email?.toLowerCase().includes('armstrong')
     );
     if (isAdmin) {
-      // Admin: show BLACK tier benefits but bar fills to 2,000 so "EARN X MORE POINTS" text is visible
-      const adminCurrentSpend = 1000;
-      const adminBarMax = 2000;
+      // Admin: show RED tier with 700 pts; threshold 2,000 to remain Red → "EARN 1,300 MORE TO REMAIN RED TIER!"
+      const adminCurrentSpend = 700;
+      const adminBarMax = SPEND_TIER_THRESHOLDS.RED; // 2000 = remain Red
       return {
         currentSpend: adminCurrentSpend,
         currentPoints: adminCurrentSpend,
@@ -241,8 +239,8 @@ function MembershipPage() {
         nextTierSpend: adminBarMax,
         spendRemaining: adminBarMax - adminCurrentSpend,
         progressPercent: (adminCurrentSpend / adminBarMax) * 100,
-        currentTierName: 'BLACK' as const,
-        nextTierName: null
+        currentTierName: 'RED' as const,
+        nextTierName: 'BLACK' as const // still show NEXT TIER: BLACK since they're in Red
       };
     }
     const currentSpend = getCurrentPeriodSpending();
@@ -262,7 +260,7 @@ function MembershipPage() {
       };
     }
     const spendRemaining = nextTierSpend - currentSpend;
-    const progressPercent = Math.min(100, (currentSpend / nextTierSpend) * 100); // pts earned count toward next tier (e.g. 500/2000 = 25% for Silver→Red)
+    const progressPercent = Math.min(100, (currentSpend / nextTierSpend) * 100); // pts earned count toward next tier (e.g. 1000/2000 = 50% for Silver→Red)
     const nextTierName = nextTierSpend === SPEND_TIER_THRESHOLDS.BLACK ? 'BLACK' : nextTierSpend === SPEND_TIER_THRESHOLDS.RED ? 'RED' : 'SILVER';
     return {
       currentSpend,
@@ -1034,9 +1032,9 @@ function MembershipPage() {
                           </p>
                           <p
                             style={{
-                              fontFamily: '"Futura PT Medium"',
+                              fontFamily: '"Futura PT Book"',
                               color: '#EB1C24',
-                              fontSize: '9px',
+                              fontSize: '9.5px',
                               margin: '0 0 8px 0',
                               textTransform: 'uppercase'
                             }}
@@ -1248,9 +1246,14 @@ function MembershipPage() {
                                   textTransform: 'uppercase',
                                   color: BRAND_GRAY,
                                   lineHeight: '1.25',
-                                  minWidth: '58px',
-                                  maxWidth: '58px'
-                                }}><span style={{ display: 'inline-block', marginLeft: '12px' }}>12 MONTHS PREMIUM</span></th>
+                                  minWidth: '62px',
+                                  maxWidth: '62px'
+                                }}>
+                                  <span style={{ display: 'inline-block', marginLeft: '12px', textAlign: 'center' }}>
+                                    <span style={{ display: 'block', whiteSpace: 'nowrap' }}>12 MONTHS</span>
+                                    <span style={{ display: 'block', whiteSpace: 'nowrap' }}>PREMIUM</span>
+                                  </span>
+                                </th>
                               </tr>
                             </thead>
                             <tbody>
@@ -1412,7 +1415,7 @@ function MembershipPage() {
                                 </td>
                               </tr>
                               <tr>
-                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>FREE GIVEAWAYS</span></td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>REWARDS + PRIZES</span></td>
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
                                   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
@@ -1474,10 +1477,11 @@ function MembershipPage() {
                                       }
                                       setSelectedTier(selectedTier === '3months' ? null : '3months');
                                     }}
-                                    className="font-futura w-full text-center py-1 text-[10px] font-semibold bg-transparent cursor-pointer mt-2"
+                                    className="font-futura w-full text-center py-1 text-[10px] font-semibold bg-transparent cursor-pointer"
                                     style={{ 
                                       border: 'none',
                                       color: selectedTier === '3months' ? '#EB1C24' : BRAND_GRAY,
+                                      marginTop: '2px',
                                       fontFamily: '"Futura PT Medium"',
                                       backgroundColor: 'transparent',
                                       textTransform: 'uppercase',
@@ -1500,10 +1504,11 @@ function MembershipPage() {
                                       }
                                       setSelectedTier(selectedTier === '6months' ? null : '6months');
                                     }}
-                                    className="font-futura w-full text-center py-1 text-[10px] font-semibold bg-transparent cursor-pointer mt-2"
+                                    className="font-futura w-full text-center py-1 text-[10px] font-semibold bg-transparent cursor-pointer"
                                     style={{ 
                                       border: 'none',
                                       color: selectedTier === '6months' ? '#EB1C24' : BRAND_GRAY,
+                                      marginTop: '2px',
                                       fontFamily: '"Futura PT Medium"',
                                       backgroundColor: 'transparent',
                                       textTransform: 'uppercase',
@@ -1527,10 +1532,11 @@ function MembershipPage() {
                                         }
                                         setSelectedTier(selectedTier === '12months' ? null : '12months');
                                       }}
-                                      className="font-futura w-full text-center py-1 text-[10px] font-semibold bg-transparent cursor-pointer mt-2"
+                                      className="font-futura w-full text-center py-1 text-[10px] font-semibold bg-transparent cursor-pointer"
                                       style={{ 
                                         border: 'none',
                                         color: selectedTier === '12months' ? '#EB1C24' : BRAND_GRAY,
+                                        marginTop: '2px',
                                         fontFamily: '"Futura PT Medium"',
                                         backgroundColor: 'transparent',
                                         textTransform: 'uppercase',
@@ -1608,18 +1614,19 @@ function MembershipPage() {
                         }}
                       />
                     </div>
-                    <div style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', lineHeight: 1.5, flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                    <div style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', lineHeight: 1.5, flex: 1, overflowY: 'auto', minHeight: 0, textTransform: 'uppercase' }}>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '0 0 6px 0', textTransform: 'uppercase' }}>INTRO BENEFITS (ONE-TIME PER ACCOUNT)</p>
                       <p style={{ margin: '0 0 8px 0' }}>Once you reach a tier and collect its intro benefits, they do not repeat.</p>
                       <p style={{ margin: '4px 0 2px 0', paddingLeft: '8px', borderLeft: '3px solid #808080' }}><span style={{ fontFamily: '"Futura PT Medium"', color: BRAND_GRAY }}>SILVER:</span> Welcome discount, 50 loyalty points</p>
-                      <p style={{ margin: '4px 0 2px 0', paddingLeft: '8px', borderLeft: '3px solid #EB1C24' }}><span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24' }}>RED:</span> Welcome discount, 1x Color Voucher, 1x Hairline Voucher, 500 loyalty points</p>
+                      <p style={{ margin: '4px 0 2px 0', paddingLeft: '8px', borderLeft: '3px solid #EB1C24' }}><span style={{ fontFamily: '"Futura PT Book"', color: '#EB1C24' }}>RED:</span> Welcome discount, 1x Color Voucher, 1x Hairline Voucher, 500 loyalty points</p>
                       <p style={{ margin: '4px 0 8px 0', paddingLeft: '8px', borderLeft: '3px solid #000' }}><span style={{ fontFamily: '"Futura PT Medium"', color: '#000000' }}>BLACK:</span> Welcome discount, 1x Color Voucher, 1x Hairline Voucher, 1x Styling Voucher, 1,000 loyalty points</p>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 6px 0', textTransform: 'uppercase' }}>RECURRING PERKS (EVERY 6-MONTH CYCLE)</p>
                       <p style={{ margin: '0 0 2px 0' }}><strong>All tiers:</strong> Member discount (Silver 5%, Red 10%, Black 15%); 1x complimentary consultation per year.</p>
-                      <p style={{ margin: '6px 0 2px 0' }}><strong>Red & Black:</strong> 1x priority booking per year; 1x discounted shipping ($10 off) per year.</p>
+                      <p style={{ margin: '6px 0 2px 0' }}><strong>Red:</strong> 1.25x loyalty points on purchases. <strong>Black:</strong> 1.5x loyalty points on purchases.</p>
                       <p style={{ margin: '6px 0 8px 0' }}><strong>Black only:</strong> Annual Black tier gift; status protection (stay Black when short on points, 1x per year).</p>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 6px 0', textTransform: 'uppercase' }}>HOW IT WORKS</p>
-                      <p style={{ margin: 0 }}>Tiers run in 6-month cycles. Earn points from purchases to unlock or keep a tier. Hit the threshold (500 Silver, 2,000 Red, 4,000 Black) by period end to keep that tier and its perks for the next cycle. Intro benefits unlock once per account; recurring perks apply each cycle you maintain or reach that tier.</p>
+                      <p style={{ margin: 0 }}>Tiers run in 6-month cycles. Earn points from purchases to unlock or keep a tier. Hit the threshold (1,000 Silver, 2,000 Red, 4,000 Black) by period end to keep that tier and its perks for the next cycle. Intro benefits unlock once per account; recurring perks apply each cycle you maintain or reach that tier.</p>
+                      <p style={{ margin: '10px 0 0 0', fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000000' }}><strong>Premium stacks with your tier.</strong> Tier perks are earned by spend (e.g. Red 1.25x and Black 1.5x points). A Premium subscription adds 2x points plus lounge access, fast-track support, and more—so Black + Premium gives you the most.</p>
                     </div>
                   </div>
                   ) : (
@@ -1685,9 +1692,9 @@ fontFamily: '"Futura PT Book"',
                               </p>
                               <p
                                 style={{
-                                  fontFamily: '"Futura PT Medium"',
+                                  fontFamily: '"Futura PT Book"',
                                   color: '#EB1C24',
-                                  fontSize: '9px',
+                                  fontSize: '9.5px',
                                   margin: '0 0 8px 0',
                                   textTransform: 'uppercase'
                                 }}
@@ -1922,25 +1929,30 @@ fontFamily: '"Futura PT Book"',
                                 const { currentSpend, spendRemaining, progressPercent, nextTier, nextTierName, currentTierName } = getNextTierProgress();
                                 const nextTierColor = nextTierName === 'BLACK' ? '#000000' : nextTierName === 'SILVER' ? BRAND_GRAY : '#EB1C24';
                                 const tierLabel = (() => {
+                                  // Black tier reached threshold for next cycle: no next tier to unlock
+                                  if (nextTier == null && currentTierName === 'BLACK') {
+                                    return <>YOU'VE EARNED ENOUGH POINTS TO REMAIN BLACK TIER!</>;
+                                  }
                                   if (nextTier == null) return null;
                                   // Have they reached the points needed to keep their current tier this cycle?
                                   const hasSecuredCurrentTier = currentTierName === 'SILVER' && currentSpend >= SPEND_TIER_THRESHOLDS.SILVER
                                     || currentTierName === 'RED' && currentSpend >= SPEND_TIER_THRESHOLDS.RED
                                     || currentTierName === 'BLACK' && currentSpend >= SPEND_TIER_THRESHOLDS.BLACK;
                                   if (hasSecuredCurrentTier) {
-                                    return <>EARN <span style={{ color: '#EB1C24' }}>{spendRemaining.toLocaleString()}</span> MORE POINTS TO UNLOCK {nextTierName} TIER!</>;
+                                    return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{spendRemaining.toLocaleString()}</span> MORE POINTS TO UNLOCK {nextTierName} TIER!</>;
                                   }
                                   // Not yet secured: show remain for the tier they're working toward (Silver if PENDING)
                                   const remainTier = currentTierName === 'PENDING' ? 'SILVER' : currentTierName;
                                   const remainThreshold = remainTier === 'SILVER' ? SPEND_TIER_THRESHOLDS.SILVER : remainTier === 'RED' ? SPEND_TIER_THRESHOLDS.RED : SPEND_TIER_THRESHOLDS.BLACK;
                                   const remainPoints = Math.max(0, remainThreshold - currentSpend);
-                                  return <>EARN <span style={{ color: '#EB1C24' }}>{remainPoints.toLocaleString()}</span> MORE POINTS TO REMAIN {remainTier} TIER!</>;
+                                  return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{remainPoints.toLocaleString()}</span> MORE POINTS TO REMAIN {remainTier} TIER!</>;
                                 })();
                                 return (
                                   <>
-                                    <div style={{ marginTop: '20px' }}>
+                                    <div style={{ marginTop: '12px' }}>
                                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0' }}>
-                                        {(currentTierName === 'SILVER' || currentTierName === 'RED') && nextTierName != null ? (
+                                        {/* Only Black (top tier) has no next tier; Silver and Red always show NEXT TIER */}
+                                        {currentTierName !== 'BLACK' && nextTierName != null ? (
                                           <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
                                             NEXT TIER: <span style={{ color: nextTierColor, fontFamily: '"Futura PT Medium"' }}>{nextTierName}</span>
                                           </p>
@@ -2041,12 +2053,12 @@ fontFamily: '"Futura PT Book"',
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                               {[
-                                'EXCLUSIVE ACCESS TO PREMIUM 3D WIG SELECTIONS',
-                                'ACCESS TO VIP LOUNGE + MEMBERS ONLY EVENTS',
+                                'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
+                                'ENTRY TO VIP MEMBERS ONLY LOBBY + LOUNGE',
                                 'FAST TRACK CUSTOMER SUPPORT',
                                 'PRIORITY BOOKING',
-                                'FREE GIVEAWAYS',
-                                'DISCOUNTED SHIPPING (DOMESTIC + INTERNATIONAL)'
+                                'MEMBER REWARDS + PRIZES',
+                                'DISCOUNTED SHIPPING'
                               ].map((label, i) => (
                                 <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                                   <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8.4px', height: '8.4px', marginTop: '4px', flexShrink: 0 }} />
@@ -2065,7 +2077,7 @@ fontFamily: '"Futura PT Book"',
                         {!hasPremiumSubscription && (
                             <>
                 <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
-                  <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
+                  <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <p
                       style={{
                         fontFamily: '"Futura PT Medium"',
@@ -2079,29 +2091,30 @@ fontFamily: '"Futura PT Book"',
                     >
                       UNLOCK PREMIUM REWARDS
                     </p>
+                    <img src={additionalFeaturesIcon} alt="" style={{ width: '20px', height: '20px', flexShrink: 0, objectFit: 'contain', marginTop: '-2px' }} />
                   </div>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        EXCLUSIVE ACCESS TO PREMIUM 3D WIG SELECTIONS
+                        PREMIUM 3D WIG CUSTOMIZATION OPTIONS
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '9px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
                         ADDITIONAL, MORE EXTENSIVE CUSTOMIZATION OPTIONS
                       </p>
                     </div>
                     <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        ENTRY PASS TO MEMBERS ONLY LOUNGE
+                        ENTRY TO VIP MEMBERS ONLY LOBBY + LOUNGE
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '9px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        EARLY ACCESS TO SALES, NEW DROPS, RESTOCKS + BRAND RELATED CONTENT
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
+                        EARLY ACCESS TO SALES, NEW DROPS + RESTOCKS
                       </p>
                     </div>
                     <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
                         FAST TRACK CUSTOMER SUPPORT
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '9px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
                         PRIORITIZED SUPPORT WITH A SIGNIFICANTLY REDUCED RESPONSE TIME
                       </p>
                     </div>
@@ -2109,32 +2122,32 @@ fontFamily: '"Futura PT Book"',
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
                         PRIORITY BOOKING + ORDER PROCESSING
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '9px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        OPTION TO BOOK APPOINTMENTS IN ADVANCE, YOUR CUSTOM ORDERS GET HANDLED FIRST
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
+                        OPTION TO SCHEDULE IN ADVANCE, CUSTOM ORDERS GET PRIORITIZED
                       </p>
                     </div>
                     <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        SPECIAL GIFT WITH PURCHASE + FREE GIVEAWAYS
+                        MEMBER REWARDS + PRIZES
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '9px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        ELIGIBLE FOR A CHANCE TO WIN RANDOM DISCOUNTS, STYLING VOUCHERS + EXCLUSIVE ITEMS
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
+                        ELIGIBLE FOR A CHANCE TO WIN DISCOUNTS, VOUCHERS + PRODUCT
                       </p>
                     </div>
                     <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        REDUCED SHIPPING FEE
+                        REDUCED SHIPPING FEES
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '9px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        DISCOUNT APPLIED AUTOMATICALLY TO DOMESTIC + INTERNATIONAL ORDERS
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
+                        DISCOUNT APPLIED AUTOMATICALLY AT CHECKOUT
                       </p>
                     </div>
                     <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
                         DOUBLE YOUR POINTS
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '9px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        EARN 2X LOYALTY POINTS FOR EACH ORDER, UNLOCKING DISCOUNTS & REWARDS FASTER
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
+                        EARN 2X LOYALTY POINTS UNLOCKING DISCOUNTS + REWARDS FASTER
                       </p>
                     </div>
                   </div>

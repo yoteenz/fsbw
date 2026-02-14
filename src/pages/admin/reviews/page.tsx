@@ -52,7 +52,7 @@ export default function AdminReviews() {
       ></div>
       
       {/* Scrollable Content */}
-      <div className="relative z-10">
+      <div className="relative z-10" style={{ textTransform: 'uppercase' }}>
         <AdminHeader title="REVIEWS" showBack onBack={() => window.history.back()} />
         
         <div className="pb-6 px-4">

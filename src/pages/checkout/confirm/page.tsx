@@ -343,7 +343,7 @@ function CheckoutConfirmPage() {
       if (pointsEarned >= 5000) {
         tier = 'RED';
       }
-      // Note: Tier benefits unlock at spending thresholds: SILVER $500+, RED $2,000+, BLACK $4,000+
+      // Note: Tier benefits unlock at spending thresholds per 6 months: SILVER 1,000+, RED 2,000+ (remain), BLACK 4,000+ (unlock)
       
       // Determine processing time based on order (check if has customizations)
       const hasCustomizations = cartItems.length > 0 && cartItems.some(item => {
