@@ -76,7 +76,8 @@ function SettingsPage() {
     window.scrollTo(0, 0);
   }, []);
 
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [birthday, setBirthday] = useState('');
   const [email, setEmail] = useState('');
   const [facebook, setFacebook] = useState('');
@@ -294,8 +295,8 @@ function SettingsPage() {
 
   useEffect(() => {
     if (userData) {
-      const fullName = [userData.firstName, userData.lastName].filter(Boolean).join(' ').toUpperCase();
-      setName(fullName || '');
+      setFirstName((userData.firstName || '').toUpperCase());
+      setLastName((userData.lastName || '').toUpperCase());
       setEmail((userData.email || '').toUpperCase());
       const normalizedBirthday = normalizeBirthdayDisplay(userData.birthday || '');
       setBirthday(normalizedBirthday);
@@ -306,10 +307,12 @@ function SettingsPage() {
       setTwitter(parseSocialHandle('twitter', userData.twitter || ''));
     } else if (!isSignedIn) {
       setEmail('BRUNO203@GMAIL.COM');
-      setName('KRISTIN WATSON');
+      setFirstName('KRISTIN');
+      setLastName('WATSON');
       setBirthday('08/30/1989');
     } else {
-      setName('');
+      setFirstName('');
+      setLastName('');
       setEmail('');
       setBirthday('');
       setFacebook('');
@@ -602,25 +605,35 @@ function SettingsPage() {
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={sectionHeaderWrapperStyle}>
                   <h2 style={sectionHeaderTextStyle}>PERSONAL INFORMATION</h2>
                 </div>
-                <div style={{ marginBottom: '20px' }}>
-                  <label style={labelStyle}>NAME</label>
-                  <input
-                    type="text"
-                    value={name}
-                    readOnly={!isOAuthUser}
-                    placeholder="FULL NAME"
-                    className="settings-personal-input"
-                    onChange={isOAuthUser ? (e) => setName(e.target.value.toUpperCase()) : undefined}
-                    onBlur={isOAuthUser ? () => {
-                      const parts = name.trim().split(/\s+/).filter(Boolean);
-                      const firstName = parts[0] || '';
-                      const lastName = parts.slice(1).join(' ') || '';
-                      persistPersonalInfo({ firstName, lastName });
-                    } : undefined}
-                    style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080', textTransform: 'uppercase' }}
-                  />
+                <div style={{ marginBottom: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={labelStyle}>FIRST NAME</label>
+                    <input
+                      type="text"
+                      value={firstName}
+                      readOnly={!isOAuthUser}
+                      placeholder="FIRST NAME"
+                      className="settings-personal-input"
+                      onChange={isOAuthUser ? (e) => setFirstName(e.target.value.toUpperCase()) : undefined}
+                      onBlur={isOAuthUser ? () => persistPersonalInfo({ firstName: firstName.trim(), lastName: lastName.trim() }) : undefined}
+                      style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080', textTransform: 'uppercase' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>LAST NAME</label>
+                    <input
+                      type="text"
+                      value={lastName}
+                      readOnly={!isOAuthUser}
+                      placeholder="LAST NAME"
+                      className="settings-personal-input"
+                      onChange={isOAuthUser ? (e) => setLastName(e.target.value.toUpperCase()) : undefined}
+                      onBlur={isOAuthUser ? () => persistPersonalInfo({ firstName: firstName.trim(), lastName: lastName.trim() }) : undefined}
+                      style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080', textTransform: 'uppercase' }}
+                    />
+                  </div>
                 </div>
-                <div style={{ marginBottom: '20px' }}>
+                <div style={{ marginBottom: '20px', width: 'calc((100% - 12px) / 2)' }}>
                   <label style={labelStyle}>BIRTHDAY</label>
                   <input
                     type="text"
@@ -656,19 +669,44 @@ function SettingsPage() {
                       />
                     ) : (
                     <>
-                      <input
-                        type={showPassword ? 'text' : 'password'}
-                        readOnly
-                        value={showPassword ? accountPassword : '••••••••••'}
-                        style={inputBaseStyle}
-                      />
-                      <div className="flex justify-between items-center" style={{ marginTop: '6px' }}>
+                      <div style={{ position: 'relative' }}>
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          readOnly
+                          value={showPassword ? accountPassword : '••••••••••'}
+                          style={{
+                            ...inputBaseStyle,
+                            paddingRight: '120px'
+                          }}
+                        />
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => setShowPassword((p) => !p)}
+                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setShowPassword((p) => !p); }}
+                          style={{
+                            position: 'absolute',
+                            right: '8px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '9px',
+                            color: '#EB1C24',
+                            cursor: 'pointer',
+                            textTransform: 'uppercase',
+                            userSelect: 'none'
+                          }}
+                        >
+                          {showPassword ? 'HIDE PASSWORD' : 'SHOW PASSWORD'}
+                        </span>
+                      </div>
+                      <div style={{ marginTop: '6px' }}>
                         <button
                           type="button"
                           onClick={() => setShowResetPasswordForm(true)}
                           style={{
                             fontFamily: '"Futura PT Book"',
-                            fontSize: '11px',
+                            fontSize: '9px',
                             color: '#EB1C24',
                             textTransform: 'uppercase',
                             fontWeight: '500',
@@ -681,24 +719,6 @@ function SettingsPage() {
                         >
                           RESET PASSWORD
                         </button>
-                        <span
-                          role="button"
-                          tabIndex={0}
-                          onClick={() => setShowPassword((p) => !p)}
-                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setShowPassword((p) => !p); }}
-                          style={{
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '11px',
-                            color: '#EB1C24',
-                            textTransform: 'uppercase',
-                            fontWeight: '500',
-                            cursor: 'pointer',
-                            padding: 0,
-                            transform: 'translateX(-2px)'
-                          }}
-                        >
-                          {showPassword ? 'HIDE PASSWORD' : 'SHOW PASSWORD'}
-                        </span>
                       </div>
                     </>
                     )
@@ -740,7 +760,7 @@ function SettingsPage() {
                           onClick={handleResetPasswordSubmit}
                           style={{
                             fontFamily: '"Futura PT Book"',
-                            fontSize: '11px',
+                            fontSize: '9px',
                             color: '#EB1C24',
                             textTransform: 'uppercase',
                             fontWeight: '500',
@@ -764,7 +784,7 @@ function SettingsPage() {
                           }}
                           style={{
                             fontFamily: '"Futura PT Book"',
-                            fontSize: '11px',
+                            fontSize: '9px',
                             color: '#EB1C24',
                             textTransform: 'uppercase',
                             fontWeight: '500',

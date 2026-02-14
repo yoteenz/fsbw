@@ -470,9 +470,24 @@ function AccountPage() {
   const handleConfirmReset = () => {
     const defaultImage = '/assets/profile-thumb.png';
     setProfileImage(defaultImage);
-    // Clear from localStorage
     try {
       localStorage.removeItem('profileImage');
+      // Persist reset to user record so it survives sign-out/sign-in
+      const currentUserRaw = localStorage.getItem('currentUser');
+      if (currentUserRaw) {
+        const currentUser = JSON.parse(currentUserRaw);
+        const email = (currentUser?.email || '').trim().toLowerCase();
+        if (email) {
+          currentUser.profileImage = defaultImage;
+          localStorage.setItem('currentUser', JSON.stringify(currentUser));
+          const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+          const idx = registered.findIndex((u: any) => (u.email || '').trim().toLowerCase() === email);
+          if (idx !== -1) {
+            registered[idx] = { ...registered[idx], profileImage: defaultImage };
+            localStorage.setItem('registeredUsers', JSON.stringify(registered));
+          }
+        }
+      }
     } catch (e) {
       // Ignore errors
     }
@@ -1008,20 +1023,44 @@ function AccountPage() {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      // Immediately open crop modal - no confirmation needed
+    if (!file) return;
+    const blob: Blob = file;
+    const openCropModal = (dataUrl: string) => {
+      setImageToCrop(dataUrl);
+      setShowCropModal(true);
+      setCropPosition({ x: 0, y: 0 });
+      setCropScale(1);
+    };
+    // Normalize orientation from EXIF (iOS photo picker) so crop modal and canvas capture match exactly
+    if (typeof createImageBitmap !== 'undefined') {
+      createImageBitmap(blob, { imageOrientation: 'from-image' })
+        .then((bitmap) => {
+          const w = bitmap.width;
+          const h = bitmap.height;
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            bitmap.close();
+            fallbackRead();
+            return;
+          }
+          ctx.drawImage(bitmap, 0, 0);
+          bitmap.close();
+          openCropModal(canvas.toDataURL('image/png'));
+        })
+        .catch(() => fallbackRead());
+    } else {
+      fallbackRead();
+    }
+    function fallbackRead() {
       const reader = new FileReader();
       reader.onloadend = () => {
-        if (reader.result) {
-          setImageToCrop(reader.result as string);
-          setShowCropModal(true);
-          setCropPosition({ x: 0, y: 0 });
-          setCropScale(1);
-        }
+        if (reader.result) openCropModal(reader.result as string);
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(blob);
     }
-    // Reset input so same file can be selected again
     event.target.value = '';
   };
 
@@ -1205,99 +1244,72 @@ function AccountPage() {
   }, [isDragging, dragStart, cropScale, cropPosition, pinchStart]);
 
   const handleApproveCrop = () => {
-    if (imageToCrop && cropContainerRef.current && imageRef.current) {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
+    const img = imageRef.current;
+    if (!imageToCrop || !cropContainerRef.current || !img || !img.complete || img.naturalWidth === 0) return;
 
-      // Output same size as crop circle so profile display matches OAuth logic (cover + center in circle)
-      const outputSize = 200;
-      canvas.width = outputSize;
-      canvas.height = outputSize;
+    const displayImageSize = 300;
+    const imgWidth = img.naturalWidth;
+    const imgHeight = img.naturalHeight;
+    const scaleX = displayImageSize / imgWidth;
+    const scaleY = displayImageSize / imgHeight;
+    const coverScale = Math.max(scaleX, scaleY);
+    const displayedWidth = imgWidth * coverScale;
+    const displayedHeight = imgHeight * coverScale;
+    const coverOffsetX = (displayedWidth - displayImageSize) / 2;
+    const coverOffsetY = (displayedHeight - displayImageSize) / 2;
 
-      // Create circular clipping path (captures exactly what's inside the modal crop circle)
-      ctx.beginPath();
-      ctx.arc(outputSize / 2, outputSize / 2, outputSize / 2, 0, Math.PI * 2);
-      ctx.clip();
+    // 1) Draw into a buffer using the SAME forward transform as the modal (translate then scale)
+    const bufferSize = Math.ceil(displayImageSize * cropScale);
+    const buffer = document.createElement('canvas');
+    buffer.width = bufferSize;
+    buffer.height = bufferSize;
+    const bCtx = buffer.getContext('2d');
+    if (!bCtx) return;
+    bCtx.translate(bufferSize / 2 + cropPosition.x, bufferSize / 2 + cropPosition.y);
+    bCtx.scale(cropScale, cropScale);
+    bCtx.translate(-displayImageSize / 2, -displayImageSize / 2);
+    bCtx.drawImage(img, -coverOffsetX, -coverOffsetY, displayedWidth, displayedHeight);
 
-      // Draw directly to output canvas - capture exactly what's visible in the crop circle
-      const img = imageRef.current;
-      const imgWidth = img.naturalWidth;
-      const imgHeight = img.naturalHeight;
-      const displayImageSize = 300;
-      
-      // Calculate cover scale
-      const scaleX = displayImageSize / imgWidth;
-      const scaleY = displayImageSize / imgHeight;
-      const coverScale = Math.max(scaleX, scaleY);
-      
-      // The image transform: top: 50%, left: 50% then translate(calc(-50% + cropPosition.x), ...) scale(cropScale)
-      // top: 50%, left: 50% positions image top-left at container center (100, 100) in 200px container
-      // translate(-50% + cropPosition.x) = translate(-150px + cropPosition.x) for 300px element
-      // So image center (150px from top-left) is at: (100 - 150 + cropPosition.x, 100 - 150 + cropPosition.y) = (cropPosition.x - 50, cropPosition.y - 50)
-      // 
-      // When cropPosition = (0, 0): image center = (-50, -50) - NOT centered!
-      // This means the initial position is wrong, OR cropPosition needs to be (150, 150) to center
-      // 
-      // Actually, wait: the -50% translate centers the image. So:
-      // - Image top-left starts at (100, 100) from top:50%, left:50%
-      // - Image center is naturally at (100 + 150, 100 + 150) = (250, 250) from container top-left
-      // - After translate(-150), image center moves to (250 - 150, 250 - 150) = (100, 100) ✓ CENTERED!
-      // - Then translate(cropPosition.x) moves it to (100 + cropPosition.x, 100 + cropPosition.y)
-      // 
-      // So the FULL transform is: translate(-150 + cropPosition.x, -150 + cropPosition.y)
-      // Image center: (100 + 150 - 150 + cropPosition.x, 100 + 150 - 150 + cropPosition.y) = (100 + cropPosition.x, 100 + cropPosition.y)
-      // 
-      // So when cropPosition = (0, 0), image center is at (100, 100) = container center ✓
-      // The crop circle center is also at (100, 100)
-      // So the offset from image center to crop center is: (100 - (100 + cropPosition.x), 100 - (100 + cropPosition.y)) = (-cropPosition.x, -cropPosition.y)
-      
-      ctx.save();
-      
-      // Start at crop circle center
-      ctx.translate(outputSize / 2, outputSize / 2);
-      
-      // Apply inverse transforms (reverse order: inverse scale, then inverse translate)
-      // 1. Inverse scale
-      ctx.scale(1 / cropScale, 1 / cropScale);
-      
-      // 2. So that crop center (100,100) shows the image point (-cropPosition.x, -cropPosition.y) from image center:
-      //    place that point at output center → translate by (cropPosition.x, cropPosition.y)
-      ctx.translate(cropPosition.x, cropPosition.y);
-      
-      // 3. Translate to image center (150px from image top-left)
-      ctx.translate(-displayImageSize / 2, -displayImageSize / 2);
-      
-      // Draw the source image with cover scaling
-      const displayedWidth = imgWidth * coverScale;
-      const displayedHeight = imgHeight * coverScale;
-      const coverOffsetX = (displayedWidth - displayImageSize) / 2;
-      const coverOffsetY = (displayedHeight - displayImageSize) / 2;
-      
-      ctx.drawImage(
-        img,
-        -coverOffsetX,
-        -coverOffsetY,
-        displayedWidth,
-        displayedHeight
-      );
-      
-      ctx.restore();
-      
-      const croppedImage = canvas.toDataURL('image/png');
-      setProfileImage(croppedImage);
-      // Save to localStorage
-      try {
-        localStorage.setItem('profileImage', croppedImage);
-      } catch (e) {
-        // Ignore errors (e.g., if localStorage is full)
-        console.warn('Failed to save profile image to localStorage:', e);
+    // 2) Output 200x200 circle = center 200x200 of the buffer (crop circle in modal is centered)
+    const outputSize = 200;
+    const canvas = document.createElement('canvas');
+    canvas.width = outputSize;
+    canvas.height = outputSize;
+    const outCtx = canvas.getContext('2d');
+    if (!outCtx) return;
+    outCtx.beginPath();
+    outCtx.arc(outputSize / 2, outputSize / 2, outputSize / 2, 0, Math.PI * 2);
+    outCtx.clip();
+    const srcX = Math.max(0, bufferSize / 2 - outputSize / 2);
+    const srcY = Math.max(0, bufferSize / 2 - outputSize / 2);
+    outCtx.drawImage(buffer, srcX, srcY, outputSize, outputSize, 0, 0, outputSize, outputSize);
+
+    const croppedImage = canvas.toDataURL('image/png');
+    setProfileImage(croppedImage);
+    try {
+      localStorage.setItem('profileImage', croppedImage);
+      const currentUserRaw = localStorage.getItem('currentUser');
+      if (currentUserRaw) {
+        const currentUser = JSON.parse(currentUserRaw);
+        const email = (currentUser?.email || '').trim().toLowerCase();
+        if (email) {
+          currentUser.profileImage = croppedImage;
+          localStorage.setItem('currentUser', JSON.stringify(currentUser));
+          const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+          const idx = registered.findIndex((u: any) => (u.email || '').trim().toLowerCase() === email);
+          if (idx !== -1) {
+            registered[idx] = { ...registered[idx], profileImage: croppedImage };
+            localStorage.setItem('registeredUsers', JSON.stringify(registered));
+          }
+        }
       }
-      setShowCropModal(false);
-      setImageToCrop(null);
-      setCropPosition({ x: 0, y: 0 });
-      setCropScale(1);
+    } catch (e) {
+      console.warn('Failed to save profile image:', e);
     }
+    setShowCropModal(false);
+    setImageToCrop(null);
+    setCropPosition({ x: 0, y: 0 });
+    setCropScale(1);
   };
 
   const handleCancelCrop = () => {
@@ -1700,23 +1712,33 @@ function AccountPage() {
                     WebkitBackdropFilter: 'blur(10px)'
                   }}
                 >
-                  {/* Profile Picture */}
+                  {/* Profile Picture - circle viewport matches crop modal framing (no extra scale/translate) */}
                   <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                    <div 
-                      style={{ width: '100px', height: '100px', position: 'relative', cursor: 'pointer' }}
+                    <div
+                      style={{
+                        width: '100px',
+                        height: '100px',
+                        position: 'relative',
+                        cursor: 'pointer',
+                        overflow: 'hidden',
+                        borderRadius: '50%',
+                        border: '1.3px solid #000',
+                        flexShrink: 0
+                      }}
                       onClick={() => setShowEnlargedImage(true)}
                     >
                       <img
                         src={profileImage}
                         alt="Profile"
                         style={{
+                          display: 'block',
                           width: '100%',
                           height: '100%',
-                          // Match OAuth display: custom images (URL or cropped data URL) fill the circle, centered
                           objectFit: isImageChanged ? 'cover' : 'fill',
-                          objectPosition: 'center',
-                          borderRadius: '50%',
-                          border: '1.3px solid #000'
+                          objectPosition: 'center center',
+                          margin: 0,
+                          padding: 0,
+                          verticalAlign: 'middle'
                         }}
                       />
                     </div>
@@ -2254,24 +2276,6 @@ function AccountPage() {
                 border: '1.3px solid #000'
               }}
             />
-            <button
-              onClick={() => setShowEnlargedImage(false)}
-              style={{
-                position: 'absolute',
-                top: '-40px',
-                right: '0',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontFamily: '"Futura PT Medium"',
-                color: '#000',
-                textTransform: 'uppercase',
-                padding: '8px'
-              }}
-            >
-              CLOSE
-            </button>
           </div>
         </div>
       )}

@@ -130,6 +130,20 @@ function SignInPage() {
   const [socialAuthError, setSocialAuthError] = useState('');
   const [socialLoading, setSocialLoading] = useState<'facebook' | 'google' | null>(null);
 
+  /** Normalize email for OAuth lookup so Gmail dotted variants (user.name@gmail.com vs username@gmail.com) match. */
+  const normalizeEmailForOAuthLookup = (raw: string): string => {
+    const e = (raw || '').trim().toLowerCase();
+    if (!e) return e;
+    const at = e.indexOf('@');
+    if (at <= 0) return e;
+    const local = e.slice(0, at);
+    const domain = e.slice(at);
+    if (domain === '@gmail.com' || domain === '@googlemail.com') {
+      return local.replace(/\./g, '') + domain;
+    }
+    return e;
+  };
+
   const createOrUpdateOAuthUser = (profile: {
     provider: 'facebook' | 'google';
     id?: string;
@@ -147,10 +161,14 @@ function SignInPage() {
     const nameParts = (profile.name || '').trim().split(/\s+/).filter(Boolean);
     const firstName = nameParts[0] || '';
     const lastName = nameParts.slice(1).join(' ') || '';
-    let existingIdx = registeredUsers.findIndex((u: any) => (u.email || '').toLowerCase() === email);
+    const normalizedEmail = normalizeEmailForOAuthLookup(email);
+    let existingIdx = registeredUsers.findIndex((u: any) => normalizeEmailForOAuthLookup(u.email || '') === normalizedEmail);
+    if (existingIdx < 0 && profile.id) {
+      existingIdx = registeredUsers.findIndex((u: any) => (u.oauthId === profile.id || u.authProviderId === profile.id) && u.authProvider === profile.provider);
+    }
     let user: any;
     if (existingIdx >= 0) {
-      user = { ...registeredUsers[existingIdx], authProvider: profile.provider, firstName: firstName || registeredUsers[existingIdx].firstName, lastName: lastName || registeredUsers[existingIdx].lastName };
+      user = { ...registeredUsers[existingIdx], authProvider: profile.provider, oauthId: profile.id, authProviderId: profile.id, firstName: firstName || registeredUsers[existingIdx].firstName, lastName: lastName || registeredUsers[existingIdx].lastName };
       if (profile.provider === 'facebook' && profile.link) user.facebook = profile.link;
       registeredUsers[existingIdx] = user;
     } else {
@@ -180,6 +198,8 @@ function SignInPage() {
         hasMadeFirstPurchase: false,
         unlockedDiscounts: ['signup'],
         authProvider: profile.provider,
+        oauthId: profile.id,
+        authProviderId: profile.id,
         createdAt: new Date().toISOString()
       };
       registeredUsers.push(user);
@@ -200,6 +220,11 @@ function SignInPage() {
     }
     localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
     localStorage.setItem('currentUser', JSON.stringify(user));
+    if (user.profileImage) {
+      localStorage.setItem('profileImage', user.profileImage);
+    } else {
+      localStorage.removeItem('profileImage');
+    }
     localStorage.setItem('isSignedIn', 'true');
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
     setSocialLoading(null);
@@ -1024,6 +1049,11 @@ function SignInPage() {
                           }
                         }
                         localStorage.setItem('currentUser', JSON.stringify(userToSet));
+                        if (userToSet.profileImage) {
+                          localStorage.setItem('profileImage', userToSet.profileImage);
+                        } else {
+                          localStorage.removeItem('profileImage');
+                        }
                         localStorage.setItem('isSignedIn', 'true');
                         setIsSignedIn(true);
                         
