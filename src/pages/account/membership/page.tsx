@@ -1415,7 +1415,7 @@ function MembershipPage() {
                                 </td>
                               </tr>
                               <tr>
-                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>REWARDS + PRIZES</span></td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>REWARDS<br />+ PRIZES</span></td>
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
                                   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
@@ -2128,7 +2128,7 @@ fontFamily: '"Futura PT Book"',
                     </div>
                     <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        MEMBER REWARDS + PRIZES
+                        MEMBER REWARDS<br />+ PRIZES
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
                         ELIGIBLE FOR A CHANCE TO WIN DISCOUNTS, VOUCHERS + PRODUCT
