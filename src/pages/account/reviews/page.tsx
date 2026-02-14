@@ -710,8 +710,8 @@ function ReviewsPage() {
                 {/* Below scroll - always visible */}
                 {activeTab === 'SHOP' && displayedShopReviews.length > 0 && (
                   <div style={{ marginTop: '14px', marginBottom: '-4px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', flexShrink: 0 }}>
-                    {hasMoreShop ? (
-                      <>
+                    <div style={{ minHeight: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {hasMoreShop ? (
                         <button
                           onClick={handleLoadMoreShop}
                           style={{
@@ -728,12 +728,7 @@ function ReviewsPage() {
                         >
                           LOAD MORE
                         </button>
-                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0' }}>
-                          {displayedShopReviews.length} OF {totalShop} {totalShop === 1 ? 'REVIEW' : 'REVIEWS'}
-                        </p>
-                      </>
-                    ) : showShowLessShop ? (
-                      <>
+                      ) : showShowLessShop ? (
                         <button
                           onClick={handleShowLessShop}
                           style={{
@@ -750,24 +745,17 @@ function ReviewsPage() {
                         >
                           SHOW LESS
                         </button>
-                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0', textAlign: 'center' }}>
-                          {displayedShopReviews.length} OF {totalShop} {totalShop === 1 ? 'REVIEW' : 'REVIEWS'}
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <span style={{ display: 'block', height: '11px', lineHeight: '11px', fontSize: '11px', visibility: 'hidden', fontFamily: '"Futura PT Medium"' }} aria-hidden="true">SHOW LESS</span>
-                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0', textAlign: 'center' }}>
-                          {displayedShopReviews.length} OF {totalShop} {totalShop === 1 ? 'REVIEW' : 'REVIEWS'}
-                        </p>
-                      </>
-                    )}
+                      ) : null}
+                    </div>
+                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0', textAlign: 'center' }}>
+                      {displayedShopReviews.length} OF {totalShop} {totalShop === 1 ? 'REVIEW' : 'REVIEWS'}
+                    </p>
                   </div>
                 )}
                 {activeTab === 'TOOLS' && displayedToolReviews.length > 0 && (
                   <div style={{ marginTop: '14px', marginBottom: '-4px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', flexShrink: 0 }}>
-                    {hasMoreTool ? (
-                      <>
+                    <div style={{ minHeight: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {hasMoreTool ? (
                         <button
                           onClick={handleLoadMoreTool}
                           style={{
@@ -784,12 +772,7 @@ function ReviewsPage() {
                         >
                           LOAD MORE
                         </button>
-                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0' }}>
-                          {displayedToolReviews.length} OF {totalTool} {totalTool === 1 ? 'REVIEW' : 'REVIEWS'}
-                        </p>
-                      </>
-                    ) : showShowLessTool ? (
-                      <>
+                      ) : showShowLessTool ? (
                         <button
                           onClick={handleShowLessTool}
                           style={{
@@ -806,18 +789,11 @@ function ReviewsPage() {
                         >
                           SHOW LESS
                         </button>
-                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0', textAlign: 'center' }}>
-                          {displayedToolReviews.length} OF {totalTool} {totalTool === 1 ? 'REVIEW' : 'REVIEWS'}
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <span style={{ display: 'block', height: '11px', lineHeight: '11px', fontSize: '11px', visibility: 'hidden', fontFamily: '"Futura PT Medium"' }} aria-hidden="true">SHOW LESS</span>
-                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0', textAlign: 'center' }}>
-                          {displayedToolReviews.length} OF {totalTool} {totalTool === 1 ? 'REVIEW' : 'REVIEWS'}
-                        </p>
-                      </>
-                    )}
+                      ) : null}
+                    </div>
+                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 -3px 0', textAlign: 'center' }}>
+                      {displayedToolReviews.length} OF {totalTool} {totalTool === 1 ? 'REVIEW' : 'REVIEWS'}
+                    </p>
                   </div>
                 )}
               </div>
