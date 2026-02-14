@@ -1,5 +1,5 @@
 /** Base count of mock reviews (shop + tool) shown on the reviews page. Account card uses this + user-submitted count. */
-export const MOCK_SHOP_REVIEWS_COUNT = 9;
+export const MOCK_SHOP_REVIEWS_COUNT = 8;
 export const MOCK_TOOL_REVIEWS_COUNT = 3;
 export const MOCK_REVIEWS_BASE_COUNT = MOCK_SHOP_REVIEWS_COUNT + MOCK_TOOL_REVIEWS_COUNT;
 

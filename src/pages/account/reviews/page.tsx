@@ -19,16 +19,6 @@ interface Review {
 // Mock shop reviews (wig units)
 const mockShopReviews: Review[] = [
   {
-    id: '1',
-    date: '04-26-2023',
-    productName: 'NOIR',
-    subtitle: 'GREAT QUALITY',
-    body: 'WIG SHIPPED QUICKER THAN I ANTICIPATED WHICH WAS GREAT! ALSO OBSESSED WITH THE QUALITY OF THIS HAIR. 10/10 WILL BE PURCHASING ANOTHER UNIT FROM HERE AGAIN.',
-    rating: 5,
-    reviewCount: 35,
-    thumbnail: '/assets/natural front.png'
-  },
-  {
     id: '2',
     date: '04-26-2023',
     productName: 'SOFT WAVE',
