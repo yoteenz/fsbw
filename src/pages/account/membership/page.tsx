@@ -1,18 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../../constants/tiers';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
+import pointsHistoryIcon from '../../../assets/icons/points-history.svg?url';
+import membershipIcon from '../../../assets/icons/membership-icon.svg?url';
+import moreWaysIcon from '../../../assets/icons/more-ways.svg?url';
+import additionalFeaturesIcon from '../../../assets/icons/additional-features.svg?url';
 
 const BRAND_GRAY = '#808080';
+const CHART_BORDER = '0.8px solid #000';
 
 const EARN_TASKS = [
   { id: 'newsletter_signup', action: 'NEWSLETTER SIGN UP', points: 50 },
   { id: 'refer_friend', action: 'REFER A FRIEND', points: 100 },
   { id: 'content_review', action: 'LEAVE A CONTENT REVIEW', points: 150 },
-  { id: 'photo_video_tags', action: 'PHOTO + VIDEO TAGS', points: 200 },
+  { id: 'photo_video_tags', action: 'SOCIAL MEDIA CONTENT TAG', points: 200 },
   { id: 'facebook', action: 'LIKE OUR FACEBOOK', points: 250, link: 'https://www.facebook.com/bookfrontalslayer?utm_source=membership&utm_medium=earn&utm_campaign=like_facebook' },
   { id: 'instagram', action: 'FOLLOW OUR INSTAGRAM', points: 250, link: 'https://www.instagram.com/frontalslayer/?utm_source=membership&utm_medium=earn&utm_campaign=follow_instagram' },
   { id: 'tiktok', action: 'FOLLOW OUR TIK TOK', points: 250, link: 'https://www.tiktok.com/@frontalslayer?utm_source=membership&utm_medium=earn&utm_campaign=follow_tiktok' },
@@ -203,6 +208,43 @@ function MembershipPage() {
 
   // Progress toward next tier based on spend (Silver → Red → Black).
   const getNextTierProgress = () => {
+    // When no one is signed in, show mock design: Silver tier with bar progressing toward Red (not full)
+    if (!userData) {
+      const mockCurrentSpend = SPEND_TIER_THRESHOLDS.SILVER; // 500, at Silver
+      const mockNextTier = SPEND_TIER_THRESHOLDS.RED;        // 2000, bar fills toward Red
+      const mockRemaining = mockNextTier - mockCurrentSpend;
+      const mockProgressPercent = Math.min(100, (mockCurrentSpend / mockNextTier) * 100); // 500 pts count toward Red = 25%
+      return {
+        currentSpend: mockCurrentSpend,
+        currentPoints: mockCurrentSpend,
+        nextTier: mockNextTier,
+        nextTierSpend: mockNextTier,
+        spendRemaining: mockRemaining,
+        progressPercent: mockProgressPercent,
+        currentTierName: 'SILVER' as const,
+        nextTierName: 'RED' as const
+      };
+    }
+    const isAdmin = userData && (
+      (userData.firstName?.toLowerCase() === 'kateena' && userData.lastName?.toLowerCase() === 'armstrong') ||
+      userData.email?.toLowerCase().includes('kateena') ||
+      userData.email?.toLowerCase().includes('armstrong')
+    );
+    if (isAdmin) {
+      // Admin: show BLACK tier benefits but bar fills to 2,000 so "EARN X MORE POINTS" text is visible
+      const adminCurrentSpend = 1000;
+      const adminBarMax = 2000;
+      return {
+        currentSpend: adminCurrentSpend,
+        currentPoints: adminCurrentSpend,
+        nextTier: adminBarMax,
+        nextTierSpend: adminBarMax,
+        spendRemaining: adminBarMax - adminCurrentSpend,
+        progressPercent: (adminCurrentSpend / adminBarMax) * 100,
+        currentTierName: 'BLACK' as const,
+        nextTierName: null
+      };
+    }
     const currentSpend = getCurrentPeriodSpending();
     const thresholds = [SPEND_TIER_THRESHOLDS.SILVER, SPEND_TIER_THRESHOLDS.RED, SPEND_TIER_THRESHOLDS.BLACK];
     const nextTierSpend = thresholds.find((t) => t > currentSpend) ?? null;
@@ -219,11 +261,8 @@ function MembershipPage() {
         nextTierName: null
       };
     }
-    const prevTierSpend = thresholds.filter((t) => t < nextTierSpend).pop() ?? 0;
     const spendRemaining = nextTierSpend - currentSpend;
-    const segmentSize = nextTierSpend - prevTierSpend;
-    const progressInSegment = currentSpend - prevTierSpend;
-    const progressPercent = Math.min(100, Math.max(0, (progressInSegment / segmentSize) * 100));
+    const progressPercent = Math.min(100, (currentSpend / nextTierSpend) * 100); // pts earned count toward next tier (e.g. 500/2000 = 25% for Silver→Red)
     const nextTierName = nextTierSpend === SPEND_TIER_THRESHOLDS.BLACK ? 'BLACK' : nextTierSpend === SPEND_TIER_THRESHOLDS.RED ? 'RED' : 'SILVER';
     return {
       currentSpend,
@@ -268,6 +307,7 @@ function MembershipPage() {
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [showCancelConfirmModal, setShowCancelConfirmModal] = useState(false);
   const [showLoyaltyRewards, setShowLoyaltyRewards] = useState(false);
+  const [showBenefitsModal, setShowBenefitsModal] = useState(false);
 
   // Subscription tier data
   const subscriptionTiers = {
@@ -275,6 +315,86 @@ function MembershipPage() {
     '6months': { name: '6 MONTHS PREMIUM', price: 520 },
     '12months': { name: '12 MONTHS PREMIUM', price: 960 }
   };
+
+  // Currency state - load from localStorage on mount (same as CartDropdown / shopping-bag)
+  const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedCurrency = localStorage.getItem('selectedCurrency');
+        return savedCurrency || 'USD';
+      } catch (e) {
+        return 'USD';
+      }
+    }
+    return 'USD';
+  });
+
+  const currencyRates = useMemo(() => ({
+    USD: { symbol: '&#36;', rate: 1.0, name: 'US Dollar' },
+    EUR: { symbol: '&euro;', rate: 0.85, name: 'Euro' },
+    GBP: { symbol: '&pound;', rate: 0.73, name: 'British Pound' },
+    CAD: { symbol: 'C&#36;', rate: 1.25, name: 'Canadian Dollar' },
+    AUD: { symbol: 'A&#36;', rate: 1.35, name: 'Australian Dollar' },
+    JPY: { symbol: '&yen;', rate: 110.0, name: 'Japanese Yen' },
+    CNY: { symbol: '&yen;', rate: 6.45, name: 'Chinese Yuan' },
+    INR: { symbol: '&#8377;', rate: 75.0, name: 'Indian Rupee' },
+    BRL: { symbol: 'R&#36;', rate: 5.2, name: 'Brazilian Real' },
+    MXN: { symbol: '&#36;', rate: 20.0, name: 'Mexican Peso' }
+  }), []);
+
+  // Load selected currency from localStorage on mount
+  useEffect(() => {
+    const savedCurrency = localStorage.getItem('selectedCurrency');
+    if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
+      if (savedCurrency !== selectedCurrency) {
+        setSelectedCurrency(savedCurrency);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Save selected currency to localStorage
+  useEffect(() => {
+    localStorage.setItem('selectedCurrency', selectedCurrency);
+  }, [selectedCurrency]);
+
+  // Listen for currency changes from cart dropdown
+  useEffect(() => {
+    const handleCurrencyChange = () => {
+      const savedCurrency = localStorage.getItem('selectedCurrency');
+      if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
+        setSelectedCurrency(savedCurrency);
+      }
+    };
+    window.addEventListener('storage', handleCurrencyChange);
+    const handleCustomCurrencyChange = (event: CustomEvent) => {
+      const newCurrency = event.detail;
+      if (newCurrency && currencyRates[newCurrency as keyof typeof currencyRates]) {
+        setSelectedCurrency(newCurrency);
+        localStorage.setItem('selectedCurrency', newCurrency);
+      }
+    };
+    window.addEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
+    const interval = setInterval(handleCurrencyChange, 500);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('storage', handleCurrencyChange);
+      window.removeEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
+    };
+  }, [currencyRates]);
+
+  // Format price with currency for chart and total due
+  const formatPrice = useCallback((price: number) => {
+    if (price == null || isNaN(price)) {
+      const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
+      return { __html: currency.symbol + '0 ' + selectedCurrency };
+    }
+    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
+    const convertedPrice = price * currency.rate;
+    return {
+      __html: currency.symbol + convertedPrice.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' ' + selectedCurrency
+    };
+  }, [currencyRates, selectedCurrency]);
 
   // Reset premium view when navigating away from membership page
   useEffect(() => {
@@ -963,7 +1083,7 @@ function MembershipPage() {
                                   </div>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', color: BRAND_GRAY, fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
                                     {nextReward
-                                      ? `${(nextReward.points - totalPoints).toLocaleString()} MORE PTS TO EARN ${nextReward.discount}`
+                                      ? `${(nextReward.points - totalPoints).toLocaleString()} MORE POINTS TO EARN ${nextReward.discount}`
                                       : 'MAX REWARD REACHED'}
                                   </p>
                                 </div>
@@ -1031,7 +1151,7 @@ function MembershipPage() {
                     className="border border-black bg-white/60 backdrop-blur-sm w-full transition-all duration-300 ease-out"
                     style={{
                       borderWidth: '1.3px',
-                      padding: '20px',
+                      padding: '20px 20px 0 20px',
                       backgroundColor: 'rgba(255, 255, 255, 0.6)'
                     }}
                   >
@@ -1066,185 +1186,286 @@ function MembershipPage() {
                       </div>
 
                       {/* Comparison Table */}
-                        <div style={{ overflowX: 'auto', marginBottom: '20px' }}>
-                          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '9px' }}>
+                        <div style={{ overflowX: 'auto', marginTop: '40px', marginBottom: '38px', display: 'flex', justifyContent: 'center' }}>
+                          <table style={{ width: 'max-content', borderCollapse: 'collapse', fontSize: '9px', transform: 'translateZ(0)' }}>
                             <thead>
                               <tr>
-                                <th style={{ 
+<th style={{ 
                                   fontFamily: '"Futura PT Medium"', 
-                                  padding: '8px 4px', 
-                                  textAlign: 'left', 
-                                  borderBottom: '1px solid #000',
+                                  padding: '4px 4px 10px',
+                                  textAlign: 'center',
+                                  borderBottom: CHART_BORDER,
+                                  borderRight: CHART_BORDER,
                                   fontWeight: '500',
-                                  textTransform: 'uppercase'
-                                }}>BENEFITS</th>
+                                  textTransform: 'uppercase',
+                                  color: '#EB1C24',
+                                  minWidth: '68px',
+                                  maxWidth: '68px'
+                                }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>BENEFITS</span></th>
                                 <th style={{ 
                                   fontFamily: '"Futura PT Medium"', 
-                                  padding: '8px 4px', 
+                                  padding: '4px 4px 10px', 
                                   textAlign: 'center', 
-                                  borderBottom: '1px solid #000',
+                                  borderBottom: CHART_BORDER,
+                                  borderRight: CHART_BORDER,
                                   fontWeight: '500',
-                                  textTransform: 'uppercase'
+                                  textTransform: 'uppercase',
+                                  minWidth: '58px',
+                                  maxWidth: '58px'
                                 }}>BASIC</th>
                                 <th style={{ 
                                   fontFamily: '"Futura PT Medium"', 
-                                  padding: '8px 4px', 
+                                  padding: '4px 4px 10px', 
                                   textAlign: 'center', 
-                                  borderBottom: '1px solid #000',
+                                  borderBottom: CHART_BORDER,
+                                  borderRight: CHART_BORDER,
                                   fontWeight: '500',
-                                  textTransform: 'uppercase'
+                                  textTransform: 'uppercase',
+                                  color: BRAND_GRAY,
+                                  lineHeight: '1.25',
+                                  minWidth: '58px',
+                                  maxWidth: '58px'
                                 }}>3 MONTHS PREMIUM</th>
                                 <th style={{ 
                                   fontFamily: '"Futura PT Medium"', 
-                                  padding: '8px 4px', 
+                                  padding: '4px 4px 10px', 
                                   textAlign: 'center', 
-                                  borderBottom: '1px solid #000',
+                                  borderBottom: CHART_BORDER,
+                                  borderRight: CHART_BORDER,
                                   fontWeight: '500',
-                                  textTransform: 'uppercase'
+                                  textTransform: 'uppercase',
+                                  color: BRAND_GRAY,
+                                  lineHeight: '1.25',
+                                  minWidth: '58px',
+                                  maxWidth: '58px'
                                 }}>6 MONTHS PREMIUM</th>
                                 <th style={{ 
                                   fontFamily: '"Futura PT Medium"', 
-                                  padding: '8px 4px', 
+                                  padding: '4px 4px 10px', 
                                   textAlign: 'center', 
-                                  borderBottom: '1px solid #000',
+                                  borderBottom: CHART_BORDER,
                                   fontWeight: '500',
-                                  textTransform: 'uppercase'
-                                }}>12 MONTHS PREMIUM</th>
+                                  textTransform: 'uppercase',
+                                  color: BRAND_GRAY,
+                                  lineHeight: '1.25',
+                                  minWidth: '58px',
+                                  maxWidth: '58px'
+                                }}><span style={{ display: 'inline-block', marginLeft: '12px' }}>12 MONTHS PREMIUM</span></th>
                               </tr>
                             </thead>
                             <tbody>
                               <tr>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textTransform: 'uppercase' }}>WELCOME DISCOUNT</td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>$10 OFF</td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>$20 OFF</td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>$40 OFF</td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>$60 OFF</td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>WELCOME DISCOUNT</span></td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', fontSize: '10px', padding: '6px 4px', textAlign: 'center', whiteSpace: 'nowrap', lineHeight: '1.25' }}><span dangerouslySetInnerHTML={formatPrice(10)} /></td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', fontSize: '10px', padding: '6px 4px', textAlign: 'center', whiteSpace: 'nowrap', lineHeight: '1.25' }}><span dangerouslySetInnerHTML={formatPrice(20)} /></td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', fontSize: '10px', padding: '6px 4px', textAlign: 'center', whiteSpace: 'nowrap', lineHeight: '1.25' }}><span dangerouslySetInnerHTML={formatPrice(40)} /></td>
+                                <td style={{ borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', fontSize: '10px', padding: '6px 4px', textAlign: 'center', whiteSpace: 'nowrap', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '12px' }}><span dangerouslySetInnerHTML={formatPrice(60)} /></span></td>
                               </tr>
                               <tr>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textTransform: 'uppercase' }}>BIRTHDAY GIFT</td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '16px', height: '16px' }} />
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>BIRTHDAY GIFT</span></td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
+                                  </div>
                                 </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                  </div>
                                 </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                  </div>
                                 </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
-                                </td>
-                              </tr>
-                              <tr>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textTransform: 'uppercase' }}>REDUCED SHIPPING</td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '16px', height: '16px' }} />
-                                </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
-                                </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
-                                </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
+                                <td style={{ borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <span style={{ display: 'inline-block', marginLeft: '12px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                      <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                    </div>
+                                  </span>
                                 </td>
                               </tr>
                               <tr>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textTransform: 'uppercase' }}>PREMIUM BUILD-A-WIG</td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '16px', height: '16px' }} />
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>REDUCED SHIPPING</span></td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
+                                  </div>
                                 </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                  </div>
                                 </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                  </div>
                                 </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
-                                </td>
-                              </tr>
-                              <tr>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textTransform: 'uppercase' }}>LOUNGE ACCESS</td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '16px', height: '16px' }} />
-                                </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
-                                </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
-                                </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
+                                <td style={{ borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <span style={{ display: 'inline-block', marginLeft: '12px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                      <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                    </div>
+                                  </span>
                                 </td>
                               </tr>
                               <tr>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textTransform: 'uppercase' }}>VIP SUPPORT</td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '16px', height: '16px' }} />
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>PREMIUM<br />BUILD-A-WIG</span></td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
+                                  </div>
                                 </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '16px', height: '16px' }} />
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                  </div>
                                 </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                  </div>
                                 </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
-                                </td>
-                              </tr>
-                              <tr>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textTransform: 'uppercase' }}>PRIORITY BOOKING</td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '16px', height: '16px' }} />
-                                </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '16px', height: '16px' }} />
-                                </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
-                                </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
+                                <td style={{ borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <span style={{ display: 'inline-block', marginLeft: '12px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                      <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                    </div>
+                                  </span>
                                 </td>
                               </tr>
                               <tr>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textTransform: 'uppercase' }}>FREE GIVEAWAYS</td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '16px', height: '16px' }} />
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>LOUNGE ACCESS</span></td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
+                                  </div>
                                 </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '16px', height: '16px' }} />
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                  </div>
                                 </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '16px', height: '16px' }} />
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                  </div>
                                 </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
+                                <td style={{ borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <span style={{ display: 'inline-block', marginLeft: '12px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                      <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                    </div>
+                                  </span>
                                 </td>
                               </tr>
                               <tr>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textTransform: 'uppercase' }}>2X LOYALTY POINTS</td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '16px', height: '16px' }} />
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>VIP SUPPORT</span></td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
+                                  </div>
                                 </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '16px', height: '16px' }} />
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                  </div>
                                 </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                  </div>
                                 </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8px', height: '8px' }} />
+                                <td style={{ borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <span style={{ display: 'inline-block', marginLeft: '12px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                      <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                    </div>
+                                  </span>
                                 </td>
                               </tr>
-                              <tr style={{ borderTop: '1px solid #000' }}>
-                                <td style={{ fontFamily: '"Futura PT Medium"', padding: '8px 4px', textTransform: 'uppercase', fontWeight: '500' }}>PRICE</td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '8px 4px', textAlign: 'center' }}>FREE</td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '8px 4px', textAlign: 'center' }}>
-                                  $280 USD
+                              <tr>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>PRIORITY BOOKING</span></td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
+                                  </div>
+                                </td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                  </div>
+                                </td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                  </div>
+                                </td>
+                                <td style={{ borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <span style={{ display: 'inline-block', marginLeft: '12px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                      <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                    </div>
+                                  </span>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>FREE GIVEAWAYS</span></td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
+                                  </div>
+                                </td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
+                                  </div>
+                                </td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
+                                  </div>
+                                </td>
+                                <td style={{ borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <span style={{ display: 'inline-block', marginLeft: '12px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                      <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                    </div>
+                                  </span>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>2X LOYALTY POINTS</span></td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
+                                  </div>
+                                </td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
+                                  </div>
+                                </td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
+                                  </div>
+                                </td>
+                                <td style={{ borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <span style={{ display: 'inline-block', marginLeft: '12px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                      <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                    </div>
+                                  </span>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style={{ borderRight: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '8px 4px 0', textTransform: 'uppercase', fontWeight: '500', verticalAlign: 'top', color: '#EB1C24', textAlign: 'center', minWidth: '68px', maxWidth: '68px', fontSize: '10px' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>PRICE</span></td>
+                                <td style={{ borderRight: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '8px 4px 0', textAlign: 'center', verticalAlign: 'top', fontSize: '10px' }}>FREE</td>
+                                <td style={{ borderRight: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '8px 4px 0', textAlign: 'center', verticalAlign: 'top', fontSize: '10px' }}>
+                                  <span dangerouslySetInnerHTML={formatPrice(280)} />
                                   <button
                                     onClick={() => {
                                       // If changing subscription, don't allow deselection of current tier
@@ -1253,10 +1474,10 @@ function MembershipPage() {
                                       }
                                       setSelectedTier(selectedTier === '3months' ? null : '3months');
                                     }}
-                                    className="font-futura w-full text-center py-1 text-[9px] font-semibold bg-transparent cursor-pointer mt-2"
+                                    className="font-futura w-full text-center py-1 text-[10px] font-semibold bg-transparent cursor-pointer mt-2"
                                     style={{ 
                                       border: 'none',
-                                      color: selectedTier === '3months' ? '#EB1C24' : '#000000',
+                                      color: selectedTier === '3months' ? '#EB1C24' : BRAND_GRAY,
                                       fontFamily: '"Futura PT Medium"',
                                       backgroundColor: 'transparent',
                                       textTransform: 'uppercase',
@@ -1269,8 +1490,8 @@ function MembershipPage() {
                                     {selectedTier === '3months' ? (hasPremiumSubscription ? 'SELECTED' : 'DESELECT') : 'SELECT'}
                                   </button>
                                 </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '8px 4px', textAlign: 'center' }}>
-                                  $520 USD
+                                <td style={{ borderRight: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '8px 4px 0', textAlign: 'center', verticalAlign: 'top', fontSize: '10px' }}>
+                                  <span dangerouslySetInnerHTML={formatPrice(520)} />
                                   <button
                                     onClick={() => {
                                       // If changing subscription, don't allow deselection of current tier
@@ -1279,10 +1500,10 @@ function MembershipPage() {
                                       }
                                       setSelectedTier(selectedTier === '6months' ? null : '6months');
                                     }}
-                                    className="font-futura w-full text-center py-1 text-[9px] font-semibold bg-transparent cursor-pointer mt-2"
+                                    className="font-futura w-full text-center py-1 text-[10px] font-semibold bg-transparent cursor-pointer mt-2"
                                     style={{ 
                                       border: 'none',
-                                      color: selectedTier === '6months' ? '#EB1C24' : '#000000',
+                                      color: selectedTier === '6months' ? '#EB1C24' : BRAND_GRAY,
                                       fontFamily: '"Futura PT Medium"',
                                       backgroundColor: 'transparent',
                                       textTransform: 'uppercase',
@@ -1295,43 +1516,45 @@ function MembershipPage() {
                                     {selectedTier === '6months' ? (hasPremiumSubscription ? 'SELECTED' : 'DESELECT') : 'SELECT'}
                                   </button>
                                 </td>
-                                <td style={{ fontFamily: '"Futura PT Book"', padding: '8px 4px', textAlign: 'center' }}>
-                                  $960 USD
-                                  <button
-                                    onClick={() => {
-                                      // If changing subscription, don't allow deselection of current tier
-                                      if (hasPremiumSubscription && selectedTier === '12months') {
-                                        return; // Can't deselect current subscription
-                                      }
-                                      setSelectedTier(selectedTier === '12months' ? null : '12months');
-                                    }}
-                                    className="font-futura w-full text-center py-1 text-[9px] font-semibold bg-transparent cursor-pointer mt-2"
-                                    style={{ 
-                                      border: 'none',
-                                      color: selectedTier === '12months' ? '#EB1C24' : '#000000',
-                                      fontFamily: '"Futura PT Medium"',
-                                      backgroundColor: 'transparent',
-                                      textTransform: 'uppercase',
-                                      display: 'block',
-                                      width: '100%',
-                                      padding: '4px 0'
-                                    }}
-                                    type="button"
-                                  >
-                                    {selectedTier === '12months' ? (hasPremiumSubscription ? 'SELECTED' : 'DESELECT') : 'SELECT'}
-                                  </button>
+                                <td style={{ fontFamily: '"Futura PT Medium"', padding: '8px 4px 0', textAlign: 'center', verticalAlign: 'top', fontSize: '10px' }}>
+                                  <span style={{ display: 'inline-block', marginLeft: '12px' }}>
+                                    <span dangerouslySetInnerHTML={formatPrice(960)} />
+                                    <button
+                                      onClick={() => {
+                                        // If changing subscription, don't allow deselection of current tier
+                                        if (hasPremiumSubscription && selectedTier === '12months') {
+                                          return; // Can't deselect current subscription
+                                        }
+                                        setSelectedTier(selectedTier === '12months' ? null : '12months');
+                                      }}
+                                      className="font-futura w-full text-center py-1 text-[10px] font-semibold bg-transparent cursor-pointer mt-2"
+                                      style={{ 
+                                        border: 'none',
+                                        color: selectedTier === '12months' ? '#EB1C24' : BRAND_GRAY,
+                                        fontFamily: '"Futura PT Medium"',
+                                        backgroundColor: 'transparent',
+                                        textTransform: 'uppercase',
+                                        display: 'block',
+                                        width: '100%',
+                                        padding: '4px 0'
+                                      }}
+                                      type="button"
+                                    >
+                                      {selectedTier === '12months' ? (hasPremiumSubscription ? 'SELECTED' : 'DESELECT') : 'SELECT'}
+                                    </button>
+                                  </span>
                                 </td>
                               </tr>
                             </tbody>
                           </table>
                         </div>
 
-                        {/* Total Due Today */}
-                        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                        {/* Total Due Today - negative margin pulls card bottom up without changing button distance (12px) from card */}
+                        <div style={{ textAlign: 'center', marginBottom: '-10px', paddingBottom: '0' }}>
                           <p
                             style={{
                               fontFamily: '"Futura PT Medium"',
-                              color: '#000000',
+                              color: '#EB1C24',
                               fontSize: '11px',
                               margin: '0 0 4px 0',
                               textTransform: 'uppercase',
@@ -1346,14 +1569,58 @@ function MembershipPage() {
                               color: '#000000',
                               fontSize: '14px',
                               margin: '0',
+                              paddingBottom: '0',
+                              lineHeight: '1.2',
                               fontWeight: '500'
                             }}
                           >
-                            {selectedTier ? `$${subscriptionTiers[selectedTier as keyof typeof subscriptionTiers].price} USD` : '$0 USD'}
+                            <span dangerouslySetInnerHTML={formatPrice(selectedTier ? subscriptionTiers[selectedTier as keyof typeof subscriptionTiers].price : 0)} />
                           </p>
                         </div>
                       </div>
                     </>
+                  </div>
+                  ) : showBenefitsModal ? (
+                  <div
+                    className="border border-black bg-white/60 backdrop-blur-sm w-full transition-all duration-300 ease-out flex flex-col"
+                    style={{
+                      borderWidth: '1.3px',
+                      padding: '20px 20px 20px 20px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                      minHeight: '560px',
+                      height: '100vh',
+                      maxHeight: '100vh'
+                    }}
+                  >
+                    <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', flexShrink: 0 }}>
+                      <h2 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500', margin: 0, textTransform: 'uppercase' }}>
+                        TIER BENEFITS & HOW IT WORKS
+                      </h2>
+                      <img
+                        src="/assets/close-icon.svg"
+                        alt="Close"
+                        onClick={() => setShowBenefitsModal(false)}
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          cursor: 'pointer',
+                          filter: 'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)'
+                        }}
+                      />
+                    </div>
+                    <div style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', lineHeight: 1.5, flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '0 0 6px 0', textTransform: 'uppercase' }}>INTRO BENEFITS (ONE-TIME PER ACCOUNT)</p>
+                      <p style={{ margin: '0 0 8px 0' }}>Once you reach a tier and collect its intro benefits, they do not repeat.</p>
+                      <p style={{ margin: '4px 0 2px 0', paddingLeft: '8px', borderLeft: '3px solid #808080' }}><span style={{ fontFamily: '"Futura PT Medium"', color: BRAND_GRAY }}>SILVER:</span> Welcome discount, 50 loyalty points</p>
+                      <p style={{ margin: '4px 0 2px 0', paddingLeft: '8px', borderLeft: '3px solid #EB1C24' }}><span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24' }}>RED:</span> Welcome discount, 1x Color Voucher, 1x Hairline Voucher, 500 loyalty points</p>
+                      <p style={{ margin: '4px 0 8px 0', paddingLeft: '8px', borderLeft: '3px solid #000' }}><span style={{ fontFamily: '"Futura PT Medium"', color: '#000000' }}>BLACK:</span> Welcome discount, 1x Color Voucher, 1x Hairline Voucher, 1x Styling Voucher, 1,000 loyalty points</p>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 6px 0', textTransform: 'uppercase' }}>RECURRING PERKS (EVERY 6-MONTH CYCLE)</p>
+                      <p style={{ margin: '0 0 2px 0' }}><strong>All tiers:</strong> Member discount (Silver 5%, Red 10%, Black 15%); 1x complimentary consultation per year.</p>
+                      <p style={{ margin: '6px 0 2px 0' }}><strong>Red & Black:</strong> 1x priority booking per year; 1x discounted shipping ($10 off) per year.</p>
+                      <p style={{ margin: '6px 0 8px 0' }}><strong>Black only:</strong> Annual Black tier gift; status protection (stay Black when short on points, 1x per year).</p>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 6px 0', textTransform: 'uppercase' }}>HOW IT WORKS</p>
+                      <p style={{ margin: 0 }}>Tiers run in 6-month cycles. Earn points from purchases to unlock or keep a tier. Hit the threshold (500 Silver, 2,000 Red, 4,000 Black) by period end to keep that tier and its perks for the next cycle. Intro benefits unlock once per account; recurring perks apply each cycle you maintain or reach that tier.</p>
+                    </div>
                   </div>
                   ) : (
                     <>
@@ -1467,7 +1734,7 @@ fontFamily: '"Futura PT Book"',
                                       </div>
                                       <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', color: BRAND_GRAY, fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
                                         {nextReward
-                                          ? `${(nextReward.points - totalPoints).toLocaleString()} MORE PTS TO EARN ${nextReward.discount}`
+                                          ? `${(nextReward.points - totalPoints).toLocaleString()} MORE POINTS TO EARN ${nextReward.discount}`
                                           : 'MAX REWARD REACHED'}
                                       </p>
                                     </div>
@@ -1531,12 +1798,12 @@ fontFamily: '"Futura PT Book"',
 
                 {/* Points History - Card */}
                         <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
-                          <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
+                          <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <p
                               style={{
                                 fontFamily: '"Futura PT Medium"',
                                 color: '#EB1C24',
-                                fontSize: '11px',
+                                fontSize: '12px',
                                 margin: '0',
                                 textTransform: 'uppercase',
                                 fontWeight: '500',
@@ -1545,6 +1812,7 @@ fontFamily: '"Futura PT Book"',
                             >
                               POINTS HISTORY
                             </p>
+                            <img src={pointsHistoryIcon} alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain' }} />
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase', marginBottom: '8px', fontFamily: '"Futura PT Medium"', fontWeight: '500', color: '#000000' }}>
                             <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left' }}>DATE</span>
@@ -1567,12 +1835,12 @@ fontFamily: '"Futura PT Book"',
 
                 {/* Card 2: MEMBERSHIP STATUS */}
                 <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
-                  <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
+                  <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <p
                       style={{
                         fontFamily: '"Futura PT Medium"',
                         color: '#EB1C24',
-                        fontSize: '11px',
+                        fontSize: '12px',
                         margin: '0',
                         textTransform: 'uppercase',
                         fontWeight: '500',
@@ -1581,49 +1849,106 @@ fontFamily: '"Futura PT Book"',
                     >
                       MEMBERSHIP STATUS
                     </p>
+                    <img src={membershipIcon} alt="" style={{ width: '18px', height: '18px', flexShrink: 0, objectFit: 'contain' }} />
                   </div>
                   <div>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                                    <p
+                                      style={{
+                                        fontFamily: '"Futura PT Book"',
+                                        color: '#000000',
+                                        fontSize: '10px',
+                                        margin: 0,
+                                        textTransform: 'uppercase'
+                                      }}
+                                    >
+                                      CURRENT TIER: <span style={{ color: (() => { const t = getNextTierProgress().currentTierName; return t === 'RED' ? '#EB1C24' : t === 'BLACK' ? '#000000' : BRAND_GRAY; })(), fontFamily: '"Futura PT Medium"' }}>{(() => getNextTierProgress().currentTierName)()}</span>
+                                    </p>
+                                    <p
+                                      style={{
+                                        fontFamily: '"Futura PT Medium"',
+                                        color: BRAND_GRAY,
+                                        fontSize: '9px',
+                                        margin: 0,
+                                        textTransform: 'uppercase'
+                                      }}
+                                    >
+                                      {(() => {
+                                        const { start, end } = getCurrentPeriod();
+                                        const startStr = start.toLocaleString('en-US', { month: 'short', day: 'numeric' }).toUpperCase();
+                                        const endStr = end.toLocaleString('en-US', { month: 'short', day: 'numeric' }).toUpperCase();
+                                        return `${startStr} - ${endStr}`;
+                                      })()}
+                                    </p>
+                                  </div>
                                   <p
                                     style={{
                                       fontFamily: '"Futura PT Book"',
                                       color: '#000000',
                                       fontSize: '10px',
-                                      margin: '0 0 4px 0',
-                                      textTransform: 'uppercase'
-                                    }}
-                                  >
-                                    CURRENT TIER: <span style={{ color: (() => { const t = getNextTierProgress().currentTierName; return t === 'RED' ? '#EB1C24' : t === 'BLACK' ? '#000000' : BRAND_GRAY; })(), fontFamily: '"Futura PT Medium"' }}>{(() => getNextTierProgress().currentTierName)()}</span>
-                                  </p>
-                                  <p
-                                    style={{
-                                      fontFamily: '"Futura PT Book"',
-                                      color: '#000000',
-                                      fontSize: '10px',
-                                      margin: '0 0 4px 0',
+                                      margin: '16px 0 4px 0',
                                       textTransform: 'uppercase'
                                     }}
                                   >
                                     {(() => {
                                       const t = getNextTierProgress().currentTierName;
                                       const welcomeAmount = getWelcomeDiscountAmount(t);
-                                      if (t === 'PENDING') return <>REACH SILVER TO UNLOCK BENEFITS</>;
-                                      if (t === 'BLACK') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 1X STYLING VOUCHER <br /> 1,000 LOYALTY POINTS</>;
-                                      if (t === 'RED') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 1X COLOR VOUCHER <br /> 500 LOYALTY POINTS</>;
+                                      if (t === 'PENDING') return <>REACH SILVER TO UNLOCK TIER BENEFITS!</>;
+                                      if (t === 'BLACK') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 1X COLOR VOUCHER <br />1X HAIRLINE VOUCHER, 1X STYLING VOUCHER, 1,000 LOYALTY POINTS</>;
+                                      if (t === 'RED') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 1X COLOR VOUCHER <br />1X HAIRLINE VOUCHER, 500 LOYALTY POINTS</>;
                                       return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 50 LOYALTY POINTS</>;
                                     })()}
                                   </p>
+                                  <button
+                                    type="button"
+                                    onClick={() => setShowBenefitsModal((prev) => !prev)}
+                                    style={{
+                                      fontFamily: '"Futura PT Medium"',
+                                      color: '#EB1C24',
+                                      fontSize: '10px',
+                                      margin: 0,
+                                      textTransform: 'uppercase',
+                                      textAlign: 'left',
+                                      background: 'none',
+                                      border: 'none',
+                                      padding: 0,
+                                      cursor: 'pointer',
+                                      display: 'block'
+                                    }}
+                                  >
+                                    EXPLORE ALL BENEFITS
+                                  </button>
                                   {(() => {
-                                const { currentSpend, spendRemaining, progressPercent, nextTier, nextTierName } = getNextTierProgress();
+                                const { currentSpend, spendRemaining, progressPercent, nextTier, nextTierName, currentTierName } = getNextTierProgress();
                                 const nextTierColor = nextTierName === 'BLACK' ? '#000000' : nextTierName === 'SILVER' ? BRAND_GRAY : '#EB1C24';
+                                const tierLabel = (() => {
+                                  if (nextTier == null) return null;
+                                  // Have they reached the points needed to keep their current tier this cycle?
+                                  const hasSecuredCurrentTier = currentTierName === 'SILVER' && currentSpend >= SPEND_TIER_THRESHOLDS.SILVER
+                                    || currentTierName === 'RED' && currentSpend >= SPEND_TIER_THRESHOLDS.RED
+                                    || currentTierName === 'BLACK' && currentSpend >= SPEND_TIER_THRESHOLDS.BLACK;
+                                  if (hasSecuredCurrentTier) {
+                                    return <>EARN <span style={{ color: '#EB1C24' }}>{spendRemaining.toLocaleString()}</span> MORE POINTS TO UNLOCK {nextTierName} TIER!</>;
+                                  }
+                                  // Not yet secured: show remain for the tier they're working toward (Silver if PENDING)
+                                  const remainTier = currentTierName === 'PENDING' ? 'SILVER' : currentTierName;
+                                  const remainThreshold = remainTier === 'SILVER' ? SPEND_TIER_THRESHOLDS.SILVER : remainTier === 'RED' ? SPEND_TIER_THRESHOLDS.RED : SPEND_TIER_THRESHOLDS.BLACK;
+                                  const remainPoints = Math.max(0, remainThreshold - currentSpend);
+                                  return <>EARN <span style={{ color: '#EB1C24' }}>{remainPoints.toLocaleString()}</span> MORE POINTS TO REMAIN {remainTier} TIER!</>;
+                                })();
                                 return (
                                   <>
                                     <div style={{ marginTop: '20px' }}>
                                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0' }}>
-                                        <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
-                                          NEXT TIER: <span style={{ color: nextTierColor, fontFamily: '"Futura PT Medium"' }}>{nextTierName != null ? nextTierName : '—'}</span>
-                                        </p>
+                                        {(currentTierName === 'SILVER' || currentTierName === 'RED') && nextTierName != null ? (
+                                          <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
+                                            NEXT TIER: <span style={{ color: nextTierColor, fontFamily: '"Futura PT Medium"' }}>{nextTierName}</span>
+                                          </p>
+                                        ) : <span />}
                                         <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
-                                          {currentSpend.toLocaleString()} PTS
+                                          {nextTier != null
+                                            ? `${currentSpend.toLocaleString()}/${nextTier.toLocaleString()} PTS`
+                                            : `${currentSpend.toLocaleString()} PTS`}
                                         </p>
                                       </div>
                                     </div>
@@ -1640,6 +1965,7 @@ fontFamily: '"Futura PT Book"',
                                         />
                                       </div>
                                     </div>
+                                    {tierLabel != null && (
                                     <p
                                       style={{
                                         fontFamily: '"Futura PT Book"',
@@ -1649,8 +1975,9 @@ fontFamily: '"Futura PT Book"',
                                         textTransform: 'uppercase'
                                       }}
                                     >
-                                      {nextTier != null ? <>EARN <span style={{ color: '#EB1C24' }}>{spendRemaining.toLocaleString()}</span> MORE POINTS TO REACH!</> : 'MAX TIER REACHED'}
+                                      {tierLabel}
                                     </p>
+                                    )}
                                   </>
                                 );
                               })()}
@@ -1659,12 +1986,12 @@ fontFamily: '"Futura PT Book"',
 
                         {/* MORE WAYS TO EARN - Card */}
                             <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
-                              <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
+                              <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <h3
                                   style={{
                                     fontFamily: '"Futura PT Medium"',
                                     color: '#EB1C24',
-                                    fontSize: '11px',
+                                    fontSize: '12px',
                                     margin: '0',
                                     textTransform: 'uppercase',
                                     fontWeight: '500',
@@ -1673,6 +2000,7 @@ fontFamily: '"Futura PT Book"',
                                 >
                                   MORE WAYS TO EARN
                                 </h3>
+                                <img src={moreWaysIcon} alt="" style={{ width: '18px', height: '18px', flexShrink: 0, objectFit: 'contain' }} />
                               </div>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                 {EARN_TASKS.map((item) => {
@@ -1695,20 +2023,21 @@ fontFamily: '"Futura PT Book"',
 
                         {hasPremiumSubscription && (
                           <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
-                            <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
+                            <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                               <p
                                 style={{
                                   fontFamily: '"Futura PT Medium"',
                                   color: '#EB1C24',
-                                  fontSize: '11px',
+                                  fontSize: '12px',
                                   margin: '0',
                                   textTransform: 'uppercase',
                                   fontWeight: '500',
                                   textAlign: 'left'
                                 }}
                               >
-                                ADDITIONAL FEATURES INCLUDED
+                                ADDITIONAL FEATURES
                               </p>
+                              <img src={additionalFeaturesIcon} alt="" style={{ width: '20px', height: '20px', flexShrink: 0, objectFit: 'contain', marginTop: '-2px' }} />
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                               {[
@@ -1819,13 +2148,13 @@ fontFamily: '"Futura PT Book"',
                   )
                 }
 
-                {/* UPGRADE/CHANGE/CANCEL SUBSCRIPTION Buttons - Below main card, only show when loyalty rewards is not active */}
-              {!showLoyaltyRewards && (
+                {/* UPGRADE/CHANGE/CANCEL SUBSCRIPTION Buttons - Below main card; hidden when benefits view is open */}
+              {!showLoyaltyRewards && !showBenefitsModal && (
                       <>
                         {hasPremiumSubscription ? (
                     <>
-                      {/* CHANGE SUBSCRIPTION Button */}
-                      <div className="px-0 md:px-0" style={{ marginTop: '-2px', marginBottom: '10px', transform: 'translateY(-2px)' }}>
+                      {/* CHANGE / CONFIRM SUBSCRIPTION Button - extra top spacing when chart is open (CONFIRM SUBSCRIPTION) */}
+                      <div className="px-0 md:px-0" style={{ marginTop: showPremiumView ? '12px' : '-2px', marginBottom: '10px', transform: showPremiumView ? 'none' : 'translateY(-2px)' }}>
                 <button
                           onClick={showPremiumView ? handleUpgradeButtonClick : handleChangeSubscription}
                   className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
@@ -1860,7 +2189,7 @@ fontFamily: '"Futura PT Book"',
             )}
                     </>
                   ) : (
-                    <div className="px-0 md:px-0" style={{ marginTop: '-2px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
+                    <div className="px-0 md:px-0" style={{ marginTop: showPremiumView ? '12px' : '-2px', marginBottom: '20px', transform: showPremiumView ? 'none' : 'translateY(-2px)' }}>
                       <button
                         onClick={handleUpgradeButtonClick}
                         className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
@@ -1906,6 +2235,7 @@ fontFamily: '"Futura PT Book"',
         cancelText="CANCEL"
         dataAttribute="cancel-subscription"
       />
+
     </div>
   );
 }
