@@ -662,10 +662,11 @@ function SettingsPage() {
                   {!showResetPasswordForm ? (
                     isOAuthUser ? (
                       <input
-                        type="text"
+                        type="password"
                         readOnly
-                        value={userData?.authProvider === 'google' ? 'SIGNED IN WITH GOOGLE' : userData?.authProvider === 'facebook' ? 'SIGNED IN WITH FACEBOOK' : 'SIGNED IN WITH SOCIAL'}
-                        style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080' }}
+                        value="••••••••••"
+                        style={{ ...inputBaseStyle }}
+                        autoComplete="off"
                       />
                     ) : (
                     <>
