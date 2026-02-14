@@ -386,7 +386,7 @@ function SettingsPage() {
         height: '24px',
         borderRadius: '12px',
         border: '1px solid black',
-        background: on ? '#EB1C24' : '#e5e5e5',
+        background: on ? '#ffffff' : '#e5e5e5',
         cursor: 'pointer',
         padding: 0,
         position: 'relative',
@@ -401,8 +401,8 @@ function SettingsPage() {
           width: '18px',
           height: '18px',
           borderRadius: '50%',
-          background: 'white',
-          border: '1px solid rgba(0,0,0,0.2)',
+          background: on ? '#EB1C24' : 'white',
+          border: '1px solid #000',
           transition: 'left 0.2s ease'
         }}
       />
