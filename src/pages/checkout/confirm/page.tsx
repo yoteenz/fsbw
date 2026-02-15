@@ -1108,7 +1108,10 @@ function CheckoutConfirmPage() {
                 style={{ 
                   height: '180px',
                   cursor: isDragging ? 'grabbing' : 'grab',
-                  userSelect: 'none'
+                  userSelect: 'none',
+                  display: 'flex',
+                  justifyContent: cartItems.length === 1 ? 'center' : 'flex-start',
+                  alignItems: 'center'
                 }}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
