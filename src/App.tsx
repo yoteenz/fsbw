@@ -91,6 +91,7 @@ const SoftWaveUnitPage = lazyWithLogging(() => import('./pages/wavy/soft-wave/pa
 const OceanCurlUnitPage = lazyWithLogging(() => import('./pages/curly/ocean-curl/page'), 'OceanCurlUnitPage');
 const BeachWaveUnitPage = lazyWithLogging(() => import('./pages/wavy/beach-wave/page'), 'BeachWaveUnitPage');
 const WishlistPage = lazyWithLogging(() => import('./pages/wishlist/page'), 'WishlistPage');
+const ViewListsPage = lazyWithLogging(() => import('./pages/wishlist/lists/page'), 'ViewListsPage');
 const AccountPage = lazyWithLogging(() => import('./pages/account/page'), 'AccountPage');
 const ConciergePage = lazyWithLogging(() => import('./pages/account/concierge/page'), 'ConciergePage');
 const MembershipPage = lazyWithLogging(() => import('./pages/account/membership/page'), 'MembershipPage');
@@ -591,6 +592,11 @@ function App() {
         <Route path="/wishlist" element={
           <Suspense fallback={<LoadingScreen />}>
             <WishlistPage />
+          </Suspense>
+        } />
+        <Route path="/wishlist/lists" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ViewListsPage />
           </Suspense>
         } />
         <Route path="/account" element={

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
+import AddToListModal from '../../components/AddToListModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 
@@ -43,6 +44,8 @@ function ShoppingBagPage() {
   const [showEmptyBagConfirm, setShowEmptyBagConfirm] = useState(false);
   const [deleteItemConfirm, setDeleteItemConfirm] = useState<{ itemId: string; type: 'cart' | 'saved'; previousQuantity?: number } | null>(null);
   const deleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [addToListModalOpen, setAddToListModalOpen] = useState(false);
+  const [addToListModalItem, setAddToListModalItem] = useState<any>(null);
 
   // Currency state - load from localStorage on mount
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -1272,17 +1275,26 @@ function ShoppingBagPage() {
 
                             {/* Quantity Counter with Save For Later */}
                             <div className="flex flex-col items-center justify-center absolute" style={{ right: '8px', top: '0', bottom: '0', marginLeft: 'auto' }}>
-                              <span
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setAddToListModalItem(item);
+                                  setAddToListModalOpen(true);
+                                }}
                                 style={{
                                   fontFamily: '"Futura PT Medium"',
                                   fontSize: '9px',
                                   color: '#EB1C24',
                                   textTransform: 'uppercase',
-                                  marginBottom: '6px'
+                                  marginBottom: '6px',
+                                  background: 'none',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  padding: 0
                                 }}
                               >
                                 + LIST
-                              </span>
+                              </button>
                               <div className="flex items-center">
                                 <button 
                                   onClick={() => handleQuantityChange(itemId, -1)}
@@ -1697,17 +1709,26 @@ function ShoppingBagPage() {
 
                          {/* Quantity Counter */}
                          <div className="flex flex-col items-center justify-center absolute" style={{ right: '8px', top: '0', bottom: '0', marginLeft: 'auto' }}>
-                           <span
+                           <button
+                             type="button"
+                             onClick={() => {
+                               setAddToListModalItem(item);
+                               setAddToListModalOpen(true);
+                             }}
                              style={{
                                fontFamily: '"Futura PT Medium"',
                                fontSize: '9px',
                                color: '#EB1C24',
                                textTransform: 'uppercase',
-                               marginBottom: '6px'
+                               marginBottom: '6px',
+                               background: 'none',
+                               border: 'none',
+                               cursor: 'pointer',
+                               padding: 0
                              }}
                            >
                              + LIST
-                           </span>
+                           </button>
                            <div className="flex items-center">
                              <button 
                                onClick={() => handleSavedQuantityChange(itemId, -1)}
@@ -1939,6 +1960,16 @@ function ShoppingBagPage() {
             confirmText="CONFIRM"
             cancelText="CANCEL"
             dataAttribute="sign-out-confirm"
+          />
+
+          {/* Add to List modal - + LIST popup */}
+          <AddToListModal
+            isOpen={addToListModalOpen}
+            onClose={() => {
+              setAddToListModalOpen(false);
+              setAddToListModalItem(null);
+            }}
+            item={addToListModalItem}
           />
         </div>
       </div>

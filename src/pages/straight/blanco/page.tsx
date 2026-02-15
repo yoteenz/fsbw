@@ -91,7 +91,7 @@ function BlancoSelection() {
   // This does explicit field-by-field comparison to ensure no false matches
   const matchesDefaultConfiguration = (item: any): boolean => {
     // Ensure item is for BLANCO product
-    if (item.name !== 'BLANCO') {
+    if ((item.name || item.productName || '').toUpperCase() !== 'BLANCO') {
       return false;
     }
     
@@ -141,7 +141,7 @@ function BlancoSelection() {
     const checkWishlist = () => {
       try {
         const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
-        const isInList = wishlistItems.some((item: any) => item.name === 'BLANCO');
+        const isInList = wishlistItems.some((item: any) => (item.name || item.productName || '').toUpperCase() === 'BLANCO');
         setIsInWishlist(isInList);
       } catch (e) {
         setIsInWishlist(false);
@@ -169,17 +169,18 @@ function BlancoSelection() {
       
       if (isInWishlist) {
         // Remove from wishlist
-        const updatedItems = wishlistItems.filter((item: any) => item.name !== 'BLANCO');
+        const updatedItems = wishlistItems.filter((item: any) => (item.name || item.productName || '').toUpperCase() !== 'BLANCO');
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(false);
       } else {
         // Add to wishlist
         const blancoItem = {
-          id: 'blanco-unit',
+          id: `blanco-unit-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
           name: 'BLANCO',
+          productName: 'BLANCO',
           price: totalPrice,
           quantity: quantity,
-          image: '/assets/BLANCO/blanco-thumb.png',
+          image: '/assets/NOIR/blanco-thumb.png',
           length: localStorage.getItem('selectedLength') || '24"',
           hairOrigin: 'RUSSIAN',
           capSize: selectedCustomCap || selectedFlexibleCap || 'M',
@@ -188,7 +189,8 @@ function BlancoSelection() {
           texture: localStorage.getItem('selectedTexture') || 'SILKY',
           color: localStorage.getItem('selectedColor') || 'PLATINUM',
           hairline: localStorage.getItem('selectedHairline') || 'NATURAL',
-          styling: localStorage.getItem('selectedStyling') || 'MIDDLE'
+          styling: localStorage.getItem('selectedStyling') || 'MIDDLE',
+          addedFrom: 'unit'
         };
         const updatedItems = [...wishlistItems, blancoItem];
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));

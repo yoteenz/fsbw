@@ -224,7 +224,7 @@ function NoirSelection() {
     const checkWishlist = () => {
       try {
         const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
-        const isInList = wishlistItems.some((item: any) => item.name === 'NOIR');
+        const isInList = wishlistItems.some((item: any) => (item.name || item.productName || '').toUpperCase() === 'NOIR');
         setIsInWishlist(isInList);
       } catch (e) {
         setIsInWishlist(false);
@@ -302,14 +302,15 @@ function NoirSelection() {
       
       if (isInWishlist) {
         // Remove from wishlist
-        const updatedItems = wishlistItems.filter((item: any) => item.name !== 'NOIR');
+        const updatedItems = wishlistItems.filter((item: any) => (item.name || item.productName || '').toUpperCase() !== 'NOIR');
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(false);
       } else {
         // Add to wishlist
         const noirItem = {
-          id: 'noir-unit',
+          id: `noir-unit-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
           name: 'NOIR',
+          productName: 'NOIR',
           price: totalPrice,
           quantity: quantity,
           image: '/assets/NOIR/noir-thumb.png',
@@ -321,7 +322,8 @@ function NoirSelection() {
           texture: localStorage.getItem('selectedTexture') || 'SILKY',
           color: localStorage.getItem('selectedColor') || 'OFF BLACK',
           hairline: localStorage.getItem('selectedHairline') || 'NATURAL',
-          styling: localStorage.getItem('selectedStyling') || 'MIDDLE'
+          styling: localStorage.getItem('selectedStyling') || 'MIDDLE',
+          addedFrom: 'unit'
         };
         const updatedItems = [...wishlistItems, noirItem];
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));

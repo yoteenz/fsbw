@@ -57,7 +57,7 @@ function BeachWaveSelection() {
     const checkWishlist = () => {
       try {
         const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
-        const isInList = wishlistItems.some((item: any) => item.name === 'BEACH WAVE');
+        const isInList = wishlistItems.some((item: any) => (item.name || item.productName || '').toUpperCase() === 'BEACH WAVE');
         setIsInWishlist(isInList);
       } catch (e) {
         setIsInWishlist(false);
@@ -85,14 +85,15 @@ function BeachWaveSelection() {
       
       if (isInWishlist) {
         // Remove from wishlist
-        const updatedItems = wishlistItems.filter((item: any) => item.name !== 'BEACH WAVE');
+        const updatedItems = wishlistItems.filter((item: any) => (item.name || item.productName || '').toUpperCase() !== 'BEACH WAVE');
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(false);
       } else {
         // Add to wishlist
         const beachWaveItem = {
-          id: 'beach-wave-unit',
+          id: `beach-wave-unit-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
           name: 'BEACH WAVE',
+          productName: 'BEACH WAVE',
           price: totalPrice,
           quantity: quantity,
           image: '/assets/NOIR/wave-thumb.png',
@@ -104,7 +105,8 @@ function BeachWaveSelection() {
           texture: localStorage.getItem('selectedTexture') || 'SILKY',
           color: localStorage.getItem('selectedColor') || 'OFF BLACK',
           hairline: localStorage.getItem('selectedHairline') || 'NATURAL',
-          styling: localStorage.getItem('selectedStyling') || 'MIDDLE'
+          styling: localStorage.getItem('selectedStyling') || 'MIDDLE',
+          addedFrom: 'unit'
         };
         const updatedItems = [...wishlistItems, beachWaveItem];
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));

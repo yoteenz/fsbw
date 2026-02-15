@@ -57,7 +57,7 @@ function OceanCurlSelection() {
     const checkWishlist = () => {
       try {
         const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
-        const isInList = wishlistItems.some((item: any) => item.name === 'OCEAN CURL');
+        const isInList = wishlistItems.some((item: any) => (item.name || item.productName || '').toUpperCase() === 'OCEAN CURL');
         setIsInWishlist(isInList);
       } catch (e) {
         setIsInWishlist(false);
@@ -85,14 +85,15 @@ function OceanCurlSelection() {
       
       if (isInWishlist) {
         // Remove from wishlist
-        const updatedItems = wishlistItems.filter((item: any) => item.name !== 'OCEAN CURL');
+        const updatedItems = wishlistItems.filter((item: any) => (item.name || item.productName || '').toUpperCase() !== 'OCEAN CURL');
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(false);
       } else {
         // Add to wishlist
         const oceanCurlItem = {
-          id: 'ocean-curl-unit',
+          id: `ocean-curl-unit-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
           name: 'OCEAN CURL',
+          productName: 'OCEAN CURL',
           price: totalPrice,
           quantity: quantity,
           image: '/assets/NOIR/curl-thumb.png',
@@ -104,7 +105,8 @@ function OceanCurlSelection() {
           texture: localStorage.getItem('selectedTexture') || 'SILKY',
           color: localStorage.getItem('selectedColor') || 'OFF BLACK',
           hairline: localStorage.getItem('selectedHairline') || 'NATURAL',
-          styling: localStorage.getItem('selectedStyling') || 'MIDDLE'
+          styling: localStorage.getItem('selectedStyling') || 'MIDDLE',
+          addedFrom: 'unit'
         };
         const updatedItems = [...wishlistItems, oceanCurlItem];
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));

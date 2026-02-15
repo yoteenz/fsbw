@@ -4375,9 +4375,18 @@ export default function BuildAWigPage() {
         productImage = '/assets/NOIR/curl-thumb.png';
       }
       
+      const hairOriginByProduct: Record<string, string> = {
+        NOIR: 'CAMBODIAN',
+        BLANCO: 'RUSSIAN',
+        'SOFT WAVE': 'INDIAN',
+        'BEACH WAVE': 'INDONESIAN',
+        'SOFT CURL': 'VIETNAMESE',
+        'OCEAN CURL': 'FILIPINO'
+      };
       const cartItem = {
         id: `build-a-wig-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         name: productName,
+        productName: productName,
         price: totalPrice, // Use the calculated total price
         quantity: 1,
         image: productImage,
@@ -4388,6 +4397,7 @@ export default function BuildAWigPage() {
         texture: customization.texture,
         lace: customization.lace,
         hairline: customization.hairline,
+        hairOrigin: hairOriginByProduct[productName] || 'CAMBODIAN',
         styling: validStyling,
         partSelection: localStorage.getItem('selectedPartSelection') || 'MIDDLE',
         addOns: customization.addOns

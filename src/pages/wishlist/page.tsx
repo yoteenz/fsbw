@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
+import AddToListModal from '../../components/AddToListModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 
@@ -38,6 +39,11 @@ function WishlistSelection() {
     return false;
   });
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [showEmptyWishlistConfirm, setShowEmptyWishlistConfirm] = useState(false);
+  const [showRemoveItemConfirm, setShowRemoveItemConfirm] = useState(false);
+  const [itemToRemoveId, setItemToRemoveId] = useState<string | null>(null);
+  const [addToListModalOpen, setAddToListModalOpen] = useState(false);
+  const [addToListModalItem, setAddToListModalItem] = useState<any>(null);
 
   // Currency state - load from localStorage on mount
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -120,23 +126,25 @@ function WishlistSelection() {
           texture: 'SILKY',
           color: 'OFF BLACK',
           hairline: 'NATURAL',
-          styling: 'STRAIGHT'
+          styling: 'STRAIGHT',
+          addedFrom: 'unit'
         },
         {
           id: 'wishlist-2',
           name: 'BLANCO',
           price: 780,
           quantity: 1,
-          image: '/assets/NOIR/noir-thumb.png',
-          length: '26"',
-          hairOrigin: 'CAMBODIAN',
-          capSize: 'L',
-          density: '250%',
+          image: '/assets/NOIR/blanco-thumb.png',
+          length: '24"',
+          hairOrigin: 'RUSSIAN',
+          capSize: 'M',
+          density: '200%',
           lace: '13X6',
           texture: 'SILKY',
-          color: 'OFF BLACK',
+          color: 'PLATINUM',
           hairline: 'NATURAL',
-          styling: 'STRAIGHT'
+          styling: 'STRAIGHT',
+          addedFrom: 'unit'
         }
       ];
       setWishlistItems(sampleProducts);
@@ -217,6 +225,15 @@ function WishlistSelection() {
 
   const handleQuantityChange = (itemId: string, delta: number) => {
     try {
+      if (delta === -1) {
+        const item = wishlistItems.find(i => i.id === itemId);
+        const currentQty = item ? (item.quantity || 1) : 1;
+        if (currentQty <= 1) {
+          setItemToRemoveId(itemId);
+          setShowRemoveItemConfirm(true);
+          return;
+        }
+      }
       const newItems = wishlistItems.map(i => {
         if (i.id === itemId) {
           const newQty = Math.max(1, Math.min(10, (i.quantity || 1) + delta));
@@ -226,9 +243,20 @@ function WishlistSelection() {
       });
       setWishlistItems(newItems);
       localStorage.setItem('wishlistItems', JSON.stringify(newItems));
+      window.dispatchEvent(new CustomEvent('wishlistUpdated'));
     } catch (e) {
       console.error('Error updating quantity:', e);
     }
+  };
+
+  const handleConfirmRemoveItemFromWishlist = () => {
+    if (!itemToRemoveId) return;
+    const newItems = wishlistItems.filter(i => i.id !== itemToRemoveId);
+    setWishlistItems(newItems);
+    localStorage.setItem('wishlistItems', JSON.stringify(newItems));
+    window.dispatchEvent(new CustomEvent('wishlistUpdated'));
+    setItemToRemoveId(null);
+    setShowRemoveItemConfirm(false);
   };
 
   const handleAddToBag = (item: any) => {
@@ -254,26 +282,64 @@ function WishlistSelection() {
     }
   };
 
+  const handleRemoveFromBag = (item: any) => {
+    try {
+      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      const updatedItems = cartItems.filter((ci: any) => ci.id !== item.id);
+      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+      const newCount = updatedItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
+      localStorage.setItem('cartCount', newCount.toString());
+      setCartCount(newCount);
+      window.dispatchEvent(new CustomEvent('cartUpdated'));
+    } catch (e) {
+      console.error('Error removing from bag:', e);
+    }
+  };
+
+  /** Route to product/unit page for viewing (not edit). */
+  const getProductRoute = (name: string): string => {
+    const n = (name || 'NOIR').toString().toUpperCase();
+    const routes: Record<string, string> = {
+      NOIR: '/straight/noir',
+      BLANCO: '/straight/blanco',
+      'SOFT WAVE': '/wavy/soft-wave',
+      'BEACH WAVE': '/wavy/beach-wave',
+      'SOFT CURL': '/curly/soft-curl',
+      'OCEAN CURL': '/curly/ocean-curl',
+      'GIFT CARD': '/tools/gift-card'
+    };
+    return routes[n] || '/build-a-wig';
+  };
+
   const handleEdit = (item: any) => {
     try {
-      localStorage.setItem('editingCartItem', JSON.stringify(item));
-      
-      // Determine the correct edit route based on product name
-      let editRoute = '/build-a-wig/edit'; // Default fallback
-      if (item.name === 'NOIR') {
-        editRoute = '/build-a-wig/noir/edit';
-      } else if (item.name === 'BLANCO') {
-        editRoute = '/build-a-wig/blanco/edit';
-      } else if (item.name === 'SOFT WAVE') {
-        editRoute = '/build-a-wig/soft-wave/edit';
-      } else if (item.name === 'SOFT CURL') {
-        editRoute = '/build-a-wig/soft-curl/edit';
-      } else if (item.name === 'BEACH WAVE') {
-        editRoute = '/build-a-wig/beach-wave/edit';
-      } else if (item.name === 'OCEAN CURL') {
-        editRoute = '/build-a-wig/ocean-curl/edit';
+      const name = (item.name || item.productName || 'NOIR').toString().toUpperCase();
+      const fromUnit = item.addedFrom === 'unit';
+
+      if (fromUnit) {
+        // Added from product/unit page: go to unit page (default or unit cap selections)
+        const unitRoutes: Record<string, string> = {
+          NOIR: '/straight/noir',
+          BLANCO: '/straight/blanco',
+          'SOFT WAVE': '/wavy/soft-wave',
+          'BEACH WAVE': '/wavy/beach-wave',
+          'SOFT CURL': '/curly/soft-curl',
+          'OCEAN CURL': '/curly/ocean-curl'
+        };
+        const route = unitRoutes[name] || '/build-a-wig/edit';
+        navigate(route);
+        return;
       }
-      
+
+      // Added from cart/bag: custom build — go to build-a-wig edit with item
+      localStorage.setItem('editingCartItem', JSON.stringify(item));
+      let editRoute = '/build-a-wig/edit';
+      if (name === 'NOIR') editRoute = '/build-a-wig/noir/edit';
+      else if (name === 'BLANCO') editRoute = '/build-a-wig/blanco/edit';
+      else if (name === 'SOFT WAVE') editRoute = '/build-a-wig/soft-wave/edit';
+      else if (name === 'SOFT CURL') editRoute = '/build-a-wig/soft-curl/edit';
+      else if (name === 'BEACH WAVE') editRoute = '/build-a-wig/beach-wave/edit';
+      else if (name === 'OCEAN CURL') editRoute = '/build-a-wig/ocean-curl/edit';
       navigate(editRoute);
     } catch (e) {
       console.error('Error setting edit item:', e);
@@ -386,6 +452,12 @@ function WishlistSelection() {
     setShowSignOutConfirm(false);
     // Close mobile menu
     setShowMobileMenu(false);
+  };
+
+  const handleEmptyWishlist = () => {
+    setWishlistItems([]);
+    localStorage.setItem('wishlistItems', JSON.stringify([]));
+    setShowEmptyWishlistConfirm(false);
   };
 
   return (
@@ -520,9 +592,9 @@ function WishlistSelection() {
             </div>
           </div>
 
-          {/* MAIN BUILD AREA - only apply menu-toggle-card when menu is open so main card height is not forced when showing wishlist */}
+          {/* MAIN BUILD AREA - only apply menu-toggle-card when menu is open so main card height is not forced when showing wishlist; p-4 when wishlist to match Shopping Bag header topspacing */}
           <div
-            className={showMobileMenu ? 'menu-toggle-card border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out' : 'border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out'}
+            className={showMobileMenu ? 'menu-toggle-card border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out' : 'border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out'}
             style={{ 
               borderWidth: '1.3px', 
               minWidth: '100%', 
@@ -746,233 +818,352 @@ function WishlistSelection() {
                 <SocialMenuIcons />
               </div>
             ) : (
-              /* WISHLIST PRODUCT CARDS */
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px', paddingTop: '20px' }}>
+              /* WISHLIST HEADER + PRODUCT CARDS */
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 0 }}>
+                {/* Wishlist header - same styling as Shopping Bag header */}
+                <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
+                  <span
+                    className="text-red-500 font-bold text-lg tracking-wider truncate text-left uppercase"
+                    style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
+                  >
+                    WISHLIST
+                  </span>
+                  <span
+                    className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
+                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '17px' }}
+                  >
+                    {wishlistItems.length}
+                  </span>
+                </div>
+
+                {/* WISHLIST PRODUCT CARDS - structured like cart (shopping bag) */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 0, paddingTop: '4.8px' }}>
                 {wishlistItems.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '40px 20px', color: '#808080' }}>
-                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '14px' }}>
-                      Your wishlist is empty
+                  <div style={{ textAlign: 'center', padding: '40px 20px', color: '#000' }}>
+                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', textTransform: 'uppercase' }}>
+                      YOUR WISHLIST IS EMPTY
                     </p>
                   </div>
                 ) : (
-                  wishlistItems.map((item, index) => {
+                  (() => {
+                    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+                    return wishlistItems.map((item, index) => {
+                  const isInBag = cartItems.some((ci: any) => ci.id === item.id);
                   const itemId = item.id || `wishlist-item-${index}`;
-                  const itemName = item.name || 'NOIR';
-                  const itemImage = item.image || '/assets/NOIR/noir-thumb.png';
+                  const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
+
+                  // Thumbnail by product name only (ignore item.image so wrong stored paths never override)
+                  const getItemImage = () => {
+                    if (itemName === 'GIFT CARD' || item.type === 'gift-card') {
+                      return '/assets/gift-card asset.png';
+                    }
+                    const hairline = (item.hairline || 'NATURAL').toUpperCase();
+                    const hasPeak = hairline.includes('PEAK');
+                    const hasLagos = hairline.includes('LAGOS');
+                    if (itemName === 'NOIR') {
+                      if (hasPeak) return '/assets/noir-peak-thumb.png';
+                      if (hasLagos) return '/assets/noir-lagos-thumb.png';
+                      return '/assets/NOIR/noir-thumb.png';
+                    }
+                    if (itemName === 'BLANCO') return '/assets/NOIR/blanco-thumb.png';
+                    if (itemName === 'SOFT WAVE') return '/assets/NOIR/wave-thumb.png';
+                    if (itemName === 'BEACH WAVE') return '/assets/NOIR/wave-thumb.png';
+                    if (itemName === 'SOFT CURL' || itemName === 'OCEAN CURL') return '/assets/NOIR/curl-thumb.png';
+                    return '/assets/NOIR/noir-thumb.png';
+                  };
+                  const itemImage = getItemImage();
+
+                  // Hair origin: use stored value from product page, else product default (matches product page defaults)
+                  const getHairOrigin = (productName: string) => {
+                    switch (productName) {
+                      case 'NOIR': return 'CAMBODIAN';
+                      case 'BLANCO': return 'RUSSIAN';
+                      case 'SOFT WAVE': return 'INDIAN';
+                      case 'BEACH WAVE': return 'INDONESIAN';
+                      case 'SOFT CURL': return 'VIETNAMESE';
+                      case 'OCEAN CURL': return 'FILIPINO';
+                      default: return 'CAMBODIAN';
+                    }
+                  };
                   const itemLength = item.length || '24"';
-                  const itemHairOrigin = item.hairOrigin || 'CAMBODIAN';
-                  const itemPrice = item.price || 580;
+                  // BLANCO must show RUSSIAN; never show NOIR's default (CAMBODIAN) for BLANCO
+                  const itemHairOrigin = (itemName === 'BLANCO' && item.hairOrigin === 'CAMBODIAN') ? getHairOrigin('BLANCO') : (item.hairOrigin || getHairOrigin(itemName));
+                  const getDefaultPrice = (productName: string) => {
+                    switch (productName) {
+                      case 'NOIR': return 740;
+                      case 'BLANCO': return 820;
+                      case 'SOFT WAVE': return 780;
+                      case 'BEACH WAVE': return 780;
+                      case 'SOFT CURL': return 780;
+                      case 'OCEAN CURL': return 780;
+                      case 'GIFT CARD': return 100;
+                      default: return 580;
+                    }
+                  };
+                  const itemPrice = item.price ?? getDefaultPrice(itemName);
                   const itemQuantity = item.quantity || 1;
 
                   return (
                     <div
                       key={itemId}
-                      className="border border-black bg-white/60 backdrop-blur-sm"
+                      className={`flex items-center justify-start space-x-3 ${index < wishlistItems.length - 1 ? 'border-b border-black' : ''}`}
                       style={{
-                        borderWidth: '1.3px',
-                        padding: '16px',
-                        display: 'flex',
-                        flexDirection: 'row',
-                        gap: '16px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                        height: '130px',
+                        paddingTop: '0',
+                        paddingBottom: '0',
+                        width: '100%',
+                        flexShrink: 0
                       }}
                     >
-                      {/* Product Image */}
-                      <div style={{ flexShrink: 0, width: '120px', height: '120px', position: 'relative' }}>
-                        <img
-                          src={itemImage}
-                          alt={itemName}
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            border: '1.3px solid #000'
-                          }}
-                        />
-                        <p
-                          style={{
-                            position: 'absolute',
-                            top: '4px',
-                            left: '4px',
-                            color: '#EB1C24',
-                            fontFamily: '"Futura PT Demi"',
-                            fontSize: '10px',
-                            fontWeight: '600',
-                            margin: '0',
-                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                            padding: '2px 4px'
-                          }}
-                        >
-                          + LIST
-                        </p>
+                      {/* Thumbnail - matching cart: image (click -> product page) then EDIT IN BUILD-A-WIG below */}
+                      <div className="flex flex-col items-center justify-center" style={{ flexShrink: 0, width: '88px', height: '100%' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', transform: 'translateY(-4px)' }}>
+                          <div
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => navigate(getProductRoute(itemName))}
+                            onKeyDown={(e) => { if (e.key === 'Enter') navigate(getProductRoute(itemName)); }}
+                            className="flex items-center justify-center cursor-pointer"
+                            style={{ width: '88px', height: '88px', margin: '0' }}
+                          >
+                            <img
+                              src={itemImage}
+                              alt={itemName}
+                              className="object-cover rounded"
+                              style={{ width: '88px', height: '88px' }}
+                            />
+                          </div>
+                          {(itemName.toLowerCase().includes('noir') || itemName.toLowerCase().includes('blanco') || itemName.toLowerCase().includes('soft wave')) && (
+                            <p
+                              className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
+                              style={{
+                                fontFamily: '"Futura PT Book"',
+                                color: '#EB1C24',
+                                textTransform: 'uppercase',
+                                fontSize: '8px',
+                                marginTop: '4px',
+                                marginBottom: '0',
+                                lineHeight: '1.1'
+                              }}
+                              onClick={() => handleEdit(item)}
+                              role="button"
+                              tabIndex={0}
+                              onKeyDown={(e) => { if (e.key === 'Enter') handleEdit(item); }}
+                            >
+                              EDIT IN BUILD-A-WIG
+                            </p>
+                          )}
+                        </div>
                       </div>
 
-                      {/* Product Details */}
-                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minWidth: 0 }}>
-                        <p
-                          style={{
-                            fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                            color: '#000000',
-                            fontSize: '28px',
-                            lineHeight: '1.1',
-                            margin: '0 0 4px 0',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          {itemName.replace(/WIG/gi, '').trim()}
-                        </p>
-
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Book"',
-                            color: '#EB1C24',
-                            fontSize: '10px',
-                            margin: '0 0 4px 0',
-                            textTransform: 'uppercase',
-                            fontWeight: '500'
-                          }}
-                        >
-                          {itemLength} RAW {itemHairOrigin}
-                        </p>
-
-                        {item.capSize && (
+                      {/* Item Details - matching cart */}
+                      <div className="flex-1 min-w-0 flex flex-col relative justify-center" style={{ marginLeft: '18px', height: '100%' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                          <p
+                            className="font-medium truncate"
+                            style={{
+                              fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                              color: '#000000',
+                              textTransform: 'uppercase',
+                              fontSize: itemName === 'NOIR' ? '22px' : '21px',
+                              lineHeight: '1.1',
+                              margin: '0'
+                            }}
+                          >
+                            {itemName.replace(/WIG/gi, '').trim()}
+                          </p>
+                          <p
+                            className="font-bold"
+                            style={{
+                              fontFamily: '"Futura PT Book"',
+                              color: itemName === 'NOIR' ? '#EB1C24' : '#000000',
+                              textTransform: 'uppercase',
+                              fontSize: '9px',
+                              marginTop: '2px',
+                              marginBottom: '0',
+                              lineHeight: '1.1'
+                            }}
+                          >
+                            {itemLength} RAW {itemHairOrigin}
+                          </p>
+                          {item.capSize && (
+                            <p
+                              className="font-semibold"
+                              style={{
+                                fontFamily: '"Futura PT Medium"',
+                                color: '#808080',
+                                textTransform: 'uppercase',
+                                fontSize: '10px',
+                                marginTop: '2px',
+                                marginBottom: '0',
+                                lineHeight: '1.1'
+                              }}
+                            >
+                              CAP SIZE: {item.capSize}
+                            </p>
+                          )}
                           <p
                             style={{
                               fontFamily: '"Futura PT Book"',
                               color: '#000000',
-                              fontSize: '9px',
-                              margin: '0 0 8px 0',
-                              textTransform: 'uppercase'
-                            }}
-                          >
-                            CAP SIZE: {item.capSize}
-                          </p>
-                        )}
-
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Book"',
-                            color: '#000000',
-                            fontSize: '14px',
-                            margin: '0 0 12px 0',
-                            fontWeight: '500'
-                          }}
-                          dangerouslySetInnerHTML={formatPrice(itemPrice)}
-                        />
-
-                        {/* Quantity Controls and Add to Bag */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '8px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', border: '1.3px solid #000' }}>
-                            <button
-                              onClick={() => handleQuantityChange(itemId, -1)}
-                              style={{
-                                width: '28px',
-                                height: '28px',
-                                border: 'none',
-                                background: 'none',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontFamily: '"Futura PT Book"',
-                                fontSize: '16px',
-                                padding: '0'
-                              }}
-                              type="button"
-                            >
-                              −
-                            </button>
-                            <span
-                              style={{
-                                width: '40px',
-                                textAlign: 'center',
-                                fontFamily: '"Futura PT Book"',
-                                fontSize: '14px',
-                                borderLeft: '1.3px solid #000',
-                                borderRight: '1.3px solid #000',
-                                padding: '4px 0'
-                              }}
-                            >
-                              {itemQuantity}
-                            </span>
-                            <button
-                              onClick={() => handleQuantityChange(itemId, 1)}
-                              style={{
-                                width: '28px',
-                                height: '28px',
-                                border: 'none',
-                                background: 'none',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontFamily: '"Futura PT Book"',
-                                fontSize: '16px',
-                                padding: '0'
-                              }}
-                              type="button"
-                            >
-                              +
-                            </button>
-                          </div>
-
-                          <button
-                            onClick={() => handleAddToBag(item)}
-                            style={{
-                              fontFamily: '"Futura PT Book"',
                               fontSize: '12px',
-                              color: '#808080',
+                              marginTop: '2px',
+                              marginBottom: '0',
+                              fontWeight: '600'
+                            }}
+                            dangerouslySetInnerHTML={formatPrice(itemPrice)}
+                          />
+                        </div>
+
+                        {/* + LIST, counter, ADD TO BAG - right side like cart (+ LIST / counter / SAVE FOR LATER) */}
+                        <div className="flex flex-col items-center justify-center absolute" style={{ right: '8px', top: '0', bottom: '0', marginLeft: 'auto' }}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setAddToListModalItem(item);
+                              setAddToListModalOpen(true);
+                            }}
+                            style={{
+                              fontFamily: '"Futura PT Medium"',
+                              fontSize: '9px',
+                              color: '#EB1C24',
+                              textTransform: 'uppercase',
+                              marginBottom: '6px',
                               background: 'none',
                               border: 'none',
                               cursor: 'pointer',
-                              padding: '0',
-                              textTransform: 'uppercase',
-                              whiteSpace: 'nowrap'
+                              padding: 0
                             }}
-                            type="button"
                           >
-                            ADD TO BAG
+                            + LIST
                           </button>
+                          <div className="flex items-center">
+                            <button
+                              onClick={() => handleQuantityChange(itemId, -1)}
+                              className="px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-minus-btn flex items-center justify-center cursor-pointer"
+                              style={{
+                                borderTop: '1.3px solid black !important',
+                                borderLeft: '1.3px solid black !important',
+                                borderBottom: '1.3px solid black !important',
+                                borderRight: 'none !important',
+                                height: '20.25px',
+                                minHeight: '20.25px',
+                                maxHeight: '20.25px',
+                                boxSizing: 'border-box',
+                                outline: 'none',
+                                border: 'none !important',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}
+                              type="button"
+                            >
+                              <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px' }}>-</span>
+                            </button>
+                            <div
+                              className="px-3 py-0.5 text-black bg-white flex items-center justify-center relative quantity-number"
+                              style={{
+                                borderTop: '1.3px solid black !important',
+                                borderBottom: '1.3px solid black !important',
+                                borderLeft: 'none !important',
+                                borderRight: 'none !important',
+                                fontFamily: '"Futura PT Medium"',
+                                fontWeight: '500',
+                                fontSize: '9px',
+                                height: '20.25px',
+                                minHeight: '20.25px',
+                                maxHeight: '20.25px',
+                                boxSizing: 'border-box',
+                                border: 'none !important'
+                              }}
+                            >
+                              <div className="absolute left-0 top-0 bottom-0 w-px bg-black"></div>
+                              <div className="absolute right-0 top-0 bottom-0 w-px bg-black"></div>
+                              {itemQuantity}
+                            </div>
+                            <button
+                              onClick={() => handleQuantityChange(itemId, 1)}
+                              disabled={itemQuantity >= 10}
+                              className={`px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-plus-btn flex items-center justify-center ${itemQuantity >= 10 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                              style={{
+                                borderTop: '1.3px solid black !important',
+                                borderRight: '1.3px solid black !important',
+                                borderBottom: '1.3px solid black !important',
+                                borderLeft: 'none !important',
+                                height: '20.25px',
+                                minHeight: '20.25px',
+                                maxHeight: '20.25px',
+                                boxSizing: 'border-box',
+                                outline: 'none',
+                                border: 'none !important',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}
+                              type="button"
+                            >
+                              <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px' }}>+</span>
+                            </button>
+                          </div>
+                          {isInBag ? (
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveFromBag(item)}
+                              className="flex items-center justify-center gap-1"
+                              style={{
+                                fontFamily: '"Futura PT Demi"',
+                                fontSize: '9px',
+                                color: '#808080',
+                                textTransform: 'uppercase',
+                                marginTop: '6px',
+                                textAlign: 'center',
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer',
+                                padding: 0
+                              }}
+                            >
+                              <img src="/assets/check.svg" alt="Check" width="9" height="9" />
+                              <span>IN THE BAG</span>
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleAddToBag(item)}
+                              style={{
+                                fontFamily: '"Futura PT Demi"',
+                                fontSize: '9px',
+                                color: '#808080',
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer',
+                                padding: '0',
+                                textTransform: 'uppercase',
+                                marginTop: '6px',
+                                textAlign: 'center'
+                              }}
+                              type="button"
+                            >
+                              ADD TO BAG
+                            </button>
+                          )}
                         </div>
-
-                        {/* Edit Link */}
-                        {(itemName.toLowerCase().includes('noir') || itemName.toLowerCase().includes('blanco') || itemName.toLowerCase().includes('soft wave')) && (
-                          <p
-                            onClick={() => handleEdit(item)}
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              color: '#EB1C24',
-                              fontSize: '9px',
-                              margin: '8px 0 0 0',
-                              cursor: 'pointer',
-                              textTransform: 'uppercase',
-                              textDecoration: 'underline',
-                              whiteSpace: 'nowrap'
-                            }}
-                            role="button"
-                            tabIndex={0}
-                            onKeyDown={(e) => { if (e.key === 'Enter') handleEdit(item); }}
-                          >
-                            EDIT IN BUILD-A-WIG
-                          </p>
-                        )}
                       </div>
                     </div>
                   );
-                  })
+                  });
+                  })()
                 )}
+                </div>
               </div>
             )}
           </div>
 
-          {/* VIEW LISTS BUTTON - Only show when menu is closed */}
+          {/* PAGE ACTIONS: below card only — do not put inside the card (see src/layouts/PAGE_LAYOUT.md) */}
           {!showMobileMenu && (
             <>
               <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
                 <button
-                  onClick={() => {
-                    console.log('View lists clicked');
-                  }}
+                  onClick={() => navigate('/wishlist/lists')}
                   className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                   style={{ 
                     borderWidth: '1.3px', 
@@ -989,10 +1180,7 @@ function WishlistSelection() {
               {/* EMPTY WISHLIST BUTTON */}
               <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
                 <button
-                  onClick={() => {
-                    setWishlistItems([]);
-                    localStorage.setItem('wishlistItems', JSON.stringify([]));
-                  }}
+                  onClick={() => setShowEmptyWishlistConfirm(true)}
                   className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                   style={{ 
                     borderWidth: '1.3px', 
@@ -1019,6 +1207,40 @@ function WishlistSelection() {
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="sign-out-confirm"
+      />
+
+      {/* Empty Wishlist Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showEmptyWishlistConfirm}
+        onClose={() => setShowEmptyWishlistConfirm(false)}
+        onConfirm={handleEmptyWishlist}
+        title="EMPTY WISHLIST"
+        message="ARE YOU SURE YOU WANT TO EMPTY YOUR WISHLIST?"
+        confirmText="CONFIRM"
+        cancelText="CANCEL"
+        dataAttribute="empty-wishlist-confirm"
+      />
+
+      {/* Remove item from wishlist (quantity minus to 0) */}
+      <ConfirmationModal
+        isOpen={showRemoveItemConfirm}
+        onClose={() => { setShowRemoveItemConfirm(false); setItemToRemoveId(null); }}
+        onConfirm={handleConfirmRemoveItemFromWishlist}
+        title="REMOVE FROM WISHLIST"
+        message="REMOVE THIS ITEM FROM YOUR WISHLIST?"
+        confirmText="REMOVE"
+        cancelText="CANCEL"
+        dataAttribute="remove-item-wishlist-confirm"
+      />
+
+      {/* Add to List modal - + LIST popup */}
+      <AddToListModal
+        isOpen={addToListModalOpen}
+        onClose={() => {
+          setAddToListModalOpen(false);
+          setAddToListModalItem(null);
+        }}
+        item={addToListModalItem}
       />
     </div>
   );

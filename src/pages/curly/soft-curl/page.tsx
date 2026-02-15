@@ -57,7 +57,7 @@ function SoftCurlSelection() {
     const checkWishlist = () => {
       try {
         const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
-        const isInList = wishlistItems.some((item: any) => item.name === 'SOFT CURL');
+        const isInList = wishlistItems.some((item: any) => (item.name || item.productName || '').toUpperCase() === 'SOFT CURL');
         setIsInWishlist(isInList);
       } catch (e) {
         setIsInWishlist(false);
@@ -91,8 +91,9 @@ function SoftCurlSelection() {
       } else {
         // Add to wishlist
         const softCurlItem = {
-          id: 'soft-curl-unit',
+          id: `soft-curl-unit-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
           name: 'SOFT CURL',
+          productName: 'SOFT CURL',
           price: totalPrice,
           quantity: quantity,
           image: '/assets/NOIR/curl-thumb.png',
@@ -104,7 +105,8 @@ function SoftCurlSelection() {
           texture: localStorage.getItem('selectedTexture') || 'SILKY',
           color: localStorage.getItem('selectedColor') || 'OFF BLACK',
           hairline: localStorage.getItem('selectedHairline') || 'NATURAL',
-          styling: localStorage.getItem('selectedStyling') || 'MIDDLE'
+          styling: localStorage.getItem('selectedStyling') || 'MIDDLE',
+          addedFrom: 'unit'
         };
         const updatedItems = [...wishlistItems, softCurlItem];
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
