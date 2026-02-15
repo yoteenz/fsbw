@@ -65,14 +65,6 @@ function NotificationsPage() {
     return '/assets/profile-thumb.png';
   });
 
-  const mockNotificationsList: Notification[] = [
-    { id: '1', title: 'SATIN BONNET IS NOW ON SALE', message: 'SHOP THIS DEAL WHILE SUPPLIES LAST.', actionText: 'VIEW PRODUCT', actionRoute: '/shop/units', date: 'TODAY', isRead: false, icon: 'f' },
-    { id: '2', title: 'ORDER #344 HAS BEEN DELIVERED', message: 'YOU CAN NOW LEAVE A REVIEW FOR THIS ORDER.', actionText: 'SUBMIT REVIEW', actionRoute: '/account/orders', date: 'YESTERDAY', isRead: false, icon: 'f' },
-    { id: '3', title: 'ORDER #344 HAS SHIPPED', message: 'PROCESSING FOR THIS ORDER IS NOW COMPLETE.', actionText: 'TRACK DELIVERY', actionRoute: '/account/orders', date: '2 DAYS AGO', isRead: false, icon: 'fc' },
-    { id: '4', title: 'NEW DROP COMING SOON', message: 'TRAVEL SIZE FOAM RELEASING ON 4/22.', date: '3 DAYS AGO', isRead: false, icon: 'f' },
-    { id: '5', title: 'ORDER #344 HAS BEEN CONFIRMED', message: "WE'RE PROCESSING YOUR ORDER, SIT TIGHT.", actionText: 'VIEW DETAILS', actionRoute: '/account/orders', date: '1 WEEK AGO', isRead: true, icon: 'f' }
-  ];
-
   const [notifications, setNotifications] = useState<Notification[]>(() => {
     try {
       const raw = localStorage.getItem('currentUser');
