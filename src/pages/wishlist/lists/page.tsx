@@ -495,7 +495,7 @@ export default function ViewListsPage() {
                       <div
                         role="button"
                         tabIndex={0}
-                        onClick={(e) => { e.stopPropagation(); const wi = JSON.parse(localStorage.getItem('wishlistItems') || '[]'); const first = wi[0]; if (first) navigate(getProductRoute(first.name || first.productName || 'NOIR')); else navigate('/wishlist'); }}
+                        onClick={(e) => { e.stopPropagation(); navigate('/wishlist'); }}
                         onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); navigate('/wishlist'); } }}
                         className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
                         style={{
@@ -561,8 +561,8 @@ export default function ViewListsPage() {
                               <div
                                 role="button"
                                 tabIndex={0}
-                                onClick={() => navigate(getProductRoute(productName))}
-                                onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(productName))}
+                                onClick={(e) => { e.stopPropagation(); setExpandedListId(list.id); }}
+                                onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); setExpandedListId(list.id); } }}
                                 className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
                                 style={{
                                   width: '88px',
