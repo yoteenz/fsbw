@@ -918,6 +918,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             // Store the current item details for editing
                             localStorage.setItem('editingCartItem', JSON.stringify(item));
                             localStorage.setItem('editingCartItemId', item.id);
+                            localStorage.removeItem('editingSource'); // edit opened from cart → save updates cart
                             
                             // CRITICAL: Store individual customization options with BOTH selected* and editSelected* prefixes
                             // This ensures consistency when loading edit mode

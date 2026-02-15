@@ -331,8 +331,10 @@ function WishlistSelection() {
         return;
       }
 
-      // Added from cart/bag: custom build — go to build-a-wig edit with item
+      // Added from cart/bag or editing from wishlist: go to build-a-wig edit with item
       localStorage.setItem('editingCartItem', JSON.stringify(item));
+      localStorage.setItem('editingCartItemId', String(item.id ?? ''));
+      localStorage.setItem('editingSource', 'wishlist'); // so build-a-wig save updates wishlist, not cart
       let editRoute = '/build-a-wig/edit';
       if (name === 'NOIR') editRoute = '/build-a-wig/noir/edit';
       else if (name === 'BLANCO') editRoute = '/build-a-wig/blanco/edit';
@@ -892,7 +894,7 @@ function WishlistSelection() {
                     switch (productName) {
                       case 'NOIR': return 740;
                       case 'BLANCO': return 820;
-                      case 'SOFT WAVE': return 780;
+                      case 'SOFT WAVE': return 760;
                       case 'BEACH WAVE': return 780;
                       case 'SOFT CURL': return 780;
                       case 'OCEAN CURL': return 780;

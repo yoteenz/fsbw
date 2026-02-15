@@ -473,6 +473,7 @@ function ShoppingBagPage() {
       // Match CartDropdown: set both editingCartItem and editingCartItemId so build-a-wig loads correct item
       localStorage.setItem('editingCartItem', JSON.stringify(item));
       localStorage.setItem('editingCartItemId', item.id);
+      localStorage.removeItem('editingSource'); // edit opened from bag → save updates cart/saved for later
 
       // Store individual customization options (same as CartDropdown) so edit mode loads correct selections
       const capSize = item.capSize || 'M';

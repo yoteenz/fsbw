@@ -4191,36 +4191,54 @@ export default function BuildAWigPage() {
         addOns: customization.addOns
       };
       
-      console.log('[EDIT MODE SAVE] Updated item (for cart or saved for later):', updatedItem);
+      console.log('[EDIT MODE SAVE] Updated item (for cart, wishlist, or saved for later):', updatedItem);
       
-      // CRITICAL: If the item was in SAVED FOR LATER, update it there in place. Do NOT add to cart.
-      const savedForLaterRaw = localStorage.getItem('savedForLater');
-      let savedForLaterList: any[] = [];
-      try {
-        savedForLaterList = savedForLaterRaw ? (JSON.parse(savedForLaterRaw) || []) : [];
-      } catch (_) {
-        savedForLaterList = [];
-      }
+      const editingSource = localStorage.getItem('editingSource');
       const idStr = String(editingCartItemId);
-      const isFromSavedForLater = Array.isArray(savedForLaterList) && savedForLaterList.some((i: any) => String(i.id) === idStr);
       
-      if (isFromSavedForLater) {
-        // Update the item in saved for later in place; do not touch the cart
-        const newSavedForLater = savedForLaterList.map((i: any) =>
-          String(i.id) === idStr ? updatedItem : i
-        );
-        localStorage.setItem('savedForLater', JSON.stringify(newSavedForLater));
-        window.dispatchEvent(new CustomEvent('savedItemsChanged'));
-        console.log('[EDIT MODE SAVE] Updated item in Saved for Later (in place), did not add to cart');
+      if (editingSource === 'wishlist') {
+        // Opened edit from wishlist page: update that item in wishlist only
+        const wishlistRaw = localStorage.getItem('wishlistItems');
+        let wishlistItems: any[] = [];
+        try {
+          wishlistItems = wishlistRaw ? (JSON.parse(wishlistRaw) || []) : [];
+        } catch (_) {
+          wishlistItems = [];
+        }
+        const newWishlist = wishlistItems.map((i: any) => (String(i.id) === idStr ? updatedItem : i));
+        localStorage.setItem('wishlistItems', JSON.stringify(newWishlist));
+        localStorage.removeItem('editingSource');
+        window.dispatchEvent(new CustomEvent('wishlistUpdated'));
+        console.log('[EDIT MODE SAVE] Updated item in wishlist');
       } else {
-        // Item was in the cart: update cart only
-        const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-        const filteredCartItems = existingCartItems.filter((item: any) => item.id !== editingCartItemId);
-        const updatedCartItems = [updatedItem, ...filteredCartItems];
-        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
-        const newCartCount = updatedCartItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
-        localStorage.setItem('cartCount', newCartCount.toString());
-        console.log('[EDIT MODE SAVE] Updated item in cart');
+        // CRITICAL: If the item was in SAVED FOR LATER, update it there in place. Do NOT add to cart.
+        const savedForLaterRaw = localStorage.getItem('savedForLater');
+        let savedForLaterList: any[] = [];
+        try {
+          savedForLaterList = savedForLaterRaw ? (JSON.parse(savedForLaterRaw) || []) : [];
+        } catch (_) {
+          savedForLaterList = [];
+        }
+        const isFromSavedForLater = Array.isArray(savedForLaterList) && savedForLaterList.some((i: any) => String(i.id) === idStr);
+        
+        if (isFromSavedForLater) {
+          // Update the item in saved for later in place; do not touch the cart
+          const newSavedForLater = savedForLaterList.map((i: any) =>
+            String(i.id) === idStr ? updatedItem : i
+          );
+          localStorage.setItem('savedForLater', JSON.stringify(newSavedForLater));
+          window.dispatchEvent(new CustomEvent('savedItemsChanged'));
+          console.log('[EDIT MODE SAVE] Updated item in Saved for Later (in place), did not add to cart');
+        } else {
+          // Item was in the cart: update cart only
+          const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+          const filteredCartItems = existingCartItems.filter((item: any) => item.id !== editingCartItemId);
+          const updatedCartItems = [updatedItem, ...filteredCartItems];
+          localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+          const newCartCount = updatedCartItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
+          localStorage.setItem('cartCount', newCartCount.toString());
+          console.log('[EDIT MODE SAVE] Updated item in cart');
+        }
       }
       
       // CRITICAL: Update editingCartItem in localStorage to reflect saved changes

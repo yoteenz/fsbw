@@ -81,7 +81,8 @@ function SoftWaveSelection() {
   const handleToggleWishlist = () => {
     try {
       const wishlistItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
-      const totalPrice = parseInt(localStorage.getItem('softWaveTotalPrice') || '780');
+      const capSize = selectedCustomCap || selectedFlexibleCap || 'M';
+      const totalPrice = (capSize === 'XXS/XS/S' || capSize === 'S/M/L') ? 800 : 760; // L and standard caps = 760, flexible = 800
       
       if (isInWishlist) {
         // Remove from wishlist

@@ -352,21 +352,29 @@ export default function ViewListsPage() {
               </div>
             ) : (
               <>
-                {/* LISTS header - same as wishlist (red label + count, gray line) */}
-                <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
-                  <span
-                    className="text-red-500 font-bold text-lg tracking-wider truncate text-left uppercase"
-                    style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
-                  >
-                    LISTS
-                  </span>
-                  <span
-                    className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
-                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '17px' }}
-                  >
-                    {lists.length + 1}
-                  </span>
-                </div>
+                {/* Page-specific header: list name when expanded (e.g. VACATION), otherwise LISTS */}
+                {(() => {
+                  const expandedList = expandedListId ? lists.find((l) => l.id === expandedListId) : null;
+                  const expandedItemCount = expandedList ? (expandedList.items?.length ?? 0) : 0;
+                  const headerLabel = expandedListId && expandedList ? (expandedList.name ?? '').toUpperCase() : 'LISTS';
+                  const headerCount = expandedListId && expandedList ? expandedItemCount : lists.length + 1;
+                  return (
+                    <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
+                      <span
+                        className="text-red-500 font-bold text-lg tracking-wider truncate text-left uppercase"
+                        style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
+                      >
+                        {headerLabel}
+                      </span>
+                      <span
+                        className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
+                        style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '17px' }}
+                      >
+                        {headerCount}
+                      </span>
+                    </div>
+                  );
+                })()}
 
                 {expandedListId ? (
                   (() => {
@@ -375,7 +383,6 @@ export default function ViewListsPage() {
                     const expandedItems: any[] = isWishlist
                       ? (() => { try { return JSON.parse(localStorage.getItem('wishlistItems') || '[]'); } catch { return []; } })()
                       : (expandedList?.items ?? []);
-                    const expandedTitle = isWishlist ? 'WISHLIST' : (expandedList?.name ?? '').toUpperCase();
                     const removeFromList = (item: any) => {
                       if (isWishlist) {
                         const raw = localStorage.getItem('wishlistItems');
@@ -395,11 +402,7 @@ export default function ViewListsPage() {
                     };
                     return (
                       <div style={{ paddingTop: '8px' }}>
-                        <h1 style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '28px', color: '#EB1C24', textAlign: 'center', margin: '0 0 4px 0', textTransform: 'uppercase' }}>{expandedTitle}</h1>
-                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#666', textAlign: 'center', margin: '0 0 2px 0', textTransform: 'uppercase' }}>PRIVATE</p>
-                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#666', textAlign: 'center', margin: '0 0 14px 0', textTransform: 'uppercase' }}>({expandedItems.length} {expandedItems.length === 1 ? 'ITEM' : 'ITEMS'})</p>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                          <button type="button" style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '14px', color: '#000', background: 'none', border: 'none', cursor: 'pointer', padding: 0, textTransform: 'uppercase' }}>+ INVITE</button>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '16px' }}>
                           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                             <button type="button" onClick={() => setExpandedViewMode('line')} style={{ padding: '4px', border: expandedViewMode === 'line' ? '1.5px solid #EB1C24' : '1px solid #ccc', background: 'none', cursor: 'pointer', borderRadius: '2px' }} aria-label="Line view">
                               <svg width="18" height="14" viewBox="0 0 18 14" fill="none"><rect y="0" width="18" height="2.5" fill="currentColor" /><rect y="5.75" width="18" height="2.5" fill="currentColor" /><rect y="11.5" width="18" height="2.5" fill="currentColor" /></svg>
@@ -425,7 +428,12 @@ export default function ViewListsPage() {
                                   <div style={{ flex: 1, minWidth: 0 }}>
                                     <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '18px', color: '#000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
                                     <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '0 0 6px 0', textTransform: 'uppercase' }}>{itemLength} RAW {itemHairOrigin}</p>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>{[1, 2, 3, 4, 5].map((s) => <span key={s} style={{ color: '#ccc', fontSize: '14px' }}>☆</span>)}</div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginBottom: '4px' }}>
+                                      {[...Array(5)].map((_, idx) => (
+                                        <img key={idx} src="/assets/NOIR/filled-star.png" alt="Star" style={{ width: '14px', height: '14px', filter: 'drop-shadow(0 0 0 1px black)' }} />
+                                      ))}
+                                    </div>
+                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: 'black', margin: '0', textTransform: 'uppercase' }}>4.9 OUT OF 5 STARS</p>
                                   </div>
                                   <button type="button" onClick={() => removeFromList(item)} style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#888', background: 'none', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0, textTransform: 'uppercase' }}>REMOVE</button>
                                 </div>
@@ -442,7 +450,12 @@ export default function ViewListsPage() {
                                     <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
                                   </div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '14px', color: '#000', margin: '8px 0 2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '0 0 4px 0', textAlign: 'center', textTransform: 'uppercase' }}>4.9 STARS</p>
+                                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginBottom: '4px' }}>
+                                    {[...Array(5)].map((_, idx) => (
+                                      <img key={idx} src="/assets/NOIR/filled-star.png" alt="Star" style={{ width: '14px', height: '14px', filter: 'drop-shadow(0 0 0 1px black)' }} />
+                                    ))}
+                                  </div>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: 'black', margin: '0 0 4px 0', textAlign: 'center', textTransform: 'uppercase' }}>4.9 OUT OF 5 STARS</p>
                                   <button type="button" onClick={() => removeFromList(item)} style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#999', background: 'none', border: 'none', cursor: 'pointer', padding: 0, textTransform: 'uppercase' }}>REMOVE</button>
                                 </div>
                               );
@@ -600,6 +613,18 @@ export default function ViewListsPage() {
               >
                 CREATE NEW LIST
               </button>
+              {expandedListId && (
+                <>
+                  <PageActionsBelowCard.Spacer />
+                  <button
+                    type="button"
+                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                    style={pageActionButtonStyle}
+                  >
+                    SHARE LIST
+                  </button>
+                </>
+              )}
             </PageActionsBelowCard>
           )}
         </div>
