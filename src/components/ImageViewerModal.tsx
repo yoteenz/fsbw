@@ -204,9 +204,9 @@ function ImageViewerModal({ isOpen, onClose, images, currentIndex, onNavigate }:
           
           // Test if background image URL is accessible
           const bgImg = new Image();
-          bgImg.onload = () => console.log('✅ Background image URL is accessible: /assets/NOIR/leaf-brick.png');
-          bgImg.onerror = () => console.error('❌ Background image URL failed to load: /assets/NOIR/leaf-brick.png');
-          bgImg.src = '/assets/NOIR/leaf-brick.png';
+          bgImg.onload = () => console.log('✅ Background image URL is accessible: /assets/leaf-brick-resize.png');
+          bgImg.onerror = () => console.error('❌ Background image URL failed to load: /assets/leaf-brick-resize.png');
+          bgImg.src = '/assets/leaf-brick-resize.png';
         } else {
           console.warn('⚠️ Background element not found in DOM');
         }
@@ -314,7 +314,7 @@ function ImageViewerModal({ isOpen, onClose, images, currentIndex, onNavigate }:
                   position: 'relative',
                   width: '200px',
                   height: '290px',
-                  backgroundImage: `url('/assets/NOIR/leaf-brick.png')`,
+                  backgroundImage: `url('/assets/leaf-brick-resize.png')`,
                   backgroundRepeat: 'repeat',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',

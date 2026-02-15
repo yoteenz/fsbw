@@ -677,7 +677,7 @@ function HairlineSelection() {
                 style={{
                   width: '262px',
                   height: '367px',
-                  backgroundImage: `url('/assets/leaf-brick.png')`,
+                  backgroundImage: `url('/assets/leaf-brick-resize.png')`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   backgroundRepeat: 'repeat',

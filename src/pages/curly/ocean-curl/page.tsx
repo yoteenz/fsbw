@@ -1237,7 +1237,7 @@ function OceanCurlSelection() {
                       justifyContent: 'center',
                       width: 'clamp(200px, 50vw, 320px)',
                       height: 'clamp(290px, 72.5vw, 464px)',
-                      backgroundImage: `url('/assets/${is3DView ? current3DImages.hero : 'NOIR/leaf-brick.png'}')`,
+                      backgroundImage: `url('/assets/${is3DView ? current3DImages.hero : 'leaf-brick-resize.png'}')`,
                       backgroundRepeat: 'repeat',
                       overflow: 'visible',
                       cursor: 'pointer'
@@ -1291,7 +1291,7 @@ function OceanCurlSelection() {
                       style={{
                         width: 'clamp(100px, 26vw, 175px)',
                         height: 'clamp(140px, 36vw, 245px)',
-                        backgroundImage: `url('/assets/${is3DView ? current3DImages.top : 'NOIR/leaf-brick.png'}')`,
+                        backgroundImage: `url('/assets/${is3DView ? current3DImages.top : 'leaf-brick-resize.png'}')`,
                         backgroundSize: 'cover',
                         backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center',
                         backgroundRepeat: 'no-repeat'
@@ -1322,7 +1322,7 @@ function OceanCurlSelection() {
                       style={{
                         width: 'clamp(100px, 26vw, 175px)',
                         height: 'clamp(140px, 36vw, 245px)',
-                        backgroundImage: `url('/assets/${is3DView ? current3DImages.bottom : 'NOIR/leaf-brick.png'}')`,
+                        backgroundImage: `url('/assets/${is3DView ? current3DImages.bottom : 'leaf-brick-resize.png'}')`,
                         backgroundSize: 'cover',
                         backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center',
                         backgroundRepeat: 'no-repeat'
