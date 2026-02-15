@@ -976,7 +976,7 @@ function WishlistSelection() {
                             className="font-bold"
                             style={{
                               fontFamily: '"Futura PT Book"',
-                              color: itemName === 'NOIR' ? '#EB1C24' : '#000000',
+                              color: '#EB1C24',
                               textTransform: 'uppercase',
                               fontSize: '9px',
                               marginTop: '2px',

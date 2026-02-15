@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
@@ -7,26 +7,6 @@ import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { loadUserLists, saveUserLists, type UserList } from '../../../components/AddToListModal';
 import CreateNewListModal from '../../../components/CreateNewListModal';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
-
-/** Small product thumb (cart/wishlist list) - not used for list leaf-brick thumbnails. */
-function getListItemImage(item: any): string {
-  if (!item) return '/assets/NOIR/noir-thumb.png';
-  const name = (item.name || item.productName || 'NOIR').toString().toUpperCase();
-  if (name === 'GIFT CARD' || item.type === 'gift-card') return '/assets/gift-card asset.png';
-  const hairline = (item.hairline || 'NATURAL').toUpperCase();
-  const hasPeak = hairline.includes('PEAK');
-  const hasLagos = hairline.includes('LAGOS');
-  if (name === 'NOIR') {
-    if (hasPeak) return '/assets/noir-peak-thumb.png';
-    if (hasLagos) return '/assets/noir-lagos-thumb.png';
-    return '/assets/NOIR/noir-thumb.png';
-  }
-  if (name === 'BLANCO') return '/assets/NOIR/blanco-thumb.png';
-  if (name === 'SOFT WAVE') return '/assets/NOIR/wave-thumb.png';
-  if (name === 'BEACH WAVE') return '/assets/NOIR/wave-thumb.png';
-  if (name === 'SOFT CURL' || name === 'OCEAN CURL') return '/assets/NOIR/curl-thumb.png';
-  return '/assets/NOIR/noir-thumb.png';
-}
 
 /** Build-a-wig style: front view image in front of leaf-brick (same as wigViews[1] on build-a-wig page). */
 function getLeafBrickFrontImage(item: any): string {
@@ -76,7 +56,6 @@ function getHairOrigin(productName: string): string {
 
 export default function ViewListsPage() {
   const navigate = useNavigate();
-  const location = useLocation();
   const [lists, setLists] = useState<UserList[]>([]);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [cartCount, setCartCount] = useState(() => {
@@ -94,7 +73,7 @@ export default function ViewListsPage() {
     return 'SHOP';
   });
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
-  const [isSignedIn, setIsSignedIn] = useState(() => {
+  const [isSignedIn] = useState(() => {
     try {
       return typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true';
     } catch (e) {
@@ -538,9 +517,7 @@ export default function ViewListsPage() {
                         const firstItem = list.items?.[0];
                         const isVacation = list.name?.toLowerCase() === 'vacation';
                         const emptyThumb = isVacation ? '/assets/2D WAVY FRONT.png' : '/assets/natural front.png';
-                        const emptyName = isVacation ? 'SOFT WAVE' : 'NOIR';
                         const thumbSrc = firstItem ? getLeafBrickFrontImage(firstItem) : emptyThumb;
-                        const productName = firstItem ? (firstItem.name || firstItem.productName || 'NOIR').toString().toUpperCase() : emptyName;
                         const count = list.items?.length ?? 0;
                         return (
                           <div
