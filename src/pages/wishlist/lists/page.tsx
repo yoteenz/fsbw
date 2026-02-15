@@ -261,7 +261,7 @@ export default function ViewListsPage() {
               maxWidth: 'none',
               overflow: 'visible',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              minHeight: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto',
+              minHeight: showMobileMenu ? 'calc(100dvh - 80px)' : '560px',
               height: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto'
             }}
           >
@@ -404,11 +404,18 @@ export default function ViewListsPage() {
                       <div style={{ paddingTop: '8px' }}>
                         <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '16px' }}>
                           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                            <button type="button" onClick={() => setExpandedViewMode('line')} style={{ padding: '4px', border: expandedViewMode === 'line' ? '1.5px solid #EB1C24' : '1px solid #ccc', background: 'none', cursor: 'pointer', borderRadius: '2px' }} aria-label="Line view">
-                              <svg width="18" height="14" viewBox="0 0 18 14" fill="none"><rect y="0" width="18" height="2.5" fill="currentColor" /><rect y="5.75" width="18" height="2.5" fill="currentColor" /><rect y="11.5" width="18" height="2.5" fill="currentColor" /></svg>
+                            <button type="button" onClick={() => setExpandedViewMode('line')} style={{ padding: '4px', border: expandedViewMode === 'line' ? '1px solid #EB1C24' : '1px solid #ccc', background: 'none', cursor: 'pointer', borderRadius: 0, color: expandedViewMode === 'line' ? '#EB1C24' : '#000' }} aria-label="Line view">
+                              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '12px', gap: '3px' }}>
+                                <div style={{ width: '12px', height: '1px', backgroundColor: 'currentColor' }} />
+                                <div style={{ width: '12px', height: '1px', backgroundColor: 'currentColor' }} />
+                                <div style={{ width: '12px', height: '1px', backgroundColor: 'currentColor' }} />
+                              </div>
                             </button>
-                            <button type="button" onClick={() => setExpandedViewMode('grid')} style={{ padding: '4px', border: expandedViewMode === 'grid' ? '1.5px solid #EB1C24' : '1px solid #ccc', background: 'none', cursor: 'pointer', borderRadius: '2px' }} aria-label="Grid view">
-                              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="0" y="0" width="7" height="7" fill="currentColor" /><rect x="11" y="0" width="7" height="7" fill="currentColor" /><rect x="0" y="11" width="7" height="7" fill="currentColor" /><rect x="11" y="11" width="7" height="7" fill="currentColor" /></svg>
+                            <button type="button" onClick={() => setExpandedViewMode('grid')} style={{ padding: '4px', border: expandedViewMode === 'grid' ? '1px solid #EB1C24' : '1px solid #ccc', background: 'none', cursor: 'pointer', borderRadius: 0, color: expandedViewMode === 'grid' ? '#EB1C24' : '#000' }} aria-label="Grid view">
+                              <div style={{ width: '12px', height: '12px', border: '1px solid currentColor', backgroundColor: 'white', position: 'relative' }}>
+                                <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: '1px', transform: 'translateY(-50%)', backgroundColor: 'currentColor' }} />
+                                <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: '1px', transform: 'translateX(-50%)', backgroundColor: 'currentColor' }} />
+                              </div>
                             </button>
                           </div>
                         </div>
@@ -435,7 +442,9 @@ export default function ViewListsPage() {
                                     </div>
                                     <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: 'black', margin: '0', textTransform: 'uppercase' }}>4.9 OUT OF 5 STARS</p>
                                   </div>
-                                  <button type="button" onClick={() => removeFromList(item)} style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#888', background: 'none', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0, textTransform: 'uppercase' }}>REMOVE</button>
+                                  <button type="button" onClick={() => removeFromList(item)} style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }} aria-label="Remove from list">
+                                <img src="/assets/close-icon.svg" alt="Remove" style={{ width: '16px', height: '16px', filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+                              </button>
                                 </div>
                               );
                             })}
