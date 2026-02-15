@@ -275,7 +275,7 @@ function BrandPage() {
                 <p
                   style={{
                     fontFamily: '"Futura PT Medium"',
-                    fontSize: '11px',
+                    fontSize: '12px',
                     color: '#EB1C24',
                     margin: '0 0 8px 0',
                     textTransform: 'uppercase',

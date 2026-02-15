@@ -10,6 +10,7 @@ interface ConfirmationModalProps {
   cancelText?: string;
   dataAttribute?: string;
   messageTextTransform?: 'uppercase' | 'lowercase' | 'none';
+  swapButtons?: boolean;
 }
 
 export default function ConfirmationModal({
@@ -21,7 +22,8 @@ export default function ConfirmationModal({
   confirmText = 'CONFIRM',
   cancelText = 'CANCEL',
   dataAttribute = 'confirmation-modal',
-  messageTextTransform = 'uppercase'
+  messageTextTransform = 'uppercase',
+  swapButtons = false
 }: ConfirmationModalProps) {
   if (!isOpen) return null;
 
@@ -93,35 +95,71 @@ export default function ConfirmationModal({
           </p>
         </div>
         <div className={cancelText ? "flex space-x-3" : "flex justify-center"}>
-          {cancelText && (
-            <button
-              onClick={onClose}
-              className="flex-1 py-2 px-4 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
-              style={{
-                borderWidth: '1.3px',
-                fontSize: '11px',
-                fontFamily: '"Futura PT Medium"',
-                color: '#000000',
-                textTransform: 'uppercase'
-              }}
-            >
-              {cancelText}
-            </button>
+          {swapButtons ? (
+            <>
+              <button
+                onClick={onConfirm}
+                className={cancelText ? "flex-1 py-2 px-4 border border-black font-medium hover:bg-gray-50 transition-colors" : "w-full py-2 px-4 border border-black font-medium hover:bg-gray-50 transition-colors"}
+                style={{
+                  borderWidth: '1.3px',
+                  fontSize: '11px',
+                  fontFamily: '"Futura PT Medium"',
+                  backgroundColor: '#FFFFFF',
+                  color: '#EB1C24',
+                  textTransform: 'uppercase'
+                }}
+              >
+                {confirmText}
+              </button>
+              {cancelText && (
+                <button
+                  onClick={onClose}
+                  className="flex-1 py-2 px-4 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
+                  style={{
+                    borderWidth: '1.3px',
+                    fontSize: '11px',
+                    fontFamily: '"Futura PT Medium"',
+                    color: '#000000',
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  {cancelText}
+                </button>
+              )}
+            </>
+          ) : (
+            <>
+              {cancelText && (
+                <button
+                  onClick={onClose}
+                  className="flex-1 py-2 px-4 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
+                  style={{
+                    borderWidth: '1.3px',
+                    fontSize: '11px',
+                    fontFamily: '"Futura PT Medium"',
+                    color: '#000000',
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  {cancelText}
+                </button>
+              )}
+              <button
+                onClick={onConfirm}
+                className={cancelText ? "flex-1 py-2 px-4 border border-black font-medium hover:bg-gray-50 transition-colors" : "w-full py-2 px-4 border border-black font-medium hover:bg-gray-50 transition-colors"}
+                style={{
+                  borderWidth: '1.3px',
+                  fontSize: '11px',
+                  fontFamily: '"Futura PT Medium"',
+                  backgroundColor: '#FFFFFF',
+                  color: '#EB1C24',
+                  textTransform: 'uppercase'
+                }}
+              >
+                {confirmText}
+              </button>
+            </>
           )}
-          <button
-            onClick={onConfirm}
-            className={cancelText ? "flex-1 py-2 px-4 border border-black font-medium hover:bg-gray-50 transition-colors" : "w-full py-2 px-4 border border-black font-medium hover:bg-gray-50 transition-colors"}
-            style={{
-              borderWidth: '1.3px',
-              fontSize: '11px',
-              fontFamily: '"Futura PT Medium"',
-              backgroundColor: '#FFFFFF',
-              color: '#EB1C24',
-              textTransform: 'uppercase'
-            }}
-          >
-            {confirmText}
-          </button>
         </div>
       </div>
     </div>

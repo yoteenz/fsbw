@@ -1248,8 +1248,15 @@ function AccountPage() {
     if (!imageToCrop || !cropContainerRef.current || !img || !img.complete || img.naturalWidth === 0) return;
 
     const displayImageSize = 300;
+    const outputSize = 200;
     const imgWidth = img.naturalWidth;
     const imgHeight = img.naturalHeight;
+    const aspectRatio = imgHeight > 0 ? imgWidth / imgHeight : 1;
+    const isSquare = aspectRatio >= 0.8 && aspectRatio <= 1.25;
+    // On save: zoom out ~20%; square/near-square -20, rectangle 20 for Y alignment
+    const saveZoomOut = 0.8;
+    const effectiveScale = cropScale * saveZoomOut;
+    const saveOffsetY = isSquare ? -5 : 20;
     const scaleX = displayImageSize / imgWidth;
     const scaleY = displayImageSize / imgHeight;
     const coverScale = Math.max(scaleX, scaleY);
@@ -1258,20 +1265,19 @@ function AccountPage() {
     const coverOffsetX = (displayedWidth - displayImageSize) / 2;
     const coverOffsetY = (displayedHeight - displayImageSize) / 2;
 
-    // 1) Draw into a buffer using the SAME forward transform as the modal (translate then scale)
-    const bufferSize = Math.ceil(displayImageSize * cropScale);
+    // 1) Draw into a buffer using zoomed-out scale and shifted-up position (modal transform adjusted for save)
+    const bufferSize = Math.ceil(displayImageSize * effectiveScale);
     const buffer = document.createElement('canvas');
     buffer.width = bufferSize;
     buffer.height = bufferSize;
     const bCtx = buffer.getContext('2d');
     if (!bCtx) return;
-    bCtx.translate(bufferSize / 2 + cropPosition.x, bufferSize / 2 + cropPosition.y);
-    bCtx.scale(cropScale, cropScale);
+    bCtx.translate(bufferSize / 2 + cropPosition.x, bufferSize / 2 + cropPosition.y + saveOffsetY);
+    bCtx.scale(effectiveScale, effectiveScale);
     bCtx.translate(-displayImageSize / 2, -displayImageSize / 2);
     bCtx.drawImage(img, -coverOffsetX, -coverOffsetY, displayedWidth, displayedHeight);
 
     // 2) Output 200x200 circle = center 200x200 of the buffer (crop circle in modal is centered)
-    const outputSize = 200;
     const canvas = document.createElement('canvas');
     canvas.width = outputSize;
     canvas.height = outputSize;

@@ -163,8 +163,7 @@ function MembershipPage() {
     }
   };
 
-  // Tier is based on money spent in current 6‑month period (matches account/page.tsx).
-  // Spend thresholds per 6-month cycle: Silver 1,000, Red 2,000 to remain Red, Black 4,000 to unlock Black.
+  // Tier is based on money spent (order totals) in the current 6‑month period. Spend also earns loyalty PTS (1:1).
   const SPEND_TIER_THRESHOLDS = { SILVER: 1000, RED: 2000, BLACK: 4000 };
   // Welcome discount (digital cash) credited to account balance and used at checkout — see constants/tiers.ts
 
@@ -178,6 +177,7 @@ function MembershipPage() {
     return { start: new Date(currentYear, 6, 1), end: new Date(currentYear, 11, 31) };
   };
 
+  /** Sum of order.total in current 6‑month period (tier spend; also 1:1 loyalty PTS earned from spend). */
   const getCurrentPeriodSpending = (): number => {
     if (!userData?.email) return 0;
     try {
@@ -200,6 +200,84 @@ function MembershipPage() {
       return total;
     } catch {
       return 0;
+    }
+  };
+
+  /** Loyalty PTS from spend (1:1 with $ in current period). Included in displayed balance so tier PTS = loyalty PTS from spend. */
+  const getPointsFromSpend = (): number => getCurrentPeriodSpending();
+
+  /** Displayed loyalty balance = stored balance + affiliate points + points earned from spend in period. */
+  const getDisplayLoyaltyPoints = (): number =>
+    (userData?.loyaltyPoints ?? 0) + calculateTotalAffiliatePoints() + getPointsFromSpend();
+
+  /** Format date for points history storage/sort: M-D-YYYY (no leading zeros). */
+  const formatPointsHistoryDate = (dateStr: string): string => {
+    const parts = dateStr.split('-').map(Number);
+    if (parts.length !== 3) return dateStr;
+    const [month, day, year] = parts;
+    return `${month}-${day}-${year}`;
+  };
+
+  /** Format date for points history display: "Feb 14, 2026". */
+  const formatPointsHistoryDateDisplay = (dateStr: string): string => {
+    const parts = dateStr.split('-').map(Number);
+    if (parts.length !== 3) return dateStr;
+    const [month, day, year] = parts;
+    const d = new Date(year, month - 1, day);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  };
+
+  /** Points history rows: PURCHASE + AFFILIATE (CONTENT + SOCIAL) from orders in current period. */
+  const getPointsHistoryRows = (): { date: string; discount: string; points: string }[] => {
+    if (!userData?.email) return [];
+    try {
+      const period = getCurrentPeriod();
+      const currentMonth = new Date().getMonth();
+      const currentYear = new Date().getFullYear();
+      const currentPeriodStr = currentMonth < 6 ? `${currentYear}-Jan-Jun` : `${currentYear}-Jul-Dec`;
+      const userOrdersKey = `userOrders_${userData.email}`;
+      const stored = localStorage.getItem(userOrdersKey);
+      if (!stored) return [];
+      const orders = JSON.parse(stored);
+      const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
+      const rows: { date: string; discount: string; points: string }[] = [];
+      allOrders.forEach((order: any) => {
+        if (!order.date) return;
+        const [month, day, year] = order.date.split('-').map(Number);
+        const orderDate = new Date(year, month - 1, day);
+        if (orderDate < period.start || orderDate > period.end) return;
+        const dateFormatted = formatPointsHistoryDate(order.date);
+        if ((order.total || 0) > 0) {
+          rows.push({
+            date: dateFormatted,
+            discount: 'PURCHASE',
+            points: `+${Math.round(order.total).toLocaleString()} PTS`
+          });
+        }
+        if (order.status === 'DELIVERED') {
+          const pointsPeriod = order.pointsEarnedPeriod || order.socialTagsPeriod || '';
+          if (pointsPeriod === currentPeriodStr) {
+            const photoVideo = Math.min(2000, order.pointsEarned || 0);
+            const social = (order.socialTagsPeriod === currentPeriodStr) ? (order.socialTags || 0) * 600 : 0;
+            const affiliatePts = photoVideo + social;
+            if (affiliatePts > 0) {
+              rows.push({
+                date: dateFormatted,
+                discount: 'CONTENT + SOCIAL',
+                points: `+${affiliatePts.toLocaleString()} PTS`
+              });
+            }
+          }
+        }
+      });
+      rows.sort((a, b) => {
+        const [aM, aD, aY] = a.date.split('-').map(Number);
+        const [bM, bD, bY] = b.date.split('-').map(Number);
+        return new Date(bY, bM - 1, bD).getTime() - new Date(aY, aM - 1, aD).getTime();
+      });
+      return rows;
+    } catch {
+      return [];
     }
   };
 
@@ -1013,11 +1091,7 @@ function MembershipPage() {
                               fontWeight: '500'
                             }}
                           >
-                            {(() => {
-                              const basePoints = userData?.loyaltyPoints || 200;
-                              const affiliatePoints = calculateTotalAffiliatePoints();
-                              return (basePoints + affiliatePoints).toLocaleString();
-                            })()} PTS
+                            {getDisplayLoyaltyPoints().toLocaleString()} PTS
                           </p>
                           <p
                             style={{
@@ -1042,9 +1116,7 @@ function MembershipPage() {
                             (EXCLUDES TAXES + SHIPPING FEES)
                           </p>
                           {(() => {
-                              const basePoints = userData?.loyaltyPoints || 200;
-                              const affiliatePoints = calculateTotalAffiliatePoints();
-                              const totalPoints = basePoints + affiliatePoints;
+                              const totalPoints = getDisplayLoyaltyPoints();
                               const rewards = [
                                 { discount: '10% OFF', points: 10000 },
                                 { discount: '15% OFF', points: 15000 },
@@ -1098,9 +1170,7 @@ function MembershipPage() {
                             { discount: '30% OFF', points: 30000 },
                             { discount: '50% OFF UNIT', points: 50000 }
                           ].map((reward, index) => {
-                            const basePoints = userData?.loyaltyPoints || 200;
-                            const affiliatePoints = calculateTotalAffiliatePoints();
-                            const currentPoints = basePoints + affiliatePoints;
+                            const currentPoints = getDisplayLoyaltyPoints();
                             const canRedeem = currentPoints >= reward.points;
                             return (
                               <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: index < 4 ? '8px 0' : '8px 0 0 0', borderBottom: index < 4 ? '1px solid #E5E5E5' : 'none' }}>
@@ -1674,9 +1744,7 @@ function MembershipPage() {
                                 }}
                               >
                                 {(() => {
-                                  const basePoints = userData?.loyaltyPoints || 200;
-                                  const affiliatePoints = calculateTotalAffiliatePoints();
-                                  return (basePoints + affiliatePoints).toLocaleString();
+                                  return getDisplayLoyaltyPoints().toLocaleString();
                                 })()} PTS
                               </p>
                               <p
@@ -1702,9 +1770,7 @@ fontFamily: '"Futura PT Book"',
                                 (EXCLUDES TAXES + SHIPPING FEES)
                               </p>
                               {(() => {
-                                  const basePoints = userData?.loyaltyPoints || 200;
-                                  const affiliatePoints = calculateTotalAffiliatePoints();
-                                  const totalPoints = basePoints + affiliatePoints;
+                                  const totalPoints = getDisplayLoyaltyPoints();
                                   const rewards = [
                                     { discount: '10% OFF', points: 10000 },
                                     { discount: '15% OFF', points: 15000 },
@@ -1758,9 +1824,7 @@ fontFamily: '"Futura PT Book"',
                                 { discount: '30% OFF', points: 30000 },
                                 { discount: '50% OFF UNIT', points: 50000 }
                               ].map((reward, index) => {
-                                const basePoints = userData?.loyaltyPoints || 200;
-                                const affiliatePoints = calculateTotalAffiliatePoints();
-                                const currentPoints = basePoints + affiliatePoints;
+                                const currentPoints = getDisplayLoyaltyPoints();
                                 const canRedeem = currentPoints >= reward.points;
                                 return (
                                   <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: index < 4 ? '8px 0' : '8px 0 0 0', borderBottom: index < 4 ? '1px solid #E5E5E5' : 'none' }}>
@@ -1824,19 +1888,23 @@ fontFamily: '"Futura PT Book"',
                           <div style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase', marginBottom: '8px', fontFamily: '"Futura PT Medium"', fontWeight: '500', color: '#000000' }}>
                             <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left' }}>DATE</span>
                             <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center' }}>REWARD</span>
-                            <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right' }}>SPENT</span>
+                            <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right' }}>POINTS</span>
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            {[
-                              { date: '02-14-2026', discount: 'DISCOUNT CODE', points: '-2,500 PTS' },
-                              { date: '01-05-2026', discount: 'DISCOUNT CODE', points: '-10,000 PTS' }
-                            ].map((row, i) => (
+                            {(() => {
+                              const pointsHistoryRows = getPointsHistoryRows();
+                              return pointsHistoryRows.length === 0 ? (
+                                <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: 0, textTransform: 'uppercase', textAlign: 'center' }}>
+                                  YOU HAVEN'T REDEEMED ANY POINTS YET.
+                                </p>
+                              ) : pointsHistoryRows.map((row, i) => (
                               <div key={i} style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase' }}>
-                                <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left', color: '#000000', fontFamily: '"Futura PT Book"' }}>{row.date}</span>
+                                <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left', color: '#000000', fontFamily: '"Futura PT Book"' }}>{formatPointsHistoryDateDisplay(row.date)}</span>
                                 <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center', color: '#808080', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.discount}</span>
                                 <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right', color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.points}</span>
                               </div>
-                            ))}
+                            ));
+                            })()}
                           </div>
                         </div>
 
@@ -2025,7 +2093,7 @@ fontFamily: '"Futura PT Book"',
                                       {isEarned ? (
                                         <img src="/assets/premium-check.svg" alt="Earned" style={{ width: '8.4px', height: '8.4px', flexShrink: 0 }} />
                                       ) : (
-                                        <span style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: '#EB1C24' }}>+{item.points}</span>
+                                        <span style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: '#EB1C24', marginLeft: '-2px' }}>+{item.points}</span>
                                       )}
                                     </div>
                                   );

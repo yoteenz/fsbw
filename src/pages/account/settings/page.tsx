@@ -817,7 +817,7 @@ function SettingsPage() {
                     const setValue = key === 'facebook' ? setFacebook : key === 'instagram' ? setInstagram : key === 'youtube' ? setYoutube : key === 'tiktok' ? setTiktok : setTwitter;
                     const isView = socialViewMode[key];
                     return (
-                      <div key={key} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center', border: '1.3px solid black', background: 'white', boxSizing: 'border-box', minHeight: '36px', paddingLeft: '8px', paddingRight: '8px' }}>
+                      <div key={key} style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', border: '1.3px solid black', background: 'white', boxSizing: 'border-box', minHeight: '36px', paddingLeft: '8px', paddingRight: '8px' }}>
                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', flexShrink: 0, textTransform: 'uppercase' }}>{prefix}</span>
                         {isView ? (
                           <span
@@ -844,6 +844,7 @@ function SettingsPage() {
                             placeholder=""
                             style={{
                               ...inputBaseStyle,
+                              fontSize: '11px',
                               border: 'none',
                               marginBottom: 0,
                               paddingLeft: 0,
@@ -868,15 +869,15 @@ function SettingsPage() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '24px' }}>
                   <div className="flex items-center justify-between" style={{ width: '100%' }}>
-                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: 'black', textTransform: 'uppercase', fontWeight: '500' }}>Newsletter</span>
+                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: 'black', textTransform: 'uppercase', fontWeight: '500', lineHeight: '1.2' }}>Newsletter</span>
                     <ToggleSwitch on={newsletter} onClick={() => setNewsletter(!newsletter)} />
                   </div>
                   <div className="flex items-center justify-between" style={{ width: '100%' }}>
-                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: 'black', textTransform: 'uppercase', fontWeight: '500' }}>Sales</span>
+                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: 'black', textTransform: 'uppercase', fontWeight: '500', lineHeight: '1.2' }}>Sales</span>
                     <ToggleSwitch on={sales} onClick={() => setSales(!sales)} />
                   </div>
                   <div className="flex items-center justify-between" style={{ width: '100%' }}>
-                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: 'black', textTransform: 'uppercase', fontWeight: '500' }}>Order Tracking</span>
+                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: 'black', textTransform: 'uppercase', fontWeight: '500', lineHeight: '1.2' }}>Order Tracking</span>
                     <ToggleSwitch on={orderTracking} onClick={() => setOrderTracking(!orderTracking)} />
                   </div>
                 </div>
@@ -895,6 +896,7 @@ function SettingsPage() {
                       color: 'black',
                       textTransform: 'uppercase',
                       fontWeight: '500',
+                      lineHeight: '1.2',
                       background: 'none',
                       border: 'none',
                       cursor: 'pointer',
@@ -913,6 +915,7 @@ function SettingsPage() {
                       color: 'black',
                       textTransform: 'uppercase',
                       fontWeight: '500',
+                      lineHeight: '3.2',
                       background: 'none',
                       border: 'none',
                       cursor: 'pointer',
@@ -931,6 +934,7 @@ function SettingsPage() {
                       color: 'black',
                       textTransform: 'uppercase',
                       fontWeight: '500',
+                      lineHeight: '1.2',
                       background: 'none',
                       border: 'none',
                       cursor: 'pointer',
@@ -973,6 +977,7 @@ function SettingsPage() {
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="delete-account-confirm"
+        swapButtons
       />
     </div>
   );

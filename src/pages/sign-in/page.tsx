@@ -5,6 +5,12 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { isAdminEmail, isPreviewEnvironment } from '../../utils/adminAuth';
+import {
+  getReviewsLastSeenShopCountKey,
+  getReviewsLastSeenToolCountKey,
+  MOCK_SHOP_REVIEWS_COUNT,
+  MOCK_TOOL_REVIEWS_COUNT
+} from '../../constants/reviews';
 
 // OAuth callback types (match globals from vite-env.d.ts)
 type FbLoginResponse = { status: string; authResponse?: { accessToken: string; userID: string } };
@@ -196,6 +202,7 @@ function SignInPage() {
         referralCode,
         giftCardBalance: 10, // Standard member welcome discount $10 USD (per premium chart)
         hasMadeFirstPurchase: false,
+        loyaltyPoints: 0,
         unlockedDiscounts: ['signup'],
         authProvider: profile.provider,
         oauthId: profile.id,
@@ -214,6 +221,12 @@ function SignInPage() {
       localStorage.removeItem('lastAddedItemId');
       localStorage.removeItem('editingCartItem');
       localStorage.removeItem('editingCartItemId');
+      // Clear all mock data for new OAuth account: empty notifications, no mock review alerts
+      try {
+        localStorage.setItem(`notifications_${email}`, '[]');
+        localStorage.setItem(getReviewsLastSeenShopCountKey(email), String(MOCK_SHOP_REVIEWS_COUNT));
+        localStorage.setItem(getReviewsLastSeenToolCountKey(email), String(MOCK_TOOL_REVIEWS_COUNT));
+      } catch (_) {}
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: 0 }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
       window.dispatchEvent(new CustomEvent('wishlistUpdated'));
@@ -1843,6 +1856,7 @@ function SignInPage() {
                         referralCode: referralCode,
                         giftCardBalance: 10, // Standard member welcome discount $10 USD (per premium chart)
                         hasMadeFirstPurchase: false, // Referral code becomes active after first purchase
+                        loyaltyPoints: 0,
                         unlockedDiscounts: ['signup'], // Track which discounts have been unlocked
                         createdAt: new Date().toISOString()
                       };
@@ -1861,6 +1875,13 @@ function SignInPage() {
                       localStorage.removeItem('editingCartItemId');
                       try {
                         localStorage.setItem(`userOrders_${newUser.email.trim().toLowerCase()}`, JSON.stringify({ activeOrders: [], pastOrders: [] }));
+                      } catch (_) {}
+                      // Clear all mock data for new sign-up: empty notifications, no mock review alerts
+                      try {
+                        const newEmail = newUser.email.trim().toLowerCase();
+                        localStorage.setItem('notifications', '[]');
+                        localStorage.setItem(getReviewsLastSeenShopCountKey(newEmail), String(MOCK_SHOP_REVIEWS_COUNT));
+                        localStorage.setItem(getReviewsLastSeenToolCountKey(newEmail), String(MOCK_TOOL_REVIEWS_COUNT));
                       } catch (_) {}
                       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: 0 }));
                       window.dispatchEvent(new CustomEvent('cartUpdated'));
