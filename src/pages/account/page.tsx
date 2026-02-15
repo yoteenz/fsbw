@@ -124,6 +124,16 @@ function AccountPage() {
     MXN: { symbol: '&#36;', rate: 20.0, name: 'Mexican Peso' }
   }), []);
 
+  // On production (e.g. Vercel): redirect to sign-in when not signed in. On localhost (vite preview) show mock account.
+  useEffect(() => {
+    if (isSignedIn) return;
+    const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+    const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+    if (!isLocalhost) {
+      navigate('/sign-in');
+    }
+  }, [isSignedIn, navigate]);
+
   // Listen for currency changes from cart dropdown
   useEffect(() => {
     const handleCurrencyChange = () => {
