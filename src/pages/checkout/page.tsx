@@ -7,6 +7,17 @@ import { createRouteProtection, prepareRouteProtectionData } from '../../utils/r
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 
+function getCardBrandDisplay(fullNumber: string): string {
+  const digits = fullNumber.replace(/\D/g, '');
+  if (digits.length < 4) return 'CARD';
+  if (digits.startsWith('4')) return 'VISA';
+  if (digits.startsWith('5') && /^5[1-5]/.test(digits)) return 'MASTERCARD';
+  if (/^5[6-9]|^2[2-7]/.test(digits)) return 'MASTERCARD';
+  if (/^3[47]/.test(digits)) return 'AMERICAN EXPRESS';
+  if (digits.startsWith('6011') || digits.startsWith('65') || /^64[4-9]/.test(digits)) return 'DISCOVER';
+  return 'CARD';
+}
+
 function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -461,20 +472,9 @@ function CheckoutPage() {
           // Check if user has a default address saved
           const defaultAddress = user.defaultAddress || user.shippingAddress;
           if (defaultAddress) {
-            setFirstName(defaultAddress.firstName || '');
-            setLastName(defaultAddress.lastName || '');
-            setShippingAddress(defaultAddress.address || '');
-            setCity(defaultAddress.city || '');
-            setState(defaultAddress.state || '');
-            setZip(defaultAddress.zip || '');
-            setPhoneNumber(defaultAddress.phoneNumber || user.phoneNumber || '');
             setEmail(defaultAddress.email || user.email || email);
-          } else if (user.firstName && user.lastName) {
-            // Fallback to user's basic info if no default address
-            setFirstName(user.firstName || '');
-            setLastName(user.lastName || '');
+          } else if (user.email) {
             setEmail(user.email || email);
-            setPhoneNumber(user.phoneNumber || '');
           }
         }
       } catch (error) {
@@ -1486,9 +1486,9 @@ function CheckoutPage() {
         input:-webkit-autofill:hover,
         input:-webkit-autofill:focus,
         input:-webkit-autofill:active {
-          -webkit-box-shadow: 0 0 0 30px #FFFFFF inset !important;
+          -webkit-box-shadow: 0 0 0 100px #FFFFFF inset !important;
           -webkit-text-fill-color: #808080 !important;
-          box-shadow: 0 0 0 30px #FFFFFF inset !important;
+          box-shadow: 0 0 0 100px #FFFFFF inset !important;
           background-color: #FFFFFF !important;
         }
         label span[style*="#EB1C24"] {
@@ -2167,8 +2167,8 @@ function CheckoutPage() {
                                 const pointsText = multiplier > 1 
                                   ? `${basePoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} × ${multiplier} = ${actualPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
                                   : actualPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-                                
-                                return <>YOU'RE EARNING <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{pointsText}</span> LOYALTY POINTS WITH THIS ORDER{multiplierText}!</>;
+                                const punctuation = actualPoints === 0 ? '.' : '!';
+                                return <>YOU'RE EARNING <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{pointsText}</span> LOYALTY POINTS WITH THIS ORDER{multiplierText}{punctuation}</>;
                               })()}
                             </>
                           ) : (
@@ -2266,7 +2266,7 @@ function CheckoutPage() {
                         fontFamily: '"Futura PT Medium"',
                         fontSize: '10px',
                         color: '#EB1C24',
-                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                        backgroundColor: '#FFFFFF',
                         boxSizing: 'border-box',
                         borderRadius: '0'
                       }}
@@ -2331,7 +2331,7 @@ function CheckoutPage() {
                         height: '36px',
                         padding: '10px 20px',
                         border: '1.3px solid #000000',
-                        backgroundColor: processingPayment ? '#f0f0f0' : '#FFFFFF',
+                        backgroundColor: '#FFFFFF',
                         fontFamily: '"Futura PT Book"',
                         fontSize: '11px',
                         cursor: processingPayment ? 'not-allowed' : 'pointer',
@@ -2350,7 +2350,7 @@ function CheckoutPage() {
                         height: '36px',
                         padding: '10px 20px',
                         border: '1.3px solid #000000',
-                        backgroundColor: processingPayment ? '#f0f0f0' : '#FFFFFF',
+                        backgroundColor: '#FFFFFF',
                         fontFamily: '"Futura PT Book"',
                         fontSize: '11px',
                         cursor: processingPayment ? 'not-allowed' : 'pointer',
@@ -2369,7 +2369,7 @@ function CheckoutPage() {
                         height: '36px',
                         padding: '10px 20px',
                         border: '1.3px solid #000000',
-                        backgroundColor: processingPayment ? '#f0f0f0' : '#FFFFFF',
+                        backgroundColor: '#FFFFFF',
                         fontFamily: '"Futura PT Book"',
                         fontSize: '11px',
                         cursor: processingPayment ? 'not-allowed' : 'pointer',
@@ -2406,7 +2406,7 @@ function CheckoutPage() {
                         height: '36px',
                         padding: '10px 20px',
                         border: '1.3px solid #000000',
-                        backgroundColor: processingPayment ? '#f0f0f0' : '#FFFFFF',
+                        backgroundColor: '#FFFFFF',
                         fontFamily: '"Futura PT Book"',
                         fontSize: '11px',
                         cursor: processingPayment ? 'not-allowed' : 'pointer',
@@ -2425,7 +2425,7 @@ function CheckoutPage() {
                         height: '36px',
                         padding: '10px 20px',
                         border: '1.3px solid #000000',
-                        backgroundColor: processingPayment ? '#f0f0f0' : '#FFFFFF',
+                        backgroundColor: '#FFFFFF',
                         fontFamily: '"Futura PT Book"',
                         fontSize: '11px',
                         cursor: processingPayment ? 'not-allowed' : 'pointer',
@@ -2444,7 +2444,7 @@ function CheckoutPage() {
                         height: '36px',
                         padding: '10px 20px',
                         border: '1.3px solid #000000',
-                        backgroundColor: processingPayment ? '#f0f0f0' : '#FFFFFF',
+                        backgroundColor: '#FFFFFF',
                         fontFamily: '"Futura PT Book"',
                         fontSize: '11px',
                         cursor: processingPayment ? 'not-allowed' : 'pointer',
@@ -2458,7 +2458,8 @@ function CheckoutPage() {
                   </div>
                     </div>
 
-                {/* SHIPPING ADDRESS SECTION */}
+                {/* SHIPPING ADDRESS SECTION - hidden for digital-only (membership upgrade / gift card only) */}
+                {!isOnlyDigitalProducts && !isSubscriptionUpgrade && (
                 <div>
                   <h2 
                     style={{ 
@@ -2501,6 +2502,7 @@ function CheckoutPage() {
                               });
                             }
                           }}
+                          disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                             height: '36px',
@@ -2512,7 +2514,8 @@ function CheckoutPage() {
                           color: '#808080',
                             boxSizing: 'border-box',
                             borderRadius: '0',
-                          outline: 'none'
+                          outline: 'none',
+                          cursor: savePaymentMethod ? 'not-allowed' : 'text'
                         }}
                       />
                     </div>
@@ -2543,6 +2546,7 @@ function CheckoutPage() {
                               });
                             }
                           }}
+                          disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                             height: '36px',
@@ -2554,7 +2558,8 @@ function CheckoutPage() {
                           color: '#808080',
                             boxSizing: 'border-box',
                             borderRadius: '0',
-                          outline: 'none'
+                          outline: 'none',
+                          cursor: savePaymentMethod ? 'not-allowed' : 'text'
                           }}
                         />
                       </div>
@@ -2586,6 +2591,7 @@ function CheckoutPage() {
                             });
                           }
                         }}
+                        disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -2597,7 +2603,8 @@ function CheckoutPage() {
                           color: '#808080',
                           boxSizing: 'border-box',
                           borderRadius: '0',
-                          outline: 'none'
+                          outline: 'none',
+                          cursor: savePaymentMethod ? 'not-allowed' : 'text'
                         }}
                       />
                     </div>
@@ -2616,6 +2623,7 @@ function CheckoutPage() {
                       </label>
                       <input
                         type="text"
+                        disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -2626,7 +2634,8 @@ function CheckoutPage() {
                           backgroundColor: '#FFFFFF',
                           color: '#808080',
                           boxSizing: 'border-box',
-                          borderRadius: '0'
+                          borderRadius: '0',
+                          cursor: savePaymentMethod ? 'not-allowed' : 'text'
                         }}
                       />
                     </div>
@@ -2658,6 +2667,7 @@ function CheckoutPage() {
                               });
                             }
                           }}
+                          disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                             height: '36px',
@@ -2669,7 +2679,8 @@ function CheckoutPage() {
                           color: '#808080',
                             boxSizing: 'border-box',
                             borderRadius: '0',
-                          outline: 'none'
+                          outline: 'none',
+                          cursor: savePaymentMethod ? 'not-allowed' : 'text'
                         }}
                       />
                     </div>
@@ -2700,6 +2711,7 @@ function CheckoutPage() {
                               });
                             }
                           }}
+                          disabled={savePaymentMethod}
                           style={{
                             width: '100%',
                             height: '36px',
@@ -2711,7 +2723,8 @@ function CheckoutPage() {
                             color: '#808080',
                             boxSizing: 'border-box',
                             borderRadius: '0',
-                            outline: 'none'
+                            outline: 'none',
+                            cursor: savePaymentMethod ? 'not-allowed' : 'text'
                           }}
                         />
                       </div>
@@ -2742,6 +2755,7 @@ function CheckoutPage() {
                               });
                             }
                           }}
+                          disabled={savePaymentMethod}
                           style={{
                             width: '100%',
                             height: '36px',
@@ -2753,7 +2767,8 @@ function CheckoutPage() {
                             color: '#808080',
                             boxSizing: 'border-box',
                             borderRadius: '0',
-                            outline: 'none'
+                            outline: 'none',
+                            cursor: savePaymentMethod ? 'not-allowed' : 'text'
                           }}
                         />
                       </div>
@@ -2785,6 +2800,7 @@ function CheckoutPage() {
                             });
                           }
                         }}
+                        disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -2796,7 +2812,8 @@ function CheckoutPage() {
                           color: '#808080',
                           boxSizing: 'border-box',
                           borderRadius: '0',
-                          outline: 'none'
+                          outline: 'none',
+                          cursor: savePaymentMethod ? 'not-allowed' : 'text'
                         }}
                       />
                     </div>
@@ -2818,7 +2835,7 @@ function CheckoutPage() {
                         type="email"
                         value={email}
                         onChange={(e) => {
-                          setEmail(e.target.value);
+                          setEmail(e.target.value.toUpperCase());
                           if (e.target.value.trim()) {
                             setInvalidFields(prev => {
                               const next = new Set(prev);
@@ -2827,6 +2844,7 @@ function CheckoutPage() {
                             });
                           }
                         }}
+                        disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -2838,7 +2856,9 @@ function CheckoutPage() {
                           color: '#808080',
                           boxSizing: 'border-box',
                           borderRadius: '0',
-                          outline: 'none'
+                          outline: 'none',
+                          cursor: savePaymentMethod ? 'not-allowed' : 'text',
+                          textTransform: 'uppercase'
                         }}
                       />
                     </div>
@@ -2918,6 +2938,7 @@ function CheckoutPage() {
                     </div>
                   </div>
                 </div>
+                )}
 
                 {/* BILLING ADDRESS SECTION */}
                 <div>
@@ -2960,7 +2981,7 @@ function CheckoutPage() {
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                            backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
+                            backgroundColor: '#FFFFFF',
                             color: '#808080',
                           boxSizing: 'border-box',
                             borderRadius: '0',
@@ -2993,7 +3014,7 @@ function CheckoutPage() {
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                            backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
+                            backgroundColor: '#FFFFFF',
                             color: '#808080',
                           boxSizing: 'border-box',
                             borderRadius: '0',
@@ -3037,7 +3058,7 @@ function CheckoutPage() {
                             border: `1.3px solid ${invalidFields.has('billingAddress') ? '#EB1C24' : '#000000'}`,
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
-                          backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
+                          backgroundColor: '#FFFFFF',
                           color: '#808080',
                           boxSizing: 'border-box',
                           borderRadius: '0',
@@ -3071,7 +3092,7 @@ function CheckoutPage() {
                             border: '1.3px solid #000000',
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
-                          backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
+                          backgroundColor: '#FFFFFF',
                           color: '#808080',
                           boxSizing: 'border-box',
                           borderRadius: '0',
@@ -3115,7 +3136,7 @@ function CheckoutPage() {
                               border: `1.3px solid ${invalidFields.has('billingCity') ? '#EB1C24' : '#000000'}`,
                               fontFamily: '"Futura PT Book"',
                               fontSize: '11px',
-                            backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
+                            backgroundColor: '#FFFFFF',
                             color: '#808080',
                               boxSizing: 'border-box',
                             borderRadius: '0',
@@ -3159,7 +3180,7 @@ function CheckoutPage() {
                               border: `1.3px solid ${invalidFields.has('billingState') ? '#EB1C24' : '#000000'}`,
                               fontFamily: '"Futura PT Book"',
                               fontSize: '11px',
-                                backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
+                                backgroundColor: '#FFFFFF',
                                 color: '#808080',
                               boxSizing: 'border-box',
                                 borderRadius: '0',
@@ -3203,7 +3224,7 @@ function CheckoutPage() {
                               border: `1.3px solid ${invalidFields.has('billingZip') ? '#EB1C24' : '#000000'}`,
                               fontFamily: '"Futura PT Book"',
                               fontSize: '11px',
-                              backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
+                              backgroundColor: '#FFFFFF',
                               color: '#808080',
                                 boxSizing: 'border-box',
                               borderRadius: '0',
@@ -3214,6 +3235,7 @@ function CheckoutPage() {
                     </div>
                   </div>
                   </div>
+                  {!isOnlyDigitalProducts && !isSubscriptionUpgrade && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px' }}>
                     <div
                       onClick={() => setSameAsBilling(!sameAsBilling)}
@@ -3250,6 +3272,7 @@ function CheckoutPage() {
                       SAME AS SHIPPING ADDRESS
                     </label>
                   </div>
+                  )}
                 </div>
 
                 {/* PAYMENT SECTION */}
@@ -3301,7 +3324,7 @@ function CheckoutPage() {
                                 border: `1.3px solid ${invalidFields.has('cardholder') ? '#EB1C24' : '#000000'}`,
                                 fontFamily: '"Futura PT Book"',
                                 fontSize: '11px',
-                                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                backgroundColor: '#FFFFFF',
                                 boxSizing: 'border-box',
                                 borderRadius: '0',
                                 outline: 'none'
@@ -3342,7 +3365,7 @@ function CheckoutPage() {
                                 border: `1.3px solid ${invalidFields.has('cardNumber') ? '#EB1C24' : '#000000'}`,
                                 fontFamily: '"Futura PT Book"',
                                 fontSize: '11px',
-                                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                backgroundColor: '#FFFFFF',
                                 boxSizing: 'border-box',
                                 borderRadius: '0',
                                 outline: 'none'
@@ -3384,7 +3407,7 @@ function CheckoutPage() {
                             border: `1.3px solid ${invalidFields.has('expirationDate') ? '#EB1C24' : '#000000'}`,
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          backgroundColor: '#FFFFFF',
                           boxSizing: 'border-box',
                           borderRadius: '0',
                           outline: 'none'
@@ -3425,7 +3448,7 @@ function CheckoutPage() {
                             border: `1.3px solid ${invalidFields.has('cvv') ? '#EB1C24' : '#000000'}`,
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            backgroundColor: '#FFFFFF',
                             boxSizing: 'border-box',
                             borderRadius: '0',
                             outline: 'none'
@@ -3458,7 +3481,7 @@ function CheckoutPage() {
                           border: '1.3px solid #000000',
                           fontFamily: '"Futura PT Book"',
                           fontSize: '11px',
-                            backgroundColor: sameAsBilling ? 'rgba(240, 240, 240, 0.8)' : '#FFFFFF',
+                            backgroundColor: '#FFFFFF',
                             color: '#808080',
                             boxSizing: 'border-box',
                             borderRadius: '0',
@@ -3580,7 +3603,7 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Demi"',
                           fontSize: '11px',
                           color: '#808080',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          backgroundColor: '#FFFFFF',
                           boxSizing: 'border-box',
                           borderRadius: '0'
                         }}
@@ -3612,7 +3635,7 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Demi"',
                           fontSize: '11px',
                           color: '#808080',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          backgroundColor: '#FFFFFF',
                             boxSizing: 'border-box',
                             borderRadius: '0'
                           }}
@@ -3692,7 +3715,7 @@ function CheckoutPage() {
                             fontFamily: '"Futura PT Demi"',
                             fontSize: '11px',
                             color: '#808080',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          backgroundColor: '#FFFFFF',
                           boxSizing: 'border-box',
                           borderRadius: '0'
                         }}
@@ -4089,7 +4112,7 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Medium"',
                             fontSize: '11px',
                           color: '#EB1C24',
-                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            backgroundColor: '#FFFFFF',
                           boxSizing: 'border-box',
                             borderRadius: '0'
                           }}
@@ -4170,6 +4193,8 @@ function CheckoutPage() {
                       </span>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(orderAmount)}></span>
                     </div>
+                    {!isOnlyDigitalProducts && !isSubscriptionUpgrade && (
+                      <>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
                         SALES TAX:
@@ -4200,6 +4225,8 @@ function CheckoutPage() {
                         )}
                       </span>
                     </div>
+                      </>
+                    )}
                     {rushProcessing > 0 && (
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
@@ -4224,7 +4251,7 @@ function CheckoutPage() {
                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(tipAmount)}></span>
                       </div>
                     )}
-                    {/* Digital cash (account balance; includes tier welcome discount). Or gift card code—only one can apply; adding a gift card replaces this line. Edit opens modal to choose amount (0 = line still shows with ($0)). */}
+                    {/* Digital cash (account balance; includes tier welcome discount). Only show when balance > 0. Gift card code replaces this line when applied. */}
                     {giftCardBalance > 0 && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -4326,7 +4353,7 @@ function CheckoutPage() {
                       border: '1.3px solid #000000',
                       fontFamily: '"Futura PT Book"',
                       fontSize: '11px',
-                      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                      backgroundColor: '#FFFFFF',
                       resize: 'vertical',
                       borderRadius: '0'
                     }}
@@ -4409,6 +4436,7 @@ function CheckoutPage() {
                       SUBSCRIBE TO EMAIL NEWSLETTER
                     </label>
                   </div>
+                  {!isOnlyDigitalProducts && !isSubscriptionUpgrade && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div
                       onClick={() => setAddressConfirmed(!addressConfirmed)}
@@ -4449,6 +4477,7 @@ function CheckoutPage() {
                       I ACKNOWLEDGE MY <span style={{ color: '#EB1C24' }}>SHIPPING ADDRESS</span> IS CORRECT & CAN NOT BE CHANGED BEYOND THIS POINT.<span style={{ color: '#EB1C24' }}>*</span>
                     </label>
                   </div>
+                  )}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                     <div
                       onClick={() => setAgreeToTerms(!agreeToTerms)}
@@ -4501,48 +4530,50 @@ function CheckoutPage() {
             <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                   <button
                     onClick={() => {
-                  // Validate required fields
-                  if (!firstName.trim()) {
-                    setValidationMessage('FIRST NAME IS REQUIRED.');
-                    setFieldToFocus('firstName');
-                    setInvalidFields(prev => new Set(prev).add('firstName'));
-                    setShowValidationModal(true);
-                    return;
-                  }
-                  if (!lastName.trim()) {
-                    setValidationMessage('LAST NAME IS REQUIRED.');
-                    setFieldToFocus('lastName');
-                    setInvalidFields(prev => new Set(prev).add('lastName'));
-                    setShowValidationModal(true);
-                    return;
-                  }
-                  if (!shippingAddress.trim()) {
-                    setValidationMessage('SHIPPING ADDRESS IS REQUIRED.');
-                    setFieldToFocus('shippingAddress');
-                    setInvalidFields(prev => new Set(prev).add('shippingAddress'));
-                    setShowValidationModal(true);
-                    return;
-                  }
-                  if (!city.trim()) {
-                    setValidationMessage('CITY IS REQUIRED.');
-                    setFieldToFocus('city');
-                    setInvalidFields(prev => new Set(prev).add('city'));
-                    setShowValidationModal(true);
-                    return;
-                  }
-                  if (!state.trim()) {
-                    setValidationMessage('STATE IS REQUIRED.');
-                    setFieldToFocus('state');
-                    setInvalidFields(prev => new Set(prev).add('state'));
-                    setShowValidationModal(true);
-                    return;
-                  }
-                  if (!zip.trim()) {
-                    setValidationMessage('ZIP CODE IS REQUIRED.');
-                    setFieldToFocus('zip');
-                    setInvalidFields(prev => new Set(prev).add('zip'));
-                    setShowValidationModal(true);
-                    return;
+                  // Validate required fields (shipping fields only for non-digital orders)
+                  if (!isOnlyDigitalProducts && !isSubscriptionUpgrade) {
+                    if (!firstName.trim()) {
+                      setValidationMessage('FIRST NAME IS REQUIRED.');
+                      setFieldToFocus('firstName');
+                      setInvalidFields(prev => new Set(prev).add('firstName'));
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    if (!lastName.trim()) {
+                      setValidationMessage('LAST NAME IS REQUIRED.');
+                      setFieldToFocus('lastName');
+                      setInvalidFields(prev => new Set(prev).add('lastName'));
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    if (!shippingAddress.trim()) {
+                      setValidationMessage('SHIPPING ADDRESS IS REQUIRED.');
+                      setFieldToFocus('shippingAddress');
+                      setInvalidFields(prev => new Set(prev).add('shippingAddress'));
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    if (!city.trim()) {
+                      setValidationMessage('CITY IS REQUIRED.');
+                      setFieldToFocus('city');
+                      setInvalidFields(prev => new Set(prev).add('city'));
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    if (!state.trim()) {
+                      setValidationMessage('STATE IS REQUIRED.');
+                      setFieldToFocus('state');
+                      setInvalidFields(prev => new Set(prev).add('state'));
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    if (!zip.trim()) {
+                      setValidationMessage('ZIP CODE IS REQUIRED.');
+                      setFieldToFocus('zip');
+                      setInvalidFields(prev => new Set(prev).add('zip'));
+                      setShowValidationModal(true);
+                      return;
+                    }
                   }
                   if (!phoneNumber.trim()) {
                     setValidationMessage('PHONE NUMBER IS REQUIRED.');
@@ -4586,7 +4617,23 @@ function CheckoutPage() {
                     setShowValidationModal(true);
                     return;
                   }
-                  if (!sameAsBilling) {
+                  // Billing required when not same-as-shipping, or when digital-only (no shipping collected)
+                  const requireBilling = !sameAsBilling || isOnlyDigitalProducts || isSubscriptionUpgrade;
+                  if (requireBilling) {
+                    if (!billingFirstName?.trim()) {
+                      setValidationMessage('BILLING FIRST NAME IS REQUIRED.');
+                      setFieldToFocus('billingFirstName');
+                      setInvalidFields(prev => new Set(prev).add('billingFirstName'));
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    if (!billingLastName?.trim()) {
+                      setValidationMessage('BILLING LAST NAME IS REQUIRED.');
+                      setFieldToFocus('billingLastName');
+                      setInvalidFields(prev => new Set(prev).add('billingLastName'));
+                      setShowValidationModal(true);
+                      return;
+                    }
                     if (!billingAddress.trim()) {
                       setValidationMessage('BILLING ADDRESS IS REQUIRED.');
                       setFieldToFocus('billingAddress');
@@ -4624,8 +4671,8 @@ function CheckoutPage() {
                     return;
                   }
                   
-                  // Check if address is confirmed (required before checkout)
-                  if (!addressConfirmed) {
+                  // Check if address is confirmed (required before checkout; skip for digital-only)
+                  if (!isOnlyDigitalProducts && !isSubscriptionUpgrade && !addressConfirmed) {
                     setValidationMessage('PLEASE CONFIRM THAT YOUR ADDRESS IS ACCURATE.');
                     setShowValidationModal(true);
                     return;
@@ -4666,9 +4713,10 @@ function CheckoutPage() {
                   // Format order date
                   const orderDate = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-');
                   
-                  // Get payment method display
+                  // Get payment method display (single brand: VISA, MASTERCARD, AMERICAN EXPRESS, etc.)
+                  const cardBrandDisplay = getCardBrandDisplay(cardNumber);
                   const paymentMethodDisplay = cardNumber.length >= 4 
-                    ? `${cardNumber.slice(0, 4).replace(/\d/g, 'X')} ENDING IN ${cardNumber.slice(-4)}`
+                    ? `${cardBrandDisplay} ENDING IN ${cardNumber.slice(-4)}`
                     : 'CARD ENDING IN XXXX';
                   
                   // Get shipping method display
@@ -4743,9 +4791,12 @@ function CheckoutPage() {
                       const currentUser = localStorage.getItem('currentUser');
                       if (currentUser) {
                         const user = JSON.parse(currentUser);
+                        const displayBrand = getCardBrandDisplay(cardNumber);
+                        const cardBrandForStorage = displayBrand === 'EXPRESS' ? 'AMERICAN EXPRESS' : displayBrand;
                         const paymentMethodToSave = {
                           cardholder: cardholder.trim(),
                           cardNumber: cardNumber.slice(-4), // Only save last 4 digits for security
+                          cardBrand: cardBrandForStorage,
                           expirationDate: expirationDate.trim(),
                           billingZip: billingZip.trim(),
                           isDefault: !user.defaultPaymentMethod, // Set as default if no default exists
@@ -4815,6 +4866,9 @@ function CheckoutPage() {
                               ? [...unlockedDiscounts, subscriptionTier]
                               : unlockedDiscounts;
                             
+                            const subNow = new Date();
+                            const subDateStr = `${subNow.getMonth() + 1}-${subNow.getDate()}-${subNow.getFullYear()}`;
+                            const subEntry = welcomeGiftCardAmount > 0 ? { date: subDateStr, transaction: 'SUBSCRIPTION', amount: welcomeGiftCardAmount } : null;
                             const updatedUser = {
                               ...user,
                               membershipType: 'PREMIUM',
@@ -4823,7 +4877,8 @@ function CheckoutPage() {
                               subscriptionEndDate: subscriptionEndDate.toISOString(),
                               autoRenewMembership: autoRenewMembership,
                               giftCardBalance: currentGiftCardBalance + welcomeGiftCardAmount,
-                              unlockedDiscounts: updatedUnlockedDiscounts
+                              unlockedDiscounts: updatedUnlockedDiscounts,
+                              ...(subEntry && { digitalCashHistory: [...(user.digitalCashHistory || []), subEntry] })
                             };
                             
                             localStorage.setItem('currentUser', JSON.stringify(updatedUser));
@@ -4855,10 +4910,13 @@ function CheckoutPage() {
                         const user = JSON.parse(currentUser);
                         const currentBalance = user.giftCardBalance || 0;
                         const newBalance = Math.max(0, currentBalance - appliedGiftCardBalance);
-                        
+                        const now = new Date();
+                        const dateStr = `${now.getMonth() + 1}-${now.getDate()}-${now.getFullYear()}`;
+                        const checkoutEntry = { date: dateStr, transaction: 'CHECKOUT', amount: -appliedGiftCardBalance };
                         const updatedUser = {
                           ...user,
-                          giftCardBalance: newBalance
+                          giftCardBalance: newBalance,
+                          digitalCashHistory: [...(user.digitalCashHistory || []), checkoutEntry]
                         };
                         
                         localStorage.setItem('currentUser', JSON.stringify(updatedUser));
@@ -4888,7 +4946,14 @@ function CheckoutPage() {
                         const refIndex = registeredUsers.findIndex((u: any) => u.email === referrer.email);
                         if (refIndex !== -1) {
                           const currentBalance = referrer.giftCardBalance || 0;
-                          const updatedReferrer = { ...referrer, giftCardBalance: currentBalance + 20 };
+                          const refNow = new Date();
+                          const refDateStr = `${refNow.getMonth() + 1}-${refNow.getDate()}-${refNow.getFullYear()}`;
+                          const referralEntry = { date: refDateStr, transaction: 'REFERRAL', amount: 20 };
+                          const updatedReferrer = {
+                            ...referrer,
+                            giftCardBalance: currentBalance + 20,
+                            digitalCashHistory: [...(referrer.digitalCashHistory || []), referralEntry]
+                          };
                           registeredUsers[refIndex] = updatedReferrer;
                           localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
                           if (isSignedIn) {

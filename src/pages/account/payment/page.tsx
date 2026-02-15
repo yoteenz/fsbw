@@ -3,14 +3,27 @@ import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
+import ConfirmationModal from '../../../components/ConfirmationModal';
 
 interface PaymentEntry {
   cardholder?: string;
   cardNumber?: string;
+  cardBrand?: string;
   expirationDate?: string;
   billingZip?: string;
   isDefault?: boolean;
   savedAt?: string;
+}
+
+function getCardBrandFromNumber(fullNumber: string): string {
+  const digits = fullNumber.replace(/\D/g, '');
+  if (digits.length < 4) return 'card';
+  if (digits.startsWith('4')) return 'visa';
+  if (digits.startsWith('5') && /^5[1-5]/.test(digits)) return 'mastercard';
+  if (/^5[6-9]|^2[2-7]/.test(digits)) return 'mastercard';
+  if (/^3[47]/.test(digits)) return 'amex';
+  if (digits.startsWith('6011') || digits.startsWith('65') || /^64[4-9]/.test(digits)) return 'discover';
+  return 'card';
 }
 
 function PaymentPage() {
@@ -46,6 +59,17 @@ function PaymentPage() {
       return null;
     }
   });
+  const [showAddPaymentForm, setShowAddPaymentForm] = useState(false);
+  const [saveAsDefaultPayment, setSaveAsDefaultPayment] = useState(true);
+  const [paymentToRemove, setPaymentToRemove] = useState<PaymentEntry | null>(null);
+  const [invalidPaymentFields, setInvalidPaymentFields] = useState<Set<string>>(new Set());
+  const [showValidationModal, setShowValidationModal] = useState(false);
+  const [validationMessage, setValidationMessage] = useState('');
+  const [newCardholder, setNewCardholder] = useState('');
+  const [newCardNumber, setNewCardNumber] = useState('');
+  const [newExpirationDate, setNewExpirationDate] = useState('');
+  const [newCvv, setNewCvv] = useState('');
+  const [newBillingZip, setNewBillingZip] = useState('');
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -111,7 +135,186 @@ function PaymentPage() {
     navigate('/sign-in');
   };
   const handleBack = () => navigate('/account');
-  const handleAddPaymentMethod = () => navigate('/checkout');
+
+  const setDefaultPaymentMethod = (entry: PaymentEntry) => {
+    const email = (userData?.email || '').trim().toLowerCase();
+    if (!email) return;
+    try {
+      const current = localStorage.getItem('currentUser');
+      if (!current) return;
+      const user = JSON.parse(current);
+      if ((user.email || '').trim().toLowerCase() !== email) return;
+      const updatedUser = { ...user, defaultPaymentMethod: { ...entry, isDefault: true } };
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const idx = registered.findIndex((u: any) => (u.email || '').trim().toLowerCase() === email);
+      if (idx !== -1) {
+        registered[idx] = { ...registered[idx], defaultPaymentMethod: updatedUser.defaultPaymentMethod };
+        localStorage.setItem('registeredUsers', JSON.stringify(registered));
+      }
+      setUserData(updatedUser);
+    } catch (_e) {}
+  };
+
+  const removePaymentMethod = (entry: PaymentEntry) => {
+    const email = (userData?.email || '').trim().toLowerCase();
+    if (!email) return;
+    try {
+      const current = localStorage.getItem('currentUser');
+      if (!current) return;
+      const user = JSON.parse(current);
+      if ((user.email || '').trim().toLowerCase() !== email) return;
+      const saved = Array.isArray(user.savedPaymentMethods) ? user.savedPaymentMethods : [];
+      const defaultPay = user.defaultPaymentMethod;
+      const isSame = (a: PaymentEntry, b: PaymentEntry) =>
+        (a.cardNumber === b.cardNumber && a.cardholder === b.cardholder);
+      const newSaved = saved.filter((p: PaymentEntry) => !isSame(p, entry));
+      const wasDefault = defaultPay && isSame(defaultPay, entry);
+      const updatedUser = {
+        ...user,
+        savedPaymentMethods: newSaved,
+        defaultPaymentMethod: wasDefault ? null : user.defaultPaymentMethod
+      };
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const idx = registered.findIndex((u: any) => (u.email || '').trim().toLowerCase() === email);
+      if (idx !== -1) {
+        registered[idx] = { ...registered[idx], savedPaymentMethods: updatedUser.savedPaymentMethods, defaultPaymentMethod: updatedUser.defaultPaymentMethod };
+        localStorage.setItem('registeredUsers', JSON.stringify(registered));
+      }
+      setUserData(updatedUser);
+    } catch (_e) {}
+  };
+
+  const openAddPaymentForm = () => {
+    const hasAny = !!(userData?.defaultPaymentMethod || (userData?.savedPaymentMethods?.length));
+    setSaveAsDefaultPayment(!hasAny || !userData?.defaultPaymentMethod);
+    setInvalidPaymentFields(new Set());
+    setShowAddPaymentForm(true);
+  };
+
+  const cancelAddPayment = () => {
+    setShowAddPaymentForm(false);
+    setInvalidPaymentFields(new Set());
+    setNewCardholder('');
+    setNewCardNumber('');
+    setNewExpirationDate('');
+    setNewCvv('');
+    setNewBillingZip('');
+  };
+
+  const saveNewPaymentMethod = () => {
+    const email = (userData?.email || '').trim().toLowerCase();
+    if (!email) return;
+    // Validate in order; show popup and highlight only the first missing field (same as checkout)
+    if (!newCardholder.trim()) {
+      setValidationMessage('CARDHOLDER NAME IS REQUIRED.');
+      setInvalidPaymentFields(new Set(['cardholder']));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!newCardNumber.replace(/\D/g, '').trim()) {
+      setValidationMessage('CARD NUMBER IS REQUIRED.');
+      setInvalidPaymentFields(new Set(['cardNumber']));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!newExpirationDate.trim()) {
+      setValidationMessage('EXPIRATION DATE IS REQUIRED.');
+      setInvalidPaymentFields(new Set(['expirationDate']));
+      setShowValidationModal(true);
+      return;
+    }
+    if (!newBillingZip.trim()) {
+      setValidationMessage('BILLING ZIP CODE IS REQUIRED.');
+      setInvalidPaymentFields(new Set(['billingZip']));
+      setShowValidationModal(true);
+      return;
+    }
+    setInvalidPaymentFields(new Set());
+    const digits = newCardNumber.replace(/\D/g, '');
+    const last4 = digits.slice(-4);
+    const cardBrand = getCardBrandFromNumber(digits);
+    const isFirstCard = !(userData?.savedPaymentMethods?.length) && !userData?.defaultPaymentMethod?.cardNumber;
+    const paymentMethodToSave = {
+      cardholder: newCardholder.trim(),
+      cardNumber: last4,
+      cardBrand,
+      expirationDate: newExpirationDate.trim(),
+      billingZip: newBillingZip.trim(),
+      isDefault: isFirstCard || saveAsDefaultPayment,
+      savedAt: new Date().toISOString()
+    };
+    try {
+      const current = localStorage.getItem('currentUser');
+      if (!current) return;
+      const user = JSON.parse(current);
+      if ((user.email || '').trim().toLowerCase() !== email) return;
+      const saved = Array.isArray(user.savedPaymentMethods) ? user.savedPaymentMethods : [];
+      const updatedUser = {
+        ...user,
+        defaultPaymentMethod: (isFirstCard || saveAsDefaultPayment) ? paymentMethodToSave : user.defaultPaymentMethod,
+        savedPaymentMethods: [...saved, paymentMethodToSave]
+      };
+      if (isFirstCard || saveAsDefaultPayment) updatedUser.defaultPaymentMethod = paymentMethodToSave;
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const idx = registered.findIndex((u: any) => (u.email || '').trim().toLowerCase() === email);
+      if (idx !== -1) {
+        registered[idx] = { ...registered[idx], defaultPaymentMethod: updatedUser.defaultPaymentMethod, savedPaymentMethods: updatedUser.savedPaymentMethods };
+        localStorage.setItem('registeredUsers', JSON.stringify(registered));
+      }
+      setUserData(updatedUser);
+      setShowAddPaymentForm(false);
+      setNewCardholder('');
+      setNewCardNumber('');
+      setNewExpirationDate('');
+      setNewCvv('');
+      setNewBillingZip('');
+    } catch (_e) {}
+  };
+
+  const inputLabelStyle: React.CSSProperties = {
+    fontFamily: '"Futura PT Book"',
+    fontSize: '10px',
+    color: '#000000',
+    display: 'block',
+    marginBottom: '4px',
+    textTransform: 'uppercase'
+  };
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    height: '36px',
+    padding: '8px',
+    border: '1.3px solid #000000',
+    fontFamily: '"Futura PT Demi"',
+    fontSize: '11px',
+    backgroundColor: '#FFFFFF',
+    color: '#808080',
+    boxSizing: 'border-box',
+    borderRadius: '0',
+    outline: 'none',
+    textTransform: 'uppercase'
+  };
+  // Match checkout expiration/billing zip box format; gray Futura Demi for consistency with other inputs
+  const checkoutBoxStyle: React.CSSProperties = {
+    height: '36px',
+    padding: '8px',
+    border: '1.3px solid #000000',
+    fontFamily: '"Futura PT Demi"',
+    fontSize: '11px',
+    color: '#808080',
+    backgroundColor: '#FFFFFF',
+    boxSizing: 'border-box',
+    borderRadius: '0',
+    outline: 'none'
+  };
+  const formatExpirationDate = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    const limited = numbers.slice(0, 4);
+    if (limited.length >= 2) return limited.slice(0, 2) + '/' + limited.slice(2);
+    return limited;
+  };
 
   // Build list: default first, then savedPaymentMethods (avoid duplicate by last4)
   const paymentList: PaymentEntry[] = [];
@@ -128,47 +331,128 @@ function PaymentPage() {
 
   const renderPaymentRow = (entry: PaymentEntry, index: number) => {
     const name = entry.cardholder || 'CARD ON FILE';
-    const last4 = entry.cardNumber ? `ENDING IN ${entry.cardNumber}` : '';
+    const brand = entry.cardBrand || 'card';
+    const brandDisplay = brand === 'amex' ? 'express' : brand;
+    const last4 = entry.cardNumber ? `${brandDisplay} ending in ${entry.cardNumber}` : '';
     const expiry = entry.expirationDate ? `EXPIRES ${entry.expirationDate}` : '';
 
     return (
-      <div
-        key={index}
-        className="border-b border-gray-200 pb-4 mb-4"
-        style={{ borderColor: 'rgba(0,0,0,0.15)' }}
-      >
-        {entry.isDefault && (
-          <p
-            style={{
-              fontFamily: '"Futura PT Medium"',
-              fontSize: '10px',
-              color: '#EB1C24',
-              margin: '0 0 6px 0',
-              textTransform: 'uppercase',
-              fontWeight: '500'
+      <div key={index} style={{ marginBottom: '50px', marginLeft: '3px', ...(index === 0 && { marginTop: '6px' }), display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '15px', color: '#000000', margin: '0 0 6px 0', lineHeight: '1.2', textTransform: 'uppercase' }}>
+            {name}
+          </p>
+          {last4 && (
+            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080', margin: '0 0 4px 0', lineHeight: '1.4', textTransform: 'uppercase' }}>
+              {last4}
+            </p>
+          )}
+          {expiry && (
+            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', margin: '0 0 2px 0', textTransform: 'uppercase' }}>
+              {expiry}
+            </p>
+          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '9px' }}>
+            <div
+              onClick={() => setDefaultPaymentMethod(entry)}
+              style={{
+                width: '14px',
+                height: '14px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '1.3px solid #000000',
+                backgroundColor: 'transparent',
+                position: 'relative'
+              }}
+            >
+              {entry.isDefault && (
+                <img src="/assets/checkbox.svg" alt="" style={{ width: '14px', height: '14px', position: 'absolute' }} />
+              )}
+            </div>
+            <label
+              onClick={() => setDefaultPaymentMethod(entry)}
+              style={{
+                fontFamily: '"Futura PT Book"',
+                fontSize: '10px',
+                color: '#000000',
+                cursor: 'pointer',
+                textTransform: 'uppercase'
+              }}
+            >
+              DEFAULT PAYMENT
+            </label>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setPaymentToRemove(entry);
+          }}
+          aria-label="Remove card"
+          style={{
+            padding: 0,
+            border: 'none',
+            background: 'none',
+            cursor: 'pointer',
+            flexShrink: 0,
+            transform: 'translateX(1px)'
+          }}
+        >
+          <img
+            src="/assets/close-icon.svg"
+            alt="Remove"
+            role="presentation"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setPaymentToRemove(entry);
             }}
-          >
-            DEFAULT
-          </p>
-        )}
-        <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '18px', color: '#000000', margin: '0 0 4px 0', lineHeight: '1.2', textTransform: 'uppercase' }}>
-          {name}
-        </p>
-        {last4 && (
-          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }}>
-            {last4}
-          </p>
-        )}
-        {expiry && (
-          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080', margin: 0, textTransform: 'uppercase' }}>
-            {expiry}
-          </p>
-        )}
+            style={{
+              width: '14.5px',
+              height: '14.5px',
+              cursor: 'pointer',
+              pointerEvents: 'auto',
+              filter: 'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)'
+            }}
+          />
+        </button>
       </div>
     );
   };
 
   return (
+    <>
+      <style>{`
+        .account-payment-card .account-payment-card-header,
+        .account-payment-card .account-payment-card-header img {
+          opacity: 1 !important;
+          filter: none !important;
+        }
+        .account-payment-card .account-payment-card-fields input:focus {
+          outline: none !important;
+          box-shadow: none !important;
+          background-color: #FFFFFF !important;
+        }
+        .account-payment-card .account-payment-card-fields input:-webkit-autofill,
+        .account-payment-card .account-payment-card-fields input:-webkit-autofill:hover,
+        .account-payment-card .account-payment-card-fields input:-webkit-autofill:focus,
+        .account-payment-card .account-payment-card-fields input:-webkit-autofill:active {
+          -webkit-box-shadow: 0 0 0 100px #FFFFFF inset !important;
+          box-shadow: 0 0 0 100px #FFFFFF inset !important;
+          background-color: #FFFFFF !important;
+          -webkit-text-fill-color: #808080 !important;
+          color: #808080 !important;
+        }
+        .account-payment-card .account-payment-card-fields input,
+        .account-payment-card .account-payment-card-fields select {
+          font-family: "Futura PT Demi", "Futura PT Medium", "Futura PT Book", sans-serif !important;
+          color: #808080 !important;
+        }
+      `}</style>
     <div className="min-h-screen" style={{ position: 'relative' }}>
       <div
         className="fixed inset-0 -z-10"
@@ -343,10 +627,13 @@ function PaymentPage() {
           ) : (
             <div className="flex flex-col gap-4 mb-5">
               <div
-                className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full"
-                style={{ borderWidth: '1.3px', minHeight: '560px' }}
+                className="account-payment-card border border-black bg-white/60 backdrop-blur-sm p-4 w-full"
+                style={{
+                  borderWidth: '1.3px',
+                  ...(showAddPaymentForm ? { paddingBottom: '24px' } : { minHeight: '510px' })
+                }}
               >
-                <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
+                <div className="account-payment-card-header flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
                   <h2
                     style={{
                       fontFamily: '"Futura PT Medium"',
@@ -359,46 +646,221 @@ function PaymentPage() {
                   >
                     PAYMENT METHOD
                   </h2>
+                  <img src="/assets/payment-icon.svg?v=2" alt="" className="account-payment-header-icon" style={{ width: 20, height: 20, opacity: 1 }} />
                 </div>
-                {paymentList.length === 0 ? (
-                  <>
-                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000000', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
-                      NO CARDS ON FILE
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080', margin: '0 0 16px 0', textTransform: 'uppercase' }}>
-                      Add a payment method at checkout and check “Save payment method” to store it here.
-                    </p>
-                  </>
+                <div className="account-payment-card-fields">
+                {showAddPaymentForm ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div>
+                      <label style={inputLabelStyle}>CARDHOLDER<span style={{ color: '#EB1C24' }}>*</span></label>
+                      <input
+                        type="text"
+                        value={newCardholder}
+                        onChange={(e) => {
+                          setNewCardholder(e.target.value.toUpperCase());
+                          setInvalidPaymentFields((prev) => { const next = new Set(prev); next.delete('cardholder'); return next; });
+                        }}
+                        style={{ ...inputStyle, border: invalidPaymentFields.has('cardholder') ? '1.3px solid #EB1C24' : '1.3px solid #000000' }}
+                      />
+                    </div>
+                    <div>
+                      <label style={inputLabelStyle}>CARD NUMBER<span style={{ color: '#EB1C24' }}>*</span></label>
+                      <input
+                        type="tel"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        maxLength={16}
+                        value={newCardNumber}
+                        onChange={(e) => {
+                          setNewCardNumber(e.target.value.replace(/\D/g, '').slice(0, 16));
+                          setInvalidPaymentFields((prev) => { const next = new Set(prev); next.delete('cardNumber'); return next; });
+                        }}
+                        style={{ ...inputStyle, border: invalidPaymentFields.has('cardNumber') ? '1.3px solid #EB1C24' : '1.3px solid #000000' }}
+                      />
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                      <div>
+                        <label style={inputLabelStyle}>EXPIRATION<span style={{ color: '#EB1C24' }}>*</span></label>
+                        <input
+                          type="tel"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          maxLength={5}
+                          value={newExpirationDate}
+                          onChange={(e) => {
+                            setNewExpirationDate(formatExpirationDate(e.target.value));
+                            setInvalidPaymentFields((prev) => { const next = new Set(prev); next.delete('expirationDate'); return next; });
+                          }}
+                          style={{ ...checkoutBoxStyle, width: '100%', border: invalidPaymentFields.has('expirationDate') ? '1.3px solid #EB1C24' : '1.3px solid #000000' }}
+                        />
+                      </div>
+                      <div>
+                        <label style={inputLabelStyle}>CVV</label>
+                        <input
+                          type="tel"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          maxLength={4}
+                          value={newCvv}
+                          onChange={(e) => setNewCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                          style={{ ...checkoutBoxStyle, width: '100%' }}
+                        />
+                      </div>
+                      <div>
+                        <label style={inputLabelStyle}>BILLING ZIP<span style={{ color: '#EB1C24' }}>*</span></label>
+                        <input
+                          type="tel"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          maxLength={10}
+                          value={newBillingZip}
+                          onChange={(e) => {
+                            setNewBillingZip(e.target.value.replace(/\D/g, '').slice(0, 10));
+                            setInvalidPaymentFields((prev) => { const next = new Set(prev); next.delete('billingZip'); return next; });
+                          }}
+                          style={{ ...checkoutBoxStyle, width: '100%', border: invalidPaymentFields.has('billingZip') ? '1.3px solid #EB1C24' : '1.3px solid #000000' }}
+                        />
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                      <div
+                        onClick={() => paymentList.length > 0 && setSaveAsDefaultPayment(!saveAsDefaultPayment)}
+                        style={{
+                          width: '14px',
+                          height: '14px',
+                          cursor: paymentList.length === 0 ? 'default' : 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          border: '1.3px solid #000000',
+                          backgroundColor: 'transparent',
+                          position: 'relative',
+                          opacity: paymentList.length === 0 ? 0.8 : 1
+                        }}
+                      >
+                        {(paymentList.length === 0 || saveAsDefaultPayment) && (
+                          <img src="/assets/checkbox.svg" alt="" style={{ width: '14px', height: '14px', position: 'absolute' }} />
+                        )}
+                      </div>
+                      <label
+                        onClick={() => paymentList.length > 0 && setSaveAsDefaultPayment(!saveAsDefaultPayment)}
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#000000',
+                          cursor: paymentList.length === 0 ? 'default' : 'pointer',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        SAVE AS DEFAULT
+                      </label>
+                    </div>
+                  </div>
                 ) : (
-                  paymentList.map((entry, i) => renderPaymentRow(entry, i))
+                  <>
+                    {paymentList.length === 0 ? (
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(510px - 60px)' }}>
+                        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#808080', margin: 0, textTransform: 'uppercase', textAlign: 'center' }}>
+                          YOU DON'T HAVE ANY PAYMENT METHODS ON FILE.
+                        </p>
+                      </div>
+                    ) : (
+                      paymentList.map((entry, i) => renderPaymentRow(entry, i))
+                    )}
+                  </>
                 )}
-
+                </div>
+              </div>
+              {showAddPaymentForm ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={saveNewPaymentMethod}
+                    className="border border-black w-full py-2 font-medium"
+                    style={{
+                      borderWidth: '1.3px',
+                      fontSize: '11px',
+                      fontFamily: '"Futura PT Medium"',
+                      color: '#EB1C24',
+                      textTransform: 'uppercase',
+                      backgroundColor: '#FFFFFF',
+                      cursor: 'pointer',
+                      marginTop: '-5px'
+                    }}
+                  >
+                    SAVE PAYMENT
+                  </button>
+                  <button
+                    type="button"
+                    onClick={cancelAddPayment}
+                    className="border border-black w-full py-2 font-medium"
+                    style={{
+                      borderWidth: '1.3px',
+                      fontSize: '11px',
+                      fontFamily: '"Futura PT Medium"',
+                      color: '#EB1C24',
+                      textTransform: 'uppercase',
+                      backgroundColor: '#FFFFFF',
+                      cursor: 'pointer',
+                      marginTop: '-4px'
+                    }}
+                  >
+                    CANCEL
+                  </button>
+                </>
+              ) : (
                 <button
-                  onClick={handleAddPaymentMethod}
+                  type="button"
+                  onClick={openAddPaymentForm}
+                  className="border border-black w-full py-2 font-medium"
                   style={{
-                    fontFamily: '"Futura PT Medium"',
+                    borderWidth: '1.3px',
                     fontSize: '11px',
+                    fontFamily: '"Futura PT Medium"',
                     color: '#EB1C24',
-                    fontWeight: '500',
                     textTransform: 'uppercase',
-                    border: '1.3px solid #EB1C24',
-                    background: 'none',
+                    backgroundColor: '#FFFFFF',
                     cursor: 'pointer',
-                    marginTop: paymentList.length > 0 ? '8px' : '0',
-                    padding: '10px 16px'
+                    marginTop: '-5px'
                   }}
                 >
-                  ADD PAYMENT METHOD
+                  ADD PAYMENT
                 </button>
-                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '8px 0 0 0', textTransform: 'uppercase' }}>
-                  You can add or update a card when you checkout. Check “Save payment method” to keep it on file.
-                </p>
-              </div>
+              )}
             </div>
           )}
         </div>
       </div>
     </div>
+
+      <ConfirmationModal
+        isOpen={paymentToRemove !== null}
+        onClose={() => setPaymentToRemove(null)}
+        onConfirm={() => {
+          if (paymentToRemove) {
+            removePaymentMethod(paymentToRemove);
+            setPaymentToRemove(null);
+          }
+        }}
+        title="REMOVE CARD?"
+        message={<>ARE YOU SURE YOU WANT TO REMOVE THIS CARD?<br />YOU CAN ADD IT AGAIN LATER.</>}
+        confirmText="CONFIRM"
+        cancelText="CANCEL"
+        dataAttribute="remove-payment-confirm"
+      />
+
+      {/* Required field validation modal (same as checkout) */}
+      <ConfirmationModal
+        isOpen={showValidationModal}
+        onClose={() => setShowValidationModal(false)}
+        onConfirm={() => setShowValidationModal(false)}
+        title="MISSING INPUT FIELD"
+        message={validationMessage}
+        confirmText="OK"
+        cancelText="CLOSE"
+        messageTextTransform="uppercase"
+      />
+    </>
   );
 }
 

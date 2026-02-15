@@ -78,11 +78,20 @@ function AccountPage() {
     return '/assets/profile-thumb.png';
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [cardAnimationsEnabled, setCardAnimationsEnabled] = useState(() => {
+    try {
+      if (typeof window === 'undefined') return true;
+      return localStorage.getItem('ordersPageAnimationsEnabled') !== 'false';
+    } catch {
+      return true;
+    }
+  });
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showCropModal, setShowCropModal] = useState(false);
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [, setAlertsRefreshKey] = useState(0);
   const [showEnlargedImage, setShowEnlargedImage] = useState(false);
+  const [showDigitalCashHistoryPopup, setShowDigitalCashHistoryPopup] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [cropPosition, setCropPosition] = useState({ x: 0, y: 0 });
   const [cropScale, setCropScale] = useState(1);
@@ -92,6 +101,17 @@ function AccountPage() {
   const imageRef = useRef<HTMLImageElement>(null);
   
   
+  // Mock digital cash history for testing labels UI – one row per transaction type
+  const MOCK_DIGITAL_CASH_HISTORY: Array<{ date: string; transaction: string; amount: number }> = [
+    { date: '2-14-2025', transaction: 'DEPOSIT', amount: 110 },
+    { date: '2-10-2025', transaction: 'TIER POINTS', amount: 80 },
+    { date: '1-28-2025', transaction: 'TIER POINTS', amount: 40 },
+    { date: '1-15-2025', transaction: 'TIER POINTS', amount: 10 },
+    { date: '2-8-2025', transaction: 'SUBSCRIPTION', amount: 40 },
+    { date: '2-5-2025', transaction: 'CHECKOUT', amount: -25 },
+    { date: '1-20-2025', transaction: 'REFERRAL', amount: 20 }
+  ];
+
   // Get cards for display
   const getCardsForDisplay = (): Array<{ title: string; subtitle: string; route: string | null }> => {
     return getOrderedCards();
@@ -133,6 +153,20 @@ function AccountPage() {
       navigate('/sign-in');
     }
   }, [isSignedIn, navigate]);
+
+  // Listen for animations toggle (settings) so card transitions can be turned off
+  useEffect(() => {
+    const handleAnimationsChanged = () => {
+      setCardAnimationsEnabled(localStorage.getItem('ordersPageAnimationsEnabled') !== 'false');
+    };
+    handleAnimationsChanged();
+    window.addEventListener('ordersAnimationsChanged', handleAnimationsChanged);
+    window.addEventListener('storage', handleAnimationsChanged);
+    return () => {
+      window.removeEventListener('ordersAnimationsChanged', handleAnimationsChanged);
+      window.removeEventListener('storage', handleAnimationsChanged);
+    };
+  }, []);
 
   // Listen for currency changes from cart dropdown
   useEffect(() => {
@@ -226,6 +260,15 @@ function AccountPage() {
       try {
         const newCartCount = parseInt(localStorage.getItem('cartCount') || '0', 10);
         setCartCount(newCartCount);
+        // Refresh user data so address/payment (and other) card counts stay accurate when returning from shipping/payment
+        const currentUser = localStorage.getItem('currentUser');
+        const signedIn = localStorage.getItem('isSignedIn') === 'true';
+        if (currentUser && signedIn) {
+          const user = JSON.parse(currentUser);
+          setUserData(user);
+          if (user.profileImage) setProfileImage(user.profileImage);
+          if (user.membershipType) _setMembershipType(user.membershipType.toUpperCase() === 'PREMIUM' ? 'PREMIUM' : 'STANDARD');
+        }
       } catch (e) {
         setCartCount(0);
       }
@@ -411,10 +454,13 @@ function AccountPage() {
       const amount = getWelcomeDiscountAmount(currentTier);
       const currentBalance = (currentUser.giftCardBalance ?? 0) as number;
       const updatedCreditedThisPeriod = [...(byPeriod[periodKey] || []), currentTier];
+      const dateStr = `${now.getMonth() + 1}-${now.getDate()}-${now.getFullYear()}`;
+      const historyEntry = { date: dateStr, transaction: 'TIER POINTS', amount };
       const updatedUser = {
         ...currentUser,
         giftCardBalance: currentBalance + amount,
-        welcomeDiscountTiersCreditedByPeriod: { ...byPeriod, [periodKey]: updatedCreditedThisPeriod }
+        welcomeDiscountTiersCreditedByPeriod: { ...byPeriod, [periodKey]: updatedCreditedThisPeriod },
+        digitalCashHistory: [...(currentUser.digitalCashHistory || []), historyEntry]
       };
       delete (updatedUser as any).welcomeDiscountTiersCredited;
       localStorage.setItem('currentUser', JSON.stringify(updatedUser));
@@ -876,36 +922,53 @@ function AccountPage() {
   const hasPaymentMethodNotifications = (): boolean => {
     if (!userData) return false;
     try {
-      const savedCardsStr = localStorage.getItem(`savedCards_${userData.email}`);
-      if (!savedCardsStr) return false;
-      
-      const savedCards = JSON.parse(savedCardsStr);
-      
-      // Check for cards about to expire (within 30 days) or new cards added
+      const defaultPay = userData.defaultPaymentMethod;
+      const saved = Array.isArray(userData.savedPaymentMethods) ? userData.savedPaymentMethods : [];
+      const cards: Array<{ expirationDate?: string }> = defaultPay ? [defaultPay, ...saved] : [...saved];
       const now = new Date();
       const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-      
-      return savedCards.some((card: any) => {
-        const seenKey = card.id ? `cardSeen_${card.id}` : null;
-        const hasSeen = seenKey ? localStorage.getItem(seenKey) : null;
-        // Card about to expire: show badge only until user has visited payment page (then cardSeen is set)
-        if (card.expiryDate) {
-          const expiryDate = new Date(card.expiryDate);
-          if (expiryDate <= thirtyDaysFromNow && expiryDate > now) {
-            return !hasSeen;
-          }
-        }
-        // Card new (added within last 7 days): show badge until seen
-        if (card.addedAt) {
-          const addedDate = new Date(card.addedAt);
-          const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-          if (addedDate > sevenDaysAgo) return !hasSeen;
-        }
-        return false;
+
+      return cards.some((card: any) => {
+        const exp = card?.expirationDate;
+        if (!exp || typeof exp !== 'string') return false;
+        const parts = exp.trim().split(/[/-]/);
+        if (parts.length < 2) return false;
+        const month = parseInt(parts[0], 10) - 1;
+        let year = parseInt(parts[1], 10);
+        if (year < 100) year += 2000;
+        const expiryDate = new Date(year, month + 1, 0);
+        return expiryDate >= now && expiryDate <= thirtyDaysFromNow;
       });
     } catch (e) {
       return false;
     }
+  };
+
+  const getAddressCount = (): number => {
+    const defaultAddr = userData?.defaultAddress || userData?.shippingAddress;
+    const saved = Array.isArray(userData?.savedAddresses) ? userData.savedAddresses : [];
+    if (!defaultAddr && saved.length === 0) return 0;
+    const list: Array<{ address?: string; city?: string; zip?: string }> = [];
+    if (defaultAddr && typeof defaultAddr === 'object' && (defaultAddr.address || defaultAddr.city)) list.push(defaultAddr);
+    saved.forEach((a: any) => {
+      if (!a?.address && !a?.city) return;
+      const isDup = list.some((e) => e.address === a.address && e.city === a.city && e.zip === a.zip);
+      if (!isDup) list.push(a);
+    });
+    return list.length;
+  };
+
+  const getPaymentCount = (): number => {
+    const defaultPay = userData?.defaultPaymentMethod;
+    const saved = Array.isArray(userData?.savedPaymentMethods) ? userData.savedPaymentMethods : [];
+    const list: Array<{ cardNumber?: string; cardholder?: string }> = [];
+    if (defaultPay && (defaultPay.cardholder || defaultPay.cardNumber)) list.push(defaultPay);
+    saved.forEach((p: any) => {
+      const hasInfo = p?.cardholder || p?.cardNumber;
+      const isDup = list.some((e) => e.cardNumber === p.cardNumber && e.cardholder === p.cardholder);
+      if (hasInfo && !isDup) list.push(p);
+    });
+    return list.length;
   };
 
   // Helper function to get default card order
@@ -940,6 +1003,11 @@ function AccountPage() {
         route: '/account/orders' 
       },
       { title: 'REWARDS', subtitle: 'MEMBERSHIP + SUBSCRIPTION', route: '/account/rewards' },
+      { 
+        title: 'REVIEWS', 
+        subtitle: reviewCount === 1 ? '1 TOTAL REVIEW' : `${reviewCount} TOTAL REVIEWS`, 
+        route: '/account/reviews' 
+      },
       { title: 'AFFILIATE', subtitle: 'SUBMIT CONTENT FOR POINTS', route: '/account/affiliate' },
       {
         title: 'REFERRALS',
@@ -947,18 +1015,13 @@ function AccountPage() {
         route: '/account/referrals'
       },
       { 
-        title: 'REVIEWS', 
-        subtitle: reviewCount === 1 ? '1 TOTAL REVIEW' : `${reviewCount} TOTAL REVIEWS`, 
-        route: '/account/reviews' 
-      },
-      { 
         title: 'SHIPPING ADDRESS', 
-        subtitle: userData && userData.email?.toLowerCase() !== 'bruno203@gmail.com' ? '0 ADDRESSES ON FILE' : '2 ADDRESSES ON FILE', 
+        subtitle: (() => { const n = getAddressCount(); return n === 1 ? '1 ADDRESS ON FILE' : `${n} ADDRESSES ON FILE`; })(), 
         route: '/account/shipping' 
       },
       { 
         title: 'PAYMENT METHOD', 
-        subtitle: userData && userData.email?.toLowerCase() !== 'bruno203@gmail.com' ? '0 CARDS ON FILE' : '2 CARDS ON FILE', 
+        subtitle: (() => { const n = getPaymentCount(); return n === 1 ? '1 CARD ON FILE' : `${n} CARDS ON FILE`; })(), 
         route: '/account/payment' 
       },
       { title: 'SETTINGS', subtitle: 'PASSWORD + CONTROLS', route: '/account/settings' }
@@ -1001,33 +1064,20 @@ function AccountPage() {
     }
   };
 
-  // Helper function to get active orders count (excluding DELIVERED status)
+  // Helper function to get active orders count (matches orders page: length of activeOrders array)
   const getActiveOrdersCount = (): number => {
-    // OAuth users always use real stored data (no mock)
-    if (userData?.authProvider) {
-      // fall through to localStorage below
-    } else {
-      const isKristinWatson = userData?.email?.toLowerCase() === 'bruno203@gmail.com';
-      if (isKristinWatson || isAdminKateenaAccount(userData)) return 2;
-    }
-
-    // Real users (and OAuth): get from localStorage
-    if (userData?.email) {
-      try {
-        const userOrdersKey = `userOrders_${userData.email}`;
-        const storedOrders = localStorage.getItem(userOrdersKey);
-        if (storedOrders) {
-          const orders = JSON.parse(storedOrders);
-          const activeOrders = orders.activeOrders || [];
-          // Filter out DELIVERED orders
-          const nonDeliveredOrders = activeOrders.filter((order: any) => order.status !== 'DELIVERED');
-          return nonDeliveredOrders.length;
-        }
-      } catch (e) {
-        console.error('Error loading order count:', e);
+    if (!userData?.email) return 0;
+    try {
+      const userOrdersKey = `userOrders_${userData.email}`;
+      const storedOrders = localStorage.getItem(userOrdersKey);
+      if (storedOrders) {
+        const orders = JSON.parse(storedOrders);
+        const activeOrders = orders.activeOrders || [];
+        return activeOrders.length;
       }
+    } catch (e) {
+      console.error('Error loading order count:', e);
     }
-
     return 0;
   };
 
@@ -1716,7 +1766,7 @@ function AccountPage() {
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {/* Profile Information Section */}
                 <div
-                  className="border border-black bg-white/60 backdrop-blur-sm w-full transition-all duration-300 ease-out"
+                  className={`border border-black bg-white/60 backdrop-blur-sm w-full ${cardAnimationsEnabled ? 'transition-all duration-300 ease-out' : ''}`}
                   style={{
                     borderWidth: '1.3px',
                     padding: '20px 20px',
@@ -1836,10 +1886,8 @@ function AccountPage() {
                       const userMembershipType = userData?.membershipType?.toUpperCase() || membershipType;
                       const displayMembershipType = userMembershipType === 'PREMIUM' ? 'PREMIUM' : 'BASIC';
                       // For BASIC: always use gray regardless of tier
-                      // For PREMIUM: always use black
+                      // Premium = black, Standard = gray; rewards page explains tier levels
                       const membershipTextColor = displayMembershipType === 'PREMIUM' ? '#000000' : '#808080';
-                      // Tier color is independent: silver = gray, red = red, black = black
-                      const tierColor = tier === 'SILVER' ? '#808080' : tier === 'RED' ? '#EB1C24' : tier === 'BLACK' ? '#000000' : '#000000';
                       return (
                         <p
                           style={{
@@ -1848,28 +1896,20 @@ function AccountPage() {
                             margin: '0',
                             textTransform: 'uppercase',
                             fontWeight: '500',
-                            transform: 'translateY(-8px)'
+                            transform: 'translateY(-8px)',
+                            color: membershipTextColor
                           }}
                         >
-                          {tier ? (
-                            <>
-                              <span style={{ color: membershipTextColor }}>
-                                {displayMembershipType} REWARDS:
-                              </span>{' '}
-                              <span style={{ color: tierColor }}>
-                                {tier} TIER
-                              </span>
-                            </>
-                          ) : (
-                            <span style={{ color: membershipTextColor }}>
-                              {displayMembershipType} REWARDS MEMBER
-                            </span>
-                          )}
+                          {displayMembershipType} REWARDS MEMBER
                         </p>
                       );
                     })()}
 
                     <p
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setShowDigitalCashHistoryPopup(true)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowDigitalCashHistoryPopup(true); } }}
                       style={{
                         fontFamily: '"Futura PT Medium"',
                         color: '#000000',
@@ -1877,7 +1917,8 @@ function AccountPage() {
                         margin: '0',
                         textTransform: 'uppercase',
                         fontWeight: '500',
-                        transform: 'translateY(9px)'
+                        transform: 'translateY(9px)',
+                        cursor: 'pointer'
                       }}
                     >
                       DIGITAL CASH: {formatPrice(userData?.giftCardBalance || 0)}
@@ -1912,7 +1953,7 @@ function AccountPage() {
                         navigate(item.route);
                       }
                     }}
-                    className="border border-black bg-white/60 backdrop-blur-sm cursor-pointer w-full transition-all duration-300 ease-out"
+                    className={`border border-black bg-white/60 backdrop-blur-sm cursor-pointer w-full ${cardAnimationsEnabled ? 'transition-all duration-300 ease-out' : ''}`}
                     style={{
                       borderWidth: '1.3px',
                       padding: '13px 20px',
@@ -2245,6 +2286,110 @@ function AccountPage() {
               >
                 APPROVE
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Digital Cash History Popup */}
+      {showDigitalCashHistoryPopup && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(255, 255, 255, 0.6)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            padding: '16px'
+          }}
+          onClick={() => setShowDigitalCashHistoryPopup(false)}
+        >
+          <div
+            className="bg-white/60 backdrop-blur-sm border border-black"
+            style={{
+              borderWidth: '1.3px',
+              padding: '16px',
+              maxWidth: '400px',
+              width: '100%',
+              maxHeight: '85vh',
+              overflow: 'auto',
+              position: 'relative'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <p
+                style={{
+                  fontFamily: '"Futura PT Medium"',
+                  color: '#EB1C24',
+                  fontSize: '12px',
+                  margin: '0',
+                  textTransform: 'uppercase',
+                  fontWeight: '500',
+                  textAlign: 'left'
+                }}
+              >
+                DIGITAL CASH HISTORY
+              </p>
+              <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase', marginBottom: '8px', fontFamily: '"Futura PT Medium"', fontWeight: '500', color: '#000000' }}>
+              <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left' }}>DATE</span>
+              <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center' }}>TRANSACTION</span>
+              <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right' }}>AMOUNT</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {(() => {
+                const history = (userData?.digitalCashHistory ?? []) as Array<{ date: string; transaction: string; amount: number }>;
+                const formatDate = (dateStr: string): string => {
+                  const parts = dateStr.split('-').map(Number);
+                  if (parts.length === 3) {
+                    const [month, day, year] = parts;
+                    const d = new Date(year, month - 1, day);
+                    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                  }
+                  const d = new Date(dateStr);
+                  if (!isNaN(d.getTime())) return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                  return dateStr;
+                };
+                const displayHistory = history.length === 0
+                  ? MOCK_DIGITAL_CASH_HISTORY
+                  : history;
+                if (displayHistory.length === 0) {
+                  return (
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: '#808080', margin: '6px 0', textTransform: 'uppercase', textAlign: 'center' }}>
+                      YOU HAVEN'T HAD ANY DIGITAL CASH TRANSACTIONS YET.
+                    </p>
+                  );
+                }
+                const sorted = [...displayHistory].sort((a, b) => {
+                  const parse = (s: string) => {
+                    const parts = s.split('-').map(Number);
+                    if (parts.length === 3) {
+                      const [month, day, year] = parts;
+                      return new Date(year, month - 1, day).getTime();
+                    }
+                    return new Date(s).getTime();
+                  };
+                  return parse(b.date) - parse(a.date);
+                });
+                return sorted.map((row, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase' }}>
+                    <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left', color: '#000000', fontFamily: '"Futura PT Book"' }}>{formatDate(row.date)}</span>
+                    <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center', color: '#808080', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.transaction}</span>
+                    <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right', color: row.amount >= 0 ? '#EB1C24' : '#000000', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>
+                      {row.amount >= 0 ? '+' : ''}{formatPrice(row.amount)}
+                    </span>
+                  </div>
+                ));
+              })()}
             </div>
           </div>
         </div>

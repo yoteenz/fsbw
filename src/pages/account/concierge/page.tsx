@@ -1591,6 +1591,19 @@ function ConciergePage() {
         birthdayGifts.unshift(newGift);
         localStorage.setItem('adminBirthdayGifts', JSON.stringify(birthdayGifts));
         
+        // Lock birthday for this OAuth user from now on (no more edits in settings)
+        const email = (userData.email || '').trim().toLowerCase();
+        if (email) {
+          const updatedUser = { ...userData, birthdayGiftClaimed: true };
+          localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+          const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+          const idx = registered.findIndex((u: any) => (u.email || '').trim().toLowerCase() === email);
+          if (idx !== -1) {
+            registered[idx] = { ...registered[idx], birthdayGiftClaimed: true };
+            localStorage.setItem('registeredUsers', JSON.stringify(registered));
+          }
+        }
+        
         // Show confirmation modal with selection message
         const giftName = getBirthdayGiftDisplayName(selectedBirthdayGift);
         // Only add "A" for gift card, not for loyalty points

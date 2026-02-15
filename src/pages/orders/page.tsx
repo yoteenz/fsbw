@@ -5,6 +5,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { isAdminKateenaAccount } from '../../utils/adminAuth';
+import summaryIcon from '../../assets/icons/summary-icon.svg?url';
 
 interface OrderLineItem {
   productName: string;
@@ -24,6 +25,8 @@ interface Order {
   /** Pre-tax subtotal (product amounts as on checkout); when set, used for per-product price instead of total */
   subtotal?: number;
   items: number;
+  /** 6-character confirmation number (always set for mock orders; real orders may have from checkout/localStorage) */
+  confirmationNumber?: string;
   reviewInfo?: string; // Optional review/points information
   trackingNumber?: string; // Optional tracking number
   trackingCarrier?: string; // Optional tracking carrier (e.g., "DHL", "FEDEX")
@@ -239,11 +242,51 @@ function OrdersPage() {
     return Math.max(0, twentyFourHours - elapsed);
   };
 
+  const getOrdinalSuffix = (day: number): string => {
+    if (day >= 11 && day <= 13) return 'TH';
+    const lastDigit = day % 10;
+    switch (lastDigit) {
+      case 1: return 'ST';
+      case 2: return 'ND';
+      case 3: return 'RD';
+      default: return 'TH';
+    }
+  };
+
+  const calculateProcessingTimeline = (orderDateStr: string, processingTime: string): string => {
+    try {
+      const [month, day, year] = orderDateStr.split('-').map(Number);
+      const orderDate = new Date(year, month - 1, day);
+      let minWeeks = 6, maxWeeks = 8;
+      if (processingTime && processingTime.includes('4')) {
+        minWeeks = 4; maxWeeks = 6;
+      } else if (processingTime && processingTime.includes('10')) {
+        minWeeks = 6; maxWeeks = 10;
+      }
+      const minDate = new Date(orderDate);
+      minDate.setDate(minDate.getDate() + (minWeeks * 7));
+      const maxDate = new Date(orderDate);
+      maxDate.setDate(maxDate.getDate() + (maxWeeks * 7));
+      const monthNames = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
+      const minMonth = monthNames[minDate.getMonth()];
+      const maxMonth = monthNames[maxDate.getMonth()];
+      const minDay = minDate.getDate();
+      const maxDay = maxDate.getDate();
+      const minSuffix = getOrdinalSuffix(minDay);
+      const maxSuffix = getOrdinalSuffix(maxDay);
+      if (minMonth === maxMonth) return `${minMonth} ${minDay}${minSuffix} - ${maxDay}${maxSuffix}`;
+      return `${minMonth} ${minDay}${minSuffix} - ${maxMonth} ${maxDay}${maxSuffix}`;
+    } catch {
+      return processingTime || '6-8 WEEKS';
+    }
+  };
+
   // Mock order data (only for Kristin Watson)
   const mockActiveOrders: Order[] = [
     {
       id: 'test-order-3',
       orderNumber: 'ORDER #777',
+      confirmationNumber: 'X7R7S7',
       date: getDateDaysAgo(20), // 20 days ago (matching concierge - multi-unit order date)
       status: 'PREPARING',
       productName: 'NOIR',
@@ -263,6 +306,7 @@ function OrdersPage() {
     {
       id: 'test-order-4',
       orderNumber: 'ORDER #666',
+      confirmationNumber: 'X6R6S6',
       date: getDateDaysAgo(2), // 2 days ago (matching concierge)
       status: 'CANCELED',
       productName: 'BLANCO',
@@ -278,6 +322,7 @@ function OrdersPage() {
     {
       id: 'test-order-5',
       orderNumber: 'ORDER #555',
+      confirmationNumber: 'X5R5S5',
       date: getDateDaysAgo(0), // Today (matching concierge - 12 hours ago)
       status: 'PLACED',
       productName: 'NOIR',
@@ -292,6 +337,7 @@ function OrdersPage() {
     {
       id: '1',
       orderNumber: 'ORDER #237',
+      confirmationNumber: 'X2R3S7',
       date: getDateDaysAgo(2), // 2 days ago
       status: 'PLACED',
       productName: 'NOIR',
@@ -305,6 +351,7 @@ function OrdersPage() {
     {
       id: '2',
       orderNumber: 'ORDER #239',
+      confirmationNumber: 'X2R3S9',
       date: getDateDaysAgo(5), // 5 days ago
       status: 'CONFIRMED',
       productName: 'BLANCO',
@@ -317,6 +364,7 @@ function OrdersPage() {
     {
       id: '10',
       orderNumber: 'ORDER #244',
+      confirmationNumber: 'X2R4S4',
       date: getDateDaysAgo(1), // 1 day ago
       status: 'PLACED',
       productName: 'SOFT WAVE',
@@ -331,6 +379,7 @@ function OrdersPage() {
     {
       id: '3',
       orderNumber: 'ORDER #241',
+      confirmationNumber: 'X2R4S1',
       date: getDateDaysAgo(8), // 8 days ago
       status: 'PREPARING',
       productName: 'NOIR',
@@ -343,6 +392,7 @@ function OrdersPage() {
     {
       id: '4',
       orderNumber: 'ORDER #242',
+      confirmationNumber: 'X2R4S2',
       date: getDateDaysAgo(12), // 12 days ago
       status: 'SHIPPED',
       productName: 'BLANCO',
@@ -355,6 +405,7 @@ function OrdersPage() {
     {
       id: '11',
       orderNumber: 'ORDER #245',
+      confirmationNumber: 'X2R4S5',
       date: getDateDaysAgo(6), // 6 days ago
       status: 'SHIPPED',
       productName: 'SOFT CURL',
@@ -367,6 +418,7 @@ function OrdersPage() {
     {
       id: '8',
       orderNumber: 'ORDER #240',
+      confirmationNumber: 'X2R4S0',
       date: getDateDaysAgo(3), // 3 days ago
       status: 'CANCELED',
       productName: 'SOFT CURL',
@@ -381,6 +433,7 @@ function OrdersPage() {
     {
       id: '9',
       orderNumber: 'ORDER #238',
+      confirmationNumber: 'X2R3S8',
       date: getDateDaysAgo(4), // 4 days ago
       status: 'CANCELED',
       productName: 'BEACH WAVE',
@@ -398,6 +451,7 @@ function OrdersPage() {
     {
       id: 'test-order-1',
       orderNumber: 'ORDER #888',
+      confirmationNumber: 'X8R8S8',
       date: getDateDaysAgo(13), // 13 days ago (matching concierge)
       status: 'DELIVERED',
       productName: 'NOIR',
@@ -414,6 +468,7 @@ function OrdersPage() {
     {
       id: 'test-order-2',
       orderNumber: 'ORDER #999',
+      confirmationNumber: 'X9R9S9',
       date: getDateDaysAgo(60), // 60 days ago (matching concierge)
       status: 'DELIVERED',
       productName: 'NOIR',
@@ -430,6 +485,7 @@ function OrdersPage() {
     {
       id: '10',
       orderNumber: 'ORDER #236',
+      confirmationNumber: 'X2R3S6',
       date: getDateDaysAgo(3), // 3 days ago
       status: 'CANCELED',
       productName: 'OCEAN CURL',
@@ -444,6 +500,7 @@ function OrdersPage() {
     {
       id: '5',
       orderNumber: 'ORDER #243',
+      confirmationNumber: 'X2R4S3',
       date: getDateDaysAgo(25), // 25 days ago
       status: 'DELIVERED',
       productName: 'NOIR',
@@ -458,6 +515,7 @@ function OrdersPage() {
     {
       id: '4',
       orderNumber: 'ORDER #234',
+      confirmationNumber: 'X2R3S4',
       date: getDateDaysAgo(42), // 42 days ago
       status: 'DELIVERED',
       productName: 'NOIR',
@@ -477,6 +535,7 @@ function OrdersPage() {
     {
       id: '5',
       orderNumber: 'ORDER #233',
+      confirmationNumber: 'X2R3S3',
       date: getDateDaysAgo(58), // 58 days ago
       status: 'DELIVERED',
       productName: 'SOFT CURL',
@@ -491,6 +550,7 @@ function OrdersPage() {
     {
       id: '6',
       orderNumber: 'ORDER #232',
+      confirmationNumber: 'X2R3S2',
       date: getDateDaysAgo(75), // 75 days ago
       status: 'DELIVERED',
       productName: 'BLANCO',
@@ -505,6 +565,7 @@ function OrdersPage() {
     {
       id: '7',
       orderNumber: 'ORDER #231',
+      confirmationNumber: 'X2R3S1',
       date: getDateDaysAgo(92), // 92 days ago
       status: 'DELIVERED',
       productName: 'NOIR',
@@ -547,6 +608,7 @@ function OrdersPage() {
     {
       id: 'test-order-3',
       orderNumber: 'ORDER #777',
+      confirmationNumber: 'X7R7S7',
       date: getDateDaysAgo(20), // 20 days ago (matching concierge - multi-unit order date)
       status: 'PREPARING',
       productName: 'NOIR',
@@ -566,6 +628,7 @@ function OrdersPage() {
     {
       id: 'test-order-4',
       orderNumber: 'ORDER #666',
+      confirmationNumber: 'X6R6S6',
       date: getDateDaysAgo(2), // 2 days ago (matching concierge)
       status: 'CANCELED',
       productName: 'BLANCO',
@@ -581,6 +644,7 @@ function OrdersPage() {
     {
       id: 'test-order-5',
       orderNumber: 'ORDER #555',
+      confirmationNumber: 'X5R5S5',
       date: getDateDaysAgo(0), // Today (matching concierge - 12 hours ago)
       status: 'PLACED',
       productName: 'NOIR',
@@ -595,6 +659,7 @@ function OrdersPage() {
     {
       id: 'kateena-1',
       orderNumber: 'ORDER #344',
+      confirmationNumber: 'X3R4S4',
       date: getDateDaysAgo(7), // 1 week ago (confirmed)
       status: 'DELIVERED',
       productName: 'NOIR',
@@ -610,6 +675,7 @@ function OrdersPage() {
     {
       id: 'kateena-2',
       orderNumber: 'ORDER #345',
+      confirmationNumber: 'X3R4S5',
       date: getDateDaysAgo(3), // 3 days ago
       status: 'SHIPPED',
       productName: 'BLANCO',
@@ -623,6 +689,7 @@ function OrdersPage() {
     {
       id: 'kateena-3',
       orderNumber: 'ORDER #346',
+      confirmationNumber: 'X3R4S6',
       date: getDateDaysAgo(1), // 1 day ago
       status: 'PREPARING',
       productName: 'SOFT WAVE',
@@ -640,6 +707,7 @@ function OrdersPage() {
     {
       id: 'detail-lines-test',
       orderNumber: 'ORDER #351',
+      confirmationNumber: 'X3R5S1',
       date: getDateDaysAgo(14),
       status: 'DELIVERED',
       productName: 'NOIR',
@@ -661,6 +729,7 @@ function OrdersPage() {
     {
       id: 'multi-product-test',
       orderNumber: 'ORDER #350',
+      confirmationNumber: 'X3R5S0',
       date: getDateDaysAgo(5),
       status: 'DELIVERED',
       productName: 'NOIR',
@@ -683,6 +752,7 @@ function OrdersPage() {
     {
       id: 'test-order-1',
       orderNumber: 'ORDER #888',
+      confirmationNumber: 'X8R8S8',
       date: getDateDaysAgo(13), // 13 days ago (matching concierge)
       status: 'DELIVERED',
       productName: 'NOIR',
@@ -699,6 +769,7 @@ function OrdersPage() {
     {
       id: 'test-order-2',
       orderNumber: 'ORDER #999',
+      confirmationNumber: 'X9R9S9',
       date: getDateDaysAgo(60), // 60 days ago (matching concierge)
       status: 'DELIVERED',
       productName: 'NOIR',
@@ -743,6 +814,14 @@ function OrdersPage() {
   const activeOrdersRef = useRef<HTMLDivElement>(null);
   const pastOrdersReviewRef = useRef<HTMLDivElement>(null);
 
+  const [ordersAnimationsEnabled, setOrdersAnimationsEnabled] = useState(() => {
+    try {
+      return localStorage.getItem('ordersPageAnimationsEnabled') !== 'false';
+    } catch {
+      return true;
+    }
+  });
+
   // Update orders when user changes
   useEffect(() => {
     const updateUser = () => {
@@ -750,11 +829,40 @@ function OrdersPage() {
         const user = localStorage.getItem('currentUser');
         const parsedUser = user ? JSON.parse(user) : null;
         setCurrentUser(parsedUser);
-        
-        // Update orders based on current user
-        const ordersData = getUserOrdersData();
+
+        // Compute orders from parsedUser so we don't rely on stale currentUser state
+        const isKateena = parsedUser ? isAdminKateenaAccount(parsedUser) : false;
+        const isKristin = parsedUser?.email?.toLowerCase() === 'bruno203@gmail.com';
+        let ordersData: { activeOrders: Order[]; pastOrders: Order[] };
+        if (isKristin) {
+          ordersData = { activeOrders: mockActiveOrders, pastOrders: mockPastOrders };
+        } else if (isKateena) {
+          ordersData = { activeOrders: kateenaMockActiveOrders, pastOrders: kateenaMockPastOrders };
+        } else {
+          ordersData = parsedUser?.email
+            ? (() => {
+                try {
+                  const key = `userOrders_${parsedUser.email}`;
+                  const stored = localStorage.getItem(key);
+                  if (stored) {
+                    const o = JSON.parse(stored);
+                    return { activeOrders: o.activeOrders || [], pastOrders: o.pastOrders || [] };
+                  }
+                } catch (_) {}
+                return { activeOrders: [], pastOrders: [] };
+              })()
+            : { activeOrders: [], pastOrders: [] };
+        }
+
         setActiveOrders(ordersData.activeOrders);
         setPastOrders(ordersData.pastOrders);
+
+        // Keep localStorage in sync for mock users so account profile card count matches orders page
+        if (parsedUser?.email && (isKateena || isKristin)) {
+          const key = `userOrders_${parsedUser.email}`;
+          localStorage.setItem(key, JSON.stringify({ activeOrders: ordersData.activeOrders, pastOrders: ordersData.pastOrders }));
+          window.dispatchEvent(new CustomEvent('ordersUpdated'));
+        }
       } catch (e) {
         console.error('Error updating user:', e);
       }
@@ -847,8 +955,25 @@ function OrdersPage() {
     };
   }, []);
 
+  useEffect(() => {
+    const handleOrdersAnimationsChange = () => {
+      try {
+        setOrdersAnimationsEnabled(localStorage.getItem('ordersPageAnimationsEnabled') !== 'false');
+      } catch (_) {}
+    };
+    window.addEventListener('ordersAnimationsChanged', handleOrdersAnimationsChange as EventListener);
+    window.addEventListener('storage', handleOrdersAnimationsChange);
+    return () => {
+      window.removeEventListener('ordersAnimationsChanged', handleOrdersAnimationsChange as EventListener);
+      window.removeEventListener('storage', handleOrdersAnimationsChange);
+    };
+  }, []);
+
   // Auto-scroll effect for order lists (with manual scroll support)
   useEffect(() => {
+    if (!ordersAnimationsEnabled) {
+      return;
+    }
     // Only initialize scrolling when menu is closed and no order is expanded
     if (showMobileMenu || expandedOrderId) {
       return;
@@ -961,7 +1086,7 @@ function OrdersPage() {
         element.removeEventListener(event, handler);
       });
     };
-  }, [activeOrders, pastOrders, showMobileMenu, expandedOrderId]);
+  }, [ordersAnimationsEnabled, activeOrders, pastOrders, showMobileMenu, expandedOrderId]);
 
   // State for forcing re-render to update countdown
   const [_countdownTick, setCountdownTick] = useState(0);
@@ -1742,6 +1867,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                >
                                  ORDER SUMMARY
                                </h2>
+                               <img src={summaryIcon} alt="" style={{ width: 12.75, height: 12.75, opacity: 1 }} />
                              </div>
                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -1787,6 +1913,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  >
                                    SHIPPING
                                  </h2>
+                                 <img src="/assets/ship-icon.svg" alt="" style={{ width: 12.75, height: 12.75, opacity: 1 }} />
                                </div>
                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
@@ -1801,26 +1928,44 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
                                    {currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES'}
                                  </p>
-                                 {expandedOrder.trackingNumber && (
-                                   <>
+                                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                   <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                     COMPLETION TIMELINE
+                                   </span>
+                                   <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                                     {expandedOrder.date ? calculateProcessingTimeline(expandedOrder.date, (expandedOrder as any).processingTime || '6-8 WEEKS') : ((expandedOrder as any).processingTime || '6-8 WEEKS')}
+                                   </span>
+                                 </div>
+                                 {expandedOrder.trackingNumber && (() => {
+                                   const shipCountry = currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES';
+                                   const isDomestic = /^US$|^USA$|^UNITED\s*STATES$/i.test(String(shipCountry).trim());
+                                   const trackingUrl = isDomestic ? `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${encodeURIComponent(expandedOrder.trackingNumber)}` : `https://www.dhl.com/en/express/tracking.html?AWB=${encodeURIComponent(expandedOrder.trackingNumber)}`;
+                                   return (
                                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                          TRACKING NUMBER
                                        </span>
-                                       <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                                       <a href={trackingUrl} target="_blank" rel="noopener noreferrer" style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase', cursor: 'pointer' }}>
                                          {expandedOrder.trackingNumber}
-                                       </span>
+                                       </a>
                                      </div>
+                                   );
+                                 })()}
+                                 {(() => {
+                                   const shipCountry = currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES';
+                                   const isDomestic = /^US$|^USA$|^UNITED\s*STATES$/i.test(String(shipCountry).trim());
+                                   const carrierLabel = isDomestic ? 'DOMESTIC' : 'INTERNATIONAL';
+                                   return (
                                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                          CARRIER
                                        </span>
                                        <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
-                                         {expandedOrder.trackingCarrier}
+                                         {carrierLabel}
                                        </span>
                                      </div>
-                                   </>
-                                 )}
+                                   );
+                                 })()}
                                </div>
                              </div>
                            )}
@@ -1841,14 +1986,97 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  >
                                    PAYMENT
                                  </h2>
+                                 <img src="/assets/payment-icon.svg" alt="" style={{ width: 14.25, height: 14.25, opacity: 1 }} />
                                </div>
                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                 {(() => {
+                                   let methodName = '';
+                                   let last4 = '';
+                                   const fromOrder = (expandedOrder as any)?.paymentMethod;
+                                   if (fromOrder) {
+                                     const endingMatch = String(fromOrder).match(/ENDING IN (\d+)/i);
+                                     last4 = endingMatch ? endingMatch[1] : '';
+                                     let brandPart = String(fromOrder).replace(/\s*ENDING IN \d+.*$/i, '').trim().replace(/_/g, ' ');
+                                     methodName = (brandPart === 'EXPRESS' ? 'AMERICAN EXPRESS' : brandPart).toUpperCase();
+                                   }
+                                   if (!methodName || !last4) {
+                                     const def = currentUser.defaultPaymentMethod;
+                                     if (def && def.cardNumber) {
+                                       last4 = String(def.cardNumber).replace(/\D/g, '').slice(-4);
+                                       const b = (def.cardBrand || '').toUpperCase().replace(/_/g, ' ');
+                                       methodName = (b === 'EXPRESS' || b === 'AMEX') ? 'AMERICAN EXPRESS' : (b || 'CARD');
+                                     }
+                                   }
+                                   if (!methodName) methodName = 'CARD';
+                                   if (!last4) last4 = '****';
+                                   return (
+                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                         {methodName}
+                                       </span>
+                                       <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                                         ENDING IN {last4}
+                                       </span>
+                                     </div>
+                                   );
+                                 })()}
                                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                      CONFIRMATION EMAIL
                                    </span>
                                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                                      {currentUser.email || ''}
+                                   </span>
+                                 </div>
+                                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                   <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                     CONFIRMATION NUMBER
+                                   </span>
+                                   <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                                     #{(() => {
+                                       const orderNum = expandedOrder.orderNumber?.replace(/^ORDER\s+/i, '').trim();
+                                       const key = orderNum ? (orderNum.startsWith('#') ? orderNum : `#${orderNum}`) : null;
+                                       if (key) {
+                                         const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
+                                         const stored = orderConfirmations[key] || orderConfirmations[expandedOrder.orderNumber];
+                                         if (stored) return stored;
+                                       }
+                                       const onOrder = (expandedOrder as any).confirmationNumber;
+                                       if (onOrder) return onOrder;
+                                       const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                                       const seed = orderNum ? orderNum.replace(/\D/g, '') : '0';
+                                       let hash = 0;
+                                       for (let i = 0; i < seed.length; i++) hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+                                       let gen = '';
+                                       for (let i = 0; i < 6; i++) { const idx = Math.abs((hash + i) % chars.length); gen += chars[idx]; }
+                                       return gen;
+                                     })()}
+                                   </span>
+                                 </div>
+                               </div>
+                             </div>
+                           )}
+                           {/* REWARDS */}
+                           {currentUser && (
+                             <div style={{ marginBottom: '5px' }}>
+                               <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                                 <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
+                                   REWARDS
+                                 </h2>
+                                 <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+                               </div>
+                               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                     YOU'VE EARNED <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{((expandedOrder as any).pointsEarned ?? currentUser?.loyaltyPoints ?? (expandedOrder.subtotal != null ? expandedOrder.subtotal : expandedOrder.total) ?? 0).toLocaleString()}</span> LOYALTY POINTS{((expandedOrder as any).pointsEarned ?? currentUser?.loyaltyPoints ?? (expandedOrder.subtotal != null ? expandedOrder.subtotal : expandedOrder.total) ?? 0) === 0 ? '.' : '!'}
+                                   </p>
+                                   <span style={{
+                                     fontFamily: ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase() === 'RED' || ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase() === 'GOLD' ? '"Futura PT Medium"' : '"Futura PT Demi"',
+                                     fontSize: '10px',
+                                     color: (() => { const t = ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase(); if (t === 'RED') return '#EB1C24'; if (t === 'SILVER') return '#808080'; if (t === 'GOLD') return '#000000'; return '#808080'; })(),
+                                     textTransform: 'uppercase'
+                                   }}>
+                                     {((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase()} TIER
                                    </span>
                                  </div>
                                </div>
@@ -1975,10 +2203,12 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            {order.trackingNumber ? (
                              <div>
                                <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10.5px', color: '#000000', margin: 0, lineHeight: '1.2', transform: 'translateY(-1px)' }}>
-                                 {order.trackingNumber}
+                                 <a href={currentUser && /^US$|^USA$|^UNITED\s*STATES$/i.test(String(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'US').trim()) ? `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${encodeURIComponent(order.trackingNumber)}` : `https://www.dhl.com/en/express/tracking.html?AWB=${encodeURIComponent(order.trackingNumber)}`} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', cursor: 'pointer' }}>
+                                   {order.trackingNumber}
+                                 </a>
                                </p>
                                <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '9px', color: '#808080', margin: 0, lineHeight: '1.2', transform: 'translateY(3px)' }}>
-                                 TRACK VIA {order.trackingCarrier}
+                                 TRACK VIA {currentUser && /^US$|^USA$|^UNITED\s*STATES$/i.test(String(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'US').trim()) ? 'DOMESTIC' : 'INTERNATIONAL'}
                                </p>
                              </div>
                            ) : order.status === 'CONFIRMED' ? (
@@ -2357,6 +2587,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                >
                                  ORDER SUMMARY
                                </h2>
+                               <img src={summaryIcon} alt="" style={{ width: 12.75, height: 12.75, opacity: 1 }} />
                              </div>
                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -2402,6 +2633,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  >
                                    SHIPPING
                                  </h2>
+                                 <img src="/assets/ship-icon.svg" alt="" style={{ width: 12.75, height: 12.75, opacity: 1 }} />
                                </div>
                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
@@ -2416,26 +2648,44 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
                                    {currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES'}
                                  </p>
-                                 {expandedOrder.trackingNumber && (
-                                   <>
+                                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                   <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                     COMPLETION TIMELINE
+                                   </span>
+                                   <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                                     {expandedOrder.date ? calculateProcessingTimeline(expandedOrder.date, (expandedOrder as any).processingTime || '6-8 WEEKS') : ((expandedOrder as any).processingTime || '6-8 WEEKS')}
+                                   </span>
+                                 </div>
+                                 {expandedOrder.trackingNumber && (() => {
+                                   const shipCountry = currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES';
+                                   const isDomestic = /^US$|^USA$|^UNITED\s*STATES$/i.test(String(shipCountry).trim());
+                                   const trackingUrl = isDomestic ? `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${encodeURIComponent(expandedOrder.trackingNumber)}` : `https://www.dhl.com/en/express/tracking.html?AWB=${encodeURIComponent(expandedOrder.trackingNumber)}`;
+                                   return (
                                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                          TRACKING NUMBER
                                        </span>
-                                       <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                                       <a href={trackingUrl} target="_blank" rel="noopener noreferrer" style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase', cursor: 'pointer' }}>
                                          {expandedOrder.trackingNumber}
-                                       </span>
+                                       </a>
                                      </div>
+                                   );
+                                 })()}
+                                 {(() => {
+                                   const shipCountry = currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES';
+                                   const isDomestic = /^US$|^USA$|^UNITED\s*STATES$/i.test(String(shipCountry).trim());
+                                   const carrierLabel = isDomestic ? 'DOMESTIC' : 'INTERNATIONAL';
+                                   return (
                                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                          CARRIER
                                        </span>
                                        <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
-                                         {expandedOrder.trackingCarrier}
+                                         {carrierLabel}
                                        </span>
                                      </div>
-                                   </>
-                                 )}
+                                   );
+                                 })()}
                                </div>
                              </div>
                            )}
@@ -2456,14 +2706,97 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  >
                                    PAYMENT
                                  </h2>
+                                 <img src="/assets/payment-icon.svg" alt="" style={{ width: 14.25, height: 14.25, opacity: 1 }} />
                                </div>
                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                 {(() => {
+                                   let methodName = '';
+                                   let last4 = '';
+                                   const fromOrder = (expandedOrder as any)?.paymentMethod;
+                                   if (fromOrder) {
+                                     const endingMatch = String(fromOrder).match(/ENDING IN (\d+)/i);
+                                     last4 = endingMatch ? endingMatch[1] : '';
+                                     let brandPart = String(fromOrder).replace(/\s*ENDING IN \d+.*$/i, '').trim().replace(/_/g, ' ');
+                                     methodName = (brandPart === 'EXPRESS' ? 'AMERICAN EXPRESS' : brandPart).toUpperCase();
+                                   }
+                                   if (!methodName || !last4) {
+                                     const def = currentUser.defaultPaymentMethod;
+                                     if (def && def.cardNumber) {
+                                       last4 = String(def.cardNumber).replace(/\D/g, '').slice(-4);
+                                       const b = (def.cardBrand || '').toUpperCase().replace(/_/g, ' ');
+                                       methodName = (b === 'EXPRESS' || b === 'AMEX') ? 'AMERICAN EXPRESS' : (b || 'CARD');
+                                     }
+                                   }
+                                   if (!methodName) methodName = 'CARD';
+                                   if (!last4) last4 = '****';
+                                   return (
+                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                         {methodName}
+                                       </span>
+                                       <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                                         ENDING IN {last4}
+                                       </span>
+                                     </div>
+                                   );
+                                 })()}
                                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                      CONFIRMATION EMAIL
                                    </span>
                                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                                      {currentUser.email || ''}
+                                   </span>
+                                 </div>
+                                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                   <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                     CONFIRMATION NUMBER
+                                   </span>
+                                   <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                                     #{(() => {
+                                       const orderNum = expandedOrder.orderNumber?.replace(/^ORDER\s+/i, '').trim();
+                                       const key = orderNum ? (orderNum.startsWith('#') ? orderNum : `#${orderNum}`) : null;
+                                       if (key) {
+                                         const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
+                                         const stored = orderConfirmations[key] || orderConfirmations[expandedOrder.orderNumber];
+                                         if (stored) return stored;
+                                       }
+                                       const onOrder = (expandedOrder as any).confirmationNumber;
+                                       if (onOrder) return onOrder;
+                                       const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                                       const seed = orderNum ? orderNum.replace(/\D/g, '') : '0';
+                                       let hash = 0;
+                                       for (let i = 0; i < seed.length; i++) hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+                                       let gen = '';
+                                       for (let i = 0; i < 6; i++) { const idx = Math.abs((hash + i) % chars.length); gen += chars[idx]; }
+                                       return gen;
+                                     })()}
+                                   </span>
+                                 </div>
+                               </div>
+                             </div>
+                           )}
+                           {/* REWARDS */}
+                           {currentUser && (
+                             <div style={{ marginBottom: '5px' }}>
+                               <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                                 <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
+                                   REWARDS
+                                 </h2>
+                                 <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+                               </div>
+                               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                     YOU'VE EARNED <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{((expandedOrder as any).pointsEarned ?? currentUser?.loyaltyPoints ?? (expandedOrder.subtotal != null ? expandedOrder.subtotal : expandedOrder.total) ?? 0).toLocaleString()}</span> LOYALTY POINTS{((expandedOrder as any).pointsEarned ?? currentUser?.loyaltyPoints ?? (expandedOrder.subtotal != null ? expandedOrder.subtotal : expandedOrder.total) ?? 0) === 0 ? '.' : '!'}
+                                   </p>
+                                   <span style={{
+                                     fontFamily: ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase() === 'RED' || ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase() === 'GOLD' ? '"Futura PT Medium"' : '"Futura PT Demi"',
+                                     fontSize: '10px',
+                                     color: (() => { const t = ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase(); if (t === 'RED') return '#EB1C24'; if (t === 'SILVER') return '#808080'; if (t === 'GOLD') return '#000000'; return '#808080'; })(),
+                                     textTransform: 'uppercase'
+                                   }}>
+                                     {((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase()} TIER
                                    </span>
                                  </div>
                                </div>
@@ -2541,10 +2874,12 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            {order.trackingNumber ? (
                              <div>
                                <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10.5px', color: '#000000', margin: 0, lineHeight: '1.2', transform: 'translateY(-1px)' }}>
-                                 {order.trackingNumber}
+                                 <a href={currentUser && /^US$|^USA$|^UNITED\s*STATES$/i.test(String(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'US').trim()) ? `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${encodeURIComponent(order.trackingNumber)}` : `https://www.dhl.com/en/express/tracking.html?AWB=${encodeURIComponent(order.trackingNumber)}`} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', cursor: 'pointer' }}>
+                                   {order.trackingNumber}
+                                 </a>
                                </p>
                                <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '9px', color: '#808080', margin: 0, lineHeight: '1.2', transform: 'translateY(3px)' }}>
-                                 TRACK VIA {order.trackingCarrier}
+                                 TRACK VIA {currentUser && /^US$|^USA$|^UNITED\s*STATES$/i.test(String(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'US').trim()) ? 'DOMESTIC' : 'INTERNATIONAL'}
                                </p>
                              </div>
                            ) : order.status === 'CONFIRMED' ? (

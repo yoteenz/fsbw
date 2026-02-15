@@ -1894,7 +1894,7 @@ fontFamily: '"Futura PT Book"',
                             {(() => {
                               const pointsHistoryRows = getPointsHistoryRows();
                               return pointsHistoryRows.length === 0 ? (
-                                <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: 0, textTransform: 'uppercase', textAlign: 'center' }}>
+                                <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '6px 0', textTransform: 'uppercase', textAlign: 'center' }}>
                                   YOU HAVEN'T REDEEMED ANY POINTS YET.
                                 </p>
                               ) : pointsHistoryRows.map((row, i) => (
@@ -2196,7 +2196,7 @@ fontFamily: '"Futura PT Book"',
                     </div>
                     <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        MEMBER REWARDS<br />+ PRIZES
+                        MEMBER REWARDS + PRIZES
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
                         ELIGIBLE FOR A CHANCE TO WIN DISCOUNTS, VOUCHERS + PRODUCT

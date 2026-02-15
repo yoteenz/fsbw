@@ -6,7 +6,7 @@ import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 
 const inputBaseStyle: React.CSSProperties = {
-  fontFamily: '"Futura PT Book"',
+  fontFamily: '"Futura PT Demi"',
   fontSize: '11px',
   color: 'black',
   width: '100%',
@@ -88,6 +88,15 @@ function SettingsPage() {
   const [newsletter, setNewsletter] = useState(true);
   const [sales, setSales] = useState(true);
   const [orderTracking, setOrderTracking] = useState(true);
+  const [ordersAnimations, setOrdersAnimations] = useState(() => {
+    try {
+      if (typeof window === 'undefined') return true;
+      const v = localStorage.getItem('ordersPageAnimationsEnabled');
+      return v !== 'false';
+    } catch {
+      return true;
+    }
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [showResetPasswordForm, setShowResetPasswordForm] = useState(false);
   const [socialViewMode, setSocialViewMode] = useState<Record<string, boolean>>({ facebook: false, instagram: false, youtube: false, tiktok: false, twitter: false });
@@ -135,6 +144,39 @@ function SettingsPage() {
   };
 
   const isOAuthUser = userData?.authProvider === 'google' || userData?.authProvider === 'facebook';
+  const birthdayLocked = isOAuthUser && userData?.birthdayGiftClaimed === true;
+  const [hasPlacedOrConfirmedOrder, setHasPlacedOrConfirmedOrder] = useState(false);
+  const nameLocked = isOAuthUser && hasPlacedOrConfirmedOrder;
+
+  useEffect(() => {
+    const email = (userData?.email || '').trim().toLowerCase();
+    if (!email) {
+      setHasPlacedOrConfirmedOrder(false);
+      return;
+    }
+    const read = () => {
+      try {
+        const raw = localStorage.getItem(`userOrders_${email}`);
+        if (!raw) {
+          setHasPlacedOrConfirmedOrder(false);
+          return;
+        }
+        const orders = JSON.parse(raw);
+        const active = orders.activeOrders || [];
+        const past = orders.pastOrders || [];
+        setHasPlacedOrConfirmedOrder(active.length > 0 || past.length > 0);
+      } catch {
+        setHasPlacedOrConfirmedOrder(false);
+      }
+    };
+    read();
+    window.addEventListener('storage', read);
+    window.addEventListener('ordersUpdated', read);
+    return () => {
+      window.removeEventListener('storage', read);
+      window.removeEventListener('ordersUpdated', read);
+    };
+  }, [userData?.email]);
 
   const persistPersonalInfo = (updates: { birthday?: string; firstName?: string; lastName?: string }) => {
     try {
@@ -611,12 +653,12 @@ function SettingsPage() {
                     <input
                       type="text"
                       value={firstName}
-                      readOnly={!isOAuthUser}
+                      readOnly={!isOAuthUser || nameLocked}
                       placeholder="FIRST NAME"
                       className="settings-personal-input"
-                      onChange={isOAuthUser ? (e) => setFirstName(e.target.value.toUpperCase()) : undefined}
-                      onBlur={isOAuthUser ? () => persistPersonalInfo({ firstName: firstName.trim(), lastName: lastName.trim() }) : undefined}
-                      style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080', textTransform: 'uppercase' }}
+                      onChange={isOAuthUser && !nameLocked ? (e) => setFirstName(e.target.value.toUpperCase()) : undefined}
+                      onBlur={isOAuthUser && !nameLocked ? () => persistPersonalInfo({ firstName: firstName.trim(), lastName: lastName.trim() }) : undefined}
+                      style={{ ...inputBaseStyle, fontFamily: '"Futura PT Demi"', color: '#808080', textTransform: 'uppercase' }}
                     />
                   </div>
                   <div>
@@ -624,12 +666,12 @@ function SettingsPage() {
                     <input
                       type="text"
                       value={lastName}
-                      readOnly={!isOAuthUser}
+                      readOnly={!isOAuthUser || nameLocked}
                       placeholder="LAST NAME"
                       className="settings-personal-input"
-                      onChange={isOAuthUser ? (e) => setLastName(e.target.value.toUpperCase()) : undefined}
-                      onBlur={isOAuthUser ? () => persistPersonalInfo({ firstName: firstName.trim(), lastName: lastName.trim() }) : undefined}
-                      style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080', textTransform: 'uppercase' }}
+                      onChange={isOAuthUser && !nameLocked ? (e) => setLastName(e.target.value.toUpperCase()) : undefined}
+                      onBlur={isOAuthUser && !nameLocked ? () => persistPersonalInfo({ firstName: firstName.trim(), lastName: lastName.trim() }) : undefined}
+                      style={{ ...inputBaseStyle, fontFamily: '"Futura PT Demi"', color: '#808080', textTransform: 'uppercase' }}
                     />
                   </div>
                 </div>
@@ -638,12 +680,12 @@ function SettingsPage() {
                   <input
                     type="text"
                     value={birthday}
-                    readOnly={!isOAuthUser}
+                    readOnly={!isOAuthUser || birthdayLocked}
                     placeholder="MM/DD/YYYY"
                     className="settings-personal-input"
-                    onChange={isOAuthUser ? (e) => setBirthday(formatBirthday(e.target.value)) : undefined}
-                    onBlur={isOAuthUser ? () => persistPersonalInfo({ birthday }) : undefined}
-                    style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080' }}
+                    onChange={isOAuthUser && !birthdayLocked ? (e) => setBirthday(formatBirthday(e.target.value)) : undefined}
+                    onBlur={isOAuthUser && !birthdayLocked ? () => persistPersonalInfo({ birthday }) : undefined}
+                    style={{ ...inputBaseStyle, fontFamily: '"Futura PT Demi"', color: '#808080' }}
                   />
                 </div>
                 <div style={{ marginBottom: '20px' }}>
@@ -654,7 +696,7 @@ function SettingsPage() {
                     readOnly
                     placeholder="EMAIL@EXAMPLE.COM"
                     className="settings-personal-input"
-                    style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080', textTransform: 'uppercase' }}
+                    style={{ ...inputBaseStyle, fontFamily: '"Futura PT Demi"', color: '#808080', textTransform: 'uppercase' }}
                   />
                 </div>
                 <div style={{ marginBottom: '20px' }}>
@@ -677,7 +719,8 @@ function SettingsPage() {
                           value={showPassword ? accountPassword : '••••••••••'}
                           style={{
                             ...inputBaseStyle,
-                            paddingRight: '120px'
+                            paddingRight: '120px',
+                            ...(showPassword && { fontFamily: '"Futura PT Medium"', color: '#808080' })
                           }}
                         />
                         <span
@@ -805,7 +848,7 @@ function SettingsPage() {
                       type="text"
                       readOnly
                       value={userData?.authProvider === 'google' ? 'SIGNED IN WITH GOOGLE' : userData?.authProvider === 'facebook' ? 'SIGNED IN WITH FACEBOOK' : 'SIGNED IN WITH SOCIAL'}
-                      style={{ ...inputBaseStyle, fontFamily: '"Futura PT Medium"', color: '#808080' }}
+                      style={{ ...inputBaseStyle, fontFamily: '"Futura PT Demi"', color: '#808080' }}
                     />
                   )}
                 </div>
@@ -825,7 +868,7 @@ function SettingsPage() {
                             tabIndex={0}
                             onClick={() => setSocialViewMode((s) => ({ ...s, [key]: false }))}
                             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSocialViewMode((s) => ({ ...s, [key]: false })); }}
-                            style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24', flex: 1, cursor: 'pointer', padding: '8px 0', minHeight: '36px', display: 'flex', alignItems: 'center', textTransform: 'uppercase' }}
+                            style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', flex: 1, cursor: 'pointer', padding: '8px 0', minHeight: '36px', display: 'flex', alignItems: 'center', textTransform: 'uppercase' }}
                           >
                             {value ? value.replace(/^@/, '').toUpperCase() : '\u00A0'}
                           </span>
@@ -844,6 +887,7 @@ function SettingsPage() {
                             placeholder=""
                             style={{
                               ...inputBaseStyle,
+                              fontFamily: '"Futura PT Medium"',
                               fontSize: '11px',
                               border: 'none',
                               marginBottom: 0,
@@ -880,6 +924,20 @@ function SettingsPage() {
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: 'black', textTransform: 'uppercase', fontWeight: '500', lineHeight: '1.2' }}>Order Tracking</span>
                     <ToggleSwitch on={orderTracking} onClick={() => setOrderTracking(!orderTracking)} />
                   </div>
+                  <div className="flex items-center justify-between" style={{ width: '100%' }}>
+                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: 'black', textTransform: 'uppercase', fontWeight: '500', lineHeight: '1.2' }}>Animations</span>
+                    <ToggleSwitch
+                      on={ordersAnimations}
+                      onClick={() => {
+                        const next = !ordersAnimations;
+                        setOrdersAnimations(next);
+                        try {
+                          localStorage.setItem('ordersPageAnimationsEnabled', next ? 'true' : 'false');
+                          window.dispatchEvent(new CustomEvent('ordersAnimationsChanged', { detail: next }));
+                        } catch (_) {}
+                      }}
+                    />
+                  </div>
                 </div>
 
                 {/* Help Center */}
@@ -905,6 +963,26 @@ function SettingsPage() {
                     }}
                   >
                     FAQ
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/brand/payment')}
+                    style={{
+                      fontFamily: '"Futura PT Book"',
+                      fontSize: '12px',
+                      color: 'black',
+                      textTransform: 'uppercase',
+                      fontWeight: '500',
+                      lineHeight: '3.2',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: 0,
+                      textAlign: 'left',
+                      marginBottom: '-8px'
+                    }}
+                  >
+                    PAYMENT
                   </button>
                   <button
                     type="button"

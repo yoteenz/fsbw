@@ -4,6 +4,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
+import summaryIcon from '../../../assets/icons/summary-icon.svg?url';
 
 function CheckoutConfirmPage() {
   const navigate = useNavigate();
@@ -418,7 +419,7 @@ function CheckoutConfirmPage() {
           state: prev.state || 'TN',
           zip: prev.zip || '38035',
           country: prev.country || 'UNITED STATES',
-          paymentMethod: prev.paymentMethod || 'VISA MASTERCARD ENDING IN 8065',
+          paymentMethod: prev.paymentMethod || 'CARD ENDING IN XXXX',
           email: prev.email || 'ASHLEYEVANS@GMAIL.COM',
           pointsEarned: prev.pointsEarned || pointsEarned || 0, // Use points from checkout page, fallback to calculated or 0
           tier: prev.tier || tier
@@ -1318,7 +1319,10 @@ function CheckoutConfirmPage() {
             )}
 
             {/* ORDER SUMMARY CARD - Only show when menu is closed */}
-            {!showMobileMenu && (
+            {!showMobileMenu && (() => {
+              const accountUser = (() => { try { const u = localStorage.getItem('currentUser'); return u ? JSON.parse(u) : null; } catch { return null; } })();
+              const addr = accountUser?.defaultAddress || accountUser?.shippingAddress;
+              return (
               <div
                 className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
                 style={{ borderWidth: '1.3px' }}
@@ -1338,13 +1342,14 @@ function CheckoutConfirmPage() {
                   >
                     ORDER SUMMARY
                   </h2>
+                  <img src={summaryIcon} alt="" style={{ width: 12.75, height: 12.75, opacity: 1 }} />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                       ORDER DATE
                     </span>
-                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                    <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                       {orderData.orderDate}
                     </span>
                   </div>
@@ -1352,13 +1357,13 @@ function CheckoutConfirmPage() {
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                       ORDER TOTAL
                     </span>
-                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }} dangerouslySetInnerHTML={formatPrice(orderData.orderTotal || 0)} />
+                    <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }} dangerouslySetInnerHTML={formatPrice(orderData.orderTotal || 0)} />
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                       ORDER NUMBER
                     </span>
-                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                    <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                       {orderData.orderNumber}
                     </span>
                   </div>
@@ -1380,26 +1385,35 @@ function CheckoutConfirmPage() {
                   >
                     SHIPPING
                   </h2>
+                  <img src="/assets/ship-icon.svg" alt="" style={{ width: 12.83, height: 12.83, opacity: 1 }} />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                    {orderData.firstName || 'ASHLEY'} {orderData.lastName || 'EVANS'}
+                    {orderData.firstName || accountUser?.firstName || ''} {orderData.lastName || accountUser?.lastName || ''}
                   </p>
                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                    {orderData.shippingAddress || '3374 E SHELBY DR APT #106'}
+                    {orderData.shippingAddress || addr?.address || ''}
                   </p>
                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                    {orderData.city || 'MEMPHIS'}, {orderData.state || 'TN'} {orderData.zip || '38035'}
+                    {orderData.city || addr?.city || ''}, {orderData.state || addr?.state || ''} {orderData.zip || addr?.zip || ''}
                   </p>
                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                    {orderData.country || 'UNITED STATES'}
+                    {orderData.country || addr?.country || 'UNITED STATES'}
                   </p>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                       COMPLETION TIMELINE
                     </span>
-                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                    <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                       {orderData.orderDate ? calculateProcessingTimeline(orderData.orderDate, orderData.processingTime || '6-8 WEEKS') : (orderData.processingTime || '6-8 WEEKS')}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                      CARRIER
+                    </span>
+                    <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                      {/^US$|^USA$|^UNITED\s*STATES$/i.test(String(orderData.country || addr?.country || 'UNITED STATES').trim()) ? 'DOMESTIC' : 'INTERNATIONAL'}
                     </span>
                   </div>
                   {(() => {
@@ -1435,7 +1449,7 @@ function CheckoutConfirmPage() {
                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                           {methodName}
                         </span>
-                        <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                        <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                           {shippingTime}
                         </span>
                       </div>
@@ -1459,22 +1473,42 @@ function CheckoutConfirmPage() {
                   >
                     PAYMENT
                   </h2>
+                  <img src="/assets/payment-icon.svg" alt="" style={{ width: 14.25, height: 14.25, opacity: 1 }} />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {(() => {
-                    const paymentMethod = orderData.paymentMethod || 'VISA MASTERCARD ENDING IN 8065';
-                    const endingMatch = paymentMethod.match(/ENDING IN (\d+)/i);
-                    const endingNumber = endingMatch ? endingMatch[1] : '8065';
-                    let methodName = paymentMethod.replace(/\s*ENDING IN \d+.*$/i, '').trim();
-                    // Replace underscores with spaces
-                    methodName = methodName.replace(/_/g, ' ');
+                    let methodName = ''; // Left: VISA, MASTERCARD, AMERICAN EXPRESS, etc.
+                    let last4 = '';     // Right: last 4 digits only (no XXXX when we have data)
+                    const fromOrder = orderData.paymentMethod;
+                    if (fromOrder) {
+                      const endingMatch = fromOrder.match(/ENDING IN (\d+)/i);
+                      last4 = endingMatch ? endingMatch[1] : '';
+                      let brandPart = fromOrder.replace(/\s*ENDING IN \d+.*$/i, '').trim().replace(/_/g, ' ');
+                      methodName = (brandPart === 'EXPRESS' ? 'AMERICAN EXPRESS' : brandPart).toUpperCase();
+                    }
+                    if (!methodName || !last4) {
+                      try {
+                        const currentUser = localStorage.getItem('currentUser');
+                        if (currentUser) {
+                          const user = JSON.parse(currentUser);
+                          const def = user.defaultPaymentMethod;
+                          if (def && def.cardNumber) {
+                            last4 = String(def.cardNumber).replace(/\D/g, '').slice(-4);
+                            const b = (def.cardBrand || '').toUpperCase().replace(/_/g, ' ');
+                            methodName = (b === 'EXPRESS' || b === 'AMEX') ? 'AMERICAN EXPRESS' : (b || 'CARD');
+                          }
+                        }
+                      } catch (_e) {}
+                    }
+                    if (!methodName) methodName = 'CARD';
+                    if (!last4) last4 = '****';
                     return (
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                           {methodName}
                         </span>
-                        <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
-                          ENDING IN {endingNumber}
+                        <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                          ENDING IN {last4}
                         </span>
                       </div>
                     );
@@ -1483,15 +1517,15 @@ function CheckoutConfirmPage() {
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                       CONFIRMATION EMAIL
                     </span>
-                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
-                      {orderData.email || 'ASHLEYEVANS@GMAIL.COM'}
+                    <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                      {orderData.email || accountUser?.email || ''}
                     </span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                       CONFIRMATION NUMBER
                     </span>
-                    <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                    <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                       #{orderData.confirmationNumber || (() => {
                         // Retrieve confirmation number from localStorage if order number exists
                         if (orderData.orderNumber) {
@@ -1539,21 +1573,22 @@ function CheckoutConfirmPage() {
                     >
                       REWARDS
                     </h2>
+                    <img src="/assets/rewards-icon.svg" alt="" style={{ width: 14.55, height: 14.55, opacity: 1, filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                        YOU'VE EARNED <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{(orderData.pointsEarned || 1290).toLocaleString()}</span> LOYALTY POINTS!
+                        YOU'VE EARNED <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{(orderData.pointsEarned ?? accountUser?.loyaltyPoints ?? orderData.orderTotal ?? 1290).toLocaleString()}</span> LOYALTY POINTS{(orderData.pointsEarned ?? accountUser?.loyaltyPoints ?? orderData.orderTotal ?? 1290) === 0 ? '.' : '!'}
                       </p>
                       <span style={{ 
                         fontFamily: (() => {
-                          const tier = (orderData.tier || 'SILVER').toUpperCase();
+                          const tier = (orderData.tier || accountUser?.tier || 'SILVER').toUpperCase();
                           if (tier === 'RED' || tier === 'GOLD') return '"Futura PT Medium"';
                           return '"Futura PT Demi"'; // SILVER and default
                         })(),
                         fontSize: '10px', 
                         color: (() => {
-                          const tier = (orderData.tier || 'SILVER').toUpperCase();
+                          const tier = (orderData.tier || accountUser?.tier || 'SILVER').toUpperCase();
                           if (tier === 'RED') return '#EB1C24';
                           if (tier === 'SILVER') return '#808080';
                           if (tier === 'GOLD') return '#000000';
@@ -1561,14 +1596,15 @@ function CheckoutConfirmPage() {
                         })(),
                         textTransform: 'uppercase' 
                       }}>
-                        {(orderData.tier || 'SILVER').toUpperCase()} TIER
+                        {(orderData.tier || accountUser?.tier || 'SILVER').toUpperCase()} TIER
                       </span>
                     </div>
                   </div>
                 </div>
               )}
               </div>
-            )}
+            );
+            })()}
 
             {/* Navigation Buttons */}
             {!showMobileMenu && (
