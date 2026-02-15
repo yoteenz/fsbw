@@ -16,6 +16,19 @@ import { isAdminKateenaAccount } from '../../../utils/adminAuth';
 const BRAND_GRAY = '#808080';
 const CHART_BORDER = '0.8px solid #000';
 
+const LOYALTY_REWARDS = [
+  { type: 'free_gift' as const, label: 'FREE GIFT', detail: 'WITH PURCHASE', points: 5000 },
+  { type: 'discount' as const, label: 'DISCOUNT CODE', detail: '10% OFF UNIT', points: 10000 },
+  { type: 'voucher' as const, label: 'VOUCHER', detail: '1X HAIRLINE', points: 15000 },
+  { type: 'digital_cash' as const, label: 'DIGITAL CASH', detail: '$100 USD', points: 20000 },
+  { type: 'voucher' as const, label: 'VOUCHER', detail: '1X COLOR', points: 25000 },
+  { type: 'discount' as const, label: 'DISCOUNT CODE', detail: '30% OFF UNIT', points: 30000 },
+  { type: 'voucher' as const, label: 'VOUCHER', detail: '1X STYLING', points: 35000 },
+  { type: 'digital_cash' as const, label: 'DIGITAL CASH', detail: '$200 USD', points: 40000 },
+  { type: 'free_gift' as const, label: 'FREE GIFT', detail: 'WITH PURCHASE', points: 45000 },
+  { type: 'discount' as const, label: 'DISCOUNT CODE', detail: '50% OFF UNIT', points: 50000 }
+];
+
 const EARN_TASKS = [
   { id: 'newsletter_signup', action: 'NEWSLETTER SIGN UP', points: 50 },
   { id: 'refer_friend', action: 'REFER A FRIEND', points: 100 },
@@ -210,20 +223,35 @@ function MembershipPage() {
   const getDisplayLoyaltyPoints = (): number =>
     (userData?.loyaltyPoints ?? 0) + calculateTotalAffiliatePoints() + getPointsFromSpend();
 
-  /** Format date for points history storage/sort: M-D-YYYY (no leading zeros). */
-  const formatPointsHistoryDate = (dateStr: string): string => {
-    const parts = dateStr.split('-').map(Number);
-    if (parts.length !== 3) return dateStr;
-    const [month, day, year] = parts;
+  /** Parse a date string (M-D-YYYY or YYYY-M-D) to timestamp for consistent sort. */
+  const parsePointsHistoryDateToTime = (dateStr: string): number => {
+    const parts = String(dateStr).split('-').map((s) => parseInt(s.trim(), 10)).filter((n) => !Number.isNaN(n));
+    if (parts.length !== 3) return 0;
+    const [p0, p1, p2] = parts;
+    const yearFirst = p0 > 31;
+    const year = yearFirst ? p0 : p2;
+    const month = yearFirst ? p1 : p0;
+    const day = yearFirst ? p2 : p1;
+    const t = new Date(year, month - 1, day).getTime();
+    return Number.isNaN(t) ? 0 : t;
+  };
+
+  /** From order.date string produce normalized M-D-YYYY for storage (so sort/display are consistent). */
+  const normalizePointsHistoryDate = (dateStr: string): string => {
+    const t = parsePointsHistoryDateToTime(dateStr);
+    if (t === 0) return dateStr;
+    const d = new Date(t);
+    const month = d.getMonth() + 1;
+    const day = d.getDate();
+    const year = d.getFullYear();
     return `${month}-${day}-${year}`;
   };
 
   /** Format date for points history display: "Feb 14, 2026". */
   const formatPointsHistoryDateDisplay = (dateStr: string): string => {
-    const parts = dateStr.split('-').map(Number);
-    if (parts.length !== 3) return dateStr;
-    const [month, day, year] = parts;
-    const d = new Date(year, month - 1, day);
+    const t = parsePointsHistoryDateToTime(dateStr);
+    if (t === 0) return dateStr;
+    const d = new Date(t);
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
@@ -243,10 +271,11 @@ function MembershipPage() {
       const rows: { date: string; discount: string; points: string }[] = [];
       allOrders.forEach((order: any) => {
         if (!order.date) return;
-        const [month, day, year] = order.date.split('-').map(Number);
-        const orderDate = new Date(year, month - 1, day);
+        const orderDateMs = parsePointsHistoryDateToTime(order.date);
+        if (orderDateMs === 0) return;
+        const orderDate = new Date(orderDateMs);
         if (orderDate < period.start || orderDate > period.end) return;
-        const dateFormatted = formatPointsHistoryDate(order.date);
+        const dateFormatted = normalizePointsHistoryDate(order.date);
         if ((order.total || 0) > 0) {
           rows.push({
             date: dateFormatted,
@@ -270,11 +299,7 @@ function MembershipPage() {
           }
         }
       });
-      rows.sort((a, b) => {
-        const [aM, aD, aY] = a.date.split('-').map(Number);
-        const [bM, bD, bY] = b.date.split('-').map(Number);
-        return new Date(bY, bM - 1, bD).getTime() - new Date(aY, aM - 1, aD).getTime();
-      });
+      rows.sort((a, b) => parsePointsHistoryDateToTime(b.date) - parsePointsHistoryDateToTime(a.date));
       return rows;
     } catch {
       return [];
@@ -1117,22 +1142,16 @@ function MembershipPage() {
                           </p>
                           {(() => {
                               const totalPoints = getDisplayLoyaltyPoints();
-                              const rewards = [
-                                { discount: '10% OFF', points: 10000 },
-                                { discount: '15% OFF', points: 15000 },
-                                { discount: '25% OFF', points: 25000 },
-                                { discount: '30% OFF', points: 30000 },
-                                { discount: '50% OFF UNIT', points: 50000 }
-                              ];
-                              const nextReward = rewards.find((r) => totalPoints < r.points);
+                              const nextReward = LOYALTY_REWARDS.find((r) => totalPoints < r.points);
                               const progressPercent = nextReward
                                 ? Math.min(100, Math.max(0, (totalPoints / nextReward.points) * 100))
                                 : 100;
+                              const nextLabelColor = nextReward && (nextReward.type === 'free_gift' || nextReward.type === 'voucher') ? '#EB1C24' : BRAND_GRAY;
                               return (
                                 <div style={{ marginTop: '40px', paddingBottom: '20px' }}>
                                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0' }}>
                                     <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
-                                      NEXT REWARD: <span style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{nextReward ? 'DISCOUNT CODE' : '—'}</span>
+                                      NEXT REWARD: <span style={{ color: nextLabelColor, fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{nextReward ? nextReward.label : '—'}</span>
                                     </p>
                                     <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
                                       {totalPoints.toLocaleString()}{nextReward ? ` / ${nextReward.points.toLocaleString()}` : ''} PTS
@@ -1153,7 +1172,7 @@ function MembershipPage() {
                                   </div>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', color: BRAND_GRAY, fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
                                     {nextReward
-                                      ? `${(nextReward.points - totalPoints).toLocaleString()} MORE POINTS TO EARN ${nextReward.discount}`
+                                      ? <>{((nextReward.points - totalPoints).toLocaleString())} MORE POINTS TO EARN {nextReward.type === 'digital_cash' ? <span style={{ color: nextLabelColor }}>{nextReward.label}</span> : <>A <span style={{ color: nextLabelColor }}>{nextReward.label}</span></>}</>
                                       : 'MAX REWARD REACHED'}
                                   </p>
                                 </div>
@@ -1161,32 +1180,27 @@ function MembershipPage() {
                             })()}
                         </div>
 
-                        {/* Discount Codes */}
+                        {/* Rewards list */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: 0, paddingBottom: '5px' }}>
-                          {[
-                            { discount: '10% OFF', points: 10000 },
-                            { discount: '15% OFF', points: 15000 },
-                            { discount: '25% OFF', points: 25000 },
-                            { discount: '30% OFF', points: 30000 },
-                            { discount: '50% OFF UNIT', points: 50000 }
-                          ].map((reward, index) => {
+                          {LOYALTY_REWARDS.map((reward, index) => {
                             const currentPoints = getDisplayLoyaltyPoints();
                             const canRedeem = currentPoints >= reward.points;
+                            const labelColor = (reward.type === 'free_gift' || reward.type === 'voucher') ? '#EB1C24' : BRAND_GRAY;
                             return (
-                              <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: index < 4 ? '8px 0' : '8px 0 0 0', borderBottom: index < 4 ? '1px solid #E5E5E5' : 'none' }}>
+                              <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: index < LOYALTY_REWARDS.length - 1 ? '8px 0' : '8px 0 0 0', borderBottom: index < LOYALTY_REWARDS.length - 1 ? '1px solid #E5E5E5' : 'none' }}>
                                 <div>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: BRAND_GRAY, margin: '0 0 2px 0', textTransform: 'uppercase', fontWeight: '500' }}>
-                                    DISCOUNT CODE
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: labelColor, margin: '0 0 2px 0', textTransform: 'uppercase', fontWeight: '500' }}>
+                                    {reward.label}
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', margin: '0' }}>
-                                    {reward.discount} AT <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{reward.points.toLocaleString()} PTS</span>
+                                    {reward.detail} AT <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{reward.points.toLocaleString()} PTS</span>
                                   </p>
                                 </div>
                                 <button
                                   onClick={() => {
                                     if (canRedeem) {
                                       // Handle redemption logic here
-                                      alert(`Redeeming ${reward.discount} for ${reward.points.toLocaleString()} points`);
+                                      alert(`Redeeming ${reward.detail} for ${reward.points.toLocaleString()} points`);
                                     }
                                   }}
                                   disabled={!canRedeem}
@@ -1642,7 +1656,7 @@ function MembershipPage() {
                           <p
                             style={{
                               fontFamily: '"Futura PT Medium"',
-                              color: '#000000',
+                              color: '#808080',
                               fontSize: '14px',
                               margin: '0',
                               paddingBottom: '0',
@@ -1771,22 +1785,16 @@ fontFamily: '"Futura PT Book"',
                               </p>
                               {(() => {
                                   const totalPoints = getDisplayLoyaltyPoints();
-                                  const rewards = [
-                                    { discount: '10% OFF', points: 10000 },
-                                    { discount: '15% OFF', points: 15000 },
-                                    { discount: '25% OFF', points: 25000 },
-                                    { discount: '30% OFF', points: 30000 },
-                                    { discount: '50% OFF UNIT', points: 50000 }
-                                  ];
-                                  const nextReward = rewards.find((r) => totalPoints < r.points);
+                                  const nextReward = LOYALTY_REWARDS.find((r) => totalPoints < r.points);
                                   const progressPercent = nextReward
                                     ? Math.min(100, Math.max(0, (totalPoints / nextReward.points) * 100))
                                     : 100;
+                                  const nextLabelColor = nextReward && (nextReward.type === 'free_gift' || nextReward.type === 'voucher') ? '#EB1C24' : BRAND_GRAY;
                                   return (
                                     <div style={{ marginTop: '40px', paddingBottom: '20px' }}>
                                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0' }}>
                                         <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
-                                          NEXT REWARD: <span style={{ color: BRAND_GRAY, fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{nextReward ? 'DISCOUNT CODE' : '—'}</span>
+                                          NEXT REWARD: <span style={{ color: nextLabelColor, fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{nextReward ? nextReward.label : '—'}</span>
                                         </p>
                                         <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
                                           {totalPoints.toLocaleString()}{nextReward ? ` / ${nextReward.points.toLocaleString()}` : ''} PTS
@@ -1807,7 +1815,7 @@ fontFamily: '"Futura PT Book"',
                                       </div>
                                       <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', color: BRAND_GRAY, fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
                                         {nextReward
-                                          ? `${(nextReward.points - totalPoints).toLocaleString()} MORE POINTS TO EARN ${nextReward.discount}`
+                                          ? <>{((nextReward.points - totalPoints).toLocaleString())} MORE POINTS TO EARN {nextReward.type === 'digital_cash' ? <span style={{ color: nextLabelColor }}>{nextReward.label}</span> : <>A <span style={{ color: nextLabelColor }}>{nextReward.label}</span></>}</>
                                           : 'MAX REWARD REACHED'}
                                       </p>
                                     </div>
@@ -1815,32 +1823,27 @@ fontFamily: '"Futura PT Book"',
                                 })()}
                             </div>
 
-                            {/* Discount Codes */}
+                            {/* Rewards list */}
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: 0, paddingBottom: '5px' }}>
-                              {[
-                                { discount: '10% OFF', points: 10000 },
-                                { discount: '15% OFF', points: 15000 },
-                                { discount: '25% OFF', points: 25000 },
-                                { discount: '30% OFF', points: 30000 },
-                                { discount: '50% OFF UNIT', points: 50000 }
-                              ].map((reward, index) => {
+                              {LOYALTY_REWARDS.map((reward, index) => {
                                 const currentPoints = getDisplayLoyaltyPoints();
                                 const canRedeem = currentPoints >= reward.points;
+                                const labelColor = (reward.type === 'free_gift' || reward.type === 'voucher') ? '#EB1C24' : BRAND_GRAY;
                                 return (
-                                  <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: index < 4 ? '8px 0' : '8px 0 0 0', borderBottom: index < 4 ? '1px solid #E5E5E5' : 'none' }}>
+                                  <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: index < LOYALTY_REWARDS.length - 1 ? '8px 0' : '8px 0 0 0', borderBottom: index < LOYALTY_REWARDS.length - 1 ? '1px solid #E5E5E5' : 'none' }}>
                                     <div>
-                                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: BRAND_GRAY, margin: '0 0 2px 0', textTransform: 'uppercase', fontWeight: '500' }}>
-                                        DISCOUNT CODE
+                                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: labelColor, margin: '0 0 2px 0', textTransform: 'uppercase', fontWeight: '500' }}>
+                                        {reward.label}
                                       </p>
                                       <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', margin: '0' }}>
-                                        {reward.discount} AT <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{reward.points.toLocaleString()} PTS</span>
-                                      </p>
+{reward.detail} AT <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{reward.points.toLocaleString()} PTS</span>
+                                        </p>
                                     </div>
                                     <button
                                       onClick={() => {
                                         if (canRedeem) {
                                           // Handle redemption logic here
-                                          alert(`Redeeming ${reward.discount} for ${reward.points.toLocaleString()} points`);
+                                          alert(`Redeeming ${reward.detail} for ${reward.points.toLocaleString()} points`);
                                         }
                                       }}
                                       disabled={!canRedeem}
@@ -1861,8 +1864,8 @@ fontFamily: '"Futura PT Book"',
                                       REDEEM
                                     </button>
                                   </div>
-                            );
-                          })}
+                                );
+                              })}
                         </div>
                   </div>
                 </div>
@@ -1901,7 +1904,7 @@ fontFamily: '"Futura PT Book"',
                               <div key={i} style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase' }}>
                                 <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left', color: '#000000', fontFamily: '"Futura PT Book"' }}>{formatPointsHistoryDateDisplay(row.date)}</span>
                                 <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center', color: '#808080', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.discount}</span>
-                                <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right', color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.points}</span>
+                                <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right', color: row.points.startsWith('+') ? '#16a34a' : '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.points}</span>
                               </div>
                             ));
                             })()}
@@ -1974,32 +1977,34 @@ fontFamily: '"Futura PT Book"',
                                       return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 50 LOYALTY POINTS</>;
                                     })()}
                                   </p>
-                                  <button
-                                    type="button"
-                                    onClick={() => setShowBenefitsModal((prev) => !prev)}
-                                    style={{
-                                      fontFamily: '"Futura PT Medium"',
-                                      color: '#EB1C24',
-                                      fontSize: '10px',
-                                      margin: 0,
-                                      textTransform: 'uppercase',
-                                      textAlign: 'left',
-                                      background: 'none',
-                                      border: 'none',
-                                      padding: 0,
-                                      cursor: 'pointer',
-                                      display: 'block'
-                                    }}
-                                  >
-                                    EXPLORE ALL BENEFITS
-                                  </button>
+                                  <div style={{ marginBottom: '24px' }}>
+                                    <button
+                                      type="button"
+                                      onClick={() => setShowBenefitsModal((prev) => !prev)}
+                                      style={{
+                                        fontFamily: '"Futura PT Medium"',
+                                        color: '#EB1C24',
+                                        fontSize: '10px',
+                                        margin: 0,
+                                        textTransform: 'uppercase',
+                                        textAlign: 'left',
+                                        background: 'none',
+                                        border: 'none',
+                                        padding: 0,
+                                        cursor: 'pointer',
+                                        display: 'block'
+                                      }}
+                                    >
+                                      EXPLORE ALL BENEFITS
+                                    </button>
+                                  </div>
                                   {(() => {
                                 const { currentSpend, spendRemaining, progressPercent, nextTier, nextTierName, currentTierName } = getNextTierProgress();
                                 const nextTierColor = nextTierName === 'BLACK' ? '#000000' : nextTierName === 'SILVER' ? BRAND_GRAY : '#EB1C24';
                                 const tierLabel = (() => {
                                   // Black tier reached threshold for next cycle: no next tier to unlock
                                   if (nextTier == null && currentTierName === 'BLACK') {
-                                    return <>YOU'VE EARNED ENOUGH POINTS TO REMAIN BLACK TIER!</>;
+                                    return <>YOU'VE EARNED ENOUGH POINTS TO REMAIN <span style={{ color: '#000000', fontFamily: '"Futura PT Medium"' }}>BLACK</span> TIER!</>;
                                   }
                                   if (nextTier == null) return null;
                                   // Have they reached the points needed to keep their current tier this cycle?
@@ -2007,13 +2012,14 @@ fontFamily: '"Futura PT Book"',
                                     || currentTierName === 'RED' && currentSpend >= SPEND_TIER_THRESHOLDS.RED
                                     || currentTierName === 'BLACK' && currentSpend >= SPEND_TIER_THRESHOLDS.BLACK;
                                   if (hasSecuredCurrentTier) {
-                                    return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{spendRemaining.toLocaleString()}</span> MORE POINTS TO UNLOCK {nextTierName} TIER!</>;
+                                    return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{spendRemaining.toLocaleString()}</span> MORE POINTS TO UNLOCK <span style={{ color: nextTierColor, fontFamily: '"Futura PT Medium"' }}>{nextTierName}</span> TIER!</>;
                                   }
                                   // Not yet secured: show remain for the tier they're working toward (Silver if PENDING)
                                   const remainTier = currentTierName === 'PENDING' ? 'SILVER' : currentTierName;
+                                  const remainTierColor = remainTier === 'BLACK' ? '#000000' : remainTier === 'SILVER' ? BRAND_GRAY : '#EB1C24';
                                   const remainThreshold = remainTier === 'SILVER' ? SPEND_TIER_THRESHOLDS.SILVER : remainTier === 'RED' ? SPEND_TIER_THRESHOLDS.RED : SPEND_TIER_THRESHOLDS.BLACK;
                                   const remainPoints = Math.max(0, remainThreshold - currentSpend);
-                                  return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{remainPoints.toLocaleString()}</span> MORE POINTS TO REMAIN {remainTier} TIER!</>;
+                                  return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{remainPoints.toLocaleString()}</span> MORE POINTS TO REMAIN <span style={{ color: remainTierColor, fontFamily: '"Futura PT Medium"' }}>{remainTier}</span> TIER!</>;
                                 })();
                                 return (
                                   <>
@@ -2164,7 +2170,7 @@ fontFamily: '"Futura PT Book"',
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        PREMIUM 3D WIG CUSTOMIZATION OPTIONS
+                        PREMIUM 3D WIG SELECTION OPTIONS
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
                         ADDITIONAL, MORE EXTENSIVE CUSTOMIZATION OPTIONS
@@ -2172,7 +2178,7 @@ fontFamily: '"Futura PT Book"',
                     </div>
                     <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        ENTRY TO VIP MEMBERS ONLY LOBBY + LOUNGE
+                        ENTRY TO MEMBERS ONLY LOBBY + LOUNGE
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
                         EARLY ACCESS TO SALES, NEW DROPS + RESTOCKS
@@ -2183,7 +2189,7 @@ fontFamily: '"Futura PT Book"',
                         FAST TRACK CUSTOMER SUPPORT
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        PRIORITIZED SUPPORT WITH A SIGNIFICANTLY REDUCED RESPONSE TIME
+                        PRIORITIZED SUPPORT WITH SIGNIFICANTLY REDUCED RESPONSE TIMES
                       </p>
                     </div>
                     <div>
@@ -2191,7 +2197,7 @@ fontFamily: '"Futura PT Book"',
                         PRIORITY BOOKING + ORDER PROCESSING
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        OPTION TO SCHEDULE IN ADVANCE, CUSTOM ORDERS GET PRIORITIZED
+                        OPTION TO SCHEDULE IN ADVANCE + PRIORITIZED CUSTOM ORDERS
                       </p>
                     </div>
                     <div>
@@ -2199,15 +2205,7 @@ fontFamily: '"Futura PT Book"',
                         MEMBER REWARDS + PRIZES
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        ELIGIBLE FOR A CHANCE TO WIN DISCOUNTS, VOUCHERS + PRODUCT
-                      </p>
-                    </div>
-                    <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        REDUCED SHIPPING FEES
-                                  </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        DISCOUNT APPLIED AUTOMATICALLY AT CHECKOUT
+                        ELIGIBLE FOR A CHANCE TO WIN RAFFLES, DISCOUNTS + VOUCHERS
                       </p>
                     </div>
                     <div>
@@ -2215,7 +2213,7 @@ fontFamily: '"Futura PT Book"',
                         DOUBLE YOUR POINTS
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        EARN 2X LOYALTY POINTS UNLOCKING DISCOUNTS + REWARDS FASTER
+                        EARN 2X LOYALTY POINTS UNLOCKING REWARDS FASTER
                       </p>
                     </div>
                   </div>

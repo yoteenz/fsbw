@@ -18,6 +18,61 @@ function getCardBrandDisplay(fullNumber: string): string {
   return 'CARD';
 }
 
+/** Single source of truth for voucher types: cart option key, default value, and item price key. Add new voucher types here to match vouchers available vs cart. */
+const VOUCHER_TYPE_CONFIG: Record<string, { optionKey: string; getDefault: (item: any) => string; priceKey: string }> = {
+  COLOR: { optionKey: 'color', getDefault: (item) => (item?.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK'), priceKey: 'colorPrice' },
+  HAIRLINE: { optionKey: 'hairline', getDefault: () => 'NATURAL', priceKey: 'hairlinePrice' },
+  STYLING: { optionKey: 'styling', getDefault: () => 'NONE', priceKey: 'stylingPrice' }
+};
+
+/** Get add-on price for one unit of this voucher type on the item. Uses stored price if present, else fallback lookup so voucher discount always shows (-$120) etc. */
+function getVoucherAddOnPriceForItem(item: any, type: string): number {
+  const config = VOUCHER_TYPE_CONFIG[type];
+  if (!config) return 0;
+  const stored = item[config.priceKey];
+  if (stored != null && stored !== '' && !Number.isNaN(Number(stored))) return Number(stored);
+  const val = (item[config.optionKey] || '').toString().toUpperCase();
+  if (type === 'COLOR') {
+    if (!val || val === 'OFF BLACK' || val === 'PLATINUM') return 0;
+    const isBlanco = (item?.name || '').toString().toUpperCase() === 'BLANCO';
+    if (isBlanco && ['GOLDEN', 'PLATINUM', 'ASH'].includes(val)) {
+      if (val === 'GOLDEN') return -20;
+      if (val === 'ASH') return 20;
+      return 0; // PLATINUM
+    }
+    let p = 100;
+    if (item.length && ['30"', '32"', '34"', '36"', '40"'].includes(String(item.length))) p += 40;
+    return p;
+  }
+  if (type === 'HAIRLINE') {
+    if (!val || val === 'NATURAL') return 0;
+    const parts = val.split(',').map((s: string) => s.trim());
+    let total = 0;
+    parts.forEach((h: string) => { if (h === 'PEAK') total += 40; else if (h === 'LAGOS') total += 60; });
+    if (parts.includes('LAGOS') && parts.includes('PEAK')) total -= 20;
+    return total;
+  }
+  if (type === 'STYLING') {
+    if (!val || val === 'NONE') return 0;
+    const stylingPrices: Record<string, number> = { 'BANGS': 40, 'CRIMPS': 80, 'FLAT IRON': 80, 'LAYERS': 120 };
+    const arr = val.split(',').map((s: string) => s.trim());
+    const hasBangs = arr.includes('BANGS');
+    const other = arr.find((s: string) => s !== 'BANGS');
+    const isLong = item.length && /3[0-6]|40/.test(String(item.length));
+    if (hasBangs && other) {
+      let sec = stylingPrices[other] || 0;
+      if (isLong && ['CRIMPS', 'FLAT IRON', 'LAYERS'].includes(other)) sec += 40;
+      return sec + 20;
+    }
+    if (hasBangs) return 40;
+    const first = arr[0];
+    let base = stylingPrices[first] || 0;
+    if (isLong && ['CRIMPS', 'FLAT IRON', 'LAYERS'].includes(first)) base += 40;
+    return base;
+  }
+  return 0;
+}
+
 function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -133,6 +188,12 @@ function CheckoutPage() {
   const userSelectedDigitalCashRef = useRef<number | null>(null);
   const [showDigitalCashModal, setShowDigitalCashModal] = useState(false);
   const [digitalCashModalAmount, setDigitalCashModalAmount] = useState(0);
+
+  // Vouchers: available by type (from user), applied quantities (editable at checkout like digital cash)
+  const [availableVouchersByType, setAvailableVouchersByType] = useState<Record<string, number>>({});
+  const [appliedVoucherQuantities, setAppliedVoucherQuantities] = useState<Record<string, number>>({});
+  const [showVoucherModal, setShowVoucherModal] = useState(false);
+  const [voucherModalQuantities, setVoucherModalQuantities] = useState<Record<string, number>>({});
   
   // Tip state - store percentage (0-100) or custom dollar amount (negative values indicate custom dollar amount)
   const [tipPercentage, setTipPercentage] = useState<number | null>(null);
@@ -208,6 +269,29 @@ function CheckoutPage() {
       return hasNonDefaultColor || hasNonDefaultStyling || hasAddOns;
     });
   }, [cartItems]);
+
+  // Voucher applicability: only when the selection is an upgrade (add-on price > 0). Excludes options like "Golden" that cost less than/default.
+  const cartVoucherApplicability = useMemo(() => {
+    const isPhysical = (item: any) => item.name !== 'GIFT CARD' && item.type !== 'gift-card' && item.type !== 'digital';
+    const out: Record<string, boolean> = {};
+    Object.keys(VOUCHER_TYPE_CONFIG).forEach((type) => {
+      out[type] = cartItems.some((item) => {
+        if (!isPhysical(item)) return false;
+        const addOnPrice = getVoucherAddOnPriceForItem(item, type);
+        return addOnPrice > 0;
+      });
+    });
+    return out;
+  }, [cartItems]);
+
+  const voucherLineApplicable = useMemo(() => {
+    if (Object.keys(availableVouchersByType).length === 0) return false;
+    return Object.keys(availableVouchersByType).some((type) => {
+      const available = availableVouchersByType[type] > 0;
+      const cartHas = cartVoucherApplicability[type] === true;
+      return available && cartHas;
+    });
+  }, [availableVouchersByType, cartVoucherApplicability]);
   
   const currencyRates = useMemo(() => ({
     USD: { symbol: '&#36;', rate: 1.0, name: 'US Dollar' },
@@ -399,6 +483,8 @@ function CheckoutPage() {
     if (isSubscriptionUpgrade) {
       setGiftCardBalance(0);
       setAppliedGiftCardBalance(0);
+      setAvailableVouchersByType({});
+      setAppliedVoucherQuantities({});
       return;
     }
     
@@ -409,16 +495,31 @@ function CheckoutPage() {
           const user = JSON.parse(currentUser);
           const balance = user.giftCardBalance || 0;
           setGiftCardBalance(balance);
-          // Automatically apply gift card balance (will be capped at order total in calculation)
           setAppliedGiftCardBalance(balance);
+          const list = user.voucherList && Array.isArray(user.voucherList) ? user.voucherList as string[] : [];
+          const byType: Record<string, number> = {};
+          for (const v of list) {
+            const spaceIdx = v.indexOf(' ');
+            if (spaceIdx <= 0) continue;
+            const prefix = v.slice(0, spaceIdx).replace(/[xX]/g, '').trim();
+            const type = v.slice(spaceIdx + 1).trim();
+            const num = parseInt(prefix, 10) || 1;
+            byType[type] = (byType[type] || 0) + num;
+          }
+          setAvailableVouchersByType(byType);
+          setAppliedVoucherQuantities({ ...byType });
         }
       } catch (e) {
         setGiftCardBalance(0);
         setAppliedGiftCardBalance(0);
+        setAvailableVouchersByType({});
+        setAppliedVoucherQuantities({});
       }
     } else {
       setGiftCardBalance(0);
       setAppliedGiftCardBalance(0);
+      setAvailableVouchersByType({});
+      setAppliedVoucherQuantities({});
     }
   }, [isSignedIn, isSubscriptionUpgrade]);
 
@@ -1252,7 +1353,32 @@ function CheckoutPage() {
   const discount = appliedDiscount;
   // Gift card discount should NOT be applied to subscription upgrades. When applied, this is shown as "DIGITAL CASH" (account balance). This balance includes tier welcome discount (Silver $10, Red $40, Black $80) credited when the user reaches each spend tier. If a gift card code is applied instead, that replaces this line (label "GIFT CARD"); both cannot be applied together.
   const giftCardDiscount = isSubscriptionUpgrade ? 0 : appliedGiftCardBalance; // Automatically applied gift card balance (digital cash)
-  const totalDiscount = discount + referralDiscount + giftCardDiscount; // Combined discount from codes, referral codes, and gift card / digital cash
+  // Voucher discount: subtract add-on price for each voucher type (uses stored price or fallback so red (-$120) etc. always shows)
+  const voucherDiscount = useMemo(() => {
+    if (!voucherLineApplicable) return 0;
+    const isPhysical = (item: any) => item.name !== 'GIFT CARD' && item.type !== 'gift-card' && item.type !== 'digital';
+    let total = 0;
+    Object.keys(VOUCHER_TYPE_CONFIG).forEach((type) => {
+      const vouchersToUse = appliedVoucherQuantities[type] || 0;
+      if (vouchersToUse <= 0) return;
+      const { optionKey, getDefault } = VOUCHER_TYPE_CONFIG[type];
+      let left = vouchersToUse;
+      cartItems.forEach((item: any) => {
+        if (!isPhysical(item) || left <= 0) return;
+        const val = item[optionKey];
+        const def = getDefault(item);
+        const hasOption = val != null && val !== '' && String(val).toUpperCase() !== String(def).toUpperCase();
+        if (!hasOption) return;
+        const pricePerUnit = getVoucherAddOnPriceForItem(item, type);
+        const qty = item.quantity || 1;
+        const units = Math.min(left, qty);
+        total += units * pricePerUnit;
+        left -= units;
+      });
+    });
+    return total;
+  }, [voucherLineApplicable, appliedVoucherQuantities, cartItems]);
+  const totalDiscount = discount + referralDiscount + giftCardDiscount + voucherDiscount;
   const rushProcessing = selectedProcessing === 'rush' ? 120 : 0;
   // Always calculate the protection fee amount (for display), but only add to total if selected
   const protectionFeeAmount = calculateProtectionFee(orderAmount);
@@ -4306,6 +4432,50 @@ function CheckoutPage() {
                       </span>
                     </div>
                     )}
+                    {/* Voucher – only when cart has color/hairline/styling and user has matching vouchers (same logic as digital cash at $0) */}
+                    {voucherLineApplicable && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        VOUCHER: <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => {
+                            const next: Record<string, number> = { ...appliedVoucherQuantities };
+                            Object.keys(availableVouchersByType).forEach(t => { if (!cartVoucherApplicability[t]) next[t] = 0; });
+                            setVoucherModalQuantities(next);
+                            setShowVoucherModal(true);
+                          }}
+                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); const next: Record<string, number> = { ...appliedVoucherQuantities }; Object.keys(availableVouchersByType).forEach(t => { if (!cartVoucherApplicability[t]) next[t] = 0; }); setVoucherModalQuantities(next); setShowVoucherModal(true); } }}
+                          style={{ fontFamily: '"Futura PT Demi"', color: '#808080', cursor: 'pointer' }}
+                        >
+                          {Object.entries(appliedVoucherQuantities).filter(([type, n]) => n > 0 && cartVoucherApplicability[type]).map(([type, n]) => `${n}X ${type}`).join(', ') || 'NONE'}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                          const next: Record<string, number> = { ...appliedVoucherQuantities };
+                          Object.keys(availableVouchersByType).forEach(t => { if (!cartVoucherApplicability[t]) next[t] = 0; });
+                          setVoucherModalQuantities(next);
+                          setShowVoucherModal(true);
+                        }}
+                          style={{ padding: 0, border: 'none', background: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
+                          aria-label="Edit voucher amount"
+                        >
+                          <img src="/assets/edit-icon.svg" alt="" width={9} height={9} style={{ display: 'block', filter: 'brightness(0) saturate(0%)', opacity: 0.6, transform: 'translateY(-1px)' }} />
+                        </button>
+                      </span>
+                      {voucherDiscount > 0 && (
+                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>
+                          {(() => {
+                            const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
+                            const symbol = currency.symbol.replace(/&#36;/g, '$').replace(/&euro;/g, '€').replace(/&pound;/g, '£').replace(/&yen;/g, '¥').replace(/&#8377;/g, '₹');
+                            const converted = Math.round(voucherDiscount * currency.rate);
+                            return `(-${symbol}${converted.toLocaleString('en-US')})`;
+                          })()}
+                        </span>
+                      )}
+                    </div>
+                    )}
                     {referralDiscount > 0 && (
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '11px', color: '#808080' }}>
@@ -5199,6 +5369,164 @@ function CheckoutPage() {
         </div>
         );
       })()}
+
+      {/* Voucher amount modal – choose how many of each voucher type to apply (like digital cash) */}
+      {showVoucherModal && (
+        <div
+          className="fixed z-50 backdrop-blur-md"
+          style={{
+            top: 0, left: 0, right: 0, bottom: 0,
+            zIndex: 999999999,
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            backdropFilter: 'blur(3px)',
+            WebkitBackdropFilter: 'blur(3px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+          onClick={(e) => { if (e.target === e.currentTarget) setShowVoucherModal(false); }}
+        >
+          <div
+            className="p-6 bg-white border border-black"
+            style={{ width: 'calc(100vw - 32px)', maxWidth: 'none', borderWidth: '1.3px', boxSizing: 'border-box' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', fontWeight: 500, marginBottom: '16px', color: '#EB1C24', textTransform: 'uppercase', textAlign: 'center' }}>
+              VOUCHER
+            </h3>
+            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', marginBottom: '16px', textTransform: 'uppercase' }}>
+              Choose how many of each voucher to apply to this order.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
+              {Object.entries(availableVouchersByType).map(([type, available]) => {
+                const inCart = cartVoucherApplicability[type] === true;
+                const current = inCart ? (voucherModalQuantities[type] ?? 0) : 0;
+                return (
+                <div key={type} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                  <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', textTransform: 'uppercase' }}>
+                    {available === 0 ? (
+                      <><span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>0</span> OF <span style={{ color: '#808080', fontFamily: '"Futura PT Demi"' }}>{type}</span></>
+                    ) : (
+                      <><span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{available}X</span> OF <span style={{ color: '#808080', fontFamily: '"Futura PT Demi"' }}>{type}</span></>
+                    )}
+                  </span>
+                  <div className="flex items-center">
+                    <button
+                      type="button"
+                      onClick={() => inCart && setVoucherModalQuantities(prev => ({ ...prev, [type]: Math.max(0, (prev[type] ?? 0) - 1) }))}
+                      disabled={!inCart || current <= 0}
+                      className={(!inCart || current <= 0) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                      style={{
+                        borderTop: '1.3px solid black',
+                        borderLeft: '1.3px solid black',
+                        borderBottom: '1.3px solid black',
+                        borderRight: 'none',
+                        height: '20.25px',
+                        minHeight: '20.25px',
+                        maxHeight: '20.25px',
+                        width: '28px',
+                        boxSizing: 'border-box',
+                        outline: 'none',
+                        background: '#fff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px', color: '#EB1C24' }}>-</span>
+                    </button>
+                    <div
+                      style={{
+                        borderTop: '1.3px solid black',
+                        borderBottom: '1.3px solid black',
+                        borderLeft: '1px solid black',
+                        borderRight: '1px solid black',
+                        fontFamily: '"Futura PT Medium"',
+                        fontWeight: 500,
+                        fontSize: '9px',
+                        height: '20.25px',
+                        minHeight: '20.25px',
+                        maxHeight: '20.25px',
+                        minWidth: '28px',
+                        boxSizing: 'border-box',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: '#fff',
+                        color: '#000'
+                      }}
+                    >
+                      {current}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => inCart && setVoucherModalQuantities(prev => ({ ...prev, [type]: Math.min(available, (prev[type] ?? 0) + 1) }))}
+                      disabled={!inCart || current >= (inCart ? available : 0)}
+                      className={(!inCart || current >= available) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                      style={{
+                        borderTop: '1.3px solid black',
+                        borderRight: '1.3px solid black',
+                        borderBottom: '1.3px solid black',
+                        borderLeft: 'none',
+                        height: '20.25px',
+                        minHeight: '20.25px',
+                        maxHeight: '20.25px',
+                        width: '28px',
+                        boxSizing: 'border-box',
+                        outline: 'none',
+                        background: '#fff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px', color: '#EB1C24' }}>+</span>
+                    </button>
+                  </div>
+                </div>
+                );
+              })}
+            </div>
+            <div className="flex space-x-3" style={{ marginTop: '24px' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  const next = Object.fromEntries(
+                    Object.keys(availableVouchersByType).map(type => [type, cartVoucherApplicability[type] ? (voucherModalQuantities[type] ?? 0) : 0])
+                  );
+                  setAppliedVoucherQuantities(next);
+                  setShowVoucherModal(false);
+                }}
+                className="flex-1 py-2 px-4 border border-black font-medium hover:bg-gray-50 transition-colors"
+                style={{
+                  borderWidth: '1.3px',
+                  fontSize: '11px',
+                  fontFamily: '"Futura PT Medium"',
+                  backgroundColor: '#FFFFFF',
+                  color: '#EB1C24',
+                  textTransform: 'uppercase'
+                }}
+              >
+                APPLY
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowVoucherModal(false)}
+                className="flex-1 py-2 px-4 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
+                style={{
+                  borderWidth: '1.3px',
+                  fontSize: '11px',
+                  fontFamily: '"Futura PT Medium"',
+                  color: '#000000',
+                  textTransform: 'uppercase'
+                }}
+              >
+                CANCEL
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Terms & Conditions Modal */}
       {showTermsModal && (

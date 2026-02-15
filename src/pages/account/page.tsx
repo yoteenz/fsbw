@@ -92,6 +92,7 @@ function AccountPage() {
   const [, setAlertsRefreshKey] = useState(0);
   const [showEnlargedImage, setShowEnlargedImage] = useState(false);
   const [showDigitalCashHistoryPopup, setShowDigitalCashHistoryPopup] = useState(false);
+  const [showVoucherHistoryPopup, setShowVoucherHistoryPopup] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [cropPosition, setCropPosition] = useState({ x: 0, y: 0 });
   const [cropScale, setCropScale] = useState(1);
@@ -110,6 +111,13 @@ function AccountPage() {
     { date: '2-8-2025', transaction: 'SUBSCRIPTION', amount: 40 },
     { date: '2-5-2025', transaction: 'CHECKOUT', amount: -25 },
     { date: '1-20-2025', transaction: 'REFERRAL', amount: 20 }
+  ];
+
+  // Mock voucher history – transaction: "1X HAIRLINE", "1X COLOR", or "REDEEMED"; amount: +1 credited, -1 redeemed
+  const MOCK_VOUCHER_HISTORY: Array<{ date: string; transaction: string; amount: number }> = [
+    { date: '2-10-2025', transaction: '1X HAIRLINE', amount: 1 },
+    { date: '1-28-2025', transaction: 'REDEEMED', amount: -1 },
+    { date: '1-15-2025', transaction: '1X COLOR', amount: 1 }
   ];
 
   // Get cards for display
@@ -232,6 +240,12 @@ function AccountPage() {
       
       if (currentUser && signedIn) {
         const user = JSON.parse(currentUser);
+        // Add test vouchers for checkout if none exist (so you can test voucher logic)
+        if (!user.voucherList || !Array.isArray(user.voucherList) || user.voucherList.length === 0) {
+          user.voucherList = ['1X COLOR', '1X HAIRLINE'];
+          user.voucherCount = user.voucherList.length;
+          localStorage.setItem('currentUser', JSON.stringify(user));
+        }
         setUserData(user);
         setIsSignedIn(true);
         
@@ -1907,6 +1921,25 @@ function AccountPage() {
                     <p
                       role="button"
                       tabIndex={0}
+                      onClick={() => setShowVoucherHistoryPopup(true)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowVoucherHistoryPopup(true); } }}
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        color: '#808080',
+                        fontSize: '10px',
+                        margin: '0 0 -12px 0',
+                        textTransform: 'uppercase',
+                        fontWeight: '500',
+                        transform: 'translateY(5px)',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      VOUCHER: {userData?.voucherCount ?? 0}
+                    </p>
+
+                    <p
+                      role="button"
+                      tabIndex={0}
                       onClick={() => setShowDigitalCashHistoryPopup(true)}
                       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowDigitalCashHistoryPopup(true); } }}
                       style={{
@@ -2383,13 +2416,137 @@ function AccountPage() {
                   <div key={i} style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase' }}>
                     <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left', color: '#000000', fontFamily: '"Futura PT Book"' }}>{formatDate(row.date)}</span>
                     <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center', color: '#808080', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.transaction}</span>
-                    <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right', color: row.amount >= 0 ? '#EB1C24' : '#000000', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>
-                      {row.amount >= 0 ? '+' : ''}{formatPrice(row.amount)}
+<span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right', color: row.amount >= 0 ? '#16a34a' : '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>
+                                      {row.amount >= 0 ? '+' : ''}{formatPrice(row.amount)}
+                                    </span>
+                  </div>
+                ));
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Voucher History Popup */}
+      {showVoucherHistoryPopup && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(255, 255, 255, 0.6)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            padding: '16px'
+          }}
+          onClick={() => setShowVoucherHistoryPopup(false)}
+        >
+          <div
+            className="bg-white/60 backdrop-blur-sm border border-black"
+            style={{
+              borderWidth: '1.3px',
+              padding: '16px',
+              maxWidth: '400px',
+              width: '100%',
+              maxHeight: '85vh',
+              overflow: 'auto',
+              position: 'relative'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <p
+                style={{
+                  fontFamily: '"Futura PT Medium"',
+                  color: '#EB1C24',
+                  fontSize: '12px',
+                  margin: '0',
+                  textTransform: 'uppercase',
+                  fontWeight: '500',
+                  textAlign: 'left'
+                }}
+              >
+                VOUCHER HISTORY
+              </p>
+              <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase', marginBottom: '8px', fontFamily: '"Futura PT Medium"', fontWeight: '500', color: '#000000' }}>
+              <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left' }}>DATE</span>
+              <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center' }}>TRANSACTION</span>
+              <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right' }}>AMOUNT</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {(() => {
+                const history = (userData?.voucherHistory ?? []) as Array<{ date: string; transaction: string; amount: number }>;
+                const formatDate = (dateStr: string): string => {
+                  const parts = dateStr.split('-').map(Number);
+                  if (parts.length === 3) {
+                    const [month, day, year] = parts;
+                    const d = new Date(year, month - 1, day);
+                    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                  }
+                  const d = new Date(dateStr);
+                  if (!isNaN(d.getTime())) return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                  return dateStr;
+                };
+                const displayHistory = history.length === 0 ? MOCK_VOUCHER_HISTORY : history;
+                if (displayHistory.length === 0) {
+                  return (
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: '#808080', margin: '6px 0', textTransform: 'uppercase', textAlign: 'center' }}>
+                      YOU HAVEN'T HAD ANY VOUCHER TRANSACTIONS YET.
+                    </p>
+                  );
+                }
+                const sorted = [...displayHistory].sort((a, b) => {
+                  const parse = (s: string) => {
+                    const parts = s.split('-').map(Number);
+                    if (parts.length === 3) {
+                      const [month, day, year] = parts;
+                      return new Date(year, month - 1, day).getTime();
+                    }
+                    return new Date(s).getTime();
+                  };
+                  return parse(b.date) - parse(a.date);
+                });
+                return sorted.map((row, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase' }}>
+                    <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left', color: '#000000', fontFamily: '"Futura PT Book"' }}>{formatDate(row.date)}</span>
+                    <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center', color: '#808080', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.transaction}</span>
+                    <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right', color: row.amount >= 0 ? '#16a34a' : '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>
+                      {row.amount >= 0 ? '+' : ''}{row.amount}
                     </span>
                   </div>
                 ));
               })()}
             </div>
+            <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: '#000000', margin: '12px 0 0 0', paddingTop: '12px', borderTop: '1px solid #E5E5E5', textTransform: 'uppercase' }}>
+              VOUCHERS AVAILABLE: {(() => {
+                const list = userData?.voucherList && Array.isArray(userData.voucherList) ? userData.voucherList as string[] : [];
+                if (list.length === 0) return <span style={{ color: '#808080' }}>NONE</span>;
+                const byType: Record<string, number> = {};
+                for (const v of list) {
+                  const spaceIdx = v.indexOf(' ');
+                  if (spaceIdx <= 0) continue;
+                  const prefix = v.slice(0, spaceIdx).replace(/[xX]/g, '').trim();
+                  const type = v.slice(spaceIdx + 1).trim();
+                  const num = parseInt(prefix, 10) || 1;
+                  byType[type] = (byType[type] || 0) + num;
+                }
+                const aggregated = Object.entries(byType).map(([type, n]) => `${n}X ${type}`);
+                return aggregated.map((v: string, i: number) => {
+                  const spaceIdx = v.indexOf(' ');
+                  const prefix = spaceIdx > 0 ? v.slice(0, spaceIdx) : v;
+                  const type = spaceIdx > 0 ? v.slice(spaceIdx + 1) : '';
+                  return <span key={i}>{i > 0 && ', '}<span style={{ color: '#EB1C24' }}>{prefix}</span>{type ? <><span style={{ color: '#808080' }}> {type}</span></> : null}</span>;
+                });
+              })()}
+            </p>
           </div>
         </div>
       )}
