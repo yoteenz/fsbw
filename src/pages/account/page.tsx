@@ -1881,7 +1881,6 @@ function AccountPage() {
                     </p>
 
                     {(() => {
-                      const tier = calculateTier();
                       // Get membership type from userData, fallback to state
                       const userMembershipType = userData?.membershipType?.toUpperCase() || membershipType;
                       const displayMembershipType = userMembershipType === 'PREMIUM' ? 'PREMIUM' : 'BASIC';

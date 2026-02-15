@@ -1578,7 +1578,7 @@ function CheckoutConfirmPage() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                        YOU'VE EARNED <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{(orderData.pointsEarned ?? accountUser?.loyaltyPoints ?? orderData.orderTotal ?? 1290).toLocaleString()}</span> LOYALTY POINTS{(orderData.pointsEarned ?? accountUser?.loyaltyPoints ?? orderData.orderTotal ?? 1290) === 0 ? '.' : '!'}
+                        YOU'RE EARNING <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{(orderData.pointsEarned ?? accountUser?.loyaltyPoints ?? orderData.orderTotal ?? 1290).toLocaleString()}</span> POINTS{(orderData.pointsEarned ?? accountUser?.loyaltyPoints ?? orderData.orderTotal ?? 1290) === 0 ? '.' : '!'}
                       </p>
                       <span style={{ 
                         fontFamily: (() => {
