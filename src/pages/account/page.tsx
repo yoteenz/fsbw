@@ -1986,11 +1986,11 @@ function AccountPage() {
                                 margin: '-6px 0 0 0',
                                 textTransform: 'uppercase',
                                 fontWeight: '500',
-                                transform: 'translateY(-8px)',
-                                color: '#EB1C24'
+                                transform: 'translateY(-8px)'
                               }}
                             >
-                              ADMINISTRATION
+                              <span style={{ color: '#EB1C24' }}>ADMIN: </span>
+                              <span style={{ color: '#000000' }}>OWNER</span>
                             </p>
                           )}
                         </>

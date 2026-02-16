@@ -443,6 +443,9 @@ export default function ViewListsPage() {
                                     </div>
                                     <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: 'black', margin: '0', textTransform: 'uppercase' }}>4.9 OUT OF 5 STARS</p>
                                   </div>
+                                  <button type="button" onClick={() => removeFromList(item)} style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }} aria-label="Remove from list">
+                                    <img src="/assets/close-icon.svg" alt="Remove" style={{ width: '16px', height: '16px', filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+                                  </button>
                                 </div>
                               );
                             })}
@@ -463,6 +466,7 @@ export default function ViewListsPage() {
                                     ))}
                                   </div>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: 'black', margin: '0 0 4px 0', textAlign: 'center', textTransform: 'uppercase' }}>4.9 OUT OF 5 STARS</p>
+                                  <button type="button" onClick={() => removeFromList(item)} style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#999', background: 'none', border: 'none', cursor: 'pointer', padding: 0, textTransform: 'uppercase' }}>REMOVE</button>
                                 </div>
                               );
                             })}
