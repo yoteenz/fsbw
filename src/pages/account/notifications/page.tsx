@@ -16,6 +16,217 @@ interface Notification {
   icon: string; // 'f' or 'fc'
 }
 
+const ACCOUNT_NOTIFICATION_PREFIX = 'acc_';
+
+/** Build account-specific notifications. All text UPPERCASE. Header (title) = short summary. Body (message) = one descriptive sentence that summarizes the alert. */
+function getAccountNotifications(user: { email?: string; [k: string]: any } | null): Notification[] {
+  if (!user?.email) return [];
+  const email = (user.email || '').trim().toLowerCase();
+  const today = (() => {
+    const d = new Date();
+    return `${d.getMonth() + 1}-${d.getDate()}-${d.getFullYear()}`;
+  })();
+  const notifs: Notification[] = [];
+
+  const voucherCount = Array.isArray(user.voucherList) ? user.voucherList.length : (user.voucherCount ?? 0);
+  notifs.push({
+    id: `${ACCOUNT_NOTIFICATION_PREFIX}voucher`,
+    title: voucherCount === 0 ? 'NO VOUCHERS AVAILABLE YET' : `${voucherCount} VOUCHER${voucherCount === 1 ? '' : 'S'} AVAILABLE`,
+    message: voucherCount === 0
+      ? 'REDEEM POINTS FOR VOUCHERS ON REWARDS PAGE.'
+      : 'YOU HAVE VOUCHERS READY TO APPLY AT CHECKOUT.',
+    actionText: 'VIEW VOUCHERS',
+    actionRoute: '/account',
+    date: today,
+    isRead: false,
+    icon: 'f'
+  });
+
+  const balance = typeof user.giftCardBalance === 'number' ? user.giftCardBalance : 0;
+  notifs.push({
+    id: `${ACCOUNT_NOTIFICATION_PREFIX}digital_cash`,
+    title: 'DIGITAL CASH BALANCE',
+    message: balance <= 0
+      ? 'EARN CREDIT VIA TIER DISCOUNTS OR REWARDS.'
+      : `$${balance.toFixed(2)} USD APPLIES AT CHECKOUT + NEVER EXPIRES.`,
+    actionText: 'VIEW BALANCE',
+    actionRoute: '/account',
+    date: today,
+    isRead: false,
+    icon: 'f'
+  });
+
+  const points = typeof user.loyaltyPoints === 'number' ? user.loyaltyPoints : 0;
+  if (points > 0) {
+    notifs.push({
+      id: `${ACCOUNT_NOTIFICATION_PREFIX}loyalty_points`,
+      title: `YOU HAVE ${points.toLocaleString()} LOYALTY PTS`,
+      message: 'EARN + REDEEM POINTS FOR VOUCHERS + CASH.',
+      actionText: 'VIEW REWARDS',
+      actionRoute: '/account/rewards',
+      date: today,
+      isRead: false,
+      icon: 'f'
+    });
+  }
+
+  const storedTier = typeof window !== 'undefined' ? localStorage.getItem(`lastKnownTier_${email}`) : null;
+  const tier = (user.currentTierName || user.tier || storedTier || '').toUpperCase() || 'PENDING';
+  const tierDisplay = tier === 'PENDING' ? 'NO TIER YET' : tier;
+  notifs.push({
+    id: `${ACCOUNT_NOTIFICATION_PREFIX}tier`,
+    title: tier === 'PENDING' ? 'NO SPEND TIER YET' : `YOU'RE NOW ${tierDisplay} TIER STATUS!`,
+    message: tier === 'PENDING'
+      ? 'EARN 1,000 POINTS TO UNLOCK SILVER TIER.'
+      : 'VIEW YOUR TIER BENEFITS ON REWARDS PAGE.',
+    actionText: 'VIEW TIER',
+    actionRoute: '/account/rewards',
+    date: today,
+    isRead: false,
+    icon: 'f'
+  });
+
+  const membership = (user.membershipType || 'STANDARD').toUpperCase();
+  const isPremium = membership === 'PREMIUM' || user.subscriptionTier;
+  notifs.push({
+    id: `${ACCOUNT_NOTIFICATION_PREFIX}membership`,
+    title: isPremium ? 'PREMIUM MEMBERSHIP IS ACTIVE' : "YOU'RE STANDARD MEMBER",
+    message: isPremium
+      ? 'MANAGE YOUR PREMIUM PERKS ON REWARDS PAGE.'
+      : 'UPGRADE TO PREMIUM FOR 2X POINTS + PERKS.',
+    actionText: 'VIEW MEMBERSHIP',
+    actionRoute: '/account/rewards',
+    date: today,
+    isRead: false,
+    icon: 'f'
+  });
+
+  try {
+    const ordersRaw = localStorage.getItem(`userOrders_${email}`);
+    const orders = ordersRaw ? JSON.parse(ordersRaw) : { activeOrders: [], pastOrders: [] };
+    const active = orders.activeOrders || [];
+    const past = orders.pastOrders || [];
+    const total = active.length + past.length;
+    notifs.push({
+      id: `${ACCOUNT_NOTIFICATION_PREFIX}order`,
+      title: total === 0 ? 'NO ORDERS AVAILABLE YET' : `${active.length} ACTIVE, ${past.length} PAST ORDERS`,
+      message: total === 0
+        ? 'TRACK + VIEW YOUR ORDERS ON ORDERS PAGE.'
+        : 'VIEW ORDER STATUS + TRACK SHIPPING HERE.',
+      actionText: 'VIEW ORDERS',
+      actionRoute: '/account/orders',
+      date: today,
+      isRead: false,
+      icon: 'f'
+    });
+  } catch (_) {
+    notifs.push({
+      id: `${ACCOUNT_NOTIFICATION_PREFIX}order`,
+      title: 'ORDER HISTORY IS AVAILABLE',
+      message: 'TRACK + VIEW YOUR ORDERS ON ORDERS PAGE.',
+      actionText: 'VIEW ORDERS',
+      actionRoute: '/account/orders',
+      date: today,
+      isRead: false,
+      icon: 'f'
+    });
+  }
+
+  notifs.push({
+    id: `${ACCOUNT_NOTIFICATION_PREFIX}rewards`,
+    title: 'REWARDS PROGRAM OVERVIEW PAGE',
+    message: 'EARN + REDEEM POINTS ON REWARDS PAGE.',
+    actionText: 'VIEW REWARDS',
+    actionRoute: '/account/rewards',
+    date: today,
+    isRead: false,
+    icon: 'f'
+  });
+
+  notifs.push({
+    id: `${ACCOUNT_NOTIFICATION_PREFIX}sales`,
+    title: 'MEMBER SALES + TIER DISCOUNTS',
+    message: 'SHOP MEMBER SALES + TIER DISCOUNTS NOW.',
+    actionText: 'SHOP',
+    actionRoute: '/build-a-wig',
+    date: today,
+    isRead: false,
+    icon: 'f'
+  });
+
+  const referralCode = (user.referralCode || '').toUpperCase();
+  notifs.push({
+    id: `${ACCOUNT_NOTIFICATION_PREFIX}referrals`,
+    title: referralCode ? `YOUR REFERRAL CODE ${referralCode}` : 'GET REFERRAL CODE + EARN',
+    message: referralCode
+      ? 'SHARE YOUR CODE + EARN WHEN FRIENDS JOIN.'
+      : 'GET YOUR REFERRAL CODE ON REFERRALS PAGE.',
+    actionText: 'VIEW REFERRALS',
+    actionRoute: '/account/referrals',
+    date: today,
+    isRead: false,
+    icon: 'f'
+  });
+
+  const hasAddress = Array.isArray(user.savedAddresses) && user.savedAddresses.length > 0;
+  const hasPayment = !!user.defaultPaymentMethod || (Array.isArray(user.savedPaymentMethods) && user.savedPaymentMethods.length > 0);
+  notifs.push({
+    id: `${ACCOUNT_NOTIFICATION_PREFIX}shipping_payment`,
+    title: hasAddress && hasPayment ? 'SHIPPING + PAYMENT SAVED' : hasAddress ? 'SHIPPING SAVED, ADD PAYMENT' : hasPayment ? 'PAYMENT SAVED, ADD SHIPPING' : 'ADD SHIPPING + PAYMENT',
+    message: hasAddress && hasPayment
+      ? 'UPDATE YOUR SAVED ADDRESS + PAYMENT IN SETTINGS.'
+      : hasAddress
+        ? 'ADD A PAYMENT METHOD IN SETTINGS.'
+        : hasPayment
+          ? 'ADD A SHIPPING ADDRESS IN SETTINGS.'
+          : 'ADD SHIPPING + PAYMENT IN SETTINGS.',
+    actionText: 'MANAGE',
+    actionRoute: '/account/shipping',
+    date: today,
+    isRead: false,
+    icon: 'f'
+  });
+
+  notifs.push({
+    id: `${ACCOUNT_NOTIFICATION_PREFIX}settings`,
+    title: 'UPDATE PROFILE + PREFERENCES',
+    message: 'KEEP YOUR PROFILE + PREFERENCES UP TO DATE.',
+    actionText: 'OPEN SETTINGS',
+    actionRoute: '/account/settings',
+    date: today,
+    isRead: false,
+    icon: 'f'
+  });
+
+  const affiliatePoints = typeof user.affiliatePoints === 'number' ? user.affiliatePoints : 0;
+  notifs.push({
+    id: `${ACCOUNT_NOTIFICATION_PREFIX}affiliate`,
+    title: affiliatePoints > 0 ? `YOU HAVE ${affiliatePoints} AFFILIATE PTS` : 'EARN AFFILIATE POINTS NOW',
+    message: affiliatePoints > 0
+      ? 'REDEEM ON AFFILIATE PAGE.'
+      : 'SUBMIT CONTENT TO EARN AFFILIATE POINTS.',
+    actionText: 'VIEW AFFILIATE',
+    actionRoute: '/account/affiliate',
+    date: today,
+    isRead: false,
+    icon: 'f'
+  });
+
+  return notifs;
+}
+
+/** Merge stored notifications with account notifications (account ones upserted by id). Account alerts (tier, membership, etc.) stay in NEW until user archives via eye — do not use stored isRead for them so they are always shown in the new tab. */
+function mergeAccountNotifications(stored: Notification[], account: Notification[]): Notification[] {
+  const byId = new Map<string, Notification>();
+  stored.forEach(n => byId.set(n.id, n));
+  account.forEach(n => {
+    const existing = byId.get(n.id);
+    const isAccount = n.id.startsWith(ACCOUNT_NOTIFICATION_PREFIX);
+    byId.set(n.id, { ...n, isRead: isAccount ? false : (existing?.isRead ?? n.isRead) });
+  });
+  return Array.from(byId.values());
+}
+
 function NotificationsPage() {
   const navigate = useNavigate();
   const [cartCount, setCartCount] = useState(() => {
@@ -71,11 +282,9 @@ function NotificationsPage() {
       const user = raw ? JSON.parse(raw) : null;
       const key = user?.authProvider && user?.email ? `notifications_${user.email}` : 'notifications';
       const stored = localStorage.getItem(key);
-      if (stored) {
-        const list = JSON.parse(stored);
-        return Array.isArray(list) ? list : [];
-      }
-      return [];
+      const list: Notification[] = stored && Array.isArray(JSON.parse(stored)) ? JSON.parse(stored) : [];
+      const account = getAccountNotifications(user);
+      return mergeAccountNotifications(list, account);
     } catch {
       return [];
     }
@@ -84,26 +293,49 @@ function NotificationsPage() {
   const newNotifications = notifications.filter(n => !n.isRead);
   const seenNotifications = notifications.filter(n => n.isRead);
 
-  // Clear alerts card notification when user visits alerts page (they've seen it)
+  const persistNotifications = (list: Notification[]) => {
+    try {
+      const rawUser = localStorage.getItem('currentUser');
+      const user = rawUser ? JSON.parse(rawUser) : null;
+      const key = user?.authProvider && user?.email ? `notifications_${user.email}` : 'notifications';
+      localStorage.setItem(key, JSON.stringify(list));
+    } catch (_) {}
+  };
+
+  // Merge account notifications on visit; do NOT mark as read — alerts stay in NEW until user archives via eye icon.
+  // Set viewed flag so the account card badge clears (grace) without moving alerts to SEEN.
   useEffect(() => {
     try {
-      localStorage.setItem('hasUnreadNotifications', 'false');
       const rawUser = localStorage.getItem('currentUser');
       const user = rawUser ? JSON.parse(rawUser) : null;
       const key = user?.authProvider && user?.email ? `notifications_${user.email}` : 'notifications';
       const raw = localStorage.getItem(key);
-      if (raw) {
-        const list = JSON.parse(raw);
-        if (Array.isArray(list)) {
-          const updated = list.map((n: Notification) => ({ ...n, isRead: true }));
-          localStorage.setItem(key, JSON.stringify(updated));
-        }
-      } else if (!user?.authProvider) {
-        // No stored notifications (non-OAuth): persist empty list so badge stays clear (no mock data for new/legacy accounts)
-        localStorage.setItem(key, '[]');
-      }
+      const stored: Notification[] = raw && Array.isArray(JSON.parse(raw)) ? JSON.parse(raw) : [];
+      const account = getAccountNotifications(user);
+      const merged = mergeAccountNotifications(stored, account);
+      localStorage.setItem(key, JSON.stringify(merged));
+      setNotifications(merged);
+      const email = (user?.email || '').trim().toLowerCase();
+      if (email) localStorage.setItem(`alertsPageViewed_${email}`, 'true');
       window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
     } catch (_) {}
+  }, []);
+
+  // Reload notifications when storage or user changes (e.g. after login or data update)
+  useEffect(() => {
+    const sync = () => {
+      try {
+        const rawUser = localStorage.getItem('currentUser');
+        const user = rawUser ? JSON.parse(rawUser) : null;
+        const key = user?.authProvider && user?.email ? `notifications_${user.email}` : 'notifications';
+        const raw = localStorage.getItem(key);
+        const stored: Notification[] = raw && Array.isArray(JSON.parse(raw)) ? JSON.parse(raw) : [];
+        const account = getAccountNotifications(user);
+        setNotifications(mergeAccountNotifications(stored, account));
+      } catch (_) {}
+    };
+    window.addEventListener('storage', sync);
+    return () => window.removeEventListener('storage', sync);
   }, []);
 
   // Listen for cart count changes and profile image updates
@@ -183,12 +415,7 @@ function NotificationsPage() {
     if (notification.actionRoute) {
       navigate(notification.actionRoute);
     }
-    // Mark as read
-    setNotifications(prev => 
-      prev.map(n => 
-        n.id === notification.id ? { ...n, isRead: true } : n
-      )
-    );
+    // Do not mark as read here — only the eye (archive) icon moves to SEEN
   };
 
   const displayedNotifications = activeTab === 'NEW' ? newNotifications : seenNotifications;
@@ -628,7 +855,7 @@ function NotificationsPage() {
 
                             {/* Notification Content */}
                             <div className="flex-1 min-w-0" style={{ transform: 'translateY(6px)', marginLeft: '4px' }}>
-                              {/* Primary Message with Archive Icon */}
+                              {/* Primary: short summary header (e.g. "You have a new voucher available") */}
                               <div className="flex items-center justify-between gap-2" style={{ marginBottom: '4px' }}>
                                 <p
                                   style={{
@@ -638,7 +865,8 @@ function NotificationsPage() {
                                     color: 'black',
                                     margin: 0,
                                     lineHeight: '1.2',
-                                    flex: 1
+                                    flex: 1,
+                                    textTransform: 'uppercase'
                                   }}
                                 >
                                   {notification.title}
@@ -708,14 +936,18 @@ function NotificationsPage() {
                                 )}
                               </div>
 
-                              {/* Secondary Message */}
+                              {/* Secondary: one short line, no wrap; fits viewport; uppercase */}
                               <p
                                 style={{
                                   fontFamily: '"Futura PT Demi"',
                                   fontSize: '10px',
                                   color: '#808080',
                                   margin: '0 0 3px 0',
-                                  lineHeight: '1.3'
+                                  lineHeight: '1.3',
+                                  textTransform: 'uppercase',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis'
                                 }}
                               >
                                 {notification.message}
@@ -781,13 +1013,11 @@ function NotificationsPage() {
         }}
         onConfirm={() => {
           if (notificationToArchive) {
-            // Archive the notification
-            setNotifications(prev => 
-              prev.map(n => 
-                n.id === notificationToArchive ? { ...n, isRead: true } : n
-              )
+            const next = notifications.map(n =>
+              n.id === notificationToArchive ? { ...n, isRead: true } : n
             );
-            // If we're on NEW tab and this was the last new notification, switch to SEEN
+            setNotifications(next);
+            persistNotifications(next);
             if (activeTab === 'NEW' && newNotifications.length === 1) {
               setActiveTab('SEEN');
             }
@@ -811,10 +1041,9 @@ function NotificationsPage() {
         }}
         onConfirm={() => {
           if (notificationToDelete) {
-            // Delete the notification
-            setNotifications(prev => 
-              prev.filter(n => n.id !== notificationToDelete)
-            );
+            const next = notifications.filter(n => n.id !== notificationToDelete);
+            setNotifications(next);
+            persistNotifications(next);
           }
           setShowDeleteConfirm(false);
           setNotificationToDelete(null);

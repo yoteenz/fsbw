@@ -192,82 +192,8 @@ export default function AddToListModal({
           ADD TO LIST
         </h3>
 
-        {/* Lists this item is already in (only show these) */}
-        <div style={{ marginBottom: '16px' }}>
-          {lists.length === 0 ? (
-            <p
-              style={{
-                fontFamily: '"Futura PT Medium"',
-                fontSize: '11px',
-                color: '#000000',
-                marginBottom: '8px',
-                textTransform: 'uppercase',
-                textAlign: 'center'
-              }}
-            >
-              YOU DON'T HAVE ANY LISTS YET.
-            </p>
-          ) : displayLists.length > 0 ? (
-            <>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                {displayLists.map((list) => {
-                  const isChecked = selectedIds.has(list.id);
-                  return (
-                    <div
-                      key={list.id}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => toggleList(list.id)}
-                    >
-                      <div
-                        style={{
-                          width: '14px',
-                          height: '14px',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          border: '1.3px solid #000000',
-                          backgroundColor: 'transparent',
-                          position: 'relative',
-                          flexShrink: 0
-                        }}
-                      >
-                        {isChecked && (
-                          <img
-                            src="/assets/checkbox.svg"
-                            alt="checked"
-                            style={{ width: '14px', height: '14px', position: 'absolute' }}
-                          />
-                        )}
-                      </div>
-                      <span
-                        style={{
-                          fontFamily: '"Futura PT Medium"',
-                          fontSize: '12px',
-                          color: '#000000',
-                          textTransform: 'uppercase'
-                        }}
-                      >
-                        {list.name}
-                        {list.items.length > 0 && (
-                          <span style={{ color: '#808080', fontSize: '12px', fontFamily: '"Futura PT Demi"' }}> ({list.items.length})</span>
-                        )}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </>
-          ) : null}
-        </div>
-
         {/* List dropdown or create-new-list text field (same box styling) */}
-        <div style={{ marginBottom: '20px' }}>
+        <div style={{ marginBottom: '16px' }}>
           {isCreatingNewList ? (
             <div style={{ display: 'flex', alignItems: 'stretch', gap: '8px' }}>
               <input
@@ -357,6 +283,80 @@ export default function AddToListModal({
               )}
             </select>
           )}
+        </div>
+
+        {/* Lists (below add-to-list input) */}
+        <div style={{ marginBottom: '20px' }}>
+          {lists.length === 0 ? (
+            <p
+              style={{
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '11px',
+                color: '#000000',
+                marginBottom: '8px',
+                textTransform: 'uppercase',
+                textAlign: 'center'
+              }}
+            >
+              YOU DON'T HAVE ANY LISTS YET.
+            </p>
+          ) : displayLists.length > 0 ? (
+            <>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {displayLists.map((list) => {
+                  const isChecked = selectedIds.has(list.id);
+                  return (
+                    <div
+                      key={list.id}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => toggleList(list.id)}
+                    >
+                      <div
+                        style={{
+                          width: '14px',
+                          height: '14px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          border: '1.3px solid #000000',
+                          backgroundColor: 'transparent',
+                          position: 'relative',
+                          flexShrink: 0
+                        }}
+                      >
+                        {isChecked && (
+                          <img
+                            src="/assets/checkbox.svg"
+                            alt="checked"
+                            style={{ width: '14px', height: '14px', position: 'absolute' }}
+                          />
+                        )}
+                      </div>
+                      <span
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '12px',
+                          color: '#000000',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        {list.name}
+                        {list.items.length > 0 && (
+                          <span style={{ color: '#808080', fontSize: '12px', fontFamily: '"Futura PT Demi"' }}> ({list.items.length})</span>
+                        )}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          ) : null}
         </div>
 
         {/* Invalid selection message */}

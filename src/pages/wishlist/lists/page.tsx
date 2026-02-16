@@ -119,6 +119,7 @@ export default function ViewListsPage() {
       setLists(next);
       setListToDelete(null);
       setShowDeleteListConfirm(false);
+      if (expandedListId === listToDelete) setExpandedListId(null);
     }
   };
 
@@ -197,7 +198,7 @@ export default function ViewListsPage() {
                 </>
               ) : (
                 <button
-                  onClick={() => navigate('/wishlist')}
+                  onClick={() => (expandedListId ? setExpandedListId(null) : navigate('/wishlist'))}
                   className="cursor-pointer"
                   style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
                 >
@@ -442,9 +443,6 @@ export default function ViewListsPage() {
                                     </div>
                                     <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: 'black', margin: '0', textTransform: 'uppercase' }}>4.9 OUT OF 5 STARS</p>
                                   </div>
-                                  <button type="button" onClick={() => removeFromList(item)} style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }} aria-label="Remove from list">
-                                <img src="/assets/close-icon.svg" alt="Remove" style={{ width: '16px', height: '16px', filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
-                              </button>
                                 </div>
                               );
                             })}
@@ -465,7 +463,6 @@ export default function ViewListsPage() {
                                     ))}
                                   </div>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: 'black', margin: '0 0 4px 0', textAlign: 'center', textTransform: 'uppercase' }}>4.9 OUT OF 5 STARS</p>
-                                  <button type="button" onClick={() => removeFromList(item)} style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#999', background: 'none', border: 'none', cursor: 'pointer', padding: 0, textTransform: 'uppercase' }}>REMOVE</button>
                                 </div>
                               );
                             })}
@@ -585,14 +582,6 @@ export default function ViewListsPage() {
                               <span style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '18px', color: '#000', textTransform: 'uppercase' }}>{list.name}</span>
                               <p style={{ fontFamily: '"Futura PT Medium", Futura, sans-serif', fontSize: '11px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase' }}>{list.hasBeenShared ? 'SHARED' : 'PRIVATE'}</p>
                             </div>
-                            <button
-                              type="button"
-                              onClick={(e) => { e.stopPropagation(); setListToDelete(list.id); setShowDeleteListConfirm(true); }}
-                              style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transform: 'translate(-2px, 1px)' }}
-                              aria-label="Delete list"
-                            >
-                              <img src="/assets/close-icon.svg" alt="Delete list" style={{ width: '16px', height: '16px', filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
-                            </button>
                           </div>
                         );
                       })}
@@ -614,16 +603,16 @@ export default function ViewListsPage() {
           {/* PAGE ACTIONS: below card only (PAGE_LAYOUT.md) */}
           {!showMobileMenu && (
             <PageActionsBelowCard>
-              <button
-                type="button"
-                onClick={() => setShowCreateListModal(true)}
-                className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                style={pageActionButtonStyle}
-              >
-                CREATE NEW LIST
-              </button>
-              {expandedListId && (
+              {expandedListId && expandedListId !== 'wishlist' ? (
                 <>
+                  <button
+                    type="button"
+                    onClick={() => { setListToDelete(expandedListId); setShowDeleteListConfirm(true); }}
+                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                    style={pageActionButtonStyle}
+                  >
+                    DELETE LIST
+                  </button>
                   <PageActionsBelowCard.Spacer />
                   <button
                     type="button"
@@ -633,6 +622,15 @@ export default function ViewListsPage() {
                     SHARE LIST
                   </button>
                 </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setShowCreateListModal(true)}
+                  className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                  style={pageActionButtonStyle}
+                >
+                  CREATE NEW LIST
+                </button>
               )}
             </PageActionsBelowCard>
           )}

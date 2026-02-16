@@ -88,6 +88,31 @@ function SettingsPage() {
   const [newsletter, setNewsletter] = useState(true);
   const [sales, setSales] = useState(true);
   const [orderTracking, setOrderTracking] = useState(true);
+
+  const persistNotificationPrefs = (updates: { newsletter?: boolean; sales?: boolean; orderTracking?: boolean }) => {
+    try {
+      const email = (userData?.email || '').trim().toLowerCase();
+      if (!email) return;
+      const current = localStorage.getItem('currentUser');
+      if (!current) return;
+      const parsed = JSON.parse(current);
+      if ((parsed.email || '').trim().toLowerCase() !== email) return;
+      const stored: Record<string, boolean> = {};
+      if (updates.newsletter !== undefined) stored.notificationNewsletter = updates.newsletter;
+      if (updates.sales !== undefined) stored.notificationSales = updates.sales;
+      if (updates.orderTracking !== undefined) stored.notificationOrderTracking = updates.orderTracking;
+      if (Object.keys(stored).length === 0) return;
+      const next = { ...parsed, ...stored };
+      localStorage.setItem('currentUser', JSON.stringify(next));
+      const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const idx = registered.findIndex((u: any) => (u.email || '').trim().toLowerCase() === email);
+      if (idx !== -1) {
+        registered[idx] = { ...registered[idx], ...stored };
+        localStorage.setItem('registeredUsers', JSON.stringify(registered));
+      }
+      setUserData((prev: any) => (prev ? { ...prev, ...stored } : prev));
+    } catch (_) {}
+  };
   const [ordersAnimations, setOrdersAnimations] = useState(() => {
     try {
       if (typeof window === 'undefined') return true;
@@ -144,39 +169,9 @@ function SettingsPage() {
   };
 
   const isOAuthUser = userData?.authProvider === 'google' || userData?.authProvider === 'facebook';
-  const birthdayLocked = isOAuthUser && userData?.birthdayGiftClaimed === true;
-  const [hasPlacedOrConfirmedOrder, setHasPlacedOrConfirmedOrder] = useState(false);
-  const nameLocked = isOAuthUser && hasPlacedOrConfirmedOrder;
-
-  useEffect(() => {
-    const email = (userData?.email || '').trim().toLowerCase();
-    if (!email) {
-      setHasPlacedOrConfirmedOrder(false);
-      return;
-    }
-    const read = () => {
-      try {
-        const raw = localStorage.getItem(`userOrders_${email}`);
-        if (!raw) {
-          setHasPlacedOrConfirmedOrder(false);
-          return;
-        }
-        const orders = JSON.parse(raw);
-        const active = orders.activeOrders || [];
-        const past = orders.pastOrders || [];
-        setHasPlacedOrConfirmedOrder(active.length > 0 || past.length > 0);
-      } catch {
-        setHasPlacedOrConfirmedOrder(false);
-      }
-    };
-    read();
-    window.addEventListener('storage', read);
-    window.addEventListener('ordersUpdated', read);
-    return () => {
-      window.removeEventListener('storage', read);
-      window.removeEventListener('ordersUpdated', read);
-    };
-  }, [userData?.email]);
+  const oauthNameBirthdayConfirmed = userData?.nameAndBirthdayConfirmed === true;
+  const birthdayLocked = isOAuthUser && oauthNameBirthdayConfirmed;
+  const nameLocked = isOAuthUser && oauthNameBirthdayConfirmed;
 
   const persistPersonalInfo = (updates: { birthday?: string; firstName?: string; lastName?: string }) => {
     try {
@@ -187,6 +182,33 @@ function SettingsPage() {
       if (updates.firstName !== undefined) payload.firstName = updates.firstName.trim();
       if (updates.lastName !== undefined) payload.lastName = updates.lastName.trim();
       if (Object.keys(payload).length === 0) return;
+      const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const idx = registered.findIndex((u: any) => (u.email || '').trim().toLowerCase() === email);
+      if (idx !== -1) {
+        registered[idx] = { ...registered[idx], ...payload };
+        localStorage.setItem('registeredUsers', JSON.stringify(registered));
+      }
+      const current = localStorage.getItem('currentUser');
+      if (current) {
+        const parsed = JSON.parse(current);
+        if ((parsed.email || '').trim().toLowerCase() === email) {
+          localStorage.setItem('currentUser', JSON.stringify({ ...parsed, ...payload }));
+        }
+      }
+      setUserData((prev: any) => (prev ? { ...prev, ...payload } : prev));
+    } catch (_) {}
+  };
+
+  const confirmOAuthNameAndBirthday = () => {
+    try {
+      const email = (userData?.email || '').trim().toLowerCase();
+      if (!email || !isOAuthUser || oauthNameBirthdayConfirmed) return;
+      const payload = {
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        birthday: birthday.trim(),
+        nameAndBirthdayConfirmed: true as const
+      };
       const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
       const idx = registered.findIndex((u: any) => (u.email || '').trim().toLowerCase() === email);
       if (idx !== -1) {
@@ -347,6 +369,9 @@ function SettingsPage() {
       setYoutube(parseSocialHandle('youtube', userData.youtube || ''));
       setTiktok(parseSocialHandle('tiktok', userData.tiktok || ''));
       setTwitter(parseSocialHandle('twitter', userData.twitter || ''));
+      setNewsletter(userData.notificationNewsletter !== false);
+      setSales(userData.notificationSales !== false);
+      setOrderTracking(userData.notificationOrderTracking !== false);
     } else if (!isSignedIn) {
       setEmail('BRUNO203@GMAIL.COM');
       setFirstName('KRISTIN');
@@ -647,6 +672,31 @@ function SettingsPage() {
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={sectionHeaderWrapperStyle}>
                   <h2 style={sectionHeaderTextStyle}>PERSONAL INFORMATION</h2>
                 </div>
+                {isOAuthUser && !oauthNameBirthdayConfirmed && (
+                  <div style={{ marginBottom: '16px' }}>
+                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24', margin: '0 0 10px 0', textTransform: 'uppercase' }}>
+                      PLEASE CONFIRM YOUR NAME AND BIRTHDAY BELOW. ONCE CONFIRMED, THEY CANNOT BE CHANGED.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={confirmOAuthNameAndBirthday}
+                      disabled={!firstName.trim() || !lastName.trim() || !birthday.trim() || birthday.replace(/\D/g, '').length !== 8}
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '10px',
+                        color: '#FFFFFF',
+                        backgroundColor: '#EB1C24',
+                        border: '1.3px solid #000',
+                        padding: '8px 12px',
+                        cursor: (firstName.trim() && lastName.trim() && birthday.replace(/\D/g, '').length === 8) ? 'pointer' : 'not-allowed',
+                        opacity: (firstName.trim() && lastName.trim() && birthday.replace(/\D/g, '').length === 8) ? 1 : 0.6,
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      CONFIRM NAME & BIRTHDAY
+                    </button>
+                  </div>
+                )}
                 <div style={{ marginBottom: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div>
                     <label style={labelStyle}>FIRST NAME</label>
@@ -744,7 +794,7 @@ function SettingsPage() {
                           {showPassword ? 'HIDE PASSWORD' : 'SHOW PASSWORD'}
                         </span>
                       </div>
-                      <div style={{ marginTop: '6px' }}>
+                      <div style={{ marginTop: '0px' }}>
                         <button
                           type="button"
                           onClick={() => setShowResetPasswordForm(true)}
@@ -914,15 +964,36 @@ function SettingsPage() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '24px' }}>
                   <div className="flex items-center justify-between" style={{ width: '100%' }}>
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: 'black', textTransform: 'uppercase', fontWeight: '500', lineHeight: '1.2' }}>Newsletter</span>
-                    <ToggleSwitch on={newsletter} onClick={() => setNewsletter(!newsletter)} />
+                    <ToggleSwitch
+                      on={newsletter}
+                      onClick={() => {
+                        const next = !newsletter;
+                        setNewsletter(next);
+                        persistNotificationPrefs({ newsletter: next });
+                      }}
+                    />
                   </div>
                   <div className="flex items-center justify-between" style={{ width: '100%' }}>
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: 'black', textTransform: 'uppercase', fontWeight: '500', lineHeight: '1.2' }}>Sales</span>
-                    <ToggleSwitch on={sales} onClick={() => setSales(!sales)} />
+                    <ToggleSwitch
+                      on={sales}
+                      onClick={() => {
+                        const next = !sales;
+                        setSales(next);
+                        persistNotificationPrefs({ sales: next });
+                      }}
+                    />
                   </div>
                   <div className="flex items-center justify-between" style={{ width: '100%' }}>
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: 'black', textTransform: 'uppercase', fontWeight: '500', lineHeight: '1.2' }}>Order Tracking</span>
-                    <ToggleSwitch on={orderTracking} onClick={() => setOrderTracking(!orderTracking)} />
+                    <ToggleSwitch
+                      on={orderTracking}
+                      onClick={() => {
+                        const next = !orderTracking;
+                        setOrderTracking(next);
+                        persistNotificationPrefs({ orderTracking: next });
+                      }}
+                    />
                   </div>
                   <div className="flex items-center justify-between" style={{ width: '100%' }}>
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: 'black', textTransform: 'uppercase', fontWeight: '500', lineHeight: '1.2' }}>Animations</span>

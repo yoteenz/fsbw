@@ -11,7 +11,7 @@ import pointsHistoryIcon from '../../../assets/icons/points-history.svg?url';
 import membershipIcon from '../../../assets/icons/membership-icon.svg?url';
 import moreWaysIcon from '../../../assets/icons/more-ways.svg?url';
 import additionalFeaturesIcon from '../../../assets/icons/additional-features.svg?url';
-import { isAdminKateenaAccount } from '../../../utils/adminAuth';
+import { isAdminKateenaAccount, isAyoteenzAdminAccount } from '../../../utils/adminAuth';
 
 const BRAND_GRAY = '#808080';
 const CHART_BORDER = '0.8px solid #000';
@@ -571,6 +571,10 @@ function MembershipPage() {
   // Includes users with subscriptionTier OR the one admin Kateena account (by email) with PREMIUM
   const hasPremiumSubscription = (userData?.subscriptionTier && userData?.membershipType === 'PREMIUM') || 
                                   (isAdminKateenaAccount(userData) && (userData?.membershipType === 'PREMIUM' || userData?.membershipType === 'Premium'));
+  /** Only ayoteenz admin sees tier names (Black, Red, Silver) in their tier color for easier testing. */
+  const showTierColorsForAdmin = isAyoteenzAdminAccount(userData);
+  /** Ayoteenz only: override displayed tier on membership status card to toggle through SILVER / RED / BLACK. */
+  const [adminTierOverride, setAdminTierOverride] = useState<'SILVER' | 'RED' | 'BLACK' | null>(null);
 
   const handleUpgradeButtonClick = () => {
     if (showPremiumView) {
@@ -1499,7 +1503,7 @@ function MembershipPage() {
                                 </td>
                               </tr>
                               <tr>
-                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>REWARDS<br />+ PRIZES</span></td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>EXCLUSIVE REWARDS</span></td>
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
                                   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
@@ -1656,7 +1660,7 @@ function MembershipPage() {
                           <p
                             style={{
                               fontFamily: '"Futura PT Medium"',
-                              color: '#808080',
+                              color: '#000000',
                               fontSize: '14px',
                               margin: '0',
                               paddingBottom: '0',
@@ -1702,8 +1706,8 @@ function MembershipPage() {
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '0 0 6px 0', textTransform: 'uppercase' }}>INTRO BENEFITS (ONE-TIME PER ACCOUNT)</p>
                       <p style={{ margin: '0 0 8px 0' }}>Once you reach a tier and collect its intro benefits, they do not repeat.</p>
                       <p style={{ margin: '4px 0 2px 0', paddingLeft: '8px', borderLeft: '3px solid #808080' }}><span style={{ fontFamily: '"Futura PT Medium"', color: BRAND_GRAY }}>SILVER:</span> Welcome discount, 50 loyalty points</p>
-                      <p style={{ margin: '4px 0 2px 0', paddingLeft: '8px', borderLeft: '3px solid #EB1C24' }}><span style={{ fontFamily: '"Futura PT Book"', color: '#EB1C24' }}>RED:</span> Welcome discount, 1x Color Voucher, 1x Hairline Voucher, 500 loyalty points</p>
-                      <p style={{ margin: '4px 0 8px 0', paddingLeft: '8px', borderLeft: '3px solid #000' }}><span style={{ fontFamily: '"Futura PT Medium"', color: '#000000' }}>BLACK:</span> Welcome discount, 1x Color Voucher, 1x Hairline Voucher, 1x Styling Voucher, 1,000 loyalty points</p>
+                      <p style={{ margin: '4px 0 2px 0', paddingLeft: '8px', borderLeft: '3px solid #EB1C24' }}><span style={{ fontFamily: '"Futura PT Book"', color: '#EB1C24' }}>RED:</span> Welcome discount, 1x Flexible Cap, 1x Hairline Voucher, 500 loyalty points</p>
+                      <p style={{ margin: '4px 0 8px 0', paddingLeft: '8px', borderLeft: '3px solid #000' }}><span style={{ fontFamily: '"Futura PT Medium"', color: '#000000' }}>BLACK:</span> Welcome discount, 1x Color Voucher, 1x Styling Voucher, 1,000 loyalty points</p>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 6px 0', textTransform: 'uppercase' }}>RECURRING PERKS (EVERY 6-MONTH CYCLE)</p>
                       <p style={{ margin: '0 0 2px 0' }}><strong>All tiers:</strong> Member discount (Silver 5%, Red 10%, Black 15%); 1x complimentary consultation per year.</p>
                       <p style={{ margin: '6px 0 2px 0' }}><strong>Red:</strong> 1.25x loyalty points on purchases. <strong>Black:</strong> 1.5x loyalty points on purchases.</p>
@@ -1913,7 +1917,7 @@ fontFamily: '"Futura PT Book"',
 
                 {/* Card 2: MEMBERSHIP STATUS */}
                 <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
-                  <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                     <p
                       style={{
                         fontFamily: '"Futura PT Medium"',
@@ -1927,9 +1931,68 @@ fontFamily: '"Futura PT Book"',
                     >
                       MEMBERSHIP STATUS
                     </p>
+                    {showTierColorsForAdmin && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+                        {(['RED', 'SILVER', 'BLACK'] as const).map((tier) => {
+                          const isActive = adminTierOverride === tier;
+                          const color = tier === 'RED' ? '#EB1C24' : tier === 'BLACK' ? '#000000' : BRAND_GRAY;
+                          return (
+                            <button
+                              key={tier}
+                              type="button"
+                              onClick={() => setAdminTierOverride(isActive ? null : tier)}
+                              style={{
+                                fontFamily: '"Futura PT Medium"',
+                                fontSize: '10px',
+                                color,
+                                margin: 0,
+                                padding: '2px 4px',
+                                textTransform: 'uppercase',
+                                fontWeight: '500',
+                                background: 'none',
+                                border: isActive ? `1px solid ${color}` : '1px solid transparent',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              {tier}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                     <img src={membershipIcon} alt="" style={{ width: '18px', height: '18px', flexShrink: 0, objectFit: 'contain' }} />
                   </div>
                   <div>
+                                  {(() => {
+                                    const progress = getNextTierProgress();
+                                    const displayTier = showTierColorsForAdmin && adminTierOverride ? adminTierOverride : progress.currentTierName;
+                                    const displayNextTier = showTierColorsForAdmin && adminTierOverride
+                                      ? (adminTierOverride === 'SILVER' ? 'RED' : adminTierOverride === 'RED' ? 'BLACK' : null)
+                                      : progress.nextTierName;
+                                    const displayCurrentSpend = progress.currentSpend;
+                                    const displayNextTierPts = displayNextTier === 'RED' ? SPEND_TIER_THRESHOLDS.RED : displayNextTier === 'BLACK' ? SPEND_TIER_THRESHOLDS.BLACK : displayNextTier === 'SILVER' ? SPEND_TIER_THRESHOLDS.SILVER : null;
+                                    const displaySpendRemaining = displayNextTierPts != null ? Math.max(0, displayNextTierPts - displayCurrentSpend) : 0;
+                                    const displayProgressPercent = displayNextTierPts != null ? Math.min(100, (displayCurrentSpend / displayNextTierPts) * 100) : 100;
+                                    const nextTierColor = displayNextTier === 'BLACK' ? '#000000' : displayNextTier === 'SILVER' ? BRAND_GRAY : '#EB1C24';
+                                    const tierLabel = (() => {
+                                      if (displayNextTier == null && displayTier === 'BLACK') {
+                                        return <>YOU'VE EARNED ENOUGH POINTS TO REMAIN <span style={{ color: '#000000', fontFamily: '"Futura PT Medium"' }}>BLACK</span> TIER!</>;
+                                      }
+                                      if (displayNextTier == null) return null;
+                                      const hasSecuredCurrentTier = displayTier === 'SILVER' && displayCurrentSpend >= SPEND_TIER_THRESHOLDS.SILVER
+                                        || displayTier === 'RED' && displayCurrentSpend >= SPEND_TIER_THRESHOLDS.RED
+                                        || displayTier === 'BLACK' && displayCurrentSpend >= SPEND_TIER_THRESHOLDS.BLACK;
+                                      if (hasSecuredCurrentTier) {
+                                        return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{displaySpendRemaining.toLocaleString()}</span> MORE POINTS TO UNLOCK <span style={{ color: showTierColorsForAdmin ? nextTierColor : '#000000', fontFamily: '"Futura PT Medium"' }}>{displayNextTier}</span> TIER!</>;
+                                      }
+                                      const remainTier = displayTier === 'PENDING' ? 'SILVER' : displayTier;
+                                      const remainTierColor = remainTier === 'BLACK' ? '#000000' : remainTier === 'SILVER' ? BRAND_GRAY : '#EB1C24';
+                                      const remainThreshold = remainTier === 'SILVER' ? SPEND_TIER_THRESHOLDS.SILVER : remainTier === 'RED' ? SPEND_TIER_THRESHOLDS.RED : SPEND_TIER_THRESHOLDS.BLACK;
+                                      const remainPoints = Math.max(0, remainThreshold - displayCurrentSpend);
+                                      return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{remainPoints.toLocaleString()}</span> MORE POINTS TO REMAIN <span style={{ color: showTierColorsForAdmin ? remainTierColor : '#000000', fontFamily: '"Futura PT Medium"' }}>{remainTier}</span> TIER!</>;
+                                    })();
+                                    return (
+                                  <>
                                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                                     <p
                                       style={{
@@ -1940,7 +2003,7 @@ fontFamily: '"Futura PT Book"',
                                         textTransform: 'uppercase'
                                       }}
                                     >
-                                      CURRENT TIER: <span style={{ color: (() => { const t = getNextTierProgress().currentTierName; return t === 'RED' ? '#EB1C24' : t === 'BLACK' ? '#000000' : BRAND_GRAY; })(), fontFamily: '"Futura PT Medium"' }}>{(() => getNextTierProgress().currentTierName)()}</span>
+                                      CURRENT TIER: <span style={{ color: showTierColorsForAdmin ? (displayTier === 'RED' ? '#EB1C24' : displayTier === 'BLACK' ? '#000000' : BRAND_GRAY) : '#000000', fontFamily: '"Futura PT Medium"' }}>{displayTier}</span>
                                     </p>
                                     <p
                                       style={{
@@ -1969,11 +2032,11 @@ fontFamily: '"Futura PT Book"',
                                     }}
                                   >
                                     {(() => {
-                                      const t = getNextTierProgress().currentTierName;
+                                      const t = displayTier;
                                       const welcomeAmount = getWelcomeDiscountAmount(t);
                                       if (t === 'PENDING') return <>REACH SILVER TO UNLOCK TIER BENEFITS!</>;
-                                      if (t === 'BLACK') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 1X COLOR VOUCHER <br />1X HAIRLINE VOUCHER, 1X STYLING VOUCHER, 1,000 LOYALTY POINTS</>;
-                                      if (t === 'RED') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 1X COLOR VOUCHER <br />1X HAIRLINE VOUCHER, 500 LOYALTY POINTS</>;
+                                      if (t === 'BLACK') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 1X COLOR VOUCHER <br />1X STYLING VOUCHER, 1,000 LOYALTY POINTS</>;
+                                      if (t === 'RED') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 1X FLEXIBLE CAP <br />1X HAIRLINE VOUCHER, 500 LOYALTY POINTS</>;
                                       return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 50 LOYALTY POINTS</>;
                                     })()}
                                   </p>
@@ -1998,43 +2061,17 @@ fontFamily: '"Futura PT Book"',
                                       EXPLORE ALL BENEFITS
                                     </button>
                                   </div>
-                                  {(() => {
-                                const { currentSpend, spendRemaining, progressPercent, nextTier, nextTierName, currentTierName } = getNextTierProgress();
-                                const nextTierColor = nextTierName === 'BLACK' ? '#000000' : nextTierName === 'SILVER' ? BRAND_GRAY : '#EB1C24';
-                                const tierLabel = (() => {
-                                  // Black tier reached threshold for next cycle: no next tier to unlock
-                                  if (nextTier == null && currentTierName === 'BLACK') {
-                                    return <>YOU'VE EARNED ENOUGH POINTS TO REMAIN <span style={{ color: '#000000', fontFamily: '"Futura PT Medium"' }}>BLACK</span> TIER!</>;
-                                  }
-                                  if (nextTier == null) return null;
-                                  // Have they reached the points needed to keep their current tier this cycle?
-                                  const hasSecuredCurrentTier = currentTierName === 'SILVER' && currentSpend >= SPEND_TIER_THRESHOLDS.SILVER
-                                    || currentTierName === 'RED' && currentSpend >= SPEND_TIER_THRESHOLDS.RED
-                                    || currentTierName === 'BLACK' && currentSpend >= SPEND_TIER_THRESHOLDS.BLACK;
-                                  if (hasSecuredCurrentTier) {
-                                    return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{spendRemaining.toLocaleString()}</span> MORE POINTS TO UNLOCK <span style={{ color: nextTierColor, fontFamily: '"Futura PT Medium"' }}>{nextTierName}</span> TIER!</>;
-                                  }
-                                  // Not yet secured: show remain for the tier they're working toward (Silver if PENDING)
-                                  const remainTier = currentTierName === 'PENDING' ? 'SILVER' : currentTierName;
-                                  const remainTierColor = remainTier === 'BLACK' ? '#000000' : remainTier === 'SILVER' ? BRAND_GRAY : '#EB1C24';
-                                  const remainThreshold = remainTier === 'SILVER' ? SPEND_TIER_THRESHOLDS.SILVER : remainTier === 'RED' ? SPEND_TIER_THRESHOLDS.RED : SPEND_TIER_THRESHOLDS.BLACK;
-                                  const remainPoints = Math.max(0, remainThreshold - currentSpend);
-                                  return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{remainPoints.toLocaleString()}</span> MORE POINTS TO REMAIN <span style={{ color: remainTierColor, fontFamily: '"Futura PT Medium"' }}>{remainTier}</span> TIER!</>;
-                                })();
-                                return (
-                                  <>
                                     <div style={{ marginTop: '12px' }}>
                                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0' }}>
-                                        {/* Only Black (top tier) has no next tier; Silver and Red always show NEXT TIER */}
-                                        {currentTierName !== 'BLACK' && nextTierName != null ? (
+                                        {displayTier !== 'BLACK' && displayNextTier != null ? (
                                           <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
-                                            NEXT TIER: <span style={{ color: nextTierColor, fontFamily: '"Futura PT Medium"' }}>{nextTierName}</span>
+                                            NEXT TIER: <span style={{ color: showTierColorsForAdmin ? nextTierColor : '#000000', fontFamily: '"Futura PT Medium"' }}>{displayNextTier}</span>
                                           </p>
                                         ) : <span />}
                                         <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
-                                          {nextTier != null
-                                            ? `${currentSpend.toLocaleString()}/${nextTier.toLocaleString()} PTS`
-                                            : `${currentSpend.toLocaleString()} PTS`}
+                                          {displayNextTierPts != null
+                                            ? `${displayCurrentSpend.toLocaleString()}/${displayNextTierPts.toLocaleString()} PTS`
+                                            : `${displayCurrentSpend.toLocaleString()} PTS`}
                                         </p>
                                       </div>
                                     </div>
@@ -2042,7 +2079,7 @@ fontFamily: '"Futura PT Book"',
                                       <div style={{ width: '100%', height: '8px', backgroundColor: '#E5E5E5', borderRadius: '4px', overflow: 'hidden' }}>
                                         <div
                                           style={{
-                                            width: `${progressPercent}%`,
+                                            width: `${displayProgressPercent}%`,
                                             height: '100%',
                                             backgroundColor: '#EB1C24',
                                             borderRadius: '4px',

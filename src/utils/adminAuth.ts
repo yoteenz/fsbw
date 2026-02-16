@@ -25,10 +25,19 @@ const DEFAULT_ADMIN_EMAILS = [
 /** Single admin Kateena account (mock data, premium, test orders). Only this email gets the exception; same-name OAuth accounts do not. */
 export const ADMIN_KATEENA_EMAIL = 'kateena.armstrong@frontalslayer.com';
 
+/** Ayoteenz admin account – used for UI helpers (e.g. colored tier names on membership page). */
+export const AYOTEENZ_ADMIN_EMAIL = 'ayoteenz@yahoo.com';
+
 /** True if user is the one admin Kateena account (by email only). Use for mock/premium exception only; other "Kateena Armstrong" accounts (e.g. OAuth with different email) are not included. */
 export function isAdminKateenaAccount(user: { email?: string } | null): boolean {
   if (!user?.email) return false;
   return (user.email || '').trim().toLowerCase() === ADMIN_KATEENA_EMAIL;
+}
+
+/** True if user is the ayoteenz admin account (by email only). Use for admin-only UI (e.g. colored tier names). */
+export function isAyoteenzAdminAccount(user: { email?: string } | null): boolean {
+  if (!user?.email) return false;
+  return (user.email || '').trim().toLowerCase() === AYOTEENZ_ADMIN_EMAIL;
 }
 
 const allowedEmails = ADMIN_EMAILS.length > 0 ? ADMIN_EMAILS : DEFAULT_ADMIN_EMAILS;

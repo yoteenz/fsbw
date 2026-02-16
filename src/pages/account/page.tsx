@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../constants/tiers';
 import { getTotalReviewCount, hasNewReviewApproved } from '../../constants/reviews';
-import { isAdminKateenaAccount } from '../../utils/adminAuth';
+import { isAdminKateenaAccount, isAyoteenzAdminAccount } from '../../utils/adminAuth';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 
@@ -113,12 +113,22 @@ function AccountPage() {
     { date: '1-20-2025', transaction: 'REFERRAL', amount: 20 }
   ];
 
-  // Mock voucher history – transaction: "1X HAIRLINE", "1X COLOR", or "REDEEMED"; amount: +1 credited, -1 redeemed
+  // Current date in M-D-YYYY for history entries — always in sync with client (e.g. Feb 16, 2025)
+  const getTodayDateStr = (): string => {
+    const d = new Date();
+    return `${d.getMonth() + 1}-${d.getDate()}-${d.getFullYear()}`;
+  };
+
+  // Mock voucher history – transaction: "1X FLEXIBLE CAP", "1X HAIRLINE", "1X COLOR", "1X STYLING", or "REDEEMED"; amount: +1 credited, -1 redeemed
   const MOCK_VOUCHER_HISTORY: Array<{ date: string; transaction: string; amount: number }> = [
+    { date: '2-12-2025', transaction: '1X FLEXIBLE CAP', amount: 1 },
     { date: '2-10-2025', transaction: '1X HAIRLINE', amount: 1 },
     { date: '1-28-2025', transaction: 'REDEEMED', amount: -1 },
     { date: '1-15-2025', transaction: '1X COLOR', amount: 1 }
   ];
+
+  /** Display order for voucher types in "VOUCHERS AVAILABLE": Color, Hairline first; Styling and Flexible Cap at bottom. */
+  const VOUCHER_DISPLAY_ORDER = ['COLOR', 'HAIRLINE', 'STYLING', 'FLEXIBLE CAP', 'FLEX CAP'];
 
   // Get cards for display
   const getCardsForDisplay = (): Array<{ title: string; subtitle: string; route: string | null }> => {
@@ -240,11 +250,59 @@ function AccountPage() {
       
       if (currentUser && signedIn) {
         const user = JSON.parse(currentUser);
-        // Add test vouchers for checkout if none exist (so you can test voucher logic)
+        let didUpdate = false;
+        // Add test vouchers for checkout if none exist (so you can test voucher logic), and seed voucher history with traceable origin + date
         if (!user.voucherList || !Array.isArray(user.voucherList) || user.voucherList.length === 0) {
-          user.voucherList = ['1X COLOR', '1X HAIRLINE'];
+          const today = getTodayDateStr();
+          user.voucherList = ['1X COLOR', '1X HAIRLINE', '1X STYLING', '1X FLEXIBLE CAP'];
           user.voucherCount = user.voucherList.length;
+          user.voucherHistory = [
+            { date: today, transaction: '1X COLOR', amount: 1 },
+            { date: today, transaction: '1X HAIRLINE', amount: 1 },
+            { date: today, transaction: '1X STYLING', amount: 1 },
+            { date: today, transaction: '1X FLEXIBLE CAP', amount: 1 }
+          ];
+          didUpdate = true;
+        } else {
+          // Migration: add 1X STYLING and 1X FLEXIBLE CAP if missing; ensure Color and Hairline have voucher history dates too
+          const list = user.voucherList as string[];
+          const hasStyling = list.some((v: string) => /STYLING/i.test(v));
+          const hasFlexCap = list.some((v: string) => /FLEXIBLE CAP|FLEX CAP/i.test(v));
+          const today = getTodayDateStr();
+          const history: Array<{ date: string; transaction: string; amount: number }> = Array.isArray(user.voucherHistory) ? [...user.voucherHistory] : [];
+          const historyTransactions = new Set(history.map((h: { transaction: string }) => h.transaction.toUpperCase()));
+          if (!hasStyling) {
+            list.push('1X STYLING');
+            history.push({ date: today, transaction: '1X STYLING', amount: 1 });
+            didUpdate = true;
+          }
+          if (!hasFlexCap) {
+            list.push('1X FLEXIBLE CAP');
+            history.push({ date: today, transaction: '1X FLEXIBLE CAP', amount: 1 });
+            didUpdate = true;
+          }
+          if (!historyTransactions.has('1X COLOR') && list.some((v: string) => /COLOR/i.test(v))) {
+            history.push({ date: today, transaction: '1X COLOR', amount: 1 });
+            didUpdate = true;
+          }
+          if (!historyTransactions.has('1X HAIRLINE') && list.some((v: string) => /HAIRLINE/i.test(v))) {
+            history.push({ date: today, transaction: '1X HAIRLINE', amount: 1 });
+            didUpdate = true;
+          }
+          if (didUpdate) {
+            user.voucherList = list;
+            user.voucherHistory = history;
+            user.voucherCount = user.voucherList.length;
+          }
+        }
+        if (didUpdate) {
           localStorage.setItem('currentUser', JSON.stringify(user));
+          const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+          const idx = registeredUsers.findIndex((u: any) => u.email === user.email);
+          if (idx !== -1) {
+            registeredUsers[idx] = user;
+            localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+          }
         }
         setUserData(user);
         setIsSignedIn(true);
@@ -799,6 +857,10 @@ function AccountPage() {
 
   const hasAlertsNotifications = (): boolean => {
     try {
+      const email = (userData?.email || '').trim().toLowerCase();
+      if (email && localStorage.getItem(`alertsPageViewed_${email}`) === 'true') {
+        return false;
+      }
       const key = userData?.authProvider && userData?.email ? `notifications_${userData.email}` : 'notifications';
       const notificationsStr = localStorage.getItem(key);
       if (notificationsStr) {
@@ -1902,19 +1964,36 @@ function AccountPage() {
                       // Premium = black, Standard = gray; rewards page explains tier levels
                       const membershipTextColor = displayMembershipType === 'PREMIUM' ? '#000000' : '#808080';
                       return (
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '10px',
-                            margin: '0',
-                            textTransform: 'uppercase',
-                            fontWeight: '500',
-                            transform: 'translateY(-8px)',
-                            color: membershipTextColor
-                          }}
-                        >
-                          {displayMembershipType} REWARDS MEMBER
-                        </p>
+                        <>
+                          <p
+                            style={{
+                              fontFamily: '"Futura PT Medium"',
+                              fontSize: '10px',
+                              margin: '0',
+                              textTransform: 'uppercase',
+                              fontWeight: '500',
+                              transform: 'translateY(-8px)',
+                              color: membershipTextColor
+                            }}
+                          >
+                            {displayMembershipType} REWARDS MEMBER
+                          </p>
+                          {isAyoteenzAdminAccount(userData) && (
+                            <p
+                              style={{
+                                fontFamily: '"Futura PT Medium"',
+                                fontSize: '10px',
+                                margin: '-6px 0 0 0',
+                                textTransform: 'uppercase',
+                                fontWeight: '500',
+                                transform: 'translateY(-8px)',
+                                color: '#EB1C24'
+                              }}
+                            >
+                              ADMINISTRATION
+                            </p>
+                          )}
+                        </>
                       );
                     })()}
 
@@ -1934,7 +2013,7 @@ function AccountPage() {
                         cursor: 'pointer'
                       }}
                     >
-                      VOUCHER: {userData?.voucherCount ?? 0}
+                      VOUCHER: {(userData?.voucherList && Array.isArray(userData.voucherList) ? userData.voucherList.length : userData?.voucherCount) ?? 0} AVAILABLE
                     </p>
 
                     <p
@@ -2514,10 +2593,11 @@ function AccountPage() {
                   };
                   return parse(b.date) - parse(a.date);
                 });
+                const transactionDisplay = (tx: string) => tx.replace(/\bFLEXIBLE CAP\b/gi, 'FLEX CAP');
                 return sorted.map((row, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase' }}>
                     <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left', color: '#000000', fontFamily: '"Futura PT Book"' }}>{formatDate(row.date)}</span>
-                    <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center', color: '#808080', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.transaction}</span>
+                    <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center', color: '#808080', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{transactionDisplay(row.transaction)}</span>
                     <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right', color: row.amount >= 0 ? '#16a34a' : '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>
                       {row.amount >= 0 ? '+' : ''}{row.amount}
                     </span>
@@ -2525,7 +2605,7 @@ function AccountPage() {
                 ));
               })()}
             </div>
-            <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: '#000000', margin: '12px 0 0 0', paddingTop: '12px', borderTop: '1px solid #E5E5E5', textTransform: 'uppercase' }}>
+            <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '9px', color: '#000000', margin: '12px 0 0 0', paddingTop: '12px', borderTop: '1px solid #E5E5E5', textTransform: 'uppercase' }}>
               VOUCHERS AVAILABLE: {(() => {
                 const list = userData?.voucherList && Array.isArray(userData.voucherList) ? userData.voucherList as string[] : [];
                 if (list.length === 0) return <span style={{ color: '#808080' }}>NONE</span>;
@@ -2534,17 +2614,28 @@ function AccountPage() {
                   const spaceIdx = v.indexOf(' ');
                   if (spaceIdx <= 0) continue;
                   const prefix = v.slice(0, spaceIdx).replace(/[xX]/g, '').trim();
-                  const type = v.slice(spaceIdx + 1).trim();
+                  const type = v.slice(spaceIdx + 1).trim().toUpperCase();
                   const num = parseInt(prefix, 10) || 1;
                   byType[type] = (byType[type] || 0) + num;
                 }
-                const aggregated = Object.entries(byType).map(([type, n]) => `${n}X ${type}`);
-                return aggregated.map((v: string, i: number) => {
-                  const spaceIdx = v.indexOf(' ');
-                  const prefix = spaceIdx > 0 ? v.slice(0, spaceIdx) : v;
-                  const type = spaceIdx > 0 ? v.slice(spaceIdx + 1) : '';
-                  return <span key={i}>{i > 0 && ', '}<span style={{ color: '#EB1C24' }}>{prefix}</span>{type ? <><span style={{ color: '#808080' }}> {type}</span></> : null}</span>;
+                const aggregated = Object.entries(byType).map(([type, n]) => ({ type, n }));
+                const order = VOUCHER_DISPLAY_ORDER;
+                const sorted = [...aggregated].sort((a, b) => {
+                  const ai = order.indexOf(a.type);
+                  const bi = order.indexOf(b.type);
+                  if (ai === -1 && bi === -1) return a.type.localeCompare(b.type);
+                  if (ai === -1) return 1;
+                  if (bi === -1) return -1;
+                  return ai - bi;
                 });
+                const typeDisplay = (t: string) => t === 'FLEXIBLE CAP' ? 'FLEX CAP' : t;
+                return sorted.map(({ type, n }, i) => (
+                  <span key={i}>
+                    {i > 0 && ', '}
+                    <span style={{ color: '#EB1C24' }}>{n}X</span>
+                    <span style={{ color: '#808080' }}> {typeDisplay(type)}</span>
+                  </span>
+                ));
               })()}
             </p>
           </div>
