@@ -75,7 +75,7 @@ function getAccountNotifications(user: { email?: string; [k: string]: any } | nu
   const tierDisplay = tier === 'PENDING' ? 'NO TIER YET' : tier;
   notifs.push({
     id: `${ACCOUNT_NOTIFICATION_PREFIX}tier`,
-    title: tier === 'PENDING' ? 'NO SPEND TIER YET' : `YOU'RE NOW ${tierDisplay} TIER STATUS!`,
+    title: tier === 'PENDING' ? 'NO SPEND TIER YET' : `YOU'RE NOW ${tierDisplay} TIER STATUS`,
     message: tier === 'PENDING'
       ? 'EARN 1,000 POINTS TO UNLOCK SILVER TIER.'
       : 'VIEW YOUR TIER BENEFITS ON REWARDS PAGE.',
