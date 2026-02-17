@@ -15,6 +15,7 @@ import { lazy, Suspense } from 'react';
 import LoadingScreen from './components/base/LoadingScreen';
 import AdminGuard from './components/AdminGuard';
 import AccountRouteGuard from './components/AccountRouteGuard';
+import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
 
 // Helper to wrap lazy imports with retry logic and logging
 const lazyWithLogging = (importFn: () => Promise<any>, componentName: string) => {
@@ -277,6 +278,11 @@ function App() {
       console.error('⚠️ Route mismatch detected!');
     }
   }, [location.pathname]);
+
+  // Clear test data for signed-in accounts that aren't ayoteenz@yahoo.com with admin tag (once per email)
+  useEffect(() => {
+    clearTestDataForNonAdminUserIfNeeded();
+  }, []);
   
   return (
     <ErrorBoundary>
@@ -591,14 +597,18 @@ function App() {
         <Route path="/brand/reviews" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
         <Route path="/brand/terms" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
         <Route path="/wishlist" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <WishlistPage />
-          </Suspense>
+          <AccountRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <WishlistPage />
+            </Suspense>
+          </AccountRouteGuard>
         } />
         <Route path="/wishlist/lists" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <ViewListsPage />
-          </Suspense>
+          <AccountRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <ViewListsPage />
+            </Suspense>
+          </AccountRouteGuard>
         } />
         <Route path="/account" element={
           <AccountRouteGuard>

@@ -11,7 +11,7 @@ import pointsHistoryIcon from '../../../assets/icons/points-history.svg?url';
 import membershipIcon from '../../../assets/icons/membership-icon.svg?url';
 import moreWaysIcon from '../../../assets/icons/more-ways.svg?url';
 import additionalFeaturesIcon from '../../../assets/icons/additional-features.svg?url';
-import { isAyoteenzAdminAccount, isMockDataAccount } from '../../../utils/adminAuth';
+import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier, ADMIN_SUBSCRIPTION_OVERRIDE_KEY } from '../../../utils/adminAuth';
 
 const BRAND_GRAY = '#808080';
 const CHART_BORDER = '0.8px solid #000';
@@ -399,7 +399,6 @@ function MembershipPage() {
   });
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [showCancelConfirmModal, setShowCancelConfirmModal] = useState(false);
-  const [showCancelUpgradeModal, setShowCancelUpgradeModal] = useState(false);
   const [showLoyaltyRewards, setShowLoyaltyRewards] = useState(false);
   const [showBenefitsModal, setShowBenefitsModal] = useState(false);
 
@@ -421,6 +420,38 @@ function MembershipPage() {
     '3months': { name: '3 MONTHS PREMIUM', price: 280 },
     '6months': { name: '6 MONTHS PREMIUM', price: 520 },
     '12months': { name: '12 MONTHS PREMIUM', price: 960 }
+  };
+
+  /** Benefits included per premium tier (matches premium upgrade chart: 3mo, 6mo, 12mo). */
+  const PREMIUM_BENEFITS_BY_TIER: Record<string, string[]> = {
+    '3months': [
+      'BIRTHDAY GIFT',
+      'DISCOUNTED SHIPPING',
+      'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
+      'ENTRY TO VIP MEMBERS ONLY LOBBY + LOUNGE',
+      'FAST TRACK CUSTOMER SUPPORT',
+      'PRIORITY BOOKING'
+    ],
+    '6months': [
+      'BIRTHDAY GIFT',
+      'DISCOUNTED SHIPPING',
+      'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
+      'ENTRY TO VIP MEMBERS ONLY LOBBY + LOUNGE',
+      'FAST TRACK CUSTOMER SUPPORT',
+      'PRIORITY BOOKING',
+      'LIVE ORDER TRACKING'
+    ],
+    '12months': [
+      'BIRTHDAY GIFT',
+      'DISCOUNTED SHIPPING',
+      'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
+      'ENTRY TO VIP MEMBERS ONLY LOBBY + LOUNGE',
+      'FAST TRACK CUSTOMER SUPPORT',
+      'PRIORITY BOOKING',
+      'LIVE ORDER TRACKING',
+      'MEMBER REWARDS + PRIZES',
+      '2X LOYALTY POINTS'
+    ]
   };
 
   // Currency state - load from localStorage on mount (same as CartDropdown / shopping-bag)
@@ -576,6 +607,14 @@ function MembershipPage() {
   const showTierColorsForAdmin = isAyoteenzAdminAccount(userData);
   /** Ayoteenz only: override displayed tier on membership status card to toggle through SILVER / RED / BLACK. */
   const [adminTierOverride, setAdminTierOverride] = useState<'SILVER' | 'RED' | 'BLACK' | null>(null);
+  /** Ayoteenz only: override subscription (Standard / 3 / 6 / 12 month) for INCLUDED IN YOUR MEMBERSHIP and site-wide; persisted in localStorage. */
+  const [adminSubscriptionOverride, setAdminSubscriptionOverride] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const v = localStorage.getItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY);
+    return v && ['standard', '3months', '6months', '12months'].includes(v) ? v : null;
+  });
+  /** Effective premium for display: when Standard tab (or no premium) show upgrade section; when 3/6/12 show INCLUDED section. */
+  const hasEffectivePremium = getEffectiveSubscriptionTier(userData) != null;
 
   const handleUpgradeButtonClick = () => {
     if (showPremiumView) {
@@ -1734,7 +1773,7 @@ function MembershipPage() {
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '0 0 6px 0', textTransform: 'uppercase' }}>INTRO BENEFITS (ONE-TIME PER ACCOUNT)</p>
                       <p style={{ margin: '0 0 8px 0' }}>Once you reach a tier and collect its intro benefits, they do not repeat.</p>
                       <p style={{ margin: '4px 0 2px 0', paddingLeft: '8px', borderLeft: '3px solid #808080' }}><span style={{ fontFamily: '"Futura PT Medium"', color: BRAND_GRAY }}>SILVER:</span> Welcome discount, 250 loyalty points</p>
-                      <p style={{ margin: '4px 0 2px 0', paddingLeft: '8px', borderLeft: '3px solid #EB1C24' }}><span style={{ fontFamily: '"Futura PT Book"', color: '#EB1C24' }}>RED:</span> Welcome discount, 1x Flexible Cap, 1x Hairline Voucher, 500 loyalty points</p>
+                      <p style={{ margin: '4px 0 2px 0', paddingLeft: '8px', borderLeft: '3px solid #EB1C24' }}><span style={{ fontFamily: '"Futura PT Book"', color: '#EB1C24' }}>RED:</span> Welcome discount, 1x Flexible Cap Voucher, 1x Hairline Voucher, 500 loyalty points</p>
                       <p style={{ margin: '4px 0 8px 0', paddingLeft: '8px', borderLeft: '3px solid #000' }}><span style={{ fontFamily: '"Futura PT Medium"', color: '#000000' }}>BLACK:</span> Welcome discount, 1x Color Voucher, 1x Styling Voucher, 1,000 loyalty points</p>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 6px 0', textTransform: 'uppercase' }}>RECURRING PERKS (EVERY 6-MONTH CYCLE)</p>
                       <p style={{ margin: '0 0 2px 0' }}><strong>All tiers:</strong> Member discount (Silver 5%, Red 10%, Black 15%); 1x complimentary consultation per year.</p>
@@ -1742,7 +1781,7 @@ function MembershipPage() {
                       <p style={{ margin: '6px 0 8px 0' }}><strong>Black only:</strong> Annual Black tier gift; status protection (stay Black when short on points, 1x per year).</p>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 6px 0', textTransform: 'uppercase' }}>HOW IT WORKS</p>
                       <p style={{ margin: 0 }}>Tiers run in 6-month cycles. Earn points from purchases to unlock or keep a tier. Hit the threshold (1,000 Silver, 2,000 Red, 4,000 Black) by period end to keep that tier and its perks for the next cycle. Intro benefits unlock once per account; recurring perks apply each cycle you maintain or reach that tier.</p>
-                      <p style={{ margin: '10px 0 0 0', fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000000' }}><strong>Premium stacks with your tier.</strong> Tier perks are earned by spend (e.g. Red 1.25x and Black 1.5x points). A Premium subscription adds 2x points plus lounge access, fast-track support, and more—so Black + Premium gives you the most.</p>
+                      <p style={{ margin: '10px 0 0 0', fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000000' }}><strong>12-month Premium</strong> members earn 2x points on purchases (takes precedence over tier). Red and Black tiers earn 1.25x and 1.5x points when not on 12-month Premium. Premium also includes lounge access, fast-track support, and more.</p>
                     </div>
                   </div>
                   ) : (
@@ -2063,7 +2102,7 @@ fontFamily: '"Futura PT Book"',
                                       const welcomeAmount = getWelcomeDiscountAmount(t);
                                       if (t === 'PENDING') return <>REACH SILVER TO UNLOCK TIER BENEFITS!</>;
                                       if (t === 'BLACK') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: DIGITAL CASH, 1X COLOR VOUCHER <br />1X STYLING VOUCHER, 1,000 LOYALTY POINTS</>;
-                                      if (t === 'RED') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: DIGITAL CASH, 1X FLEXIBLE CAP <br />1X HAIRLINE VOUCHER, 500 LOYALTY POINTS</>;
+                                      if (t === 'RED') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: DIGITAL CASH, 1X FLEXIBLE CAP VOUCHER <br />1X HAIRLINE VOUCHER, 500 LOYALTY POINTS</>;
                                       return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: DIGITAL CASH, 250 LOYALTY POINTS</>;
                                     })()}
                                   </p>
@@ -2171,9 +2210,9 @@ fontFamily: '"Futura PT Book"',
                               </div>
                             </div>
 
-                        {hasPremiumSubscription && (
+                        {hasEffectivePremium && (
                           <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
-                            <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                               <p
                                 style={{
                                   fontFamily: '"Futura PT Medium"',
@@ -2185,19 +2224,51 @@ fontFamily: '"Futura PT Book"',
                                   textAlign: 'left'
                                 }}
                               >
-                                ADDITIONAL FEATURES
+                                INCLUDED IN YOUR MEMBERSHIP
                               </p>
+                              {showTierColorsForAdmin && (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+                                  {(['standard', '3months', '6months', '12months'] as const).map((tier) => {
+                                    const label = tier === 'standard' ? 'STANDARD' : tier === '3months' ? '3 MONTH' : tier === '6months' ? '6 MONTH' : '12 MONTH';
+                                    const effective = adminSubscriptionOverride ?? (getEffectiveSubscriptionTier(userData) || 'standard');
+                                    const isActive = effective === tier;
+                                    return (
+                                      <button
+                                        key={tier}
+                                        type="button"
+                                        onClick={() => {
+                                          setAdminSubscriptionOverride(tier);
+                                          localStorage.setItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY, tier);
+                                        }}
+                                        style={{
+                                          fontFamily: '"Futura PT Medium"',
+                                          fontSize: '10px',
+                                          color: isActive ? '#EB1C24' : BRAND_GRAY,
+                                          margin: 0,
+                                          padding: '2px 4px',
+                                          textTransform: 'uppercase',
+                                          fontWeight: '500',
+                                          background: 'none',
+                                          border: isActive ? '1px solid #EB1C24' : '1px solid transparent',
+                                          cursor: 'pointer'
+                                        }}
+                                      >
+                                        {label}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              )}
                               <img src={additionalFeaturesIcon} alt="" style={{ width: '20px', height: '20px', flexShrink: 0, objectFit: 'contain', marginTop: '-2px' }} />
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                              {[
-                                'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
-                                'ENTRY TO VIP MEMBERS ONLY LOBBY + LOUNGE',
-                                'FAST TRACK CUSTOMER SUPPORT',
-                                'PRIORITY BOOKING',
-                                'MEMBER REWARDS + PRIZES',
-                                'DISCOUNTED SHIPPING'
-                              ].map((label, i) => (
+                              {((() => {
+                                const effectiveTier = showTierColorsForAdmin && adminSubscriptionOverride != null
+                                  ? (adminSubscriptionOverride === 'standard' ? null : adminSubscriptionOverride)
+                                  : (getEffectiveSubscriptionTier(userData) as keyof typeof PREMIUM_BENEFITS_BY_TIER | null);
+                                const benefits = effectiveTier && PREMIUM_BENEFITS_BY_TIER[effectiveTier] ? PREMIUM_BENEFITS_BY_TIER[effectiveTier] : (effectiveTier === null && showTierColorsForAdmin ? [] : (PREMIUM_BENEFITS_BY_TIER['12months']));
+                                return benefits;
+                              })()).map((label: string, i: number) => (
                                 <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                                   <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8.4px', height: '8.4px', marginTop: '4px', flexShrink: 0 }} />
                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
@@ -2209,13 +2280,13 @@ fontFamily: '"Futura PT Book"',
                           </div>
                         )}
 
-                      {/* UPGRADE YOUR BASIC MEMBERSHIP - Only show when loyalty rewards is not active (premium members see additional features in loyalty view) */}
+                      {/* UPGRADE YOUR BASIC MEMBERSHIP - Show when effective tier is Standard (no premium), so admin Standard tab shows this section as-is; 3/6/12 tabs show INCLUDED instead */}
                       {!showLoyaltyRewards && (
                       <>
-                        {!hasPremiumSubscription && (
+                        {!hasEffectivePremium && (
                             <>
                 <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
-                  <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                     <p
                       style={{
                         fontFamily: '"Futura PT Medium"',
@@ -2229,6 +2300,39 @@ fontFamily: '"Futura PT Book"',
                     >
                       UNLOCK PREMIUM REWARDS
                     </p>
+                    {showTierColorsForAdmin && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+                        {(['standard', '3months', '6months', '12months'] as const).map((tier) => {
+                          const label = tier === 'standard' ? 'STANDARD' : tier === '3months' ? '3 MONTH' : tier === '6months' ? '6 MONTH' : '12 MONTH';
+                          const effective = adminSubscriptionOverride ?? (getEffectiveSubscriptionTier(userData) || 'standard');
+                          const isActive = effective === tier;
+                          return (
+                            <button
+                              key={tier}
+                              type="button"
+                              onClick={() => {
+                                setAdminSubscriptionOverride(tier);
+                                localStorage.setItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY, tier);
+                              }}
+                              style={{
+                                fontFamily: '"Futura PT Medium"',
+                                fontSize: '10px',
+                                color: isActive ? '#EB1C24' : BRAND_GRAY,
+                                margin: 0,
+                                padding: '2px 4px',
+                                textTransform: 'uppercase',
+                                fontWeight: '500',
+                                background: 'none',
+                                border: isActive ? '1px solid #EB1C24' : '1px solid transparent',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              {label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                     <img src={additionalFeaturesIcon} alt="" style={{ width: '20px', height: '20px', flexShrink: 0, objectFit: 'contain', marginTop: '-2px' }} />
                   </div>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -2312,11 +2416,11 @@ fontFamily: '"Futura PT Book"',
                           {showPremiumView ? 'CONFIRM SUBSCRIPTION' : ((userData?.subscriptionTier === '12months' || (isMockDataAccount(userData) && !userData?.subscriptionTier)) ? 'CHANGE SUBSCRIPTION' : 'UPGRADE SUBSCRIPTION')}
                         </button>
                       </div>
-                      {/* CANCEL Button - below Confirm when subscription upgrade chart is open; opens confirmation popup */}
+                      {/* CANCEL Button - below Confirm when subscription upgrade chart is open; returns to rewards page */}
                       {showPremiumView && (
                         <div className="px-0 md:px-0" style={{ marginBottom: '10px' }}>
                           <button
-                            onClick={() => setShowCancelUpgradeModal(true)}
+                            onClick={handleClosePremiumView}
                             className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                             style={{ 
                               borderWidth: '1.3px', 
@@ -2369,7 +2473,7 @@ fontFamily: '"Futura PT Book"',
                       {showPremiumView && (
                         <div className="px-0 md:px-0" style={{ marginBottom: '20px' }}>
                           <button
-                            onClick={() => setShowCancelUpgradeModal(true)}
+                            onClick={handleClosePremiumView}
                             className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                             style={{ 
                               borderWidth: '1.3px', 
@@ -2414,22 +2518,6 @@ fontFamily: '"Futura PT Book"',
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="cancel-subscription"
-      />
-
-      {/* Cancel upgrade (close premium view) confirmation modal */}
-      <ConfirmationModal
-        isOpen={showCancelUpgradeModal}
-        onClose={() => setShowCancelUpgradeModal(false)}
-        onConfirm={() => {
-          setShowCancelUpgradeModal(false);
-          handleClosePremiumView();
-        }}
-        title="CANCEL UPGRADE?"
-        message="YOU WILL NOT BE CHARGED. RETURN TO MEMBERSHIP WITHOUT UPGRADING."
-        confirmText="CONFIRM"
-        cancelText="CANCEL"
-        messageTextTransform="uppercase"
-        dataAttribute="cancel-upgrade"
       />
 
     </div>

@@ -6,6 +6,7 @@ import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { isAdminEmail, isPreviewEnvironment } from '../../utils/adminAuth';
 import { normalizeEmail, normalizePassword } from '../../utils/credentialNormalize';
+import { getWebAuthnApiBase, tryPasskeySignIn } from '../../utils/webauthn';
 import {
   getReviewsLastSeenShopCountKey,
   getReviewsLastSeenToolCountKey,
@@ -16,6 +17,18 @@ import {
 // OAuth callback types (match globals from vite-env.d.ts)
 type FbLoginResponse = { status: string; authResponse?: { accessToken: string; userID: string } };
 type GoogleTokenResp = { access_token: string };
+
+/** Fetch canonical admin profile from public/admin-profile.json so Chrome (and any browser) gets same name, photo, birthday etc. as Safari. */
+async function fetchCanonicalAdminProfile(): Promise<Record<string, unknown>> {
+  try {
+    const r = await fetch('/admin-profile.json');
+    if (!r.ok) return {};
+    const j = await r.json();
+    return j && typeof j === 'object' ? j as Record<string, unknown> : {};
+  } catch {
+    return {};
+  }
+}
 
 function SignInPage() {
   const navigate = useNavigate();
@@ -319,11 +332,21 @@ function SignInPage() {
         setSocialAuthError('Google sign-in failed to load.');
         return;
       }
-      const tokenClient = window.google.accounts.oauth2.initTokenClient({
+      const tokenClient = (window.google.accounts.oauth2 as any).initTokenClient({
         client_id: googleClientId,
         scope: 'email profile',
-        callback: async (tokenResponse: GoogleTokenResp) => {
+        prompt: 'select_account consent', // Force account chooser + consent every time so user can pick yoteenz (no cached wrong account)
+        callback: async (tokenResponse: GoogleTokenResp & { error?: string; error_description?: string }) => {
           try {
+            if (tokenResponse.error) {
+              setSocialLoading(null);
+              if (tokenResponse.error === 'access_denied' || tokenResponse.error_description?.toLowerCase().includes('blocked')) {
+                setSocialAuthError('Google sign-in was blocked. Add your email (e.g. yoteenz@gmail.com) as a Test user: Google Cloud Console → APIs & Services → OAuth consent screen → Test users.');
+              } else {
+                setSocialAuthError(tokenResponse.error_description || 'Google sign-in was cancelled or failed.');
+              }
+              return;
+            }
             const res = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${encodeURIComponent(tokenResponse.access_token)}`);
             const data = await res.json();
             const name = data.name || '';
@@ -341,7 +364,7 @@ function SignInPage() {
           }
         }
       });
-      tokenClient.requestAccessToken();
+      (tokenClient as { requestAccessToken: (override?: { prompt?: string }) => void }).requestAccessToken({ prompt: 'select_account consent' });
     };
     if (window.google?.accounts?.oauth2) {
       doGoogleTokenRequest();
@@ -386,6 +409,33 @@ function SignInPage() {
       window.removeEventListener('focus', handleStorageChange);
     };
   }, []);
+
+  // When WebAuthn API is configured, start conditional passkey sign-in (Face ID / Touch ID / Windows Hello in Chrome, Safari, Edge)
+  useEffect(() => {
+    const apiBase = getWebAuthnApiBase();
+    if (!apiBase) return;
+    let cancelled = false;
+    tryPasskeySignIn()
+      .then((result) => {
+        if (cancelled || result == null) return;
+        const user = result as Record<string, unknown>;
+        if (!user || typeof user.email !== 'string') return;
+        const userToSet = { ...user };
+        if (isAdminEmail(user.email)) (userToSet as Record<string, unknown>).role = 'admin';
+        localStorage.setItem('currentUser', JSON.stringify(userToSet));
+        if (userToSet.profileImage) {
+          localStorage.setItem('profileImage', String(userToSet.profileImage));
+        } else {
+          localStorage.removeItem('profileImage');
+        }
+        localStorage.setItem('isSignedIn', 'true');
+        window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+        const from = (location.state as { from?: string } | null)?.from;
+        navigate(from && (from.startsWith('/account') || from.startsWith('/wishlist')) ? from : '/account', { replace: true });
+      })
+      .catch(() => { /* user cancelled or error; ignore and show form */ });
+    return () => { cancelled = true; };
+  }, [navigate, location.state]);
 
   // Update active tab based on current route
   useEffect(() => {
@@ -874,7 +924,7 @@ function SignInPage() {
                       </label>
                       <input
                         type="email"
-                        autoComplete="email username"
+                        autoComplete="username email webauthn"
                         value={signInEmail}
                         onChange={(e) => setSignInEmail(e.target.value)}
                         style={{
@@ -909,7 +959,7 @@ function SignInPage() {
                       <div style={{ position: 'relative' }}>
                         <input
                           type={showSignInPassword ? "text" : "password"}
-                          autoComplete="current-password"
+                          autoComplete="current-password webauthn"
                           value={signInPassword}
                           onChange={(e) => setSignInPassword(e.target.value)}
                           className="password-field"
@@ -1013,7 +1063,7 @@ function SignInPage() {
             <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                 <button
                   type="button"
-                  onClick={() => {
+                  onClick={async () => {
                     if (!signInEmail.trim()) {
                       setValidationMessage('EMAIL ADDRESS IS REQUIRED.');
                       setShowValidationModal(true);
@@ -1029,32 +1079,58 @@ function SignInPage() {
                       const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
                       const emailNorm = normalizeEmail(signInEmail);
                       const passwordNorm = normalizePassword(signInPassword);
-                      const user = registeredUsers.find((u: any) =>
-                        normalizeEmail(u.email || '') === emailNorm &&
-                        normalizePassword(u.password || '') === passwordNorm
-                      );
+                      const userByEmail = registeredUsers.find((u: any) => normalizeEmail(u.email || '') === emailNorm);
+                      const user = userByEmail && normalizePassword(userByEmail.password || '') === passwordNorm ? userByEmail : null;
+
+                      // If no password match but we found the email: might be an OAuth-only account
+                      if (!user && userByEmail?.authProvider) {
+                        const provider = (userByEmail.authProvider as string).toUpperCase();
+                        setValidationMessage(`THIS ACCOUNT USES ${provider} SIGN-IN. PLEASE USE THE ${provider} BUTTON ABOVE.`);
+                        setShowValidationModal(true);
+                        return;
+                      }
 
                       if (user) {
-                        // Authentication successful
-                        // Create a copy to avoid mutating the original
+                        // Authentication successful: start from registered user then merge existing currentUser so profile (photo, name, birthday, address, etc.) stays intact across sign-in and matches this browser's stored data
                         const userToSet = { ...user };
                         // Grant admin role only if email is in the allowed admin list
                         if (isAdminEmail(user.email || '')) {
                           userToSet.role = 'admin';
                         }
-                        
-                        // Check if there's an existing currentUser with updated membership type
-                        const existingCurrentUser = localStorage.getItem('currentUser');
-                        if (existingCurrentUser) {
+                        const existingCurrentRaw = localStorage.getItem('currentUser');
+                        if (existingCurrentRaw) {
                           try {
-                            const existingUser = JSON.parse(existingCurrentUser);
-                            // If existing user has premium membership, preserve it
-                            if (existingUser.membershipType === 'PREMIUM' && user.email?.toLowerCase() === existingUser.email?.toLowerCase()) {
-                              userToSet.membershipType = 'PREMIUM';
-                              // Also update in registeredUsers to persist
+                            const existingUser = JSON.parse(existingCurrentRaw);
+                            if (existingUser && typeof existingUser === 'object' && user.email?.toLowerCase() === (existingUser.email || '').toLowerCase()) {
+                              // Merge all profile fields from existing currentUser so both accounts are identical (e.g. after clearing registeredUsers but not currentUser, or re-sign-in on same browser)
+                              const profileFields = [
+                                'firstName', 'lastName', 'phoneNumber', 'birthday', 'profileImage',
+                                'facebook', 'instagram', 'youtube', 'tiktok', 'twitter',
+                                'membershipType', 'subscriptionTier', 'referralCode',
+                                'giftCardBalance', 'hasMadeFirstPurchase', 'loyaltyPoints',
+                                'unlockedDiscounts', 'voucherList', 'voucherHistory', 'digitalCashHistory',
+                                'welcomeDiscountTiersCreditedByPeriod', 'defaultAddress', 'shippingAddress', 'savedAddresses',
+                                'createdAt', 'id'
+                              ] as const;
+                              for (const key of profileFields) {
+                                const existingVal = existingUser[key];
+                                if (existingVal !== undefined && existingVal !== null) {
+                                  if (key === 'profileImage' && typeof existingVal === 'string' && existingVal.trim() === '') continue;
+                                  if (Array.isArray(existingVal) || (typeof existingVal === 'object' && existingVal !== null)) {
+                                    (userToSet as any)[key] = existingVal;
+                                  } else {
+                                    (userToSet as any)[key] = existingVal;
+                                  }
+                                }
+                              }
+                              if (typeof existingUser.giftCardBalance === 'number') userToSet.giftCardBalance = existingUser.giftCardBalance;
+                              if (typeof existingUser.loyaltyPoints === 'number') userToSet.loyaltyPoints = existingUser.loyaltyPoints;
+                              if (existingUser.hasMadeFirstPurchase !== undefined) userToSet.hasMadeFirstPurchase = Boolean(existingUser.hasMadeFirstPurchase);
+                              // Persist merged user back to registeredUsers so profile stays in sync
                               const userIndex = registeredUsers.findIndex((u: any) => u.email?.toLowerCase() === user.email?.toLowerCase());
                               if (userIndex !== -1) {
-                                registeredUsers[userIndex].membershipType = 'PREMIUM';
+                                registeredUsers[userIndex] = { ...userToSet };
+                                delete (registeredUsers[userIndex] as any).role;
                                 localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
                               }
                             }
@@ -1063,8 +1139,8 @@ function SignInPage() {
                           }
                         }
                         localStorage.setItem('currentUser', JSON.stringify(userToSet));
-                        if (userToSet.profileImage) {
-                          localStorage.setItem('profileImage', userToSet.profileImage);
+                        if (userToSet.profileImage && String(userToSet.profileImage).trim()) {
+                          localStorage.setItem('profileImage', String(userToSet.profileImage));
                         } else {
                           localStorage.removeItem('profileImage');
                         }
@@ -1087,13 +1163,91 @@ function SignInPage() {
                           navigate('/checkout');
                         } else if (returnTo && returnTo.startsWith('/admin') && (userToSet.role === 'admin' || isPreviewEnvironment())) {
                           navigate(returnTo);
-                        } else if (fromAccountGuard && fromAccountGuard.startsWith('/account')) {
+                        } else if (fromAccountGuard && (fromAccountGuard.startsWith('/account') || fromAccountGuard.startsWith('/wishlist'))) {
                           navigate(fromAccountGuard, { replace: true });
                         } else {
                           navigate('/account');
                         }
+                      } else if (isAdminEmail(signInEmail)) {
+                        // Allowed admin email but not in this browser: bootstrap admin user and merge existing currentUser + canonical profile so profile is identical across browsers
+                        let existingCurrent: Record<string, any> = {};
+                        try {
+                          const raw = localStorage.getItem('currentUser');
+                          if (raw) {
+                            const parsed = JSON.parse(raw);
+                            if (parsed && typeof parsed === 'object' && normalizeEmail(parsed.email || '') === emailNorm) {
+                              existingCurrent = parsed;
+                            }
+                          }
+                        } catch (_) {}
+                        const canonical = await fetchCanonicalAdminProfile();
+                        const firstInitial = (signInEmail.trim()[0] || 'A').toUpperCase();
+                        const lastInitial = (signInEmail.trim().split('@')[0]?.slice(1, 2) || 'A').toUpperCase();
+                        let referralCode = (existingCurrent.referralCode as string) || (canonical.referralCode as string) || firstInitial + lastInitial + '01' + Math.floor(10 + Math.random() * 90);
+                        while (registeredUsers.some((u: any) => u.referralCode === referralCode)) {
+                          referralCode = firstInitial + lastInitial + '01' + Math.floor(10 + Math.random() * 90);
+                        }
+                        // Prefer non-empty values so canonical (admin-profile.json from Safari) is used when existingCurrent is empty (e.g. Chrome)
+                        const str = (a: unknown, b: unknown): string => (a != null && String(a).trim() !== '') ? String(a).trim() : (b != null && String(b).trim() !== '') ? String(b).trim() : '';
+                        const profileImageVal = str(existingCurrent.profileImage, canonical.profileImage) || (existingCurrent.profileImage as string) || (canonical.profileImage as string) || '';
+                        const bootstrapUser = {
+                          id: (existingCurrent.id as string) || (canonical.id as string) || `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                          firstName: str(existingCurrent.firstName, canonical.firstName) || (existingCurrent.firstName as string) ?? (canonical.firstName as string) ?? '',
+                          lastName: str(existingCurrent.lastName, canonical.lastName) || (existingCurrent.lastName as string) ?? (canonical.lastName as string) ?? '',
+                          email: emailNorm,
+                          phoneNumber: str(existingCurrent.phoneNumber, canonical.phoneNumber) || (existingCurrent.phoneNumber as string) ?? (canonical.phoneNumber as string) ?? '',
+                          birthday: str(existingCurrent.birthday, canonical.birthday) || (existingCurrent.birthday as string) ?? (canonical.birthday as string) ?? '',
+                          password: passwordNorm,
+                          facebook: str(existingCurrent.facebook, canonical.facebook) || (existingCurrent.facebook as string) ?? (canonical.facebook as string) ?? '',
+                          instagram: str(existingCurrent.instagram, canonical.instagram) || (existingCurrent.instagram as string) ?? (canonical.instagram as string) ?? '',
+                          youtube: str(existingCurrent.youtube, canonical.youtube) || (existingCurrent.youtube as string) ?? (canonical.youtube as string) ?? '',
+                          tiktok: str(existingCurrent.tiktok, canonical.tiktok) || (existingCurrent.tiktok as string) ?? (canonical.tiktok as string) ?? '',
+                          twitter: str(existingCurrent.twitter, canonical.twitter) || (existingCurrent.twitter as string) ?? (canonical.twitter as string) ?? '',
+                          profileImage: profileImageVal,
+                          membershipType: (existingCurrent.membershipType as string) ?? (canonical.membershipType as string) ?? 'STANDARD',
+                          subscriptionTier: (existingCurrent.subscriptionTier as string) ?? (canonical.subscriptionTier as string) ?? undefined,
+                          defaultAddress: existingCurrent.defaultAddress ?? canonical.defaultAddress ?? undefined,
+                          shippingAddress: existingCurrent.shippingAddress ?? canonical.shippingAddress ?? undefined,
+                          savedAddresses: Array.isArray(existingCurrent.savedAddresses) ? existingCurrent.savedAddresses : (Array.isArray(canonical.savedAddresses) ? canonical.savedAddresses : undefined),
+                          referralCode,
+                          giftCardBalance: typeof existingCurrent.giftCardBalance === 'number' ? existingCurrent.giftCardBalance : (typeof canonical.giftCardBalance === 'number' ? canonical.giftCardBalance : 10),
+                          hasMadeFirstPurchase: Boolean(existingCurrent.hasMadeFirstPurchase ?? canonical.hasMadeFirstPurchase),
+                          loyaltyPoints: typeof existingCurrent.loyaltyPoints === 'number' ? existingCurrent.loyaltyPoints : (typeof canonical.loyaltyPoints === 'number' ? canonical.loyaltyPoints : 0),
+                          unlockedDiscounts: Array.isArray(existingCurrent.unlockedDiscounts) ? existingCurrent.unlockedDiscounts : (Array.isArray(canonical.unlockedDiscounts) ? canonical.unlockedDiscounts : ['signup']),
+                          voucherList: Array.isArray(existingCurrent.voucherList) ? existingCurrent.voucherList : (Array.isArray(canonical.voucherList) ? canonical.voucherList : undefined),
+                          voucherHistory: Array.isArray(existingCurrent.voucherHistory) ? existingCurrent.voucherHistory : (Array.isArray(canonical.voucherHistory) ? canonical.voucherHistory : undefined),
+                          digitalCashHistory: Array.isArray(existingCurrent.digitalCashHistory) ? existingCurrent.digitalCashHistory : (Array.isArray(canonical.digitalCashHistory) ? canonical.digitalCashHistory : undefined),
+                          welcomeDiscountTiersCreditedByPeriod: existingCurrent.welcomeDiscountTiersCreditedByPeriod && typeof existingCurrent.welcomeDiscountTiersCreditedByPeriod === 'object' ? existingCurrent.welcomeDiscountTiersCreditedByPeriod : (canonical.welcomeDiscountTiersCreditedByPeriod && typeof canonical.welcomeDiscountTiersCreditedByPeriod === 'object' ? canonical.welcomeDiscountTiersCreditedByPeriod : undefined),
+                          createdAt: (existingCurrent.createdAt as string) || (canonical.createdAt as string) || new Date().toISOString()
+                        };
+                        registeredUsers.push(bootstrapUser);
+                        localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                        const userToSet = { ...bootstrapUser, role: 'admin' };
+                        localStorage.setItem('currentUser', JSON.stringify(userToSet));
+                        if (userToSet.profileImage && String(userToSet.profileImage).trim()) {
+                          localStorage.setItem('profileImage', String(userToSet.profileImage));
+                        } else {
+                          localStorage.removeItem('profileImage');
+                        }
+                        localStorage.setItem('isSignedIn', 'true');
+                        setIsSignedIn(true);
+                        window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+                        setSignInEmail('');
+                        setSignInPassword('');
+                        const fromAccountGuard = (location.state as { from?: string } | null)?.from;
+                        const returnTo = new URLSearchParams(location.search).get('returnTo');
+                        if (returnTo === 'checkout') {
+                          navigate('/checkout');
+                        } else if (returnTo && returnTo.startsWith('/admin')) {
+                          navigate(returnTo);
+                        } else if (fromAccountGuard && (fromAccountGuard.startsWith('/account') || fromAccountGuard.startsWith('/wishlist'))) {
+                          navigate(fromAccountGuard, { replace: true });
+                        } else {
+                          navigate('/account');
+                        }
+                        return;
                       } else {
-                        // No matching user: often means this browser has no account (e.g. created on another device)
+                        // No matching user: this browser has no account (e.g. created on another device)
                         const hasAnyUsers = registeredUsers.length > 0;
                         const hasMatchingEmail = registeredUsers.some((u: any) => normalizeEmail(u.email || '') === emailNorm);
                         const message = !hasAnyUsers
@@ -1524,35 +1678,6 @@ function SignInPage() {
                     </div>
                     <input
                       type="text"
-                      placeholder={facebookFocused || facebook ? "@USERNAME" : "@FACEBOOK"}
-                      value={facebook}
-                      onChange={(e) => {
-                        const formatted = formatSocialUsername(e.target.value);
-                        setFacebook(formatted);
-                      }}
-                      onFocus={() => setFacebookFocused(true)}
-                      onBlur={() => {
-                        setFacebookFocused(false);
-                        if (!facebook) {
-                          setFacebook('');
-                        }
-                      }}
-                      style={{
-                        width: '100%',
-                        height: '36px',
-                        padding: '8px',
-                        border: '1.3px solid #000000',
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '11px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                        boxSizing: 'border-box',
-                        borderRadius: '0',
-                        outline: 'none',
-                        marginTop: '16px'
-                      }}
-                    />
-                    <input
-                      type="text"
                       placeholder={instagramFocused || instagram ? "@USERNAME" : "@INSTAGRAM"}
                       value={instagram}
                       onChange={(e) => {
@@ -1576,7 +1701,8 @@ function SignInPage() {
                         backgroundColor: 'rgba(255, 255, 255, 0.8)',
                         boxSizing: 'border-box',
                         borderRadius: '0',
-                        outline: 'none'
+                        outline: 'none',
+                        marginTop: '16px'
                       }}
                     />
                     <input
@@ -1620,6 +1746,34 @@ function SignInPage() {
                         setTiktokFocused(false);
                         if (!tiktok) {
                           setTiktok('');
+                        }
+                      }}
+                      style={{
+                        width: '100%',
+                        height: '36px',
+                        padding: '8px',
+                        border: '1.3px solid #000000',
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '11px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                        boxSizing: 'border-box',
+                        borderRadius: '0',
+                        outline: 'none'
+                      }}
+                    />
+                    <input
+                      type="text"
+                      placeholder={facebookFocused || facebook ? "@USERNAME" : "@FACEBOOK"}
+                      value={facebook}
+                      onChange={(e) => {
+                        const formatted = formatSocialUsername(e.target.value);
+                        setFacebook(formatted);
+                      }}
+                      onFocus={() => setFacebookFocused(true)}
+                      onBlur={() => {
+                        setFacebookFocused(false);
+                        if (!facebook) {
+                          setFacebook('');
                         }
                       }}
                       style={{
@@ -1723,6 +1877,9 @@ function SignInPage() {
                       </svg>
                       <span>{socialLoading === 'google' ? 'SIGNING IN...' : 'SIGN UP WITH GOOGLE ACCOUNT'}</span>
                     </button>
+                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '8px 0 0 0', lineHeight: 1.3 }}>
+                      If Google shows &quot;Access blocked&quot; or the wrong account, add your email (e.g. yoteenz@gmail.com) as a <strong>Test user</strong> in Google Cloud Console → APIs &amp; Services → OAuth consent screen → Test users.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -1848,15 +2005,15 @@ function SignInPage() {
                         phoneNumber.trim()
                       );
                       
-                      // Create user account
+                      // Create user account (store normalized email/password so sign-in matches across browsers/autofill)
                       const newUser = {
                         id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                         firstName: firstName.trim(),
                         lastName: lastName.trim(),
-                        email: email.trim().toLowerCase(),
+                        email: normalizeEmail(email),
                         phoneNumber: phoneNumber.trim(),
                         birthday: birthday.trim(),
-                        password: password, // In production, this should be hashed
+                        password: normalizePassword(password), // In production, this should be hashed
                         facebook: facebook.trim(),
                         instagram: instagram.trim(),
                         youtube: youtube.trim(),
@@ -1923,7 +2080,7 @@ function SignInPage() {
                       
                       // Navigate to account page or back to the account route they tried to open
                       const fromAccountGuard = (location.state as { from?: string } | null)?.from;
-                      navigate(fromAccountGuard && fromAccountGuard.startsWith('/account') ? fromAccountGuard : '/account', { replace: true });
+                      navigate(fromAccountGuard && (fromAccountGuard.startsWith('/account') || fromAccountGuard.startsWith('/wishlist')) ? fromAccountGuard : '/account', { replace: true });
                     } catch (error) {
                       console.error('Error creating account:', error);
                       setValidationMessage('AN ERROR OCCURRED. PLEASE TRY AGAIN.');

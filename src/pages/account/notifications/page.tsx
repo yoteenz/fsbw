@@ -4,6 +4,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
+import { isAyoteenzAdminAccount } from '../../../utils/adminAuth';
 
 interface Notification {
   id: string;
@@ -66,8 +67,8 @@ function getVoucherExpirations(user: { voucherList?: string[]; voucherHistory?: 
   return result;
 }
 
-/** Build account-specific notifications. All text UPPERCASE. Header (title) = short summary. Body (message) = one descriptive sentence that summarizes the alert. */
-function getAccountNotifications(user: { email?: string; [k: string]: any } | null): Notification[] {
+/** Build account-specific notifications. All text UPPERCASE. Header (title) = short summary. Body (message) = one descriptive sentence that summarizes the alert. Exported so account page can compute badge (hasAlertsNotifications) from current list including mock voucher alerts. */
+export function getAccountNotifications(user: { email?: string; [k: string]: any } | null): Notification[] {
   if (!user?.email) return [];
   const email = (user.email || '').trim().toLowerCase();
   const today = (() => {
@@ -120,6 +121,30 @@ function getAccountNotifications(user: { email?: string; [k: string]: any } | nu
       isRead: false,
       icon: 'f'
     });
+  }
+
+  // Admin ayoteenz only: mock expiring voucher alerts for all voucher types × all time states (24h, 1 week, 1 month) for UI confirmation
+  if (isAyoteenzAdminAccount(user)) {
+    const mockVoucherTypes = ['COLOR', 'HAIRLINE', 'STYLING', 'FLEXIBLE CAP'];
+    const mockTimeStates: Array<{ label: string; key: string }> = [
+      { label: '24 HOURS', key: '24h' },
+      { label: '1 WEEK', key: '1w' },
+      { label: '1 MONTH', key: '1m' }
+    ];
+    for (const voucherType of mockVoucherTypes) {
+      for (const { label: timeLabel, key: timeKey } of mockTimeStates) {
+        notifs.push({
+          id: `${ACCOUNT_NOTIFICATION_PREFIX}voucher_expiring_mock_${voucherType.replace(/\s+/g, '_')}_${timeKey}`,
+          title: 'FREE VOUCHER EXPIRING SOON',
+          message: `YOUR ${voucherType} VOUCHER EXPIRES IN ${timeLabel}.`,
+          actionText: 'VIEW VOUCHERS',
+          actionRoute: '/account',
+          date: today,
+          isRead: false,
+          icon: 'f'
+        });
+      }
+    }
   }
 
   const balance = typeof user.giftCardBalance === 'number' ? user.giftCardBalance : 0;
@@ -295,8 +320,8 @@ function getAccountNotifications(user: { email?: string; [k: string]: any } | nu
   return notifs;
 }
 
-/** Merge stored notifications with account notifications (account ones upserted by id). Account alerts (tier, membership, etc.) stay in NEW until user archives via eye — do not use stored isRead for them so they are always shown in the new tab. */
-function mergeAccountNotifications(stored: Notification[], account: Notification[]): Notification[] {
+/** Merge stored notifications with account notifications (account ones upserted by id). Account alerts (tier, membership, etc.) stay in NEW until user archives via eye — do not use stored isRead for them so they are always shown in the new tab. Exported for account page badge logic. */
+export function mergeAccountNotifications(stored: Notification[], account: Notification[]): Notification[] {
   const byId = new Map<string, Notification>();
   stored.forEach(n => byId.set(n.id, n));
   account.forEach(n => {

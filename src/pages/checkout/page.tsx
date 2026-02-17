@@ -5,6 +5,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import { handlePaymentOption, PaymentProvider, PaymentData } from '../../utils/paymentHandlers';
 import { createRouteProtection, prepareRouteProtectionData } from '../../utils/routeProtection';
 import { getPointsMultiplier } from '../../constants/tiers';
+import { getEffectiveSubscriptionTier } from '../../utils/adminAuth';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 
@@ -955,18 +956,7 @@ function CheckoutPage() {
       const currentUser = localStorage.getItem('currentUser');
       if (currentUser) {
         const user = JSON.parse(currentUser);
-        // Check for subscriptionTier (3months, 6months, 12months) - for paid subscriptions
-        if (user.subscriptionTier) {
-          return user.subscriptionTier; // '3months', '6months', or '12months'
-        }
-        
-        // Check if user has PREMIUM membership but no subscriptionTier (admin accounts)
-        // Admin accounts with PREMIUM membership get 12months tier for shipping discounts
-        if (user.membershipType === 'PREMIUM' || user.membershipType === 'Premium') {
-          return '12months'; // Admin/premium accounts get 12 months premium benefits
-        }
-        
-        return null;
+        return getEffectiveSubscriptionTier(user);
       }
     } catch (e) {
       console.error('Error getting premium tier:', e);
@@ -974,7 +964,7 @@ function CheckoutPage() {
     return null;
   };
 
-  /** Points multiplier from tier (Red 1.25x, Black 1.5x) + 12mo premium (2x stacked). Used for earning display and pointsEarned. */
+  /** Points multiplier: 12mo premium = 2x (takes precedence); else Red 1.25x, Black 1.5x, Standard 1x. No stacking. */
   const getPointsMultiplierForUser = (): number => {
     if (!isSignedIn) return 1;
     try {
@@ -2324,22 +2314,8 @@ function CheckoutPage() {
                                 const basePoints = (isSubscriptionUpgrade || isOnlyDigitalProducts ? 0 : Math.round(pointsEligibleAmount));
                                 const multiplier = getPointsMultiplierForUser();
                                 const actualPoints = Math.round(basePoints * multiplier);
-                                const pointsText = multiplier > 1
-                                  ? `${basePoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} × ${multiplier} = ${actualPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
-                                  : actualPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
                                 const punctuation = actualPoints === 0 ? '.' : '!';
-                                let multiplierText = '';
-                                try {
-                                  const currentUser = localStorage.getItem('currentUser');
-                                  if (currentUser && multiplier > 1) {
-                                    const user = JSON.parse(currentUser);
-                                    const tier = (user.currentTierName || user.tier || (user.email ? localStorage.getItem(`lastKnownTier_${(user.email || '').trim().toLowerCase()}`) : null) || '').toString().toUpperCase();
-                                    const subscriptionTier = getPremiumTier();
-                                    const { label } = getPointsMultiplier(tier || null, subscriptionTier);
-                                    if (label) multiplierText = ` (${label})`;
-                                  }
-                                } catch (_) {}
-                                return <>YOU'RE EARNING <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{pointsText}</span> LOYALTY POINTS WITH THIS ORDER{multiplierText}{punctuation}</>;
+                                return <>YOU'RE EARNING <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{actualPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span> LOYALTY POINTS WITH THIS ORDER{punctuation}</>;
                               })()}
                             </>
                           ) : (

@@ -4,7 +4,8 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../constants/tiers';
 import { getTotalReviewCount, hasNewReviewApproved } from '../../constants/reviews';
-import { isAyoteenzAdminAccount, isMockDataAccount } from '../../utils/adminAuth';
+import { isAdminEmail, isAyoteenzAdminAccount, isMockDataAccount } from '../../utils/adminAuth';
+import { getAccountNotifications, mergeAccountNotifications } from './notifications/page';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 
@@ -625,6 +626,47 @@ function AccountPage() {
     setShowResetConfirm(false);
   };
 
+  /** Export current admin profile as JSON so it can be saved as public/admin-profile.json for cross-browser sync (e.g. Safari → Chrome). */
+  const handleExportAdminProfile = () => {
+    if (!userData || !isAdminEmail(userData.email || '')) return;
+    const profile: Record<string, unknown> = {
+      id: userData.id,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      email: userData.email,
+      phoneNumber: userData.phoneNumber,
+      birthday: userData.birthday,
+      facebook: userData.facebook,
+      instagram: userData.instagram,
+      youtube: userData.youtube,
+      tiktok: userData.tiktok,
+      twitter: userData.twitter,
+      profileImage: userData.profileImage || localStorage.getItem('profileImage'),
+      membershipType: userData.membershipType,
+      subscriptionTier: userData.subscriptionTier,
+      defaultAddress: userData.defaultAddress,
+      shippingAddress: userData.shippingAddress,
+      savedAddresses: userData.savedAddresses,
+      referralCode: userData.referralCode,
+      giftCardBalance: userData.giftCardBalance,
+      hasMadeFirstPurchase: userData.hasMadeFirstPurchase,
+      loyaltyPoints: userData.loyaltyPoints,
+      unlockedDiscounts: userData.unlockedDiscounts,
+      voucherList: userData.voucherList,
+      voucherHistory: userData.voucherHistory,
+      digitalCashHistory: userData.digitalCashHistory,
+      welcomeDiscountTiersCreditedByPeriod: userData.welcomeDiscountTiersCreditedByPeriod,
+      createdAt: userData.createdAt
+    };
+    const blob = new Blob([JSON.stringify(profile, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'admin-profile.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   // Helper function to get current 6-month period
   const getCurrentPeriod = (): { start: Date; end: Date; periodName: string } => {
     const now = new Date();
@@ -854,20 +896,23 @@ function AccountPage() {
     }
   };
 
+  // ALERTS card badge: show when there are unread notifications. Uses merged list (stored + getAccountNotifications)
+  // so account-driven alerts (voucher expiring, tier, membership, mock voucher alerts for admin, etc.) all fire the badge.
+  // Badge clears when user visits the alerts page (alertsPageViewed_${email}); legacy hasUnreadNotifications fallback supported.
   const hasAlertsNotifications = (): boolean => {
     try {
-      const email = (userData?.email || '').trim().toLowerCase();
+      if (!userData?.email) return false;
+      const email = (userData.email || '').trim().toLowerCase();
       if (email && localStorage.getItem(`alertsPageViewed_${email}`) === 'true') {
         return false;
       }
       const key = userData?.authProvider && userData?.email ? `notifications_${userData.email}` : 'notifications';
-      const notificationsStr = localStorage.getItem(key);
-      if (notificationsStr) {
-        const notifications = JSON.parse(notificationsStr);
-        return Array.isArray(notifications) && notifications.some((n: any) => !n.isRead);
-      }
-      const hasUnreadNotifications = localStorage.getItem('hasUnreadNotifications') === 'true';
-      return hasUnreadNotifications;
+      const storedStr = localStorage.getItem(key);
+      const stored: any[] = storedStr && Array.isArray(JSON.parse(storedStr)) ? JSON.parse(storedStr) : [];
+      const account = getAccountNotifications(userData);
+      const merged = mergeAccountNotifications(stored, account);
+      if (merged.some((n: any) => !n.isRead)) return true;
+      return localStorage.getItem('hasUnreadNotifications') === 'true';
     } catch (e) {
       return false;
     }
@@ -1992,6 +2037,27 @@ function AccountPage() {
                               <span style={{ color: '#EB1C24' }}>ADMIN: </span>
                               <span style={{ color: '#000000' }}>FOUNDER</span>
                             </p>
+                          )}
+                          {userData && isAdminEmail(userData.email || '') && (
+                            <button
+                              type="button"
+                              onClick={handleExportAdminProfile}
+                              style={{
+                                fontFamily: '"Futura PT Medium"',
+                                fontSize: '9px',
+                                margin: '4px 0 0 0',
+                                textTransform: 'uppercase',
+                                fontWeight: '500',
+                                color: '#808080',
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer',
+                                padding: 0,
+                                textDecoration: 'underline'
+                              }}
+                            >
+                              Export admin profile (for Chrome/Safari sync)
+                            </button>
                           )}
                         </>
                       );

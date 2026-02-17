@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { getPointsMultiplier } from '../../../constants/tiers';
+import { getEffectiveSubscriptionTier } from '../../../utils/adminAuth';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import summaryIcon from '../../../assets/icons/summary-icon.svg?url';
@@ -338,9 +339,9 @@ function CheckoutConfirmPage() {
           const currentUser = localStorage.getItem('currentUser');
           const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
           if (isSignedIn && currentUser) {
-            const user = JSON.parse(currentUser);
+            const user = JSON.parse(currentUser as string);
             const tier: string | null = (user.currentTierName || user.tier || (user.email ? localStorage.getItem(`lastKnownTier_${(user.email || '').trim().toLowerCase()}`) : null) || '').toString().toUpperCase() || null;
-            const subTier: string | null = user.subscriptionTier || (user.membershipType === 'PREMIUM' || user.membershipType === 'Premium' ? '12months' : null) || null;
+            const subTier: string | null = getEffectiveSubscriptionTier(user);
             const res = getPointsMultiplier(tier, subTier);
             multiplier = res.multiplier;
           }
@@ -668,18 +669,15 @@ function CheckoutConfirmPage() {
     setShowMobileMenu(false);
   };
 
-  // Check if user is a premium member
+  // Check if user is a premium member (uses effective subscription tier for admin override)
   const isPremiumMember = (): boolean => {
     if (!isSignedIn) return false;
     try {
       const currentUser = localStorage.getItem('currentUser');
       if (currentUser) {
         const user = JSON.parse(currentUser);
-        // Check if user has subscriptionTier (premium subscription)
-        if (user?.subscriptionTier) {
-          return true;
-        }
-        // Check if user has premium tier (RED, GOLD, BLACK)
+        const effectiveTier = getEffectiveSubscriptionTier(user);
+        if (effectiveTier) return true;
         if (user?.tier) {
           const tier = user.tier.toUpperCase();
           return tier === 'RED' || tier === 'GOLD' || tier === 'BLACK';
@@ -1594,7 +1592,7 @@ function CheckoutConfirmPage() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                        YOU'RE EARNING <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{(orderData.pointsEarned ?? accountUser?.loyaltyPoints ?? orderData.orderTotal ?? 1290).toLocaleString()}</span> POINTS{(orderData.pointsEarned ?? accountUser?.loyaltyPoints ?? orderData.orderTotal ?? 1290) === 0 ? '.' : '!'}
+                        YOU'RE EARNING <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{(orderData.pointsEarned ?? accountUser?.loyaltyPoints ?? orderData.orderTotal ?? 1290).toLocaleString()}</span> LOYALTY POINTS WITH THIS ORDER{(orderData.pointsEarned ?? accountUser?.loyaltyPoints ?? orderData.orderTotal ?? 1290) === 0 ? '.' : '!'}
                       </p>
                       <span style={{ 
                         fontFamily: (() => {
