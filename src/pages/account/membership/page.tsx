@@ -11,7 +11,7 @@ import pointsHistoryIcon from '../../../assets/icons/points-history.svg?url';
 import membershipIcon from '../../../assets/icons/membership-icon.svg?url';
 import moreWaysIcon from '../../../assets/icons/more-ways.svg?url';
 import additionalFeaturesIcon from '../../../assets/icons/additional-features.svg?url';
-import { isAdminKateenaAccount, isAyoteenzAdminAccount } from '../../../utils/adminAuth';
+import { isAyoteenzAdminAccount, isMockDataAccount } from '../../../utils/adminAuth';
 
 const BRAND_GRAY = '#808080';
 const CHART_BORDER = '0.8px solid #000';
@@ -101,8 +101,8 @@ function MembershipPage() {
 
       let deliveredOrders: any[] = [];
 
-      if (isAdminKateenaAccount(userData)) {
-        // Use mock data for Kateena (same as affiliate page)
+      if (isMockDataAccount(userData)) {
+        // Use mock data for admin account only (same as affiliate page)
         // Mock orders with approved content
         deliveredOrders = [
           {
@@ -323,8 +323,8 @@ function MembershipPage() {
         nextTierName: 'RED' as const
       };
     }
-    if (isAdminKateenaAccount(userData)) {
-      // Admin: show RED tier with 700 pts; threshold 2,000 to remain Red → "EARN 1,300 MORE TO REMAIN RED TIER!"
+    if (isMockDataAccount(userData)) {
+      // Admin (mock-data) account: show RED tier with 700 pts; threshold 2,000 to remain Red → "EARN 1,300 MORE TO REMAIN RED TIER!"
       const adminCurrentSpend = 700;
       const adminBarMax = SPEND_TIER_THRESHOLDS.RED; // 2000 = remain Red
       return {
@@ -399,6 +399,7 @@ function MembershipPage() {
   });
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [showCancelConfirmModal, setShowCancelConfirmModal] = useState(false);
+  const [showCancelUpgradeModal, setShowCancelUpgradeModal] = useState(false);
   const [showLoyaltyRewards, setShowLoyaltyRewards] = useState(false);
   const [showBenefitsModal, setShowBenefitsModal] = useState(false);
 
@@ -570,7 +571,7 @@ function MembershipPage() {
   // Check if user has existing premium subscription
   // Includes users with subscriptionTier OR the one admin Kateena account (by email) with PREMIUM
   const hasPremiumSubscription = (userData?.subscriptionTier && userData?.membershipType === 'PREMIUM') || 
-                                  (isAdminKateenaAccount(userData) && (userData?.membershipType === 'PREMIUM' || userData?.membershipType === 'Premium'));
+                                  (isMockDataAccount(userData) && (userData?.membershipType === 'PREMIUM' || userData?.membershipType === 'Premium'));
   /** Only ayoteenz admin sees tier names (Black, Red, Silver) in their tier color for easier testing. */
   const showTierColorsForAdmin = isAyoteenzAdminAccount(userData);
   /** Ayoteenz only: override displayed tier on membership status card to toggle through SILVER / RED / BLACK. */
@@ -625,7 +626,7 @@ function MembershipPage() {
     // Pre-select current subscription tier
     let currentTier = userData?.subscriptionTier;
     // For admin Kateena account only (by email), set to 12months
-    if (isAdminKateenaAccount(userData) && !currentTier) {
+    if (isMockDataAccount(userData) && !currentTier) {
       currentTier = '12months';
     }
     setSelectedTier(currentTier || null);
@@ -674,7 +675,7 @@ function MembershipPage() {
   // Get subscription end date and format it
   const getSubscriptionEndDate = () => {
     // Check if this is the admin Kateena account (12 months from 1/4/2026)
-    if (isAdminKateenaAccount(userData)) {
+    if (isMockDataAccount(userData)) {
       const startDate = new Date('2026-01-04');
       const endDate = new Date(startDate);
       endDate.setMonth(endDate.getMonth() + 12);
@@ -698,7 +699,7 @@ function MembershipPage() {
   // Get subscription tier name (3, 6, or 12 MONTHS)
   const getSubscriptionTierName = () => {
     // Admin Kateena account is 12 months premium
-    if (isAdminKateenaAccount(userData)) return '12 MONTH';
+    if (isMockDataAccount(userData)) return '12 MONTH';
     
     if (!userData?.subscriptionTier) return '';
     const tier = userData.subscriptionTier;
@@ -1259,14 +1260,16 @@ function MembershipPage() {
                           PREMIUM MEMBERSHIP
                         </h2>
                         <img
-                          src="/assets/close-icon.svg"
-                          alt="Close"
+                          src={additionalFeaturesIcon}
+                          alt="Unlock Premium Rewards"
                           onClick={handleClosePremiumView}
                           style={{
-                            width: '16px',
-                            height: '16px',
-                            cursor: 'pointer',
-                            filter: 'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)'
+                            width: '20px',
+                            height: '20px',
+                            flexShrink: 0,
+                            objectFit: 'contain',
+                            marginTop: '-2px',
+                            cursor: 'pointer'
                           }}
                         />
                       </div>
@@ -1298,7 +1301,7 @@ function MembershipPage() {
                                   textTransform: 'uppercase',
                                   minWidth: '58px',
                                   maxWidth: '58px'
-                                }}>BASIC</th>
+                                }}>STANDARD</th>
                                 <th style={{ 
                                   fontFamily: '"Futura PT Medium"', 
                                   padding: '4px 4px 10px', 
@@ -1487,6 +1490,31 @@ function MembershipPage() {
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
                                   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                  </div>
+                                </td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                  </div>
+                                </td>
+                                <td style={{ borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <span style={{ display: 'inline-block', marginLeft: '12px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                      <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                    </div>
+                                  </span>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>LIVE ORDER TRACKING</span></td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
+                                  </div>
+                                </td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
                                   </div>
                                 </td>
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
@@ -1705,7 +1733,7 @@ function MembershipPage() {
                     <div style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', lineHeight: 1.5, flex: 1, overflowY: 'auto', minHeight: 0, textTransform: 'uppercase' }}>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '0 0 6px 0', textTransform: 'uppercase' }}>INTRO BENEFITS (ONE-TIME PER ACCOUNT)</p>
                       <p style={{ margin: '0 0 8px 0' }}>Once you reach a tier and collect its intro benefits, they do not repeat.</p>
-                      <p style={{ margin: '4px 0 2px 0', paddingLeft: '8px', borderLeft: '3px solid #808080' }}><span style={{ fontFamily: '"Futura PT Medium"', color: BRAND_GRAY }}>SILVER:</span> Welcome discount, 50 loyalty points</p>
+                      <p style={{ margin: '4px 0 2px 0', paddingLeft: '8px', borderLeft: '3px solid #808080' }}><span style={{ fontFamily: '"Futura PT Medium"', color: BRAND_GRAY }}>SILVER:</span> Welcome discount, 250 loyalty points</p>
                       <p style={{ margin: '4px 0 2px 0', paddingLeft: '8px', borderLeft: '3px solid #EB1C24' }}><span style={{ fontFamily: '"Futura PT Book"', color: '#EB1C24' }}>RED:</span> Welcome discount, 1x Flexible Cap, 1x Hairline Voucher, 500 loyalty points</p>
                       <p style={{ margin: '4px 0 8px 0', paddingLeft: '8px', borderLeft: '3px solid #000' }}><span style={{ fontFamily: '"Futura PT Medium"', color: '#000000' }}>BLACK:</span> Welcome discount, 1x Color Voucher, 1x Styling Voucher, 1,000 loyalty points</p>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 6px 0', textTransform: 'uppercase' }}>RECURRING PERKS (EVERY 6-MONTH CYCLE)</p>
@@ -1874,7 +1902,11 @@ fontFamily: '"Futura PT Book"',
                   </div>
                 </div>
 
-                {/* Points History - Card */}
+                {/* Points History - Card (only when there are points transactions / redeemed) */}
+                        {(() => {
+                          const pointsHistoryRows = getPointsHistoryRows();
+                          if (pointsHistoryRows.length === 0) return null;
+                          return (
                         <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
                           <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <p
@@ -1898,22 +1930,17 @@ fontFamily: '"Futura PT Book"',
                             <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right' }}>POINTS</span>
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            {(() => {
-                              const pointsHistoryRows = getPointsHistoryRows();
-                              return pointsHistoryRows.length === 0 ? (
-                                <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '6px 0', textTransform: 'uppercase', textAlign: 'center' }}>
-                                  YOU HAVEN'T REDEEMED ANY POINTS YET.
-                                </p>
-                              ) : pointsHistoryRows.map((row, i) => (
+                            {pointsHistoryRows.map((row, i) => (
                               <div key={i} style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase' }}>
                                 <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left', color: '#000000', fontFamily: '"Futura PT Book"' }}>{formatPointsHistoryDateDisplay(row.date)}</span>
                                 <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center', color: '#808080', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.discount}</span>
                                 <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right', color: row.points.startsWith('+') ? '#16a34a' : '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.points}</span>
                               </div>
-                            ));
-                            })()}
+                            ))}
                           </div>
                         </div>
+                          );
+                        })()}
 
                 {/* Card 2: MEMBERSHIP STATUS */}
                 <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
@@ -2035,9 +2062,9 @@ fontFamily: '"Futura PT Book"',
                                       const t = displayTier;
                                       const welcomeAmount = getWelcomeDiscountAmount(t);
                                       if (t === 'PENDING') return <>REACH SILVER TO UNLOCK TIER BENEFITS!</>;
-                                      if (t === 'BLACK') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 1X COLOR VOUCHER <br />1X STYLING VOUCHER, 1,000 LOYALTY POINTS</>;
-                                      if (t === 'RED') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 1X FLEXIBLE CAP <br />1X HAIRLINE VOUCHER, 500 LOYALTY POINTS</>;
-                                      return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: WELCOME DISCOUNT, 50 LOYALTY POINTS</>;
+                                      if (t === 'BLACK') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: DIGITAL CASH, 1X COLOR VOUCHER <br />1X STYLING VOUCHER, 1,000 LOYALTY POINTS</>;
+                                      if (t === 'RED') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: DIGITAL CASH, 1X FLEXIBLE CAP <br />1X HAIRLINE VOUCHER, 500 LOYALTY POINTS</>;
+                                      return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: DIGITAL CASH, 250 LOYALTY POINTS</>;
                                     })()}
                                   </p>
                                   <div style={{ marginBottom: '24px' }}>
@@ -2270,7 +2297,7 @@ fontFamily: '"Futura PT Book"',
                         {hasPremiumSubscription ? (
                     <>
                       {/* CHANGE / CONFIRM SUBSCRIPTION Button - extra top spacing when chart is open (CONFIRM SUBSCRIPTION) */}
-                      <div className="px-0 md:px-0" style={{ marginTop: showPremiumView ? '12px' : '-2px', marginBottom: '10px', transform: showPremiumView ? 'none' : 'translateY(-2px)' }}>
+                      <div className="px-0 md:px-0" style={{ marginTop: showPremiumView ? '12px' : '-2px', marginBottom: showPremiumView ? '8px' : '10px', transform: showPremiumView ? 'none' : 'translateY(-2px)' }}>
                 <button
                           onClick={showPremiumView ? handleUpgradeButtonClick : handleChangeSubscription}
                   className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
@@ -2282,9 +2309,27 @@ fontFamily: '"Futura PT Book"',
                   }}
                   type="button"
                 >
-                          {showPremiumView ? 'CONFIRM SUBSCRIPTION' : ((userData?.subscriptionTier === '12months' || (isAdminKateenaAccount(userData) && !userData?.subscriptionTier)) ? 'CHANGE SUBSCRIPTION' : 'UPGRADE SUBSCRIPTION')}
+                          {showPremiumView ? 'CONFIRM SUBSCRIPTION' : ((userData?.subscriptionTier === '12months' || (isMockDataAccount(userData) && !userData?.subscriptionTier)) ? 'CHANGE SUBSCRIPTION' : 'UPGRADE SUBSCRIPTION')}
                         </button>
                       </div>
+                      {/* CANCEL Button - below Confirm when subscription upgrade chart is open; opens confirmation popup */}
+                      {showPremiumView && (
+                        <div className="px-0 md:px-0" style={{ marginBottom: '10px' }}>
+                          <button
+                            onClick={() => setShowCancelUpgradeModal(true)}
+                            className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                            style={{ 
+                              borderWidth: '1.3px', 
+                              color: '#EB1C24',
+                              fontFamily: '"Futura PT Medium"',
+                              backgroundColor: '#FFFFFF'
+                            }}
+                            type="button"
+                          >
+                            CANCEL
+                          </button>
+                        </div>
+                      )}
                       {/* CANCEL SUBSCRIPTION Button - Hidden when chart is open */}
                       {!showPremiumView && (
                         <div className="px-0 md:px-0" style={{ marginTop: '0px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
@@ -2305,21 +2350,40 @@ fontFamily: '"Futura PT Book"',
             )}
                     </>
                   ) : (
-                    <div className="px-0 md:px-0" style={{ marginTop: showPremiumView ? '12px' : '-2px', marginBottom: '20px', transform: showPremiumView ? 'none' : 'translateY(-2px)' }}>
-                      <button
-                        onClick={handleUpgradeButtonClick}
-                        className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                        style={{ 
-                          borderWidth: '1.3px', 
-                          color: '#EB1C24',
-                          fontFamily: '"Futura PT Medium"',
-                          backgroundColor: '#FFFFFF'
-                        }}
-                        type="button"
-                      >
-                        {showPremiumView ? 'CONFIRM SUBSCRIPTION' : 'UPGRADE SUBSCRIPTION'}
-                      </button>
-          </div>
+                    <>
+                      <div className="px-0 md:px-0" style={{ marginTop: showPremiumView ? '12px' : '-2px', marginBottom: showPremiumView ? '8px' : '20px', transform: showPremiumView ? 'none' : 'translateY(-2px)' }}>
+                        <button
+                          onClick={handleUpgradeButtonClick}
+                          className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                          style={{ 
+                            borderWidth: '1.3px', 
+                            color: '#EB1C24',
+                            fontFamily: '"Futura PT Medium"',
+                            backgroundColor: '#FFFFFF'
+                          }}
+                          type="button"
+                        >
+                          {showPremiumView ? 'CONFIRM SUBSCRIPTION' : 'UPGRADE SUBSCRIPTION'}
+                        </button>
+                      </div>
+                      {showPremiumView && (
+                        <div className="px-0 md:px-0" style={{ marginBottom: '20px' }}>
+                          <button
+                            onClick={() => setShowCancelUpgradeModal(true)}
+                            className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                            style={{ 
+                              borderWidth: '1.3px', 
+                              color: '#EB1C24',
+                              fontFamily: '"Futura PT Medium"',
+                              backgroundColor: '#FFFFFF'
+                            }}
+                            type="button"
+                          >
+                            CANCEL
+                          </button>
+                        </div>
+                      )}
+                    </>
                   )}
                       </>
               )}
@@ -2350,6 +2414,22 @@ fontFamily: '"Futura PT Book"',
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="cancel-subscription"
+      />
+
+      {/* Cancel upgrade (close premium view) confirmation modal */}
+      <ConfirmationModal
+        isOpen={showCancelUpgradeModal}
+        onClose={() => setShowCancelUpgradeModal(false)}
+        onConfirm={() => {
+          setShowCancelUpgradeModal(false);
+          handleClosePremiumView();
+        }}
+        title="CANCEL UPGRADE?"
+        message="YOU WILL NOT BE CHARGED. RETURN TO MEMBERSHIP WITHOUT UPGRADING."
+        confirmText="CONFIRM"
+        cancelText="CANCEL"
+        messageTextTransform="uppercase"
+        dataAttribute="cancel-upgrade"
       />
 
     </div>

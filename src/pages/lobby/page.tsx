@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from '../../components/base/LoadingScreen';
 import ConfirmationModal from '../../components/ConfirmationModal';
-import { isAdminKateenaAccount } from '../../utils/adminAuth';
+import { isMockDataAccount } from '../../utils/adminAuth';
 
 // Lobby Component
 const LobbyPage: React.FC = () => {
@@ -501,8 +501,8 @@ const LobbyApp: React.FC = () => {
         const user = JSON.parse(currentUser);
         
         // Check if this is the admin Kateena account (by email) with PREMIUM membership
-        if (isAdminKateenaAccount(user) && (user.membershipType === 'PREMIUM' || user.membershipType === 'Premium')) {
-          return true; // Kateena admin account with premium membership should have access
+        if (isMockDataAccount(user) && (user.membershipType === 'PREMIUM' || user.membershipType === 'Premium')) {
+          return true; // Admin account with premium membership should have access
         }
         
         // Check if user has PREMIUM membership type

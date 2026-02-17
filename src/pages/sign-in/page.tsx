@@ -5,6 +5,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { isAdminEmail, isPreviewEnvironment } from '../../utils/adminAuth';
+import { normalizeEmail, normalizePassword } from '../../utils/credentialNormalize';
 import {
   getReviewsLastSeenShopCountKey,
   getReviewsLastSeenToolCountKey,
@@ -61,7 +62,6 @@ function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [signUpAttempted, setSignUpAttempted] = useState(false);
-  const [signInPasswordFocused, setSignInPasswordFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
   const [facebook, setFacebook] = useState('');
@@ -874,6 +874,7 @@ function SignInPage() {
                       </label>
                       <input
                         type="email"
+                        autoComplete="email username"
                         value={signInEmail}
                         onChange={(e) => setSignInEmail(e.target.value)}
                         style={{
@@ -908,16 +909,15 @@ function SignInPage() {
                       <div style={{ position: 'relative' }}>
                         <input
                           type={showSignInPassword ? "text" : "password"}
+                          autoComplete="current-password"
                           value={signInPassword}
                           onChange={(e) => setSignInPassword(e.target.value)}
-                          onFocus={() => setSignInPasswordFocused(true)}
-                          onBlur={() => setSignInPasswordFocused(false)}
                           className="password-field"
                           style={{
                             width: '100%',
                             height: '36px',
                             padding: '8px',
-                            paddingRight: signInPasswordFocused ? '8px' : '120px',
+                            paddingRight: '120px',
                             border: '1.3px solid #000000',
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
@@ -928,25 +928,24 @@ function SignInPage() {
                             textTransform: 'none'
                           }}
                         />
-                        {!signInPasswordFocused && signInPassword && (
-                          <span
-                            onClick={() => setShowSignInPassword(!showSignInPassword)}
-                            style={{
-                              position: 'absolute',
-                              right: '8px',
-                              top: '50%',
-                              transform: 'translateY(-50%)',
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '9px',
-                              color: '#EB1C24',
-                              cursor: 'pointer',
-                              textTransform: 'uppercase',
-                              userSelect: 'none'
-                            }}
-                          >
-                            {showSignInPassword ? 'HIDE PASSWORD' : 'SHOW PASSWORD'}
-                          </span>
-                        )}
+                        <span
+                          onClick={() => setShowSignInPassword(!showSignInPassword)}
+                          style={{
+                            position: 'absolute',
+                            right: '8px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '9px',
+                            color: '#EB1C24',
+                            cursor: 'pointer',
+                            textTransform: 'uppercase',
+                            userSelect: 'none',
+                            pointerEvents: 'auto'
+                          }}
+                        >
+                          {showSignInPassword ? 'HIDE PASSWORD' : 'SHOW PASSWORD'}
+                        </span>
                       </div>
                     </div>
 
@@ -1025,14 +1024,16 @@ function SignInPage() {
                       setShowValidationModal(true);
                       return;
                     }
-                    // Validate credentials against registered users
+                    // Validate credentials: normalize so Chrome/Safari/autofill behave the same (invisible chars, trim, NFC)
                     try {
                       const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-                      const user = registeredUsers.find((u: any) => 
-                        u.email.toLowerCase() === signInEmail.toLowerCase().trim() && 
-                        u.password === signInPassword.trim()
+                      const emailNorm = normalizeEmail(signInEmail);
+                      const passwordNorm = normalizePassword(signInPassword);
+                      const user = registeredUsers.find((u: any) =>
+                        normalizeEmail(u.email || '') === emailNorm &&
+                        normalizePassword(u.password || '') === passwordNorm
                       );
-                      
+
                       if (user) {
                         // Authentication successful
                         // Create a copy to avoid mutating the original
@@ -1077,7 +1078,8 @@ function SignInPage() {
                         setSignInEmail('');
                         setSignInPassword('');
                         
-                        // Determine where to route based on URL parameter or default to account
+                        // Determine where to route: state.from (account guard), returnTo param, or default to account
+                        const fromAccountGuard = (location.state as { from?: string } | null)?.from;
                         const searchParams = new URLSearchParams(location.search);
                         const returnTo = searchParams.get('returnTo');
                         
@@ -1085,12 +1087,21 @@ function SignInPage() {
                           navigate('/checkout');
                         } else if (returnTo && returnTo.startsWith('/admin') && (userToSet.role === 'admin' || isPreviewEnvironment())) {
                           navigate(returnTo);
+                        } else if (fromAccountGuard && fromAccountGuard.startsWith('/account')) {
+                          navigate(fromAccountGuard, { replace: true });
                         } else {
                           navigate('/account');
                         }
                       } else {
-                        // Invalid credentials
-                        setValidationMessage('INVALID EMAIL OR PASSWORD.');
+                        // No matching user: often means this browser has no account (e.g. created on another device)
+                        const hasAnyUsers = registeredUsers.length > 0;
+                        const hasMatchingEmail = registeredUsers.some((u: any) => normalizeEmail(u.email || '') === emailNorm);
+                        const message = !hasAnyUsers
+                          ? 'NO ACCOUNT IN THIS BROWSER. CREATE AN ACCOUNT ON THIS DEVICE FIRST.'
+                          : !hasMatchingEmail
+                            ? 'NO ACCOUNT FOR THIS EMAIL IN THIS BROWSER. CREATE AN ACCOUNT HERE WITH THE SAME EMAIL TO USE THIS DEVICE.'
+                            : 'INVALID EMAIL OR PASSWORD.';
+                        setValidationMessage(message);
                         setShowValidationModal(true);
                       }
                     } catch (error) {
@@ -1910,8 +1921,9 @@ function SignInPage() {
                       setSignUpAttempted(false);
                       setEmailError('');
                       
-                      // Navigate to account page
-                      navigate('/account');
+                      // Navigate to account page or back to the account route they tried to open
+                      const fromAccountGuard = (location.state as { from?: string } | null)?.from;
+                      navigate(fromAccountGuard && fromAccountGuard.startsWith('/account') ? fromAccountGuard : '/account', { replace: true });
                     } catch (error) {
                       console.error('Error creating account:', error);
                       setValidationMessage('AN ERROR OCCURRED. PLEASE TRY AGAIN.');

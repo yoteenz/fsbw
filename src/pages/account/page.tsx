@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../constants/tiers';
 import { getTotalReviewCount, hasNewReviewApproved } from '../../constants/reviews';
-import { isAdminKateenaAccount, isAyoteenzAdminAccount } from '../../utils/adminAuth';
+import { isAyoteenzAdminAccount, isMockDataAccount } from '../../utils/adminAuth';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 
@@ -385,9 +385,9 @@ function AccountPage() {
     }
   }, [showMobileMenu, location.pathname]);
 
-  // Initialize admin Kateena account only (by email) with proper gift card balance and unlocked discounts
+  // Initialize admin (mock-data) account only with proper gift card balance and unlocked discounts – no test data for non-admin accounts
   useEffect(() => {
-    if (userData && isAdminKateenaAccount(userData)) {
+    if (userData && isMockDataAccount(userData)) {
         try {
           const currentUser = localStorage.getItem('currentUser');
           if (currentUser) {
@@ -431,7 +431,7 @@ function AccountPage() {
             }
           }
         } catch (e) {
-          console.error('Error initializing Kateena account:', e);
+          console.error('Error initializing admin mock-data account:', e);
         }
     }
   }, [userData]);
@@ -742,8 +742,7 @@ function AccountPage() {
     if (userData?.authProvider) {
       // fall through to real calculation below
     } else {
-      const isKristinWatson = userData?.email?.toLowerCase() === 'bruno203@gmail.com';
-      if (isKristinWatson || isAdminKateenaAccount(userData)) {
+      if (isMockDataAccount(userData)) {
         return null;
       }
     }
@@ -1950,7 +1949,8 @@ function AccountPage() {
                         margin: '0',
                         textTransform: 'uppercase',
                         fontWeight: '500',
-                        transform: 'translateY(-2px)'
+                        transform: 'translateY(-2px)',
+                        textDecoration: 'none'
                       }}
                     >
                       {userData ? (userData.email || '').toUpperCase() : (isSignedIn ? '' : 'BRUNO203@GMAIL.COM')}
@@ -1990,7 +1990,7 @@ function AccountPage() {
                               }}
                             >
                               <span style={{ color: '#EB1C24' }}>ADMIN: </span>
-                              <span style={{ color: '#000000' }}>OWNER</span>
+                              <span style={{ color: '#000000' }}>FOUNDER</span>
                             </p>
                           )}
                         </>
@@ -2470,7 +2470,7 @@ function AccountPage() {
                   if (!isNaN(d.getTime())) return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                   return dateStr;
                 };
-                const displayHistory = history.length === 0
+                const displayHistory = history.length === 0 && isMockDataAccount(userData)
                   ? MOCK_DIGITAL_CASH_HISTORY
                   : history;
                 if (displayHistory.length === 0) {
@@ -2574,7 +2574,7 @@ function AccountPage() {
                   if (!isNaN(d.getTime())) return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                   return dateStr;
                 };
-                const displayHistory = history.length === 0 ? MOCK_VOUCHER_HISTORY : history;
+                const displayHistory = history.length === 0 && isMockDataAccount(userData) ? MOCK_VOUCHER_HISTORY : history;
                 if (displayHistory.length === 0) {
                   return (
                     <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: '#808080', margin: '6px 0', textTransform: 'uppercase', textAlign: 'center' }}>

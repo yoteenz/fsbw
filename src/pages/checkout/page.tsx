@@ -4,6 +4,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { handlePaymentOption, PaymentProvider, PaymentData } from '../../utils/paymentHandlers';
 import { createRouteProtection, prepareRouteProtectionData } from '../../utils/routeProtection';
+import { getPointsMultiplier } from '../../constants/tiers';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 
@@ -973,6 +974,22 @@ function CheckoutPage() {
     return null;
   };
 
+  /** Points multiplier from tier (Red 1.25x, Black 1.5x) + 12mo premium (2x stacked). Used for earning display and pointsEarned. */
+  const getPointsMultiplierForUser = (): number => {
+    if (!isSignedIn) return 1;
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      if (!currentUser) return 1;
+      const user = JSON.parse(currentUser);
+      const tier = (user.currentTierName || user.tier || (user.email ? localStorage.getItem(`lastKnownTier_${(user.email || '').trim().toLowerCase()}`) : null) || '').toString().toUpperCase();
+      const subscriptionTier = getPremiumTier();
+      const { multiplier } = getPointsMultiplier(tier || null, subscriptionTier);
+      return multiplier;
+    } catch (_) {
+      return 1;
+    }
+  };
+
   // Calculate available shipping options based on address (shows original prices, discounts applied in order summary)
   const calculateShippingOptions = () => {
     if (!selectedCountry || !zipCode) return [];
@@ -1474,9 +1491,9 @@ function CheckoutPage() {
           orderConfirmations[orderNumber] = confirmationNumber;
           localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
           
-          // Calculate points earned
+          // Calculate points earned (tier + 12mo premium multiplier)
           const basePoints = isSignedIn ? Math.round(pointsEligibleAmount) : 0;
-          const multiplier = 1;
+          const multiplier = getPointsMultiplierForUser();
           const pointsEarned = Math.round(basePoints * multiplier);
           
           // Store order data for return from payment provider
@@ -1538,9 +1555,9 @@ function CheckoutPage() {
           orderConfirmations[orderNumber] = confirmationNumber;
           localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
           
-          // Calculate points earned (if signed in) - exclude gift cards and digital items
+          // Calculate points earned (if signed in) - exclude gift cards and digital items; tier + 12mo premium multiplier
           const basePoints = isSignedIn ? Math.round(pointsEligibleAmount) : 0;
-          const multiplier = 1;
+          const multiplier = getPointsMultiplierForUser();
           const pointsEarned = Math.round(basePoints * multiplier);
           
           // Create Route protection if package protection is selected (non-blocking)
@@ -2305,14 +2322,23 @@ function CheckoutPage() {
                             <>
                               {(() => {
                                 const basePoints = (isSubscriptionUpgrade || isOnlyDigitalProducts ? 0 : Math.round(pointsEligibleAmount));
-                                const multiplier = 1;
-                                const multiplierText = '';
-                                
+                                const multiplier = getPointsMultiplierForUser();
                                 const actualPoints = Math.round(basePoints * multiplier);
-                                const pointsText = multiplier > 1 
+                                const pointsText = multiplier > 1
                                   ? `${basePoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} × ${multiplier} = ${actualPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
                                   : actualPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
                                 const punctuation = actualPoints === 0 ? '.' : '!';
+                                let multiplierText = '';
+                                try {
+                                  const currentUser = localStorage.getItem('currentUser');
+                                  if (currentUser && multiplier > 1) {
+                                    const user = JSON.parse(currentUser);
+                                    const tier = (user.currentTierName || user.tier || (user.email ? localStorage.getItem(`lastKnownTier_${(user.email || '').trim().toLowerCase()}`) : null) || '').toString().toUpperCase();
+                                    const subscriptionTier = getPremiumTier();
+                                    const { label } = getPointsMultiplier(tier || null, subscriptionTier);
+                                    if (label) multiplierText = ` (${label})`;
+                                  }
+                                } catch (_) {}
                                 return <>YOU'RE EARNING <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{pointsText}</span> LOYALTY POINTS WITH THIS ORDER{multiplierText}{punctuation}</>;
                               })()}
                             </>
@@ -4877,10 +4903,9 @@ function CheckoutPage() {
                     return;
                   }
                   
-                  // Calculate points earned (if signed in) - exclude gift cards and digital items
+                  // Calculate points earned (if signed in) - exclude gift cards and digital items; tier + 12mo premium multiplier
                   const basePoints = isSignedIn ? Math.round(pointsEligibleAmount) : 0;
-                  const multiplier = 1;
-                  
+                  const multiplier = getPointsMultiplierForUser();
                   const pointsEarned = Math.round(basePoints * multiplier);
                   
                   // Get and increment order number
@@ -5198,7 +5223,8 @@ function CheckoutPage() {
                         total: subtotal,
                         subtotal: orderAmount,
                         items: cartItems.reduce((sum: number, i: any) => sum + (i.quantity || 1), 0),
-                        placedAt: Date.now()
+                        placedAt: Date.now(),
+                        pointsEarned
                       };
                       activeOrders.push(newOrder);
                       localStorage.setItem(userOrdersKey, JSON.stringify({ ...ordersData, activeOrders }));

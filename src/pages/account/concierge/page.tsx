@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
-import { getCurrentUser, isAdminKateenaAccount } from '../../../utils/adminAuth';
+import { getCurrentUser, isMockDataAccount } from '../../../utils/adminAuth';
 
 // Add pulsating animation style (recording indicator style)
 const pulsateStyle = `
@@ -116,8 +116,8 @@ function ConciergePage() {
   // @ts-ignore - intentionally unused, may be used in future
   const _eligibleForBirthdayGift = isEligibleForBirthdayGift();
   
-  // Admin Kateena account only (by email) – gets mock/test orders
-  const isKateenaArmstrong = () => isAdminKateenaAccount(getCurrentUser());
+  // Admin (mock-data) account only – gets test orders; all others start with no orders
+  const isMockOrdersAccount = () => isMockDataAccount(getCurrentUser());
   
   // Order tracking state
   const [selectedOrderId, setSelectedOrderId] = useState<string>('');
@@ -142,15 +142,15 @@ function ConciergePage() {
         const userOrdersKey = `userOrders_${userData.email}`;
         let storedOrders = localStorage.getItem(userOrdersKey);
         
-        // If no orders exist: only seed test orders for Kateena (admin/testing). New/other accounts start empty.
+        // If no orders exist: only seed test orders for admin (mock-data) account. New/other accounts start empty.
         if (!storedOrders) {
-          if (!isKateenaArmstrong()) {
+          if (!isMockOrdersAccount()) {
             const emptyOrders = { activeOrders: [], pastOrders: [] };
             localStorage.setItem(userOrdersKey, JSON.stringify(emptyOrders));
             setActiveOrders([]);
             return;
           }
-          // Create order date 13 days ago to show 20% progress in CONSTRUCTING UNIT stage (Kateena test only)
+          // Create order date 13 days ago to show 20% progress in CONSTRUCTING UNIT stage (admin test only)
           // Constructing starts at day 5 (after sourcing ends: 2 + 3 = 5), takes 28 days. To be at 20%: 5 + (28 * 0.2) = 10.6 days ? 11 days
           const constructingOrderDate = new Date();
           constructingOrderDate.setDate(constructingOrderDate.getDate() - 13);
@@ -620,7 +620,7 @@ function ConciergePage() {
           } else if (!selectedOrderId) {
             // Auto-select order 999 (completed) if it exists and user is Kateena admin, otherwise first active order
             // Only auto-load order 999 for Kateena admin account (for mock order testing)
-            if (isKateenaArmstrong()) {
+            if (isMockOrdersAccount()) {
               // First, try to find order 999 in past orders (delivered/completed)
               const order999 = past.find((order: any) => order.orderNumber === 'ORDER #999');
               if (order999) {

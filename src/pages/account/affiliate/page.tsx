@@ -7,7 +7,7 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import moreWaysIcon from '../../../assets/icons/more-ways.svg?url';
 import affiliateIcon from '../../../assets/icons/affiliate-icon.svg?url';
-import { isAdminKateenaAccount } from '../../../utils/adminAuth';
+import { isMockDataAccount } from '../../../utils/adminAuth';
 
 interface Order {
   id: string;
@@ -99,11 +99,8 @@ function AffiliatePage() {
     }
   };
 
-  // Helper function to check if current user is Kristin Watson (mock account) – OAuth users never use mock
-  const isKristinWatson = () => {
-    if (!userData || userData.authProvider) return false;
-    return userData.email?.toLowerCase() === 'bruno203@gmail.com';
-  };
+  // Only the admin (mock-data) account gets test orders; all others use real data only
+  const isMockOrdersAccount = () => userData && !userData.authProvider && isMockDataAccount(userData);
 
   // Helper function to get a date X days ago
   const getDateDaysAgo = (daysAgo: number): string => {
@@ -144,8 +141,8 @@ function AffiliatePage() {
     }
   };
 
-  // Mock delivered orders for Kristin Watson (one per product)
-  const kristinMockDeliveredOrders: Order[] = [
+  // Legacy mock delivered orders (kept for reference; only admin mock-data account uses kateenaMock* now)
+  const kristinMockDeliveredOrders: Order[] = [ // eslint-disable-line @typescript-eslint/no-unused-vars
     {
       id: 'kristin-delivered-1',
       orderNumber: 'ORDER #250',
@@ -346,10 +343,8 @@ function AffiliatePage() {
       return [];
     }
 
-    // Return mock orders for Kristin Watson or Kateena Armstrong
-    if (isKristinWatson()) {
-      return kristinMockDeliveredOrders;
-    } else if (isAdminKateenaAccount(userData)) {
+    // Return mock orders only for admin (mock-data) account
+    if (isMockOrdersAccount()) {
       return kateenaMockDeliveredOrders;
     }
 
@@ -420,7 +415,8 @@ function AffiliatePage() {
       return { ...storedContent };
     }
     
-    // Mock data for admin account (Kateena Armstrong) orders only - merge with stored content
+    // Mock data for admin (mock-data) account orders only - merge with stored content
+    const useMockContent = currentUser && !currentUser.authProvider && isMockDataAccount(currentUser);
     const mockContent: { [orderId: string]: { photos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; videos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; socials: Array<{ id: string; platform: string; link: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }> } } = {};
     
     // Mock data for NOIR order (kateena-delivered-1) - has some approved content
@@ -737,9 +733,8 @@ function AffiliatePage() {
       ]
     };
     
-    // Merge stored content with mock content - stored content takes precedence
-    // This ensures user-submitted content is preserved while keeping mock data for demo
-    const mergedContent = { ...mockContent };
+    // Merge stored content with mock content (admin account only) - stored content takes precedence
+    const mergedContent = useMockContent ? { ...mockContent } : {};
     
     // Overwrite with stored content (user submissions take priority)
     Object.keys(storedContent).forEach(orderId => {

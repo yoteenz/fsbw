@@ -18,6 +18,54 @@ interface Notification {
 
 const ACCOUNT_NOTIFICATION_PREFIX = 'acc_';
 
+/** Vouchers are valid for 6 months once added. */
+const VOUCHER_VALIDITY_MONTHS = 6;
+
+/** Parse M-D-YYYY to Date; return null if invalid. */
+function parseVoucherDate(dateStr: string): Date | null {
+  const parts = (dateStr || '').trim().split('-').map(Number);
+  if (parts.length !== 3) return null;
+  const [month, day, year] = parts;
+  const d = new Date(year, month - 1, day);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+/** Get expiration date (added date + 6 months). */
+function getVoucherExpiration(addedDate: Date): Date {
+  const exp = new Date(addedDate);
+  exp.setMonth(exp.getMonth() + VOUCHER_VALIDITY_MONTHS);
+  return exp;
+}
+
+/** Get list of { type, expiresAt } for each voucher the user has, using voucherList + voucherHistory (credits only; 6 months from credit date). */
+function getVoucherExpirations(user: { voucherList?: string[]; voucherHistory?: Array<{ date: string; transaction: string; amount: number }> }): Array<{ type: string; expiresAt: Date }> {
+  const list = Array.isArray(user.voucherList) ? user.voucherList : [];
+  const history = Array.isArray(user.voucherHistory) ? user.voucherHistory : [];
+  if (list.length === 0) return [];
+
+  const countByType: Record<string, number> = {};
+  for (const v of list) {
+    const key = (v || '').trim().toUpperCase();
+    if (!key) continue;
+    countByType[key] = (countByType[key] || 0) + 1;
+  }
+
+  const result: Array<{ type: string; expiresAt: Date }> = [];
+  for (const type of Object.keys(countByType)) {
+    const n = countByType[type];
+    const credits = history
+      .filter((h) => (h.transaction || '').trim().toUpperCase() === type && h.amount > 0)
+      .map((h) => parseVoucherDate(h.date))
+      .filter((d): d is Date => d !== null)
+      .sort((a, b) => b.getTime() - a.getTime())
+      .slice(0, n);
+    for (const added of credits) {
+      result.push({ type, expiresAt: getVoucherExpiration(added) });
+    }
+  }
+  return result;
+}
+
 /** Build account-specific notifications. All text UPPERCASE. Header (title) = short summary. Body (message) = one descriptive sentence that summarizes the alert. */
 function getAccountNotifications(user: { email?: string; [k: string]: any } | null): Notification[] {
   if (!user?.email) return [];
@@ -41,6 +89,38 @@ function getAccountNotifications(user: { email?: string; [k: string]: any } | nu
     isRead: false,
     icon: 'f'
   });
+
+  const now = Date.now();
+  const oneDayMs = 24 * 60 * 60 * 1000;
+  const oneWeekMs = 7 * oneDayMs;
+  const oneMonthMs = 30 * oneDayMs;
+  const expirations = getVoucherExpirations(user);
+  for (const { type, expiresAt } of expirations) {
+    const expMs = expiresAt.getTime();
+    if (expMs <= now) continue;
+    const msLeft = expMs - now;
+    const typeLabel = type.replace(/^1X\s+/i, '').trim() || type;
+    let timeLabel: string;
+    if (msLeft <= oneDayMs) {
+      timeLabel = '24 HOURS';
+    } else if (msLeft <= oneWeekMs) {
+      timeLabel = '1 WEEK';
+    } else if (msLeft <= oneMonthMs) {
+      timeLabel = '1 MONTH';
+    } else {
+      continue;
+    }
+    notifs.push({
+      id: `${ACCOUNT_NOTIFICATION_PREFIX}voucher_expiring_${typeLabel}_${expMs}`,
+      title: 'FREE VOUCHER EXPIRING SOON',
+      message: `YOUR ${typeLabel.replace(/\s+/g, ' ')} VOUCHER EXPIRES IN ${timeLabel}.`,
+      actionText: 'VIEW VOUCHERS',
+      actionRoute: '/account',
+      date: today,
+      isRead: false,
+      icon: 'f'
+    });
+  }
 
   const balance = typeof user.giftCardBalance === 'number' ? user.giftCardBalance : 0;
   notifs.push({

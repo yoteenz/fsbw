@@ -40,6 +40,13 @@ export function isAyoteenzAdminAccount(user: { email?: string } | null): boolean
   return (user.email || '').trim().toLowerCase() === AYOTEENZ_ADMIN_EMAIL;
 }
 
+/** True if this account should receive test/mock data (points, history, seed orders, etc.). Only the ayoteenz account when it has the admin tag (in admin list); OAuth/non-admin accounts (e.g. yoteenz@gmail.com) get no mock data. */
+export function isMockDataAccount(user: { email?: string; role?: string } | null): boolean {
+  if (!user?.email) return false;
+  if (!isAyoteenzAdminAccount(user)) return false;
+  return user.role === 'admin' || isAdminEmail(user.email || '');
+}
+
 const allowedEmails = ADMIN_EMAILS.length > 0 ? ADMIN_EMAILS : DEFAULT_ADMIN_EMAILS;
 
 /** Preview-only admin emails (env REACT_APP_PREVIEW_ADMIN_EMAILS). Only get admin on preview/local, never on Vercel production. */

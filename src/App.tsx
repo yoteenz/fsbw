@@ -14,6 +14,7 @@ import AddOnsPage from './pages/build-a-wig/addons/page';
 import { lazy, Suspense } from 'react';
 import LoadingScreen from './components/base/LoadingScreen';
 import AdminGuard from './components/AdminGuard';
+import AccountRouteGuard from './components/AccountRouteGuard';
 
 // Helper to wrap lazy imports with retry logic and logging
 const lazyWithLogging = (importFn: () => Promise<any>, componentName: string) => {
@@ -600,69 +601,95 @@ function App() {
           </Suspense>
         } />
         <Route path="/account" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <AccountPage />
-          </Suspense>
+          <AccountRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <AccountPage />
+            </Suspense>
+          </AccountRouteGuard>
         } />
         <Route path="/account/concierge" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <ConciergePage />
-          </Suspense>
+          <AccountRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <ConciergePage />
+            </Suspense>
+          </AccountRouteGuard>
         } />
         <Route path="/account/rewards" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <MembershipPage />
-          </Suspense>
+          <AccountRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <MembershipPage />
+            </Suspense>
+          </AccountRouteGuard>
         } />
         <Route path="/account/referrals" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <ReferralsPage />
-          </Suspense>
+          <AccountRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <ReferralsPage />
+            </Suspense>
+          </AccountRouteGuard>
         } />
         <Route path="/account/affiliate" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <AffiliatePage />
-          </Suspense>
+          <AccountRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <AffiliatePage />
+            </Suspense>
+          </AccountRouteGuard>
         } />
         <Route path="/account/alerts" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <NotificationsPage />
-          </Suspense>
+          <AccountRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <NotificationsPage />
+            </Suspense>
+          </AccountRouteGuard>
         } />
         <Route path="/account/orders/:orderId/review" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <LeaveReviewOrderPage />
-          </Suspense>
+          <AccountRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <LeaveReviewOrderPage />
+            </Suspense>
+          </AccountRouteGuard>
         } />
         <Route path="/account/reviews" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <ReviewsPage />
-          </Suspense>
+          <AccountRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <ReviewsPage />
+            </Suspense>
+          </AccountRouteGuard>
         } />
         <Route path="/account/shipping" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <ShippingPage />
-          </Suspense>
+          <AccountRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <ShippingPage />
+            </Suspense>
+          </AccountRouteGuard>
         } />
         <Route path="/account/payment" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <PaymentPage />
-          </Suspense>
+          <AccountRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <PaymentPage />
+            </Suspense>
+          </AccountRouteGuard>
         } />
         <Route path="/account/settings" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <SettingsPage />
-          </Suspense>
+          <AccountRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <SettingsPage />
+            </Suspense>
+          </AccountRouteGuard>
         } />
         <Route path="/account/orders" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <OrdersPage />
-          </Suspense>
+          <AccountRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <OrdersPage />
+            </Suspense>
+          </AccountRouteGuard>
         } />
         <Route path="/account/load-card" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <LoadCardPage />
-          </Suspense>
+          <AccountRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <LoadCardPage />
+            </Suspense>
+          </AccountRouteGuard>
         } />
         <Route path="/sign-in" element={
           <Suspense fallback={<LoadingScreen />}>

@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
-import { isAdminKateenaAccount } from '../../utils/adminAuth';
+import { isMockDataAccount } from '../../utils/adminAuth';
 import summaryIcon from '../../assets/icons/summary-icon.svg?url';
 
 interface OrderLineItem {
@@ -84,16 +84,8 @@ function OrdersPage() {
     return null;
   });
   
-  // Helper function to check if current user is Kristin Watson (mock account)
-  const isKristinWatson = () => {
-    const user = currentUser;
-    const signedIn = typeof window !== 'undefined' ? localStorage.getItem('isSignedIn') === 'true' : false;
-    // Show mock orders only for Kristin Watson (bruno203@gmail.com) or when not signed in (default mock state)
-    return user?.email?.toLowerCase() === 'bruno203@gmail.com' || (!user && !signedIn);
-  };
-
-  // Admin Kateena account only (by email) – gets mock orders
-  const isKateenaArmstrong = () => isAdminKateenaAccount(currentUser);
+  // Only the admin (mock-data) account gets test orders; all other accounts see real data only (empty if none)
+  const isMockOrdersAccount = () => isMockDataAccount(currentUser);
 
   // Currency state - load from localStorage on mount
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -281,8 +273,8 @@ function OrdersPage() {
     }
   };
 
-  // Mock order data (only for Kristin Watson)
-  const mockActiveOrders: Order[] = [
+  // Legacy mock order data (kept for reference; only admin mock-data account uses kateenaMock* now)
+  const mockActiveOrders: Order[] = [ // eslint-disable-line @typescript-eslint/no-unused-vars
     {
       id: 'test-order-3',
       orderNumber: 'ORDER #777',
@@ -447,7 +439,7 @@ function OrdersPage() {
     }
   ];
 
-  const mockPastOrders: Order[] = [
+  const mockPastOrders: Order[] = [ // eslint-disable-line @typescript-eslint/no-unused-vars
     {
       id: 'test-order-1',
       orderNumber: 'ORDER #888',
@@ -785,21 +777,15 @@ function OrdersPage() {
     }
   ];
 
-  // Get orders based on user - show mock orders for Kristin Watson or Kateena Armstrong, otherwise show user's actual orders
+  // Get orders: mock only for admin (mock-data) account; all others get real orders (empty if none)
   const getUserOrdersData = () => {
-    if (isKristinWatson()) {
-      return {
-        activeOrders: mockActiveOrders,
-        pastOrders: mockPastOrders
-      };
-    } else if (isKateenaArmstrong()) {
+    if (isMockOrdersAccount()) {
       return {
         activeOrders: kateenaMockActiveOrders,
         pastOrders: kateenaMockPastOrders
       };
-    } else {
-      return getUserOrders();
     }
+    return getUserOrders();
   };
 
   const [activeOrders, setActiveOrders] = useState<Order[]>(() => {
@@ -830,13 +816,10 @@ function OrdersPage() {
         const parsedUser = user ? JSON.parse(user) : null;
         setCurrentUser(parsedUser);
 
-        // Compute orders from parsedUser so we don't rely on stale currentUser state
-        const isKateena = parsedUser ? isAdminKateenaAccount(parsedUser) : false;
-        const isKristin = parsedUser?.email?.toLowerCase() === 'bruno203@gmail.com';
+        // Compute orders: mock only for admin (mock-data) account
+        const useMock = parsedUser ? isMockDataAccount(parsedUser) : false;
         let ordersData: { activeOrders: Order[]; pastOrders: Order[] };
-        if (isKristin) {
-          ordersData = { activeOrders: mockActiveOrders, pastOrders: mockPastOrders };
-        } else if (isKateena) {
+        if (useMock) {
           ordersData = { activeOrders: kateenaMockActiveOrders, pastOrders: kateenaMockPastOrders };
         } else {
           ordersData = parsedUser?.email
@@ -857,8 +840,8 @@ function OrdersPage() {
         setActiveOrders(ordersData.activeOrders);
         setPastOrders(ordersData.pastOrders);
 
-        // Keep localStorage in sync for mock users so account profile card count matches orders page
-        if (parsedUser?.email && (isKateena || isKristin)) {
+        // Keep localStorage in sync for mock-data account so account profile card count matches orders page
+        if (parsedUser?.email && useMock) {
           const key = `userOrders_${parsedUser.email}`;
           localStorage.setItem(key, JSON.stringify({ activeOrders: ordersData.activeOrders, pastOrders: ordersData.pastOrders }));
           window.dispatchEvent(new CustomEvent('ordersUpdated'));

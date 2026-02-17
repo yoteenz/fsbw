@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
+import { getPointsMultiplier } from '../../../constants/tiers';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import summaryIcon from '../../../assets/icons/summary-icon.svg?url';
@@ -332,7 +333,19 @@ function CheckoutConfirmPage() {
             }, 0)
           : 1290; // Default points-eligible amount if cart is empty
         
-        pointsEarned = Math.round(pointsEligibleAmount);
+        let multiplier = 1;
+        try {
+          const currentUser = localStorage.getItem('currentUser');
+          const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
+          if (isSignedIn && currentUser) {
+            const user = JSON.parse(currentUser);
+            const tier: string | null = (user.currentTierName || user.tier || (user.email ? localStorage.getItem(`lastKnownTier_${(user.email || '').trim().toLowerCase()}`) : null) || '').toString().toUpperCase() || null;
+            const subTier: string | null = user.subscriptionTier || (user.membershipType === 'PREMIUM' || user.membershipType === 'Premium' ? '12months' : null) || null;
+            const res = getPointsMultiplier(tier, subTier);
+            multiplier = res.multiplier;
+          }
+        } catch (_) {}
+        pointsEarned = Math.round(pointsEligibleAmount * multiplier);
       }
       
       const taxesProcessing = taxableAmount * 0.10;
