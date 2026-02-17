@@ -11,7 +11,7 @@ import pointsHistoryIcon from '../../../assets/icons/points-history.svg?url';
 import membershipIcon from '../../../assets/icons/membership-icon.svg?url';
 import moreWaysIcon from '../../../assets/icons/more-ways.svg?url';
 import additionalFeaturesIcon from '../../../assets/icons/additional-features.svg?url';
-import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier, ADMIN_SUBSCRIPTION_OVERRIDE_KEY } from '../../../utils/adminAuth';
+import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier, getEffectiveTierName, ADMIN_SUBSCRIPTION_OVERRIDE_KEY, ADMIN_TIER_OVERRIDE_KEY } from '../../../utils/adminAuth';
 
 const BRAND_GRAY = '#808080';
 const CHART_BORDER = '0.8px solid #000';
@@ -605,8 +605,12 @@ function MembershipPage() {
                                   (isMockDataAccount(userData) && (userData?.membershipType === 'PREMIUM' || userData?.membershipType === 'Premium'));
   /** Only ayoteenz admin sees tier names (Black, Red, Silver) in their tier color for easier testing. */
   const showTierColorsForAdmin = isAyoteenzAdminAccount(userData);
-  /** Ayoteenz only: override displayed tier on membership status card to toggle through SILVER / RED / BLACK. */
-  const [adminTierOverride, setAdminTierOverride] = useState<'SILVER' | 'RED' | 'BLACK' | null>(null);
+  /** Ayoteenz only: override displayed tier on membership status card to toggle through SILVER / RED / BLACK; persisted in localStorage so checkout uses it. */
+  const [adminTierOverride, setAdminTierOverride] = useState<'SILVER' | 'RED' | 'BLACK' | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const v = (localStorage.getItem(ADMIN_TIER_OVERRIDE_KEY) || '').trim().toUpperCase();
+    return v === 'SILVER' || v === 'RED' || v === 'BLACK' ? v : null;
+  });
   /** Ayoteenz only: override subscription (Standard / 3 / 6 / 12 month) for INCLUDED IN YOUR MEMBERSHIP and site-wide; persisted in localStorage. */
   const [adminSubscriptionOverride, setAdminSubscriptionOverride] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null;
@@ -2000,13 +2004,19 @@ fontFamily: '"Futura PT Book"',
                     {showTierColorsForAdmin && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
                         {(['RED', 'SILVER', 'BLACK'] as const).map((tier) => {
-                          const isActive = adminTierOverride === tier;
+                          const effective = adminTierOverride ?? (getEffectiveTierName(userData) as 'SILVER' | 'RED' | 'BLACK' | null);
+                          const isActive = effective === tier;
                           const color = tier === 'RED' ? '#EB1C24' : tier === 'BLACK' ? '#000000' : BRAND_GRAY;
                           return (
                             <button
                               key={tier}
                               type="button"
-                              onClick={() => setAdminTierOverride(isActive ? null : tier)}
+                              onClick={() => {
+                                const next = isActive ? null : tier;
+                                setAdminTierOverride(next);
+                                if (next) localStorage.setItem(ADMIN_TIER_OVERRIDE_KEY, next);
+                                else localStorage.removeItem(ADMIN_TIER_OVERRIDE_KEY);
+                              }}
                               style={{
                                 fontFamily: '"Futura PT Medium"',
                                 fontSize: '10px',

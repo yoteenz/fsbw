@@ -95,7 +95,7 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
   const oneDayMs = 24 * 60 * 60 * 1000;
   const oneWeekMs = 7 * oneDayMs;
   const oneMonthMs = 30 * oneDayMs;
-  const expirations = getVoucherExpirations(user);
+  const expirations = getVoucherExpirations(user as { voucherList?: string[]; voucherHistory?: Array<{ date: string; transaction: string; amount: number }> });
   for (const { type, expiresAt } of expirations) {
     const expMs = expiresAt.getTime();
     if (expMs <= now) continue;

@@ -38,6 +38,14 @@ const sectionHeaderTextStyle: React.CSSProperties = {
   textTransform: 'uppercase'
 };
 
+/** Helper text below OAuth/settings inputs – matches reset password text styling & placement */
+const oauthHelperStyle: React.CSSProperties = {
+  fontFamily: '"Futura PT Book"',
+  fontSize: '10px',
+  color: '#000',
+  margin: '4px 0 0 0'
+};
+
 function SettingsPage() {
   const navigate = useNavigate();
   const [cartCount, setCartCount] = useState(() => {
@@ -129,6 +137,8 @@ function SettingsPage() {
   const [resetNewPassword, setResetNewPassword] = useState('');
   const [resetConfirmPassword, setResetConfirmPassword] = useState('');
   const [resetPasswordError, setResetPasswordError] = useState('');
+  const [oauthPassword, setOauthPassword] = useState('');
+  const [oauthConfirmPassword, setOauthConfirmPassword] = useState('');
   const [showDeleteAccountConfirm, setShowDeleteAccountConfirm] = useState(false);
 
   const socialPrefixes: Record<string, string> = {
@@ -203,10 +213,14 @@ function SettingsPage() {
     try {
       const email = (userData?.email || '').trim().toLowerCase();
       if (!email || !isOAuthUser || oauthNameBirthdayConfirmed) return;
+      const pwd = oauthPassword.trim();
+      const pwdConfirm = oauthConfirmPassword.trim();
+      if (!pwd || pwd !== pwdConfirm) return;
       const payload = {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         birthday: birthday.trim(),
+        password: pwd,
         nameAndBirthdayConfirmed: true as const
       };
       const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
@@ -223,6 +237,8 @@ function SettingsPage() {
         }
       }
       setUserData((prev: any) => (prev ? { ...prev, ...payload } : prev));
+      setOauthPassword('');
+      setOauthConfirmPassword('');
     } catch (_) {}
   };
 
@@ -680,7 +696,7 @@ function SettingsPage() {
                     <button
                       type="button"
                       onClick={confirmOAuthNameAndBirthday}
-                      disabled={!firstName.trim() || !lastName.trim() || !birthday.trim() || birthday.replace(/\D/g, '').length !== 8}
+                      disabled={!firstName.trim() || !lastName.trim() || !birthday.trim() || birthday.replace(/\D/g, '').length !== 8 || !oauthPassword.trim() || oauthPassword.trim() !== oauthConfirmPassword.trim()}
                       style={{
                         fontFamily: '"Futura PT Medium"',
                         fontSize: '10px',
@@ -688,8 +704,8 @@ function SettingsPage() {
                         backgroundColor: '#EB1C24',
                         border: '1.3px solid #000',
                         padding: '8px 12px',
-                        cursor: (firstName.trim() && lastName.trim() && birthday.replace(/\D/g, '').length === 8) ? 'pointer' : 'not-allowed',
-                        opacity: (firstName.trim() && lastName.trim() && birthday.replace(/\D/g, '').length === 8) ? 1 : 0.6,
+                        cursor: (firstName.trim() && lastName.trim() && birthday.replace(/\D/g, '').length === 8 && oauthPassword.trim() && oauthPassword.trim() === oauthConfirmPassword.trim()) ? 'pointer' : 'not-allowed',
+                        opacity: (firstName.trim() && lastName.trim() && birthday.replace(/\D/g, '').length === 8 && oauthPassword.trim() && oauthPassword.trim() === oauthConfirmPassword.trim()) ? 1 : 0.6,
                         textTransform: 'uppercase'
                       }}
                     >
@@ -699,45 +715,78 @@ function SettingsPage() {
                 )}
                 <div style={{ marginBottom: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div>
-                    <label style={labelStyle}>FIRST NAME</label>
+                    <label style={{ ...labelStyle, marginBottom: '4px' }}>FIRST NAME</label>
                     <input
                       type="text"
                       value={firstName}
                       readOnly={!isOAuthUser || nameLocked}
-                      placeholder="FIRST NAME"
+                      placeholder={isOAuthUser && !nameLocked ? 'please confirm your first name' : 'FIRST NAME'}
                       className="settings-personal-input"
                       onChange={isOAuthUser && !nameLocked ? (e) => setFirstName(e.target.value.toUpperCase()) : undefined}
                       onBlur={isOAuthUser && !nameLocked ? () => persistPersonalInfo({ firstName: firstName.trim(), lastName: lastName.trim() }) : undefined}
-                      style={{ ...inputBaseStyle, fontFamily: '"Futura PT Demi"', color: '#808080', textTransform: 'uppercase' }}
+                      style={{ ...inputBaseStyle, marginBottom: 0 }}
                     />
+                    {isOAuthUser && !nameLocked && <p style={oauthHelperStyle}>confirm your first name</p>}
                   </div>
                   <div>
-                    <label style={labelStyle}>LAST NAME</label>
+                    <label style={{ ...labelStyle, marginBottom: '4px' }}>LAST NAME</label>
                     <input
                       type="text"
                       value={lastName}
                       readOnly={!isOAuthUser || nameLocked}
-                      placeholder="LAST NAME"
+                      placeholder={isOAuthUser && !nameLocked ? 'please confirm your last name' : 'LAST NAME'}
                       className="settings-personal-input"
                       onChange={isOAuthUser && !nameLocked ? (e) => setLastName(e.target.value.toUpperCase()) : undefined}
                       onBlur={isOAuthUser && !nameLocked ? () => persistPersonalInfo({ firstName: firstName.trim(), lastName: lastName.trim() }) : undefined}
-                      style={{ ...inputBaseStyle, fontFamily: '"Futura PT Demi"', color: '#808080', textTransform: 'uppercase' }}
+                      style={{ ...inputBaseStyle, marginBottom: 0 }}
                     />
+                    {isOAuthUser && !nameLocked && <p style={oauthHelperStyle}>confirm your last name</p>}
                   </div>
                 </div>
                 <div style={{ marginBottom: '20px', width: 'calc((100% - 12px) / 2)' }}>
-                  <label style={labelStyle}>BIRTHDAY</label>
+                  <label style={{ ...labelStyle, marginBottom: '4px' }}>BIRTHDAY</label>
                   <input
                     type="text"
                     value={birthday}
                     readOnly={!isOAuthUser || birthdayLocked}
-                    placeholder="MM/DD/YYYY"
+                    placeholder={isOAuthUser && !birthdayLocked ? 'please confirm your birthday' : 'MM/DD/YYYY'}
                     className="settings-personal-input"
                     onChange={isOAuthUser && !birthdayLocked ? (e) => setBirthday(formatBirthday(e.target.value)) : undefined}
                     onBlur={isOAuthUser && !birthdayLocked ? () => persistPersonalInfo({ birthday }) : undefined}
-                    style={{ ...inputBaseStyle, fontFamily: '"Futura PT Demi"', color: '#808080' }}
+                    style={{ ...inputBaseStyle, marginBottom: 0 }}
                   />
+                  {isOAuthUser && !birthdayLocked && <p style={oauthHelperStyle}>confirm your birthday</p>}
                 </div>
+                {isOAuthUser && !oauthNameBirthdayConfirmed && (
+                  <>
+                    <div style={{ marginBottom: '12px' }}>
+                      <label style={{ ...labelStyle, marginBottom: '4px' }}>PASSWORD</label>
+                      <input
+                        type="password"
+                        value={oauthPassword}
+                        onChange={(e) => setOauthPassword(e.target.value)}
+                        placeholder="please create your account password"
+                        className="settings-personal-input"
+                        style={{ ...inputBaseStyle }}
+                        autoComplete="new-password"
+                      />
+                      <p style={oauthHelperStyle}>create your account password</p>
+                    </div>
+                    <div style={{ marginBottom: '20px' }}>
+                      <label style={{ ...labelStyle, marginBottom: '4px' }}>CONFIRM PASSWORD</label>
+                      <input
+                        type="password"
+                        value={oauthConfirmPassword}
+                        onChange={(e) => setOauthConfirmPassword(e.target.value)}
+                        placeholder="please create your account password"
+                        className="settings-personal-input"
+                        style={{ ...inputBaseStyle }}
+                        autoComplete="new-password"
+                      />
+                      <p style={oauthHelperStyle}>confirm your password</p>
+                    </div>
+                  </>
+                )}
                 <div style={{ marginBottom: '20px' }}>
                   <label style={labelStyle}>EMAIL</label>
                   <input

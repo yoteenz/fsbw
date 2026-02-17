@@ -50,9 +50,11 @@ export async function signInWithPasskey(apiBase: string): Promise<unknown> {
   if (!res.ok) throw new Error(`WebAuthn challenge failed: ${res.status}`);
   const requestJson = await res.json();
 
-  const options = PublicKeyCredential.parseRequestOptionsFromJSON?.(
-    requestJson as PublicKeyCredentialRequestOptionsJSON
-  );
+  const PKC = PublicKeyCredential as unknown as {
+    parseRequestOptionsFromJSON?: (json: PublicKeyCredentialRequestOptionsJSON) => unknown;
+    signalUnknownCredential?: (opts: { rpId: string; credentialId: string }) => Promise<void>;
+  };
+  const options = PKC.parseRequestOptionsFromJSON?.(requestJson as PublicKeyCredentialRequestOptionsJSON);
   if (!options) throw new Error('Invalid WebAuthn options from server');
 
   const credential = (await navigator.credentials.get({
@@ -62,7 +64,8 @@ export async function signInWithPasskey(apiBase: string): Promise<unknown> {
 
   if (!credential) throw new Error('No passkey selected');
 
-  const body = JSON.stringify(credential.toJSON());
+  const credWithToJSON = credential as PublicKeyCredential & { toJSON?: () => unknown };
+  const body = JSON.stringify(typeof credWithToJSON.toJSON === 'function' ? credWithToJSON.toJSON() : { id: credential.id, response: credential.response });
   const verifyRes = await fetch(verifyUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -70,10 +73,10 @@ export async function signInWithPasskey(apiBase: string): Promise<unknown> {
     body,
   });
 
-  if (verifyRes.status === 404 && PublicKeyCredential.signalUnknownCredential) {
+  if (verifyRes.status === 404 && PKC.signalUnknownCredential) {
     try {
       const rpId = requestJson.rpId || window.location.hostname;
-      await PublicKeyCredential.signalUnknownCredential({
+      await PKC.signalUnknownCredential({
         rpId,
         credentialId: (credential as any).id,
       });

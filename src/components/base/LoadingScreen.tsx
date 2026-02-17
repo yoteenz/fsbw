@@ -1,20 +1,14 @@
+import React from 'react';
 
-import { useState, useEffect } from 'react';
+/** Optional: when true, loading screen auto-hides after 4s (e.g. for initial app load). When false/undefined, stays visible until content loads (e.g. Suspense fallback for checkout). */
+export default function LoadingScreen({ autoHideAfterMs }: { autoHideAfterMs?: number } = {}) {
+  const [isVisible, setIsVisible] = React.useState(true);
 
-export default function LoadingScreen() {
-  const [isVisible, setIsVisible] = useState(true);
-
-  useEffect(() => {
-    // Auto-hide after 4 seconds
-    const timer = setTimeout(() => {
-      setIsVisible(false);
-    }, 4000);
-
-    // Cleanup
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
+  React.useEffect(() => {
+    if (autoHideAfterMs == null || autoHideAfterMs <= 0) return;
+    const timer = setTimeout(() => setIsVisible(false), autoHideAfterMs);
+    return () => clearTimeout(timer);
+  }, [autoHideAfterMs]);
 
   if (!isVisible) return null;
 

@@ -142,7 +142,7 @@ function AffiliatePage() {
   };
 
   // Legacy mock delivered orders (kept for reference; only admin mock-data account uses kateenaMock* now)
-  const kristinMockDeliveredOrders: Order[] = [ // eslint-disable-line @typescript-eslint/no-unused-vars
+  const kristinMockDeliveredOrders: Order[] = [
     {
       id: 'kristin-delivered-1',
       orderNumber: 'ORDER #250',
@@ -220,6 +220,7 @@ function AffiliatePage() {
       socialTags: 0 // No social tags (rejected)
     }
   ];
+  void kristinMockDeliveredOrders; // kept for reference
 
   // Mock delivered orders for Kateena Armstrong (one per product)
   const kateenaMockDeliveredOrders: Order[] = [

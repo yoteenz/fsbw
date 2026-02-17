@@ -5,7 +5,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import { handlePaymentOption, PaymentProvider, PaymentData } from '../../utils/paymentHandlers';
 import { createRouteProtection, prepareRouteProtectionData } from '../../utils/routeProtection';
 import { getPointsMultiplier } from '../../constants/tiers';
-import { getEffectiveSubscriptionTier } from '../../utils/adminAuth';
+import { getEffectiveSubscriptionTier, getEffectiveTierName } from '../../utils/adminAuth';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 
@@ -964,16 +964,16 @@ function CheckoutPage() {
     return null;
   };
 
-  /** Points multiplier: 12mo premium = 2x (takes precedence); else Red 1.25x, Black 1.5x, Standard 1x. No stacking. */
+  /** Points multiplier: 12mo premium = 2x (takes precedence); else Red 1.25x, Black 1.5x, Standard 1x. No stacking. Uses effective tier (admin override) when set. */
   const getPointsMultiplierForUser = (): number => {
     if (!isSignedIn) return 1;
     try {
       const currentUser = localStorage.getItem('currentUser');
       if (!currentUser) return 1;
       const user = JSON.parse(currentUser);
-      const tier = (user.currentTierName || user.tier || (user.email ? localStorage.getItem(`lastKnownTier_${(user.email || '').trim().toLowerCase()}`) : null) || '').toString().toUpperCase();
+      const tier = getEffectiveTierName(user) || (user.currentTierName || user.tier || (user.email ? localStorage.getItem(`lastKnownTier_${(user.email || '').trim().toLowerCase()}`) : null) || '').toString().toUpperCase() || null;
       const subscriptionTier = getPremiumTier();
-      const { multiplier } = getPointsMultiplier(tier || null, subscriptionTier);
+      const { multiplier } = getPointsMultiplier(tier, subscriptionTier);
       return multiplier;
     } catch (_) {
       return 1;
@@ -1460,6 +1460,12 @@ function CheckoutPage() {
       const result = await handlePaymentOption(provider, paymentData);
       
       if (result.success) {
+        let effectiveTier = 'SILVER';
+        try {
+          const cu = localStorage.getItem('currentUser');
+          if (cu) { const u = JSON.parse(cu); effectiveTier = getEffectiveTierName(u) || 'SILVER'; }
+        } catch (_) {}
+
         if (result.redirectUrl) {
           // Prepare order data before redirecting (for return after payment completion)
           const lastOrderNumber = parseInt(localStorage.getItem('lastOrderNumber') || '0', 10);
@@ -1486,7 +1492,7 @@ function CheckoutPage() {
           const multiplier = getPointsMultiplierForUser();
           const pointsEarned = Math.round(basePoints * multiplier);
           
-          // Store order data for return from payment provider
+          // Store order data for return from payment provider (tier matches rewards page toggle for summary display)
           const orderDataForReturn = {
             orderNumber: orderNumber,
             confirmationNumber: confirmationNumber,
@@ -1495,6 +1501,7 @@ function CheckoutPage() {
             paymentMethod: provider,
             cartItems: cartItems,
             pointsEarned: pointsEarned,
+            tier: effectiveTier,
             firstName: firstName,
             lastName: lastName,
             shippingAddress: shippingAddress,
@@ -1596,6 +1603,7 @@ function CheckoutPage() {
               paymentMethod: provider,
               cartItems: cartItems,
               pointsEarned: pointsEarned,
+              tier: effectiveTier,
             }
           });
         }
@@ -5260,7 +5268,13 @@ function CheckoutPage() {
                     }
                   }
                   
-                  // Navigate to confirmation page with order data
+                  // Effective tier (matches rewards page toggle) so summary shows same tier + points
+                  let effectiveTierSummary = 'SILVER';
+                  try {
+                    const cu = localStorage.getItem('currentUser');
+                    if (cu) { const u = JSON.parse(cu); effectiveTierSummary = getEffectiveTierName(u) || 'SILVER'; }
+                  } catch (_) {}
+
                   navigate('/checkout/summary', {
                     state: {
                       orderNumber,
@@ -5278,6 +5292,7 @@ function CheckoutPage() {
                       paymentMethod: paymentMethodDisplay,
                       email,
                       pointsEarned,
+                      tier: effectiveTierSummary,
                       cartItems: cartItems
                     }
                   });

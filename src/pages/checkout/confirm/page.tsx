@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { getPointsMultiplier } from '../../../constants/tiers';
-import { getEffectiveSubscriptionTier } from '../../../utils/adminAuth';
+import { getEffectiveSubscriptionTier, getEffectiveTierName } from '../../../utils/adminAuth';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import summaryIcon from '../../../assets/icons/summary-icon.svg?url';
@@ -312,54 +312,55 @@ function CheckoutConfirmPage() {
           }, 0)
         : 1290; // Default taxable amount if cart is empty
       
-      // Use pointsEarned from location.state (passed from checkout page) if available
-      // Only recalculate as fallback if not provided
+      // Use pointsEarned from location.state (passed from checkout page) when available so summary always matches checkout
       const pointsEarnedFromState = location.state?.pointsEarned;
-      let pointsEarned = pointsEarnedFromState;
-      
-      // Only recalculate if pointsEarned wasn't passed from checkout
-      if (pointsEarned === undefined || pointsEarned === null) {
-        // Calculate points-eligible amount (exclude gift cards and digital items like memberships)
+      let pointsEarned: number | undefined =
+        typeof pointsEarnedFromState === 'number' ? pointsEarnedFromState : undefined;
+
+      // Only recalculate when not passed from checkout; use same formula as checkout page
+      if (pointsEarned === undefined) {
+        // Points-eligible amount: exclude gift cards and digital items; 0 when cart empty (match checkout)
         const pointsEligibleAmount = cartItems.length > 0
           ? cartItems.reduce((sum, item) => {
-              // Skip gift cards and digital items (memberships)
               const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
               const isDigital = item.type === 'digital';
-              
-              if (isGiftCard || isDigital) {
-                return sum; // Don't add to points-eligible amount
-              }
-              
+              if (isGiftCard || isDigital) return sum;
               return sum + (item.price || 0) * (item.quantity || 1);
             }, 0)
-          : 1290; // Default points-eligible amount if cart is empty
-        
+          : 0;
+
         let multiplier = 1;
         try {
           const currentUser = localStorage.getItem('currentUser');
-          const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
-          if (isSignedIn && currentUser) {
+          const signedIn = localStorage.getItem('isSignedIn') === 'true';
+          if (signedIn && currentUser) {
             const user = JSON.parse(currentUser as string);
-            const tier: string | null = (user.currentTierName || user.tier || (user.email ? localStorage.getItem(`lastKnownTier_${(user.email || '').trim().toLowerCase()}`) : null) || '').toString().toUpperCase() || null;
+            const tier: string | null = getEffectiveTierName(user) || (user.currentTierName || user.tier || (user.email ? localStorage.getItem(`lastKnownTier_${(user.email || '').trim().toLowerCase()}`) : null) || '').toString().toUpperCase() || null;
             const subTier: string | null = getEffectiveSubscriptionTier(user);
-            const res = getPointsMultiplier(tier, subTier);
-            multiplier = res.multiplier;
+            multiplier = getPointsMultiplier(tier, subTier).multiplier;
           }
         } catch (_) {}
-        pointsEarned = Math.round(pointsEligibleAmount * multiplier);
+
+        // Same as checkout: basePoints = isSignedIn ? round(pointsEligibleAmount) : 0; pointsEarned = round(basePoints * multiplier)
+        const signedIn = localStorage.getItem('isSignedIn') === 'true';
+        const basePoints = signedIn ? Math.round(pointsEligibleAmount) : 0;
+        pointsEarned = Math.round(basePoints * multiplier);
       }
-      
+
       const taxesProcessing = taxableAmount * 0.10;
       const shippingHandling = 60; // Standard shipping
       const subtotal = calculatedTotal + taxesProcessing + shippingHandling;
-      
-      // Determine tier based on points (note: actual tier system is based on spending, not points)
-      // This is for display purposes only - actual tier is calculated from total spending
-      let tier = 'SILVER'; // SILVER is base tier for everyone
-      if (pointsEarned >= 5000) {
-        tier = 'RED';
-      }
-      // Note: Tier benefits unlock at spending thresholds per 6 months: SILVER 1,000+, RED 2,000+ (remain), BLACK 4,000+ (unlock)
+
+      // Tier must match checkout + rewards page toggle (effective tier), not derived from points
+      let tier = 'SILVER';
+      try {
+        const currentUserForTier = localStorage.getItem('currentUser');
+        const signedInForTier = localStorage.getItem('isSignedIn') === 'true';
+        if (signedInForTier && currentUserForTier) {
+          const userForTier = JSON.parse(currentUserForTier as string);
+          tier = getEffectiveTierName(userForTier) || 'SILVER';
+        }
+      } catch (_) {}
       
       // Determine processing time based on order (check if has customizations)
       const hasCustomizations = cartItems.length > 0 && cartItems.some(item => {
@@ -435,7 +436,7 @@ function CheckoutConfirmPage() {
           country: prev.country || 'UNITED STATES',
           paymentMethod: prev.paymentMethod || 'CARD ENDING IN XXXX',
           email: prev.email || 'ASHLEYEVANS@GMAIL.COM',
-          pointsEarned: prev.pointsEarned || pointsEarned || 0, // Use points from checkout page, fallback to calculated or 0
+          pointsEarned: (typeof pointsEarned === 'number' ? pointsEarned : prev.pointsEarned) ?? 0, // Prefer points from this run (checkout state or recalc), then prev, then 0
           tier: prev.tier || tier
         };
       });
@@ -1597,7 +1598,7 @@ function CheckoutConfirmPage() {
                       <span style={{ 
                         fontFamily: (() => {
                           const tier = (orderData.tier || accountUser?.tier || 'SILVER').toUpperCase();
-                          if (tier === 'RED' || tier === 'GOLD') return '"Futura PT Medium"';
+                          if (tier === 'RED' || tier === 'GOLD' || tier === 'BLACK') return '"Futura PT Medium"';
                           return '"Futura PT Demi"'; // SILVER and default
                         })(),
                         fontSize: '10px', 
@@ -1605,7 +1606,7 @@ function CheckoutConfirmPage() {
                           const tier = (orderData.tier || accountUser?.tier || 'SILVER').toUpperCase();
                           if (tier === 'RED') return '#EB1C24';
                           if (tier === 'SILVER') return '#808080';
-                          if (tier === 'GOLD') return '#000000';
+                          if (tier === 'GOLD' || tier === 'BLACK') return '#000000';
                           return '#808080'; // Default to gray
                         })(),
                         textTransform: 'uppercase' 

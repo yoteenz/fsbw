@@ -40,6 +40,50 @@ export function isAyoteenzAdminAccount(user: { email?: string } | null): boolean
   return (user.email || '').trim().toLowerCase() === AYOTEENZ_ADMIN_EMAIL;
 }
 
+/** localStorage key for ayoteenz admin subscription override (Standard / 3 / 6 / 12 month) for testing UI across pages. */
+export const ADMIN_SUBSCRIPTION_OVERRIDE_KEY = 'adminSubscriptionOverride';
+
+/** localStorage key for ayoteenz admin spend-tier override (SILVER / RED / BLACK) for testing UI and checkout logic across pages. */
+export const ADMIN_TIER_OVERRIDE_KEY = 'adminTierOverride';
+
+/**
+ * Effective spend tier (SILVER / RED / BLACK) for the given user. For ayoteenz admin only, reads adminTierOverride from localStorage
+ * so the membership page toggle persists and applies on checkout, confirm, etc.
+ */
+export function getEffectiveTierName(user: { email?: string; currentTierName?: string; tier?: string } | null): string | null {
+  if (!user?.email) return null;
+  if (!isAyoteenzAdminAccount(user)) {
+    const tier = (user.currentTierName || user.tier || (typeof window !== 'undefined' && user.email ? localStorage.getItem(`lastKnownTier_${(user.email || '').trim().toLowerCase()}`) : null) || '').toString().toUpperCase();
+    return tier && ['SILVER', 'RED', 'BLACK'].includes(tier) ? tier : null;
+  }
+  if (typeof window === 'undefined') {
+    const tier = (user.currentTierName || user.tier || '').toString().toUpperCase();
+    return tier && ['SILVER', 'RED', 'BLACK'].includes(tier) ? tier : null;
+  }
+  const override = (localStorage.getItem(ADMIN_TIER_OVERRIDE_KEY) || '').trim().toUpperCase();
+  if (override === 'SILVER' || override === 'RED' || override === 'BLACK') return override;
+  const tier = (user.currentTierName || user.tier || (user.email ? localStorage.getItem(`lastKnownTier_${(user.email || '').trim().toLowerCase()}`) : null) || '').toString().toUpperCase();
+  return tier && ['SILVER', 'RED', 'BLACK'].includes(tier) ? tier : null;
+}
+
+/**
+ * Effective subscription tier for the given user. For ayoteenz admin only, reads adminSubscriptionOverride from localStorage
+ * so toggles on membership page persist and apply on checkout, orders, etc. Values: '3months' | '6months' | '12months' | null (Standard).
+ */
+export function getEffectiveSubscriptionTier(user: { email?: string; subscriptionTier?: string; membershipType?: string } | null): string | null {
+  if (!user?.email) return null;
+  if (!isAyoteenzAdminAccount(user)) {
+    if (user.subscriptionTier) return user.subscriptionTier;
+    if (user.membershipType === 'PREMIUM' || user.membershipType === 'Premium') return '12months';
+    return null;
+  }
+  if (typeof window === 'undefined') return user.subscriptionTier || (user.membershipType === 'PREMIUM' || user.membershipType === 'Premium' ? '12months' : null);
+  const override = (localStorage.getItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY) || '').trim().toLowerCase();
+  if (override === 'standard' || override === '') return null;
+  if (override === '3months' || override === '6months' || override === '12months') return override;
+  return user.subscriptionTier || (user.membershipType === 'PREMIUM' || user.membershipType === 'Premium' ? '12months' : null);
+}
+
 /** True if this account should receive test/mock data (points, history, seed orders, etc.). Only the ayoteenz account when it has the admin tag (in admin list); OAuth/non-admin accounts (e.g. yoteenz@gmail.com) get no mock data. */
 export function isMockDataAccount(user: { email?: string; role?: string } | null): boolean {
   if (!user?.email) return false;

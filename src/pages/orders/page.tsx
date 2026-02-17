@@ -274,7 +274,7 @@ function OrdersPage() {
   };
 
   // Legacy mock order data (kept for reference; only admin mock-data account uses kateenaMock* now)
-  const mockActiveOrders: Order[] = [ // eslint-disable-line @typescript-eslint/no-unused-vars
+  const mockActiveOrders: Order[] = [
     {
       id: 'test-order-3',
       orderNumber: 'ORDER #777',
@@ -438,8 +438,9 @@ function OrdersPage() {
       canceledAt: getTimestampHoursAgo(18) // Canceled 18 hours ago (still in active, not archived yet)
     }
   ];
+  void mockActiveOrders; // kept for reference
 
-  const mockPastOrders: Order[] = [ // eslint-disable-line @typescript-eslint/no-unused-vars
+  const mockPastOrders: Order[] = [
     {
       id: 'test-order-1',
       orderNumber: 'ORDER #888',
@@ -570,6 +571,7 @@ function OrdersPage() {
       deliveredAt: Date.now() - (92 * 24 * 60 * 60 * 1000)
     }
   ];
+  void mockPastOrders; // kept for reference
 
   // Helper function to get user's actual orders from localStorage
   const getUserOrders = (): { activeOrders: Order[], pastOrders: Order[] } => {
