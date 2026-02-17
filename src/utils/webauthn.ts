@@ -58,7 +58,7 @@ export async function signInWithPasskey(apiBase: string): Promise<unknown> {
   if (!options) throw new Error('Invalid WebAuthn options from server');
 
   const credential = (await navigator.credentials.get({
-    publicKey: options,
+    publicKey: options as PublicKeyCredentialRequestOptions,
     mediation: 'conditional',
   })) as PublicKeyCredential | null;
 

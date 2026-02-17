@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../constants/tiers';
 import { getTotalReviewCount, hasNewReviewApproved } from '../../constants/reviews';
-import { isAdminEmail, isAyoteenzAdminAccount, isMockDataAccount } from '../../utils/adminAuth';
+import { isAdminEmail, isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier } from '../../utils/adminAuth';
 import { getAccountNotifications, mergeAccountNotifications } from './notifications/page';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
@@ -2002,9 +2002,14 @@ function AccountPage() {
                     </p>
 
                     {(() => {
-                      // Get membership type from userData, fallback to state
+                      // Get membership type from userData; for admin use getEffectiveSubscriptionTier so tier/membership toggles are reflected
+                      const effectiveSubTier = getEffectiveSubscriptionTier(userData);
                       const userMembershipType = userData?.membershipType?.toUpperCase() || membershipType;
-                      const displayMembershipType = userMembershipType === 'PREMIUM' ? 'PREMIUM' : 'BASIC';
+                      const displayMembershipType = (isAyoteenzAdminAccount(userData) && effectiveSubTier != null)
+                        ? 'PREMIUM'
+                        : userMembershipType === 'PREMIUM'
+                          ? 'PREMIUM'
+                          : 'BASIC';
                       // For BASIC: always use gray regardless of tier
                       // Premium = black, Standard = gray; rewards page explains tier levels
                       const membershipTextColor = displayMembershipType === 'PREMIUM' ? '#000000' : '#808080';

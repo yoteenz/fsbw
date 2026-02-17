@@ -1593,6 +1593,7 @@ function CheckoutPage() {
             }
           }
           
+          sessionStorage.setItem('checkoutSummaryRewards', JSON.stringify({ pointsEarned, tier: effectiveTier }));
           navigate('/checkout/summary', {
             state: {
               orderNumber: orderNumber,
@@ -5274,6 +5275,8 @@ function CheckoutPage() {
                     const cu = localStorage.getItem('currentUser');
                     if (cu) { const u = JSON.parse(cu); effectiveTierSummary = getEffectiveTierName(u) || 'SILVER'; }
                   } catch (_) {}
+
+                  sessionStorage.setItem('checkoutSummaryRewards', JSON.stringify({ pointsEarned, tier: effectiveTierSummary }));
 
                   navigate('/checkout/summary', {
                     state: {

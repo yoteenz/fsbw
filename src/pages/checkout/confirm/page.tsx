@@ -125,6 +125,18 @@ function CheckoutConfirmPage() {
   const [startScrollPosition, setStartScrollPosition] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+  // Authoritative points/tier from checkout (sessionStorage written by checkout before navigate; survives location.state loss)
+  const [rewardsFromCheckout, setRewardsFromCheckout] = useState<{ pointsEarned?: number; tier?: string }>(() => {
+    try {
+      const raw = sessionStorage.getItem('checkoutSummaryRewards');
+      if (raw) {
+        const p = JSON.parse(raw);
+        return { pointsEarned: p.pointsEarned, tier: p.tier };
+      }
+    } catch (_) {}
+    return {};
+  });
+
   // Helper function to get ordinal suffix (ST, ND, RD, TH)
   const getOrdinalSuffix = (day: number): string => {
     if (day >= 11 && day <= 13) {
@@ -231,6 +243,40 @@ function CheckoutConfirmPage() {
         console.error('Error loading cart items:', e);
       }
     }
+  }, [location.state]);
+
+  // Sync points + tier from checkout (location.state + sessionStorage) into orderData and rewards state so summary always matches
+  useEffect(() => {
+    const state = location.state as { pointsEarned?: number; tier?: string } | null;
+    const hasPoints = state?.pointsEarned !== undefined && state?.pointsEarned !== null;
+    const hasTier = state?.tier != null && state?.tier !== '';
+    if (hasPoints || hasTier) {
+      const next = { pointsEarned: hasPoints ? state!.pointsEarned : undefined, tier: hasTier ? state!.tier : undefined };
+      setRewardsFromCheckout((prev) => ({ ...prev, ...next }));
+      try {
+        sessionStorage.setItem('checkoutSummaryRewards', JSON.stringify({ pointsEarned: next.pointsEarned, tier: next.tier }));
+      } catch (_) {}
+      setOrderData((prev: any) => ({
+        ...prev,
+        ...(hasPoints && { pointsEarned: state!.pointsEarned }),
+        ...(hasTier && { tier: state!.tier }),
+      }));
+      return;
+    }
+    try {
+      const raw = sessionStorage.getItem('checkoutSummaryRewards');
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (p.pointsEarned !== undefined || (p.tier != null && p.tier !== '')) {
+          setRewardsFromCheckout((prev) => ({ ...prev, pointsEarned: p.pointsEarned, tier: p.tier }));
+          setOrderData((prev: any) => ({
+            ...prev,
+            ...(p.pointsEarned !== undefined && { pointsEarned: p.pointsEarned }),
+            ...(p.tier != null && p.tier !== '' && { tier: p.tier }),
+          }));
+        }
+      }
+    } catch (_) {}
   }, [location.state]);
 
   // Save selected currency to localStorage
@@ -348,7 +394,38 @@ function CheckoutConfirmPage() {
       }
 
       const taxesProcessing = taxableAmount * 0.10;
-      const shippingHandling = 60; // Standard shipping
+
+      // Shipping with premium discount (match checkout logic): domestic vs international + tier discounts
+      const rawCountry = (location.state as any)?.country ?? orderData?.country ?? 'US';
+      const countryStr = String(rawCountry).trim().toUpperCase() || 'US';
+      const isDomesticCountry = countryStr === 'US' || countryStr === 'USA' || countryStr === 'U.S.' || countryStr === 'U.S.A.' || /^UNITED\s*STATES(\s+OF\s+AMERICA)?$/i.test(countryStr);
+      const shippingMethodLabel = (location.state as any)?.shippingMethod || orderData?.shippingMethod || '';
+      const isExpress = /express/i.test(shippingMethodLabel);
+      const originalShipping = isDomesticCountry ? (isExpress ? 100 : 60) : (isExpress ? 160 : 100);
+      let shippingDiscount = 0;
+      try {
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+          const user = JSON.parse(currentUser as string);
+          const premiumTier = getEffectiveSubscriptionTier(user);
+          const isDigitalOnly = cartItems.length > 0 && cartItems.every((item: any) => item.type === 'digital' || item.name === 'GIFT CARD' || item.type === 'gift-card');
+          if (premiumTier && !isDigitalOnly) {
+            if (isDomesticCountry) {
+              if (!isExpress) {
+                if (premiumTier === '3months') shippingDiscount = 20;
+                else if (premiumTier === '6months') shippingDiscount = 40;
+                else if (premiumTier === '12months') shippingDiscount = 60;
+              } else {
+                if (premiumTier === '6months') shippingDiscount = 40;
+                else if (premiumTier === '12months') shippingDiscount = 40;
+              }
+            } else {
+              if (premiumTier === '12months') shippingDiscount = 40;
+            }
+          }
+        }
+      } catch (_) {}
+      const shippingHandling = Math.max(0, originalShipping - shippingDiscount);
       const subtotal = calculatedTotal + taxesProcessing + shippingHandling;
 
       // Tier must match checkout + rewards page toggle (effective tier), not derived from points
@@ -1428,41 +1505,29 @@ function CheckoutConfirmPage() {
                       CARRIER
                     </span>
                     <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
-                      {/^US$|^USA$|^UNITED\s*STATES$/i.test(String(orderData.country || addr?.country || 'UNITED STATES').trim()) ? 'DOMESTIC' : 'INTERNATIONAL'}
+                      {(() => {
+                        const c = String(orderData.country || addr?.country || 'UNITED STATES').trim().toUpperCase();
+                        const isDomestic = c === 'US' || c === 'USA' || c === 'U.S.' || c === 'U.S.A.' || /^UNITED\s*STATES(\s+OF\s+AMERICA)?$/i.test(c);
+                        return isDomestic ? 'DOMESTIC' : 'INTERNATIONAL';
+                      })()}
                     </span>
                   </div>
                   {(() => {
                     const shippingMethod = orderData.shippingMethod || 'UPS DOMESTIC STANDARD +$60';
-                    // Remove price first
-                    let methodName = shippingMethod.replace(/\s*\+?\$?\d+.*$/, '').trim();
-                    // Remove common carrier names (UPS, DHL, FedEx, USPS, etc.) - case insensitive
-                    methodName = methodName
-                      .replace(/^(UPS|DHL|FEDEX|USPS|FEDEX\s+EXPRESS|FEDEX\s+GROUND)\s+/i, '')
-                      .replace(/\s+(UPS|DHL|FEDEX|USPS)$/i, '')
-                      .trim();
-                    
-                    // Ensure proper formatting (all caps, no extra spaces, replace underscores with spaces)
-                    methodName = methodName.toUpperCase().replace(/_/g, ' ').replace(/\s+/g, ' ');
-                    
-                    // Determine shipping time based on method
-                    const getShippingTime = (method: string): string => {
-                      const methodUpper = method.toUpperCase();
-                      if (methodUpper.includes('EXPRESS')) {
-                        return '1-2 BUSINESS DAYS';
-                      } else if (methodUpper.includes('STANDARD') || methodUpper.includes('DOMESTIC')) {
-                        return '3-5 BUSINESS DAYS';
-                      } else if (methodUpper.includes('INTERNATIONAL')) {
-                        return '7-14 BUSINESS DAYS';
-                      }
-                      return '3-5 BUSINESS DAYS'; // Default
-                    };
-                    
-                    const shippingTime = getShippingTime(methodName);
-                    
+                    const methodUpper = shippingMethod.toUpperCase();
+                    const isExpress = methodUpper.includes('EXPRESS');
+                    const processingTime = (orderData.processingTime || '').toUpperCase();
+                    const isRush = /RUSH|4\s*[-–]\s*6|4\s*TO\s*6/.test(processingTime);
+                    const displayLabel = (isRush ? 'RUSH ' : '') + (isExpress ? 'EXPRESS' : 'STANDARD') + ' SHIPPING';
+                    const c = String(orderData.country || addr?.country || 'UNITED STATES').trim().toUpperCase();
+                    const isDomestic = c === 'US' || c === 'USA' || c === 'U.S.' || c === 'U.S.A.' || /^UNITED\s*STATES(\s+OF\s+AMERICA)?$/i.test(c);
+                    const shippingTime = isDomestic
+                      ? (isExpress ? '1-2 BUSINESS DAYS' : '3-5 BUSINESS DAYS')
+                      : (isExpress ? '3-5 BUSINESS DAYS' : '7-14 BUSINESS DAYS');
                     return (
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
-                          {methodName}
+                          {displayLabel}
                         </span>
                         <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                           {shippingTime}
@@ -1572,8 +1637,22 @@ function CheckoutConfirmPage() {
                 </div>
               </div>
 
-              {/* REWARDS */}
-              {(
+              {/* REWARDS - read sessionStorage at render time so we always show what checkout just wrote (avoids state/effect timing) */}
+              {(() => {
+                let displayPoints: number | undefined;
+                let displayTier: string | undefined;
+                try {
+                  const raw = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('checkoutSummaryRewards') : null;
+                  if (raw) {
+                    const p = JSON.parse(raw);
+                    if (p.pointsEarned !== undefined && p.pointsEarned !== null) displayPoints = p.pointsEarned;
+                    if (p.tier != null && p.tier !== '') displayTier = p.tier;
+                  }
+                } catch (_) {}
+                if (displayPoints === undefined) displayPoints = rewardsFromCheckout.pointsEarned ?? (location.state as any)?.pointsEarned ?? orderData.pointsEarned ?? accountUser?.loyaltyPoints ?? orderData.orderTotal ?? 1290;
+                if (displayTier === undefined) displayTier = rewardsFromCheckout.tier || (location.state as any)?.tier || orderData.tier || accountUser?.tier || 'SILVER';
+                const tierUpper = String(displayTier).toUpperCase();
+                return (
                 <div>
                   <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                     <h2
@@ -1593,30 +1672,21 @@ function CheckoutConfirmPage() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                        YOU'RE EARNING <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{(orderData.pointsEarned ?? accountUser?.loyaltyPoints ?? orderData.orderTotal ?? 1290).toLocaleString()}</span> LOYALTY POINTS WITH THIS ORDER{(orderData.pointsEarned ?? accountUser?.loyaltyPoints ?? orderData.orderTotal ?? 1290) === 0 ? '.' : '!'}
+                        YOU'RE EARNING <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{Number(displayPoints).toLocaleString()}</span> LOYALTY POINTS WITH THIS ORDER{Number(displayPoints) === 0 ? '.' : '!'}
                       </p>
                       <span style={{ 
-                        fontFamily: (() => {
-                          const tier = (orderData.tier || accountUser?.tier || 'SILVER').toUpperCase();
-                          if (tier === 'RED' || tier === 'GOLD' || tier === 'BLACK') return '"Futura PT Medium"';
-                          return '"Futura PT Demi"'; // SILVER and default
-                        })(),
+                        fontFamily: (tierUpper === 'RED' || tierUpper === 'GOLD' || tierUpper === 'BLACK') ? '"Futura PT Medium"' : '"Futura PT Demi"',
                         fontSize: '10px', 
-                        color: (() => {
-                          const tier = (orderData.tier || accountUser?.tier || 'SILVER').toUpperCase();
-                          if (tier === 'RED') return '#EB1C24';
-                          if (tier === 'SILVER') return '#808080';
-                          if (tier === 'GOLD' || tier === 'BLACK') return '#000000';
-                          return '#808080'; // Default to gray
-                        })(),
+                        color: tierUpper === 'RED' ? '#EB1C24' : tierUpper === 'SILVER' ? '#808080' : (tierUpper === 'GOLD' || tierUpper === 'BLACK') ? '#000000' : '#808080',
                         textTransform: 'uppercase' 
                       }}>
-                        {(orderData.tier || accountUser?.tier || 'SILVER').toUpperCase()} TIER
+                        {tierUpper} TIER
                       </span>
                     </div>
                   </div>
                 </div>
-              )}
+              );
+              })()}
               </div>
             );
             })()}
