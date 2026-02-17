@@ -2002,14 +2002,12 @@ function AccountPage() {
                     </p>
 
                     {(() => {
-                      // Get membership type from userData; for admin use getEffectiveSubscriptionTier so tier/membership toggles are reflected
+                      // Get membership type from userData; for admin use only getEffectiveSubscriptionTier (override) so tier/membership toggles are reflected
                       const effectiveSubTier = getEffectiveSubscriptionTier(userData);
                       const userMembershipType = userData?.membershipType?.toUpperCase() || membershipType;
-                      const displayMembershipType = (isAyoteenzAdminAccount(userData) && effectiveSubTier != null)
-                        ? 'PREMIUM'
-                        : userMembershipType === 'PREMIUM'
-                          ? 'PREMIUM'
-                          : 'BASIC';
+                      const displayMembershipType = isAyoteenzAdminAccount(userData)
+                        ? (effectiveSubTier != null ? 'PREMIUM' : 'BASIC')
+                        : (userMembershipType === 'PREMIUM' ? 'PREMIUM' : 'BASIC');
                       // For BASIC: always use gray regardless of tier
                       // Premium = black, Standard = gray; rewards page explains tier levels
                       const membershipTextColor = displayMembershipType === 'PREMIUM' ? '#000000' : '#808080';

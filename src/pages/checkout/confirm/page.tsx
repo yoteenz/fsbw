@@ -151,23 +151,17 @@ function CheckoutConfirmPage() {
     }
   };
 
-  // Helper function to calculate processing timeline date range
+  // Helper: processing timeline date range from orderData.processingTime (standard 6-8 weeks, rush 4-6 weeks, customized up to 10 weeks)
   const calculateProcessingTimeline = (orderDateStr: string, processingTime: string): string => {
     try {
-      // Parse order date (MM-DD-YYYY format)
       const [month, day, year] = orderDateStr.split('-').map(Number);
       const orderDate = new Date(year, month - 1, day);
-      
-      // Determine weeks based on processing time
       let minWeeks = 6;
       let maxWeeks = 8;
-      
       if (processingTime && processingTime.includes('4')) {
-        // Rush processing: 4-6 weeks
         minWeeks = 4;
         maxWeeks = 6;
       } else if (processingTime && processingTime.includes('10')) {
-        // Customized units: up to 10 weeks
         minWeeks = 6;
         maxWeeks = 10;
       }
@@ -1637,7 +1631,7 @@ function CheckoutConfirmPage() {
                 </div>
               </div>
 
-              {/* REWARDS - read sessionStorage at render time so we always show what checkout just wrote (avoids state/effect timing) */}
+              {/* REWARDS - sessionStorage (from checkout) first, then compute from same logic as checkout so toggle + cart always match */}
               {(() => {
                 let displayPoints: number | undefined;
                 let displayTier: string | undefined;
@@ -1649,6 +1643,23 @@ function CheckoutConfirmPage() {
                     if (p.tier != null && p.tier !== '') displayTier = p.tier;
                   }
                 } catch (_) {}
+                if (displayPoints === undefined || displayTier === undefined) {
+                  try {
+                    const signedIn = typeof localStorage !== 'undefined' && localStorage.getItem('isSignedIn') === 'true';
+                    const currentUserRaw = typeof localStorage !== 'undefined' ? localStorage.getItem('currentUser') : null;
+                    const user = currentUserRaw ? JSON.parse(currentUserRaw) : null;
+                    const tier = getEffectiveTierName(user) || (user?.currentTierName || user?.tier || '')?.toString().toUpperCase() || null;
+                    const subTier = getEffectiveSubscriptionTier(user);
+                    const mult = getPointsMultiplier(tier, subTier).multiplier;
+                    const pointsEligibleAmount = (cartItems || []).reduce((sum: number, item: any) => {
+                      if (item?.name === 'GIFT CARD' || item?.type === 'gift-card' || item?.type === 'digital') return sum;
+                      return sum + (item?.price || 0) * (item?.quantity || 1);
+                    }, 0);
+                    const basePoints = signedIn ? Math.round(pointsEligibleAmount) : 0;
+                    if (displayPoints === undefined) displayPoints = Math.round(basePoints * mult);
+                    if (displayTier === undefined) displayTier = (getEffectiveTierName(user) || orderData.tier || accountUser?.tier || 'SILVER').toString().toUpperCase();
+                  } catch (_) {}
+                }
                 if (displayPoints === undefined) displayPoints = rewardsFromCheckout.pointsEarned ?? (location.state as any)?.pointsEarned ?? orderData.pointsEarned ?? accountUser?.loyaltyPoints ?? orderData.orderTotal ?? 1290;
                 if (displayTier === undefined) displayTier = rewardsFromCheckout.tier || (location.state as any)?.tier || orderData.tier || accountUser?.tier || 'SILVER';
                 const tierUpper = String(displayTier).toUpperCase();
