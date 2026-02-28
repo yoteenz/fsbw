@@ -785,7 +785,7 @@ export default function RecentActivity({ onViewModeChange }: RecentActivityProps
             <button
               onClick={handleArchiveClick}
               className="bg-white/60 backdrop-blur-sm border border-black w-full h-full flex items-center justify-center hover:bg-white/80 transition-all duration-300 ease-out shadow-lg hover:shadow-xl hover:-translate-y-1"
-              style={{ borderWidth: '1.4px' }}
+              style={{ borderWidth: '1.3px' }}
             >
               <i className="ri-close-line text-red-500 text-base" style={{ color: '#EB1C24' }}></i>
             </button>
@@ -795,7 +795,7 @@ export default function RecentActivity({ onViewModeChange }: RecentActivityProps
         <div
           ref={cardRef}
           className={`bg-white/60 backdrop-blur-sm border border-black overflow-hidden ${dragging ? 'cursor-grabbing' : 'cursor-grab'} transition-all duration-300 ease-out select-none relative z-20 shadow-lg hover:shadow-xl hover:-translate-y-1 ${showArchiveButton ? '-mr-1' : ''}`}
-          style={{ borderWidth: '1.4px', userSelect: 'none' }}
+          style={{ borderWidth: '1.3px', userSelect: 'none' }}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -852,47 +852,53 @@ export default function RecentActivity({ onViewModeChange }: RecentActivityProps
 
   return (
     <div>
-      {/* View mode icons only - floating top right */}
-      <div className="mb-1 flex justify-end">
-        <div className="flex items-center flex-shrink-0">
+      {/* View mode icons - same as wishlist lists page (line & grid) */}
+      <div className="flex justify-end" style={{ marginBottom: '16px' }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <button
+            type="button"
             onClick={() => handleViewModeChange('list')}
-            className={`w-6 h-6 flex items-center justify-center ${viewMode === 'list' ? 'text-red-500' : 'text-black'}`}
-            style={{ color: viewMode === 'list' ? '#EB1C24' : '#000000' }}
+            style={{
+              padding: '4px',
+              border: viewMode === 'list' ? '1px solid #EB1C24' : '1px solid #ccc',
+              background: 'none',
+              cursor: 'pointer',
+              borderRadius: 0,
+              color: viewMode === 'list' ? '#EB1C24' : '#000'
+            }}
+            aria-label="Line view"
           >
-            <div className="flex flex-col justify-center h-3 space-y-1">
-              <div className="w-3 h-px bg-current"></div>
-              <div className="w-3 h-px bg-current"></div>
-              <div className="w-3 h-px bg-current"></div>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '12px', gap: '3px' }}>
+              <div style={{ width: '12px', height: '1px', backgroundColor: 'currentColor' }} />
+              <div style={{ width: '12px', height: '1px', backgroundColor: 'currentColor' }} />
+              <div style={{ width: '12px', height: '1px', backgroundColor: 'currentColor' }} />
             </div>
           </button>
-
           <button
+            type="button"
             onClick={() => handleViewModeChange(viewMode === 'grouped' ? 'list' : 'grouped')}
-            className={`w-6 h-6 flex items-center justify-center ${viewMode === 'grouped' ? 'text-red-500' : 'text-black'}`}
-            style={{ color: viewMode === 'grouped' ? '#EB1C24' : '#000000' }}
+            style={{
+              padding: '4px',
+              border: viewMode === 'grouped' ? '1px solid #EB1C24' : '1px solid #ccc',
+              background: 'none',
+              cursor: 'pointer',
+              borderRadius: 0,
+              color: viewMode === 'grouped' ? '#EB1C24' : '#000'
+            }}
+            aria-label="Grid view"
           >
-            <div
-              className={`w-3 h-3 border notif-grid-icon relative ${viewMode === 'grouped' ? 'border-red-500 bg-white' : 'border-current bg-white'}`}
-              style={{ borderColor: viewMode === 'grouped' ? '#EB1C24' : 'currentColor' }}
-            >
-              <div
-                className={`absolute top-1/2 left-0 right-0 h-px transform -translate-y-1/2 ${viewMode === 'grouped' ? 'bg-red-500' : 'bg-current'}`}
-                style={{ backgroundColor: viewMode === 'grouped' ? '#EB1C24' : 'currentColor' }}
-              ></div>
-              <div
-                className={`absolute left-1/2 top-0 bottom-0 w-px transform -translate-x-1/2 ${viewMode === 'grouped' ? 'bg-red-500' : 'bg-current'}`}
-                style={{ backgroundColor: viewMode === 'grouped' ? '#EB1C24' : 'currentColor' }}
-              ></div>
+            <div style={{ width: '12px', height: '12px', border: '1px solid currentColor', backgroundColor: 'white', position: 'relative' }}>
+              <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: '1px', transform: 'translateY(-50%)', backgroundColor: 'currentColor' }} />
+              <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: '1px', transform: 'translateX(-50%)', backgroundColor: 'currentColor' }} />
             </div>
           </button>
         </div>
       </div>
 
       {/* Main content */}
-      <div className="space-y-3">
+      <div className={viewMode === 'grouped' ? 'space-y-4' : 'space-y-3'}>
         {viewMode === 'grouped' ? (
-          // GROUPED VIEW - includes all three groups
+          // GROUPED VIEW - includes all three groups (4px more spacing between cards)
           groupOrder.map((groupName) => {
             const count = getGroupCount(groupName);
             if (count === 0) return null;
@@ -903,7 +909,7 @@ export default function RecentActivity({ onViewModeChange }: RecentActivityProps
                 key={groupName}
                 data-group={groupName}
                 className={`bg-white/60 backdrop-blur-sm border border-black shadow-lg hover:shadow-xl transition-all duration-300 ease-out ${isDragging === groupName ? '' : 'cursor-move'}`}
-                style={{ borderWidth: '1.4px', zIndex: isDragging === groupName ? 1000 : 'auto' }}
+                style={{ borderWidth: '1.3px', zIndex: isDragging === groupName ? 1000 : 'auto' }}
                 onMouseDown={(e) => {
                   const target = e.target as HTMLElement;
                   const isHeaderClick = target.closest('.group-header');

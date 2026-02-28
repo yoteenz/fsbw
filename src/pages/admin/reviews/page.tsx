@@ -57,7 +57,7 @@ export default function AdminReviews() {
         
         <div className="pb-6 px-4">
           <div className="max-w-md mx-auto space-y-4">
-            <div className="bg-white/60 backdrop-blur-sm border border-black p-4" style={{ borderWidth: '1.4px' }}>
+            <div className="bg-white/60 backdrop-blur-sm border border-black p-4" style={{ borderWidth: '1.3px', minHeight: 'calc(100dvh - 160px)' }}>
               <h2 className="text-lg font-bold mb-4" style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', color: '#EB1C24' }}>
                 REVIEW OVERVIEW
               </h2>
@@ -74,7 +74,7 @@ export default function AdminReviews() {
             </div>
 
             {reviews.map((review) => (
-              <div key={review.id} className="bg-white/60 backdrop-blur-sm border border-black p-4" style={{ borderWidth: '1.4px' }}>
+              <div key={review.id} className="bg-white/60 backdrop-blur-sm border border-black p-4" style={{ borderWidth: '1.3px' }}>
                 <div className="flex justify-between items-start mb-2">
                   <div>
                     <h3 className="font-bold text-sm font-futura">{review.client}</h3>

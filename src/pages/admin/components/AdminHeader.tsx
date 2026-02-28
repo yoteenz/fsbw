@@ -136,12 +136,14 @@ const priorityMessages = [
 // ];
 
 interface AdminHeaderProps {
-  /** Text displayed after the "ADMIN >" label */
+  /** Text displayed after the breadcrumb label (e.g. "ADMIN" or "CLIENTS") */
   title: string;
-  /** Show a back‑arrow button on the left side */
+  /** Show a back‑arrow button on the left side; when clicked, goes to previous page in history */
   showBack?: boolean;
-  /** Callback executed when the back button is pressed */
-  onBack?: () => void;
+  /** Optional breadcrumb parent label (e.g. "CLIENTS"); when set, replaces "ADMIN" */
+  breadcrumbParentLabel?: string;
+  /** Optional breadcrumb parent path (e.g. "/admin/clients"); when set, breadcrumb link goes here instead of dashboard */
+  breadcrumbParentPath?: string;
 }
 
 /**
@@ -152,7 +154,8 @@ interface AdminHeaderProps {
 export default function AdminHeader({
   title,
   showBack = false,
-  onBack,
+  breadcrumbParentLabel,
+  breadcrumbParentPath,
 }: AdminHeaderProps) {
   const navigate = useNavigate();
 
@@ -173,6 +176,7 @@ export default function AdminHeader({
   const [notificationsLongPressTimer, setNotificationsLongPressTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [showInactiveNotifications, setShowInactiveNotifications] = useState(false);
   const [showInactiveMessages, setShowInactiveMessages] = useState(false);
+  const [isBreadcrumbHovered, setIsBreadcrumbHovered] = useState(false);
 
   // Add scroll event listener to close dropdowns
   useEffect(() => {
@@ -210,17 +214,9 @@ export default function AdminHeader({
     };
   };
 
-  /** Safely invoke the optional onBack callback or navigate back */
+  /** Go to the previous page in history (used when back icon is shown) */
   const handleBack = () => {
-    if (typeof onBack === 'function') {
-      try {
-        onBack();
-      } catch (err) {
-        console.error('AdminHeader: onBack handler threw an error', err);
-      }
-    } else {
-      navigate(-1);
-    }
+    navigate(-1);
   };
 
   // Handle search activation
@@ -403,13 +399,12 @@ export default function AdminHeader({
       <div className="max-w-md mx-auto">
         <div
           className="bg-white/60 backdrop-blur-sm border border-black px-4 py-2 flex items-center justify-center h-10 relative"
-          style={{ borderWidth: '1.4px' }}
+          style={{ borderWidth: '1.3px' }}
         >
-          {/* Left side icons - Fixed width container with proper vertical centering */}
-          <div className="flex items-center space-x-0.5 w-16 h-full absolute left-4">
-            {/* Back button or Search icon - always takes same space with vertical centering */}
-            <div className="w-8 h-8 flex items-center justify-center">
-              {showBack && !isSearchActive ? (
+          {/* Left side icons - match product pages: flex gap-5, absolute left-4 */}
+          <div className="flex items-center gap-5 absolute left-4 h-full">
+            {showBack && !isSearchActive ? (
+              <>
                 <button
                   type="button"
                   onClick={handleBack}
@@ -418,73 +413,57 @@ export default function AdminHeader({
                   onMouseLeave={() => setIsBackPressed(false)}
                   onTouchStart={() => setIsBackPressed(true)}
                   onTouchEnd={() => setIsBackPressed(false)}
-                  className="w-full h-full flex items-center justify-center transition-colors duration-150"
+                  className="cursor-pointer transition-opacity duration-150"
+                  style={{
+                    height: '15px',
+                    width: '21px',
+                    padding: 0,
+                    border: 'none',
+                    background: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
                   aria-label="Back"
                 >
-                  <svg
-                    width="12"
+                  <img
+                    src="/assets/back-button.svg"
+                    alt="Back"
+                    width="21"
                     height="15"
-                    viewBox="0 0 12 15"
-                    fill="none"
-                    style={{ color: isBackPressed ? '#EB1C24' : '#000000' }}
-                  >
-                    <path
-                      d="M10.7579 15C10.6205 15.0001 10.4877 14.9622 10.3836 14.8934L0.201231 8.17623C0.139913 8.13596 0.0903232 8.08623 0.0556832 8.03028C0.0210431 7.97434 0.00212871 7.91342 0.000169535 7.85149C-0.00178963 7.78956 0.0132503 7.72801 0.0443116 7.67084C0.0753729 7.61367 0.12176 7.56215 0.180458 7.51965L10.3628 0.113393C10.4743 0.036355 10.6205 -0.00421025 10.7704 0.000346211C10.9203 0.00490267 11.0619 0.0542203 11.165 0.137783C11.2682 0.221347 11.3248 0.332543 11.3227 0.447664C11.3206 0.562785 11.26 0.67272 11.1538 0.754031L1.43411 7.82543L11.133 14.2237C11.2221 14.2824 11.2856 14.3607 11.315 14.4481C11.3444 14.5354 11.3383 14.6275 11.2974 14.7121C11.2566 14.7966 11.183 14.8695 11.0865 14.921C10.9901 14.9725 10.8754 15.0001 10.7579 15Z"
-                      fill="currentColor"
-                    />
-                  </svg>
+                    style={{ opacity: isBackPressed ? 0.7 : 1 }}
+                  />
                 </button>
-              ) : (
-                // Show search icon in back button position for dashboard or when search is not active
-                !isSearchActive && (
-                  <button
-                    type="button"
-                    className="w-full h-full flex items-center justify-center transition-colors duration-150"
-                    onMouseDown={() => setIsSearchPressed(true)}
-                    onMouseUp={() => setIsSearchPressed(false)}
-                    onMouseLeave={() => setIsSearchPressed(false)}
-                    onTouchStart={() => setIsSearchPressed(true)}
-                    onTouchEnd={() => setIsSearchPressed(false)}
-                    onClick={handleSearchClick}
-                  >
-                    <img
-                      src="/assets/search-icon.svg"
-                      alt="Search"
-                      width="20"
-                      height="20"
-                      style={{
-                        filter: isSearchPressed ? 'brightness(0) saturate(100%) invert(20%) sepia(100%) saturate(7500%) hue-rotate(0deg) brightness(100%) contrast(100%)' : 'none'
-                      }}
-                    />
-                  </button>
-                )
-              )}
-            </div>
-
-            {/* Secondary icon button - only show if there's a back button AND search is not active */}
-            {showBack && !isSearchActive && (
-              <div className="w-6 h-6 flex items-center justify-center">
                 <button
                   type="button"
-                  className="w-full h-full flex items-center justify-center transition-colors duration-150"
-                  onMouseDown={() => setIsSearchPressed(true)}
-                  onMouseUp={() => setIsSearchPressed(false)}
-                  onMouseLeave={() => setIsSearchPressed(false)}
-                  onTouchStart={() => setIsSearchPressed(true)}
-                  onTouchEnd={() => setIsSearchPressed(false)}
+                  className="cursor-pointer"
                   onClick={handleSearchClick}
+                  style={{ transform: 'translateX(-2px)' }}
                 >
                   <img
                     src="/assets/search-icon.svg"
-                    alt="Search"
-                    width="20"
-                    height="20"
-                    style={{
-                      filter: isSearchPressed ? 'brightness(0) saturate(100%) invert(20%) sepia(100%) saturate(7500%) hue-rotate(0deg) brightness(100%) contrast(100%)' : 'none'
-                    }}
+                    alt="Search icon"
+                    width="16"
+                    height="15"
                   />
                 </button>
-              </div>
+              </>
+            ) : (
+              !isSearchActive && (
+                <button
+                  type="button"
+                  className="cursor-pointer"
+                  onClick={handleSearchClick}
+                  style={showBack ? { transform: 'translateX(-2px)' } : { transform: 'translateX(2px)' }}
+                >
+                  <img
+                    src="/assets/search-icon.svg"
+                    alt="Search icon"
+                    width="16"
+                    height="15"
+                  />
+                </button>
+              )
             )}
           </div>
 
@@ -499,9 +478,10 @@ export default function AdminHeader({
                   onBlur={handleSearchBlur}
                   onKeyDown={handleSearchKeyPress}
                   placeholder="SEARCH ADMIN..."
-                  className="w-full bg-transparent border-none outline-none text-xs font-futura uppercase placeholder-gray-400"
+                  className="w-full bg-transparent border-none outline-none text-xs uppercase placeholder-gray-400"
                   style={{
-                    fontWeight: '500',
+                    fontFamily: "'Futura PT Medium'",
+                    fontWeight: 500,
                     color: '#EB1C24',
                     fontSize: '12px',
                     textAlign: 'left',
@@ -513,17 +493,25 @@ export default function AdminHeader({
             ) : (
               <div className="overflow-hidden text-ellipsis">
                 <button
-                  onClick={() => navigate('/admin/dashboard')}
-                  className="text-xs text-black font-futura uppercase hover:text-red-500 transition-colors cursor-pointer"
-                  style={{ fontWeight: '500' }}
+                  onClick={() => navigate(breadcrumbParentPath ?? '/admin/dashboard')}
+                  onMouseEnter={() => setIsBreadcrumbHovered(true)}
+                  onMouseLeave={() => setIsBreadcrumbHovered(false)}
+                  onTouchEnd={() => setIsBreadcrumbHovered(false)}
+                  className="text-sm uppercase transition-colors cursor-pointer"
+                  style={{
+                    fontFamily: "'Futura PT Book'",
+                    fontWeight: 500,
+                    fontSize: '14px',
+                    color: isBreadcrumbHovered ? '#EB1C24' : '#000000',
+                  }}
                 >
-                  ADMIN &gt;{' '}
+                  {(breadcrumbParentLabel ?? 'ADMIN')} &gt;{' '}
                 </button>
                 <span
-                  className="text-xs font-futura text-red-500 uppercase"
-                  style={{ fontWeight: '500', color: '#EB1C24' }}
+                  className="text-sm text-red-500 uppercase"
+                  style={{ fontFamily: "'Futura PT Medium'", fontWeight: 500, color: '#EB1C24', fontSize: '14px' }}
                 >
-                  {title}
+                  {' '}{title}
                 </span>
               </div>
             )}
@@ -546,8 +534,8 @@ export default function AdminHeader({
                 <img
                   src={showInactiveMessages ? '/assets/inactive message-icon.svg' : '/assets/active messages-icon.svg'}
                   alt="Messages"
-                  width="22"
-                  height="20"
+                  width="19"
+                  height="18"
                   style={{
                     opacity: showInactiveMessages ? 0.5 : 1,
                     transform: 'translateY(-1px)'
@@ -571,8 +559,8 @@ export default function AdminHeader({
                 <img
                   src={showInactiveNotifications ? '/assets/inactive notifications-icon.svg' : '/assets/active notifications-icon.svg'}
                   alt="Notifications"
-                  width="20"
-                  height="20"
+                  width="17"
+                  height="17"
                   style={{
                     opacity: showInactiveNotifications ? 0.5 : 1,
                     transform: 'translateY(1px)'
@@ -608,7 +596,7 @@ export default function AdminHeader({
             <div
               data-dropdown-content
               className="bg-white/60 backdrop-blur-md border border-black shadow-lg hover:shadow-xl transition-all duration-300 ease-out max-h-80 overflow-y-auto"
-              style={{ borderWidth: '1.4px' }}
+              style={{ borderWidth: '1.3px' }}
               onMouseDown={(e) => {
                 // Prevent backdrop from closing dropdown when clicking inside
                 e.stopPropagation();
@@ -723,7 +711,7 @@ export default function AdminHeader({
             <div
               data-dropdown-content
               className="bg-white/60 backdrop-blur-md border border-black shadow-lg hover:shadow-xl transition-all duration-300 ease-out max-h-80 overflow-y-auto"
-              style={{ borderWidth: '1.4px' }}
+              style={{ borderWidth: '1.3px' }}
               onMouseDown={(e) => {
                 // Prevent backdrop from closing dropdown when clicking inside
                 e.stopPropagation();

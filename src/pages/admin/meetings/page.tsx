@@ -71,7 +71,7 @@ export default function AdminMeetings() {
         <div className="pb-6 px-4">
           <div className="max-w-md mx-auto">
             {/* Meetings Content */}
-            <div className="bg-white/60 backdrop-blur-sm border border-black p-6" style={{ borderWidth: '1.4px' }}>
+            <div className="bg-white/60 backdrop-blur-sm border border-black p-6" style={{ borderWidth: '1.3px', minHeight: 'calc(100dvh - 160px)' }}>
               <h2 className="text-center text-xl font-bold mb-6" style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', color: '#EB1C24' }}>
                 Meeting Scheduler
               </h2>

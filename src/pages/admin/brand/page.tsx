@@ -33,7 +33,7 @@ export default function AdminBrand() {
         
         <div className="pb-6 px-4">
           <div className="max-w-md mx-auto space-y-4">
-            <div className="bg-white/60 backdrop-blur-sm border border-black p-4" style={{ borderWidth: '1.4px' }}>
+            <div className="bg-white/60 backdrop-blur-sm border border-black p-4" style={{ borderWidth: '1.3px', minHeight: 'calc(100dvh - 160px)' }}>
               <h2 className="text-lg font-bold mb-4 font-futura" style={{ color: '#EB1C24' }}>
                 BRAND PERFORMANCE
               </h2>
@@ -76,7 +76,7 @@ export default function AdminBrand() {
               </div>
             </div>
 
-            <div className="bg-white/60 backdrop-blur-sm border border-black p-4" style={{ borderWidth: '1.4px' }}>
+            <div className="bg-white/60 backdrop-blur-sm border border-black p-4" style={{ borderWidth: '1.3px' }}>
               <h3 className="text-sm font-bold mb-3 font-futura" style={{ color: '#EB1C24' }}>RECENT ACHIEVEMENTS</h3>
               <div className="space-y-2">
                 <div className="flex justify-between">

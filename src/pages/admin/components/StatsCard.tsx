@@ -192,7 +192,7 @@ export default function StatsCard({ data, onCardClick }: StatsCardProps) {
   };
 
   return (
-    <div className="bg-white/60 backdrop-blur-sm border border-black p-4 min-h-[140px] flex flex-col overflow-hidden shadow-lg transition-all duration-300 ease-out" style={{ borderWidth: '1.4px' }}>
+    <div className="bg-white/60 backdrop-blur-sm border border-black p-4 min-h-[140px] flex flex-col overflow-hidden shadow-lg transition-all duration-300 ease-out" style={{ borderWidth: '1.3px' }}>
       {/* Header with negative top margin to move even higher */}
       <div className="flex items-center justify-between -mt-1">
         <button

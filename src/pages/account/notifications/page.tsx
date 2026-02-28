@@ -910,7 +910,7 @@ function NotificationsPage() {
                   </div>
 
                   {/* Notifications List */}
-                  <div className="flex-1 flex flex-col overflow-y-auto mt-4" style={{ maxHeight: 'calc(560px - 100px)', scrollBehavior: 'smooth', width: '100%' }}>
+                  <div className="flex-1 flex flex-col overflow-y-auto mt-4" style={{ maxHeight: '467px', scrollBehavior: 'smooth', width: '100%' }}>
                     {displayedNotifications.length === 0 ? (
                       <div className="flex flex-col justify-center items-center my-8 flex-shrink-0">
                         <p

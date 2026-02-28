@@ -528,7 +528,7 @@ function ShippingPage() {
           color: #808080 !important;
         }
       `}</style>
-    <div className="min-h-screen" style={{ position: 'relative' }}>
+    <div className="min-h-screen" style={{ position: 'relative', minHeight: '100vh' }}>
       <div
         className="fixed inset-0 -z-10"
         style={{
@@ -705,7 +705,11 @@ function ShippingPage() {
                 className="account-shipping-card border border-black bg-white/60 backdrop-blur-sm p-4 w-full"
                 style={{
                   borderWidth: '1.3px',
-                  ...(showAddAddressForm ? { paddingBottom: '24px' } : { minHeight: '510px' })
+                  /* Same as wishlist lists main card */
+                  height: 'calc(100vh * 520 / 745)',
+                  minHeight: 'calc(100vh * 520 / 745)',
+                  maxHeight: 'calc(100vh * 520 / 745)',
+                  ...(showAddAddressForm && { paddingBottom: '24px' })
                 }}
               >
                 <div className="account-shipping-card-header flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>

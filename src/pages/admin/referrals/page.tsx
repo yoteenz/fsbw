@@ -53,24 +53,24 @@ export default function AdminReferralsPage() {
       <div className="relative z-10" style={{ textTransform: 'uppercase' }}>
         <AdminHeader title="REFERRALS" showBack onBack={() => window.history.back()} />
         <div className="pb-6 px-4">
-          <div className="max-w-md mx-auto">
+          <div className="max-w-md mx-auto" style={{ minHeight: 'calc(100dvh - 160px)' }}>
             {loading ? (
-              <div className="bg-white/60 backdrop-blur-sm border border-black px-4 py-6" style={{ borderWidth: '1.4px' }}>
+              <div className="bg-white/60 backdrop-blur-sm border border-black px-4 py-6" style={{ borderWidth: '1.3px' }}>
                 <p className="text-sm font-futura uppercase">Loading referral data...</p>
               </div>
             ) : (
               <>
                 <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="bg-white/60 backdrop-blur-sm border border-black p-4" style={{ borderWidth: '1.4px' }}>
+                  <div className="bg-white/60 backdrop-blur-sm border border-black p-4" style={{ borderWidth: '1.3px' }}>
                     <p className="text-xs font-futura uppercase text-gray-500 mb-1">Total invitees</p>
                     <p className="text-xl font-covered-by-your-grace" style={{ color: '#EB1C24' }}>{inviteeCount}</p>
                   </div>
-                  <div className="bg-white/60 backdrop-blur-sm border border-black p-4" style={{ borderWidth: '1.4px' }}>
+                  <div className="bg-white/60 backdrop-blur-sm border border-black p-4" style={{ borderWidth: '1.3px' }}>
                     <p className="text-xs font-futura uppercase text-gray-500 mb-1">Total paid out</p>
                     <p className="text-xl font-covered-by-your-grace" style={{ color: '#EB1C24' }}>${totalEarned}</p>
                   </div>
                 </div>
-                <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.4px' }}>
+                <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px' }}>
                   <h3 className="font-futura font-bold uppercase text-black border-b border-gray-200 px-4 py-3" style={{ fontSize: '11px' }}>
                     By referrer
                   </h3>
@@ -88,7 +88,7 @@ export default function AdminReferralsPage() {
                     )}
                   </div>
                 </div>
-                <div className="bg-white/60 backdrop-blur-sm border border-black" style={{ borderWidth: '1.4px' }}>
+                <div className="bg-white/60 backdrop-blur-sm border border-black" style={{ borderWidth: '1.3px' }}>
                   <h3 className="font-futura font-bold uppercase text-black border-b border-gray-200 px-4 py-3" style={{ fontSize: '11px' }}>
                     Recent referral activity
                   </h3>

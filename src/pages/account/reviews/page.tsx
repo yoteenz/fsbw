@@ -636,7 +636,7 @@ function ReviewsPage() {
             </div>
           ) : (
             <div className="flex flex-col gap-4 mb-5">
-              <div className="bg-white/60 backdrop-blur-sm border border-black p-4 flex flex-col overflow-hidden" style={{ borderWidth: '1.3px', minHeight: '566px' }}>
+              <div className="bg-white/60 backdrop-blur-sm border border-black p-4 flex flex-col overflow-hidden" style={{ borderWidth: '1.3px', minHeight: '560px' }}>
                 {/* Tabs: SHOP REVIEWS | TOOL REVIEWS */}
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
                   <button

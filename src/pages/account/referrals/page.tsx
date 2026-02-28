@@ -305,11 +305,11 @@ function ReferralsPage() {
             </div>
           </div>
 
-          <div className="flex flex-col pb-4 mb-2 w-full" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible', minHeight: showMobileMenu ? '560px' : 'auto' }}>
+          <div className="flex flex-col pb-4 mb-2 w-full" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible', minHeight: 'calc(100dvh - 160px)' }}>
             {showMobileMenu ? (
               <div
                 className="border border-black flex flex-col pt-6 pb-4 px-5 bg-white/60 backdrop-blur-sm w-full"
-                style={{ borderWidth: '1.3px', minWidth: '100%', maxWidth: 'none', overflow: 'visible', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: '560px' }}
+                style={{ borderWidth: '1.3px', minWidth: '100%', maxWidth: 'none', overflow: 'visible', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: 'calc(100dvh - 160px)' }}
               >
                 <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
                   <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>

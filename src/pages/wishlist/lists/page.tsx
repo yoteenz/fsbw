@@ -160,7 +160,7 @@ export default function ViewListsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen" style={{ position: 'relative' }}>
+    <div className="min-h-screen" style={{ position: 'relative', minHeight: '100vh' }}>
       <div
         className="fixed inset-0 -z-10"
         style={{
@@ -260,10 +260,12 @@ export default function ViewListsPage() {
               borderWidth: '1.3px',
               minWidth: '100%',
               maxWidth: 'none',
-              overflow: 'visible',
+              overflow: 'hidden',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              minHeight: showMobileMenu ? 'calc(100dvh - 80px)' : '560px',
-              height: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto'
+              /* Same proportion as 520px on a 745px-tall viewport */
+              height: 'calc(100vh * 520 / 745)',
+              minHeight: 'calc(100vh * 520 / 745)',
+              maxHeight: 'calc(100vh * 520 / 745)'
             }}
           >
             {showMobileMenu ? (
@@ -354,13 +356,14 @@ export default function ViewListsPage() {
             ) : (
               <>
                 {/* Page-specific header: list name when expanded (e.g. VACATION), otherwise LISTS */}
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
                 {(() => {
                   const expandedList = expandedListId ? lists.find((l) => l.id === expandedListId) : null;
                   const expandedItemCount = expandedList ? (expandedList.items?.length ?? 0) : 0;
                   const headerLabel = expandedListId && expandedList ? (expandedList.name ?? '').toUpperCase() : 'LISTS';
                   const headerCount = expandedListId && expandedList ? expandedItemCount : lists.length + 1;
                   return (
-                    <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
+                    <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ flexShrink: 0 }}>
                       <span
                         className="text-red-500 font-bold text-lg tracking-wider truncate text-left uppercase"
                         style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
@@ -377,6 +380,8 @@ export default function ViewListsPage() {
                   );
                 })()}
 
+                {/* Scrollable lists/content area */}
+                <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
                 {expandedListId ? (
                   (() => {
                     const isWishlist = expandedListId === 'wishlist';
@@ -600,6 +605,8 @@ export default function ViewListsPage() {
                 </div>
                 </>
                 )}
+                </div>
+                </div>
               </>
             )}
           </div>

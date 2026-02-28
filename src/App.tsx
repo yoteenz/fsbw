@@ -78,7 +78,6 @@ const lazyWithLogging = (importFn: () => Promise<any>, componentName: string) =>
 const AdminDashboard = lazyWithLogging(() => import('./pages/admin/dashboard/page'), 'AdminDashboard');
 const AdminBrand = lazyWithLogging(() => import('./pages/admin/brand/page'), 'AdminBrand');
 const AdminClients = lazyWithLogging(() => import('./pages/admin/clients/page'), 'AdminClients');
-const AdminClientsAccount = lazyWithLogging(() => import('./pages/admin/clients/account/page'), 'AdminClientsAccount');
 const AdminDeletedAccounts = lazyWithLogging(() => import('./pages/admin/clients/deleted/page'), 'AdminDeletedAccounts');
 const AdminMeetings = lazyWithLogging(() => import('./pages/admin/meetings/page'), 'AdminMeetings');
 const AdminPending = lazyWithLogging(() => import('./pages/admin/pending/page'), 'AdminPending');
@@ -256,6 +255,12 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
   }
 }
 
+// Redirect /admin/clients/account?email=... to /admin/clients/overview?email=... (details now toggle on main card)
+const ClientsAccountRedirect = () => {
+  const location = useLocation();
+  return <Navigate to={{ pathname: '/admin/clients/overview', search: location.search }} replace />;
+};
+
 // Wrapper component to ensure BuildAWigPage only renders on correct route
 const BuildAWigPageWrapper = () => {
   const location = useLocation();
@@ -302,21 +307,18 @@ function App() {
               <AdminBrand />
             </Suspense>
           } />
-          <Route path="clients/account" element={
-            <Suspense fallback={<LoadingScreen />}>
-              <AdminClientsAccount />
-            </Suspense>
-          } />
+          <Route path="clients/account" element={<ClientsAccountRedirect />} />
           <Route path="clients/deleted" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminDeletedAccounts />
             </Suspense>
           } />
-          <Route path="clients" element={
+          <Route path="clients/overview" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminClients />
             </Suspense>
           } />
+          <Route path="clients" element={<Navigate to="/admin/clients/overview" replace />} />
           <Route path="meetings" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminMeetings />

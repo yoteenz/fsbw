@@ -1795,8 +1795,8 @@ function AffiliatePage() {
               minWidth: '100%', 
               maxWidth: 'none', 
               overflow: 'visible',
-              minHeight: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto',
-              height: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto'
+              minHeight: 'calc(100dvh - 160px)',
+              height: showMobileMenu ? 'calc(100dvh - 160px)' : 'auto'
             }}
           >
             {showMobileMenu ? (
@@ -1809,7 +1809,7 @@ function AffiliatePage() {
                   maxWidth: 'none', 
                   overflow: 'visible',
                   backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                  minHeight: 'calc(100dvh - 80px)'
+                  minHeight: 'calc(100dvh - 160px)'
                 }}
               >
                 <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>

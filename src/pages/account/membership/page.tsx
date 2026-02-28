@@ -889,7 +889,7 @@ function MembershipPage() {
             {showMobileMenu ? (
               <div
                 className="flex flex-col pb-4 mb-2 w-full"
-                style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible', minHeight: '560px' }}
+                style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible', minHeight: 'calc(100dvh - 160px)' }}
               >
               {/* MENU CONTENT */}
               <div
@@ -900,7 +900,7 @@ function MembershipPage() {
                   maxWidth: 'none', 
                   overflow: 'visible',
                   backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                  minHeight: '560px'
+                  minHeight: 'calc(100dvh - 160px)'
                 }}
               >
                 <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>

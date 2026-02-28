@@ -2682,6 +2682,11 @@ img.natural-front-mobile {
     width: calc(100% - 20px) !important; /* Reduce by 20px while keeping centered */
   }
 
+/* Account profile red email - no underline (e.g. yoteenz) */
+.account-profile-email {
+  text-decoration: none !important;
+}
+
 /* ULTIMATE OVERRIDE for natural front mobile image */
 img.natural-front-mobile {
   width: 460px !important;

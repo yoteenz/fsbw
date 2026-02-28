@@ -185,7 +185,7 @@ export default function ActivityFeed() {
   return (
     <div>
       {/* Activity Feed */}
-      <div className="bg-white/60 backdrop-blur-sm border border-black shadow-lg hover:shadow-xl transition-all duration-300 ease-out" style={{ borderWidth: '1.4px' }}>
+      <div className="bg-white/60 backdrop-blur-sm border border-black shadow-lg hover:shadow-xl transition-all duration-300 ease-out" style={{ borderWidth: '1.3px' }}>
         {/* Recent Activity Header - inside the card with border bottom */}
         <div className="px-3 pt-3 pb-2 border-b border-gray-200">
           <h2 className="text-black font-futura tracking-wider" style={{ fontWeight: '500', fontSize: '12px' }}>

@@ -463,7 +463,7 @@ function WishlistSelection() {
   };
 
   return (
-    <div className="min-h-screen" style={{ position: 'relative' }}>
+    <div className="min-h-screen" style={{ position: 'relative', minHeight: '100vh' }}>
       {/* Marble Background */}
       <div 
         className="fixed inset-0 -z-10"
@@ -559,7 +559,7 @@ function WishlistSelection() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/build-a-wig')}
+                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
                   >
                     ACCOUNT &gt;
                   </span>{' '}
@@ -601,10 +601,11 @@ function WishlistSelection() {
               borderWidth: '1.3px', 
               minWidth: '100%', 
               maxWidth: 'none', 
-              overflow: 'visible',
+              overflow: 'hidden',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              minHeight: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto',
-              height: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto'
+              height: 'calc(100vh - 270px)',
+              minHeight: 'calc(100vh - 270px)',
+              maxHeight: 'calc(100vh - 270px)'
             }}
           >
             {showMobileMenu ? (
@@ -821,9 +822,9 @@ function WishlistSelection() {
               </div>
             ) : (
               /* WISHLIST HEADER + PRODUCT CARDS */
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 0 }}>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 0, flex: 1, minHeight: 0, overflow: 'hidden' }}>
                 {/* Wishlist header - same styling as Shopping Bag header */}
-                <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
+                <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ flexShrink: 0 }}>
                   <span
                     className="text-red-500 font-bold text-lg tracking-wider truncate text-left uppercase"
                     style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
@@ -838,8 +839,8 @@ function WishlistSelection() {
                   </span>
                 </div>
 
-                {/* WISHLIST PRODUCT CARDS - structured like cart (shopping bag) */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 0, paddingTop: '4.8px' }}>
+                {/* WISHLIST PRODUCT CARDS - scrollable */}
+                <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 0, paddingTop: '4.8px' }}>
                 {wishlistItems.length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '40px 20px', color: '#000' }}>
                     <p style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', textTransform: 'uppercase' }}>

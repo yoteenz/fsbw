@@ -1134,15 +1134,15 @@ function AccountPage() {
         subtitle: referralInvitesUsed === 1 ? '1 INVITE USED' : `${referralInvitesUsed} INVITES USED`,
         route: '/account/referrals'
       },
+      {
+        title: 'PAYMENT METHOD',
+        subtitle: (() => { const n = getPaymentCount(); return n === 1 ? '1 CARD ON FILE' : `${n} CARDS ON FILE`; })(),
+        route: '/account/payment'
+      },
       { 
         title: 'SHIPPING ADDRESS', 
         subtitle: (() => { const n = getAddressCount(); return n === 1 ? '1 ADDRESS ON FILE' : `${n} ADDRESSES ON FILE`; })(), 
         route: '/account/shipping' 
-      },
-      { 
-        title: 'PAYMENT METHOD', 
-        subtitle: (() => { const n = getPaymentCount(); return n === 1 ? '1 CARD ON FILE' : `${n} CARDS ON FILE`; })(), 
-        route: '/account/payment' 
       },
       { title: 'SETTINGS', subtitle: 'PASSWORD + CONTROLS', route: '/account/settings' }
     );
@@ -1663,7 +1663,7 @@ function AccountPage() {
               minWidth: '100%', 
               maxWidth: 'none', 
               overflow: 'visible',
-              minHeight: showMobileMenu ? '560px' : 'auto'
+              minHeight: 'calc(100dvh - 160px)'
             }}
           >
             {showMobileMenu ? (
@@ -1676,7 +1676,7 @@ function AccountPage() {
                   maxWidth: 'none', 
                   overflow: 'visible',
                   backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                  minHeight: '560px'
+                  minHeight: 'calc(100dvh - 160px)'
                 }}
               >
                 <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
@@ -1987,6 +1987,7 @@ function AccountPage() {
                     </p>
 
                     <p
+                      className="account-profile-email"
                       style={{
                         fontFamily: '"Futura PT Medium"',
                         color: '#EB1C24',

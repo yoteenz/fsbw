@@ -88,14 +88,14 @@ export default function AdminDeletedAccounts() {
           <div className="pb-6 px-4">
             <div className="max-w-md mx-auto">
               <p className="text-xs text-gray-600 mb-4" style={{ textTransform: 'uppercase' }}>
-                Accounts deleted by users. Restore to make them able to sign in again.
+                ACCOUNTS DELETED BY USERS. RESTORE TO MAKE THEM ABLE TO SIGN IN AGAIN.
               </p>
               {deletedUsers.length === 0 ? (
-                <div className="bg-white/60 backdrop-blur-sm border border-black p-6 text-center" style={{ borderWidth: '1.3px' }}>
-                  <p className="text-sm" style={{ color: '#000' }}>No deleted accounts</p>
+                <div className="bg-white/60 backdrop-blur-sm border border-black p-6 text-center" style={{ borderWidth: '1.3px', minHeight: 'calc(100dvh - 160px)' }}>
+                  <p className="text-sm" style={{ color: '#000' }}>NO DELETED ACCOUNTS</p>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-3" style={{ minHeight: 'calc(100dvh - 160px)' }}>
                   {deletedUsers.map((user) => {
                     const email = (user.email || '').trim().toLowerCase();
                     const isExpanded = expandedEmail === email;
@@ -113,7 +113,7 @@ export default function AdminDeletedAccounts() {
                               </p>
                               <p className="text-xs text-gray-600 truncate">{user.email}</p>
                               <p className="text-xs text-gray-500 mt-1">
-                                Deleted: {formatDeletedDate(user.deletedAt)}
+                                DELETED: {formatDeletedDate(user.deletedAt)}
                               </p>
                             </div>
                             <div className="flex flex-col gap-2 flex-shrink-0">
@@ -137,7 +137,7 @@ export default function AdminDeletedAccounts() {
                           </div>
                           {isExpanded && (
                             <div className="mt-4 pt-4 border-t border-gray-200 text-left">
-                              <p className="text-xs text-gray-600 mb-2 font-medium">Full record (read-only)</p>
+                              <p className="text-xs text-gray-600 mb-2 font-medium">FULL RECORD (READ-ONLY)</p>
                               <pre className="text-[10px] bg-white/80 p-3 overflow-x-auto max-h-48 overflow-y-auto border border-gray-200">
                                 {JSON.stringify(
                                   Object.fromEntries(

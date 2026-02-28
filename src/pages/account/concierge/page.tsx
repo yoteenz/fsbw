@@ -1781,7 +1781,7 @@ function ConciergePage() {
               minWidth: '100%', 
               maxWidth: 'none', 
               overflow: 'visible',
-              minHeight: showMobileMenu ? '560px' : 'auto'
+              minHeight: 'calc(100dvh - 160px)'
             }}
           >
             {showMobileMenu ? (
@@ -1794,7 +1794,7 @@ function ConciergePage() {
                   maxWidth: 'none', 
                   overflow: 'visible',
                   backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                  minHeight: '560px'
+                  minHeight: 'calc(100dvh - 160px)'
                 }}
               >
                 <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>

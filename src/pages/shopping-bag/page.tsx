@@ -652,7 +652,7 @@ function ShoppingBagPage() {
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
 
   return (
-    <div className="min-h-screen" style={{ position: 'relative' }}>
+    <div className="min-h-screen" style={{ position: 'relative', minHeight: '100vh' }}>
       {/* Marble Background */}
       <div 
         className="fixed inset-0 -z-10"
@@ -785,14 +785,15 @@ function ShoppingBagPage() {
 
           {/* MAIN BUILD AREA */}
           <div
-            className={`${showMobileMenu ? 'menu-toggle-card ' : ''}border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm overflow-hidden transition-all duration-300 ease-out ${showMobileMenu || cartItems.length > 1 ? 'min-h-[360px]' : ''}`}
+            className={`${showMobileMenu ? 'menu-toggle-card ' : ''}border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm overflow-hidden transition-all duration-300 ease-out`}
             style={{ 
               borderWidth: '1.3px', 
               minWidth: '100%', 
               maxWidth: 'none', 
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              minHeight: showMobileMenu ? 'calc(100dvh - 80px)' : (cartItems.length > 1 ? '360px' : 'auto'),
-              height: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto'
+              height: 'calc(100vh - 270px)',
+              minHeight: 'calc(100vh - 270px)',
+              maxHeight: 'calc(100vh - 270px)'
             }}
           >
             {showMobileMenu ? (

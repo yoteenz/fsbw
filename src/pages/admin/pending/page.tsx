@@ -127,7 +127,7 @@ export default function AdminPending() {
         <AdminHeader title="PENDING ITEMS" showBack onBack={() => window.history.back()} />
         
         <div className="pb-6 px-4">
-          <div className="max-w-md mx-auto">
+          <div className="max-w-md mx-auto" style={{ minHeight: 'calc(100dvh - 160px)' }}>
             <div className="grid grid-cols-2 gap-4">
               {pendingStats.map((stat, index) => (
                 <StatsCard key={index} data={stat} onCardClick={handleCardClick} />
