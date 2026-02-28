@@ -54,26 +54,27 @@ function getMockClientsForAyoteenz(): any[] {
     totalReviews: number; reviewsWithPhotosVideos: number; pendingReviews: number;
     currentTierName?: string;
   }> = [
-    { id: 'mock-1', email: 'mock1@test.com', firstName: 'Zara', lastName: 'Adams', membershipType: 'PREMIUM', createdAt: new Date(now - 2 * day).toISOString(), totalSpent: 4200, ordersCount: 5, newCount: 1, alertCount: 2, bookingCount: 3, birthDay: 15, invitesCount: 4, status: 'ACTIVE', reviewsCount: 3, photosCount: 5, videosCount: 1, tagsCount: 8, totalReviews: 5, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED' },
-    { id: 'mock-2', email: 'mock2@test.com', firstName: 'Amy', lastName: 'Brooks', membershipType: 'STANDARD', createdAt: new Date(now - 10 * day).toISOString(), totalSpent: 890, ordersCount: 2, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 3, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER' },
+    /* totalSpent = realistic sums of product prices (NOIR ~740–920, BLANCO ~820, SOFT WAVE ~980, SOFT CURL ~780–1200, multi-unit ~1575–2220) */
+    { id: 'mock-1', email: 'mock1@test.com', firstName: 'Zara', lastName: 'Adams', membershipType: 'PREMIUM', createdAt: new Date(now - 2 * day).toISOString(), totalSpent: 4195, ordersCount: 5, newCount: 1, alertCount: 2, bookingCount: 3, birthDay: 15, invitesCount: 4, status: 'ACTIVE', reviewsCount: 3, photosCount: 5, videosCount: 1, tagsCount: 8, totalReviews: 5, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED' },
+    { id: 'mock-2', email: 'mock2@test.com', firstName: 'Amy', lastName: 'Brooks', membershipType: 'STANDARD', createdAt: new Date(now - 10 * day).toISOString(), totalSpent: 1490, ordersCount: 2, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 3, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER' },
     { id: 'mock-3', email: 'mock3@test.com', firstName: 'Quinn', lastName: 'Chen', membershipType: 'PREMIUM', createdAt: new Date(now - 1 * day).toISOString(), totalSpent: 3100, ordersCount: 4, newCount: 2, alertCount: 1, bookingCount: 2, birthDay: 22, invitesCount: 2, status: 'ACTIVE', reviewsCount: 2, photosCount: 4, videosCount: 2, tagsCount: 6, totalReviews: 4, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'BLACK' },
-    { id: 'mock-4', email: 'mock4@test.com', firstName: 'Diana', lastName: 'Foster', membershipType: 'STANDARD', createdAt: new Date(now - 45 * day).toISOString(), totalSpent: 1500, ordersCount: 3, newCount: 0, alertCount: 1, bookingCount: 1, birthDay: 8, invitesCount: 1, status: 'INACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 3, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 0, currentTierName: 'SILVER' },
-    { id: 'mock-5', email: 'mock5@test.com', firstName: 'Evan', lastName: 'Garcia', membershipType: 'PREMIUM', createdAt: new Date(now - 5 * day).toISOString(), totalSpent: 5800, ordersCount: 8, newCount: 1, alertCount: 3, bookingCount: 4, birthDay: 30, invitesCount: 7, status: 'ACTIVE', reviewsCount: 5, photosCount: 9, videosCount: 3, tagsCount: 12, totalReviews: 8, reviewsWithPhotosVideos: 6, pendingReviews: 2, currentTierName: 'BLACK' },
-    { id: 'mock-6', email: 'mock6@test.com', firstName: 'Fiona', lastName: 'Hayes', membershipType: 'STANDARD', createdAt: new Date(now - 90 * day).toISOString(), totalSpent: 420, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 11, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER' },
+    { id: 'mock-4', email: 'mock4@test.com', firstName: 'Diana', lastName: 'Foster', membershipType: 'STANDARD', createdAt: new Date(now - 45 * day).toISOString(), totalSpent: 1575, ordersCount: 3, newCount: 0, alertCount: 1, bookingCount: 1, birthDay: 8, invitesCount: 1, status: 'INACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 3, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 0, currentTierName: 'SILVER' },
+    { id: 'mock-5', email: 'mock5@test.com', firstName: 'Evan', lastName: 'Garcia', membershipType: 'PREMIUM', createdAt: new Date(now - 5 * day).toISOString(), totalSpent: 5820, ordersCount: 8, newCount: 1, alertCount: 3, bookingCount: 4, birthDay: 30, invitesCount: 7, status: 'ACTIVE', reviewsCount: 5, photosCount: 9, videosCount: 3, tagsCount: 12, totalReviews: 8, reviewsWithPhotosVideos: 6, pendingReviews: 2, currentTierName: 'BLACK' },
+    { id: 'mock-6', email: 'mock6@test.com', firstName: 'Fiona', lastName: 'Hayes', membershipType: 'STANDARD', createdAt: new Date(now - 90 * day).toISOString(), totalSpent: 740, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 11, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER' },
     { id: 'mock-7', email: 'mock7@test.com', firstName: 'Grant', lastName: 'Ingram', membershipType: 'PREMIUM', createdAt: new Date(now - 3 * day).toISOString(), totalSpent: 2100, ordersCount: 3, newCount: 0, alertCount: 0, bookingCount: 2, birthDay: 27, invitesCount: 3, status: 'ACTIVE', reviewsCount: 2, photosCount: 3, videosCount: 1, tagsCount: 4, totalReviews: 3, reviewsWithPhotosVideos: 2, pendingReviews: 0, currentTierName: 'RED' },
-    { id: 'mock-8', email: 'mock8@test.com', firstName: 'Hannah', lastName: 'Jones', membershipType: 'STANDARD', createdAt: new Date(now - 14 * day).toISOString(), totalSpent: 1200, ordersCount: 2, newCount: 1, alertCount: 2, bookingCount: 1, birthDay: 5, invitesCount: 1, status: 'ACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 2, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 1, currentTierName: 'SILVER' },
-    { id: 'mock-9', email: 'mock9@test.com', firstName: 'Ivan', lastName: 'Kim', membershipType: 'PREMIUM', createdAt: new Date(now - 7 * day).toISOString(), totalSpent: 6700, ordersCount: 6, newCount: 2, alertCount: 1, bookingCount: 5, birthDay: 19, invitesCount: 5, status: 'INACTIVE', reviewsCount: 4, photosCount: 7, videosCount: 2, tagsCount: 10, totalReviews: 6, reviewsWithPhotosVideos: 5, pendingReviews: 1, currentTierName: 'BLACK' },
-    { id: 'mock-10', email: 'mock10@test.com', firstName: 'Julia', lastName: 'Lee', membershipType: 'STANDARD', createdAt: new Date(now - 21 * day).toISOString(), totalSpent: 650, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 12, invitesCount: 0, status: 'ACTIVE', reviewsCount: 0, photosCount: 1, videosCount: 0, tagsCount: 1, totalReviews: 1, reviewsWithPhotosVideos: 1, pendingReviews: 0, currentTierName: 'SILVER' },
+    { id: 'mock-8', email: 'mock8@test.com', firstName: 'Hannah', lastName: 'Jones', membershipType: 'STANDARD', createdAt: new Date(now - 14 * day).toISOString(), totalSpent: 1520, ordersCount: 2, newCount: 1, alertCount: 2, bookingCount: 1, birthDay: 5, invitesCount: 1, status: 'ACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 2, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 1, currentTierName: 'SILVER' },
+    { id: 'mock-9', email: 'mock9@test.com', firstName: 'Ivan', lastName: 'Kim', membershipType: 'PREMIUM', createdAt: new Date(now - 7 * day).toISOString(), totalSpent: 6710, ordersCount: 6, newCount: 2, alertCount: 1, bookingCount: 5, birthDay: 19, invitesCount: 5, status: 'INACTIVE', reviewsCount: 4, photosCount: 7, videosCount: 2, tagsCount: 10, totalReviews: 6, reviewsWithPhotosVideos: 5, pendingReviews: 1, currentTierName: 'BLACK' },
+    { id: 'mock-10', email: 'mock10@test.com', firstName: 'Julia', lastName: 'Lee', membershipType: 'STANDARD', createdAt: new Date(now - 21 * day).toISOString(), totalSpent: 740, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 12, invitesCount: 0, status: 'ACTIVE', reviewsCount: 0, photosCount: 1, videosCount: 0, tagsCount: 1, totalReviews: 1, reviewsWithPhotosVideos: 1, pendingReviews: 0, currentTierName: 'SILVER' },
     { id: 'mock-11', email: 'mock11@test.com', firstName: 'Kyle', lastName: 'Martinez', membershipType: 'PREMIUM', createdAt: new Date(now - 4 * day).toISOString(), totalSpent: 3900, ordersCount: 5, newCount: 1, alertCount: 2, bookingCount: 3, birthDay: 25, invitesCount: 2, status: 'ACTIVE', reviewsCount: 3, photosCount: 4, videosCount: 1, tagsCount: 7, totalReviews: 4, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED' },
     { id: 'mock-12', email: 'mock12@test.com', firstName: 'Luna', lastName: 'Nguyen', membershipType: 'STANDARD', createdAt: new Date(now - 60 * day).toISOString(), totalSpent: 2100, ordersCount: 4, newCount: 0, alertCount: 1, bookingCount: 2, birthDay: 7, invitesCount: 4, status: 'INACTIVE', reviewsCount: 2, photosCount: 3, videosCount: 1, tagsCount: 5, totalReviews: 3, reviewsWithPhotosVideos: 2, pendingReviews: 0, currentTierName: 'RED' },
-    { id: 'mock-13', email: 'mock13@test.com', firstName: 'Marcus', lastName: 'Owen', membershipType: 'PREMIUM', createdAt: new Date(now - 1 * day).toISOString(), totalSpent: 5100, ordersCount: 7, newCount: 3, alertCount: 4, bookingCount: 6, birthDay: 14, invitesCount: 9, status: 'ACTIVE', reviewsCount: 6, photosCount: 10, videosCount: 4, tagsCount: 14, totalReviews: 9, reviewsWithPhotosVideos: 7, pendingReviews: 2, currentTierName: 'BLACK' },
-    { id: 'mock-14', email: 'mock14@test.com', firstName: 'Nina', lastName: 'Patel', membershipType: 'STANDARD', createdAt: new Date(now - 30 * day).toISOString(), totalSpent: 780, ordersCount: 2, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 20, invitesCount: 0, status: 'ACTIVE', reviewsCount: 1, photosCount: 1, videosCount: 0, tagsCount: 2, totalReviews: 1, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER' },
+    { id: 'mock-13', email: 'mock13@test.com', firstName: 'Marcus', lastName: 'Owen', membershipType: 'PREMIUM', createdAt: new Date(now - 1 * day).toISOString(), totalSpent: 5120, ordersCount: 7, newCount: 3, alertCount: 4, bookingCount: 6, birthDay: 14, invitesCount: 9, status: 'ACTIVE', reviewsCount: 6, photosCount: 10, videosCount: 4, tagsCount: 14, totalReviews: 9, reviewsWithPhotosVideos: 7, pendingReviews: 2, currentTierName: 'BLACK' },
+    { id: 'mock-14', email: 'mock14@test.com', firstName: 'Nina', lastName: 'Patel', membershipType: 'STANDARD', createdAt: new Date(now - 30 * day).toISOString(), totalSpent: 1520, ordersCount: 2, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 20, invitesCount: 0, status: 'ACTIVE', reviewsCount: 1, photosCount: 1, videosCount: 0, tagsCount: 2, totalReviews: 1, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER' },
     { id: 'mock-15', email: 'mock15@test.com', firstName: 'Oscar', lastName: 'Quinn', membershipType: 'PREMIUM', createdAt: new Date(now - 6 * day).toISOString(), totalSpent: 4400, ordersCount: 5, newCount: 1, alertCount: 1, bookingCount: 4, birthDay: 9, invitesCount: 3, status: 'INACTIVE', reviewsCount: 3, photosCount: 5, videosCount: 1, tagsCount: 8, totalReviews: 4, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED' },
     { id: 'mock-16', email: 'mock16@test.com', firstName: 'Paula', lastName: 'Rivera', membershipType: 'STANDARD', createdAt: new Date(now - 120 * day).toISOString(), totalSpent: 3200, ordersCount: 6, newCount: 0, alertCount: 2, bookingCount: 2, birthDay: 28, invitesCount: 2, status: 'ACTIVE', reviewsCount: 2, photosCount: 4, videosCount: 0, tagsCount: 6, totalReviews: 3, reviewsWithPhotosVideos: 2, pendingReviews: 0, currentTierName: 'RED' },
     { id: 'mock-17', email: 'mock17@test.com', firstName: 'Ryan', lastName: 'Scott', membershipType: 'PREMIUM', createdAt: new Date(now - 2 * day).toISOString(), totalSpent: 1900, ordersCount: 3, newCount: 0, alertCount: 0, bookingCount: 1, birthDay: 4, invitesCount: 1, status: 'ACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 3, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 1, currentTierName: 'SILVER' },
     { id: 'mock-18', email: 'mock18@test.com', firstName: 'Sara', lastName: 'Torres', membershipType: 'STANDARD', createdAt: new Date(now - 8 * day).toISOString(), totalSpent: 1100, ordersCount: 2, newCount: 1, alertCount: 3, bookingCount: 1, birthDay: 16, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER' },
     { id: 'mock-19', email: 'mock19@test.com', firstName: 'Tyler', lastName: 'Upton', membershipType: 'PREMIUM', createdAt: new Date(now - 12 * day).toISOString(), totalSpent: 7200, ordersCount: 9, newCount: 2, alertCount: 2, bookingCount: 7, birthDay: 23, invitesCount: 6, status: 'ACTIVE', reviewsCount: 5, photosCount: 8, videosCount: 2, tagsCount: 11, totalReviews: 7, reviewsWithPhotosVideos: 6, pendingReviews: 2, currentTierName: 'BLACK' },
-    { id: 'mock-20', email: 'mock20@test.com', firstName: 'Uma', lastName: 'Vance', membershipType: 'STANDARD', createdAt: new Date(now - 3 * day).toISOString(), totalSpent: 340, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 1, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER' },
+    { id: 'mock-20', email: 'mock20@test.com', firstName: 'Uma', lastName: 'Vance', membershipType: 'STANDARD', createdAt: new Date(now - 3 * day).toISOString(), totalSpent: 740, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 1, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER' },
   ];
   return mockRows.map((row) => ({
     ...row,
@@ -185,27 +186,31 @@ export default function AdminClients() {
   ];
 
   // NEW / ORDERS / CHARGES: from mock fields (ayoteenz mock clients) or from userOrders_${email} for real users
+  // NEW = orders not yet delivered; ORDERS = total orders (excluding canceled) in progress or completed
+  // CHARGES = total spend (excluding canceled orders)
   const getClientRow = (u: any, index: number) => {
     const name = ([(u.firstName || '').trim(), (u.lastName || '').trim()].filter(Boolean).join(' ') || u.email || '—').toUpperCase();
     let newCount = u.newCount;
     let ordersCount = u.ordersCount;
     let charges = u.totalSpent;
-    if (newCount == null || ordersCount == null || charges == null) {
-      try {
-        const email = (u.email || '').trim().toLowerCase();
-        if (email) {
-          const raw = localStorage.getItem(`userOrders_${email}`);
-          const data = raw ? JSON.parse(raw) : null;
-          const active = data?.activeOrders || [];
-          const past = data?.pastOrders || [];
-          const all = [...active, ...past];
-          if (ordersCount == null) ordersCount = all.length;
-          if (charges == null) charges = all.reduce((sum: number, o: any) => sum + (Number(o.total) || 0), 0);
-          if (newCount == null) newCount = 0;
+    try {
+      const email = (u.email || '').trim().toLowerCase();
+      if (email) {
+        const raw = localStorage.getItem(`userOrders_${email}`);
+        const data = raw ? JSON.parse(raw) : null;
+        const active = data?.activeOrders || [];
+        const past = data?.pastOrders || [];
+        const all = [...active, ...past];
+        if (all.length > 0) {
+          const nonCanceled = all.filter((o: any) => (o.status || '').toUpperCase() !== 'CANCELED' && !o.canceledAt);
+          const notDelivered = nonCanceled.filter((o: any) => (o.status || '').toUpperCase() !== 'DELIVERED' && !o.deliveredAt);
+          if (ordersCount == null) ordersCount = nonCanceled.length;
+          charges = nonCanceled.reduce((sum: number, o: any) => sum + (Number(o.total) || 0), 0);
+          if (newCount == null) newCount = notDelivered.length;
         }
-      } catch {
-        // ignore
       }
+    } catch {
+      // ignore
     }
     return { index: index + 1, name, newCount: newCount ?? 0, ordersCount: ordersCount ?? 0, charges: charges ?? 0 };
   };
@@ -384,7 +389,7 @@ export default function AdminClients() {
               {/* Single main card – client list (reference structure) */}
               <div
                 className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
-                style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745)' }}
+                style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
               >
                 {/* CLIENTS header (concierge-style): text left, icon right; when details view: X close on right; card header always "CLIENTS" */}
                 <div className="flex items-center justify-between -mt-1 pb-1 px-4 pt-4" style={{ marginBottom: 0 }}>
@@ -595,10 +600,11 @@ export default function AdminClients() {
                       key={tab}
                       type="button"
                       onClick={() => setActiveTab(tab)}
-                      className="flex-1 py-3 text-xs font-medium transition-colors"
+                      className="flex-1 py-3 font-medium transition-colors"
                       style={{
                         fontFamily: '"Futura PT Medium"',
-                        color: activeTab === tab ? '#EB1C24' : '#9CA3AF',
+                        fontSize: '11px',
+                        color: activeTab === tab ? '#EB1C24' : '#808080',
                         border: 'none',
                         paddingBottom: '4px',
                         background: 'none',
@@ -610,6 +616,7 @@ export default function AdminClients() {
                           display: 'inline-block',
                           borderBottom: activeTab === tab ? '1px solid #EB1C24' : '1px solid transparent',
                           paddingBottom: '4px',
+                          marginLeft: tab === 'REVIEWS' ? '-6px' : undefined,
                         }}
                       >
                         {tab}
@@ -620,69 +627,71 @@ export default function AdminClients() {
 
                 {/* Sort + Column headers on same row – same line width as tabs */}
                 <div
-                  className="grid gap-2 px-5 py-2 text-xs font-medium text-black items-center min-w-0"
+                  className="grid gap-2 px-5 py-2 font-medium text-black items-center min-w-0"
                   style={{
                     fontFamily: '"Futura PT Book"',
-                    gridTemplateColumns: '1fr 3rem 3.5rem 4rem',
+                    fontSize: '11px',
+                    gridTemplateColumns: '1fr 3.5rem 3.5rem 3.5rem',
                     marginTop: '8px',
+                    marginLeft: '-4px',
                   }}
                 >
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setShowSortDropdown((v) => !v)}
-                      className="flex items-center gap-1.5 text-xs text-black hover:text-gray-800 transition-colors"
-                    >
-                      <span>{sortOptionToLabel(sortOption)}</span>
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 12 12"
-                        fill="none"
+                  <div className="relative" style={{ paddingLeft: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowSortDropdown((v) => !v)}
+                      className="flex items-center gap-1.5 text-black hover:text-gray-800 transition-colors"
+                  >
+                    <span>{sortOptionToLabel(sortOption)}</span>
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
                         className="flex-shrink-0"
                         style={{ transform: showSortDropdown ? 'rotate(180deg)' : 'none', color: '#EB1C24', marginLeft: '-2px' }}
-                      >
-                        <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </button>
-                    {showSortDropdown && (
-                      <>
-                        <div
-                          className="fixed inset-0 z-10"
-                          aria-hidden="true"
-                          onClick={() => setShowSortDropdown(false)}
-                        />
-                        <div
+                    >
+                        <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  {showSortDropdown && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-10"
+                        aria-hidden="true"
+                        onClick={() => setShowSortDropdown(false)}
+                      />
+                      <div
                           className="absolute left-0 mt-1 py-1 bg-white border border-black shadow-lg z-20 min-w-[120px]"
-                          style={{ borderWidth: '1.3px' }}
-                        >
-                          {SORT_OPTIONS.map((opt) => (
-                            <button
-                              key={opt}
-                              type="button"
-                              onClick={() => {
-                                setSortOption(opt);
-                                setShowSortDropdown(false);
-                              }}
-                              className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
-                              style={{
-                                fontFamily: '"Futura PT Book"',
-                                color: sortOption === opt ? '#EB1C24' : '#000',
-                                fontWeight: sortOption === opt ? 500 : 400,
-                              }}
-                            >
-                              {sortOptionToLabel(opt)}
-                            </button>
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  </div>
+                        style={{ borderWidth: '1.3px' }}
+                      >
+                        {SORT_OPTIONS.map((opt) => (
+                          <button
+                            key={opt}
+                            type="button"
+                            onClick={() => {
+                              setSortOption(opt);
+                              setShowSortDropdown(false);
+                            }}
+                            className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
+                            style={{
+                              fontFamily: '"Futura PT Book"',
+                              color: sortOption === opt ? '#EB1C24' : '#000',
+                              fontWeight: sortOption === opt ? 500 : 400,
+                            }}
+                          >
+                            {sortOptionToLabel(opt)}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
                   {activeTab === 'INVITES' ? (
                     <>
                       <div className="text-center">REFERRAL</div>
                       <div className="text-center">STATUS</div>
-                      <div className="text-right">INVITES</div>
+                      <div className="text-center">INVITES</div>
                     </>
                   ) : activeTab === 'REWARDS' ? (
                     <>
@@ -698,9 +707,9 @@ export default function AdminClients() {
                     </>
                   ) : (
                     <>
-                      <div className="text-center">NEW</div>
-                      <div className="text-center">ORDERS</div>
-                      <div className="text-right">CHARGES</div>
+                  <div className="text-center">NEW</div>
+                  <div className="text-center">ORDERS</div>
+                  <div className="text-center">CHARGES</div>
                     </>
                   )}
                 </div>
@@ -721,24 +730,25 @@ export default function AdminClients() {
                       return (
                         <div
                           key={u.email || u.id || i}
-                          className="grid grid-cols-[1fr_auto_auto_auto] gap-2 px-5 py-3 border-b border-gray-100 text-sm items-center"
-                          style={{ gridTemplateColumns: '1fr 3rem 3.5rem 4rem' }}
+                          className={`grid grid-cols-[1fr_auto_auto_auto] gap-2 px-5 py-3 text-sm items-center ${i === sortedClients.length - 1 ? '' : 'border-b border-gray-100'}`}
+                          style={{ gridTemplateColumns: '1fr 3.5rem 3.5rem 3.5rem', marginLeft: '-4px' }}
                         >
                           <button
                             type="button"
                             onClick={() => setSelectedClientEmail(u.email || null)}
                             className="min-w-0 text-left w-full bg-transparent border-none p-0 cursor-pointer hover:opacity-80 transition-opacity"
+                            style={{ paddingLeft: '8px' }}
                           >
-                            <span className="font-medium block truncate" style={{ color: '#EB1C24' }}>
+                            <span className="font-medium block truncate" style={{ fontSize: '12px', color: '#EB1C24' }}>
                               {row.index}. {row.name}
                             </span>
-                            <span className={`text-xs block truncate ${(u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? 'text-black' : 'text-gray-500'}`} style={{ fontFamily: (u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? '"Futura PT Book"' : '"Futura PT Medium"' }}>
+                            <span className={`block truncate ${(u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? 'text-black' : 'text-gray-500'}`} style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '13px' }}>
                               {getMembershipTierLabel(u)}
                             </span>
                           </button>
-                          <div className="text-center text-gray-700">{row.referralNumber}</div>
-                          <div className="text-center text-gray-700">{row.status}</div>
-                          <div className="text-right font-medium" style={{ color: '#EB1C24' }}>
+                          <div className="text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>{row.referralNumber}</div>
+                          <div className="text-center" style={{ fontFamily: row.status === 'ACTIVE' ? '"Futura PT Book"' : '"Futura PT Medium"', fontSize: '11px', color: row.status === 'ACTIVE' ? '#EB1C24' : '#808080' }}>{row.status}</div>
+                          <div className="text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: (row.invitesCount !== 0 && row.invitesCount !== '0') ? '#EB1C24' : '#000000' }}>
                             {row.invitesCount}
                           </div>
                         </div>
@@ -750,24 +760,25 @@ export default function AdminClients() {
                       return (
                         <div
                           key={u.email || u.id || i}
-                          className="grid gap-2 px-5 py-3 border-b border-gray-100 text-sm items-center"
-                          style={{ gridTemplateColumns: '1fr 3rem 3.5rem 4rem' }}
+                          className={`grid gap-2 px-5 py-3 text-sm items-center ${i === sortedClients.length - 1 ? '' : 'border-b border-gray-100'}`}
+                          style={{ gridTemplateColumns: '1fr 3.5rem 3.5rem 3.5rem', marginLeft: '-4px' }}
                         >
                           <button
                             type="button"
                             onClick={() => setSelectedClientEmail(u.email || null)}
                             className="min-w-0 text-left w-full bg-transparent border-none p-0 cursor-pointer hover:opacity-80 transition-opacity"
+                            style={{ paddingLeft: '8px' }}
                           >
-                            <span className="font-medium block truncate" style={{ color: '#EB1C24' }}>
+                            <span className="font-medium block truncate" style={{ fontSize: '12px', color: '#EB1C24' }}>
                               {row.index}. {row.name}
                             </span>
-                            <span className={`text-xs block truncate ${(u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? 'text-black' : 'text-gray-500'}`} style={{ fontFamily: (u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? '"Futura PT Book"' : '"Futura PT Medium"' }}>
+                            <span className={`block truncate ${(u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? 'text-black' : 'text-gray-500'}`} style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '13px' }}>
                               {getMembershipTierLabel(u)}
                             </span>
                           </button>
-                          <div className="text-center text-gray-700">{row.totalReviews}</div>
-                          <div className="text-center text-gray-700">{row.reviewsWithPhotosVideos}</div>
-                          <div className="text-center text-gray-700">{row.pendingReviews}</div>
+                          <div className="text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: (row.totalReviews !== 0 && row.totalReviews !== '0') ? '#EB1C24' : '#000000' }}>{row.totalReviews}</div>
+                          <div className="text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: (row.reviewsWithPhotosVideos !== 0 && row.reviewsWithPhotosVideos !== '0') ? '#EB1C24' : '#000000' }}>{row.reviewsWithPhotosVideos}</div>
+                          <div className="text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: (row.pendingReviews !== 0 && row.pendingReviews !== '0') ? '#EB1C24' : '#000000' }}>{row.pendingReviews}</div>
                         </div>
                       );
                     })
@@ -777,24 +788,25 @@ export default function AdminClients() {
                       return (
                         <div
                           key={u.email || u.id || i}
-                          className="grid gap-2 px-5 py-3 border-b border-gray-100 text-sm items-center"
-                          style={{ gridTemplateColumns: '1fr 3rem 3.5rem 4rem' }}
+                          className={`grid gap-2 px-5 py-3 text-sm items-center ${i === sortedClients.length - 1 ? '' : 'border-b border-gray-100'}`}
+                          style={{ gridTemplateColumns: '1fr 3.5rem 3.5rem 3.5rem', marginLeft: '-4px' }}
                         >
                           <button
                             type="button"
                             onClick={() => setSelectedClientEmail(u.email || null)}
                             className="min-w-0 text-left w-full bg-transparent border-none p-0 cursor-pointer hover:opacity-80 transition-opacity"
+                            style={{ paddingLeft: '8px' }}
                           >
-                            <span className="font-medium block truncate" style={{ color: '#EB1C24' }}>
+                            <span className="font-medium block truncate" style={{ fontSize: '12px', color: '#EB1C24' }}>
                               {row.index}. {row.name}
                             </span>
-                            <span className={`text-xs block truncate ${(u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? 'text-black' : 'text-gray-500'}`} style={{ fontFamily: (u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? '"Futura PT Book"' : '"Futura PT Medium"' }}>
+                            <span className={`block truncate ${(u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? 'text-black' : 'text-gray-500'}`} style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '13px' }}>
                               {getMembershipTierLabel(u)}
                             </span>
                           </button>
-                          <div className="text-center text-gray-700">{row.photosCount}</div>
-                          <div className="text-center text-gray-700">{row.videosCount}</div>
-                          <div className="text-center text-gray-700">{row.tagsCount}</div>
+                          <div className="text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: (row.photosCount !== 0 && row.photosCount !== '0') ? '#EB1C24' : '#000000' }}>{row.photosCount}</div>
+                          <div className="text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: (row.videosCount !== 0 && row.videosCount !== '0') ? '#EB1C24' : '#000000' }}>{row.videosCount}</div>
+                          <div className="text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: (row.tagsCount !== 0 && row.tagsCount !== '0') ? '#EB1C24' : '#000000' }}>{row.tagsCount}</div>
                         </div>
                       );
                     })
@@ -804,24 +816,25 @@ export default function AdminClients() {
                       return (
                         <div
                           key={u.email || u.id || i}
-                          className="grid grid-cols-[1fr_auto_auto_auto] gap-2 px-5 py-3 border-b border-gray-100 text-sm items-center"
-                          style={{ gridTemplateColumns: '1fr 3rem 3.5rem 4rem' }}
+                          className={`grid grid-cols-[1fr_auto_auto_auto] gap-2 px-5 py-3 text-sm items-center ${i === sortedClients.length - 1 ? '' : 'border-b border-gray-100'}`}
+                          style={{ gridTemplateColumns: '1fr 3.5rem 3.5rem 3.5rem', marginLeft: '-4px' }}
                         >
                           <button
                             type="button"
                             onClick={() => setSelectedClientEmail(u.email || null)}
                             className="min-w-0 text-left w-full bg-transparent border-none p-0 cursor-pointer hover:opacity-80 transition-opacity"
+                            style={{ paddingLeft: '8px' }}
                           >
-                            <span className="font-medium block truncate" style={{ color: '#EB1C24' }}>
+                            <span className="font-medium block truncate" style={{ fontSize: '12px', color: '#EB1C24' }}>
                               {row.index}. {row.name}
                             </span>
-                            <span className={`text-xs block truncate ${(u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? 'text-black' : 'text-gray-500'}`} style={{ fontFamily: (u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? '"Futura PT Book"' : '"Futura PT Medium"' }}>
+                            <span className={`block truncate ${(u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? 'text-black' : 'text-gray-500'}`} style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '13px' }}>
                               {getMembershipTierLabel(u)}
                             </span>
                           </button>
-                          <div className="text-center text-gray-700">{row.newCount}</div>
-                          <div className="text-center text-gray-700">{row.ordersCount}</div>
-                          <div className="text-right font-medium" style={{ color: '#EB1C24' }}>
+                          <div className="text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: (row.newCount !== 0 && row.newCount !== '0') ? '#EB1C24' : '#000000' }}>{row.newCount}</div>
+                          <div className="text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000000' }}>{row.ordersCount}</div>
+                          <div className="text-center" style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#808080' }}>
                             ${row.charges.toLocaleString()}
                           </div>
                         </div>
@@ -834,14 +847,14 @@ export default function AdminClients() {
               </div>
 
               {!selectedClientEmail && (
-                <button
-                  type="button"
-                  onClick={() => navigate('/admin/clients/deleted')}
-                  className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-                  style={{ ...pageActionButtonStyle, marginTop: '12px' }}
-                >
+              <button
+                type="button"
+                onClick={() => navigate('/admin/clients/deleted')}
+                className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                style={{ ...pageActionButtonStyle, marginTop: '12px' }}
+              >
                   VIEW DELETED ACCOUNTS
-                </button>
+              </button>
               )}
             </div>
           </div>
