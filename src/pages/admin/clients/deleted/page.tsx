@@ -154,6 +154,7 @@ export default function AdminDeletedAccounts() {
         localStorage.setItem('deletedUsers', JSON.stringify(MOCK_DELETED_USERS));
         list = MOCK_DELETED_USERS;
       }
+      list = [...list].sort((a, b) => new Date(b.deletedAt).getTime() - new Date(a.deletedAt).getTime());
       setDeletedUsers(list);
     } catch {
       setDeletedUsers([]);
@@ -182,7 +183,8 @@ export default function AdminDeletedAccounts() {
       if (!registered.some((u: { email?: string }) => (u.email || '').toLowerCase() === email)) {
         registered.push(userWithoutDeletedAt);
       }
-      const newDeleted = deleted.filter((u: DeletedUser) => (u.email || '').toLowerCase() !== email);
+      const newDeleted = deleted.filter((u: DeletedUser) => (u.email || '').toLowerCase() !== email)
+        .sort((a, b) => new Date(b.deletedAt).getTime() - new Date(a.deletedAt).getTime());
       localStorage.setItem('registeredUsers', JSON.stringify(registered));
       localStorage.setItem('deletedUsers', JSON.stringify(newDeleted));
       setDeletedUsers(newDeleted);

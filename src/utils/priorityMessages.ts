@@ -64,12 +64,80 @@ export function getClientOrderIssue(client: Record<string, unknown>): { lastIssu
   return null;
 }
 
-/** Whether client qualifies for Alerts: Premium + unread priority messages OR has order-related issue */
+/** Whether client qualifies for Alerts: Premium + unread priority messages OR has order-related issue OR has new orders (in progress) */
 export function clientHasUnreadPriorityMessages(client: Record<string, unknown>): boolean {
   const membership = ((client.membershipType || 'STANDARD') + '').toUpperCase();
   const hasMessages = membership === 'PREMIUM' && getClientUnreadPriorityMessage(client) !== null;
   const hasOrderIssue = getClientOrderIssue(client) !== null;
-  return hasMessages || hasOrderIssue;
+  const hasNewOrders = getClientNewOrdersCount(client) > 0;
+  return hasMessages || hasOrderIssue || hasNewOrders;
+}
+
+/** Get count of new orders (in progress, not yet delivered) */
+function getClientNewOrdersCount(client: Record<string, unknown>): number {
+  const count = (client.newCount ?? 0) as number;
+  if (count > 0) return count;
+  const emailVal = client.email;
+  const email = (emailVal == null ? '' : String(emailVal)).trim().toLowerCase();
+  if (!email) return 0;
+  try {
+    const raw = localStorage.getItem(`userOrders_${email}`);
+    const data = raw ? JSON.parse(raw) : null;
+    const active = data?.activeOrders || [];
+    const past = data?.pastOrders || [];
+    const all = [...active, ...past];
+    const notDelivered = all.filter(
+      (o: Record<string, unknown>) =>
+        (String(o.status || '').toUpperCase() !== 'DELIVERED' && !o.deliveredAt) &&
+        (String(o.status || '').toUpperCase() !== 'CANCELED' && !o.canceledAt)
+    );
+    return notDelivered.length;
+  } catch {
+    return 0;
+  }
+}
+
+/** Get timestamp of most recent new order (in progress) for sorting */
+function getLastNewOrderTime(client: Record<string, unknown>): number {
+  const lastAt = client.lastNewOrderAt as string | undefined;
+  if (lastAt) {
+    try {
+      return new Date(lastAt).getTime();
+    } catch {
+      // ignore
+    }
+  }
+  const emailVal = client.email;
+  const email = (emailVal == null ? '' : String(emailVal)).trim().toLowerCase();
+  if (!email) return 0;
+  try {
+    const raw = localStorage.getItem(`userOrders_${email}`);
+    const data = raw ? JSON.parse(raw) : null;
+    const active = data?.activeOrders || [];
+    const past = data?.pastOrders || [];
+    const all = [...active, ...past];
+    const notDelivered = all.filter(
+      (o: Record<string, unknown>) =>
+        (String(o.status || '').toUpperCase() !== 'DELIVERED' && !o.deliveredAt) &&
+        (String(o.status || '').toUpperCase() !== 'CANCELED' && !o.canceledAt)
+    );
+    if (notDelivered.length === 0) return 0;
+    let maxTime = 0;
+    for (const o of notDelivered) {
+      const d = (o.placedAt ?? o.date ?? o.createdAt) as string | undefined;
+      if (d) {
+        try {
+          const t = new Date(d).getTime();
+          if (!isNaN(t)) maxTime = Math.max(maxTime, t);
+        } catch {
+          // ignore
+        }
+      }
+    }
+    return maxTime;
+  } catch {
+    return 0;
+  }
 }
 
 /** Get most recent alert timestamp for sorting (priority message or order issue, whichever is newer) */

@@ -37,14 +37,14 @@ function getMembershipTierLabel(u: any): string {
   return `${membership} ${tier}`.toUpperCase();
 }
 
-/** Tier display label and color for profile: "Silver tier", "Black tier", "Red tier" with matching color */
+/** Tier display label and color for profile: "Silver tier rewards", "Black tier rewards", "Red tier rewards" with matching color */
 function getTierDisplayLabelAndColor(u: any): { label: string; color: string } {
   const tier = getEffectiveTierName(u);
   const membership = (u?.membershipType || 'STANDARD').toString().toUpperCase();
-  if (tier === 'SILVER') return { label: 'Silver tier', color: '#808080' };
-  if (tier === 'BLACK') return { label: 'Black tier', color: '#000000' };
-  if (tier === 'RED') return { label: 'Red tier', color: '#EB1C24' };
-  return { label: membership === 'PREMIUM' ? 'Premium' : 'Standard', color: '#808080' };
+  if (tier === 'SILVER') return { label: 'Silver tier rewards', color: '#808080' };
+  if (tier === 'BLACK') return { label: 'Black tier rewards', color: '#000000' };
+  if (tier === 'RED') return { label: 'Red tier rewards', color: '#EB1C24' };
+  return { label: membership === 'PREMIUM' ? 'Premium rewards' : 'Standard rewards', color: '#808080' };
 }
 
 /** Check if client is subscribed to the email newsletter (client.newsletterSubscribed or localStorage userNewsletter_${email}) */
@@ -224,8 +224,22 @@ function getMockClientsForAyoteenz(): any[] {
       hasOrders && hasUnread
         ? new Date(now - (4 - Math.min((row.alertCount ?? 1) % 4, 3)) * min).toISOString() // variety for sort order
         : undefined;
+    const addrStr = (row.address || '').toString().trim();
+    const addrParts = addrStr ? addrStr.split(', ').map((s: string) => s.trim()) : [];
+    const defaultAddress = addrParts.length >= 3
+      ? addrParts.length >= 4
+        ? { address: addrParts[0], city: addrParts[1], state: addrParts[2], zip: addrParts[3], country: 'US' }
+        : {
+            address: addrParts[0],
+            city: addrParts[1],
+            state: (addrParts[2].match(/^[A-Za-z]{2}/) || [addrParts[2]])[0],
+            zip: addrParts[2].replace(/^[A-Za-z]{2}\s*/, '').trim() || addrParts[2],
+            country: 'US',
+          }
+      : undefined;
     return {
       ...row,
+      defaultAddress,
       referralNumber: buildReferralCode(row.firstName, row.lastName, row.birthDay, row.email),
       lastUnreadPriorityMessageAt,
       lastOrderIssueAt,
@@ -563,7 +577,7 @@ export default function AdminClients() {
         if (primary && typeof primary === 'object' && (primary.address || primary.city)) {
           const parts = [
             primary.address,
-            [primary.city, primary.state, primary.zip].filter(Boolean).join(', '),
+            [primary.city, [primary.state, primary.zip].filter(Boolean).join(' ')].filter(Boolean).join(', '),
             formatCountryDisplay(primary.country),
           ].filter(Boolean);
           return parts.join('\n').toUpperCase() || '—';
@@ -893,20 +907,20 @@ export default function AdminClients() {
                         <div className="bg-white border border-gray-200 p-4 mb-6">
                           <div className="space-y-3 text-sm">
                             <div className="flex justify-between">
-                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px' }}>JOIN DATE:</span>
-                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px' }}>{selectedJoinDate}</span>
+                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '11px' }}>JOIN DATE:</span>
+                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px' }}>{selectedJoinDate}</span>
                             </div>
                             <div className="flex justify-between">
-                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px' }}>EMAIL:</span>
-                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px' }}>{(selectedClient?.email || '').toUpperCase()}</span>
+                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '11px' }}>EMAIL:</span>
+                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px' }}>{(selectedClient?.email || '').toUpperCase()}</span>
                             </div>
                             <div className="flex justify-between">
-                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px' }}>BIRTHDAY:</span>
-                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px' }}>{selectedBirthday}</span>
+                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '11px' }}>BIRTHDAY:</span>
+                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px' }}>{selectedBirthday}</span>
                             </div>
                             <div className="flex justify-between">
-                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px' }}>PHONE:</span>
-                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px' }}>{(selectedClient?.phone || '—').toUpperCase()}</span>
+                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '11px' }}>PHONE:</span>
+                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px' }}>{(selectedClient?.phone || '—').toUpperCase()}</span>
                             </div>
                             {(['facebook', 'instagram', 'twitter', 'tiktok', 'youtube', 'linkedin'] as const).map((key) => {
                               const val = (selectedClient as any)?.[key];
@@ -914,14 +928,14 @@ export default function AdminClients() {
                               const label = key.toLowerCase() + ':';
                               return (
                                 <div key={key} className="flex justify-between">
-                                  <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px' }}>{label}</span>
-                                  <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px' }}>{String(val).trim().toUpperCase()}</span>
+                                  <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '11px' }}>{label}</span>
+                                  <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px' }}>{String(val).trim().toUpperCase()}</span>
                                 </div>
                               );
                             })}
                             <div className="flex justify-between items-start">
-                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px' }}>ADDRESS:</span>
-                              <span className="text-right" style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', maxWidth: '60%' }}>
+                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '11px' }}>ADDRESS:</span>
+                              <span className="text-right" style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', maxWidth: '60%' }}>
                                 {selectedPrimaryAddress === '—' ? (
                                   '—'
                                 ) : (
@@ -1183,7 +1197,7 @@ export default function AdminClients() {
                                                 {(addr.address || '').trim() && <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: 0, textTransform: 'uppercase' }}>{(addr.address || '').toUpperCase()}</p>}
                                                 {[addr.city, addr.state, addr.zip].filter(Boolean).length > 0 && (
                                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: 0, textTransform: 'uppercase' }}>
-                                                    {[addr.city, addr.state, addr.zip].filter(Boolean).join(', ').toUpperCase()}
+                                                    {[addr.city, [addr.state, addr.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ').toUpperCase()}
                                                   </p>
                                                 )}
                                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: 0, textTransform: 'uppercase' }}>
@@ -1376,13 +1390,17 @@ export default function AdminClients() {
                                   tabIndex={0}
                                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandedOrderId(order.id); } }}
                                 >
-                                  <div className="flex justify-between items-start mb-2">
+                                  <div className="flex justify-between items-center mb-2">
                                     <div>
-                                      <h4 className="font-medium text-sm">{(order.product || '').toUpperCase()}</h4>
-                                      <p className="text-xs text-gray-600">{(selectedRawOrders.find((o: any) => o.id === order.id)?.orderNumber || order.id || '')} - {order.date}</p>
+                                      <h4 style={{ fontFamily: '"Futura PT Book"', fontSize: '13px', color: '#000000' }}>{(() => {
+                                        const raw = (selectedRawOrders.find((o: any) => o.id === order.id)?.orderNumber || order.id || '').toString();
+                                        const num = raw.replace(/^ORDER\s*#?\s*/i, '').trim() || raw.replace(/^#/, '');
+                                        return num ? `ORDER #${num}` : '—';
+                                      })()}</h4>
+                                      <p className="text-xs mt-1" style={{ fontFamily: '"Futura PT Demi"', color: '#808080' }}>{order.date}</p>
+                                      <p className="text-sm mt-1" style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24' }}>${order.amount.toLocaleString()}</p>
                                     </div>
                                     <div className="text-right">
-                                      <p className="font-bold text-sm" style={{ color: '#EB1C24' }}>${order.amount.toLocaleString()}</p>
                                       <p className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">{order.status}</p>
                                     </div>
                                   </div>
@@ -1412,16 +1430,16 @@ export default function AdminClients() {
                           <div className="bg-white border border-gray-200 p-4">
                             <div className="grid grid-cols-3 gap-4 text-center">
                               <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>{getReviewsTabRow(selectedClient, 0).totalReviews}</p>
-                                <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>TOTAL</p>
+                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{getReviewsTabRow(selectedClient, 0).totalReviews}</p>
+                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>TOTAL</p>
                               </div>
                               <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>{getReviewsTabRow(selectedClient, 0).reviewsWithPhotosVideos}</p>
-                                <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>MEDIA</p>
+                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{getReviewsTabRow(selectedClient, 0).reviewsWithPhotosVideos}</p>
+                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>MEDIA</p>
                               </div>
                               <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>{getReviewsTabRow(selectedClient, 0).pendingReviews}</p>
-                                <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>PENDING</p>
+                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{getReviewsTabRow(selectedClient, 0).pendingReviews}</p>
+                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>PENDING</p>
                               </div>
                             </div>
                           </div>
@@ -1461,9 +1479,12 @@ export default function AdminClients() {
                           }
                           return (
                             <div className="bg-white border border-gray-200 p-4">
-                              <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', marginBottom: '12px' }}>MESSAGES / SUPPORT</h3>
                               {messages.length === 0 ? (
-                                <p className="text-sm font-futura py-4" style={{ color: '#808080' }}>NO MESSAGES OR SUPPORT EMAILS YET.</p>
+                                <div className="text-center py-4">
+                                  <p style={{ fontSize: '11px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', color: '#808080', textTransform: 'uppercase', margin: 0 }}>
+                                    NO MESSAGES OR SUPPORT EMAILS YET.
+                                  </p>
+                                </div>
                               ) : (
                                 <div className="space-y-3 max-h-64 overflow-y-auto">
                                   {messages.map((m) => (
