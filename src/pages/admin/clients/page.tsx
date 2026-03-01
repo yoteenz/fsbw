@@ -62,6 +62,44 @@ function getMembershipTierLabel(u: any): string {
   return `${membership} ${tier}`.toUpperCase();
 }
 
+/** Build a single searchable string for a client (names, email, membership, tier, products, sort-related tags) */
+function getClientSearchableText(u: any): string {
+  const name = ([(u.firstName || '').trim(), (u.lastName || '').trim()].filter(Boolean).join(' ') || u.email || '').toLowerCase();
+  const email = (u.email || '').toString().trim().toLowerCase();
+  const membership = (u.membershipType || 'STANDARD').toString().toLowerCase();
+  const tier = (getEffectiveTierName(u) || '').toLowerCase();
+  const tierLabel = getMembershipTierLabel(u).toLowerCase();
+  const parts = [name, email, membership, tier, tierLabel];
+  if (membership === 'premium') parts.push('premium');
+  if (membership === 'standard') parts.push('standard');
+  if (tier) parts.push(tier);
+  if (isClientNewsletterSubscribed(u)) parts.push('newsletter');
+  if (isClientHasSocials(u)) parts.push('socials');
+  if (clientHasUnreadPriorityMessages(u)) parts.push('alerts');
+  try {
+    const emailKey = (u?.email || '').toString().trim().toLowerCase();
+    if (/^mock\d+@test\.com$/i.test(emailKey)) {
+      const mockOrders = getMockOrdersForClient(u);
+      mockOrders.forEach((o: any) => {
+        if (o.product) parts.push(String(o.product).toLowerCase());
+        if (o.lineItems) o.lineItems.forEach((line: any) => { if (line.productName) parts.push(String(line.productName).toLowerCase()); });
+      });
+    } else if (emailKey) {
+      const raw = localStorage.getItem(`userOrders_${emailKey}`);
+      const data = raw ? JSON.parse(raw) : null;
+      const orders = [...(data?.activeOrders || []), ...(data?.pastOrders || [])];
+      orders.forEach((o: any) => {
+        if (o.productName) parts.push(String(o.productName).toLowerCase());
+        (o.lineItems || []).forEach((line: any) => { if (line.productName) parts.push(String(line.productName).toLowerCase()); });
+        (o.items || []).forEach((item: any) => { if (item?.name) parts.push(String(item.name).toLowerCase()); });
+      });
+    }
+  } catch {
+    /* ignore */
+  }
+  return parts.filter(Boolean).join(' ');
+}
+
 /** Tier display label and color for profile: "Silver tier rewards", "Black tier rewards", "Red tier rewards" with matching color */
 function getTierDisplayLabelAndColor(u: any): { label: string; color: string } {
   const tier = getEffectiveTierName(u);
@@ -311,7 +349,10 @@ const MOCK_PRODUCTS = ['NOIR', 'BLANCO', 'SOFT WAVE', 'SOFT CURL', 'BEACH WAVE',
 const MOCK_ADDON_VARIATIONS = [0, 40, 50, 100, 20, 60, 80];
 
 /** Mock orders for mock clients when localStorage has no userOrders data. Uses client's ordersCount, totalSpent, newCount. Prices reflect actual product base prices + add-ons. No order goes below product base price. */
-function getMockOrdersForClient(client: any): Array<{ id: string; date: string; product: string; amount: number; status: string }> {
+type MockOrderSingle = { id: string; date: string; product: string; amount: number; status: string };
+type MockOrderMulti = { id: string; date: string; status: string; lineItems: Array<{ productName: string; subtotal: number; options?: Record<string, string> }>; total: number };
+type MockOrder = MockOrderSingle | MockOrderMulti;
+function getMockOrdersForClient(client: any): MockOrder[] {
   const email = (client?.email || '').toString().trim().toLowerCase();
   if (email === 'mock13@test.com') {
     const now = Date.now();
@@ -319,7 +360,7 @@ function getMockOrdersForClient(client: any): Array<{ id: string; date: string; 
     const statuses = ['AWAITING FORM', 'IN PROGRESS', 'SHIPPED', 'DELIVERED'] as const;
     const products = ['NOIR', 'BLANCO', 'SOFT WAVE', 'SOFT CURL'];
     const amounts = [820, 940, 1100, 780];
-    return statuses.map((status, i) => {
+    const singleOrders: MockOrderSingle[] = statuses.map((status, i) => {
       const orderDate = new Date(now - (90 - i * 20) * day);
       const dateStr = `${String(orderDate.getMonth() + 1).padStart(2, '0')}-${String(orderDate.getDate()).padStart(2, '0')}-${orderDate.getFullYear()}`;
       return {
@@ -330,6 +371,41 @@ function getMockOrdersForClient(client: any): Array<{ id: string; date: string; 
         status,
       };
     });
+    const multiOrders: MockOrderMulti[] = [
+      {
+        id: '#005',
+        date: (() => { const d = new Date(now - 5 * day); return `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}-${d.getFullYear()}`; })(),
+        status: 'IN PROGRESS',
+        lineItems: [
+          { productName: 'NOIR', subtotal: 740, options: { length: '24"' } },
+          { productName: 'BLANCO', subtotal: 820, options: { length: '24"' } },
+        ],
+        total: 1560,
+      },
+      {
+        id: '#006',
+        date: (() => { const d = new Date(now - 3 * day); return `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}-${d.getFullYear()}`; })(),
+        status: 'AWAITING FORM',
+        lineItems: [
+          { productName: 'NOIR', subtotal: 740, options: { length: '24"' } },
+          { productName: 'BLANCO', subtotal: 820, options: { length: '24"' } },
+          { productName: 'SOFT WAVE', subtotal: 760, options: { length: '24"' } },
+        ],
+        total: 2320,
+      },
+      {
+        id: '#007',
+        date: (() => { const d = new Date(now - 1 * day); return `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}-${d.getFullYear()}`; })(),
+        status: 'SHIPPED',
+        lineItems: MOCK_PRODUCTS.map((name) => ({
+          productName: name,
+          subtotal: getProductBasePrice(name),
+          options: { length: '24"' } as Record<string, string>,
+        })),
+        total: MOCK_PRODUCTS.reduce((sum, name) => sum + getProductBasePrice(name), 0),
+      },
+    ];
+    return [...singleOrders, ...multiOrders];
   }
   const count = client?.ordersCount ?? 0;
   const totalSpent = client?.totalSpent ?? 0;
@@ -362,17 +438,25 @@ function getMockOrdersForClient(client: any): Array<{ id: string; date: string; 
     amounts[i] = Math.max(basePrices[i], Math.round(amounts[i]));
   }
   const orders: Array<{ id: string; date: string; product: string; amount: number; status: string }> = [];
+  const statusProgression = ['AWAITING FORM', 'IN PROGRESS', 'SHIPPED'] as const;
   for (let i = 0; i < count; i++) {
     const isDelivered = i >= newCount;
     const daysAgo = 30 + (count - 1 - i) * 25;
     const orderDate = new Date(now - daysAgo * day);
     const dateStr = `${String(orderDate.getMonth() + 1).padStart(2, '0')}-${String(orderDate.getDate()).padStart(2, '0')}-${orderDate.getFullYear()}`;
+    let status: string;
+    if (isDelivered) {
+      status = 'DELIVERED';
+    } else {
+      const statusIndex = newCount - 1 - i;
+      status = statusIndex <= 2 ? statusProgression[statusIndex] : 'IN PROGRESS';
+    }
     orders.push({
       id: `#${String(i + 1).padStart(3, '0')}`,
       date: dateStr,
       product: MOCK_PRODUCTS[i % MOCK_PRODUCTS.length],
       amount: amounts[i],
-      status: isDelivered ? 'DELIVERED' : 'IN PROGRESS',
+      status,
     });
   }
   return orders.reverse();
@@ -399,6 +483,7 @@ export default function AdminClients() {
   const [mediaViewerUrls, setMediaViewerUrls] = useState<string[]>([]);
   const [mediaViewerIndex, setMediaViewerIndex] = useState(0);
   const [showInvitesPopup, setShowInvitesPopup] = useState(false);
+  const [clientSearchQuery, setClientSearchQuery] = useState('');
 
   // Sync selectedClientEmail from URL (e.g. when redirected from /admin/clients/account?email=...)
   useEffect(() => {
@@ -512,28 +597,37 @@ export default function AdminClients() {
         }));
       } else if (found && /^mock\d+@test\.com$/i.test(email)) {
         const mockList = getMockOrdersForClient(found);
-        orderHistory = mockList;
+        orderHistory = mockList.map((m: any) => ({
+          id: m.id,
+          date: m.date,
+          product: m.lineItems?.[0]?.productName ?? m.product,
+          amount: m.total ?? m.amount,
+          status: m.status,
+        }));
         rawOrders = mockList.map((m: any, i: number) => {
           const pm = found?.defaultPaymentMethod;
           const brand = (pm?.cardBrand || 'VISA').toString().replace(/_/g, ' ');
           const last4 = pm?.cardNumber ? String(pm.cardNumber).replace(/\D/g, '').slice(-4) : String(1000 + i).slice(-4);
           const isDelivered = (m.status || '').toUpperCase() === 'DELIVERED' || (m.status || '').toUpperCase() === 'SHIPPED';
           const trackingNum = isDelivered ? `9405${String(5011899223 + (found?.birthDay ?? 1) * 1000 + i).padStart(10, '0')}${String(19784123 + i).padStart(8, '0')}` : undefined;
+          const hasLineItems = m.lineItems && Array.isArray(m.lineItems) && m.lineItems.length > 0;
+          const lineItems = hasLineItems ? m.lineItems.map((line: any) => ({ productName: line.productName, subtotal: line.subtotal ?? line.amount, options: line.options ?? { length: '24"' } })) : [{ productName: m.product, subtotal: m.amount, options: { length: '24"' } }];
+          const total = hasLineItems ? (m.total ?? lineItems.reduce((s: number, l: any) => s + (l.subtotal ?? 0), 0)) : m.amount;
           const base: Record<string, any> = {
             id: m.id,
             orderNumber: `ORDER #${m.id.replace(/^#/, '')}`,
             date: m.date,
             status: m.status,
-            productName: m.product,
-            productImage: getProductImage(m.product),
-            total: m.amount,
-            items: 1,
-            lineItems: [{ productName: m.product, subtotal: m.amount, options: { length: '24"' } }],
+            productName: lineItems[0]?.productName ?? m.product,
+            productImage: getProductImage(lineItems[0]?.productName ?? m.product),
+            total,
+            items: lineItems.length,
+            lineItems,
             processingTime: '6-8 WEEKS',
             trackingNumber: trackingNum,
             trackingCarrier: 'USPS',
             confirmationNumber: `X${String(i + 1).padStart(1)}R${m.id.replace(/\D/g, '').slice(-2)}S${String(i + 1)}`,
-            pointsEarned: Math.round(m.amount),
+            pointsEarned: Math.round(total),
             tier: found?.currentTierName || getEffectiveTierName(found) || 'SILVER',
             paymentMethod: `${brand} ENDING IN ${last4}`,
           };
@@ -545,10 +639,10 @@ export default function AdminClients() {
           }
           if (base.discountCode || base.giftCard) {
             let s = 0;
-            if (base.discountCode) s += Math.round(m.amount * 0.12);
+            if (base.discountCode) s += Math.round(total * 0.12);
             if (base.giftCard) s += 50;
             base.savings = s;
-            base.subtotal = m.amount + s;
+            base.subtotal = total + s;
           }
           return base;
         });
@@ -953,6 +1047,12 @@ export default function AdminClients() {
     return list;
   })();
 
+  const clientsFilteredBySearch = (() => {
+    const q = (clientSearchQuery || '').trim().toLowerCase();
+    if (!q) return sortedClients;
+    return sortedClients.filter((u: any) => getClientSearchableText(u).includes(q));
+  })();
+
   return (
     <>
       <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -1061,6 +1161,36 @@ export default function AdminClients() {
                 </div>
                 {/* Gray underline – same inset as content below */}
                 <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
+
+                {!selectedClientEmail && (
+                  <div className="px-4 pb-2" style={{ marginBottom: '4px' }}>
+                    <div className="flex items-center gap-2 bg-white/80 border border-gray-200 rounded" style={{ padding: '6px 10px', borderWidth: '1px' }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, color: '#808080' }} aria-hidden>
+                        <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M21 21L16.65 16.65" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <input
+                        type="text"
+                        value={clientSearchQuery}
+                        onChange={(e) => setClientSearchQuery(e.target.value)}
+                        placeholder="Search clients, products, premium, standard..."
+                        className="flex-1 min-w-0 bg-transparent border-none outline-none placeholder-gray-400"
+                        style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000' }}
+                        aria-label="Search clients by name, product, membership, tier"
+                      />
+                      {clientSearchQuery && (
+                        <button
+                          type="button"
+                          onClick={() => setClientSearchQuery('')}
+                          aria-label="Clear search"
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: '#808080', fontSize: '14px' }}
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 {selectedClientEmail ? (
                   /* Details view: profile, orders, appointments */
@@ -1198,7 +1328,6 @@ export default function AdminClients() {
                         </div>
                         {/* Rewards section: photos, videos, tags – tap to expand/collapse */}
                         {selectedClient && (() => {
-                          const rewards = getRewardsRow(selectedClient, 0);
                           const media = getAffiliateMediaForClient(selectedClient);
                           const toggle = (key: 'photos' | 'videos' | 'tags') => {
                             setRewardsExpand((prev) => (prev === key ? null : key));
@@ -1484,15 +1613,23 @@ export default function AdminClients() {
                                       <img src="/assets/close-icon.svg" alt="Close" style={{ width: '16px', height: '16px', filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
                                     </button>
                                   </div>
-                                  <div className="relative overflow-x-auto" style={{ minHeight: '180px', height: 'auto', marginBottom: '20px' }}>
+                                  <div
+                                    className="relative"
+                                    style={{
+                                      minHeight: '180px',
+                                      height: 'auto',
+                                      marginBottom: '20px',
+                                      overflowX: orderProducts.length >= 3 ? 'auto' : 'hidden',
+                                    }}
+                                  >
                                     <div
                                       className="flex"
                                       style={{
                                         gap: '20px',
                                         minHeight: '180px',
                                         alignItems: 'flex-start',
-                                        justifyContent: orderProducts.length === 1 ? 'center' : 'flex-start',
-                                        paddingRight: '10px'
+                                        justifyContent: orderProducts.length === 1 ? 'center' : orderProducts.length === 2 ? 'center' : 'flex-start',
+                                        paddingRight: orderProducts.length >= 3 ? '10px' : 0,
                                       }}
                                     >
                                       {orderProducts.map((product: any) => {
@@ -1646,6 +1783,35 @@ export default function AdminClients() {
                                         <img src="/assets/ship-icon.svg" alt="" style={{ width: 12.75, height: 12.75, opacity: 1 }} />
                                       </div>
                                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                        <div className="flex justify-between">
+                                          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>COMPLETION TIMELINE</span>
+                                          <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                                            {expandedOrder.date ? calculateProcessingTimeline(expandedOrder.date, (expandedOrder as any).processingTime || '6-8 WEEKS') : ((expandedOrder as any).processingTime || '6-8 WEEKS')}
+                                          </span>
+                                        </div>
+                                        {(expandedOrder as any).trackingNumber && (() => {
+                                          const shipCountry = (selectedClient.defaultAddress || selectedClient.shippingAddress)?.country || '';
+                                          const isDomestic = !shipCountry || /^US$|^USA$|^UNITED\s*STATES($|\s+OF\s+AMERICA)/i.test(String(shipCountry).trim());
+                                          const trackingUrl = isDomestic ? `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${encodeURIComponent((expandedOrder as any).trackingNumber)}` : `https://www.dhl.com/en/express/tracking.html?AWB=${encodeURIComponent((expandedOrder as any).trackingNumber)}`;
+                                          return (
+                                            <div className="flex justify-between">
+                                              <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>TRACKING NUMBER</span>
+                                              <a href={trackingUrl} target="_blank" rel="noopener noreferrer" style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase', cursor: 'pointer' }}>
+                                                {(expandedOrder as any).trackingNumber}
+                                              </a>
+                                            </div>
+                                          );
+                                        })()}
+                                        {(() => {
+                                          const shipCountry = (selectedClient.defaultAddress || selectedClient.shippingAddress)?.country || '';
+                                          const isDomestic = !shipCountry || /^US$|^USA$|^UNITED\s*STATES($|\s+OF\s+AMERICA)/i.test(String(shipCountry).trim());
+                                          return (
+                                            <div className="flex justify-between">
+                                              <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>CARRIER</span>
+                                              <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>{isDomestic ? 'DOMESTIC' : 'INTERNATIONAL'}</span>
+                                            </div>
+                                          );
+                                        })()}
                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: 0, textTransform: 'uppercase' }}>
                                           {(selectedClient.firstName || '')} {(selectedClient.lastName || '')}
                                         </p>
@@ -1683,35 +1849,6 @@ export default function AdminClients() {
                                               <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: 0, textTransform: 'uppercase' }}>{addrStr}</p>
                                               <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: 0, textTransform: 'uppercase' }}>{formatCountryDisplay((selectedClient.defaultAddress || selectedClient.shippingAddress)?.country)}</p>
                                             </>
-                                          );
-                                        })()}
-                                        <div className="flex justify-between">
-                                          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>COMPLETION TIMELINE</span>
-                                          <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
-                                            {expandedOrder.date ? calculateProcessingTimeline(expandedOrder.date, (expandedOrder as any).processingTime || '6-8 WEEKS') : ((expandedOrder as any).processingTime || '6-8 WEEKS')}
-                                          </span>
-                                        </div>
-                                        {(expandedOrder as any).trackingNumber && (() => {
-                                          const shipCountry = (selectedClient.defaultAddress || selectedClient.shippingAddress)?.country || '';
-                                          const isDomestic = !shipCountry || /^US$|^USA$|^UNITED\s*STATES($|\s+OF\s+AMERICA)/i.test(String(shipCountry).trim());
-                                          const trackingUrl = isDomestic ? `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${encodeURIComponent((expandedOrder as any).trackingNumber)}` : `https://www.dhl.com/en/express/tracking.html?AWB=${encodeURIComponent((expandedOrder as any).trackingNumber)}`;
-                                          return (
-                                            <div className="flex justify-between">
-                                              <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>TRACKING NUMBER</span>
-                                              <a href={trackingUrl} target="_blank" rel="noopener noreferrer" style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase', cursor: 'pointer' }}>
-                                                {(expandedOrder as any).trackingNumber}
-                                              </a>
-                                            </div>
-                                          );
-                                        })()}
-                                        {(() => {
-                                          const shipCountry = (selectedClient.defaultAddress || selectedClient.shippingAddress)?.country || '';
-                                          const isDomestic = !shipCountry || /^US$|^USA$|^UNITED\s*STATES($|\s+OF\s+AMERICA)/i.test(String(shipCountry).trim());
-                                          return (
-                                            <div className="flex justify-between">
-                                              <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>CARRIER</span>
-                                              <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>{isDomestic ? 'DOMESTIC' : 'INTERNATIONAL'}</span>
-                                            </div>
                                           );
                                         })()}
                                       </div>
@@ -2170,17 +2307,17 @@ export default function AdminClients() {
                     <div className="px-5 py-8 text-center text-sm text-gray-500">
                       NO REGISTERED CLIENTS YET. LIST IS PER BROWSER.
                     </div>
-                  ) : sortedClients.length === 0 ? (
+                  ) : clientsFilteredBySearch.length === 0 ? (
                     <div className="px-5 py-8 text-center text-sm text-gray-500">
-                      NO CLIENTS MATCH THIS FILTER.
+                      {clientSearchQuery.trim() ? 'NO CLIENTS MATCH YOUR SEARCH.' : 'NO CLIENTS MATCH THIS FILTER.'}
                     </div>
                   ) : activeTab === 'INVITES' ? (
-                    sortedClients.map((u: any, i: number) => {
+                    clientsFilteredBySearch.map((u: any, i: number) => {
                       const row = getInvitesRow(u, i);
                       return (
                         <div
                           key={u.email || u.id || i}
-                          className={`grid grid-cols-[1fr_auto_auto_auto] gap-2 px-5 py-3 text-sm items-start ${i === sortedClients.length - 1 ? '' : 'border-b border-gray-100'}`}
+                          className={`grid grid-cols-[1fr_auto_auto_auto] gap-2 px-5 py-3 text-sm items-start ${i === clientsFilteredBySearch.length - 1 ? '' : 'border-b border-gray-100'}`}
                           style={{ gridTemplateColumns: '1fr 3.5rem 3.5rem 3.5rem', marginLeft: '-4px', paddingTop: '10px' }}
                         >
                           <button
@@ -2205,12 +2342,12 @@ export default function AdminClients() {
                       );
                     })
                   ) : activeTab === 'REVIEWS' ? (
-                    sortedClients.map((u: any, i: number) => {
+                    clientsFilteredBySearch.map((u: any, i: number) => {
                       const row = getReviewsTabRow(u, i);
                       return (
                         <div
                           key={u.email || u.id || i}
-                          className={`grid gap-2 px-5 py-3 text-sm items-start ${i === sortedClients.length - 1 ? '' : 'border-b border-gray-100'}`}
+                          className={`grid gap-2 px-5 py-3 text-sm items-start ${i === clientsFilteredBySearch.length - 1 ? '' : 'border-b border-gray-100'}`}
                           style={{ gridTemplateColumns: '1fr 3.5rem 3.5rem 3.5rem', marginLeft: '-4px', paddingTop: '10px' }}
                         >
                           <button
@@ -2233,12 +2370,12 @@ export default function AdminClients() {
                       );
                     })
                   ) : activeTab === 'REWARDS' ? (
-                    sortedClients.map((u: any, i: number) => {
+                    clientsFilteredBySearch.map((u: any, i: number) => {
                       const row = getRewardsRow(u, i);
                       return (
                         <div
                           key={u.email || u.id || i}
-                          className={`grid gap-2 px-5 py-3 text-sm items-start ${i === sortedClients.length - 1 ? '' : 'border-b border-gray-100'}`}
+                          className={`grid gap-2 px-5 py-3 text-sm items-start ${i === clientsFilteredBySearch.length - 1 ? '' : 'border-b border-gray-100'}`}
                           style={{ gridTemplateColumns: '1fr 3.5rem 3.5rem 3.5rem', marginLeft: '-4px', paddingTop: '10px' }}
                         >
                           <button
@@ -2261,12 +2398,12 @@ export default function AdminClients() {
                       );
                     })
                   ) : (
-                    sortedClients.map((u: any, i: number) => {
+                    clientsFilteredBySearch.map((u: any, i: number) => {
                       const row = getClientRow(u, i);
                       return (
                         <div
                           key={u.email || u.id || i}
-                          className={`grid grid-cols-[1fr_auto_auto_auto] gap-2 px-5 py-3 text-sm items-start ${i === sortedClients.length - 1 ? '' : 'border-b border-gray-100'}`}
+                          className={`grid grid-cols-[1fr_auto_auto_auto] gap-2 px-5 py-3 text-sm items-start ${i === clientsFilteredBySearch.length - 1 ? '' : 'border-b border-gray-100'}`}
                           style={{ gridTemplateColumns: '1fr 3.5rem 3.5rem 3.5rem', marginLeft: '-4px', paddingTop: '10px' }}
                         >
                           <button
