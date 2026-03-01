@@ -1724,9 +1724,6 @@ const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length 
                          return (
                          <div className="flex flex-col gap-6" style={{ marginTop: '10px' }}>
                            {/* Products Horizontal Scroll: black product name, red RAW line, gray price, black details (non-default only) */}
-                           {orderProducts.length >= 3 && (
-                             <style>{`.orders-expanded-products-row { padding-left: calc(50% - 170px) !important; justify-content: flex-start !important; }`}</style>
-                           )}
                            <div 
                              className="relative overflow-x-auto"
                              style={{ 
@@ -1736,14 +1733,13 @@ const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length 
                              }}
                            >
                              <div
-                               className={`flex ${orderProducts.length >= 3 ? 'orders-expanded-products-row' : ''}`}
+                               className="flex"
                                style={{
                                  gap: '20px',
                                  minHeight: '180px',
                                  alignItems: 'flex-start',
-                                 justifyContent: orderProducts.length <= 2 ? 'center' : 'flex-start',
-                                 paddingRight: '10px',
-                                 ...(orderProducts.length >= 3 ? { paddingLeft: 'calc(50% - 170px)' } : {})
+                                 justifyContent: orderProducts.length === 1 ? 'center' : 'flex-start',
+                                 paddingRight: '10px'
                                }}
                              >
                               {orderProducts.map((product) => {
@@ -2466,9 +2462,6 @@ const orderProductsArchived = expandedOrder.lineItems && expandedOrder.lineItems
                        <div key="archived-expanded" className={`${pastOrders.length > 1 ? 'flex-1' : ''} flex flex-col overflow-hidden mt-2`}>
                          <div className="flex flex-col gap-6" style={{ marginTop: '10px' }}>
                            {/* Products Horizontal Scroll: black product name, red RAW line, gray price, black details (non-default only) */}
-                           {orderProductsArchived.length >= 3 && (
-                             <style>{`.orders-expanded-products-row-archived { padding-left: calc(50% - 170px) !important; justify-content: flex-start !important; }`}</style>
-                           )}
                            <div 
                              className="relative overflow-x-auto"
                              style={{ 
@@ -2478,14 +2471,13 @@ const orderProductsArchived = expandedOrder.lineItems && expandedOrder.lineItems
                              }}
                            >
                              <div
-                               className={`flex ${orderProductsArchived.length >= 3 ? 'orders-expanded-products-row-archived' : ''}`}
+                               className="flex"
                                style={{
                                  gap: '20px',
                                  minHeight: '180px',
                                  alignItems: 'flex-start',
-                                 justifyContent: orderProductsArchived.length <= 2 ? 'center' : 'flex-start',
-                                 paddingRight: '10px',
-                                 ...(orderProductsArchived.length >= 3 ? { paddingLeft: 'calc(50% - 170px)' } : {})
+                                 justifyContent: orderProductsArchived.length === 1 ? 'center' : 'flex-start',
+                                 paddingRight: '10px'
                                }}
                              >
                               {orderProductsArchived.map((product) => {
