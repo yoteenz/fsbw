@@ -5,6 +5,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { isMockDataAccount } from '../../utils/adminAuth';
+import { formatCountryDisplay } from '../../utils/formatCountry';
 import summaryIcon from '../../assets/icons/summary-icon.svg?url';
 
 interface OrderLineItem {
@@ -1911,7 +1912,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    {currentUser.defaultAddress?.city || currentUser.shippingAddress?.city || ''}, {currentUser.defaultAddress?.state || currentUser.shippingAddress?.state || ''} {currentUser.defaultAddress?.zip || currentUser.shippingAddress?.zip || ''}
                                  </p>
                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                   {currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES'}
+                                   {formatCountryDisplay(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country)}
                                  </p>
                                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
@@ -1922,8 +1923,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    </span>
                                  </div>
                                  {expandedOrder.trackingNumber && (() => {
-                                   const shipCountry = currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES';
-                                   const isDomestic = /^US$|^USA$|^UNITED\s*STATES$/i.test(String(shipCountry).trim());
+                                   const shipCountry = currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || '';
+                                   const isDomestic = !shipCountry || /^US$|^USA$|^UNITED\s*STATES$/i.test(String(shipCountry).trim());
                                    const trackingUrl = isDomestic ? `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${encodeURIComponent(expandedOrder.trackingNumber)}` : `https://www.dhl.com/en/express/tracking.html?AWB=${encodeURIComponent(expandedOrder.trackingNumber)}`;
                                    return (
                                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -1937,8 +1938,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    );
                                  })()}
                                  {(() => {
-                                   const shipCountry = currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES';
-                                   const isDomestic = /^US$|^USA$|^UNITED\s*STATES$/i.test(String(shipCountry).trim());
+                                   const shipCountry = currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || '';
+                                   const isDomestic = !shipCountry || /^US$|^USA$|^UNITED\s*STATES$/i.test(String(shipCountry).trim());
                                    const carrierLabel = isDomestic ? 'DOMESTIC' : 'INTERNATIONAL';
                                    return (
                                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -2005,6 +2006,24 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                      </div>
                                    );
                                  })()}
+                                 {((expandedOrder as any).discountCode ?? (expandedOrder as any).discount_code ?? (expandedOrder as any).discount) && (
+                                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>DISCOUNT CODE</span>
+                                     <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>{String((expandedOrder as any).discountCode ?? (expandedOrder as any).discount_code ?? (expandedOrder as any).discount).toUpperCase()}</span>
+                                   </div>
+                                 )}
+                                 {((expandedOrder as any).giftCard ?? (expandedOrder as any).gift_card ?? (expandedOrder as any).giftCardNumber ?? (expandedOrder as any).giftCardCode) && (
+                                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>GIFT CARD</span>
+                                     <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>{String((expandedOrder as any).giftCard ?? (expandedOrder as any).gift_card ?? (expandedOrder as any).giftCardNumber ?? (expandedOrder as any).giftCardCode).toUpperCase()}</span>
+                                   </div>
+                                 )}
+                                 {((expandedOrder as any).referralCode ?? (expandedOrder as any).referral_code) && (
+                                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>REFERRAL CODE</span>
+                                     <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>{String((expandedOrder as any).referralCode ?? (expandedOrder as any).referral_code).toUpperCase()}</span>
+                                   </div>
+                                 )}
                                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                      CONFIRMATION EMAIL
@@ -2631,7 +2650,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    {currentUser.defaultAddress?.city || currentUser.shippingAddress?.city || ''}, {currentUser.defaultAddress?.state || currentUser.shippingAddress?.state || ''} {currentUser.defaultAddress?.zip || currentUser.shippingAddress?.zip || ''}
                                  </p>
                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                   {currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES'}
+                                   {formatCountryDisplay(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country)}
                                  </p>
                                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
@@ -2642,8 +2661,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    </span>
                                  </div>
                                  {expandedOrder.trackingNumber && (() => {
-                                   const shipCountry = currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES';
-                                   const isDomestic = /^US$|^USA$|^UNITED\s*STATES$/i.test(String(shipCountry).trim());
+                                   const shipCountry = currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || '';
+                                   const isDomestic = !shipCountry || /^US$|^USA$|^UNITED\s*STATES$/i.test(String(shipCountry).trim());
                                    const trackingUrl = isDomestic ? `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${encodeURIComponent(expandedOrder.trackingNumber)}` : `https://www.dhl.com/en/express/tracking.html?AWB=${encodeURIComponent(expandedOrder.trackingNumber)}`;
                                    return (
                                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -2657,8 +2676,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    );
                                  })()}
                                  {(() => {
-                                   const shipCountry = currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES';
-                                   const isDomestic = /^US$|^USA$|^UNITED\s*STATES$/i.test(String(shipCountry).trim());
+                                   const shipCountry = currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || '';
+                                   const isDomestic = !shipCountry || /^US$|^USA$|^UNITED\s*STATES$/i.test(String(shipCountry).trim());
                                    const carrierLabel = isDomestic ? 'DOMESTIC' : 'INTERNATIONAL';
                                    return (
                                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -2725,6 +2744,24 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                      </div>
                                    );
                                  })()}
+                                 {((expandedOrder as any).discountCode ?? (expandedOrder as any).discount_code ?? (expandedOrder as any).discount) && (
+                                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>DISCOUNT CODE</span>
+                                     <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>{String((expandedOrder as any).discountCode ?? (expandedOrder as any).discount_code ?? (expandedOrder as any).discount).toUpperCase()}</span>
+                                   </div>
+                                 )}
+                                 {((expandedOrder as any).giftCard ?? (expandedOrder as any).gift_card ?? (expandedOrder as any).giftCardNumber ?? (expandedOrder as any).giftCardCode) && (
+                                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>GIFT CARD</span>
+                                     <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>{String((expandedOrder as any).giftCard ?? (expandedOrder as any).gift_card ?? (expandedOrder as any).giftCardNumber ?? (expandedOrder as any).giftCardCode).toUpperCase()}</span>
+                                   </div>
+                                 )}
+                                 {((expandedOrder as any).referralCode ?? (expandedOrder as any).referral_code) && (
+                                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>REFERRAL CODE</span>
+                                     <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>{String((expandedOrder as any).referralCode ?? (expandedOrder as any).referral_code).toUpperCase()}</span>
+                                   </div>
+                                 )}
                                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                      CONFIRMATION EMAIL

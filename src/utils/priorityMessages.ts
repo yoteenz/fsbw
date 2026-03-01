@@ -41,7 +41,8 @@ export function getClientUnreadPriorityMessage(client: Record<string, unknown>):
   const count = (client.alertCount ?? client.unreadPriorityMessageCount ?? 0) as number;
   if (lastAt && count > 0) return { lastUnreadAt: lastAt, unreadCount: count };
 
-  const email = (client.email || '').trim().toLowerCase();
+  const emailVal = client.email;
+  const email = (emailVal == null ? '' : String(emailVal)).trim().toLowerCase();
   if (!email) return null;
   const byClient = getPriorityMessagesByClient();
   const data = byClient[email];
@@ -54,7 +55,8 @@ export function getClientOrderIssue(client: Record<string, unknown>): { lastIssu
   const lastAt = client.lastOrderIssueAt as string | undefined;
   if (lastAt) return { lastIssueAt: lastAt };
 
-  const email = (client.email || '').trim().toLowerCase();
+  const emailVal = client.email;
+  const email = (emailVal == null ? '' : String(emailVal)).trim().toLowerCase();
   if (!email) return null;
   const byClient = getOrderIssuesByClient();
   const data = byClient[email];

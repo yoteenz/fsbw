@@ -76,10 +76,10 @@ export default function AdminMeetings() {
           <div className="max-w-md mx-auto">
             {/* Main card */}
             <div
-              className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
-              style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
+              className="bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden"
+              style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)', maxHeight: 'calc(100vh - 140px)' }}
             >
-              <div className="flex items-center justify-between -mt-1 pb-1 px-4 pt-4" style={{ marginBottom: 0 }}>
+              <div className="flex items-center justify-between -mt-1 pb-1 px-4 pt-4 flex-shrink-0" style={{ marginBottom: 0 }}>
                 <h2
                   className="flex-1"
                   style={{
@@ -98,8 +98,9 @@ export default function AdminMeetings() {
                   <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z" fill="#EB1C24" />
                 </svg>
               </div>
-              <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
+              <div className="flex-shrink-0" style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
 
+              <div className="flex-1 min-h-0 overflow-y-auto pb-4">
               <div className="flex px-5">
                 {MEETING_TABS.map((tab) => (
                   <button
@@ -213,6 +214,7 @@ export default function AdminMeetings() {
                     <span style={{ color: '#EB1C24' }}>●</span> DELIVERY
                   </button>
                 </div>
+              </div>
               </div>
             </div>
 

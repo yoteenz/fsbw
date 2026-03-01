@@ -8,6 +8,7 @@ import summaryIcon from '../../../assets/icons/summary-icon.svg?url';
 import { blockClient, isClientBlocked } from '../../../utils/blockedClients';
 import { clientHasUnreadPriorityMessages, getLastUnreadPriorityMessageTime } from '../../../utils/priorityMessages';
 import { formatBirthday } from '../../../utils/formatBirthday';
+import { formatCountryDisplay } from '../../../utils/formatCountry';
 
 const TABS = ['ALL', 'REVIEWS', 'REWARDS', 'INVITES'] as const;
 
@@ -17,6 +18,7 @@ const SORT_OPTIONS = [
   'Z to A',
   'Most spent',
   'Least spent',
+  'Email',
   'Alerts',
   'Standard',
   'Premium',
@@ -45,6 +47,25 @@ function getTierDisplayLabelAndColor(u: any): { label: string; color: string } {
   return { label: membership === 'PREMIUM' ? 'Premium' : 'Standard', color: '#808080' };
 }
 
+/** Check if client is subscribed to the email newsletter (client.newsletterSubscribed or localStorage userNewsletter_${email}) */
+function isClientNewsletterSubscribed(u: any): boolean {
+  if (u?.newsletterSubscribed === true) return true;
+  try {
+    const email = (u?.email || '').toString().trim().toLowerCase();
+    if (!email) return false;
+    const raw = localStorage.getItem(`userNewsletter_${email}`);
+    if (raw === 'true' || raw === '1') return true;
+    try {
+      const parsed = JSON.parse(raw || 'false');
+      return parsed === true || parsed === 'true';
+    } catch {
+      return false;
+    }
+  } catch {
+    return false;
+  }
+}
+
 /** Referral code = first initial + last initial + birth day (2 digits) + 2 digits derived from unique seed (e.g. email) so same name+day still get different codes. e.g. KA3047 */
 function buildReferralCode(firstName: string, lastName: string, birthDay: number, uniqueSeed: string): string {
   const first = (firstName || '').trim().charAt(0).toUpperCase();
@@ -55,6 +76,27 @@ function buildReferralCode(firstName: string, lastName: string, birthDay: number
   for (let i = 0; i < str.length; i++) hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0;
   const suffix = String(Math.abs(hash) % 100).padStart(2, '0');
   return first + last + day + suffix;
+}
+
+/** Processing timeline from order date (e.g. "JANUARY 15TH - FEBRUARY 12TH") */
+function calculateProcessingTimeline(orderDateStr: string, processingTime: string): string {
+  try {
+    const parts = (orderDateStr || '').split(/[-\/]/).map(Number);
+    const [month, day, year] = parts.length >= 3 ? parts : [1, 1, new Date().getFullYear()];
+    const orderDate = new Date(year, month - 1, day);
+    let minWeeks = 6, maxWeeks = 8;
+    if (processingTime && /4/.test(processingTime)) { minWeeks = 4; maxWeeks = 6; }
+    else if (processingTime && /10/.test(processingTime)) { minWeeks = 6; maxWeeks = 10; }
+    const minDate = new Date(orderDate); minDate.setDate(minDate.getDate() + minWeeks * 7);
+    const maxDate = new Date(orderDate); maxDate.setDate(maxDate.getDate() + maxWeeks * 7);
+    const monthNames = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
+    const getSuffix = (d: number) => { if (d >= 11 && d <= 13) return 'TH'; const n = d % 10; return n === 1 ? 'ST' : n === 2 ? 'ND' : n === 3 ? 'RD' : 'TH'; };
+    const minM = monthNames[minDate.getMonth()], maxM = monthNames[maxDate.getMonth()];
+    const minD = minDate.getDate(), maxD = maxDate.getDate();
+    return minM === maxM ? `${minM} ${minD}${getSuffix(minD)} - ${maxD}${getSuffix(maxD)}` : `${minM} ${minD}${getSuffix(minD)} - ${maxM} ${maxD}${getSuffix(maxD)}`;
+  } catch {
+    return processingTime || '6-8 WEEKS';
+  }
 }
 
 /** Product image path for order summary */
@@ -116,19 +158,21 @@ function getMockClientsForAyoteenz(): any[] {
     reviewsCount: number; photosCount: number; videosCount: number; tagsCount: number;
     totalReviews: number; reviewsWithPhotosVideos: number; pendingReviews: number;
     currentTierName?: string; phone?: string; address?: string;
+    facebook?: string; instagram?: string; twitter?: string; tiktok?: string; youtube?: string; linkedin?: string;
+    newsletterSubscribed?: boolean;
   }> = [
     /* totalSpent = realistic sums of product prices (NOIR ~740–920, BLANCO ~820, SOFT WAVE ~980, SOFT CURL ~780–1200, multi-unit ~1575–2220) */
-    { id: 'mock-1', email: 'mock1@test.com', firstName: 'Zara', lastName: 'Adams', membershipType: 'PREMIUM', createdAt: new Date(now - 2 * day).toISOString(), totalSpent: 4195, ordersCount: 5, newCount: 1, alertCount: 2, bookingCount: 3, birthDay: 15, birthMonth: 3, birthYear: 1989, invitesCount: 4, status: 'ACTIVE', reviewsCount: 3, photosCount: 5, videosCount: 1, tagsCount: 8, totalReviews: 5, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED', phone: '(555) 201-3401', address: '124 OAK ST, LOS ANGELES, CA 90012', facebook: '@FRONTALSLAYER', instagram: '@ZARAADAMS' },
+    { id: 'mock-1', email: 'mock1@test.com', firstName: 'Zara', lastName: 'Adams', membershipType: 'PREMIUM', createdAt: new Date(now - 2 * day).toISOString(), totalSpent: 4195, ordersCount: 5, newCount: 1, alertCount: 2, bookingCount: 3, birthDay: 15, birthMonth: 3, birthYear: 1989, invitesCount: 4, status: 'ACTIVE', reviewsCount: 3, photosCount: 5, videosCount: 1, tagsCount: 8, totalReviews: 5, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED', phone: '(555) 201-3401', address: '124 OAK ST, LOS ANGELES, CA 90012', facebook: '@FRONTALSLAYER', instagram: '@ZARAADAMS', newsletterSubscribed: true },
     { id: 'mock-2', email: 'mock2@test.com', firstName: 'Amy', lastName: 'Brooks', membershipType: 'STANDARD', createdAt: new Date(now - 10 * day).toISOString(), totalSpent: 1490, ordersCount: 2, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 3, birthMonth: 7, birthYear: 1992, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 302-4512', address: '89 MAPLE AVE, BROOKLYN, NY 11201', instagram: '@AMYBROOKS' },
-    { id: 'mock-3', email: 'mock3@test.com', firstName: 'Quinn', lastName: 'Chen', membershipType: 'PREMIUM', createdAt: new Date(now - 1 * day).toISOString(), totalSpent: 3100, ordersCount: 4, newCount: 2, alertCount: 1, bookingCount: 2, birthDay: 22, birthMonth: 11, birthYear: 1985, invitesCount: 2, status: 'ACTIVE', reviewsCount: 2, photosCount: 4, videosCount: 2, tagsCount: 6, totalReviews: 4, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'BLACK', phone: '(555) 403-5623', address: '256 PINE RD, HOUSTON, TX 77002', tiktok: '@QUINNCHEN' },
+    { id: 'mock-3', email: 'mock3@test.com', firstName: 'Quinn', lastName: 'Chen', membershipType: 'PREMIUM', createdAt: new Date(now - 1 * day).toISOString(), totalSpent: 3100, ordersCount: 4, newCount: 2, alertCount: 1, bookingCount: 2, birthDay: 22, birthMonth: 11, birthYear: 1985, invitesCount: 2, status: 'ACTIVE', reviewsCount: 2, photosCount: 4, videosCount: 2, tagsCount: 6, totalReviews: 4, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'BLACK', phone: '(555) 403-5623', address: '256 PINE RD, HOUSTON, TX 77002', tiktok: '@QUINNCHEN', newsletterSubscribed: true },
     { id: 'mock-4', email: 'mock4@test.com', firstName: 'Diana', lastName: 'Foster', membershipType: 'STANDARD', createdAt: new Date(now - 45 * day).toISOString(), totalSpent: 1575, ordersCount: 3, newCount: 0, alertCount: 1, bookingCount: 1, birthDay: 8, birthMonth: 2, birthYear: 1991, invitesCount: 1, status: 'INACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 3, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 504-6734', address: '17 ELM ST, CHICAGO, IL 60601' },
-    { id: 'mock-5', email: 'mock5@test.com', firstName: 'Evan', lastName: 'Garcia', membershipType: 'PREMIUM', createdAt: new Date(now - 5 * day).toISOString(), totalSpent: 5820, ordersCount: 8, newCount: 1, alertCount: 3, bookingCount: 4, birthDay: 30, birthMonth: 8, birthYear: 1989, invitesCount: 7, status: 'ACTIVE', reviewsCount: 5, photosCount: 9, videosCount: 3, tagsCount: 12, totalReviews: 8, reviewsWithPhotosVideos: 6, pendingReviews: 2, currentTierName: 'BLACK', phone: '(555) 605-7845', address: '432 CEDAR LN, MIAMI, FL 33101' },
+    { id: 'mock-5', email: 'mock5@test.com', firstName: 'Evan', lastName: 'Garcia', membershipType: 'PREMIUM', createdAt: new Date(now - 5 * day).toISOString(), totalSpent: 5820, ordersCount: 8, newCount: 1, alertCount: 3, bookingCount: 4, birthDay: 30, birthMonth: 8, birthYear: 1989, invitesCount: 7, status: 'ACTIVE', reviewsCount: 5, photosCount: 9, videosCount: 3, tagsCount: 12, totalReviews: 8, reviewsWithPhotosVideos: 6, pendingReviews: 2, currentTierName: 'BLACK', phone: '(555) 605-7845', address: '432 CEDAR LN, MIAMI, FL 33101', newsletterSubscribed: true },
     { id: 'mock-6', email: 'mock6@test.com', firstName: 'Fiona', lastName: 'Hayes', membershipType: 'STANDARD', createdAt: new Date(now - 90 * day).toISOString(), totalSpent: 740, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 11, birthMonth: 5, birthYear: 1994, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 706-8956', address: '91 BIRCH WAY, SEATTLE, WA 98101' },
     { id: 'mock-7', email: 'mock7@test.com', firstName: 'Grant', lastName: 'Ingram', membershipType: 'PREMIUM', createdAt: new Date(now - 3 * day).toISOString(), totalSpent: 2100, ordersCount: 3, newCount: 0, alertCount: 0, bookingCount: 2, birthDay: 27, birthMonth: 9, birthYear: 1987, invitesCount: 3, status: 'ACTIVE', reviewsCount: 2, photosCount: 3, videosCount: 1, tagsCount: 4, totalReviews: 3, reviewsWithPhotosVideos: 2, pendingReviews: 0, currentTierName: 'RED', phone: '(555) 807-9067', address: '203 WILLOW DR, ATLANTA, GA 30301' },
-    { id: 'mock-8', email: 'mock8@test.com', firstName: 'Hannah', lastName: 'Jones', membershipType: 'STANDARD', createdAt: new Date(now - 14 * day).toISOString(), totalSpent: 1520, ordersCount: 2, newCount: 1, alertCount: 2, bookingCount: 1, birthDay: 5, birthMonth: 12, birthYear: 1990, invitesCount: 1, status: 'ACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 2, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 1, currentTierName: 'SILVER', phone: '(555) 908-0178', address: '65 CHERRY BLVD, BOSTON, MA 02101' },
+    { id: 'mock-8', email: 'mock8@test.com', firstName: 'Hannah', lastName: 'Jones', membershipType: 'STANDARD', createdAt: new Date(now - 14 * day).toISOString(), totalSpent: 1520, ordersCount: 2, newCount: 1, alertCount: 2, bookingCount: 1, birthDay: 5, birthMonth: 12, birthYear: 1990, invitesCount: 1, status: 'ACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 2, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 1, currentTierName: 'SILVER', phone: '(555) 908-0178', address: '65 CHERRY BLVD, BOSTON, MA 02101', newsletterSubscribed: true },
     { id: 'mock-9', email: 'mock9@test.com', firstName: 'Ivan', lastName: 'Kim', membershipType: 'PREMIUM', createdAt: new Date(now - 7 * day).toISOString(), totalSpent: 6710, ordersCount: 6, newCount: 2, alertCount: 1, bookingCount: 5, birthDay: 19, birthMonth: 4, birthYear: 1986, invitesCount: 5, status: 'INACTIVE', reviewsCount: 4, photosCount: 7, videosCount: 2, tagsCount: 10, totalReviews: 6, reviewsWithPhotosVideos: 5, pendingReviews: 1, currentTierName: 'BLACK', phone: '(555) 109-1289', address: '378 SPRUCE ST, DENVER, CO 80201' },
     { id: 'mock-10', email: 'mock10@test.com', firstName: 'Julia', lastName: 'Lee', membershipType: 'STANDARD', createdAt: new Date(now - 21 * day).toISOString(), totalSpent: 740, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 12, birthMonth: 1, birthYear: 1993, invitesCount: 0, status: 'ACTIVE', reviewsCount: 0, photosCount: 1, videosCount: 0, tagsCount: 1, totalReviews: 1, reviewsWithPhotosVideos: 1, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 210-2390', address: '52 ASH AVE, PHOENIX, AZ 85001' },
-    { id: 'mock-11', email: 'mock11@test.com', firstName: 'Kyle', lastName: 'Martinez', membershipType: 'PREMIUM', createdAt: new Date(now - 4 * day).toISOString(), totalSpent: 3900, ordersCount: 5, newCount: 1, alertCount: 2, bookingCount: 3, birthDay: 25, birthMonth: 6, birthYear: 1988, invitesCount: 2, status: 'ACTIVE', reviewsCount: 3, photosCount: 4, videosCount: 1, tagsCount: 7, totalReviews: 4, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED', phone: '(555) 321-3401', address: '419 WALNUT PL, DETROIT, MI 48201' },
+    { id: 'mock-11', email: 'mock11@test.com', firstName: 'Kyle', lastName: 'Martinez', membershipType: 'PREMIUM', createdAt: new Date(now - 4 * day).toISOString(), totalSpent: 3900, ordersCount: 5, newCount: 1, alertCount: 2, bookingCount: 3, birthDay: 25, birthMonth: 6, birthYear: 1988, invitesCount: 2, status: 'ACTIVE', reviewsCount: 3, photosCount: 4, videosCount: 1, tagsCount: 7, totalReviews: 4, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED', phone: '(555) 321-3401', address: '419 WALNUT PL, DETROIT, MI 48201', newsletterSubscribed: true },
     { id: 'mock-12', email: 'mock12@test.com', firstName: 'Luna', lastName: 'Nguyen', membershipType: 'STANDARD', createdAt: new Date(now - 60 * day).toISOString(), totalSpent: 2100, ordersCount: 4, newCount: 0, alertCount: 1, bookingCount: 2, birthDay: 7, birthMonth: 10, birthYear: 1995, invitesCount: 4, status: 'INACTIVE', reviewsCount: 2, photosCount: 3, videosCount: 1, tagsCount: 5, totalReviews: 3, reviewsWithPhotosVideos: 2, pendingReviews: 0, currentTierName: 'RED', phone: '(555) 432-4512', address: '186 HICKORY LN, DALLAS, TX 75201' },
     { id: 'mock-13', email: 'mock13@test.com', firstName: 'Marcus', lastName: 'Owen', membershipType: 'PREMIUM', createdAt: new Date(now - 1 * day).toISOString(), totalSpent: 5120, ordersCount: 7, newCount: 3, alertCount: 4, bookingCount: 6, birthDay: 14, birthMonth: 2, birthYear: 1984, invitesCount: 9, status: 'ACTIVE', reviewsCount: 6, photosCount: 10, videosCount: 4, tagsCount: 14, totalReviews: 9, reviewsWithPhotosVideos: 7, pendingReviews: 2, currentTierName: 'BLACK', phone: '(555) 543-5623', address: '721 MAGNOLIA DR, SAN FRANCISCO, CA 94102' },
     { id: 'mock-14', email: 'mock14@test.com', firstName: 'Nina', lastName: 'Patel', membershipType: 'STANDARD', createdAt: new Date(now - 30 * day).toISOString(), totalSpent: 1520, ordersCount: 2, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 20, birthMonth: 8, birthYear: 1991, invitesCount: 0, status: 'ACTIVE', reviewsCount: 1, photosCount: 1, videosCount: 0, tagsCount: 2, totalReviews: 1, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 654-6734', address: '94 DOGWOOD ST, PHILADELPHIA, PA 19101' },
@@ -140,10 +184,17 @@ function getMockClientsForAyoteenz(): any[] {
     { id: 'mock-20', email: 'mock20@test.com', firstName: 'Uma', lastName: 'Vance', membershipType: 'STANDARD', createdAt: new Date(now - 3 * day).toISOString(), totalSpent: 740, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 1, birthMonth: 4, birthYear: 1996, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 210-2390', address: '319 LAUREL ST, MINNEAPOLIS, MN 55401' },
   ];
   const min = 60 * 1000;
-  return mockRows.map((row) => {
+  const MOCK_CARD_BRANDS = ['VISA', 'MASTERCARD', 'AMERICAN_EXPRESS', 'DISCOVER'] as const;
+  const MOCK_CARD_PREFIXES: Record<string, string> = { VISA: '4', MASTERCARD: '5', AMERICAN_EXPRESS: '3', DISCOVER: '6' };
+  return mockRows.map((row, idx) => {
     const isPremium = (row.membershipType || '').toString().toUpperCase() === 'PREMIUM';
     const hasUnread = (row.alertCount ?? 0) > 0;
     const hasOrders = (row.ordersCount ?? 0) > 0;
+    const cardBrand = MOCK_CARD_BRANDS[idx % MOCK_CARD_BRANDS.length];
+    const prefix = MOCK_CARD_PREFIXES[cardBrand] || '4';
+    const last4 = String(1000 + (row.birthDay * 7 + idx) % 9000).slice(-4);
+    const midLen = cardBrand === 'AMERICAN_EXPRESS' ? 8 : 10;
+    const cardNumber = prefix + '2424242424'.slice(0, midLen) + last4;
     // lastUnreadPriorityMessageAt: Premium clients with unread messages (for Alerts sort)
     const lastUnreadPriorityMessageAt =
       isPremium && hasUnread
@@ -159,6 +210,8 @@ function getMockClientsForAyoteenz(): any[] {
       referralNumber: buildReferralCode(row.firstName, row.lastName, row.birthDay, row.email),
       lastUnreadPriorityMessageAt,
       lastOrderIssueAt,
+      subscriptionDuration: isPremium ? ([3, 6, 12][row.birthDay % 3] as number) : undefined,
+      defaultPaymentMethod: { cardBrand, cardNumber },
     };
   });
 }
@@ -290,7 +343,7 @@ export default function AdminClients() {
       const active = data?.activeOrders || [];
       const past = data?.pastOrders || [];
       if (active.length > 0 || past.length > 0) {
-        rawOrders = [...active, ...past].map((o: any, i: number) => ({ ...o, id: o.id || `order-${i}` }));
+        rawOrders = [...active, ...past].map((o: any, idx: number) => ({ ...o, id: o.id || `order-${idx}` }));
         orderHistory = rawOrders.map((o: any) => ({
           id: o.id,
           date: o.date || o.createdAt || '—',
@@ -301,16 +354,37 @@ export default function AdminClients() {
       } else if (found && /^mock\d+@test\.com$/i.test(email)) {
         const mockList = getMockOrdersForClient(found);
         orderHistory = mockList;
-        rawOrders = mockList.map((m: any, i: number) => ({
-          id: m.id,
-          orderNumber: `ORDER #${m.id.replace(/^#/, '')}`,
-          date: m.date,
-          status: m.status,
-          productName: m.product,
-          productImage: getProductImage(m.product),
-          total: m.amount,
-          items: 1,
-        }));
+        rawOrders = mockList.map((m: any, i: number) => {
+          const pm = found?.defaultPaymentMethod;
+          const brand = (pm?.cardBrand || 'VISA').toString().replace(/_/g, ' ');
+          const last4 = pm?.cardNumber ? String(pm.cardNumber).replace(/\D/g, '').slice(-4) : String(1000 + i).slice(-4);
+          const referralNum = found?.referralNumber || buildReferralCode(found?.firstName || '', found?.lastName || '', found?.birthDay ?? 1, found?.email || '');
+          const base: Record<string, any> = {
+            id: m.id,
+            orderNumber: `ORDER #${m.id.replace(/^#/, '')}`,
+            date: m.date,
+            status: m.status,
+            productName: m.product,
+            productImage: getProductImage(m.product),
+            total: m.amount,
+            items: 1,
+            trackingNumber: (m.status || '').toUpperCase() === 'DELIVERED' || (m.status || '').toUpperCase() === 'SHIPPED' ? `1Z${m.id.replace(/\D/g, '')}AA10123456784` : undefined,
+            trackingCarrier: 'FEDEX',
+            confirmationNumber: `X${String(i + 1).padStart(1)}R${m.id.replace(/\D/g, '').slice(-2)}S${String(i + 1)}`,
+            pointsEarned: Math.round(m.amount),
+            tier: found?.currentTierName || getEffectiveTierName(found) || 'SILVER',
+            paymentMethod: `${brand} ENDING IN ${last4}`,
+          };
+          if (i % 4 === 0) base.discountCode = ['WELCOME10', 'WIG20', 'PREMIUM15', 'NEWYEAR25'][Math.floor(i / 4) % 4];
+          if (i % 4 === 1) base.giftCard = `GC-${String(4000 + i).padStart(4, '0')}-${String(1000 + i * 37).slice(-4)}`;
+          if (i % 4 === 2) base.referralCode = referralNum;
+          if (i % 4 === 3) {
+            base.discountCode = 'VIP20';
+            base.giftCard = `GC-${String(5000 + i).padStart(4, '0')}-${String(2000 + i * 11).slice(-4)}`;
+            base.referralCode = referralNum;
+          }
+          return base;
+        });
       }
     } catch {
       // ignore
@@ -409,8 +483,26 @@ export default function AdminClients() {
   const { selectedReferralStatus, selectedReferralCode } = selectedClient
     ? (() => { const r = getInvitesRow(selectedClient, 0); return { selectedReferralStatus: r.status, selectedReferralCode: r.referralNumber }; })()
     : { selectedReferralStatus: 'INACTIVE', selectedReferralCode: '—' };
-  const selectedTierLabel = selectedClient ? getMembershipTierLabel(selectedClient) : '—';
   const selectedTierDisplay = selectedClient ? getTierDisplayLabelAndColor(selectedClient) : { label: '—', color: '#808080' };
+  const selectedMembershipDuration = selectedClient && (selectedClient as any).membershipType?.toString().toUpperCase() === 'PREMIUM'
+    ? (() => {
+        const c = selectedClient as any;
+        const raw = c.subscriptionDuration ?? c.membershipDuration ?? c.subscriptionMonths;
+        if (raw != null) {
+          const n = typeof raw === 'number' ? raw : parseInt(String(raw).replace(/\D/g, ''), 10);
+          if (n === 3) return '3 MONTHS';
+          if (n === 6) return '6 MONTHS';
+          if (n === 12) return '12 MONTHS';
+        }
+        const unlocked = c.unlockedDiscounts as string[] | undefined;
+        if (Array.isArray(unlocked)) {
+          if (unlocked.some((d: string) => /12month/i.test(d))) return '12 MONTHS';
+          if (unlocked.some((d: string) => /6month/i.test(d))) return '6 MONTHS';
+          if (unlocked.some((d: string) => /3month/i.test(d))) return '3 MONTHS';
+        }
+        return null;
+      })()
+    : null;
   const selectedBirthday = formatBirthday(selectedClient);
   const selectedPrimaryAddress = selectedClient
     ? (() => {
@@ -420,7 +512,7 @@ export default function AdminClients() {
           const parts = [
             primary.address,
             [primary.city, primary.state, primary.zip].filter(Boolean).join(', '),
-            primary.country,
+            formatCountryDisplay(primary.country),
           ].filter(Boolean);
           return parts.join('\n').toUpperCase() || '—';
         }
@@ -528,6 +620,9 @@ export default function AdminClients() {
       list.sort((a, b) => charges(b) - charges(a));
     } else if (sortOption === 'Least spent') {
       list.sort((a, b) => charges(a) - charges(b));
+    } else if (sortOption === 'Email') {
+      list = list.filter((u) => isClientNewsletterSubscribed(u));
+      list.sort((a, b) => created(b) - created(a));
     } else if (sortOption === 'Alerts') {
       list = list.filter((u) => clientHasUnreadPriorityMessages(u));
       list.sort((a, b) => getLastUnreadPriorityMessageTime(b) - getLastUnreadPriorityMessageTime(a));
@@ -677,51 +772,59 @@ export default function AdminClients() {
                           </div>
                         </div>
                         <div className="bg-white border border-gray-200 p-4 mb-6">
-                          <div className="flex flex-col items-center text-center mb-4">
-                            <span
-                              className="inline-block px-3 py-1 text-xs rounded mb-2"
-                              style={{
-                                backgroundColor: selectedReferralStatus === 'ACTIVE' ? 'rgba(235, 28, 36, 0.15)' : '#f3f4f6',
-                                color: selectedReferralStatus === 'ACTIVE' ? '#EB1C24' : '#808080',
-                              }}
-                            >
-                              {selectedReferralStatus}
-                            </span>
-                            <p className="mb-1" style={{ fontFamily: '"Futura PT Book"', color: selectedTierDisplay.color, fontSize: '10px' }}>{selectedTierDisplay.label}</p>
-                            <p style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px' }}>{selectedReferralCode}</p>
-                          </div>
-                          <div className="flex justify-center">
-                            <div className="grid grid-cols-3 gap-4 text-center w-fit">
-                              <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>{selectedTotalOrders}</p>
-                                <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>ORDERS</p>
-                              </div>
-                              <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>${selectedTotalSpent.toLocaleString()}</p>
-                                <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>TOTAL SPENT</p>
-                              </div>
-                              <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>{selectedMembershipType}</p>
-                                <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>MEMBERSHIP</p>
+                          <div className="mb-4">
+                            <div className="flex justify-between items-center">
+                              <p style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px', margin: 0 }}>{selectedReferralCode}</p>
+                              <div className="flex flex-col items-end">
+                                <span
+                                  className="inline-block px-3 py-1 text-xs rounded"
+                                  style={{
+                                    backgroundColor: selectedReferralStatus === 'ACTIVE' ? 'rgba(235, 28, 36, 0.15)' : '#f3f4f6',
+                                    color: selectedReferralStatus === 'ACTIVE' ? '#EB1C24' : '#808080',
+                                  }}
+                                >
+                                  {selectedReferralStatus}
+                                </span>
+                                {selectedClient && isClientNewsletterSubscribed(selectedClient) && (
+                                  <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', margin: 0, marginTop: '4px' }}>NEWSLETTER</p>
+                                )}
                               </div>
                             </div>
+                            <p style={{ fontFamily: '"Futura PT Book"', color: selectedTierDisplay.color, fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedTierDisplay.label}</p>
+                            {selectedMembershipDuration && (
+                              <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '9px', margin: 0, marginTop: '3px' }}>{selectedMembershipDuration}</p>
+                            )}
                           </div>
+                          <div className="grid grid-cols-3 gap-4 text-center" style={{ paddingTop: '10px' }}>
+                              <div>
+                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{selectedTotalOrders}</p>
+                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>ORDERS</p>
+                              </div>
+                              <div>
+                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>${selectedTotalSpent.toLocaleString()}</p>
+                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>TOTAL SPENT</p>
+                              </div>
+                              <div>
+                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{selectedMembershipType}</p>
+                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>MEMBERSHIP</p>
+                              </div>
+                            </div>
                         </div>
                         {/* Rewards section: photos, videos, tags */}
                         {selectedClient && (
                           <div className="bg-white border border-gray-200 p-4 mb-6">
                             <div className="grid grid-cols-3 gap-4 text-center">
                               <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>{getRewardsRow(selectedClient, 0).photosCount}</p>
-                                <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>PHOTOS</p>
+                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{getRewardsRow(selectedClient, 0).photosCount}</p>
+                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>PHOTOS</p>
                               </div>
                               <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>{getRewardsRow(selectedClient, 0).videosCount}</p>
-                                <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>VIDEOS</p>
+                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{getRewardsRow(selectedClient, 0).videosCount}</p>
+                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>VIDEOS</p>
                               </div>
                               <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>{getRewardsRow(selectedClient, 0).tagsCount}</p>
-                                <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>TAGS</p>
+                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{getRewardsRow(selectedClient, 0).tagsCount}</p>
+                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>TAGS</p>
                               </div>
                             </div>
                           </div>
@@ -761,7 +864,7 @@ export default function AdminClients() {
                                 {selectedPrimaryAddress === '—' ? (
                                   '—'
                                 ) : (
-                                  selectedPrimaryAddress.split('\n').map((line, i) => (
+                                  selectedPrimaryAddress.split('\n').map((line: string, i: number) => (
                                     <span key={i}>
                                       {i > 0 && <br />}
                                       {line}
@@ -831,7 +934,11 @@ export default function AdminClients() {
                                 <div className="bg-white border border-gray-200 p-4">
                                   <div className="flex justify-between items-center mb-4">
                                     <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px' }}>
-                                      {(expandedOrder.orderNumber || expandedOrder.id || 'ORDER').toString().replace(/^ORDER\s*/i, 'ORDER #')}
+                                      {(() => {
+                                        const raw = (expandedOrder.orderNumber || expandedOrder.id || 'ORDER').toString();
+                                        const num = raw.replace(/^ORDER\s*#?\s*/i, '').trim();
+                                        return num ? `ORDER #${num}` : 'ORDER';
+                                      })()}
                                     </h3>
                                     <button
                                       type="button"
@@ -842,31 +949,112 @@ export default function AdminClients() {
                                       <img src="/assets/close-icon.svg" alt="Close" style={{ width: '16px', height: '16px', filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
                                     </button>
                                   </div>
-                                  <div className="relative overflow-x-auto mb-4" style={{ minHeight: '140px' }}>
-                                    <div className="flex gap-4" style={{ alignItems: 'flex-start' }}>
+                                  <div className="relative overflow-x-auto" style={{ minHeight: '180px', height: 'auto', marginBottom: '20px' }}>
+                                    <div
+                                      className="flex"
+                                      style={{
+                                        gap: '20px',
+                                        minHeight: '180px',
+                                        alignItems: 'flex-start',
+                                        justifyContent: orderProducts.length === 1 ? 'center' : 'flex-start',
+                                        paddingRight: '10px'
+                                      }}
+                                    >
                                       {orderProducts.map((product: any) => {
                                         const opts = product.options || {};
                                         const lengthVal = opts.length || '24"';
                                         const nonDefaultDetails = getNonDefaultDetailLines(product.name, opts);
                                         return (
-                                          <div key={product.id} className="flex-shrink-0" style={{ width: '120px', textAlign: 'center' }}>
-                                            <img src={product.image} alt={product.name} style={{ width: '90px', height: '90px', objectFit: 'contain' }} />
-                                            <p style={{ fontFamily: '"Covered By Your Grace"', fontSize: '16px', color: '#000', marginTop: '4px', textTransform: 'uppercase' }}>{product.name.replace(/WIG/gi, '').trim()}</p>
-                                            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#EB1C24', marginTop: '2px', textTransform: 'uppercase' }}>{`${lengthVal} RAW ${getHairOrigin(product.name)}`}</p>
-                                            <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', color: '#808080', marginTop: '4px' }}>${product.price.toLocaleString()}</p>
-                                            {nonDefaultDetails.length > 0 && (
+                                          <div
+                                            key={product.id}
+                                            className="flex-shrink-0"
+                                            style={{
+                                              width: '150px',
+                                              minHeight: '150px',
+                                              display: 'flex',
+                                              flexDirection: 'column',
+                                              alignItems: 'center',
+                                              justifyContent: 'center',
+                                              padding: '8px'
+                                            }}
+                                          >
+                                            <img
+                                              src={product.image}
+                                              alt={product.name}
+                                              style={{
+                                                width: '120px',
+                                                height: '120px',
+                                                objectFit: 'contain'
+                                              }}
+                                            />
+                                            <p
+                                              style={{
+                                                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                                fontSize: product.name === 'NOIR' ? '22px' : '21px',
+                                                color: '#000000',
+                                                marginTop: '4px',
+                                                marginBottom: '0',
+                                                textTransform: 'uppercase',
+                                                textAlign: 'center',
+                                                lineHeight: '1.1'
+                                              }}
+                                            >
+                                              {product.name.replace(/WIG/gi, '').trim()}
+                                            </p>
+                                            <p
+                                              style={{
+                                                fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif',
+                                                fontSize: '9px',
+                                                color: '#EB1C24',
+                                                marginTop: '3px',
+                                                marginBottom: 0,
+                                                textTransform: 'uppercase',
+                                                textAlign: 'center',
+                                                lineHeight: '1.1'
+                                              }}
+                                            >
+                                              {`${lengthVal} RAW ${getHairOrigin(product.name)}`}
+                                            </p>
+                                            <p
+                                              style={{
+                                                fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
+                                                fontSize: '9px',
+                                                color: '#808080',
+                                                marginTop: '6px',
+                                                marginBottom: 0,
+                                                textTransform: 'uppercase',
+                                                textAlign: 'center',
+                                                lineHeight: '1.1'
+                                              }}
+                                            >
+                                              ${product.price.toLocaleString()}
+                                            </p>
+                                            {nonDefaultDetails.length > 0 ? (
                                               <div style={{ marginTop: '4px', textAlign: 'center' }}>
                                                 {nonDefaultDetails.map((line: string, idx: number) => (
-                                                  <div key={idx} style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#000', marginTop: idx === 0 ? 0 : '2px', textTransform: 'uppercase' }}>{line}</div>
+                                                  <div
+                                                    key={idx}
+                                                    style={{
+                                                      fontFamily: '"Futura PT Book", Futura, Inter, sans-serif',
+                                                      fontSize: '9px',
+                                                      color: '#000000',
+                                                      marginTop: idx === 0 ? 0 : '4px',
+                                                      marginBottom: 0,
+                                                      textTransform: 'uppercase',
+                                                      lineHeight: '1.2'
+                                                    }}
+                                                  >
+                                                    {line}
+                                                  </div>
                                                 ))}
                                               </div>
-                                            )}
+                                            ) : null}
                                           </div>
                                         );
                                       })}
                                     </div>
                                   </div>
-                                  <div style={{ marginBottom: '16px' }}>
+                                  <div style={{ marginBottom: '24px' }}>
                                     <div className="flex items-center justify-between pb-1 border-b border-gray-200" style={{ marginBottom: '10px' }}>
                                       <h4 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>ORDER SUMMARY</h4>
                                       <img src={summaryIcon} alt="" style={{ width: 12.75, height: 12.75, opacity: 1 }} />
@@ -907,31 +1095,204 @@ export default function AdminClients() {
                                     </div>
                                   </div>
                                   {selectedClient && (
-                                    <div>
+                                    <>
+                                    <div style={{ marginTop: '24px' }}>
                                       <div className="flex items-center justify-between pb-1 border-b border-gray-200" style={{ marginBottom: '10px' }}>
                                         <h4 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>SHIPPING</h4>
                                         <img src="/assets/ship-icon.svg" alt="" style={{ width: 12.75, height: 12.75, opacity: 1 }} />
                                       </div>
-                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: 0, textTransform: 'uppercase' }}>
-                                          {selectedClient.firstName || ''} {selectedClient.lastName || ''}
+                                          {(selectedClient.firstName || '')} {(selectedClient.lastName || '')}
                                         </p>
                                         {(() => {
-                                          const addr = (selectedClient.address || '').toUpperCase();
-                                          if (!addr) return null;
-                                          const parts = addr.split(', ');
+                                          const addr = selectedClient.defaultAddress || selectedClient.shippingAddress;
+                                          if (addr && typeof addr === 'object') {
+                                            return (
+                                              <>
+                                                {(addr.address || '').trim() && <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: 0, textTransform: 'uppercase' }}>{(addr.address || '').toUpperCase()}</p>}
+                                                {[addr.city, addr.state, addr.zip].filter(Boolean).length > 0 && (
+                                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: 0, textTransform: 'uppercase' }}>
+                                                    {[addr.city, addr.state, addr.zip].filter(Boolean).join(', ').toUpperCase()}
+                                                  </p>
+                                                )}
+                                                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: 0, textTransform: 'uppercase' }}>
+                                                  {formatCountryDisplay(addr.country)}
+                                                </p>
+                                              </>
+                                            );
+                                          }
+                                          const addrStr = (selectedClient.address || '').toString().toUpperCase();
+                                          if (!addrStr) return null;
+                                          const parts = addrStr.split(', ');
                                           if (parts.length >= 3) {
                                             return (
                                               <>
                                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: 0, textTransform: 'uppercase' }}>{parts[0]}</p>
                                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: 0, textTransform: 'uppercase' }}>{parts.slice(1).join(', ')}</p>
+                                                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: 0, textTransform: 'uppercase' }}>{formatCountryDisplay((selectedClient.defaultAddress || selectedClient.shippingAddress)?.country)}</p>
                                               </>
                                             );
                                           }
-                                          return <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: 0, textTransform: 'uppercase' }}>{addr}</p>;
+                                          return (
+                                            <>
+                                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: 0, textTransform: 'uppercase' }}>{addrStr}</p>
+                                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: 0, textTransform: 'uppercase' }}>{formatCountryDisplay((selectedClient.defaultAddress || selectedClient.shippingAddress)?.country)}</p>
+                                            </>
+                                          );
+                                        })()}
+                                        <div className="flex justify-between">
+                                          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>COMPLETION TIMELINE</span>
+                                          <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                                            {expandedOrder.date ? calculateProcessingTimeline(expandedOrder.date, (expandedOrder as any).processingTime || '6-8 WEEKS') : ((expandedOrder as any).processingTime || '6-8 WEEKS')}
+                                          </span>
+                                        </div>
+                                        {(expandedOrder as any).trackingNumber && (() => {
+                                          const shipCountry = (selectedClient.defaultAddress || selectedClient.shippingAddress)?.country || '';
+                                          const isDomestic = !shipCountry || /^US$|^USA$|^UNITED\s*STATES($|\s+OF\s+AMERICA)/i.test(String(shipCountry).trim());
+                                          const trackingUrl = isDomestic ? `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${encodeURIComponent((expandedOrder as any).trackingNumber)}` : `https://www.dhl.com/en/express/tracking.html?AWB=${encodeURIComponent((expandedOrder as any).trackingNumber)}`;
+                                          return (
+                                            <div className="flex justify-between">
+                                              <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>TRACKING NUMBER</span>
+                                              <a href={trackingUrl} target="_blank" rel="noopener noreferrer" style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase', cursor: 'pointer' }}>
+                                                {(expandedOrder as any).trackingNumber}
+                                              </a>
+                                            </div>
+                                          );
+                                        })()}
+                                        {(() => {
+                                          const shipCountry = (selectedClient.defaultAddress || selectedClient.shippingAddress)?.country || '';
+                                          const isDomestic = !shipCountry || /^US$|^USA$|^UNITED\s*STATES($|\s+OF\s+AMERICA)/i.test(String(shipCountry).trim());
+                                          return (
+                                            <div className="flex justify-between">
+                                              <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>CARRIER</span>
+                                              <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>{isDomestic ? 'DOMESTIC' : 'INTERNATIONAL'}</span>
+                                            </div>
+                                          );
                                         })()}
                                       </div>
                                     </div>
+                                    <div style={{ marginTop: '24px' }}>
+                                      <div className="flex items-center justify-between pb-1 border-b border-gray-200" style={{ marginBottom: '10px' }}>
+                                        <h4 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>PAYMENT</h4>
+                                        <img src="/assets/payment-icon.svg" alt="" style={{ width: 14.25, height: 14.25, opacity: 1 }} />
+                                      </div>
+                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                        {(() => {
+                                          let methodName = '';
+                                          let last4 = '';
+                                          let cardDigits = '';
+                                          const fromOrder = (expandedOrder as any)?.paymentMethod;
+                                          if (fromOrder) {
+                                            const str = String(fromOrder);
+                                            const endingMatch = str.match(/ENDING IN (\d+)/i);
+                                            last4 = endingMatch ? endingMatch[1] : '';
+                                            cardDigits = str.replace(/\D/g, '');
+                                            let brandPart = str.replace(/\s*ENDING IN \d+.*$/i, '').trim().replace(/_/g, ' ');
+                                            const bp = brandPart.toUpperCase();
+                                            if (bp === 'EXPRESS' || bp === 'AMEX') methodName = 'AMERICAN EXPRESS';
+                                            else if (bp === 'VISA' || bp === 'MASTERCARD' || bp === 'DISCOVER') methodName = bp;
+                                            else if (brandPart) methodName = bp;
+                                          }
+                                          if (!methodName || !last4) {
+                                            const def = selectedClient.defaultPaymentMethod;
+                                            if (def && def.cardNumber) {
+                                              cardDigits = String(def.cardNumber).replace(/\D/g, '');
+                                              last4 = cardDigits.slice(-4);
+                                              const b = (def.cardBrand || '').toUpperCase().replace(/_/g, ' ');
+                                              if (b === 'EXPRESS' || b === 'AMEX') methodName = 'AMERICAN EXPRESS';
+                                              else if (b === 'VISA' || b === 'MASTERCARD' || b === 'DISCOVER') methodName = b;
+                                              else if (b) methodName = b;
+                                            }
+                                          }
+                                          if (!methodName && cardDigits.length > 0) {
+                                            const first = cardDigits.charAt(0);
+                                            if (first === '4') methodName = 'VISA';
+                                            else if (first === '5') methodName = 'MASTERCARD';
+                                            else if (first === '3') methodName = 'AMERICAN EXPRESS';
+                                            else if (first === '6') methodName = 'DISCOVER';
+                                          }
+                                          if (!methodName) methodName = 'CARD';
+                                          if (!last4) last4 = '****';
+                                          return (
+                                            <div className="flex justify-between">
+                                              <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>{methodName}</span>
+                                              <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>ENDING IN {last4}</span>
+                                            </div>
+                                          );
+                                        })()}
+                                        {((expandedOrder as any).discountCode ?? (expandedOrder as any).discount_code ?? (expandedOrder as any).discount) && (
+                                          <div className="flex justify-between">
+                                            <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>DISCOUNT CODE</span>
+                                            <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>{String((expandedOrder as any).discountCode ?? (expandedOrder as any).discount_code ?? (expandedOrder as any).discount).toUpperCase()}</span>
+                                          </div>
+                                        )}
+                                        {((expandedOrder as any).giftCard ?? (expandedOrder as any).gift_card ?? (expandedOrder as any).giftCardNumber ?? (expandedOrder as any).giftCardCode) && (
+                                          <div className="flex justify-between">
+                                            <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>GIFT CARD</span>
+                                            <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>{String((expandedOrder as any).giftCard ?? (expandedOrder as any).gift_card ?? (expandedOrder as any).giftCardNumber ?? (expandedOrder as any).giftCardCode).toUpperCase()}</span>
+                                          </div>
+                                        )}
+                                        {((expandedOrder as any).referralCode ?? (expandedOrder as any).referral_code) && (
+                                          <div className="flex justify-between">
+                                            <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>REFERRAL CODE</span>
+                                            <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>{String((expandedOrder as any).referralCode ?? (expandedOrder as any).referral_code).toUpperCase()}</span>
+                                          </div>
+                                        )}
+                                        <div className="flex justify-between">
+                                          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>CONFIRMATION EMAIL</span>
+                                          <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>{(selectedClient.email || '').toUpperCase()}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>CONFIRMATION NUMBER</span>
+                                          <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                                            #{(() => {
+                                              const raw = (expandedOrder.orderNumber || expandedOrder.id || '').toString();
+                                              const orderNum = raw.replace(/^ORDER\s*#?\s*/i, '').trim();
+                                              const key = orderNum ? (orderNum.startsWith('#') ? orderNum : `#${orderNum}`) : null;
+                                              if (key) {
+                                                try {
+                                                  const orderConfirmations = JSON.parse(localStorage.getItem('orderConfirmations') || '{}');
+                                                  const stored = orderConfirmations[key] || orderConfirmations[expandedOrder.orderNumber];
+                                                  if (stored) return stored;
+                                                } catch {}
+                                              }
+                                              const onOrder = (expandedOrder as any).confirmationNumber;
+                                              if (onOrder) return onOrder;
+                                              const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                                              const seed = orderNum ? orderNum.replace(/\D/g, '') : '0';
+                                              let hash = 0;
+                                              for (let i = 0; i < seed.length; i++) hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+                                              let gen = '';
+                                              for (let i = 0; i < 6; i++) { gen += chars[Math.abs((hash + i) % chars.length)]; }
+                                              return gen;
+                                            })()}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div style={{ marginTop: '24px' }}>
+                                      <div className="flex items-center justify-between pb-1 border-b border-gray-200" style={{ marginBottom: '10px' }}>
+                                        <h4 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>REWARDS</h4>
+                                        <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+                                      </div>
+                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                        <div className="flex justify-between items-center">
+                                          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: 0, textTransform: 'uppercase' }}>
+                                            YOU&apos;VE EARNED <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{((expandedOrder as any).pointsEarned ?? selectedClient?.loyaltyPoints ?? (expandedOrder.subtotal != null ? expandedOrder.subtotal : expandedOrder.total) ?? 0).toLocaleString()}</span> LOYALTY POINTS{((expandedOrder as any).pointsEarned ?? selectedClient?.loyaltyPoints ?? (expandedOrder.subtotal != null ? expandedOrder.subtotal : expandedOrder.total) ?? 0) === 0 ? '.' : '!'}
+                                          </p>
+                                          <span style={{
+                                            fontFamily: (() => { const t = ((expandedOrder as any).tier || selectedClient?.currentTierName || getEffectiveTierName(selectedClient) || 'SILVER').toString().toUpperCase(); return (t === 'RED' || t === 'BLACK') ? '"Futura PT Medium"' : '"Futura PT Demi"'; })(),
+                                            fontSize: '10px',
+                                            color: (() => { const t = ((expandedOrder as any).tier || selectedClient?.currentTierName || getEffectiveTierName(selectedClient) || 'SILVER').toString().toUpperCase(); if (t === 'RED') return '#EB1C24'; if (t === 'SILVER') return '#808080'; if (t === 'BLACK') return '#000000'; return '#808080'; })(),
+                                            textTransform: 'uppercase'
+                                          }}>
+                                            {((expandedOrder as any).tier || selectedClient?.currentTierName || getEffectiveTierName(selectedClient) || 'SILVER').toString().toUpperCase()} TIER
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    </>
                                   )}
                                 </div>
                               );
@@ -997,13 +1358,13 @@ export default function AdminClients() {
                         )}
                         {detailsTab === 'messages' && selectedClient && (() => {
                           const email = (selectedClient.email || '').trim().toLowerCase();
-                          let messages: Array<{ id: string; message: string; timestamp?: string; type?: string; subject?: string }> = [];
+                          let messages: Array<{ id: string; message: string; timestamp?: string | number; type?: string; subject?: string }> = [];
                           try {
                             const priorityRaw = localStorage.getItem('adminPriorityMessages');
                             const priorityList = priorityRaw ? JSON.parse(priorityRaw) : [];
                             if (Array.isArray(priorityList)) {
                               messages = priorityList
-                                .filter((m: any) => (m.userId || m.userEmail || '').toLowerCase() === email)
+                                .filter((m: any) => String(m.userId || m.userEmail || '').toLowerCase() === email)
                                 .map((m: any) => ({ id: m.id || '', message: m.message || '', timestamp: m.timestamp, type: m.type || 'priority' }));
                             }
                             const supportKey = `userSupportMessages_${email}`;
@@ -1036,7 +1397,7 @@ export default function AdminClients() {
                               ) : (
                                 <div className="space-y-3 max-h-64 overflow-y-auto">
                                   {messages.map((m) => (
-                                    <div key={m.id} className="py-3 border-b border-gray-100 last:border-0">
+                                    <div key={String(m.id)} className="py-3 border-b border-gray-100 last:border-0">
                                       {m.subject && (
                                         <p className="font-futura text-xs font-medium mb-1" style={{ color: '#EB1C24' }}>{m.subject.toUpperCase()}</p>
                                       )}
@@ -1218,7 +1579,7 @@ export default function AdminClients() {
                           </button>
                           <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', textAlign: 'center' }}>{row.referralNumber}</div>
                           <div className="flex justify-center w-full" style={{ fontFamily: row.status === 'ACTIVE' ? '"Futura PT Book"' : '"Futura PT Medium"', fontSize: '11px', color: row.status === 'ACTIVE' ? '#EB1C24' : '#808080', textAlign: 'center' }}>{row.status}</div>
-                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: (row.invitesCount !== 0 && row.invitesCount !== '0') ? '#EB1C24' : '#000000', textAlign: 'center' }}>
+                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.invitesCount) !== 0 ? '#EB1C24' : '#000000', textAlign: 'center' }}>
                             {row.invitesCount}
                           </div>
                         </div>
@@ -1246,9 +1607,9 @@ export default function AdminClients() {
                               {getMembershipTierLabel(u)}
                             </span>
                           </button>
-                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: (row.totalReviews !== 0 && row.totalReviews !== '0') ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.totalReviews}</div>
-                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: (row.reviewsWithPhotosVideos !== 0 && row.reviewsWithPhotosVideos !== '0') ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.reviewsWithPhotosVideos}</div>
-                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: (row.pendingReviews !== 0 && row.pendingReviews !== '0') ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.pendingReviews}</div>
+                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.totalReviews) !== 0 ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.totalReviews}</div>
+                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.reviewsWithPhotosVideos) !== 0 ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.reviewsWithPhotosVideos}</div>
+                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.pendingReviews) !== 0 ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.pendingReviews}</div>
                         </div>
                       );
                     })
@@ -1274,9 +1635,9 @@ export default function AdminClients() {
                               {getMembershipTierLabel(u)}
                             </span>
                           </button>
-                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: (row.photosCount !== 0 && row.photosCount !== '0') ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.photosCount}</div>
-                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: (row.videosCount !== 0 && row.videosCount !== '0') ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.videosCount}</div>
-                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: (row.tagsCount !== 0 && row.tagsCount !== '0') ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.tagsCount}</div>
+                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.photosCount) !== 0 ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.photosCount}</div>
+                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.videosCount) !== 0 ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.videosCount}</div>
+                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.tagsCount) !== 0 ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.tagsCount}</div>
                         </div>
                       );
                     })
