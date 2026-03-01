@@ -4,6 +4,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import ConfirmationModal from '../../../components/ConfirmationModal';
+import { getDeletedPlatformFromUserAgent } from '../../../utils/platformDetection';
 
 const inputBaseStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Demi"',
@@ -299,7 +300,8 @@ function SettingsPage() {
         const deletedUsers = JSON.parse(localStorage.getItem('deletedUsers') || '[]');
         deletedUsers.push({
           ...userRecord,
-          deletedAt: new Date().toISOString()
+          deletedAt: new Date().toISOString(),
+          deletedFrom: getDeletedPlatformFromUserAgent()
         });
         localStorage.setItem('deletedUsers', JSON.stringify(deletedUsers));
         const filtered = registeredUsers.filter((u: any) => (u.email || '').toLowerCase() !== email);
