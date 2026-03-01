@@ -78,12 +78,18 @@ function buildReferralCode(firstName: string, lastName: string, birthDay: number
   return first + last + day + suffix;
 }
 
-/** Processing timeline from order date (e.g. "JANUARY 15TH - FEBRUARY 12TH") */
+/** Processing timeline from order date (e.g. "JANUARY 15TH - FEBRUARY 12TH"). Parses various date formats. */
 function calculateProcessingTimeline(orderDateStr: string, processingTime: string): string {
   try {
-    const parts = (orderDateStr || '').split(/[-\/]/).map(Number);
-    const [month, day, year] = parts.length >= 3 ? parts : [1, 1, new Date().getFullYear()];
-    const orderDate = new Date(year, month - 1, day);
+    let orderDate: Date;
+    const parsed = new Date(orderDateStr);
+    if (!isNaN(parsed.getTime())) {
+      orderDate = parsed;
+    } else {
+      const parts = (orderDateStr || '').split(/[-\/]/).map(Number);
+      const [month, day, year] = parts.length >= 3 ? parts : [1, 1, new Date().getFullYear()];
+      orderDate = new Date(year, month - 1, day);
+    }
     let minWeeks = 6, maxWeeks = 8;
     if (processingTime && /4/.test(processingTime)) { minWeeks = 4; maxWeeks = 6; }
     else if (processingTime && /10/.test(processingTime)) { minWeeks = 6; maxWeeks = 10; }
@@ -234,7 +240,7 @@ const MOCK_PRODUCTS = ['NOIR', 'BLANCO', 'SOFT WAVE', 'SOFT CURL', 'BEACH WAVE',
 /** Add-on price variations (flexible cap +$40, length/density/color, etc.) for realistic order totals */
 const MOCK_ADDON_VARIATIONS = [0, 40, 50, 100, 20, 60, 80];
 
-/** Mock orders for mock clients when localStorage has no userOrders data. Uses client's ordersCount, totalSpent, newCount. Prices reflect actual product base prices + add-ons. */
+/** Mock orders for mock clients when localStorage has no userOrders data. Uses client's ordersCount, totalSpent, newCount. Prices reflect actual product base prices + add-ons. No order goes below product base price. */
 function getMockOrdersForClient(client: any): Array<{ id: string; date: string; product: string; amount: number; status: string }> {
   const count = client?.ordersCount ?? 0;
   const totalSpent = client?.totalSpent ?? 0;
@@ -242,26 +248,41 @@ function getMockOrdersForClient(client: any): Array<{ id: string; date: string; 
   if (count <= 0) return [];
   const now = Date.now();
   const day = 24 * 60 * 60 * 1000;
-  const orders: Array<{ id: string; date: string; product: string; amount: number; status: string }> = [];
-  const amounts: number[] = [];
+  const basePrices: number[] = [];
+  const addons: number[] = [];
   for (let i = 0; i < count; i++) {
     const product = MOCK_PRODUCTS[i % MOCK_PRODUCTS.length];
-    const basePrice = getProductBasePrice(product);
-    const addon = MOCK_ADDON_VARIATIONS[i % MOCK_ADDON_VARIATIONS.length];
-    amounts.push(Math.max(basePrice, basePrice + addon));
+    basePrices.push(getProductBasePrice(product));
+    addons.push(MOCK_ADDON_VARIATIONS[i % MOCK_ADDON_VARIATIONS.length]);
   }
-  const sum = amounts.reduce((a, b) => a + b, 0);
-  const diff = totalSpent - sum;
-  if (diff !== 0) amounts[0] += diff;
+  const totalBase = basePrices.reduce((a, b) => a + b, 0);
+  const totalAddon = addons.reduce((a, b) => a + b, 0);
+  const sum = totalBase + totalAddon;
+  let diff = totalSpent - sum;
+  let amounts: number[];
+  if (diff >= 0) {
+    const addonShare = totalAddon > 0 ? (i: number) => addons[i] / totalAddon : () => 1 / count;
+    amounts = basePrices.map((b, i) => b + addons[i] + Math.round(diff * addonShare(i)));
+  } else if (totalAddon > 0) {
+    const scale = Math.max(0, (totalAddon + diff) / totalAddon);
+    amounts = basePrices.map((b, i) => Math.round(b + addons[i] * scale));
+  } else {
+    amounts = basePrices.map((b, i) => b + addons[i]);
+  }
+  for (let i = 0; i < count; i++) {
+    amounts[i] = Math.max(basePrices[i], Math.round(amounts[i]));
+  }
+  const orders: Array<{ id: string; date: string; product: string; amount: number; status: string }> = [];
   for (let i = 0; i < count; i++) {
     const isDelivered = i >= newCount;
-    const daysAgo = count - i + Math.floor(i / 2);
+    const daysAgo = 30 + (count - 1 - i) * 25;
     const orderDate = new Date(now - daysAgo * day);
+    const dateStr = `${String(orderDate.getMonth() + 1).padStart(2, '0')}-${String(orderDate.getDate()).padStart(2, '0')}-${orderDate.getFullYear()}`;
     orders.push({
       id: `#${String(i + 1).padStart(3, '0')}`,
-      date: orderDate.toLocaleDateString(undefined, { dateStyle: 'medium' }),
+      date: dateStr,
       product: MOCK_PRODUCTS[i % MOCK_PRODUCTS.length],
-      amount: Math.round(amounts[i]),
+      amount: amounts[i],
       status: isDelivered ? 'DELIVERED' : 'IN PROGRESS',
     });
   }
@@ -378,6 +399,8 @@ export default function AdminClients() {
           const brand = (pm?.cardBrand || 'VISA').toString().replace(/_/g, ' ');
           const last4 = pm?.cardNumber ? String(pm.cardNumber).replace(/\D/g, '').slice(-4) : String(1000 + i).slice(-4);
           const referralNum = found?.referralNumber || buildReferralCode(found?.firstName || '', found?.lastName || '', found?.birthDay ?? 1, found?.email || '');
+          const isDelivered = (m.status || '').toUpperCase() === 'DELIVERED' || (m.status || '').toUpperCase() === 'SHIPPED';
+          const trackingNum = isDelivered ? `9405${String(5011899223 + (found?.birthDay ?? 1) * 1000 + i).padStart(10, '0')}${String(19784123 + i).padStart(8, '0')}` : undefined;
           const base: Record<string, any> = {
             id: m.id,
             orderNumber: `ORDER #${m.id.replace(/^#/, '')}`,
@@ -388,8 +411,9 @@ export default function AdminClients() {
             total: m.amount,
             items: 1,
             lineItems: [{ productName: m.product, subtotal: m.amount, options: { length: '24"' } }],
-            trackingNumber: (m.status || '').toUpperCase() === 'DELIVERED' || (m.status || '').toUpperCase() === 'SHIPPED' ? `1Z${m.id.replace(/\D/g, '')}AA10123456784` : undefined,
-            trackingCarrier: 'FEDEX',
+            processingTime: '6-8 WEEKS',
+            trackingNumber: trackingNum,
+            trackingCarrier: 'USPS',
             confirmationNumber: `X${String(i + 1).padStart(1)}R${m.id.replace(/\D/g, '').slice(-2)}S${String(i + 1)}`,
             pointsEarned: Math.round(m.amount),
             tier: found?.currentTierName || getEffectiveTierName(found) || 'SILVER',
@@ -1116,12 +1140,12 @@ export default function AdminClients() {
                                         </div>
                                       )}
                                       <div className="flex justify-between">
-                                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>ORDER TOTAL</span>
-                                        <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>${(expandedOrder.total ?? 0).toLocaleString()}</span>
-                                      </div>
-                                      <div className="flex justify-between">
                                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>ORDER NUMBER</span>
                                         <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>{(expandedOrder.orderNumber || expandedOrder.id || '—').toString().replace(/^ORDER\s+/i, '')}</span>
+                                      </div>
+                                      <div className="flex justify-between">
+                                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>ORDER TOTAL</span>
+                                        <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>${(expandedOrder.total ?? 0).toLocaleString()}</span>
                                       </div>
                                       {(() => {
                                         const subtotalVal = (expandedOrder as any).subtotal ?? subtotal;

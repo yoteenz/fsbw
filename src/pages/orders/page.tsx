@@ -1866,18 +1866,18 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                </div>
                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                  <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
-                                   ORDER TOTAL
-                                 </span>
-                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
-                                   {formatPrice(expandedOrder.total)} {selectedCurrency}
-                                 </span>
-                               </div>
-                               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                 <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                    ORDER NUMBER
                                  </span>
                                  <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                                    {expandedOrder.orderNumber.replace(/^ORDER\s+/i, '')}
+                                 </span>
+                               </div>
+                               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                 <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                   ORDER TOTAL
+                                 </span>
+                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                                   {formatPrice(expandedOrder.total)} {selectedCurrency}
                                  </span>
                                </div>
                              </div>
@@ -2604,18 +2604,18 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                </div>
                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                  <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
-                                   ORDER TOTAL
-                                 </span>
-                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
-                                   {formatPrice(expandedOrder.total)} {selectedCurrency}
-                                 </span>
-                               </div>
-                               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                 <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                    ORDER NUMBER
                                  </span>
                                  <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
                                    {expandedOrder.orderNumber.replace(/^ORDER\s+/i, '')}
+                                 </span>
+                               </div>
+                               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                 <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                                   ORDER TOTAL
+                                 </span>
+                                 <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                                   {formatPrice(expandedOrder.total)} {selectedCurrency}
                                  </span>
                                </div>
                              </div>
