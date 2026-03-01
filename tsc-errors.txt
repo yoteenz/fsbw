@@ -1,0 +1,2 @@
+src/pages/admin/clients/page.tsx(1331,33): error TS6133: 'rewards' is declared but its value is never read.
+src/pages/admin/clients/page.tsx(1597,37): error TS6133: 'hasDiscounts' is declared but its value is never read.

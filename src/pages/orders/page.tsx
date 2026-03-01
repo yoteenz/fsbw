@@ -1724,6 +1724,9 @@ const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length 
                          return (
                          <div className="flex flex-col gap-6" style={{ marginTop: '10px' }}>
                            {/* Products Horizontal Scroll: black product name, red RAW line, gray price, black details (non-default only) */}
+                           {orderProducts.length >= 3 && (
+                             <style>{`.orders-expanded-products-row { padding-left: calc(50% - 170px) !important; justify-content: flex-start !important; }`}</style>
+                           )}
                            <div 
                              className="relative overflow-x-auto"
                              style={{ 
@@ -1733,13 +1736,14 @@ const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length 
                              }}
                            >
                              <div
-                               className="flex"
+                               className={`flex ${orderProducts.length >= 3 ? 'orders-expanded-products-row' : ''}`}
                                style={{
                                  gap: '20px',
                                  minHeight: '180px',
                                  alignItems: 'flex-start',
-                                 justifyContent: orderProducts.length === 1 ? 'center' : 'flex-start',
-                                 paddingRight: '10px'
+                                 justifyContent: orderProducts.length <= 2 ? 'center' : 'flex-start',
+                                 paddingRight: '10px',
+                                 ...(orderProducts.length >= 3 ? { paddingLeft: 'calc(50% - 170px)' } : {})
                                }}
                              >
                               {orderProducts.map((product) => {
@@ -1902,18 +1906,6 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  <img src="/assets/ship-icon.svg" alt="" style={{ width: 12.75, height: 12.75, opacity: 1 }} />
                                </div>
                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                   {currentUser.firstName || ''} {currentUser.lastName || ''}
-                                 </p>
-                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                   {currentUser.defaultAddress?.address || currentUser.shippingAddress?.address || ''}
-                                 </p>
-                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                   {currentUser.defaultAddress?.city || currentUser.shippingAddress?.city || ''}, {currentUser.defaultAddress?.state || currentUser.shippingAddress?.state || ''} {currentUser.defaultAddress?.zip || currentUser.shippingAddress?.zip || ''}
-                                 </p>
-                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                   {formatCountryDisplay(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country)}
-                                 </p>
                                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                      COMPLETION TIMELINE
@@ -1952,6 +1944,18 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                      </div>
                                    );
                                  })()}
+                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                   {currentUser.firstName || ''} {currentUser.lastName || ''}
+                                 </p>
+                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                   {currentUser.defaultAddress?.address || currentUser.shippingAddress?.address || ''}
+                                 </p>
+                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                   {currentUser.defaultAddress?.city || currentUser.shippingAddress?.city || ''}, {currentUser.defaultAddress?.state || currentUser.shippingAddress?.state || ''} {currentUser.defaultAddress?.zip || currentUser.shippingAddress?.zip || ''}
+                                 </p>
+                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                   {formatCountryDisplay(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country)}
+                                 </p>
                                </div>
                              </div>
                            )}
@@ -2462,6 +2466,9 @@ const orderProductsArchived = expandedOrder.lineItems && expandedOrder.lineItems
                        <div key="archived-expanded" className={`${pastOrders.length > 1 ? 'flex-1' : ''} flex flex-col overflow-hidden mt-2`}>
                          <div className="flex flex-col gap-6" style={{ marginTop: '10px' }}>
                            {/* Products Horizontal Scroll: black product name, red RAW line, gray price, black details (non-default only) */}
+                           {orderProductsArchived.length >= 3 && (
+                             <style>{`.orders-expanded-products-row-archived { padding-left: calc(50% - 170px) !important; justify-content: flex-start !important; }`}</style>
+                           )}
                            <div 
                              className="relative overflow-x-auto"
                              style={{ 
@@ -2471,13 +2478,14 @@ const orderProductsArchived = expandedOrder.lineItems && expandedOrder.lineItems
                              }}
                            >
                              <div
-                               className="flex"
+                               className={`flex ${orderProductsArchived.length >= 3 ? 'orders-expanded-products-row-archived' : ''}`}
                                style={{
                                  gap: '20px',
                                  minHeight: '180px',
                                  alignItems: 'flex-start',
-                                 justifyContent: orderProductsArchived.length === 1 ? 'center' : 'flex-start',
-                                 paddingRight: '10px'
+                                 justifyContent: orderProductsArchived.length <= 2 ? 'center' : 'flex-start',
+                                 paddingRight: '10px',
+                                 ...(orderProductsArchived.length >= 3 ? { paddingLeft: 'calc(50% - 170px)' } : {})
                                }}
                              >
                               {orderProductsArchived.map((product) => {
@@ -2640,18 +2648,6 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  <img src="/assets/ship-icon.svg" alt="" style={{ width: 12.75, height: 12.75, opacity: 1 }} />
                                </div>
                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                   {currentUser.firstName || ''} {currentUser.lastName || ''}
-                                 </p>
-                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                   {currentUser.defaultAddress?.address || currentUser.shippingAddress?.address || ''}
-                                 </p>
-                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                   {currentUser.defaultAddress?.city || currentUser.shippingAddress?.city || ''}, {currentUser.defaultAddress?.state || currentUser.shippingAddress?.state || ''} {currentUser.defaultAddress?.zip || currentUser.shippingAddress?.zip || ''}
-                                 </p>
-                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                   {formatCountryDisplay(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country)}
-                                 </p>
                                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                                      COMPLETION TIMELINE
@@ -2690,6 +2686,18 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                      </div>
                                    );
                                  })()}
+                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                   {currentUser.firstName || ''} {currentUser.lastName || ''}
+                                 </p>
+                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                   {currentUser.defaultAddress?.address || currentUser.shippingAddress?.address || ''}
+                                 </p>
+                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                   {currentUser.defaultAddress?.city || currentUser.shippingAddress?.city || ''}, {currentUser.defaultAddress?.state || currentUser.shippingAddress?.state || ''} {currentUser.defaultAddress?.zip || currentUser.shippingAddress?.zip || ''}
+                                 </p>
+                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                   {formatCountryDisplay(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country)}
+                                 </p>
                                </div>
                              </div>
                            )}

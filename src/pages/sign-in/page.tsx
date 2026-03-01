@@ -14,10 +14,6 @@ import {
   MOCK_TOOL_REVIEWS_COUNT
 } from '../../constants/reviews';
 
-// OAuth callback types (match globals from vite-env.d.ts)
-type FbLoginResponse = { status: string; authResponse?: { accessToken: string; userID: string } };
-type GoogleTokenResp = { access_token: string };
-
 /** Fetch canonical admin profile from public/admin-profile.json so Chrome (and any browser) gets same name, photo, birthday etc. as Safari. */
 async function fetchCanonicalAdminProfile(): Promise<Record<string, unknown>> {
   try {
@@ -142,244 +138,6 @@ function SignInPage() {
     cleaned = cleaned.replace(/^(facebook|instagram|youtube|tiktok|twitter)/i, '');
     
     return '@' + cleaned;
-  };
-
-  const fbAppId = import.meta.env.VITE_FACEBOOK_APP_ID as string | undefined;
-  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined;
-  const [socialAuthError, setSocialAuthError] = useState('');
-  const [socialLoading, setSocialLoading] = useState<'facebook' | 'google' | null>(null);
-
-  /** Normalize email for OAuth lookup so Gmail dotted variants (user.name@gmail.com vs username@gmail.com) match. */
-  const normalizeEmailForOAuthLookup = (raw: string): string => {
-    const e = (raw || '').trim().toLowerCase();
-    if (!e) return e;
-    const at = e.indexOf('@');
-    if (at <= 0) return e;
-    const local = e.slice(0, at);
-    const domain = e.slice(at);
-    if (domain === '@gmail.com' || domain === '@googlemail.com') {
-      return local.replace(/\./g, '') + domain;
-    }
-    return e;
-  };
-
-  const createOrUpdateOAuthUser = (profile: {
-    provider: 'facebook' | 'google';
-    id?: string;
-    name: string;
-    email: string;
-    picture?: string;
-    link?: string;
-  }) => {
-    const registeredUsers: any[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-    const email = (profile.email || '').trim().toLowerCase();
-    if (!email) {
-      setSocialAuthError('Email is required. Please grant email permission.');
-      return;
-    }
-    const nameParts = (profile.name || '').trim().split(/\s+/).filter(Boolean);
-    const firstName = nameParts[0] || '';
-    const lastName = nameParts.slice(1).join(' ') || '';
-    const normalizedEmail = normalizeEmailForOAuthLookup(email);
-    let existingIdx = registeredUsers.findIndex((u: any) => normalizeEmailForOAuthLookup(u.email || '') === normalizedEmail);
-    if (existingIdx < 0 && profile.id) {
-      existingIdx = registeredUsers.findIndex((u: any) => (u.oauthId === profile.id || u.authProviderId === profile.id) && u.authProvider === profile.provider);
-    }
-    let user: any;
-    if (existingIdx >= 0) {
-      user = { ...registeredUsers[existingIdx], authProvider: profile.provider, oauthId: profile.id, authProviderId: profile.id, firstName: firstName || registeredUsers[existingIdx].firstName, lastName: lastName || registeredUsers[existingIdx].lastName };
-      if (profile.provider === 'facebook' && profile.link) user.facebook = profile.link;
-      registeredUsers[existingIdx] = user;
-    } else {
-      const firstInitial = firstName ? firstName.charAt(0).toUpperCase() : 'U';
-      const lastInitial = lastName ? lastName.charAt(0).toUpperCase() : 'S';
-      let referralCode = firstInitial + lastInitial + '01' + Math.floor(10 + Math.random() * 90);
-      while (registeredUsers.some((u: any) => u.referralCode === referralCode)) {
-        referralCode = firstInitial + lastInitial + '01' + Math.floor(10 + Math.random() * 90);
-      }
-      user = {
-        id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        firstName,
-        lastName,
-        email,
-        phoneNumber: '',
-        birthday: '',
-        password: '',
-        facebook: profile.provider === 'facebook' && profile.link ? profile.link : '',
-        instagram: '',
-        youtube: '',
-        tiktok: '',
-        twitter: '',
-        profileImage: profile.picture || '/assets/profile-thumb.png',
-        membershipType: 'STANDARD',
-        referralCode,
-        giftCardBalance: 10, // Standard member welcome discount $10 USD (per premium chart)
-        hasMadeFirstPurchase: false,
-        loyaltyPoints: 0,
-        unlockedDiscounts: ['signup'],
-        authProvider: profile.provider,
-        oauthId: profile.id,
-        authProviderId: profile.id,
-        createdAt: new Date().toISOString()
-      };
-      registeredUsers.push(user);
-      try {
-        localStorage.setItem(`userOrders_${email}`, JSON.stringify({ activeOrders: [], pastOrders: [] }));
-      } catch (_) {}
-      // New account: clear cart, wishlist, bag state so they don't see previous guest data
-      localStorage.setItem('cartItems', '[]');
-      localStorage.setItem('cartCount', '0');
-      localStorage.setItem('wishlistItems', '[]');
-      localStorage.removeItem('addToBagButtonState');
-      localStorage.removeItem('lastAddedItemId');
-      localStorage.removeItem('editingCartItem');
-      localStorage.removeItem('editingCartItemId');
-      // Clear all mock data for new OAuth account: empty notifications, no mock review alerts
-      try {
-        localStorage.setItem(`notifications_${email}`, '[]');
-        localStorage.setItem(getReviewsLastSeenShopCountKey(email), String(MOCK_SHOP_REVIEWS_COUNT));
-        localStorage.setItem(getReviewsLastSeenToolCountKey(email), String(MOCK_TOOL_REVIEWS_COUNT));
-      } catch (_) {}
-      window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: 0 }));
-      window.dispatchEvent(new CustomEvent('cartUpdated'));
-      window.dispatchEvent(new CustomEvent('wishlistUpdated'));
-    }
-    localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    if (user.profileImage) {
-      localStorage.setItem('profileImage', user.profileImage);
-    } else {
-      localStorage.removeItem('profileImage');
-    }
-    localStorage.setItem('isSignedIn', 'true');
-    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
-    setSocialLoading(null);
-    setSocialAuthError('');
-    navigate('/account/settings');
-  };
-
-  const handleFacebookSignIn = () => {
-    setSocialAuthError('');
-    if (!fbAppId) {
-      setSocialAuthError('Facebook sign-in is not configured. Add VITE_FACEBOOK_APP_ID to your environment.');
-      return;
-    }
-    setSocialLoading('facebook');
-    if (window.FB) {
-      window.FB.login((response: FbLoginResponse) => {
-        if (response.status !== 'connected' || !response.authResponse) {
-          setSocialLoading(null);
-          setSocialAuthError('Facebook sign-in was cancelled or failed.');
-          return;
-        }
-        window.FB!.api('/me', { fields: 'id,name,email,link' }, (profile: { id?: string; name?: string; email?: string; link?: string }) => {
-          if (profile.email) {
-            createOrUpdateOAuthUser({ provider: 'facebook', id: profile.id, name: profile.name || '', email: profile.email, link: profile.link });
-          } else {
-            setSocialLoading(null);
-            setSocialAuthError('Email permission is required. Please try again and grant email access.');
-          }
-        });
-      }, { scope: 'email,public_profile' });
-      return;
-    }
-    window.fbAsyncInit = () => {
-      window.FB!.init({ appId: fbAppId, cookie: true, xfbml: true, version: 'v18.0' });
-      window.FB!.login((response: FbLoginResponse) => {
-        if (response.status !== 'connected' || !response.authResponse) {
-          setSocialLoading(null);
-          setSocialAuthError('Facebook sign-in was cancelled or failed.');
-          return;
-        }
-        window.FB!.api('/me', { fields: 'id,name,email,link' }, (profile: { id?: string; name?: string; email?: string; link?: string }) => {
-          if (profile.email) {
-            createOrUpdateOAuthUser({ provider: 'facebook', id: profile.id, name: profile.name || '', email: profile.email, link: profile.link });
-          } else {
-            setSocialLoading(null);
-            setSocialAuthError('Email permission is required. Please try again and grant email access.');
-          }
-        });
-      }, { scope: 'email,public_profile' });
-    };
-    const script = document.createElement('script');
-    script.src = 'https://connect.facebook.net/en_US/sdk.js';
-    script.async = true;
-    script.defer = true;
-    script.crossOrigin = 'anonymous';
-    script.onload = () => {
-      if (!window.FB) {
-        setSocialLoading(null);
-        setSocialAuthError('Facebook sign-in failed to load.');
-      }
-    };
-    script.onerror = () => {
-      setSocialLoading(null);
-      setSocialAuthError('Facebook sign-in failed to load.');
-    };
-    document.body.appendChild(script);
-  };
-
-  const handleGoogleSignIn = () => {
-    setSocialAuthError('');
-    if (!googleClientId) {
-      setSocialAuthError('Google sign-in is not configured. Add VITE_GOOGLE_CLIENT_ID to your environment.');
-      return;
-    }
-    setSocialLoading('google');
-    const doGoogleTokenRequest = () => {
-      if (!window.google?.accounts?.oauth2) {
-        setSocialLoading(null);
-        setSocialAuthError('Google sign-in failed to load.');
-        return;
-      }
-      const tokenClient = (window.google.accounts.oauth2 as any).initTokenClient({
-        client_id: googleClientId,
-        scope: 'email profile',
-        prompt: 'select_account consent', // Force account chooser + consent every time so user can pick yoteenz (no cached wrong account)
-        callback: async (tokenResponse: GoogleTokenResp & { error?: string; error_description?: string }) => {
-          try {
-            if (tokenResponse.error) {
-              setSocialLoading(null);
-              if (tokenResponse.error === 'access_denied' || tokenResponse.error_description?.toLowerCase().includes('blocked')) {
-                setSocialAuthError('Google sign-in was blocked. Add your email (e.g. yoteenz@gmail.com) as a Test user: Google Cloud Console → APIs & Services → OAuth consent screen → Test users.');
-              } else {
-                setSocialAuthError(tokenResponse.error_description || 'Google sign-in was cancelled or failed.');
-              }
-              return;
-            }
-            const res = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${encodeURIComponent(tokenResponse.access_token)}`);
-            const data = await res.json();
-            const name = data.name || '';
-            const email = data.email || '';
-            const picture = data.picture;
-            if (email) {
-              createOrUpdateOAuthUser({ provider: 'google', id: data.sub, name, email, picture });
-            } else {
-              setSocialLoading(null);
-              setSocialAuthError('Email permission is required.');
-            }
-          } catch (_) {
-            setSocialLoading(null);
-            setSocialAuthError('Google sign-in failed.');
-          }
-        }
-      });
-      (tokenClient as { requestAccessToken: (override?: { prompt?: string }) => void }).requestAccessToken({ prompt: 'select_account consent' });
-    };
-    if (window.google?.accounts?.oauth2) {
-      doGoogleTokenRequest();
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.defer = true;
-    script.onload = () => doGoogleTokenRequest();
-    script.onerror = () => {
-      setSocialLoading(null);
-      setSocialAuthError('Google sign-in failed to load.');
-    };
-    document.body.appendChild(script);
   };
 
   // Listen for cart count changes
@@ -577,14 +335,6 @@ function SignInPage() {
                       width="21"
                       height="15"
                       src="/assets/back-button.svg"
-                    />
-                  </button>
-                  <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                    <img
-                      alt="Search icon"
-                      width="16"
-                      height="15"
-                      src="/assets/search-icon.svg"
                     />
                   </button>
                 </>
@@ -1081,14 +831,6 @@ function SignInPage() {
                       const passwordNorm = normalizePassword(signInPassword);
                       const userByEmail = registeredUsers.find((u: any) => normalizeEmail(u.email || '') === emailNorm);
                       const user = userByEmail && normalizePassword(userByEmail.password || '') === passwordNorm ? userByEmail : null;
-
-                      // If no password match but we found the email: might be an OAuth-only account
-                      if (!user && userByEmail?.authProvider) {
-                        const provider = (userByEmail.authProvider as string).toUpperCase();
-                        setValidationMessage(`THIS ACCOUNT USES ${provider} SIGN-IN. PLEASE USE THE ${provider} BUTTON ABOVE.`);
-                        setShowValidationModal(true);
-                        return;
-                      }
 
                       if (user) {
                         // Authentication successful: start from registered user then merge existing currentUser so profile (photo, name, birthday, address, etc.) stays intact across sign-in and matches this browser's stored data
@@ -1814,73 +1556,12 @@ function SignInPage() {
                         backgroundColor: 'rgba(255, 255, 255, 0.8)',
                         boxSizing: 'border-box',
                         borderRadius: '0',
-                        outline: 'none'
+                        outline: 'none',
+                        marginBottom: '8px'
                       }}
                     />
                   </div>
 
-                  {/* Social Sign Up Buttons */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
-                    {socialAuthError && (
-                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24', margin: 0 }}>{socialAuthError}</p>
-                    )}
-                    <button
-                      type="button"
-                      onClick={handleFacebookSignIn}
-                      disabled={!!socialLoading}
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        border: '1.3px solid #000',
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '12px',
-                        backgroundColor: 'transparent',
-                        textTransform: 'uppercase',
-                        cursor: socialLoading ? 'wait' : 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        justifyContent: 'center',
-                        opacity: socialLoading === 'facebook' ? 0.7 : 1
-                      }}
-                    >
-                      <svg width="22" height="22" viewBox="0 0 33 29" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
-                        <path d="M27.3913 29H21.0274C20.8544 29 20.6885 28.9389 20.5662 28.8301C20.4439 28.7214 20.3752 28.5738 20.3752 28.42L20.3941 18.4713C20.3941 18.3174 20.4628 18.1699 20.5851 18.0611C20.7074 17.9524 20.8733 17.8913 21.0463 17.8913H24.913L25.3741 14.6583L21.0306 14.6247C20.8577 14.6247 20.6918 14.5636 20.5695 14.4548C20.4472 14.3461 20.3785 14.1985 20.3785 14.0447V11.3622C20.3785 10.2353 20.6889 8.73654 23.372 8.73654H25.1876L25.2215 6.003L22.228 5.97284C18.8315 5.97284 16.8039 7.83232 16.8039 10.9469V14.0453C16.8039 14.1991 16.7352 14.3466 16.6129 14.4554C16.4906 14.5642 16.3247 14.6253 16.1517 14.6253H13.2476L13.228 17.8623L16.168 17.8918C16.341 17.8918 16.5069 17.9529 16.6292 18.0617C16.7515 18.1705 16.8202 18.318 16.8202 18.4718L16.8006 28.42C16.8006 28.5738 16.7319 28.7214 16.6096 28.8301C16.4873 28.9389 16.3214 29 16.1485 29H5.21739C3.83413 28.9986 2.50797 28.5093 1.52985 27.6394C0.55174 26.7696 0.00155355 25.5902 0 24.36L0 4.64C0.00155355 3.40982 0.55174 2.23042 1.52985 1.36055C2.50797 0.490681 3.83413 0.00138162 5.21739 0L27.3913 0C28.7746 0.00138162 30.1007 0.490681 31.0788 1.36055C32.0569 2.23042 32.6071 3.40982 32.6087 4.64V24.36C32.6071 25.5902 32.0569 26.7696 31.0788 27.6394C30.1007 28.5093 28.7746 28.9986 27.3913 29ZM21.6809 27.84H27.3913C28.4287 27.8389 29.4233 27.4719 30.1569 26.8195C30.8905 26.1671 31.3031 25.2826 31.3043 24.36V4.64C31.3031 3.71738 30.8905 2.83285 30.1569 2.18046C29.4233 1.52806 28.4287 1.16107 27.3913 1.16H5.21739C4.1799 1.16092 3.18521 1.52786 2.4516 2.18029C1.71798 2.83271 1.30538 3.71733 1.30435 4.64V24.36C1.30556 25.2826 1.71821 26.1671 2.45179 26.8195C3.18536 27.4719 4.17996 27.8389 5.21739 27.84H15.4976L15.5146 19.0513H13.2613C12.9072 19.0506 12.5678 18.9254 12.3171 18.703C12.0665 18.4805 11.9251 18.1789 11.9237 17.864L11.91 14.6572C11.9091 14.5005 11.9431 14.3452 12.01 14.2003C12.0768 14.0553 12.1752 13.9235 12.2995 13.8125C12.4238 13.7014 12.5716 13.6134 12.7343 13.5533C12.897 13.4932 13.0714 13.4623 13.2476 13.4624H15.4963V10.9463C15.4963 7.163 18.0743 4.814 22.2248 4.814H25.185C25.5397 4.81446 25.8797 4.94002 26.1305 5.16313C26.3812 5.38625 26.5223 5.6887 26.5226 6.00416V8.70812C26.5221 9.02337 26.3811 9.32559 26.1305 9.54857C25.8799 9.77154 25.5401 9.89709 25.1856 9.8977H23.3693C21.9143 9.8977 21.6796 10.3304 21.6796 11.3634V13.4659H25.3376C25.5266 13.4658 25.7135 13.5014 25.8859 13.5703C26.0583 13.6392 26.2123 13.7397 26.3378 13.8654C26.4633 13.991 26.5575 14.1389 26.6141 14.2993C26.6707 14.4597 26.6884 14.6289 26.6661 14.7958L26.2389 18.0026C26.2001 18.2919 26.0434 18.5585 25.7985 18.752C25.5536 18.9455 25.2374 19.0523 24.9098 19.0524H21.6978L21.6809 27.84Z" fill="#808080"/>
-                      </svg>
-                      <span>{socialLoading === 'facebook' ? 'SIGNING IN...' : 'SIGN UP WITH FACEBOOK ACCOUNT'}</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleGoogleSignIn}
-                      disabled={!!socialLoading}
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        border: '1.3px solid #000',
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '12px',
-                        backgroundColor: 'transparent',
-                        textTransform: 'uppercase',
-                        cursor: socialLoading ? 'wait' : 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        justifyContent: 'center',
-                        opacity: socialLoading === 'google' ? 0.7 : 1
-                      }}
-                    >
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
-                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#808080"/>
-                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#808080"/>
-                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#808080"/>
-                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#808080"/>
-                      </svg>
-                      <span>{socialLoading === 'google' ? 'SIGNING IN...' : 'SIGN UP WITH GOOGLE ACCOUNT'}</span>
-                    </button>
-                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '8px 0 0 0', lineHeight: 1.3 }}>
-                      If Google shows &quot;Access blocked&quot; or the wrong account, add your email (e.g. yoteenz@gmail.com) as a <strong>Test user</strong> in Google Cloud Console → APIs &amp; Services → OAuth consent screen → Test users.
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>

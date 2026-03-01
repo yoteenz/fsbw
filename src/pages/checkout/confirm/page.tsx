@@ -1474,18 +1474,6 @@ function CheckoutConfirmPage() {
                   <img src="/assets/ship-icon.svg" alt="" style={{ width: 12.83, height: 12.83, opacity: 1 }} />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                    {orderData.firstName || accountUser?.firstName || ''} {orderData.lastName || accountUser?.lastName || ''}
-                  </p>
-                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                    {orderData.shippingAddress || addr?.address || ''}
-                  </p>
-                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                    {orderData.city || addr?.city || ''}, {orderData.state || addr?.state || ''} {orderData.zip || addr?.zip || ''}
-                  </p>
-                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                    {orderData.country || addr?.country || 'UNITED STATES'}
-                  </p>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
                       COMPLETION TIMELINE
@@ -1529,6 +1517,18 @@ function CheckoutConfirmPage() {
                       </div>
                     );
                   })()}
+                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                    {orderData.firstName || accountUser?.firstName || ''} {orderData.lastName || accountUser?.lastName || ''}
+                  </p>
+                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                    {orderData.shippingAddress || addr?.address || ''}
+                  </p>
+                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                    {orderData.city || addr?.city || ''}, {orderData.state || addr?.state || ''} {orderData.zip || addr?.zip || ''}
+                  </p>
+                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                    {orderData.country || addr?.country || 'UNITED STATES'}
+                  </p>
                 </div>
               </div>
 
