@@ -1593,9 +1593,8 @@ export default function AdminClients() {
                                   }));
                               const discounts = (expandedOrder as any).discounts || [];
                               const subtotal = (expandedOrder as any).subtotal ?? expandedOrder.total;
-                              const hasDiscounts = discounts.length > 0 || (subtotal != null && subtotal > (expandedOrder.total ?? 0));
                               return (
-                                <div className="bg-white border border-gray-200 p-4">
+                                <div className="bg-white border border-gray-200 p-4" style={orderProducts.length >= 3 ? { minWidth: 0 } : undefined}>
                                   <div className="flex justify-between items-center mb-4">
                                     <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px' }}>
                                       {(() => {
@@ -1620,6 +1619,7 @@ export default function AdminClients() {
                                       height: 'auto',
                                       marginBottom: '20px',
                                       overflowX: orderProducts.length >= 3 ? 'auto' : 'hidden',
+                                      ...(orderProducts.length >= 3 ? { width: '100%', minWidth: 0 } : {})
                                     }}
                                   >
                                     <div
@@ -1628,8 +1628,10 @@ export default function AdminClients() {
                                         gap: '20px',
                                         minHeight: '180px',
                                         alignItems: 'flex-start',
-                                        justifyContent: orderProducts.length === 1 ? 'center' : orderProducts.length === 2 ? 'center' : 'flex-start',
+                                        justifyContent: orderProducts.length <= 2 ? 'center' : 'flex-start',
                                         paddingRight: orderProducts.length >= 3 ? '10px' : 0,
+                                        boxSizing: 'border-box',
+                                        ...(orderProducts.length >= 3 ? { paddingLeft: 'calc(50% - 160px)' } : {})
                                       }}
                                     >
                                       {orderProducts.map((product: any) => {
