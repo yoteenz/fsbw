@@ -125,6 +125,19 @@ function getHairOrigin(productName: string): string {
   }
 }
 
+/** Base price by product (matches build-a-wig and CartDropdown) */
+function getProductBasePrice(productName: string): number {
+  switch ((productName || '').toUpperCase()) {
+    case 'NOIR': return 740;
+    case 'BLANCO': return 820;
+    case 'SOFT CURL':
+    case 'OCEAN CURL': return 780;
+    case 'SOFT WAVE':
+    case 'BEACH WAVE': return 760;
+    default: return 740;
+  }
+}
+
 /** Detail lines for product options (cap size first, then non-default) */
 function getNonDefaultDetailLines(productName: string, options: Record<string, string> | undefined): string[] {
   const fmt = (label: string, value: string) => `${label}: ${value.toLowerCase()}`;
@@ -218,7 +231,10 @@ function getMockClientsForAyoteenz(): any[] {
 
 const MOCK_PRODUCTS = ['NOIR', 'BLANCO', 'SOFT WAVE', 'SOFT CURL', 'BEACH WAVE', 'OCEAN CURL'];
 
-/** Mock orders for mock clients when localStorage has no userOrders data. Uses client's ordersCount, totalSpent, newCount. */
+/** Add-on price variations (flexible cap +$40, length/density/color, etc.) for realistic order totals */
+const MOCK_ADDON_VARIATIONS = [0, 40, 50, 100, 20, 60, 80];
+
+/** Mock orders for mock clients when localStorage has no userOrders data. Uses client's ordersCount, totalSpent, newCount. Prices reflect actual product base prices + add-ons. */
 function getMockOrdersForClient(client: any): Array<{ id: string; date: string; product: string; amount: number; status: string }> {
   const count = client?.ordersCount ?? 0;
   const totalSpent = client?.totalSpent ?? 0;
@@ -227,13 +243,16 @@ function getMockOrdersForClient(client: any): Array<{ id: string; date: string; 
   const now = Date.now();
   const day = 24 * 60 * 60 * 1000;
   const orders: Array<{ id: string; date: string; product: string; amount: number; status: string }> = [];
-  const avgAmount = count > 0 ? Math.round(totalSpent / count) : 0;
-  const amounts = Array.from({ length: count }, (_, i) => {
-    const variance = (i % 3 === 0 ? 80 : i % 3 === 1 ? -60 : 40);
-    return Math.max(580, Math.min(1200, avgAmount + variance));
-  });
+  const amounts: number[] = [];
+  for (let i = 0; i < count; i++) {
+    const product = MOCK_PRODUCTS[i % MOCK_PRODUCTS.length];
+    const basePrice = getProductBasePrice(product);
+    const addon = MOCK_ADDON_VARIATIONS[i % MOCK_ADDON_VARIATIONS.length];
+    amounts.push(Math.max(basePrice, basePrice + addon));
+  }
   const sum = amounts.reduce((a, b) => a + b, 0);
-  amounts[0] += totalSpent - sum;
+  const diff = totalSpent - sum;
+  if (diff !== 0) amounts[0] += diff;
   for (let i = 0; i < count; i++) {
     const isDelivered = i >= newCount;
     const daysAgo = count - i + Math.floor(i / 2);
@@ -242,7 +261,7 @@ function getMockOrdersForClient(client: any): Array<{ id: string; date: string; 
       id: `#${String(i + 1).padStart(3, '0')}`,
       date: orderDate.toLocaleDateString(undefined, { dateStyle: 'medium' }),
       product: MOCK_PRODUCTS[i % MOCK_PRODUCTS.length],
-      amount: amounts[i],
+      amount: Math.round(amounts[i]),
       status: isDelivered ? 'DELIVERED' : 'IN PROGRESS',
     });
   }
@@ -368,6 +387,7 @@ export default function AdminClients() {
             productImage: getProductImage(m.product),
             total: m.amount,
             items: 1,
+            lineItems: [{ productName: m.product, subtotal: m.amount, options: { length: '24"' } }],
             trackingNumber: (m.status || '').toUpperCase() === 'DELIVERED' || (m.status || '').toUpperCase() === 'SHIPPED' ? `1Z${m.id.replace(/\D/g, '')}AA10123456784` : undefined,
             trackingCarrier: 'FEDEX',
             confirmationNumber: `X${String(i + 1).padStart(1)}R${m.id.replace(/\D/g, '').slice(-2)}S${String(i + 1)}`,
@@ -382,6 +402,14 @@ export default function AdminClients() {
             base.discountCode = 'VIP20';
             base.giftCard = `GC-${String(5000 + i).padStart(4, '0')}-${String(2000 + i * 11).slice(-4)}`;
             base.referralCode = referralNum;
+          }
+          if (base.discountCode || base.giftCard || base.referralCode) {
+            let s = 0;
+            if (base.discountCode) s += Math.round(m.amount * 0.12);
+            if (base.giftCard) s += 50;
+            if (base.referralCode) s += 25;
+            base.savings = s;
+            base.subtotal = m.amount + s;
           }
           return base;
         });
@@ -647,7 +675,14 @@ export default function AdminClients() {
           }}
         />
         <div className="relative z-10" style={{ textTransform: 'uppercase' }}>
-          <AdminHeader title={selectedClientEmail ? 'DETAILS' : 'OVERVIEW'} showBack breadcrumbParentLabel="CLIENTS" breadcrumbParentPath="/admin/dashboard" />
+          <AdminHeader
+            title={selectedClientEmail ? 'DETAILS' : 'OVERVIEW'}
+            showBack
+            breadcrumbParentLabel="CLIENTS"
+            breadcrumbParentPath="/admin/clients"
+            onBack={selectedClientEmail ? () => { setSelectedClientEmail(null); setDetailsTab('orders'); setExpandedOrderId(null); } : undefined}
+            breadcrumbParentOnClick={selectedClientEmail ? () => { setSelectedClientEmail(null); setDetailsTab('orders'); setExpandedOrderId(null); } : undefined}
+          />
 
           <div className="pb-6 px-4">
             <div className="max-w-md mx-auto">
@@ -775,24 +810,26 @@ export default function AdminClients() {
                           <div className="mb-4">
                             <div className="flex justify-between items-center">
                               <p style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px', margin: 0 }}>{selectedReferralCode}</p>
-                              <div className="flex flex-col items-end">
+                              <div className="relative flex flex-col items-end">
                                 <span
                                   className="inline-block px-3 py-1 text-xs rounded"
                                   style={{
                                     backgroundColor: selectedReferralStatus === 'ACTIVE' ? 'rgba(235, 28, 36, 0.15)' : '#f3f4f6',
                                     color: selectedReferralStatus === 'ACTIVE' ? '#EB1C24' : '#808080',
+                                    transform: 'scale(0.8)',
+                                    transformOrigin: 'top right',
                                   }}
                                 >
                                   {selectedReferralStatus}
                                 </span>
                                 {selectedClient && isClientNewsletterSubscribed(selectedClient) && (
-                                  <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', margin: 0, marginTop: '4px' }}>NEWSLETTER</p>
+                                  <p style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)', fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, marginTop: '4px', textAlign: 'center' }}>NEWSLETTER</p>
                                 )}
                               </div>
                             </div>
-                            <p style={{ fontFamily: '"Futura PT Book"', color: selectedTierDisplay.color, fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedTierDisplay.label}</p>
+                            <p style={{ fontFamily: selectedTierDisplay.label === 'Silver tier' ? '"Futura PT Demi"' : '"Futura PT Medium"', color: selectedTierDisplay.color, fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedTierDisplay.label}</p>
                             {selectedMembershipDuration && (
-                              <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '9px', margin: 0, marginTop: '3px' }}>{selectedMembershipDuration}</p>
+                              <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: 0, marginTop: '3px' }}>{selectedMembershipDuration}</p>
                             )}
                           </div>
                           <div className="grid grid-cols-3 gap-4 text-center" style={{ paddingTop: '10px' }}>
@@ -1064,12 +1101,6 @@ export default function AdminClients() {
                                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>ORDER DATE</span>
                                         <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>{expandedOrder.date || '—'}</span>
                                       </div>
-                                      {hasDiscounts && subtotal != null && subtotal > (expandedOrder.total ?? 0) && (
-                                        <div className="flex justify-between">
-                                          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>SUBTOTAL</span>
-                                          <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>${subtotal.toLocaleString()}</span>
-                                        </div>
-                                      )}
                                       {discounts.map((d: any, i: number) => (
                                         <div key={i} className="flex justify-between">
                                           <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>{d.label || 'DISCOUNT'}</span>
@@ -1092,6 +1123,21 @@ export default function AdminClients() {
                                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>ORDER NUMBER</span>
                                         <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>{(expandedOrder.orderNumber || expandedOrder.id || '—').toString().replace(/^ORDER\s+/i, '')}</span>
                                       </div>
+                                      {(() => {
+                                        const subtotalVal = (expandedOrder as any).subtotal ?? subtotal;
+                                        const totalVal = expandedOrder.total ?? 0;
+                                        const explicitSavings = (expandedOrder as any).savings;
+                                        const computedSavings = subtotalVal != null && subtotalVal > totalVal ? subtotalVal - totalVal : 0;
+                                        const discountSum = discounts.reduce((sum: number, d: any) => sum + (typeof d.amount === 'number' && d.amount < 0 ? Math.abs(d.amount) : 0), 0);
+                                        const savingsAmount = explicitSavings ?? computedSavings ?? discountSum;
+                                        if (savingsAmount <= 0) return null;
+                                        return (
+                                          <div className="flex justify-between">
+                                            <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>SAVINGS</span>
+                                            <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', textTransform: 'uppercase' }}>-${savingsAmount.toLocaleString()} USD</span>
+                                          </div>
+                                        );
+                                      })()}
                                     </div>
                                   </div>
                                   {selectedClient && (

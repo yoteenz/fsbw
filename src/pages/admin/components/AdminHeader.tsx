@@ -149,6 +149,8 @@ interface AdminHeaderProps {
   breadcrumbParentLabel?: string;
   /** Optional breadcrumb parent path (e.g. "/admin/clients"); when set, breadcrumb link goes here instead of dashboard */
   breadcrumbParentPath?: string;
+  /** Optional custom breadcrumb click handler; when set, used instead of navigate(breadcrumbParentPath) */
+  breadcrumbParentOnClick?: () => void;
 }
 
 /**
@@ -162,6 +164,7 @@ export default function AdminHeader({
   onBack,
   breadcrumbParentLabel,
   breadcrumbParentPath,
+  breadcrumbParentOnClick,
 }: AdminHeaderProps) {
   const navigate = useNavigate();
 
@@ -517,7 +520,7 @@ export default function AdminHeader({
             ) : (
               <div className="overflow-hidden text-ellipsis">
                 <button
-                  onClick={() => navigate(breadcrumbParentPath ?? '/admin/dashboard')}
+                  onClick={() => (breadcrumbParentOnClick ?? (() => navigate(breadcrumbParentPath ?? '/admin/dashboard')))()}
                   onMouseEnter={() => setIsBreadcrumbHovered(true)}
                   onMouseLeave={() => setIsBreadcrumbHovered(false)}
                   onTouchEnd={() => setIsBreadcrumbHovered(false)}
