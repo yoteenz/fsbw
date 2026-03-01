@@ -1,10 +1,12 @@
-
 import { useState } from 'react';
 import AdminHeader from '../components/AdminHeader';
+import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
+
+const MEETING_TABS = ['DAY', 'WEEK'] as const;
 
 export default function AdminMeetings() {
   const [selectedDate, setSelectedDate] = useState('2024-01-20');
-  const [viewMode, setViewMode] = useState('day');
+  const [viewMode, setViewMode] = useState<'day' | 'week'>('day');
 
   const meetings = [
     {
@@ -50,163 +52,182 @@ export default function AdminMeetings() {
   };
 
   return (
-    <>
     <div className="min-h-screen" style={{ position: 'relative' }}>
-      {/* Fixed Background Layer */}
-      <div 
+      <div
         className="fixed inset-0 -z-10"
         style={{
           backgroundImage: `url('/assets/marble-half.png')`,
           backgroundSize: 'contain',
           backgroundPosition: 'center',
           backgroundRepeat: 'repeat',
-          backgroundAttachment: 'fixed'
+          backgroundAttachment: 'fixed',
         }}
-      ></div>
-      
-      {/* Scrollable Content */}
+      />
       <div className="relative z-10" style={{ textTransform: 'uppercase' }}>
-        <AdminHeader title="MEETING SCHEDULER" showBack onBack={() => window.history.back()} />
-        
+        <AdminHeader
+          title="MEETINGS"
+          showBack
+          onBack={() => window.history.back()}
+          breadcrumbParentLabel="ADMIN"
+          breadcrumbParentPath="/admin/dashboard"
+        />
+
         <div className="pb-6 px-4">
           <div className="max-w-md mx-auto">
-            {/* Meetings Content */}
-            <div className="bg-white/60 backdrop-blur-sm border border-black p-6" style={{ borderWidth: '1.3px', minHeight: 'calc(100dvh - 160px)' }}>
-              <h2 className="text-center text-xl font-bold mb-6" style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', color: '#EB1C24' }}>
-                Meeting Scheduler
-              </h2>
-              
-              {/* Date Selector */}
-              <div className="mb-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-bold">Schedule for {selectedDate}</h3>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => setViewMode('day')}
-                      className={`px-3 py-1 text-xs ${viewMode === 'day' ? 'bg-red-500 text-white' : 'bg-white text-gray-700'} border`}
+            {/* Main card */}
+            <div
+              className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
+              style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
+            >
+              <div className="flex items-center justify-between -mt-1 pb-1 px-4 pt-4" style={{ marginBottom: 0 }}>
+                <h2
+                  className="flex-1"
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    color: '#EB1C24',
+                    fontSize: '12px',
+                    fontWeight: 500,
+                    margin: 0,
+                    textTransform: 'uppercase',
+                    textAlign: 'left',
+                  }}
+                >
+                  MEETINGS
+                </h2>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '8px' }}>
+                  <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z" fill="#EB1C24" />
+                </svg>
+              </div>
+              <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
+
+              <div className="flex px-5">
+                {MEETING_TABS.map((tab) => (
+                  <button
+                    key={tab}
+                    type="button"
+                    onClick={() => setViewMode(tab.toLowerCase() as 'day' | 'week')}
+                    className="flex-1 py-3 font-medium transition-colors"
+                    style={{
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '11px',
+                      color: viewMode === tab.toLowerCase() ? '#EB1C24' : '#808080',
+                      border: 'none',
+                      paddingBottom: '4px',
+                      background: 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        borderBottom: viewMode === tab.toLowerCase() ? '1px solid #EB1C24' : '1px solid transparent',
+                        paddingBottom: '4px',
+                      }}
                     >
-                      Day
-                    </button>
-                    <button
-                      onClick={() => setViewMode('week')}
-                      className={`px-3 py-1 text-xs ${viewMode === 'week' ? 'bg-red-500 text-white' : 'bg-white text-gray-700'} border`}
-                    >
-                      Week
-                    </button>
-                  </div>
-                </div>
+                      {tab}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="px-5 pb-4">
                 <input
                   type="date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="w-full p-3 border border-gray-300 text-sm"
+                  className="w-full p-3 border"
+                  style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb' }}
                 />
               </div>
 
-              {/* Meeting Stats */}
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="bg-white border border-gray-200 p-3 text-center">
-                  <p className="text-xl font-bold" style={{ color: '#EB1C24' }}>{meetings.length}</p>
-                  <p className="text-xs text-gray-600">Today's Meetings</p>
-                </div>
-                <div className="bg-white border border-gray-200 p-3 text-center">
-                  <p className="text-xl font-bold text-green-600">{meetings.filter(m => m.status === 'Confirmed').length}</p>
-                  <p className="text-xs text-gray-600">Confirmed</p>
-                </div>
-                <div className="bg-white border border-gray-200 p-3 text-center">
-                  <p className="text-xl font-bold text-yellow-600">{meetings.filter(m => m.status === 'Pending').length}</p>
-                  <p className="text-xs text-gray-600">Pending</p>
+              <div className="px-5 pb-4">
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{meetings.length}</p>
+                    <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>TODAY</p>
+                  </div>
+                  <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{meetings.filter(m => m.status === 'Confirmed').length}</p>
+                    <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>CONFIRMED</p>
+                  </div>
+                  <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{meetings.filter(m => m.status === 'Pending').length}</p>
+                    <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>PENDING</p>
+                  </div>
                 </div>
               </div>
 
-              {/* Meeting List */}
-              <div className="space-y-3">
+              <h3 className="px-5" style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>TODAY&apos;S MEETINGS</h3>
+              <div className="overflow-y-auto px-5 pb-4" style={{ maxHeight: '220px' }}>
                 {meetings.map((meeting) => (
-                  <div key={meeting.id} className="bg-white border border-gray-200 p-4" style={{ borderWidth: '1px' }}>
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <span className="font-bold text-sm">{meeting.time}</span>
-                          <span className={`text-xs px-2 py-1 rounded ${
-                            meeting.status === 'Confirmed' ? 'bg-green-100 text-green-800' :
-                            meeting.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {meeting.status}
-                          </span>
-                        </div>
-                        <h4 className="font-medium text-sm mb-1">{meeting.client}</h4>
-                        <p className="text-xs text-gray-600 mb-1">{meeting.type} • {meeting.duration}</p>
-                        <p className="text-xs text-gray-500">{meeting.notes}</p>
+                  <div
+                    key={meeting.id}
+                    className="py-3"
+                    style={{ borderBottom: '1px solid #e5e7eb' }}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="min-w-0 flex-1">
+                        <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24' }}>{meeting.time}</span>
+                        <span className="ml-2 px-2 py-0.5 rounded" style={{
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          backgroundColor: meeting.status === 'Confirmed' ? 'rgba(34,197,94,0.15)' : 'rgba(234,179,8,0.15)',
+                          color: meeting.status === 'Confirmed' ? '#16a34a' : '#ca8a04',
+                        }}>
+                          {meeting.status}
+                        </span>
+                        <p className="mt-1" style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#000' }}>{meeting.client.toUpperCase()}</p>
+                        <p className="mt-0.5" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>{meeting.type} • {meeting.duration}</p>
+                        <p className="mt-0.5" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>{meeting.notes}</p>
                       </div>
-                      <div className="flex space-x-2">
+                      <div className="flex gap-2 shrink-0">
                         <button
                           onClick={() => handleEditMeeting(meeting.id)}
-                          className="text-xs px-2 py-1 border border-gray-300 bg-white hover:bg-gray-50"
+                          className="px-2 py-1 border"
+                          style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb', color: '#808080' }}
                         >
-                          Edit
+                          EDIT
                         </button>
-                        <button className="text-xs px-2 py-1 text-white" style={{ backgroundColor: '#EB1C24' }}>
-                          Details
+                        <button className="px-2 py-1" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', backgroundColor: '#EB1C24', color: '#fff', border: 'none' }}>
+                          DETAILS
                         </button>
-                      </div>
-                    </div>
-                    
-                    {/* Meeting Actions */}
-                    <div className="flex justify-between items-center pt-3 border-t border-gray-100">
-                      <div className="flex space-x-3 text-xs">
-                        <button className="flex items-center space-x-1 text-gray-600 hover:text-red-500">
-                          <i className="ri-phone-line"></i>
-                          <span>Call</span>
-                        </button>
-                        <button className="flex items-center space-x-1 text-gray-600 hover:text-red-500">
-                          <i className="ri-message-line"></i>
-                          <span>Message</span>
-                        </button>
-                        <button className="flex items-center space-x-1 text-gray-600 hover:text-red-500">
-                          <i className="ri-map-pin-line"></i>
-                          <span>Location</span>
-                        </button>
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        {meeting.type === 'Consultation' && <i className="ri-chat-3-line"></i>}
-                        {meeting.type === 'Fitting' && <i className="ri-scissors-line"></i>}
-                        {meeting.type === 'Color Match' && <i className="ri-palette-line"></i>}
-                        {meeting.type === 'Delivery' && <i className="ri-truck-line"></i>}
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Quick Schedule */}
-              <div className="mt-6 bg-gray-50 border border-gray-200 p-4">
-                <h3 className="font-bold mb-3">Quick Schedule</h3>
+              <div style={{ borderTop: '1px solid #e5e7eb', marginTop: '12px', paddingTop: '12px', marginLeft: '20px', marginRight: '20px' }}>
+                <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '10px' }}>QUICK SCHEDULE</h3>
                 <div className="grid grid-cols-2 gap-3">
-                  <button className="flex items-center justify-center space-x-2 p-3 border border-gray-300 bg-white hover:bg-gray-50">
-                    <i className="ri-chat-3-line" style={{ color: '#EB1C24' }}></i>
-                    <span className="text-sm">Consultation</span>
+                  <button className="flex items-center justify-center gap-2 p-3 border" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb', color: '#000' }}>
+                    <span style={{ color: '#EB1C24' }}>●</span> CONSULTATION
                   </button>
-                  <button className="flex items-center justify-center space-x-2 p-3 border border-gray-300 bg-white hover:bg-gray-50">
-                    <i className="ri-scissors-line" style={{ color: '#EB1C24' }}></i>
-                    <span className="text-sm">Fitting</span>
+                  <button className="flex items-center justify-center gap-2 p-3 border" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb', color: '#000' }}>
+                    <span style={{ color: '#EB1C24' }}>●</span> FITTING
                   </button>
-                  <button className="flex items-center justify-center space-x-2 p-3 border border-gray-300 bg-white hover:bg-gray-50">
-                    <i className="ri-palette-line" style={{ color: '#EB1C24' }}></i>
-                    <span className="text-sm">Color Match</span>
+                  <button className="flex items-center justify-center gap-2 p-3 border" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb', color: '#000' }}>
+                    <span style={{ color: '#EB1C24' }}>●</span> COLOR MATCH
                   </button>
-                  <button className="flex items-center justify-center space-x-2 p-3 border border-gray-300 bg-white hover:bg-gray-50">
-                    <i className="ri-truck-line" style={{ color: '#EB1C24' }}></i>
-                    <span className="text-sm">Delivery</span>
+                  <button className="flex items-center justify-center gap-2 p-3 border" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb', color: '#000' }}>
+                    <span style={{ color: '#EB1C24' }}>●</span> DELIVERY
                   </button>
                 </div>
               </div>
             </div>
+
+            <button
+              type="button"
+              onClick={() => alert('Quick schedule')}
+              className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+              style={{ ...pageActionButtonStyle, marginTop: '14px' }}
+            >
+              QUICK SCHEDULE
+            </button>
           </div>
         </div>
       </div>
     </div>
-    </>
   );
 }
 

@@ -1,6 +1,9 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+/** Debug: long-press (500ms) on messages/notifications icons toggles active/inactive for testing "no new" state */
+const LONG_PRESS_MS = 500;
 
 const notifications = [
   { id: 1, text: "LOW INVENTORY - RESTOCK (5) ITEMS", urgent: true, unread: true, timestamp: "2 MIN AGO", category: "ALERTS" },
@@ -140,6 +143,8 @@ interface AdminHeaderProps {
   title: string;
   /** Show a back‑arrow button on the left side; when clicked, goes to previous page in history */
   showBack?: boolean;
+  /** Optional custom back handler; when set, used instead of navigate(-1) */
+  onBack?: () => void;
   /** Optional breadcrumb parent label (e.g. "CLIENTS"); when set, replaces "ADMIN" */
   breadcrumbParentLabel?: string;
   /** Optional breadcrumb parent path (e.g. "/admin/clients"); when set, breadcrumb link goes here instead of dashboard */
@@ -154,13 +159,13 @@ interface AdminHeaderProps {
 export default function AdminHeader({
   title,
   showBack = false,
+  onBack,
   breadcrumbParentLabel,
   breadcrumbParentPath,
 }: AdminHeaderProps) {
   const navigate = useNavigate();
 
   const [isBackPressed, setIsBackPressed] = useState(false);
-  const [isSearchPressed, setIsSearchPressed] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [_isMessagesPressed, _setIsMessagesPressed] = useState(false);
@@ -171,12 +176,14 @@ export default function AdminHeader({
   const [readNotifications, setReadNotifications] = useState<number[]>([]);
   const [readMessages, setReadMessages] = useState<number[]>([]);
 
-  // Long press detection states
-  const [messagesLongPressTimer, setMessagesLongPressTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
-  const [notificationsLongPressTimer, setNotificationsLongPressTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+  // Long press detection (debug: toggle active/inactive for testing)
   const [showInactiveNotifications, setShowInactiveNotifications] = useState(false);
   const [showInactiveMessages, setShowInactiveMessages] = useState(false);
   const [isBreadcrumbHovered, setIsBreadcrumbHovered] = useState(false);
+  const messagesLongPressJustOccurred = useRef(false);
+  const notificationsLongPressJustOccurred = useRef(false);
+  const messagesLongPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const notificationsLongPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Add scroll event listener to close dropdowns
   useEffect(() => {
@@ -216,7 +223,8 @@ export default function AdminHeader({
 
   /** Go to the previous page in history (used when back icon is shown) */
   const handleBack = () => {
-    navigate(-1);
+    if (onBack) onBack();
+    else navigate(-1);
   };
 
   // Handle search activation
@@ -242,50 +250,66 @@ export default function AdminHeader({
     }
   };
 
-  // Handle messages click with long press detection
-  const handleMessagesMouseDown = () => {
+  // Handle messages: long-press toggles active/inactive (debug: test "no new messages" state)
+  const handleMessagesPointerDown = () => {
     const timer = setTimeout(() => {
-      setShowInactiveMessages(!showInactiveMessages);
+      setShowInactiveMessages((prev) => {
+        const next = !prev;
+        console.log('[AdminHeader] Long-press: messages icon →', next ? 'INACTIVE (no new)' : 'ACTIVE');
+        return next;
+      });
       setShowMessagesDropdown(false);
-    }, 500); // 500ms long press
-    setMessagesLongPressTimer(timer);
+      messagesLongPressJustOccurred.current = true;
+    }, LONG_PRESS_MS);
+    messagesLongPressTimerRef.current = timer;
   };
 
-  const handleMessagesMouseUp = () => {
-    if (messagesLongPressTimer) {
-      clearTimeout(messagesLongPressTimer);
-      setMessagesLongPressTimer(null);
+  const handleMessagesPointerUp = () => {
+    if (messagesLongPressTimerRef.current) {
+      clearTimeout(messagesLongPressTimerRef.current);
+      messagesLongPressTimerRef.current = null;
     }
   };
 
   const handleMessagesClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // Always toggle dropdown on click, regardless of long press timer
+    if (messagesLongPressJustOccurred.current) {
+      messagesLongPressJustOccurred.current = false;
+      return;
+    }
     setShowMessagesDropdown(!showMessagesDropdown);
     setShowNotificationsDropdown(false);
   };
 
-  // Handle notifications click with long press detection
-  const handleNotificationsMouseDown = () => {
+  // Handle notifications: long-press toggles active/inactive (debug: test "no new notifications" state)
+  const handleNotificationsPointerDown = () => {
     const timer = setTimeout(() => {
-      setShowInactiveNotifications(!showInactiveNotifications);
+      setShowInactiveNotifications((prev) => {
+        const next = !prev;
+        console.log('[AdminHeader] Long-press: notifications icon →', next ? 'INACTIVE (no new)' : 'ACTIVE');
+        return next;
+      });
       setShowNotificationsDropdown(false);
-    }, 500); // 500ms long press
-    setNotificationsLongPressTimer(timer);
+      notificationsLongPressJustOccurred.current = true;
+    }, LONG_PRESS_MS);
+    notificationsLongPressTimerRef.current = timer;
   };
 
-  const handleNotificationsMouseUp = () => {
-    if (notificationsLongPressTimer) {
-      clearTimeout(notificationsLongPressTimer);
-      setNotificationsLongPressTimer(null);
+  const handleNotificationsPointerUp = () => {
+    if (notificationsLongPressTimerRef.current) {
+      clearTimeout(notificationsLongPressTimerRef.current);
+      notificationsLongPressTimerRef.current = null;
     }
   };
 
   const handleNotificationsClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // Always toggle dropdown on click, regardless of long press timer
+    if (notificationsLongPressJustOccurred.current) {
+      notificationsLongPressJustOccurred.current = false;
+      return;
+    }
     setShowNotificationsDropdown(!showNotificationsDropdown);
     setShowMessagesDropdown(false);
   };
@@ -524,22 +548,17 @@ export default function AdminHeader({
               <button
                 type="button"
                 className="w-6 h-6 flex items-center justify-center transition-colors duration-150"
-                onMouseDown={handleMessagesMouseDown}
-                onMouseUp={handleMessagesMouseUp}
-                onMouseLeave={handleMessagesMouseUp}
-                onTouchStart={handleMessagesMouseDown}
-                onTouchEnd={handleMessagesMouseUp}
+                onPointerDown={handleMessagesPointerDown}
+                onPointerUp={handleMessagesPointerUp}
+                onPointerLeave={handleMessagesPointerUp}
                 onClick={handleMessagesClick}
               >
                 <img
-                  src={showInactiveMessages ? '/assets/inactive message-icon.svg' : '/assets/active messages-icon.svg'}
+                  src={showInactiveMessages ? '/assets/messages-inactive.svg' : '/assets/messages-active.svg'}
                   alt="Messages"
-                  width="19"
-                  height="18"
-                  style={{
-                    opacity: showInactiveMessages ? 0.5 : 1,
-                    transform: 'translateY(-1px)'
-                  }}
+                  width="18"
+                  height="17"
+                  style={{ transform: 'translate(-10px, -1px)' }}
                 />
               </button>
             </div>
@@ -549,22 +568,17 @@ export default function AdminHeader({
               <button
                 type="button"
                 className="w-6 h-6 flex items-center justify-center transition-colors duration-150"
-                onMouseDown={handleNotificationsMouseDown}
-                onMouseUp={handleNotificationsMouseUp}
-                onMouseLeave={handleNotificationsMouseUp}
-                onTouchStart={handleNotificationsMouseDown}
-                onTouchEnd={handleNotificationsMouseUp}
+                onPointerDown={handleNotificationsPointerDown}
+                onPointerUp={handleNotificationsPointerUp}
+                onPointerLeave={handleNotificationsPointerUp}
                 onClick={handleNotificationsClick}
               >
                 <img
-                  src={showInactiveNotifications ? '/assets/inactive notifications-icon.svg' : '/assets/active notifications-icon.svg'}
+                  src={showInactiveNotifications ? '/assets/notifications-inactive.svg' : '/assets/notifications-active.svg'}
                   alt="Notifications"
-                  width="17"
-                  height="17"
-                  style={{
-                    opacity: showInactiveNotifications ? 0.5 : 1,
-                    transform: 'translateY(1px)'
-                  }}
+                  width="16"
+                  height="16"
+                  style={{ transform: 'translateY(-0.8px)' }}
                 />
               </button>
             </div>
@@ -595,14 +609,14 @@ export default function AdminHeader({
           <div className="max-w-md mx-auto pointer-events-auto">
             <div
               data-dropdown-content
-              className="bg-white/60 backdrop-blur-md border border-black shadow-lg hover:shadow-xl transition-all duration-300 ease-out max-h-80 overflow-y-auto"
-              style={{ borderWidth: '1.3px' }}
+              className="bg-white/60 backdrop-blur-md border border-black shadow-lg hover:shadow-xl transition-all duration-300 ease-out flex flex-col overflow-hidden"
+              style={{ borderWidth: '1.3px', maxHeight: 'min(365px, 85vh)' }}
               onMouseDown={(e) => {
                 // Prevent backdrop from closing dropdown when clicking inside
                 e.stopPropagation();
               }}
             >
-              <div className="px-3 py-2 border-b flex items-center justify-between">
+              <div className="px-3 py-2 border-b flex items-center justify-between flex-shrink-0">
                 <h3 className="font-futura font-bold text-black uppercase" style={{ fontSize: '10px' }}>
                   {showInactiveMessages ? 'INACTIVE MESSAGES' : 'PRIORITY MESSAGES'}
                 </h3>
@@ -616,7 +630,7 @@ export default function AdminHeader({
                 </span>
               </div>
 
-              <div className="max-h-64 overflow-y-auto">
+              <div className="flex-1 overflow-y-auto min-h-0">
                 {displayedMessages.slice(0, 8).map(message => {
                   const isRead = readMessages.includes(message.id);
                   const isUnread = message.unread && !isRead;
@@ -685,19 +699,19 @@ export default function AdminHeader({
                     </p>
                   </div>
                 )}
+              </div>
 
-                <div className="px-3 py-2 border-t border-gray-200">
-                  <button
-                    className="w-full text-center text-xs font-futura font-bold uppercase hover:opacity-80"
-                    style={{ color: '#EB1C24' }}
-                    onClick={() => {
-                      setShowMessagesDropdown(false);
-                      navigate('/admin/overview');
-                    }}
-                  >
-                    <span style={{ fontSize: '10px' }}>VIEW ALL MESSAGES</span>
-                  </button>
-                </div>
+              <div className="px-3 py-2 border-t border-gray-200 flex-shrink-0">
+                <button
+                  className="w-full text-center text-xs font-futura font-bold uppercase hover:opacity-80"
+                  style={{ color: '#EB1C24' }}
+                  onClick={() => {
+                    setShowMessagesDropdown(false);
+                    navigate('/admin/overview');
+                  }}
+                >
+                  <span style={{ fontSize: '10px' }}>VIEW ALL MESSAGES</span>
+                </button>
               </div>
             </div>
           </div>
@@ -710,14 +724,14 @@ export default function AdminHeader({
           <div className="max-w-md mx-auto pointer-events-auto">
             <div
               data-dropdown-content
-              className="bg-white/60 backdrop-blur-md border border-black shadow-lg hover:shadow-xl transition-all duration-300 ease-out max-h-80 overflow-y-auto"
-              style={{ borderWidth: '1.3px' }}
+              className="bg-white/60 backdrop-blur-md border border-black shadow-lg hover:shadow-xl transition-all duration-300 ease-out flex flex-col overflow-hidden"
+              style={{ borderWidth: '1.3px', maxHeight: 'min(415px, 85vh)' }}
               onMouseDown={(e) => {
                 // Prevent backdrop from closing dropdown when clicking inside
                 e.stopPropagation();
               }}
             >
-              <div className="px-3 py-2 border-b flex items-center justify-between">
+              <div className="px-3 py-2 border-b flex items-center justify-between flex-shrink-0">
                 <h3 className="font-futura font-bold text-black uppercase" style={{ fontSize: '10px' }}>
                   {showInactiveNotifications ? 'INACTIVE NOTIFICATIONS' : 'NOTIFICATIONS'}
                 </h3>
@@ -728,7 +742,7 @@ export default function AdminHeader({
                 </span>
               </div>
 
-              <div className="max-h-64 overflow-y-auto">
+              <div className="flex-1 overflow-y-auto min-h-0">
                 {displayedNotifications.slice(0, 10).map(notification => {
                   const isRead = readNotifications.includes(notification.id);
                   const isUnread = notification.unread && !isRead;
@@ -780,19 +794,19 @@ export default function AdminHeader({
                     </p>
                   </div>
                 )}
+              </div>
 
-                <div className="px-3 py-2 border-t border-gray-200">
-                  <button
-                    className="w-full text-center text-xs font-futura font-bold uppercase hover:opacity-80"
-                    style={{ color: '#EB1C24' }}
-                    onClick={() => {
-                      setShowNotificationsDropdown(false);
-                      navigate('/admin/overview');
-                    }}
-                  >
-                    <span style={{ fontSize: '10px' }}>VIEW ALL NOTIFICATIONS</span>
-                  </button>
-                </div>
+              <div className="px-3 py-2 border-t border-gray-200 flex-shrink-0">
+                <button
+                  className="w-full text-center text-xs font-futura font-bold uppercase hover:opacity-80"
+                  style={{ color: '#EB1C24' }}
+                  onClick={() => {
+                    setShowNotificationsDropdown(false);
+                    navigate('/admin/overview');
+                  }}
+                >
+                  <span style={{ fontSize: '10px' }}>VIEW ALL NOTIFICATIONS</span>
+                </button>
               </div>
             </div>
           </div>

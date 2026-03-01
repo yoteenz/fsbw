@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import AdminHeader from '../../components/AdminHeader';
 import { isAyoteenzAdminAccount } from '../../../../utils/adminAuth';
+import { formatBirthday } from '../../../../utils/formatBirthday';
 
 function getMockClientsForAyoteenz(): any[] {
   const now = Date.now();
@@ -91,8 +92,6 @@ export default function AdminClientsAccount() {
   const totalOrders = client?.ordersCount ?? orderHistory.length;
   const totalSpent = client?.totalSpent ?? orderHistory.reduce((s: number, o: any) => s + (o.amount || 0), 0);
   const joinDate = client?.createdAt ? new Date(client.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' }) : '—';
-  const lastOrder = orderHistory.length > 0 ? orderHistory[0].date : '—';
-
   const appointments = [
     { date: '2024-01-20', time: '2:00 PM', type: 'CONSULTATION', status: 'SCHEDULED' },
     { date: '2024-01-05', time: '10:30 AM', type: 'FITTING', status: 'COMPLETED' },
@@ -194,6 +193,10 @@ export default function AdminClientsAccount() {
                           <div className="flex justify-between">
                             <span className="text-gray-600">EMAIL:</span>
                             <span className="font-medium">{(client?.email || '').toUpperCase()}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">BIRTHDAY:</span>
+                            <span className="font-medium">{formatBirthday(client)}</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-gray-600">PHONE:</span>

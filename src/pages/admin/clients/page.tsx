@@ -1,9 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
+import ConfirmationModal from '../../../components/ConfirmationModal';
 import { isAyoteenzAdminAccount, getEffectiveTierName } from '../../../utils/adminAuth';
 import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import summaryIcon from '../../../assets/icons/summary-icon.svg?url';
+import { blockClient, isClientBlocked } from '../../../utils/blockedClients';
+import { clientHasUnreadPriorityMessages, getLastUnreadPriorityMessageTime } from '../../../utils/priorityMessages';
+import { formatBirthday } from '../../../utils/formatBirthday';
 
 const TABS = ['ALL', 'REVIEWS', 'REWARDS', 'INVITES'] as const;
 
@@ -29,6 +33,16 @@ function getMembershipTierLabel(u: any): string {
   const tier = getEffectiveTierName(u);
   if (!tier) return membership;
   return `${membership} ${tier}`.toUpperCase();
+}
+
+/** Tier display label and color for profile: "Silver tier", "Black tier", "Red tier" with matching color */
+function getTierDisplayLabelAndColor(u: any): { label: string; color: string } {
+  const tier = getEffectiveTierName(u);
+  const membership = (u?.membershipType || 'STANDARD').toString().toUpperCase();
+  if (tier === 'SILVER') return { label: 'Silver tier', color: '#808080' };
+  if (tier === 'BLACK') return { label: 'Black tier', color: '#000000' };
+  if (tier === 'RED') return { label: 'Red tier', color: '#EB1C24' };
+  return { label: membership === 'PREMIUM' ? 'Premium' : 'Standard', color: '#808080' };
 }
 
 /** Referral code = first initial + last initial + birth day (2 digits) + 2 digits derived from unique seed (e.g. email) so same name+day still get different codes. e.g. KA3047 */
@@ -98,37 +112,55 @@ function getMockClientsForAyoteenz(): any[] {
   const mockRows: Array<{
     id: string; email: string; firstName: string; lastName: string; membershipType: string; createdAt: string;
     totalSpent: number; ordersCount: number; newCount: number; alertCount: number; bookingCount: number;
-    birthDay: number; invitesCount: number; status: string;
+    birthDay: number; birthMonth: number; birthYear: number; invitesCount: number; status: string;
     reviewsCount: number; photosCount: number; videosCount: number; tagsCount: number;
     totalReviews: number; reviewsWithPhotosVideos: number; pendingReviews: number;
     currentTierName?: string; phone?: string; address?: string;
   }> = [
     /* totalSpent = realistic sums of product prices (NOIR ~740–920, BLANCO ~820, SOFT WAVE ~980, SOFT CURL ~780–1200, multi-unit ~1575–2220) */
-    { id: 'mock-1', email: 'mock1@test.com', firstName: 'Zara', lastName: 'Adams', membershipType: 'PREMIUM', createdAt: new Date(now - 2 * day).toISOString(), totalSpent: 4195, ordersCount: 5, newCount: 1, alertCount: 2, bookingCount: 3, birthDay: 15, invitesCount: 4, status: 'ACTIVE', reviewsCount: 3, photosCount: 5, videosCount: 1, tagsCount: 8, totalReviews: 5, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED', phone: '(555) 201-3401', address: '124 OAK ST, LOS ANGELES, CA 90012', facebook: '@FRONTALSLAYER', instagram: '@ZARAADAMS' },
-    { id: 'mock-2', email: 'mock2@test.com', firstName: 'Amy', lastName: 'Brooks', membershipType: 'STANDARD', createdAt: new Date(now - 10 * day).toISOString(), totalSpent: 1490, ordersCount: 2, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 3, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 302-4512', address: '89 MAPLE AVE, BROOKLYN, NY 11201', instagram: '@AMYBROOKS' },
-    { id: 'mock-3', email: 'mock3@test.com', firstName: 'Quinn', lastName: 'Chen', membershipType: 'PREMIUM', createdAt: new Date(now - 1 * day).toISOString(), totalSpent: 3100, ordersCount: 4, newCount: 2, alertCount: 1, bookingCount: 2, birthDay: 22, invitesCount: 2, status: 'ACTIVE', reviewsCount: 2, photosCount: 4, videosCount: 2, tagsCount: 6, totalReviews: 4, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'BLACK', phone: '(555) 403-5623', address: '256 PINE RD, HOUSTON, TX 77002', tiktok: '@QUINNCHEN' },
-    { id: 'mock-4', email: 'mock4@test.com', firstName: 'Diana', lastName: 'Foster', membershipType: 'STANDARD', createdAt: new Date(now - 45 * day).toISOString(), totalSpent: 1575, ordersCount: 3, newCount: 0, alertCount: 1, bookingCount: 1, birthDay: 8, invitesCount: 1, status: 'INACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 3, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 504-6734', address: '17 ELM ST, CHICAGO, IL 60601' },
-    { id: 'mock-5', email: 'mock5@test.com', firstName: 'Evan', lastName: 'Garcia', membershipType: 'PREMIUM', createdAt: new Date(now - 5 * day).toISOString(), totalSpent: 5820, ordersCount: 8, newCount: 1, alertCount: 3, bookingCount: 4, birthDay: 30, invitesCount: 7, status: 'ACTIVE', reviewsCount: 5, photosCount: 9, videosCount: 3, tagsCount: 12, totalReviews: 8, reviewsWithPhotosVideos: 6, pendingReviews: 2, currentTierName: 'BLACK', phone: '(555) 605-7845', address: '432 CEDAR LN, MIAMI, FL 33101' },
-    { id: 'mock-6', email: 'mock6@test.com', firstName: 'Fiona', lastName: 'Hayes', membershipType: 'STANDARD', createdAt: new Date(now - 90 * day).toISOString(), totalSpent: 740, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 11, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 706-8956', address: '91 BIRCH WAY, SEATTLE, WA 98101' },
-    { id: 'mock-7', email: 'mock7@test.com', firstName: 'Grant', lastName: 'Ingram', membershipType: 'PREMIUM', createdAt: new Date(now - 3 * day).toISOString(), totalSpent: 2100, ordersCount: 3, newCount: 0, alertCount: 0, bookingCount: 2, birthDay: 27, invitesCount: 3, status: 'ACTIVE', reviewsCount: 2, photosCount: 3, videosCount: 1, tagsCount: 4, totalReviews: 3, reviewsWithPhotosVideos: 2, pendingReviews: 0, currentTierName: 'RED', phone: '(555) 807-9067', address: '203 WILLOW DR, ATLANTA, GA 30301' },
-    { id: 'mock-8', email: 'mock8@test.com', firstName: 'Hannah', lastName: 'Jones', membershipType: 'STANDARD', createdAt: new Date(now - 14 * day).toISOString(), totalSpent: 1520, ordersCount: 2, newCount: 1, alertCount: 2, bookingCount: 1, birthDay: 5, invitesCount: 1, status: 'ACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 2, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 1, currentTierName: 'SILVER', phone: '(555) 908-0178', address: '65 CHERRY BLVD, BOSTON, MA 02101' },
-    { id: 'mock-9', email: 'mock9@test.com', firstName: 'Ivan', lastName: 'Kim', membershipType: 'PREMIUM', createdAt: new Date(now - 7 * day).toISOString(), totalSpent: 6710, ordersCount: 6, newCount: 2, alertCount: 1, bookingCount: 5, birthDay: 19, invitesCount: 5, status: 'INACTIVE', reviewsCount: 4, photosCount: 7, videosCount: 2, tagsCount: 10, totalReviews: 6, reviewsWithPhotosVideos: 5, pendingReviews: 1, currentTierName: 'BLACK', phone: '(555) 109-1289', address: '378 SPRUCE ST, DENVER, CO 80201' },
-    { id: 'mock-10', email: 'mock10@test.com', firstName: 'Julia', lastName: 'Lee', membershipType: 'STANDARD', createdAt: new Date(now - 21 * day).toISOString(), totalSpent: 740, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 12, invitesCount: 0, status: 'ACTIVE', reviewsCount: 0, photosCount: 1, videosCount: 0, tagsCount: 1, totalReviews: 1, reviewsWithPhotosVideos: 1, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 210-2390', address: '52 ASH AVE, PHOENIX, AZ 85001' },
-    { id: 'mock-11', email: 'mock11@test.com', firstName: 'Kyle', lastName: 'Martinez', membershipType: 'PREMIUM', createdAt: new Date(now - 4 * day).toISOString(), totalSpent: 3900, ordersCount: 5, newCount: 1, alertCount: 2, bookingCount: 3, birthDay: 25, invitesCount: 2, status: 'ACTIVE', reviewsCount: 3, photosCount: 4, videosCount: 1, tagsCount: 7, totalReviews: 4, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED', phone: '(555) 321-3401', address: '419 WALNUT PL, DETROIT, MI 48201' },
-    { id: 'mock-12', email: 'mock12@test.com', firstName: 'Luna', lastName: 'Nguyen', membershipType: 'STANDARD', createdAt: new Date(now - 60 * day).toISOString(), totalSpent: 2100, ordersCount: 4, newCount: 0, alertCount: 1, bookingCount: 2, birthDay: 7, invitesCount: 4, status: 'INACTIVE', reviewsCount: 2, photosCount: 3, videosCount: 1, tagsCount: 5, totalReviews: 3, reviewsWithPhotosVideos: 2, pendingReviews: 0, currentTierName: 'RED', phone: '(555) 432-4512', address: '186 HICKORY LN, DALLAS, TX 75201' },
-    { id: 'mock-13', email: 'mock13@test.com', firstName: 'Marcus', lastName: 'Owen', membershipType: 'PREMIUM', createdAt: new Date(now - 1 * day).toISOString(), totalSpent: 5120, ordersCount: 7, newCount: 3, alertCount: 4, bookingCount: 6, birthDay: 14, invitesCount: 9, status: 'ACTIVE', reviewsCount: 6, photosCount: 10, videosCount: 4, tagsCount: 14, totalReviews: 9, reviewsWithPhotosVideos: 7, pendingReviews: 2, currentTierName: 'BLACK', phone: '(555) 543-5623', address: '721 MAGNOLIA DR, SAN FRANCISCO, CA 94102' },
-    { id: 'mock-14', email: 'mock14@test.com', firstName: 'Nina', lastName: 'Patel', membershipType: 'STANDARD', createdAt: new Date(now - 30 * day).toISOString(), totalSpent: 1520, ordersCount: 2, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 20, invitesCount: 0, status: 'ACTIVE', reviewsCount: 1, photosCount: 1, videosCount: 0, tagsCount: 2, totalReviews: 1, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 654-6734', address: '94 DOGWOOD ST, PHILADELPHIA, PA 19101' },
-    { id: 'mock-15', email: 'mock15@test.com', firstName: 'Oscar', lastName: 'Quinn', membershipType: 'PREMIUM', createdAt: new Date(now - 6 * day).toISOString(), totalSpent: 4400, ordersCount: 5, newCount: 1, alertCount: 1, bookingCount: 4, birthDay: 9, invitesCount: 3, status: 'INACTIVE', reviewsCount: 3, photosCount: 5, videosCount: 1, tagsCount: 8, totalReviews: 4, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED', phone: '(555) 765-7845', address: '553 POPLAR RD, SAN DIEGO, CA 92101' },
-    { id: 'mock-16', email: 'mock16@test.com', firstName: 'Paula', lastName: 'Rivera', membershipType: 'STANDARD', createdAt: new Date(now - 120 * day).toISOString(), totalSpent: 3200, ordersCount: 6, newCount: 0, alertCount: 2, bookingCount: 2, birthDay: 28, invitesCount: 2, status: 'ACTIVE', reviewsCount: 2, photosCount: 4, videosCount: 0, tagsCount: 6, totalReviews: 3, reviewsWithPhotosVideos: 2, pendingReviews: 0, currentTierName: 'RED', phone: '(555) 876-8956', address: '268 SYCAMORE AVE, AUSTIN, TX 78701' },
-    { id: 'mock-17', email: 'mock17@test.com', firstName: 'Ryan', lastName: 'Scott', membershipType: 'PREMIUM', createdAt: new Date(now - 2 * day).toISOString(), totalSpent: 1900, ordersCount: 3, newCount: 0, alertCount: 0, bookingCount: 1, birthDay: 4, invitesCount: 1, status: 'ACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 3, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 1, currentTierName: 'SILVER', phone: '(555) 987-9067', address: '135 CHESTNUT WAY, PORTLAND, OR 97201' },
-    { id: 'mock-18', email: 'mock18@test.com', firstName: 'Sara', lastName: 'Torres', membershipType: 'STANDARD', createdAt: new Date(now - 8 * day).toISOString(), totalSpent: 1100, ordersCount: 2, newCount: 1, alertCount: 3, bookingCount: 1, birthDay: 16, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 098-0178', address: '602 BEECH BLVD, NASHVILLE, TN 37201' },
-    { id: 'mock-19', email: 'mock19@test.com', firstName: 'Tyler', lastName: 'Upton', membershipType: 'PREMIUM', createdAt: new Date(now - 12 * day).toISOString(), totalSpent: 7200, ordersCount: 9, newCount: 2, alertCount: 2, bookingCount: 7, birthDay: 23, invitesCount: 6, status: 'ACTIVE', reviewsCount: 5, photosCount: 8, videosCount: 2, tagsCount: 11, totalReviews: 7, reviewsWithPhotosVideos: 6, pendingReviews: 2, currentTierName: 'BLACK', phone: '(555) 109-1289', address: '847 OAK PARK DR, CHARLOTTE, NC 28201' },
-    { id: 'mock-20', email: 'mock20@test.com', firstName: 'Uma', lastName: 'Vance', membershipType: 'STANDARD', createdAt: new Date(now - 3 * day).toISOString(), totalSpent: 740, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 1, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 210-2390', address: '319 LAUREL ST, MINNEAPOLIS, MN 55401' },
+    { id: 'mock-1', email: 'mock1@test.com', firstName: 'Zara', lastName: 'Adams', membershipType: 'PREMIUM', createdAt: new Date(now - 2 * day).toISOString(), totalSpent: 4195, ordersCount: 5, newCount: 1, alertCount: 2, bookingCount: 3, birthDay: 15, birthMonth: 3, birthYear: 1989, invitesCount: 4, status: 'ACTIVE', reviewsCount: 3, photosCount: 5, videosCount: 1, tagsCount: 8, totalReviews: 5, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED', phone: '(555) 201-3401', address: '124 OAK ST, LOS ANGELES, CA 90012', facebook: '@FRONTALSLAYER', instagram: '@ZARAADAMS' },
+    { id: 'mock-2', email: 'mock2@test.com', firstName: 'Amy', lastName: 'Brooks', membershipType: 'STANDARD', createdAt: new Date(now - 10 * day).toISOString(), totalSpent: 1490, ordersCount: 2, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 3, birthMonth: 7, birthYear: 1992, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 302-4512', address: '89 MAPLE AVE, BROOKLYN, NY 11201', instagram: '@AMYBROOKS' },
+    { id: 'mock-3', email: 'mock3@test.com', firstName: 'Quinn', lastName: 'Chen', membershipType: 'PREMIUM', createdAt: new Date(now - 1 * day).toISOString(), totalSpent: 3100, ordersCount: 4, newCount: 2, alertCount: 1, bookingCount: 2, birthDay: 22, birthMonth: 11, birthYear: 1985, invitesCount: 2, status: 'ACTIVE', reviewsCount: 2, photosCount: 4, videosCount: 2, tagsCount: 6, totalReviews: 4, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'BLACK', phone: '(555) 403-5623', address: '256 PINE RD, HOUSTON, TX 77002', tiktok: '@QUINNCHEN' },
+    { id: 'mock-4', email: 'mock4@test.com', firstName: 'Diana', lastName: 'Foster', membershipType: 'STANDARD', createdAt: new Date(now - 45 * day).toISOString(), totalSpent: 1575, ordersCount: 3, newCount: 0, alertCount: 1, bookingCount: 1, birthDay: 8, birthMonth: 2, birthYear: 1991, invitesCount: 1, status: 'INACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 3, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 504-6734', address: '17 ELM ST, CHICAGO, IL 60601' },
+    { id: 'mock-5', email: 'mock5@test.com', firstName: 'Evan', lastName: 'Garcia', membershipType: 'PREMIUM', createdAt: new Date(now - 5 * day).toISOString(), totalSpent: 5820, ordersCount: 8, newCount: 1, alertCount: 3, bookingCount: 4, birthDay: 30, birthMonth: 8, birthYear: 1989, invitesCount: 7, status: 'ACTIVE', reviewsCount: 5, photosCount: 9, videosCount: 3, tagsCount: 12, totalReviews: 8, reviewsWithPhotosVideos: 6, pendingReviews: 2, currentTierName: 'BLACK', phone: '(555) 605-7845', address: '432 CEDAR LN, MIAMI, FL 33101' },
+    { id: 'mock-6', email: 'mock6@test.com', firstName: 'Fiona', lastName: 'Hayes', membershipType: 'STANDARD', createdAt: new Date(now - 90 * day).toISOString(), totalSpent: 740, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 11, birthMonth: 5, birthYear: 1994, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 706-8956', address: '91 BIRCH WAY, SEATTLE, WA 98101' },
+    { id: 'mock-7', email: 'mock7@test.com', firstName: 'Grant', lastName: 'Ingram', membershipType: 'PREMIUM', createdAt: new Date(now - 3 * day).toISOString(), totalSpent: 2100, ordersCount: 3, newCount: 0, alertCount: 0, bookingCount: 2, birthDay: 27, birthMonth: 9, birthYear: 1987, invitesCount: 3, status: 'ACTIVE', reviewsCount: 2, photosCount: 3, videosCount: 1, tagsCount: 4, totalReviews: 3, reviewsWithPhotosVideos: 2, pendingReviews: 0, currentTierName: 'RED', phone: '(555) 807-9067', address: '203 WILLOW DR, ATLANTA, GA 30301' },
+    { id: 'mock-8', email: 'mock8@test.com', firstName: 'Hannah', lastName: 'Jones', membershipType: 'STANDARD', createdAt: new Date(now - 14 * day).toISOString(), totalSpent: 1520, ordersCount: 2, newCount: 1, alertCount: 2, bookingCount: 1, birthDay: 5, birthMonth: 12, birthYear: 1990, invitesCount: 1, status: 'ACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 2, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 1, currentTierName: 'SILVER', phone: '(555) 908-0178', address: '65 CHERRY BLVD, BOSTON, MA 02101' },
+    { id: 'mock-9', email: 'mock9@test.com', firstName: 'Ivan', lastName: 'Kim', membershipType: 'PREMIUM', createdAt: new Date(now - 7 * day).toISOString(), totalSpent: 6710, ordersCount: 6, newCount: 2, alertCount: 1, bookingCount: 5, birthDay: 19, birthMonth: 4, birthYear: 1986, invitesCount: 5, status: 'INACTIVE', reviewsCount: 4, photosCount: 7, videosCount: 2, tagsCount: 10, totalReviews: 6, reviewsWithPhotosVideos: 5, pendingReviews: 1, currentTierName: 'BLACK', phone: '(555) 109-1289', address: '378 SPRUCE ST, DENVER, CO 80201' },
+    { id: 'mock-10', email: 'mock10@test.com', firstName: 'Julia', lastName: 'Lee', membershipType: 'STANDARD', createdAt: new Date(now - 21 * day).toISOString(), totalSpent: 740, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 12, birthMonth: 1, birthYear: 1993, invitesCount: 0, status: 'ACTIVE', reviewsCount: 0, photosCount: 1, videosCount: 0, tagsCount: 1, totalReviews: 1, reviewsWithPhotosVideos: 1, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 210-2390', address: '52 ASH AVE, PHOENIX, AZ 85001' },
+    { id: 'mock-11', email: 'mock11@test.com', firstName: 'Kyle', lastName: 'Martinez', membershipType: 'PREMIUM', createdAt: new Date(now - 4 * day).toISOString(), totalSpent: 3900, ordersCount: 5, newCount: 1, alertCount: 2, bookingCount: 3, birthDay: 25, birthMonth: 6, birthYear: 1988, invitesCount: 2, status: 'ACTIVE', reviewsCount: 3, photosCount: 4, videosCount: 1, tagsCount: 7, totalReviews: 4, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED', phone: '(555) 321-3401', address: '419 WALNUT PL, DETROIT, MI 48201' },
+    { id: 'mock-12', email: 'mock12@test.com', firstName: 'Luna', lastName: 'Nguyen', membershipType: 'STANDARD', createdAt: new Date(now - 60 * day).toISOString(), totalSpent: 2100, ordersCount: 4, newCount: 0, alertCount: 1, bookingCount: 2, birthDay: 7, birthMonth: 10, birthYear: 1995, invitesCount: 4, status: 'INACTIVE', reviewsCount: 2, photosCount: 3, videosCount: 1, tagsCount: 5, totalReviews: 3, reviewsWithPhotosVideos: 2, pendingReviews: 0, currentTierName: 'RED', phone: '(555) 432-4512', address: '186 HICKORY LN, DALLAS, TX 75201' },
+    { id: 'mock-13', email: 'mock13@test.com', firstName: 'Marcus', lastName: 'Owen', membershipType: 'PREMIUM', createdAt: new Date(now - 1 * day).toISOString(), totalSpent: 5120, ordersCount: 7, newCount: 3, alertCount: 4, bookingCount: 6, birthDay: 14, birthMonth: 2, birthYear: 1984, invitesCount: 9, status: 'ACTIVE', reviewsCount: 6, photosCount: 10, videosCount: 4, tagsCount: 14, totalReviews: 9, reviewsWithPhotosVideos: 7, pendingReviews: 2, currentTierName: 'BLACK', phone: '(555) 543-5623', address: '721 MAGNOLIA DR, SAN FRANCISCO, CA 94102' },
+    { id: 'mock-14', email: 'mock14@test.com', firstName: 'Nina', lastName: 'Patel', membershipType: 'STANDARD', createdAt: new Date(now - 30 * day).toISOString(), totalSpent: 1520, ordersCount: 2, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 20, birthMonth: 8, birthYear: 1991, invitesCount: 0, status: 'ACTIVE', reviewsCount: 1, photosCount: 1, videosCount: 0, tagsCount: 2, totalReviews: 1, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 654-6734', address: '94 DOGWOOD ST, PHILADELPHIA, PA 19101' },
+    { id: 'mock-15', email: 'mock15@test.com', firstName: 'Oscar', lastName: 'Quinn', membershipType: 'PREMIUM', createdAt: new Date(now - 6 * day).toISOString(), totalSpent: 4400, ordersCount: 5, newCount: 1, alertCount: 1, bookingCount: 4, birthDay: 9, birthMonth: 11, birthYear: 1989, invitesCount: 3, status: 'INACTIVE', reviewsCount: 3, photosCount: 5, videosCount: 1, tagsCount: 8, totalReviews: 4, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED', phone: '(555) 765-7845', address: '553 POPLAR RD, SAN DIEGO, CA 92101' },
+    { id: 'mock-16', email: 'mock16@test.com', firstName: 'Paula', lastName: 'Rivera', membershipType: 'STANDARD', createdAt: new Date(now - 120 * day).toISOString(), totalSpent: 3200, ordersCount: 6, newCount: 0, alertCount: 2, bookingCount: 2, birthDay: 28, birthMonth: 7, birthYear: 1983, invitesCount: 2, status: 'ACTIVE', reviewsCount: 2, photosCount: 4, videosCount: 0, tagsCount: 6, totalReviews: 3, reviewsWithPhotosVideos: 2, pendingReviews: 0, currentTierName: 'RED', phone: '(555) 876-8956', address: '268 SYCAMORE AVE, AUSTIN, TX 78701' },
+    { id: 'mock-17', email: 'mock17@test.com', firstName: 'Ryan', lastName: 'Scott', membershipType: 'PREMIUM', createdAt: new Date(now - 2 * day).toISOString(), totalSpent: 1900, ordersCount: 3, newCount: 0, alertCount: 0, bookingCount: 1, birthDay: 4, birthMonth: 5, birthYear: 1990, invitesCount: 1, status: 'ACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 3, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 1, currentTierName: 'SILVER', phone: '(555) 987-9067', address: '135 CHESTNUT WAY, PORTLAND, OR 97201' },
+    { id: 'mock-18', email: 'mock18@test.com', firstName: 'Sara', lastName: 'Torres', membershipType: 'STANDARD', createdAt: new Date(now - 8 * day).toISOString(), totalSpent: 1100, ordersCount: 2, newCount: 1, alertCount: 3, bookingCount: 1, birthDay: 16, birthMonth: 9, birthYear: 1992, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 098-0178', address: '602 BEECH BLVD, NASHVILLE, TN 37201' },
+    { id: 'mock-19', email: 'mock19@test.com', firstName: 'Tyler', lastName: 'Upton', membershipType: 'PREMIUM', createdAt: new Date(now - 12 * day).toISOString(), totalSpent: 7200, ordersCount: 9, newCount: 2, alertCount: 2, bookingCount: 7, birthDay: 23, birthMonth: 12, birthYear: 1987, invitesCount: 6, status: 'ACTIVE', reviewsCount: 5, photosCount: 8, videosCount: 2, tagsCount: 11, totalReviews: 7, reviewsWithPhotosVideos: 6, pendingReviews: 2, currentTierName: 'BLACK', phone: '(555) 109-1289', address: '847 OAK PARK DR, CHARLOTTE, NC 28201' },
+    { id: 'mock-20', email: 'mock20@test.com', firstName: 'Uma', lastName: 'Vance', membershipType: 'STANDARD', createdAt: new Date(now - 3 * day).toISOString(), totalSpent: 740, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 1, birthMonth: 4, birthYear: 1996, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 210-2390', address: '319 LAUREL ST, MINNEAPOLIS, MN 55401' },
   ];
-  return mockRows.map((row) => ({
-    ...row,
-    referralNumber: buildReferralCode(row.firstName, row.lastName, row.birthDay, row.email),
-  }));
+  const min = 60 * 1000;
+  return mockRows.map((row) => {
+    const isPremium = (row.membershipType || '').toString().toUpperCase() === 'PREMIUM';
+    const hasUnread = (row.alertCount ?? 0) > 0;
+    const hasOrders = (row.ordersCount ?? 0) > 0;
+    // lastUnreadPriorityMessageAt: Premium clients with unread messages (for Alerts sort)
+    const lastUnreadPriorityMessageAt =
+      isPremium && hasUnread
+        ? new Date(now - (5 - Math.min(row.alertCount ?? 1, 4)) * min).toISOString()
+        : undefined;
+    // lastOrderIssueAt: order-related issues (missing form, refund, shipping delay, etc.) - any client with orders + alerts
+    const lastOrderIssueAt =
+      hasOrders && hasUnread
+        ? new Date(now - (4 - Math.min((row.alertCount ?? 1) % 4, 3)) * min).toISOString() // variety for sort order
+        : undefined;
+    return {
+      ...row,
+      referralNumber: buildReferralCode(row.firstName, row.lastName, row.birthDay, row.email),
+      lastUnreadPriorityMessageAt,
+      lastOrderIssueAt,
+    };
+  });
 }
 
 const MOCK_PRODUCTS = ['NOIR', 'BLANCO', 'SOFT WAVE', 'SOFT CURL', 'BEACH WAVE', 'OCEAN CURL'];
@@ -164,7 +196,7 @@ function getMockOrdersForClient(client: any): Array<{ id: string; date: string; 
   return orders.reverse();
 }
 
-const DETAILS_TABS = ['orders', 'appointments', 'reviews', 'rewards'] as const;
+const DETAILS_TABS = ['orders', 'appointments', 'reviews', 'messages'] as const;
 
 export default function AdminClients() {
   const navigate = useNavigate();
@@ -177,6 +209,8 @@ export default function AdminClients() {
   const [selectedClientEmail, setSelectedClientEmail] = useState<string | null>(null);
   const [detailsTab, setDetailsTab] = useState<typeof DETAILS_TABS[number]>('orders');
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+  const [showBlockConfirm, setShowBlockConfirm] = useState(false);
+  const [profilePhotoError, setProfilePhotoError] = useState(false);
 
   // Sync selectedClientEmail from URL (e.g. when redirected from /admin/clients/account?email=...)
   useEffect(() => {
@@ -187,6 +221,11 @@ export default function AdminClients() {
   useEffect(() => {
     if (detailsTab !== 'orders') setExpandedOrderId(null);
   }, [detailsTab]);
+
+  // Reset profile photo error when switching clients
+  useEffect(() => {
+    setProfilePhotoError(false);
+  }, [selectedClientEmail]);
 
   const loadData = useCallback(() => {
     try {
@@ -216,6 +255,8 @@ export default function AdminClients() {
           localStorage.setItem('registeredUsers', JSON.stringify(reg));
         }
       }
+      // Filter out blocked clients
+      reg = reg.filter((u: any) => !isClientBlocked(u));
       setRegisteredUsers(reg);
     } catch {
       setRegisteredUsers([]);
@@ -368,6 +409,25 @@ export default function AdminClients() {
   const { selectedReferralStatus, selectedReferralCode } = selectedClient
     ? (() => { const r = getInvitesRow(selectedClient, 0); return { selectedReferralStatus: r.status, selectedReferralCode: r.referralNumber }; })()
     : { selectedReferralStatus: 'INACTIVE', selectedReferralCode: '—' };
+  const selectedTierLabel = selectedClient ? getMembershipTierLabel(selectedClient) : '—';
+  const selectedTierDisplay = selectedClient ? getTierDisplayLabelAndColor(selectedClient) : { label: '—', color: '#808080' };
+  const selectedBirthday = formatBirthday(selectedClient);
+  const selectedPrimaryAddress = selectedClient
+    ? (() => {
+        const c = selectedClient as any;
+        const primary = c.defaultAddress || c.shippingAddress;
+        if (primary && typeof primary === 'object' && (primary.address || primary.city)) {
+          const parts = [
+            primary.address,
+            [primary.city, primary.state, primary.zip].filter(Boolean).join(', '),
+            primary.country,
+          ].filter(Boolean);
+          return parts.join('\n').toUpperCase() || '—';
+        }
+        if (c.address && typeof c.address === 'string') return c.address.toUpperCase();
+        return '—';
+      })()
+    : '—';
 
   // REWARDS tab: reviews, photos, videos, tags (from mock or localStorage – affiliate-submitted content)
   const getRewardsRow = (u: any, index: number) => {
@@ -460,7 +520,6 @@ export default function AdminClients() {
     const name = (u: any) => [(u.firstName || '').trim(), (u.lastName || '').trim()].filter(Boolean).join(' ') || (u.email || '');
     const charges = (u: any) => u.totalSpent ?? (() => { try { const raw = localStorage.getItem(`userOrders_${(u.email || '').trim().toLowerCase()}`); const d = raw ? JSON.parse(raw) : null; const all = [...(d?.activeOrders || []), ...(d?.pastOrders || [])]; return all.reduce((s: number, o: any) => s + (Number(o.total) || 0), 0); } catch { return 0; } })();
     const created = (u: any) => (u.createdAt ? new Date(u.createdAt).getTime() : 0);
-    const alertCount = (u: any) => u.alertCount ?? 0;
     if (sortOption === 'A to Z') {
       list.sort((a, b) => name(a).localeCompare(name(b), undefined, { sensitivity: 'base' }));
     } else if (sortOption === 'Z to A') {
@@ -470,7 +529,8 @@ export default function AdminClients() {
     } else if (sortOption === 'Least spent') {
       list.sort((a, b) => charges(a) - charges(b));
     } else if (sortOption === 'Alerts') {
-      list.sort((a, b) => alertCount(b) - alertCount(a));
+      list = list.filter((u) => clientHasUnreadPriorityMessages(u));
+      list.sort((a, b) => getLastUnreadPriorityMessageTime(b) - getLastUnreadPriorityMessageTime(a));
     } else {
       // Most recent: newest first
       list.sort((a, b) => created(b) - created(a));
@@ -582,38 +642,90 @@ export default function AdminClients() {
 
                 {selectedClientEmail ? (
                   /* Details view: profile, orders, appointments */
-                  <div className="px-4 pb-6">
+                  <div className="px-4 pb-6" style={{ paddingTop: '10px' }}>
                     {selectedClient ? (
                       <>
+                        {/* Circular profile area centered above the tab bar */}
+                        <div className="flex justify-center mb-4">
+                          <div
+                            className="relative rounded-full flex items-center justify-center overflow-hidden shrink-0"
+                            style={{
+                              width: '100px',
+                              height: '100px',
+                              backgroundColor: '#FFFFFF',
+                              border: '1.3px solid #000',
+                            }}
+                          >
+                            {(() => {
+                              const c = selectedClient as any;
+                              const photoSrc = c?.profileImage || c?.photo || c?.profilePhoto || c?.avatar || '/assets/profile-thumb.png';
+                              return !profilePhotoError ? (
+                                <img
+                                  src={photoSrc}
+                                  alt=""
+                                  className="absolute inset-0 w-full h-full object-cover"
+                                  onError={() => setProfilePhotoError(true)}
+                                />
+                              ) : null;
+                            })()}
+                            <div
+                              className="absolute inset-0 flex items-center justify-center font-futura font-bold text-lg"
+                              style={{ backgroundColor: 'transparent', color: '#000000', zIndex: !profilePhotoError ? -1 : 0 }}
+                            >
+                              {[(selectedClient?.firstName || '').trim().charAt(0), (selectedClient?.lastName || '').trim().charAt(0)].filter(Boolean).join('').toUpperCase() || '?'}
+                            </div>
+                          </div>
+                        </div>
                         <div className="bg-white border border-gray-200 p-4 mb-6">
-                          <div className="mb-4">
+                          <div className="flex flex-col items-center text-center mb-4">
                             <span
-                              className="inline-block px-3 py-1 text-xs rounded"
+                              className="inline-block px-3 py-1 text-xs rounded mb-2"
                               style={{
                                 backgroundColor: selectedReferralStatus === 'ACTIVE' ? 'rgba(235, 28, 36, 0.15)' : '#f3f4f6',
-                                color: selectedReferralStatus === 'ACTIVE' ? '#FFFFFF' : '#808080',
+                                color: selectedReferralStatus === 'ACTIVE' ? '#EB1C24' : '#808080',
                               }}
                             >
                               {selectedReferralStatus}
                             </span>
-                            <p className="mb-1 mt-2" style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '12px' }}>{(selectedClient?.email || '').toUpperCase()}</p>
+                            <p className="mb-1" style={{ fontFamily: '"Futura PT Book"', color: selectedTierDisplay.color, fontSize: '10px' }}>{selectedTierDisplay.label}</p>
                             <p style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px' }}>{selectedReferralCode}</p>
                           </div>
-                          <div className="grid grid-cols-3 gap-4 text-center">
-                            <div>
-                              <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>{selectedTotalOrders}</p>
-                              <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>ORDERS</p>
-                            </div>
-                            <div>
-                              <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>${selectedTotalSpent.toLocaleString()}</p>
-                              <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>TOTAL SPENT</p>
-                            </div>
-                            <div>
-                              <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>{selectedMembershipType}</p>
-                              <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>MEMBERSHIP</p>
+                          <div className="flex justify-center">
+                            <div className="grid grid-cols-3 gap-4 text-center w-fit">
+                              <div>
+                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>{selectedTotalOrders}</p>
+                                <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>ORDERS</p>
+                              </div>
+                              <div>
+                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>${selectedTotalSpent.toLocaleString()}</p>
+                                <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>TOTAL SPENT</p>
+                              </div>
+                              <div>
+                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>{selectedMembershipType}</p>
+                                <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>MEMBERSHIP</p>
+                              </div>
                             </div>
                           </div>
                         </div>
+                        {/* Rewards section: photos, videos, tags */}
+                        {selectedClient && (
+                          <div className="bg-white border border-gray-200 p-4 mb-6">
+                            <div className="grid grid-cols-3 gap-4 text-center">
+                              <div>
+                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>{getRewardsRow(selectedClient, 0).photosCount}</p>
+                                <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>PHOTOS</p>
+                              </div>
+                              <div>
+                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>{getRewardsRow(selectedClient, 0).videosCount}</p>
+                                <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>VIDEOS</p>
+                              </div>
+                              <div>
+                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>{getRewardsRow(selectedClient, 0).tagsCount}</p>
+                                <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>TAGS</p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                         <div className="bg-white border border-gray-200 p-4 mb-6">
                           <div className="space-y-3 text-sm">
                             <div className="flex justify-between">
@@ -623,6 +735,10 @@ export default function AdminClients() {
                             <div className="flex justify-between">
                               <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px' }}>EMAIL:</span>
                               <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px' }}>{(selectedClient?.email || '').toUpperCase()}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px' }}>BIRTHDAY:</span>
+                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px' }}>{selectedBirthday}</span>
                             </div>
                             <div className="flex justify-between">
                               <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px' }}>PHONE:</span>
@@ -642,23 +758,16 @@ export default function AdminClients() {
                             <div className="flex justify-between items-start">
                               <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px' }}>ADDRESS:</span>
                               <span className="text-right" style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', maxWidth: '60%' }}>
-                                {(() => {
-                                  const addr = (selectedClient?.address || '—').toUpperCase();
-                                  if (addr === '—') return addr;
-                                  const parts = addr.split(', ');
-                                  if (parts.length >= 3) {
-                                    const street = parts[0];
-                                    const cityStateZip = parts.slice(1).join(', ');
-                                    return (
-                                      <>
-                                        {street}
-                                        <br />
-                                        {cityStateZip}
-                                      </>
-                                    );
-                                  }
-                                  return addr;
-                                })()}
+                                {selectedPrimaryAddress === '—' ? (
+                                  '—'
+                                ) : (
+                                  selectedPrimaryAddress.split('\n').map((line, i) => (
+                                    <span key={i}>
+                                      {i > 0 && <br />}
+                                      {line}
+                                    </span>
+                                  ))
+                                )}
                               </span>
                             </div>
                           </div>
@@ -886,24 +995,64 @@ export default function AdminClients() {
                             </div>
                           </div>
                         )}
-                        {detailsTab === 'rewards' && selectedClient && (
-                          <div className="bg-white border border-gray-200 p-4">
-                            <div className="grid grid-cols-3 gap-4 text-center">
-                              <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>{getRewardsRow(selectedClient, 0).photosCount}</p>
-                                <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>PHOTOS</p>
-                              </div>
-                              <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>{getRewardsRow(selectedClient, 0).videosCount}</p>
-                                <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>VIDEOS</p>
-                              </div>
-                              <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '16px' }}>{getRewardsRow(selectedClient, 0).tagsCount}</p>
-                                <p className="text-xs" style={{ fontFamily: '"Futura PT Book"', color: '#000000' }}>TAGS</p>
-                              </div>
+                        {detailsTab === 'messages' && selectedClient && (() => {
+                          const email = (selectedClient.email || '').trim().toLowerCase();
+                          let messages: Array<{ id: string; message: string; timestamp?: string; type?: string; subject?: string }> = [];
+                          try {
+                            const priorityRaw = localStorage.getItem('adminPriorityMessages');
+                            const priorityList = priorityRaw ? JSON.parse(priorityRaw) : [];
+                            if (Array.isArray(priorityList)) {
+                              messages = priorityList
+                                .filter((m: any) => (m.userId || m.userEmail || '').toLowerCase() === email)
+                                .map((m: any) => ({ id: m.id || '', message: m.message || '', timestamp: m.timestamp, type: m.type || 'priority' }));
+                            }
+                            const supportKey = `userSupportMessages_${email}`;
+                            const supportRaw = localStorage.getItem(supportKey);
+                            const supportList = supportRaw ? JSON.parse(supportRaw) : [];
+                            if (Array.isArray(supportList)) {
+                              supportList.forEach((m: any) => {
+                                messages.push({
+                                  id: m.id || `support-${messages.length}`,
+                                  message: m.message || m.body || m.content || '',
+                                  timestamp: m.timestamp || m.date,
+                                  type: 'support',
+                                  subject: m.subject,
+                                });
+                              });
+                            }
+                            messages.sort((a, b) => {
+                              const ta = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+                              const tb = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+                              return tb - ta;
+                            });
+                          } catch {
+                            // ignore
+                          }
+                          return (
+                            <div className="bg-white border border-gray-200 p-4">
+                              <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', marginBottom: '12px' }}>MESSAGES / SUPPORT</h3>
+                              {messages.length === 0 ? (
+                                <p className="text-sm font-futura py-4" style={{ color: '#808080' }}>NO MESSAGES OR SUPPORT EMAILS YET.</p>
+                              ) : (
+                                <div className="space-y-3 max-h-64 overflow-y-auto">
+                                  {messages.map((m) => (
+                                    <div key={m.id} className="py-3 border-b border-gray-100 last:border-0">
+                                      {m.subject && (
+                                        <p className="font-futura text-xs font-medium mb-1" style={{ color: '#EB1C24' }}>{m.subject.toUpperCase()}</p>
+                                      )}
+                                      <p className="font-futura text-xs" style={{ color: '#000' }}>{m.message}</p>
+                                      {m.timestamp && (
+                                        <p className="font-futura text-xs mt-1" style={{ color: '#808080' }}>
+                                          {new Date(m.timestamp).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+                                        </p>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
                             </div>
-                          </div>
-                        )}
+                          );
+                        })()}
                       </>
                     ) : (
                       <div className="bg-white border border-gray-200 p-6 text-center">
@@ -1167,20 +1316,50 @@ export default function AdminClients() {
                 )}
               </div>
 
+              {selectedClientEmail && selectedClient && (
+                <button
+                  type="button"
+                  onClick={() => setShowBlockConfirm(true)}
+                  className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                  style={{ ...pageActionButtonStyle, marginTop: '14px' }}
+                >
+                  BLOCK CLIENT
+                </button>
+              )}
               {!selectedClientEmail && (
-              <button
-                type="button"
-                onClick={() => navigate('/admin/clients/deleted')}
-                className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-                style={{ ...pageActionButtonStyle, marginTop: '14px' }}
-              >
+                <button
+                  type="button"
+                  onClick={() => navigate('/admin/clients/deleted')}
+                  className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                  style={{ ...pageActionButtonStyle, marginTop: '14px' }}
+                >
                   VIEW DELETED ACCOUNTS
-              </button>
+                </button>
               )}
             </div>
           </div>
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={showBlockConfirm}
+        onClose={() => setShowBlockConfirm(false)}
+        onConfirm={() => {
+          if (selectedClient) {
+            const allReg = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            blockClient(selectedClient, Array.isArray(allReg) ? allReg : []);
+            loadData();
+            setSelectedClientEmail(null);
+            setShowBlockConfirm(false);
+            navigate('/admin/clients');
+          }
+        }}
+        title="BLOCK CLIENT?"
+        message="YOU WILL BAN THIS CLIENT AND ANY SIMILAR ACCOUNTS."
+        confirmText="CONFIRM"
+        cancelText="CANCEL"
+        dataAttribute="block-client-confirm"
+      />
     </>
   );
 }

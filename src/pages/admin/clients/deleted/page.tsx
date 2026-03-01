@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import AdminHeader from '../../components/AdminHeader';
 import ConfirmationModal from '../../../../components/ConfirmationModal';
+import { unblockClient } from '../../../../utils/blockedClients';
 
 type DeletedUser = {
   email?: string;
@@ -9,6 +10,7 @@ type DeletedUser = {
   password?: string;
   deletedAt: string;
   deletedFrom?: string;
+  blocked?: boolean;
   [key: string]: unknown;
 };
 
@@ -166,6 +168,12 @@ export default function AdminDeletedAccounts() {
     const email = (user.email || '').trim().toLowerCase();
     if (!email) return;
     try {
+      if (user.blocked) {
+        unblockClient(email);
+        loadDeleted();
+        setExpandedEmail(null);
+        return;
+      }
       const deleted = JSON.parse(localStorage.getItem('deletedUsers') || '[]');
       const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
       const restored = deleted.find((u: DeletedUser) => (u.email || '').toLowerCase() === email);
@@ -238,7 +246,7 @@ export default function AdminDeletedAccounts() {
                               </p>
                               <p className="text-xs truncate" style={{ fontFamily: '"Futura PT Medium"', color: '#000000', marginTop: '3px' }}>{user.email}</p>
                               <p className="text-xs text-gray-500 mt-1">
-                                DELETED: {getDeletedPlatformLabel(user.deletedFrom)}
+                                {user.blocked ? 'BLOCKED: (SPAM/FRAUD)' : `DELETED: ${getDeletedPlatformLabel(user.deletedFrom)}`}
                               </p>
                               <p className="mt-1" style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px' }}>
                                 {formatDeletedDate(user.deletedAt)}
@@ -249,7 +257,7 @@ export default function AdminDeletedAccounts() {
                                 type="button"
                                 onClick={() => toggleExpand(email)}
                                 className="px-3 py-1.5 border border-black text-xs font-medium hover:bg-gray-100"
-                                style={{ borderWidth: '1.2px', color: '#000000' }}
+                                style={{ borderWidth: '1.2px', color: '#000000', backgroundColor: '#FFFFFF' }}
                               >
                                 {isExpanded ? 'HIDE' : 'VIEW'}
                               </button>
@@ -257,7 +265,7 @@ export default function AdminDeletedAccounts() {
                                 type="button"
                                 onClick={() => setUserToRestore(user)}
                                 className="px-3 py-1.5 border border-black text-xs font-medium hover:bg-gray-100"
-                                style={{ borderWidth: '1.2px', color: '#EB1C24' }}
+                                style={{ borderWidth: '1.2px', color: '#EB1C24', backgroundColor: '#FFFFFF' }}
                               >
                                 RESTORE
                               </button>
@@ -297,13 +305,21 @@ export default function AdminDeletedAccounts() {
             setUserToRestore(null);
           }
         }}
-        title="RESTORE ACCOUNT?"
+        title={userToRestore?.blocked ? 'UNBLOCK CLIENT?' : 'RESTORE ACCOUNT?'}
         message={
-          <>
-            ARE YOU SURE YOU WANT TO RESTORE THIS ACCOUNT?
-            <br />
-            THE USER WILL BE ABLE TO SIGN IN AGAIN.
-          </>
+          userToRestore?.blocked ? (
+            <>
+              ARE YOU SURE YOU WANT TO UN-BAN THIS CLIENT?
+              <br />
+              THEY WILL BE ABLE TO MAKE PURCHASES AGAIN.
+            </>
+          ) : (
+            <>
+              ARE YOU SURE YOU WANT TO RESTORE THIS ACCOUNT?
+              <br />
+              THE USER WILL BE ABLE TO SIGN IN AGAIN.
+            </>
+          )
         }
         confirmText="CONFIRM"
         cancelText="CANCEL"

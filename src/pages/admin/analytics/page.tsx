@@ -1,8 +1,10 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import AdminHeader from '../components/AdminHeader';
-import StatsCard from '../components/StatsCard';
+import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { getSocialAnalyticsSummary } from '../../../utils/socialAnalytics';
 import type { SocialPlatform, SocialSource } from '../../../utils/socialAnalytics';
+
+const ANALYTICS_TABS = ['SUMMARY', 'BY PLATFORM', 'BY SOURCE'] as const;
 
 const PLATFORM_LABEL: Record<SocialPlatform, string> = {
   instagram: 'Instagram',
@@ -32,8 +34,9 @@ function formatEventTime(timestamp: number): string {
 
 export default function AdminAnalytics() {
   const summary = useMemo(() => getSocialAnalyticsSummary(), []);
+  const [activeTab, setActiveTab] = useState<typeof ANALYTICS_TABS[number]>('SUMMARY');
 
-  const statsData = [
+  void ([
     {
       title: 'TOTAL CLICKS',
       count: summary.total,
@@ -75,68 +78,174 @@ export default function AdminAnalytics() {
       ],
       activity: 'From membership “More ways to earn” links',
     },
-  ];
+  ]);
 
   return (
-    <>
-      <div className="min-h-screen" style={{ position: 'relative' }}>
-        <div
-          className="fixed inset-0 -z-10"
-          style={{
-            backgroundImage: `url('/assets/marble-half.png')`,
-            backgroundSize: 'contain',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'repeat',
-            backgroundAttachment: 'fixed',
-          }}
+    <div className="min-h-screen" style={{ position: 'relative' }}>
+      <div
+        className="fixed inset-0 -z-10"
+        style={{
+          backgroundImage: `url('/assets/marble-half.png')`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'repeat',
+          backgroundAttachment: 'fixed',
+        }}
+      />
+      <div className="relative z-10" style={{ textTransform: 'uppercase' }}>
+        <AdminHeader
+          title="ANALYTICS"
+          showBack
+          onBack={() => window.history.back()}
+          breadcrumbParentLabel="ADMIN"
+          breadcrumbParentPath="/admin/dashboard"
         />
-        <div className="relative z-10" style={{ textTransform: 'uppercase' }}>
-          <AdminHeader title="ANALYTICS" showBack onBack={() => window.history.back()} />
-          <div className="pb-6 px-4">
-            <div className="max-w-md mx-auto" style={{ minHeight: 'calc(100dvh - 160px)' }}>
-              <div className="grid grid-cols-2 gap-4">
-                {statsData.map((stat, index) => (
-                  <StatsCard key={index} data={stat} />
+        <div className="pb-6 px-4">
+          <div className="max-w-md mx-auto">
+            {/* Main card */}
+            <div
+              className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
+              style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
+            >
+              <div className="flex items-center justify-between -mt-1 pb-1 px-4 pt-4" style={{ marginBottom: 0 }}>
+                <h2
+                  className="flex-1"
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    color: '#EB1C24',
+                    fontSize: '12px',
+                    fontWeight: 500,
+                    margin: 0,
+                    textTransform: 'uppercase',
+                    textAlign: 'left',
+                  }}
+                >
+                  ANALYTICS
+                </h2>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '8px' }}>
+                  <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" fill="#EB1C24" />
+                </svg>
+              </div>
+              <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
+
+              <div className="flex px-5">
+                {ANALYTICS_TABS.map((tab) => (
+                  <button
+                    key={tab}
+                    type="button"
+                    onClick={() => setActiveTab(tab)}
+                    className="flex-1 py-3 font-medium transition-colors"
+                    style={{
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '11px',
+                      color: activeTab === tab ? '#EB1C24' : '#808080',
+                      border: 'none',
+                      paddingBottom: '4px',
+                      background: 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        borderBottom: activeTab === tab ? '1px solid #EB1C24' : '1px solid transparent',
+                        paddingBottom: '4px',
+                      }}
+                    >
+                      {tab}
+                    </span>
+                  </button>
                 ))}
               </div>
-              {/* Recent events */}
-              <div className="mt-6 border border-black bg-white/60 backdrop-blur-sm" style={{ borderWidth: '1.3px', padding: '16px' }}>
-                <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', margin: '0 0 12px 0', fontWeight: '500' }}>
-                  RECENT SOCIAL CLICKS
-                </h3>
-                {summary.recentEvents.length === 0 ? (
-                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080', margin: '0' }}>
-                    No clicks recorded yet.
-                  </p>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '280px', overflowY: 'auto' }}>
-                    {summary.recentEvents.map((evt, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          fontSize: '10px',
-                          fontFamily: '"Futura PT Book"',
-                          color: '#000',
-                          padding: '6px 8px',
-                          backgroundColor: 'rgba(0,0,0,0.04)',
-                          borderRadius: '4px',
-                        }}
-                      >
-                        <span style={{ fontWeight: '500' }}>{PLATFORM_LABEL[evt.platform]}</span>
-                        <span style={{ color: '#808080' }}>{SOURCE_LABEL[evt.source]}</span>
-                        <span style={{ color: '#808080', whiteSpace: 'nowrap' }}>{formatEventTime(evt.timestamp)}</span>
+
+              {/* Tab content */}
+              <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '380px' }}>
+                {activeTab === 'SUMMARY' && (
+                  <>
+                    <div className="text-center py-4">
+                      <p className="font-covered-by-your-grace text-3xl" style={{ color: '#EB1C24' }}>{summary.total}</p>
+                      <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>TOTAL CLICKS</p>
+                    </div>
+                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>BY SOURCE</h3>
+                    <div className="space-y-2 mb-4">
+                      <div className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
+                        <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>MENU TOGGLE</span>
+                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>{summary.bySource.menu}</span>
                       </div>
-                    ))}
-                  </div>
+                      <div className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
+                        <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>MORE WAYS TO EARN</span>
+                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>{summary.bySource.more_ways_to_earn}</span>
+                      </div>
+                    </div>
+                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>RECENT CLICKS</h3>
+                    {summary.recentEvents.length === 0 ? (
+                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080', margin: '0' }}>No clicks recorded yet.</p>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '140px', overflowY: 'auto' }}>
+                        {summary.recentEvents.slice(0, 10).map((evt, i) => (
+                          <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '10px', fontFamily: '"Futura PT Book"', color: '#000', padding: '6px 8px', backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                            <span style={{ fontWeight: '500' }}>{PLATFORM_LABEL[evt.platform]}</span>
+                            <span style={{ color: '#808080' }}>{SOURCE_LABEL[evt.source]}</span>
+                            <span style={{ color: '#808080', whiteSpace: 'nowrap' }}>{formatEventTime(evt.timestamp)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                )}
+                {activeTab === 'BY PLATFORM' && (
+                  <>
+                    <div className="text-center py-4">
+                      <p className="font-covered-by-your-grace text-3xl" style={{ color: '#EB1C24' }}>{summary.total}</p>
+                      <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>TOTAL CLICKS</p>
+                    </div>
+                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>CLICKS BY PLATFORM</h3>
+                    <div className="space-y-2">
+                      {(['instagram', 'twitter', 'facebook', 'tiktok'] as const).map((p) => (
+                        <div key={p} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
+                          <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>{PLATFORM_LABEL[p]}</span>
+                          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>{summary.byPlatform[p]}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+                {activeTab === 'BY SOURCE' && (
+                  <>
+                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>MENU TOGGLE</h3>
+                    <div className="space-y-2 mb-4">
+                      {(['instagram', 'twitter', 'facebook'] as const).map((p) => (
+                        <div key={p} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
+                          <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>{PLATFORM_LABEL[p]}</span>
+                          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>{summary.byPlatformAndSource[p].menu}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>MORE WAYS TO EARN</h3>
+                    <div className="space-y-2">
+                      {(['instagram', 'twitter', 'facebook', 'tiktok'] as const).map((p) => (
+                        <div key={p} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
+                          <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>{PLATFORM_LABEL[p]}</span>
+                          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>{summary.byPlatformAndSource[p].more_ways_to_earn}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </>
                 )}
               </div>
             </div>
+
+            <button
+              type="button"
+              onClick={() => {}}
+              className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+              style={{ ...pageActionButtonStyle, marginTop: '14px' }}
+            >
+              EXPORT ANALYTICS
+            </button>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
