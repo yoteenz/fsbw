@@ -559,8 +559,8 @@ export default function AdminHeader({
                 <img
                   src={showInactiveMessages ? '/assets/messages-inactive.svg' : '/assets/messages-active.svg'}
                   alt="Messages"
-                  width="18"
-                  height="17"
+                  width="16"
+                  height="16"
                   style={{ transform: 'translate(-10px, -1px)' }}
                 />
               </button>
@@ -579,8 +579,8 @@ export default function AdminHeader({
                 <img
                   src={showInactiveNotifications ? '/assets/notifications-inactive.svg' : '/assets/notifications-active.svg'}
                   alt="Notifications"
-                  width="16"
-                  height="16"
+                  width="15"
+                  height="15"
                   style={{ transform: 'translateY(-0.8px)' }}
                 />
               </button>

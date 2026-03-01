@@ -3851,3 +3851,15 @@ img.object-contain {
 .border.border-black.flex-col.pt-6:has(.product-wig-preview) {
   padding-top: 0.75rem !important; /* was pt-6 (1.5rem); reduce excess above 2D/3D */
 }
+
+/* Client details orders tab: center status tag text vertically in pill (override any conflicting styles) */
+.admin-order-status-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+}
+.admin-order-status-pill > span {
+  line-height: 1 !important;
+  vertical-align: middle !important;
+}

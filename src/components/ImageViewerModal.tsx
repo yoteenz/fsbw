@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 interface ImageViewerModalProps {
   isOpen: boolean;
@@ -9,227 +9,141 @@ interface ImageViewerModalProps {
   onNavigate: (index: number) => void;
 }
 
+// Same logic as product shots on product page: horizontal strip with scrollPosition + touch/mouse drag
 function ImageViewerModal({ isOpen, onClose, images, currentIndex, onNavigate }: ImageViewerModalProps) {
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
-  const [mouseStart, setMouseStart] = useState<number | null>(null);
-  const [mouseEnd, setMouseEnd] = useState<number | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
   const [touchStartedOnBackdrop, setTouchStartedOnBackdrop] = useState(false);
 
-  // Minimum swipe distance (in pixels)
-  const minSwipeDistance = 50;
+  // Strip scroll state (same as product shots: scrollPosition, isDragging, startX, startScrollPosition)
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [startScrollPosition, setStartScrollPosition] = useState(0);
 
-  const handlePrevious = useCallback(() => {
-    const newIndex = currentIndex > 0 ? currentIndex - 1 : images.length - 1;
-    onNavigate(newIndex);
-  }, [currentIndex, images.length, onNavigate]);
+  const contentRef = useRef<HTMLDivElement>(null);
 
-  const handleNext = useCallback(() => {
-    const newIndex = currentIndex < images.length - 1 ? currentIndex + 1 : 0;
-    onNavigate(newIndex);
-  }, [currentIndex, images.length, onNavigate]);
-
-  // Handle keyboard navigation
+  // Native touchmove with passive: false so preventDefault() works and mobile doesn't scroll the page (same as product shots)
   useEffect(() => {
-    if (!isOpen) return;
+    const el = contentRef.current;
+    if (!el || !isOpen) return;
+    const onMove = (e: TouchEvent) => e.preventDefault();
+    el.addEventListener('touchmove', onMove, { passive: false });
+    return () => el.removeEventListener('touchmove', onMove);
+  }, [isOpen]);
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      } else if (e.key === 'ArrowLeft') {
-        handlePrevious();
-      } else if (e.key === 'ArrowRight') {
-        handleNext();
-      }
-    };
+  // Slide width in pixels (one full "page" per image) — match viewport like product shots
+  const slideWidthPx = typeof window !== 'undefined' ? window.innerWidth * 0.9 : 400;
+  const maxScroll = 0;
+  const minScroll = images.length <= 1 ? 0 : -(images.length - 1) * slideWidthPx;
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, handlePrevious, handleNext, onClose]);
+  // Sync scroll position when modal opens or currentIndex changes (e.g. keyboard or parent)
+  useEffect(() => {
+    if (!isOpen || images.length === 0) return;
+    const target = -currentIndex * slideWidthPx;
+    setScrollPosition(Math.max(minScroll, Math.min(maxScroll, target)));
+  }, [isOpen, currentIndex, images.length, slideWidthPx, minScroll, maxScroll]);
 
-  // Touch handlers for mobile - content area
-  const onTouchStart = (e: React.TouchEvent) => {
-    e.stopPropagation(); // Prevent backdrop from handling this
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
+  // Mouse handlers — same as product shots (noir)
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setStartX(e.clientX);
+    setStartScrollPosition(scrollPosition);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const currentX = e.clientX;
+    const diff = currentX - startX;
+    const newPosition = startScrollPosition - diff;
+    setScrollPosition(Math.max(minScroll, Math.min(maxScroll, newPosition)));
+  };
+
+  const handleMouseUp = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    // Snap to nearest index and notify parent
+    const nearestIndex = Math.round(-scrollPosition / slideWidthPx);
+    const clamped = Math.max(0, Math.min(images.length - 1, nearestIndex));
+    setScrollPosition(-clamped * slideWidthPx);
+    onNavigate(clamped);
+  };
+
+  // Touch handlers — same as product shots (noir): preventDefault on move so browser doesn't scroll
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    setStartX(e.touches[0].clientX);
+    setStartScrollPosition(scrollPosition);
     setTouchStartedOnBackdrop(false);
   };
 
-  const onTouchMove = (e: React.TouchEvent) => {
-    e.stopPropagation(); // Prevent backdrop from handling this
-    setTouchEnd(e.targetTouches[0].clientX);
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const currentX = e.touches[0].clientX;
+    const diff = currentX - startX;
+    const newPosition = startScrollPosition + diff; // same direction as product shots
+    setScrollPosition(Math.max(minScroll, Math.min(maxScroll, newPosition)));
   };
 
-  const onTouchEnd = (e?: React.TouchEvent) => {
-    if (e) {
-      e.stopPropagation(); // Prevent backdrop from handling this
-    }
-    
-    if (!touchStart || !touchEnd) {
-      setTouchStart(null);
-      setTouchEnd(null);
-      setTouchStartedOnBackdrop(false);
-      return;
-    }
-    
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
-
-    if (isLeftSwipe && images.length > 1) {
-      handleNext();
-    }
-    if (isRightSwipe && images.length > 1) {
-      handlePrevious();
-    }
-    
-    setTouchStart(null);
-    setTouchEnd(null);
-    setTouchStartedOnBackdrop(false);
+  const handleTouchEnd = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    const nearestIndex = Math.round(-scrollPosition / slideWidthPx);
+    const clamped = Math.max(0, Math.min(images.length - 1, nearestIndex));
+    setScrollPosition(-clamped * slideWidthPx);
+    onNavigate(clamped);
   };
 
-  // Handle backdrop touch to close
+  // Backdrop touch to close (tap on dimmed area)
   const handleBackdropTouchStart = (e: React.TouchEvent) => {
-    // Only track if touching directly on the backdrop
     if (e.target === e.currentTarget) {
       setTouchStartedOnBackdrop(true);
-      setTouchStart(e.targetTouches[0].clientX);
-      setTouchEnd(null);
-    }
-  };
-
-  const handleBackdropTouchMove = (e: React.TouchEvent) => {
-    if (e.target === e.currentTarget && touchStartedOnBackdrop) {
-      setTouchEnd(e.targetTouches[0].clientX);
     }
   };
 
   const handleBackdropTouchEnd = (e: React.TouchEvent) => {
     if (e.target === e.currentTarget && touchStartedOnBackdrop) {
-      // If touch ended on backdrop with minimal movement (tap), close
-      const moved = touchStart && touchEnd ? Math.abs(touchStart - touchEnd) : 0;
-      if (moved < 10) {
-        onClose();
-      }
-      setTouchStart(null);
-      setTouchEnd(null);
       setTouchStartedOnBackdrop(false);
+      onClose();
     }
   };
 
-  // Mouse handlers for desktop
-  const onMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true);
-    setMouseEnd(null);
-    setMouseStart(e.clientX);
-  };
-
-  const onMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    setMouseEnd(e.clientX);
-  };
-
-  const onMouseUp = () => {
-    if (!isDragging || !mouseStart || !mouseEnd) {
-      setIsDragging(false);
-      setMouseStart(null);
-      setMouseEnd(null);
-      return;
-    }
-    
-    const distance = mouseStart - mouseEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
-
-    if (isLeftSwipe && images.length > 1) {
-      handleNext();
-    }
-    if (isRightSwipe && images.length > 1) {
-      handlePrevious();
-    }
-    
-    setIsDragging(false);
-    setMouseStart(null);
-    setMouseEnd(null);
-  };
-
-  // Check if current image is a 2D view image (contains "2D" in the path or is a Noir 2D view)
-  // Must calculate before early return to maintain hook order
-  const currentImage = isOpen && images.length > 0 && currentIndex >= 0 ? images[currentIndex] : null;
-  const is2DView = currentImage && (
-    currentImage.includes('2D') || 
-    currentImage.includes('2d') ||
-    currentImage.includes('natural front') ||
-    currentImage.includes('natural left') ||
-    currentImage.includes('natural right') ||
-    currentImage.includes('peak front') ||
-    currentImage.includes('peak left') ||
-    currentImage.includes('peak right') ||
-    currentImage.includes('lagos front') ||
-    currentImage.includes('lagos left') ||
-    currentImage.includes('lagos right')
-  );
-  
-  // All images now use the same sizing to match Noir's behavior
-  
-  // Debug logging - must be before early return to maintain hook order
+  // Keyboard — same as before
   useEffect(() => {
-    if (isOpen && is2DView) {
-      console.log('🔍 ImageViewerModal Debug:', {
-        currentImage,
-        is2DView,
-        currentIndex,
-        totalImages: images.length,
-        imagePath: currentImage
-      });
-      
-      // Check if background element exists
-      setTimeout(() => {
-        const bgElement = document.querySelector('.debug-leaf-brick-bg');
-        if (bgElement) {
-          const computedStyle = window.getComputedStyle(bgElement);
-          console.log('🎨 Background element styles:', {
-            backgroundImage: computedStyle.backgroundImage,
-            backgroundRepeat: computedStyle.backgroundRepeat,
-            backgroundSize: computedStyle.backgroundSize,
-            zIndex: computedStyle.zIndex,
-            width: computedStyle.width,
-            height: computedStyle.height,
-            display: computedStyle.display,
-            position: computedStyle.position,
-            opacity: computedStyle.opacity,
-            visibility: computedStyle.visibility
-          });
-          
-          // Test if background image URL is accessible
-          const bgImg = new Image();
-          bgImg.onload = () => console.log('✅ Background image URL is accessible: /assets/leaf-brick-resize.png');
-          bgImg.onerror = () => console.error('❌ Background image URL failed to load: /assets/leaf-brick-resize.png');
-          bgImg.src = '/assets/leaf-brick-resize.png';
-        } else {
-          console.warn('⚠️ Background element not found in DOM');
-        }
-      }, 100);
-      
-      // Check if container exists
-      const container = document.querySelector('.debug-2d-container');
-      if (container) {
-        const computedStyle = window.getComputedStyle(container);
-        console.log('📦 Container styles:', {
-          width: computedStyle.width,
-          height: computedStyle.height,
-          position: computedStyle.position,
-          zIndex: computedStyle.zIndex
-        });
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      } else if (e.key === 'ArrowLeft') {
+        const prev = currentIndex > 0 ? currentIndex - 1 : images.length - 1;
+        onNavigate(prev);
+      } else if (e.key === 'ArrowRight') {
+        const next = currentIndex < images.length - 1 ? currentIndex + 1 : 0;
+        onNavigate(next);
       }
-    }
-  }, [isOpen, is2DView, currentImage, currentIndex, images.length]);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, currentIndex, images.length, onClose, onNavigate]);
+
+  // Check if an image path is 2D view (mannequin on leaf-brick) for special layout
+  const is2DViewImage = (src: string) =>
+    src.includes('2D') ||
+    src.includes('2d') ||
+    src.includes('natural front') ||
+    src.includes('natural left') ||
+    src.includes('natural right') ||
+    src.includes('peak front') ||
+    src.includes('peak left') ||
+    src.includes('peak right') ||
+    src.includes('lagos front') ||
+    src.includes('lagos left') ||
+    src.includes('lagos right');
 
   if (!isOpen || images.length === 0) return null;
 
   return createPortal(
-    <div 
+    <div
       style={{
         position: 'fixed',
         inset: '0',
@@ -245,131 +159,122 @@ function ImageViewerModal({ isOpen, onClose, images, currentIndex, onNavigate }:
       }}
       onClick={onClose}
       onTouchStart={handleBackdropTouchStart}
-      onTouchMove={handleBackdropTouchMove}
       onTouchEnd={handleBackdropTouchEnd}
     >
-      <div 
+      {/* Same pattern as product shots: viewport with overflow hidden, inner strip with translateX(scrollPosition) */}
+      <div
+        ref={contentRef}
         style={{
           position: 'relative',
-          maxWidth: is2DView ? '90vw' : '90vw',
-          maxHeight: is2DView ? '90vh' : '85vh',
+          width: '90vw',
+          maxWidth: '90vw',
+          height: '85vh',
+          maxHeight: '85vh',
+          overflow: 'hidden',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          margin: 'auto',
-          width: is2DView ? 'auto' : 'auto',
-          height: 'auto',
-          padding: '20px',
-          boxSizing: 'border-box'
+          touchAction: 'none'
         }}
         onClick={(e) => e.stopPropagation()}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={(e) => onTouchEnd(e)}
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
-        onMouseLeave={onMouseUp}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
-        {/* Image Container - with leaf-brick background for 2D view */}
-        {is2DView ? (
-          <div
-            className="debug-2d-container"
-            style={{
-              position: 'relative',
-              maxWidth: '90vw',
-              maxHeight: '90vh',
-              width: 'auto',
-              height: 'auto',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'visible'
-            }}
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={(e) => onTouchEnd(e)}
-            onMouseDown={onMouseDown}
-            onMouseMove={onMouseMove}
-            onMouseUp={onMouseUp}
-            onMouseLeave={onMouseUp}
-          >
-            {/* Exact product page structure, then scale entire container */}
+        <div
+          className="flex"
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            width: '100%',
+            height: '100%',
+            transform: `translateX(${scrollPosition}px)`,
+            transition: isDragging ? 'none' : 'transform 0.3s ease-out',
+            gap: 0
+          }}
+        >
+          {images.map((src, index) => (
             <div
+              key={index}
               style={{
-                position: 'relative',
-                width: '200px',
-                height: '290px',
-                transform: 'scale(1.88)',
-                transformOrigin: 'center center',
+                flex: '0 0 90vw',
+                width: '90vw',
+                maxWidth: '90vw',
+                height: '100%',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                padding: '0 2px'
               }}
             >
-              {/* Leaf-brick background - exact product page structure */}
-              <div
-                className="debug-leaf-brick-bg"
-                style={{
-                  position: 'relative',
-                  width: '200px',
-                  height: '290px',
-                  backgroundImage: `url('/assets/leaf-brick-resize.png')`,
-                  backgroundRepeat: 'repeat',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  zIndex: 0,
-                  pointerEvents: 'none'
-                }}
-              />
-              {/* Mannequin - exact product page positioning */}
-              <img
-                src={images[currentIndex]}
-                alt={`Image ${currentIndex + 1} of ${images.length}`}
-                className="debug-mannequin-img"
-                style={{ 
-                  position: 'absolute',
-                  left: '50%',
-                  top: 'calc(50% - 10.601px + 12px + 0.1px)',
-                  transform: 'translateX(-50%) translateY(-50%)',
-                  zIndex: 10,
-                  width: '230px',
-                  height: 'auto',
-                  maxHeight: '610px',
-                  minWidth: '230px',
-                  minHeight: 'auto',
-                  objectFit: 'contain',
-                  borderRadius: '0',
-                  userSelect: 'none',
-                  pointerEvents: 'auto'
-                }}
-                onLoad={() => console.log('✅ Mannequin image loaded:', images[currentIndex])}
-                onError={() => console.error('❌ Mannequin image failed to load:', images[currentIndex])}
-              />
+              {is2DViewImage(src) && (
+                <div
+                  style={{
+                    position: 'relative',
+                    width: '200px',
+                    height: '290px',
+                    transform: 'scale(1.88)',
+                    transformOrigin: 'center center',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <div
+                    style={{
+                      position: 'relative',
+                      width: '200px',
+                      height: '290px',
+                      backgroundImage: `url('/assets/leaf-brick-resize.png')`,
+                      backgroundRepeat: 'repeat',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      zIndex: 0,
+                      pointerEvents: 'none'
+                    }}
+                  />
+                  <img
+                    src={src}
+                    alt={`Image ${index + 1} of ${images.length}`}
+                    style={{
+                      position: 'absolute',
+                      left: '50%',
+                      top: 'calc(50% - 10.601px + 12px + 0.1px)',
+                      transform: 'translateX(-50%) translateY(-50%)',
+                      zIndex: 10,
+                      width: '230px',
+                      height: 'auto',
+                      maxHeight: '610px',
+                      minWidth: '230px',
+                      objectFit: 'contain',
+                      userSelect: 'none',
+                      pointerEvents: 'none'
+                    }}
+                  />
+                </div>
+              )}
+              {!is2DViewImage(src) && (
+                <img
+                  src={src}
+                  alt={`Image ${index + 1} of ${images.length}`}
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    width: 'auto',
+                    height: 'auto',
+                    objectFit: 'contain',
+                    userSelect: 'none',
+                    pointerEvents: 'none'
+                  }}
+                />
+              )}
             </div>
-          </div>
-        ) : (
-        <img
-          src={images[currentIndex]}
-          alt={`Image ${currentIndex + 1} of ${images.length}`}
-          style={{ 
-            maxWidth: '90vw',
-            maxHeight: '85vh',
-            width: 'auto',
-            height: 'auto',
-            objectFit: 'contain',
-            borderRadius: '0',
-            userSelect: 'none'
-          }}
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={(e) => onTouchEnd(e)}
-            onMouseDown={onMouseDown}
-            onMouseMove={onMouseMove}
-            onMouseUp={onMouseUp}
-            onMouseLeave={onMouseUp}
-          />
-        )}
+          ))}
+        </div>
       </div>
     </div>,
     document.body

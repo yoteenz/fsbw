@@ -9,21 +9,46 @@ import { blockClient, isClientBlocked } from '../../../utils/blockedClients';
 import { clientHasUnreadPriorityMessages, getLastUnreadPriorityMessageTime } from '../../../utils/priorityMessages';
 import { formatBirthday } from '../../../utils/formatBirthday';
 import { formatCountryDisplay } from '../../../utils/formatCountry';
+import ImageViewerModal from '../../../components/ImageViewerModal';
 
 const TABS = ['ALL', 'REVIEWS', 'REWARDS', 'INVITES'] as const;
 
 const SORT_OPTIONS = [
   'Most recent',
+  'Alerts',
   'A to Z',
   'Z to A',
   'Most spent',
   'Least spent',
-  'Email',
-  'Alerts',
+  'Newsletter',
+  'Socials',
   'Standard',
   'Premium',
+  'Silver',
+  'Red',
+  'Black',
 ] as const;
 type SortOption = typeof SORT_OPTIONS[number];
+
+/** Build clickable URL for a social platform from handle or existing URL */
+function getSocialUrl(platform: string, val: string): string {
+  const v = String(val || '').trim();
+  if (/^https?:\/\//i.test(v)) return v;
+  const handle = v.replace(/^@/, '');
+  if (!handle) return '#';
+  const base: Record<string, string> = {
+    facebook: 'https://facebook.com/',
+    instagram: 'https://instagram.com/',
+    twitter: 'https://x.com/',
+    tiktok: 'https://tiktok.com/@',
+    youtube: 'https://youtube.com/',
+    linkedin: 'https://linkedin.com/in/',
+  };
+  const baseUrl = base[platform] || '#';
+  if (platform === 'tiktok') return baseUrl + (v.startsWith('@') ? v.slice(1) : handle);
+  if (platform === 'youtube') return baseUrl + (handle.startsWith('@') || handle.startsWith('channel/') ? handle : `@${handle}`);
+  return baseUrl + handle;
+}
 
 function sortOptionToLabel(opt: SortOption): string {
   return opt.toUpperCase().replace(/\s+/g, ' ');
@@ -64,6 +89,29 @@ function isClientNewsletterSubscribed(u: any): boolean {
   } catch {
     return false;
   }
+}
+
+const PROFILE_SOCIAL_KEYS = ['facebook', 'instagram', 'twitter', 'tiktok', 'youtube', 'linkedin'] as const;
+
+/** Check if client has at least one profile social (facebook, instagram, etc.). Socials come from what the client entered at sign-up or added/edited on their account profile settings page. Same condition as client details personal info. When the client is the logged-in user, merges currentUser from localStorage so the latest profile is used. */
+function isClientHasSocials(u: any): boolean {
+  if (!u) return false;
+  let source: any = u;
+  try {
+    const currentUserRaw = typeof localStorage !== 'undefined' ? localStorage.getItem('currentUser') : null;
+    const currentUser = currentUserRaw ? JSON.parse(currentUserRaw) : null;
+    const uEmail = (u.email || '').toString().trim().toLowerCase();
+    const cuEmail = (currentUser?.email || '').toString().trim().toLowerCase();
+    if (currentUser && uEmail && uEmail === cuEmail) {
+      source = { ...u, ...currentUser };
+    }
+  } catch {
+    /* ignore */
+  }
+  return PROFILE_SOCIAL_KEYS.some((key) => {
+    const val = source[key];
+    return val != null && val !== '' && String(val).trim() !== '';
+  });
 }
 
 /** Referral code = first initial + last initial + birth day (2 digits) + 2 digits derived from unique seed (e.g. email) so same name+day still get different codes. e.g. KA3047 */
@@ -166,7 +214,7 @@ function getNonDefaultDetailLines(productName: string, options: Record<string, s
   return lines;
 }
 
-/** 20 mock clients for ayoteenz admin only – mix of Standard/Premium, spend, bookings, alerts for testing sort tags. */
+/** 20 mock clients for ayoteenz admin only – mix of Standard/Premium, spend, bookings, alerts for testing sort tags. Most names are female to reflect a hair/wig brand client base. */
 function getMockClientsForAyoteenz(): any[] {
   const now = Date.now();
   const day = 24 * 60 * 60 * 1000;
@@ -181,26 +229,28 @@ function getMockClientsForAyoteenz(): any[] {
     newsletterSubscribed?: boolean;
   }> = [
     /* totalSpent = realistic sums of product prices (NOIR ~740–920, BLANCO ~820, SOFT WAVE ~980, SOFT CURL ~780–1200, multi-unit ~1575–2220) */
-    { id: 'mock-1', email: 'mock1@test.com', firstName: 'Zara', lastName: 'Adams', membershipType: 'PREMIUM', createdAt: new Date(now - 2 * day).toISOString(), totalSpent: 4195, ordersCount: 5, newCount: 1, alertCount: 2, bookingCount: 3, birthDay: 15, birthMonth: 3, birthYear: 1989, invitesCount: 4, status: 'ACTIVE', reviewsCount: 3, photosCount: 5, videosCount: 1, tagsCount: 8, totalReviews: 5, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED', phone: '(555) 201-3401', address: '124 OAK ST, LOS ANGELES, CA 90012', facebook: '@FRONTALSLAYER', instagram: '@ZARAADAMS', newsletterSubscribed: true },
+    { id: 'mock-1', email: 'mock1@test.com', firstName: 'Zara', lastName: 'Adams', membershipType: 'PREMIUM', createdAt: new Date(now - 2 * day).toISOString(), totalSpent: 4195, ordersCount: 5, newCount: 1, alertCount: 2, bookingCount: 3, birthDay: 15, birthMonth: 3, birthYear: 1989, invitesCount: 4, status: 'ACTIVE', reviewsCount: 3, photosCount: 5, videosCount: 1, tagsCount: 8, totalReviews: 5, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED', phone: '(555) 201-3401', address: '124 OAK ST, LOS ANGELES, CA 90012', facebook: '@ZARAADAMS', instagram: '@ZARAADAMS', newsletterSubscribed: true },
     { id: 'mock-2', email: 'mock2@test.com', firstName: 'Amy', lastName: 'Brooks', membershipType: 'STANDARD', createdAt: new Date(now - 10 * day).toISOString(), totalSpent: 1490, ordersCount: 2, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 3, birthMonth: 7, birthYear: 1992, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 302-4512', address: '89 MAPLE AVE, BROOKLYN, NY 11201', instagram: '@AMYBROOKS' },
     { id: 'mock-3', email: 'mock3@test.com', firstName: 'Quinn', lastName: 'Chen', membershipType: 'PREMIUM', createdAt: new Date(now - 1 * day).toISOString(), totalSpent: 3100, ordersCount: 4, newCount: 2, alertCount: 1, bookingCount: 2, birthDay: 22, birthMonth: 11, birthYear: 1985, invitesCount: 2, status: 'ACTIVE', reviewsCount: 2, photosCount: 4, videosCount: 2, tagsCount: 6, totalReviews: 4, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'BLACK', phone: '(555) 403-5623', address: '256 PINE RD, HOUSTON, TX 77002', tiktok: '@QUINNCHEN', newsletterSubscribed: true },
     { id: 'mock-4', email: 'mock4@test.com', firstName: 'Diana', lastName: 'Foster', membershipType: 'STANDARD', createdAt: new Date(now - 45 * day).toISOString(), totalSpent: 1575, ordersCount: 3, newCount: 0, alertCount: 1, bookingCount: 1, birthDay: 8, birthMonth: 2, birthYear: 1991, invitesCount: 1, status: 'INACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 3, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 504-6734', address: '17 ELM ST, CHICAGO, IL 60601' },
-    { id: 'mock-5', email: 'mock5@test.com', firstName: 'Evan', lastName: 'Garcia', membershipType: 'PREMIUM', createdAt: new Date(now - 5 * day).toISOString(), totalSpent: 5820, ordersCount: 8, newCount: 1, alertCount: 3, bookingCount: 4, birthDay: 30, birthMonth: 8, birthYear: 1989, invitesCount: 7, status: 'ACTIVE', reviewsCount: 5, photosCount: 9, videosCount: 3, tagsCount: 12, totalReviews: 8, reviewsWithPhotosVideos: 6, pendingReviews: 2, currentTierName: 'BLACK', phone: '(555) 605-7845', address: '432 CEDAR LN, MIAMI, FL 33101', newsletterSubscribed: true },
+    { id: 'mock-5', email: 'mock5@test.com', firstName: 'Elena', lastName: 'Garcia', membershipType: 'PREMIUM', createdAt: new Date(now - 5 * day).toISOString(), totalSpent: 5820, ordersCount: 8, newCount: 1, alertCount: 3, bookingCount: 4, birthDay: 30, birthMonth: 8, birthYear: 1989, invitesCount: 7, status: 'ACTIVE', reviewsCount: 5, photosCount: 9, videosCount: 3, tagsCount: 12, totalReviews: 8, reviewsWithPhotosVideos: 6, pendingReviews: 2, currentTierName: 'BLACK', phone: '(555) 605-7845', address: '432 CEDAR LN, MIAMI, FL 33101', newsletterSubscribed: true },
     { id: 'mock-6', email: 'mock6@test.com', firstName: 'Fiona', lastName: 'Hayes', membershipType: 'STANDARD', createdAt: new Date(now - 90 * day).toISOString(), totalSpent: 740, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 11, birthMonth: 5, birthYear: 1994, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 706-8956', address: '91 BIRCH WAY, SEATTLE, WA 98101' },
-    { id: 'mock-7', email: 'mock7@test.com', firstName: 'Grant', lastName: 'Ingram', membershipType: 'PREMIUM', createdAt: new Date(now - 3 * day).toISOString(), totalSpent: 2100, ordersCount: 3, newCount: 0, alertCount: 0, bookingCount: 2, birthDay: 27, birthMonth: 9, birthYear: 1987, invitesCount: 3, status: 'ACTIVE', reviewsCount: 2, photosCount: 3, videosCount: 1, tagsCount: 4, totalReviews: 3, reviewsWithPhotosVideos: 2, pendingReviews: 0, currentTierName: 'RED', phone: '(555) 807-9067', address: '203 WILLOW DR, ATLANTA, GA 30301' },
+    { id: 'mock-7', email: 'mock7@test.com', firstName: 'Grace', lastName: 'Ingram', membershipType: 'PREMIUM', createdAt: new Date(now - 3 * day).toISOString(), totalSpent: 2100, ordersCount: 3, newCount: 0, alertCount: 0, bookingCount: 2, birthDay: 27, birthMonth: 9, birthYear: 1987, invitesCount: 3, status: 'ACTIVE', reviewsCount: 2, photosCount: 3, videosCount: 1, tagsCount: 4, totalReviews: 3, reviewsWithPhotosVideos: 2, pendingReviews: 0, currentTierName: 'RED', phone: '(555) 807-9067', address: '203 WILLOW DR, ATLANTA, GA 30301' },
     { id: 'mock-8', email: 'mock8@test.com', firstName: 'Hannah', lastName: 'Jones', membershipType: 'STANDARD', createdAt: new Date(now - 14 * day).toISOString(), totalSpent: 1520, ordersCount: 2, newCount: 1, alertCount: 2, bookingCount: 1, birthDay: 5, birthMonth: 12, birthYear: 1990, invitesCount: 1, status: 'ACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 2, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 1, currentTierName: 'SILVER', phone: '(555) 908-0178', address: '65 CHERRY BLVD, BOSTON, MA 02101', newsletterSubscribed: true },
-    { id: 'mock-9', email: 'mock9@test.com', firstName: 'Ivan', lastName: 'Kim', membershipType: 'PREMIUM', createdAt: new Date(now - 7 * day).toISOString(), totalSpent: 6710, ordersCount: 6, newCount: 2, alertCount: 1, bookingCount: 5, birthDay: 19, birthMonth: 4, birthYear: 1986, invitesCount: 5, status: 'INACTIVE', reviewsCount: 4, photosCount: 7, videosCount: 2, tagsCount: 10, totalReviews: 6, reviewsWithPhotosVideos: 5, pendingReviews: 1, currentTierName: 'BLACK', phone: '(555) 109-1289', address: '378 SPRUCE ST, DENVER, CO 80201' },
+    { id: 'mock-9', email: 'mock9@test.com', firstName: 'Ivy', lastName: 'Kim', membershipType: 'PREMIUM', createdAt: new Date(now - 7 * day).toISOString(), totalSpent: 6710, ordersCount: 6, newCount: 2, alertCount: 1, bookingCount: 5, birthDay: 19, birthMonth: 4, birthYear: 1986, invitesCount: 5, status: 'INACTIVE', reviewsCount: 4, photosCount: 7, videosCount: 2, tagsCount: 10, totalReviews: 6, reviewsWithPhotosVideos: 5, pendingReviews: 1, currentTierName: 'BLACK', phone: '(555) 109-1289', address: '378 SPRUCE ST, DENVER, CO 80201' },
     { id: 'mock-10', email: 'mock10@test.com', firstName: 'Julia', lastName: 'Lee', membershipType: 'STANDARD', createdAt: new Date(now - 21 * day).toISOString(), totalSpent: 740, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 12, birthMonth: 1, birthYear: 1993, invitesCount: 0, status: 'ACTIVE', reviewsCount: 0, photosCount: 1, videosCount: 0, tagsCount: 1, totalReviews: 1, reviewsWithPhotosVideos: 1, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 210-2390', address: '52 ASH AVE, PHOENIX, AZ 85001' },
-    { id: 'mock-11', email: 'mock11@test.com', firstName: 'Kyle', lastName: 'Martinez', membershipType: 'PREMIUM', createdAt: new Date(now - 4 * day).toISOString(), totalSpent: 3900, ordersCount: 5, newCount: 1, alertCount: 2, bookingCount: 3, birthDay: 25, birthMonth: 6, birthYear: 1988, invitesCount: 2, status: 'ACTIVE', reviewsCount: 3, photosCount: 4, videosCount: 1, tagsCount: 7, totalReviews: 4, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED', phone: '(555) 321-3401', address: '419 WALNUT PL, DETROIT, MI 48201', newsletterSubscribed: true },
+    { id: 'mock-11', email: 'mock11@test.com', firstName: 'Keira', lastName: 'Martinez', membershipType: 'PREMIUM', createdAt: new Date(now - 4 * day).toISOString(), totalSpent: 3900, ordersCount: 5, newCount: 1, alertCount: 2, bookingCount: 3, birthDay: 25, birthMonth: 6, birthYear: 1988, invitesCount: 2, status: 'ACTIVE', reviewsCount: 3, photosCount: 4, videosCount: 1, tagsCount: 7, totalReviews: 4, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED', phone: '(555) 321-3401', address: '419 WALNUT PL, DETROIT, MI 48201', newsletterSubscribed: true },
     { id: 'mock-12', email: 'mock12@test.com', firstName: 'Luna', lastName: 'Nguyen', membershipType: 'STANDARD', createdAt: new Date(now - 60 * day).toISOString(), totalSpent: 2100, ordersCount: 4, newCount: 0, alertCount: 1, bookingCount: 2, birthDay: 7, birthMonth: 10, birthYear: 1995, invitesCount: 4, status: 'INACTIVE', reviewsCount: 2, photosCount: 3, videosCount: 1, tagsCount: 5, totalReviews: 3, reviewsWithPhotosVideos: 2, pendingReviews: 0, currentTierName: 'RED', phone: '(555) 432-4512', address: '186 HICKORY LN, DALLAS, TX 75201' },
-    { id: 'mock-13', email: 'mock13@test.com', firstName: 'Marcus', lastName: 'Owen', membershipType: 'PREMIUM', createdAt: new Date(now - 1 * day).toISOString(), totalSpent: 5120, ordersCount: 7, newCount: 3, alertCount: 4, bookingCount: 6, birthDay: 14, birthMonth: 2, birthYear: 1984, invitesCount: 9, status: 'ACTIVE', reviewsCount: 6, photosCount: 10, videosCount: 4, tagsCount: 14, totalReviews: 9, reviewsWithPhotosVideos: 7, pendingReviews: 2, currentTierName: 'BLACK', phone: '(555) 543-5623', address: '721 MAGNOLIA DR, SAN FRANCISCO, CA 94102' },
+    { id: 'mock-13', email: 'mock13@test.com', firstName: 'Maya', lastName: 'Owen', membershipType: 'PREMIUM', createdAt: new Date(now - 1 * day).toISOString(), totalSpent: 5120, ordersCount: 7, newCount: 3, alertCount: 4, bookingCount: 6, birthDay: 14, birthMonth: 2, birthYear: 1984, invitesCount: 9, status: 'ACTIVE', reviewsCount: 6, photosCount: 10, videosCount: 4, tagsCount: 14, totalReviews: 9, reviewsWithPhotosVideos: 7, pendingReviews: 2, currentTierName: 'BLACK', phone: '(555) 543-5623', address: '721 MAGNOLIA DR, SAN FRANCISCO, CA 94102' },
     { id: 'mock-14', email: 'mock14@test.com', firstName: 'Nina', lastName: 'Patel', membershipType: 'STANDARD', createdAt: new Date(now - 30 * day).toISOString(), totalSpent: 1520, ordersCount: 2, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 20, birthMonth: 8, birthYear: 1991, invitesCount: 0, status: 'ACTIVE', reviewsCount: 1, photosCount: 1, videosCount: 0, tagsCount: 2, totalReviews: 1, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 654-6734', address: '94 DOGWOOD ST, PHILADELPHIA, PA 19101' },
-    { id: 'mock-15', email: 'mock15@test.com', firstName: 'Oscar', lastName: 'Quinn', membershipType: 'PREMIUM', createdAt: new Date(now - 6 * day).toISOString(), totalSpent: 4400, ordersCount: 5, newCount: 1, alertCount: 1, bookingCount: 4, birthDay: 9, birthMonth: 11, birthYear: 1989, invitesCount: 3, status: 'INACTIVE', reviewsCount: 3, photosCount: 5, videosCount: 1, tagsCount: 8, totalReviews: 4, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED', phone: '(555) 765-7845', address: '553 POPLAR RD, SAN DIEGO, CA 92101' },
+    { id: 'mock-15', email: 'mock15@test.com', firstName: 'Olivia', lastName: 'Quinn', membershipType: 'PREMIUM', createdAt: new Date(now - 6 * day).toISOString(), totalSpent: 4400, ordersCount: 5, newCount: 1, alertCount: 1, bookingCount: 4, birthDay: 9, birthMonth: 11, birthYear: 1989, invitesCount: 3, status: 'INACTIVE', reviewsCount: 3, photosCount: 5, videosCount: 1, tagsCount: 8, totalReviews: 4, reviewsWithPhotosVideos: 3, pendingReviews: 1, currentTierName: 'RED', phone: '(555) 765-7845', address: '553 POPLAR RD, SAN DIEGO, CA 92101' },
     { id: 'mock-16', email: 'mock16@test.com', firstName: 'Paula', lastName: 'Rivera', membershipType: 'STANDARD', createdAt: new Date(now - 120 * day).toISOString(), totalSpent: 3200, ordersCount: 6, newCount: 0, alertCount: 2, bookingCount: 2, birthDay: 28, birthMonth: 7, birthYear: 1983, invitesCount: 2, status: 'ACTIVE', reviewsCount: 2, photosCount: 4, videosCount: 0, tagsCount: 6, totalReviews: 3, reviewsWithPhotosVideos: 2, pendingReviews: 0, currentTierName: 'RED', phone: '(555) 876-8956', address: '268 SYCAMORE AVE, AUSTIN, TX 78701' },
-    { id: 'mock-17', email: 'mock17@test.com', firstName: 'Ryan', lastName: 'Scott', membershipType: 'PREMIUM', createdAt: new Date(now - 2 * day).toISOString(), totalSpent: 1900, ordersCount: 3, newCount: 0, alertCount: 0, bookingCount: 1, birthDay: 4, birthMonth: 5, birthYear: 1990, invitesCount: 1, status: 'ACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 3, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 1, currentTierName: 'SILVER', phone: '(555) 987-9067', address: '135 CHESTNUT WAY, PORTLAND, OR 97201' },
+    { id: 'mock-17', email: 'mock17@test.com', firstName: 'Reese', lastName: 'Scott', membershipType: 'PREMIUM', createdAt: new Date(now - 2 * day).toISOString(), totalSpent: 1900, ordersCount: 3, newCount: 0, alertCount: 0, bookingCount: 1, birthDay: 4, birthMonth: 5, birthYear: 1990, invitesCount: 1, status: 'ACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 3, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 1, currentTierName: 'SILVER', phone: '(555) 987-9067', address: '135 CHESTNUT WAY, PORTLAND, OR 97201' },
     { id: 'mock-18', email: 'mock18@test.com', firstName: 'Sara', lastName: 'Torres', membershipType: 'STANDARD', createdAt: new Date(now - 8 * day).toISOString(), totalSpent: 1100, ordersCount: 2, newCount: 1, alertCount: 3, bookingCount: 1, birthDay: 16, birthMonth: 9, birthYear: 1992, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 098-0178', address: '602 BEECH BLVD, NASHVILLE, TN 37201' },
-    { id: 'mock-19', email: 'mock19@test.com', firstName: 'Tyler', lastName: 'Upton', membershipType: 'PREMIUM', createdAt: new Date(now - 12 * day).toISOString(), totalSpent: 7200, ordersCount: 9, newCount: 2, alertCount: 2, bookingCount: 7, birthDay: 23, birthMonth: 12, birthYear: 1987, invitesCount: 6, status: 'ACTIVE', reviewsCount: 5, photosCount: 8, videosCount: 2, tagsCount: 11, totalReviews: 7, reviewsWithPhotosVideos: 6, pendingReviews: 2, currentTierName: 'BLACK', phone: '(555) 109-1289', address: '847 OAK PARK DR, CHARLOTTE, NC 28201' },
+    { id: 'mock-19', email: 'mock19@test.com', firstName: 'Tessa', lastName: 'Upton', membershipType: 'PREMIUM', createdAt: new Date(now - 12 * day).toISOString(), totalSpent: 7200, ordersCount: 9, newCount: 2, alertCount: 2, bookingCount: 7, birthDay: 23, birthMonth: 12, birthYear: 1987, invitesCount: 6, status: 'ACTIVE', reviewsCount: 5, photosCount: 8, videosCount: 2, tagsCount: 11, totalReviews: 7, reviewsWithPhotosVideos: 6, pendingReviews: 2, currentTierName: 'BLACK', phone: '(555) 109-1289', address: '847 OAK PARK DR, CHARLOTTE, NC 28201' },
     { id: 'mock-20', email: 'mock20@test.com', firstName: 'Uma', lastName: 'Vance', membershipType: 'STANDARD', createdAt: new Date(now - 3 * day).toISOString(), totalSpent: 740, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 1, birthMonth: 4, birthYear: 1996, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 210-2390', address: '319 LAUREL ST, MINNEAPOLIS, MN 55401' },
+    /* Dedicated invites/referral test account – ACTIVE code, 5 invites, easy to find in INVITES tab */
+    { id: 'mock-invites', email: 'mock21@test.com', firstName: 'Invites', lastName: 'Demo', membershipType: 'PREMIUM', createdAt: new Date(now - 5 * day).toISOString(), totalSpent: 2200, ordersCount: 3, newCount: 0, alertCount: 0, bookingCount: 1, birthDay: 15, birthMonth: 6, birthYear: 1990, invitesCount: 5, status: 'ACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 3, totalReviews: 1, reviewsWithPhotosVideos: 1, pendingReviews: 0, currentTierName: 'RED', phone: '(555) 555-0100', address: '100 REFERRAL LN, TEST CITY, TC 12345' },
   ];
   const min = 60 * 1000;
   const MOCK_CARD_BRANDS = ['VISA', 'MASTERCARD', 'AMERICAN_EXPRESS', 'DISCOVER'] as const;
@@ -224,6 +274,11 @@ function getMockClientsForAyoteenz(): any[] {
       hasOrders && hasUnread
         ? new Date(now - (4 - Math.min((row.alertCount ?? 1) % 4, 3)) * min).toISOString() // variety for sort order
         : undefined;
+    // lastNewOrderAt: most recent in-progress order (for Alerts sort when client has new orders but no messages/issues)
+    const lastNewOrderAt =
+      hasOrders && (row.newCount ?? 0) > 0
+        ? new Date(now - (3 - Math.min((row.newCount ?? 1) % 4, 2)) * min).toISOString()
+        : undefined;
     const addrStr = (row.address || '').toString().trim();
     const addrParts = addrStr ? addrStr.split(', ').map((s: string) => s.trim()) : [];
     const defaultAddress = addrParts.length >= 3
@@ -243,6 +298,7 @@ function getMockClientsForAyoteenz(): any[] {
       referralNumber: buildReferralCode(row.firstName, row.lastName, row.birthDay, row.email),
       lastUnreadPriorityMessageAt,
       lastOrderIssueAt,
+      lastNewOrderAt,
       subscriptionDuration: isPremium ? ([3, 6, 12][row.birthDay % 3] as number) : undefined,
       defaultPaymentMethod: { cardBrand, cardNumber },
     };
@@ -256,6 +312,25 @@ const MOCK_ADDON_VARIATIONS = [0, 40, 50, 100, 20, 60, 80];
 
 /** Mock orders for mock clients when localStorage has no userOrders data. Uses client's ordersCount, totalSpent, newCount. Prices reflect actual product base prices + add-ons. No order goes below product base price. */
 function getMockOrdersForClient(client: any): Array<{ id: string; date: string; product: string; amount: number; status: string }> {
+  const email = (client?.email || '').toString().trim().toLowerCase();
+  if (email === 'mock13@test.com') {
+    const now = Date.now();
+    const day = 24 * 60 * 60 * 1000;
+    const statuses = ['AWAITING FORM', 'IN PROGRESS', 'SHIPPED', 'DELIVERED'] as const;
+    const products = ['NOIR', 'BLANCO', 'SOFT WAVE', 'SOFT CURL'];
+    const amounts = [820, 940, 1100, 780];
+    return statuses.map((status, i) => {
+      const orderDate = new Date(now - (90 - i * 20) * day);
+      const dateStr = `${String(orderDate.getMonth() + 1).padStart(2, '0')}-${String(orderDate.getDate()).padStart(2, '0')}-${orderDate.getFullYear()}`;
+      return {
+        id: `#${String(i + 1).padStart(3, '0')}`,
+        date: dateStr,
+        product: products[i],
+        amount: amounts[i],
+        status,
+      };
+    });
+  }
   const count = client?.ordersCount ?? 0;
   const totalSpent = client?.totalSpent ?? 0;
   const newCount = client?.newCount ?? 0;
@@ -317,7 +392,13 @@ export default function AdminClients() {
   const [detailsTab, setDetailsTab] = useState<typeof DETAILS_TABS[number]>('orders');
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
+  const [showCancelOrderConfirm, setShowCancelOrderConfirm] = useState(false);
   const [profilePhotoError, setProfilePhotoError] = useState(false);
+  const [rewardsExpand, setRewardsExpand] = useState<'photos' | 'videos' | 'tags' | null>(null);
+  const [showMediaViewer, setShowMediaViewer] = useState(false);
+  const [mediaViewerUrls, setMediaViewerUrls] = useState<string[]>([]);
+  const [mediaViewerIndex, setMediaViewerIndex] = useState(0);
+  const [showInvitesPopup, setShowInvitesPopup] = useState(false);
 
   // Sync selectedClientEmail from URL (e.g. when redirected from /admin/clients/account?email=...)
   useEffect(() => {
@@ -332,6 +413,12 @@ export default function AdminClients() {
   // Reset profile photo error when switching clients
   useEffect(() => {
     setProfilePhotoError(false);
+  }, [selectedClientEmail]);
+  useEffect(() => {
+    setRewardsExpand(null);
+  }, [selectedClientEmail]);
+  useEffect(() => {
+    setShowInvitesPopup(false);
   }, [selectedClientEmail]);
 
   const loadData = useCallback(() => {
@@ -388,7 +475,19 @@ export default function AdminClients() {
   const { selectedClient, selectedOrderHistory, selectedRawOrders } = (() => {
     const email = (selectedClientEmail || '').trim().toLowerCase();
     if (!email) return { selectedClient: null, selectedOrderHistory: [], selectedRawOrders: [] };
-    const found = registeredUsers.find((u: any) => (u.email || '').toLowerCase() === email);
+    let found = registeredUsers.find((u: any) => (u.email || '').toLowerCase() === email);
+    if (found) {
+      try {
+        const currentUserRaw = localStorage.getItem('currentUser');
+        const currentUser = currentUserRaw ? JSON.parse(currentUserRaw) : null;
+        const cuEmail = (currentUser?.email || '').toString().trim().toLowerCase();
+        if (currentUser && email === cuEmail) {
+          found = { ...found, ...currentUser };
+        }
+      } catch {
+        /* ignore */
+      }
+    }
     let orderHistory: any[] = [];
     let rawOrders: any[] = [];
     try {
@@ -398,6 +497,12 @@ export default function AdminClients() {
       const past = data?.pastOrders || [];
       if (active.length > 0 || past.length > 0) {
         rawOrders = [...active, ...past].map((o: any, idx: number) => ({ ...o, id: o.id || `order-${idx}` }));
+        const orderSortTime = (o: any) => {
+          const t = o.updatedAt ?? o.updated_at ?? o.date ?? o.createdAt ?? o.placedAt;
+          if (!t) return 0;
+          try { return new Date(t).getTime(); } catch { return 0; }
+        };
+        rawOrders.sort((a: any, b: any) => orderSortTime(b) - orderSortTime(a));
         orderHistory = rawOrders.map((o: any) => ({
           id: o.id,
           date: o.date || o.createdAt || '—',
@@ -412,7 +517,6 @@ export default function AdminClients() {
           const pm = found?.defaultPaymentMethod;
           const brand = (pm?.cardBrand || 'VISA').toString().replace(/_/g, ' ');
           const last4 = pm?.cardNumber ? String(pm.cardNumber).replace(/\D/g, '').slice(-4) : String(1000 + i).slice(-4);
-          const referralNum = found?.referralNumber || buildReferralCode(found?.firstName || '', found?.lastName || '', found?.birthDay ?? 1, found?.email || '');
           const isDelivered = (m.status || '').toUpperCase() === 'DELIVERED' || (m.status || '').toUpperCase() === 'SHIPPED';
           const trackingNum = isDelivered ? `9405${String(5011899223 + (found?.birthDay ?? 1) * 1000 + i).padStart(10, '0')}${String(19784123 + i).padStart(8, '0')}` : undefined;
           const base: Record<string, any> = {
@@ -435,22 +539,25 @@ export default function AdminClients() {
           };
           if (i % 4 === 0) base.discountCode = ['WELCOME10', 'WIG20', 'PREMIUM15', 'NEWYEAR25'][Math.floor(i / 4) % 4];
           if (i % 4 === 1) base.giftCard = `GC-${String(4000 + i).padStart(4, '0')}-${String(1000 + i * 37).slice(-4)}`;
-          if (i % 4 === 2) base.referralCode = referralNum;
           if (i % 4 === 3) {
             base.discountCode = 'VIP20';
             base.giftCard = `GC-${String(5000 + i).padStart(4, '0')}-${String(2000 + i * 11).slice(-4)}`;
-            base.referralCode = referralNum;
           }
-          if (base.discountCode || base.giftCard || base.referralCode) {
+          if (base.discountCode || base.giftCard) {
             let s = 0;
             if (base.discountCode) s += Math.round(m.amount * 0.12);
             if (base.giftCard) s += 50;
-            if (base.referralCode) s += 25;
             base.savings = s;
             base.subtotal = m.amount + s;
           }
           return base;
         });
+        const orderSortTime = (o: any) => {
+          const t = o.updatedAt ?? o.updated_at ?? o.date ?? o.createdAt ?? o.placedAt;
+          if (!t) return 0;
+          try { return new Date(t).getTime(); } catch { return 0; }
+        };
+        rawOrders.sort((a: any, b: any) => orderSortTime(b) - orderSortTime(a));
       }
     } catch {
       // ignore
@@ -462,23 +569,29 @@ export default function AdminClients() {
     ? ([(selectedClient.firstName || '').trim(), (selectedClient.lastName || '').trim()].filter(Boolean).join(' ') || selectedClient.email || '—').toUpperCase()
     : '—';
   const selectedMembershipType = (selectedClient?.membershipType || 'STANDARD').toUpperCase();
-  const selectedTotalOrders = selectedClient?.ordersCount ?? selectedOrderHistory.length;
-  const selectedTotalSpent = selectedClient?.totalSpent ?? selectedOrderHistory.reduce((s: number, o: any) => s + (o.amount || 0), 0);
+  const selectedTotalOrders = selectedOrderHistory.length;
+  const selectedTotalSpent = selectedOrderHistory.reduce((s: number, o: any) => s + (o.amount || 0), 0);
   const selectedJoinDate = selectedClient?.createdAt ? new Date(selectedClient.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' }) : '—';
 
-  const appointments = [
-    { date: '2024-01-20', time: '2:00 PM', type: 'CONSULTATION', status: 'SCHEDULED' },
-    { date: '2024-01-05', time: '10:30 AM', type: 'FITTING', status: 'COMPLETED' },
-  ];
+  const appointments = (() => {
+    const list = [
+      { date: '2024-01-20', time: '2:00 PM', type: 'CONSULTATION', status: 'SCHEDULED' },
+      { date: '2024-01-05', time: '10:30 AM', type: 'FITTING', status: 'COMPLETED' },
+    ];
+    const sortTime = (a: { date: string; time?: string }) => {
+      const d = a.date || '';
+      const t = (a.time || '').replace(/\s*(AM|PM)\s*/i, ' $1');
+      try { return new Date(`${d} ${t}`).getTime(); } catch { return new Date(d).getTime() || 0; }
+    };
+    return [...list].sort((a, b) => sortTime(b) - sortTime(a));
+  })();
 
-  // NEW / ORDERS / CHARGES: from mock fields (ayoteenz mock clients) or from userOrders_${email} for real users
-  // NEW = orders not yet delivered; ORDERS = only delivered orders (NEW orders don't count until delivered)
-  // CHARGES = total spend (excluding canceled orders)
+  // NEW / ORDERS / CHARGES: use same source as client details – localStorage userOrders or getMockOrdersForClient for mock users
   const getClientRow = (u: any, index: number) => {
     const name = ([(u.firstName || '').trim(), (u.lastName || '').trim()].filter(Boolean).join(' ') || u.email || '—').toUpperCase();
-    let newCount = u.newCount;
-    let ordersCount = u.ordersCount;
-    let charges = u.totalSpent;
+    let newCount: number | null = null;
+    let ordersCount: number | null = null;
+    let charges: number | null = null;
     try {
       const email = (u.email || '').trim().toLowerCase();
       if (email) {
@@ -489,17 +602,27 @@ export default function AdminClients() {
         const all = [...active, ...past];
         if (all.length > 0) {
           const nonCanceled = all.filter((o: any) => (o.status || '').toUpperCase() !== 'CANCELED' && !o.canceledAt);
-          const notDelivered = nonCanceled.filter((o: any) => (o.status || '').toUpperCase() !== 'DELIVERED' && !o.deliveredAt);
-          const delivered = nonCanceled.filter((o: any) => (o.status || '').toUpperCase() === 'DELIVERED' || !!o.deliveredAt);
-          if (ordersCount == null) ordersCount = delivered.length;
+          const notDelivered = nonCanceled.filter((o: any) => (o.status || '').toUpperCase() !== 'DELIVERED' && !o.deliveredAt && (o.status || '').toUpperCase() !== 'SHIPPED');
+          ordersCount = nonCanceled.length;
           charges = nonCanceled.reduce((sum: number, o: any) => sum + (Number(o.total) || 0), 0);
-          if (newCount == null) newCount = notDelivered.length;
+          newCount = notDelivered.length;
+        } else if (/^mock\d+@test\.com$/i.test(email)) {
+          const mockOrders = getMockOrdersForClient(u);
+          ordersCount = mockOrders.length;
+          newCount = mockOrders.filter((o: any) => (o.status || '').toUpperCase() !== 'DELIVERED' && (o.status || '').toUpperCase() !== 'SHIPPED').length;
+          charges = mockOrders.reduce((sum: number, o: any) => sum + (Number(o.amount) || 0), 0);
         }
       }
     } catch {
       // ignore
     }
-    return { index: index + 1, name, newCount: newCount ?? 0, ordersCount: ordersCount ?? 0, charges: charges ?? 0 };
+    return {
+      index: index + 1,
+      name,
+      newCount: newCount ?? u.newCount ?? 0,
+      ordersCount: ordersCount ?? u.ordersCount ?? 0,
+      charges: charges ?? u.totalSpent ?? 0,
+    };
   };
 
   // INVITES tab: referral number + status (referral code active = has completed purchase) + invites (count who used code to make purchase)
@@ -521,12 +644,20 @@ export default function AdminClients() {
         if (referralNumber == null) referralNumber = localStorage.getItem(`userReferralCode_${email}`) || null;
         if (referralNumber == null) referralNumber = '—';
 
-        // STATUS = referral code active if user has completed a purchase (at least one DELIVERED order)
+        // STATUS = referral code active if user has completed a purchase (at least one DELIVERED or SHIPPED order)
         const ordersRaw = localStorage.getItem(`userOrders_${email}`);
         const ordersData = ordersRaw ? JSON.parse(ordersRaw) : null;
         const allOrders = [...(ordersData?.activeOrders || []), ...(ordersData?.pastOrders || [])];
-        const hasDelivered = allOrders.some((o: any) => (o.status || '').toUpperCase() === 'DELIVERED' || !!o.deliveredAt);
-        status = allOrders.length > 0 ? (hasDelivered ? 'ACTIVE' : 'INACTIVE') : ((u.totalSpent ?? 0) > 0 ? 'ACTIVE' : 'INACTIVE');
+        let hasDelivered: boolean;
+        if (allOrders.length > 0) {
+          hasDelivered = allOrders.some((o: any) => (o.status || '').toUpperCase() === 'DELIVERED' || (o.status || '').toUpperCase() === 'SHIPPED' || !!o.deliveredAt);
+        } else if (/^mock\d+@test\.com$/i.test(email)) {
+          const mockOrders = getMockOrdersForClient(u);
+          hasDelivered = mockOrders.some((o: any) => (o.status || '').toUpperCase() === 'DELIVERED' || (o.status || '').toUpperCase() === 'SHIPPED');
+        } else {
+          hasDelivered = (u.totalSpent ?? 0) > 0;
+        }
+        status = hasDelivered ? 'ACTIVE' : 'INACTIVE';
 
         // INVITES = count of people who used this user's referral code to make a purchase (referralEarnings with status confirmed)
         const earningsRaw = localStorage.getItem('referralEarnings');
@@ -534,6 +665,10 @@ export default function AdminClients() {
         invitesCount = Array.isArray(earnings)
           ? earnings.filter((e: any) => (e.referrerEmail || '').trim().toLowerCase() === email && (e.status || '').toLowerCase() === 'confirmed').length
           : (u.invitesCount ?? 0);
+        // Mock users: use their mock invitesCount when no referralEarnings entries exist (so INVITES tab is testable)
+        if (/^mock\d+@test\.com$/i.test(email) && invitesCount === 0 && (u.invitesCount ?? 0) > 0) {
+          invitesCount = u.invitesCount ?? 0;
+        }
       } else {
         status = u.status === 'INACTIVE' ? 'INACTIVE' : 'ACTIVE';
         invitesCount = u.invitesCount ?? 0;
@@ -546,9 +681,53 @@ export default function AdminClients() {
   };
 
   // Referral status + code for details view (same logic as INVITES tab)
-  const { selectedReferralStatus, selectedReferralCode } = selectedClient
-    ? (() => { const r = getInvitesRow(selectedClient, 0); return { selectedReferralStatus: r.status, selectedReferralCode: r.referralNumber }; })()
-    : { selectedReferralStatus: 'INACTIVE', selectedReferralCode: '—' };
+  const { selectedReferralStatus, selectedReferralCode, selectedInvitesCount } = selectedClient
+    ? (() => { const r = getInvitesRow(selectedClient, 0); return { selectedReferralStatus: r.status, selectedReferralCode: r.referralNumber, selectedInvitesCount: r.invitesCount }; })()
+    : { selectedReferralStatus: 'INACTIVE', selectedReferralCode: '—', selectedInvitesCount: 0 };
+
+  // Invites popup: rows = people who used this client's referral code (date used, user name, that user's invite count, that user's spent)
+  const invitesDetailRows = (() => {
+    const email = (selectedClientEmail || '').trim().toLowerCase();
+    if (!email || !selectedClient) return [];
+    try {
+      const earningsRaw = localStorage.getItem('referralEarnings');
+      const earnings = earningsRaw ? JSON.parse(earningsRaw) : [];
+      const confirmed = Array.isArray(earnings)
+        ? earnings.filter((e: any) => (e.referrerEmail || '').trim().toLowerCase() === email && (e.status || '').toLowerCase() === 'confirmed')
+        : [];
+      const rows: Array<{ dateUsed: string; userName: string; inviteCount: number; spent: number }> = [];
+      for (const e of confirmed) {
+        const referredEmail = (e.referredEmail || e.inviteeEmail || e.email || '').trim().toLowerCase();
+        const usedAt = e.usedAt ?? e.used_at ?? e.date ?? e.createdAt ?? e.confirmedAt;
+        const dateStr = usedAt ? (() => { try { return new Date(usedAt).toLocaleDateString(undefined, { dateStyle: 'medium' }); } catch { return '—'; } })() : '—';
+        const referredUser = referredEmail ? registeredUsers.find((u: any) => (u.email || '').toLowerCase() === referredEmail) : null;
+        const name = referredUser ? ([(referredUser.firstName || '').trim(), (referredUser.lastName || '').trim()].filter(Boolean).join(' ') || referredUser.email || '—').toUpperCase() : (referredEmail || '—').toUpperCase();
+        const inviteCount = referredUser ? getInvitesRow(referredUser, 0).invitesCount : 0;
+        const spent = referredUser ? getClientRow(referredUser, 0).charges : 0;
+        rows.push({ dateUsed: dateStr, userName: name, inviteCount, spent });
+      }
+      // Mock users: if no referralEarnings entries but client has invitesCount, show mock rows so popup is testable
+      if (rows.length === 0 && selectedInvitesCount > 0 && /^mock\d+@test\.com$/i.test(email)) {
+        const mockNames = ['ALEX BROWN', 'JORDAN LEE', 'SAM WILSON', 'RILEY MARTINEZ', 'JAMIE GARCIA'];
+        const mockSpent = [740, 1520, 2100, 890, 3200];
+        const now = Date.now();
+        const day = 24 * 60 * 60 * 1000;
+        for (let i = 0; i < Math.min(selectedInvitesCount, 5); i++) {
+          const d = new Date(now - (30 + i * 14) * day);
+          rows.push({
+            dateUsed: d.toLocaleDateString(undefined, { dateStyle: 'medium' }),
+            userName: mockNames[i % mockNames.length],
+            inviteCount: i % 3,
+            spent: mockSpent[i % mockSpent.length],
+          });
+        }
+      }
+      return rows;
+    } catch {
+      return [];
+    }
+  })();
+
   const selectedTierDisplay = selectedClient ? getTierDisplayLabelAndColor(selectedClient) : { label: '—', color: '#808080' };
   const selectedMembershipDuration = selectedClient && (selectedClient as any).membershipType?.toString().toUpperCase() === 'PREMIUM'
     ? (() => {
@@ -630,6 +809,72 @@ export default function AdminClients() {
     };
   };
 
+  /** Get affiliate-submitted photos/videos/socials for client details expand view. For mock clients with a count but no localStorage data, returns mock content so the panel matches the count. Socials = platform + link (like account/affiliate page). */
+  const getAffiliateMediaForClient = (u: any): { photos: string[]; videos: string[]; socials: Array<{ platform: string; link: string }> } => {
+    const toList = (raw: string | null): string[] => {
+      if (raw == null) return [];
+      try {
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+        return parsed.map((x: any) => (typeof x === 'string' ? x : x?.url ?? x?.src ?? x?.tag ?? String(x))).filter(Boolean);
+      } catch {
+        return [];
+      }
+    };
+    const toSocialsList = (raw: string | null): Array<{ platform: string; link: string }> => {
+      if (raw == null) return [];
+      try {
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+        return parsed.map((x: any) => ({
+          platform: typeof x?.platform === 'string' ? x.platform : (x?.network ?? 'LINK'),
+          link: typeof x?.link === 'string' ? x.link : (x?.url ?? String(x ?? '')),
+        })).filter((s: { platform: string; link: string }) => s.platform && s.link);
+      } catch {
+        return [];
+      }
+    };
+    const email = (u?.email || '').trim().toLowerCase();
+    if (!email) return { photos: [], videos: [], socials: [] };
+    const photos = toList(localStorage.getItem(`userAffiliatePhotos_${email}`));
+    const videos = toList(localStorage.getItem(`userAffiliateVideos_${email}`));
+    const socials = toSocialsList(localStorage.getItem(`userAffiliateSocials_${email}`));
+    const isMock = /^mock\d+@test\.com$/i.test(email);
+    const photosCount = u?.photosCount ?? 0;
+    const videosCount = u?.videosCount ?? 0;
+    const tagsCount = u?.tagsCount ?? 0;
+    const MOCK_PHOTO_PLACEHOLDERS = ['/assets/gallery-mock.png', '/assets/gallery-mock.png', '/assets/gallery-mock.png', '/assets/gallery-mock.png', '/assets/gallery-mock.png', '/assets/gallery-mock.png', '/assets/gallery-mock.png', '/assets/gallery-mock.png', '/assets/gallery-mock.png', '/assets/gallery-mock.png'];
+    const MOCK_VIDEO_PLACEHOLDERS = ['/assets/gallery-mock.png', '/assets/gallery-mock.png', '/assets/gallery-mock.png', '/assets/gallery-mock.png', '/assets/gallery-mock.png'];
+    const MOCK_SOCIALS: Array<{ platform: string; link: string }> = [
+      { platform: 'Instagram', link: 'https://instagram.com/ayoteenz' },
+      { platform: 'TikTok', link: 'https://tiktok.com/@ayoteenz' },
+      { platform: 'YouTube', link: 'https://youtube.com/@ayoteenz' },
+      { platform: 'Twitter', link: 'https://x.com/ayoteenz' },
+      { platform: 'Facebook', link: 'https://facebook.com/ayoteenz' },
+    ];
+    return {
+      photos: isMock && photos.length === 0 && photosCount > 0 ? MOCK_PHOTO_PLACEHOLDERS.slice(0, Math.min(photosCount, MOCK_PHOTO_PLACEHOLDERS.length)) : photos,
+      videos: isMock && videos.length === 0 && videosCount > 0 ? MOCK_VIDEO_PLACEHOLDERS.slice(0, Math.min(videosCount, MOCK_VIDEO_PLACEHOLDERS.length)) : videos,
+      socials: isMock && socials.length === 0 && tagsCount > 0 ? MOCK_SOCIALS.slice(0, Math.min(tagsCount, MOCK_SOCIALS.length)) : socials,
+    };
+  };
+
+  /** Shared frame style for affiliate photos/videos – white border + black outline, sized so 3 fit per row (same mock asset as account/affiliate page). */
+  const affiliateFrameStyle = {
+    position: 'relative' as const,
+    padding: '1px',
+    border: '3px solid white',
+    boxShadow: '0 0 0 1.1px black',
+    boxSizing: 'border-box' as const,
+    width: '88px',
+    height: '88px',
+    display: 'flex' as const,
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+    backgroundColor: '#f5f5f5',
+    overflow: 'hidden' as const,
+  };
+
   // REVIEWS tab: total submitted reviews, reviews with photos/videos, pending (waiting approval)
   const getReviewsTabRow = (u: any, index: number) => {
     const name = ([(u.firstName || '').trim(), (u.lastName || '').trim()].filter(Boolean).join(' ') || u.email || '—').toUpperCase();
@@ -674,9 +919,15 @@ export default function AdminClients() {
       list = list.filter((u) => membership(u) === 'STANDARD');
     } else if (sortOption === 'Premium') {
       list = list.filter((u) => membership(u) === 'PREMIUM');
+    } else if (sortOption === 'Silver') {
+      list = list.filter((u) => (getEffectiveTierName(u) || '').toUpperCase() === 'SILVER');
+    } else if (sortOption === 'Red') {
+      list = list.filter((u) => (getEffectiveTierName(u) || '').toUpperCase() === 'RED');
+    } else if (sortOption === 'Black') {
+      list = list.filter((u) => (getEffectiveTierName(u) || '').toUpperCase() === 'BLACK');
     }
     const name = (u: any) => [(u.firstName || '').trim(), (u.lastName || '').trim()].filter(Boolean).join(' ') || (u.email || '');
-    const charges = (u: any) => u.totalSpent ?? (() => { try { const raw = localStorage.getItem(`userOrders_${(u.email || '').trim().toLowerCase()}`); const d = raw ? JSON.parse(raw) : null; const all = [...(d?.activeOrders || []), ...(d?.pastOrders || [])]; return all.reduce((s: number, o: any) => s + (Number(o.total) || 0), 0); } catch { return 0; } })();
+    const charges = (u: any) => getClientRow(u, 0).charges;
     const created = (u: any) => (u.createdAt ? new Date(u.createdAt).getTime() : 0);
     if (sortOption === 'A to Z') {
       list.sort((a, b) => name(a).localeCompare(name(b), undefined, { sensitivity: 'base' }));
@@ -686,8 +937,11 @@ export default function AdminClients() {
       list.sort((a, b) => charges(b) - charges(a));
     } else if (sortOption === 'Least spent') {
       list.sort((a, b) => charges(a) - charges(b));
-    } else if (sortOption === 'Email') {
+    } else if (sortOption === 'Newsletter') {
       list = list.filter((u) => isClientNewsletterSubscribed(u));
+      list.sort((a, b) => created(b) - created(a));
+    } else if (sortOption === 'Socials') {
+      list = list.filter((u) => isClientHasSocials(u));
       list.sort((a, b) => created(b) - created(a));
     } else if (sortOption === 'Alerts') {
       list = list.filter((u) => clientHasUnreadPriorityMessages(u));
@@ -717,9 +971,9 @@ export default function AdminClients() {
             title={selectedClientEmail ? 'DETAILS' : 'OVERVIEW'}
             showBack
             breadcrumbParentLabel="CLIENTS"
-            breadcrumbParentPath="/admin/clients"
+            breadcrumbParentPath="/admin/dashboard"
             onBack={selectedClientEmail ? () => { setSelectedClientEmail(null); setDetailsTab('orders'); setExpandedOrderId(null); } : undefined}
-            breadcrumbParentOnClick={selectedClientEmail ? () => { setSelectedClientEmail(null); setDetailsTab('orders'); setExpandedOrderId(null); } : undefined}
+            breadcrumbParentOnClick={() => navigate('/admin/dashboard')}
           />
 
           <div className="pb-6 px-4">
@@ -848,7 +1102,7 @@ export default function AdminClients() {
                           <div className="mb-4">
                             <div className="flex justify-between items-center">
                               <p style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px', margin: 0 }}>{selectedReferralCode}</p>
-                              <div className="relative flex flex-col items-end">
+                              <div className="relative flex flex-col items-end" style={{ minWidth: '72px' }}>
                                 <span
                                   className="inline-block px-3 py-1 text-xs rounded"
                                   style={{
@@ -861,14 +1115,71 @@ export default function AdminClients() {
                                   {selectedReferralStatus}
                                 </span>
                                 {selectedClient && isClientNewsletterSubscribed(selectedClient) && (
-                                  <p style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)', fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, marginTop: '4px', textAlign: 'center' }}>NEWSLETTER</p>
+                                  <p style={{ position: 'absolute', top: '100%', right: 0, fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, marginTop: '2px', textAlign: 'right' }}>NEWSLETTER</p>
                                 )}
                               </div>
                             </div>
-                            <p style={{ fontFamily: selectedTierDisplay.label === 'Silver tier' ? '"Futura PT Demi"' : '"Futura PT Medium"', color: selectedTierDisplay.color, fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedTierDisplay.label}</p>
-                            {selectedMembershipDuration && (
-                              <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: 0, marginTop: '3px' }}>{selectedMembershipDuration}</p>
-                            )}
+                            {(() => {
+                              const hasNewsletter = selectedClient && isClientNewsletterSubscribed(selectedClient);
+                              const invitesBlock = (
+                                <div style={{ width: '72px', textAlign: 'right' }}>
+                                  {selectedInvitesCount >= 1 ? (
+                                    <button
+                                      type="button"
+                                      onClick={() => setShowInvitesPopup(true)}
+                                      className="cursor-pointer bg-transparent border-none p-0 w-full"
+                                      style={{
+                                        fontFamily: '"Futura PT Demi"',
+                                        color: '#808080',
+                                        fontSize: '10px',
+                                        margin: 0,
+                                        padding: 0,
+                                        lineHeight: 1.2,
+                                        textAlign: 'right',
+                                        display: 'block',
+                                        width: '100%',
+                                      }}
+                                    >
+                                      {selectedInvitesCount === 1 ? '1 INVITE' : `${selectedInvitesCount} INVITES`}
+                                    </button>
+                                  ) : (
+                                    <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: 0, lineHeight: 1.2, textAlign: 'right' }}>
+                                      0 INVITES
+                                    </p>
+                                  )}
+                                </div>
+                              );
+                              if (hasNewsletter) {
+                                if (selectedMembershipDuration) {
+                                  return (
+                                    <>
+                                      <p style={{ fontFamily: selectedTierDisplay.label === 'Silver tier' ? '"Futura PT Demi"' : '"Futura PT Medium"', color: selectedTierDisplay.color, fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedTierDisplay.label}</p>
+                                      <div className="flex justify-between items-baseline" style={{ marginTop: '2px' }}>
+                                        <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: 0 }}>{selectedMembershipDuration}</p>
+                                        {invitesBlock}
+                                      </div>
+                                    </>
+                                  );
+                                }
+                                return (
+                                  <div className="flex justify-between items-baseline" style={{ marginTop: '2px' }}>
+                                    <p style={{ fontFamily: selectedTierDisplay.label === 'Silver tier' ? '"Futura PT Demi"' : '"Futura PT Medium"', color: selectedTierDisplay.color, fontSize: '10px', margin: 0 }}>{selectedTierDisplay.label}</p>
+                                    {invitesBlock}
+                                  </div>
+                                );
+                              }
+                              return (
+                                <>
+                                  <div className="flex justify-between items-baseline" style={{ marginTop: '2px' }}>
+                                    <p style={{ fontFamily: selectedTierDisplay.label === 'Silver tier' ? '"Futura PT Demi"' : '"Futura PT Medium"', color: selectedTierDisplay.color, fontSize: '10px', margin: 0 }}>{selectedTierDisplay.label}</p>
+                                    {invitesBlock}
+                                  </div>
+                                  {selectedMembershipDuration && (
+                                    <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedMembershipDuration}</p>
+                                  )}
+                                </>
+                              );
+                            })()}
                           </div>
                           <div className="grid grid-cols-3 gap-4 text-center" style={{ paddingTop: '10px' }}>
                               <div>
@@ -885,57 +1196,206 @@ export default function AdminClients() {
                               </div>
                             </div>
                         </div>
-                        {/* Rewards section: photos, videos, tags */}
-                        {selectedClient && (
-                          <div className="bg-white border border-gray-200 p-4 mb-6">
-                            <div className="grid grid-cols-3 gap-4 text-center">
-                              <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{getRewardsRow(selectedClient, 0).photosCount}</p>
-                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>PHOTOS</p>
+                        {/* Rewards section: photos, videos, tags – tap to expand/collapse */}
+                        {selectedClient && (() => {
+                          const rewards = getRewardsRow(selectedClient, 0);
+                          const media = getAffiliateMediaForClient(selectedClient);
+                          const toggle = (key: 'photos' | 'videos' | 'tags') => {
+                            setRewardsExpand((prev) => (prev === key ? null : key));
+                          };
+                          return (
+                            <div className="bg-white border border-gray-200 p-4 mb-6">
+                              <div className="grid grid-cols-3 gap-4 text-center">
+                                <button
+                                  type="button"
+                                  onClick={() => toggle('photos')}
+                                  className="text-center cursor-pointer border-0 bg-transparent p-0"
+                                  style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}
+                                >
+                                  <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px', margin: 0 }}>{media.photos.length}</p>
+                                  <p style={{ margin: 0 }}>PHOTOS</p>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => toggle('videos')}
+                                  className="text-center cursor-pointer border-0 bg-transparent p-0"
+                                  style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}
+                                >
+                                  <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px', margin: 0 }}>{media.videos.length}</p>
+                                  <p style={{ margin: 0 }}>VIDEOS</p>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => toggle('tags')}
+                                  className="text-center cursor-pointer border-0 bg-transparent p-0"
+                                  style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}
+                                >
+                                  <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px', margin: 0 }}>{media.socials.length}</p>
+                                  <p style={{ margin: 0 }}>SOCIALS</p>
+                                </button>
                               </div>
-                              <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{getRewardsRow(selectedClient, 0).videosCount}</p>
-                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>VIDEOS</p>
-                              </div>
-                              <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{getRewardsRow(selectedClient, 0).tagsCount}</p>
-                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>TAGS</p>
-                              </div>
+                              {rewardsExpand === 'photos' && media.photos.length > 0 && (
+                                <div className="mt-4 pt-4" style={{ borderTop: '1px solid #e5e7eb' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', gap: '10px', width: '284px', maxWidth: '100%' }}>
+                                      {media.photos.map((url: string, i: number) => (
+                                        <div
+                                          key={i}
+                                          role="button"
+                                          tabIndex={0}
+                                          onClick={() => {
+                                            setMediaViewerUrls(media.photos);
+                                            setMediaViewerIndex(i);
+                                            setShowMediaViewer(true);
+                                          }}
+                                          onKeyDown={(e) => {
+                                            if (e.key === 'Enter' || e.key === ' ') {
+                                              e.preventDefault();
+                                              setMediaViewerUrls(media.photos);
+                                              setMediaViewerIndex(i);
+                                              setShowMediaViewer(true);
+                                            }
+                                          }}
+                                          style={{ width: '88px', flexShrink: 0, position: 'relative', cursor: 'pointer' }}
+                                        >
+                                          <div style={affiliateFrameStyle}>
+                                            {/\.(jpg|jpeg|png|gif|webp)$/i.test(url) || url.startsWith('data:') || url.includes('gallery-mock') || url.includes('/assets/') ? (
+                                              <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+                                            ) : (
+                                              <a href={url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center text-xs text-gray-500 p-2 break-all" style={{ width: '100%', height: '100%' }} onClick={(e) => e.stopPropagation()}>View</a>
+                                            )}
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                              {rewardsExpand === 'photos' && media.photos.length === 0 && (
+                                <div className="mt-4 pt-4 flex justify-center" style={{ borderTop: '1px solid #e5e7eb' }}>
+                                  <p className="text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>No photos submitted yet.</p>
+                                </div>
+                              )}
+                              {rewardsExpand === 'videos' && media.videos.length > 0 && (
+                                <div className="mt-4 pt-4" style={{ borderTop: '1px solid #e5e7eb' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', gap: '10px', width: '284px', maxWidth: '100%' }}>
+                                      {media.videos.map((url: string, i: number) => {
+                                        const isImageUrl = url.includes('gallery-mock') || url.includes('/assets/') || /\.(jpg|jpeg|png|gif|webp)$/i.test(url) || url.startsWith('data:');
+                                        return (
+                                          <div
+                                            key={i}
+                                            role="button"
+                                            tabIndex={0}
+                                            onClick={() => {
+                                              setMediaViewerUrls(media.videos.map((u: string) => (u.includes('gallery-mock') || u.includes('/assets/') || /\.(jpg|jpeg|png|gif|webp)$/i.test(u) || u.startsWith('data:') ? u : '/assets/gallery-mock.png')));
+                                              setMediaViewerIndex(i);
+                                              setShowMediaViewer(true);
+                                            }}
+                                            onKeyDown={(e) => {
+                                              if (e.key === 'Enter' || e.key === ' ') {
+                                                e.preventDefault();
+                                                setMediaViewerUrls(media.videos.map((u: string) => (u.includes('gallery-mock') || u.includes('/assets/') || /\.(jpg|jpeg|png|gif|webp)$/i.test(u) || u.startsWith('data:') ? u : '/assets/gallery-mock.png')));
+                                                setMediaViewerIndex(i);
+                                                setShowMediaViewer(true);
+                                              }
+                                            }}
+                                            style={{ width: '88px', flexShrink: 0, position: 'relative', cursor: 'pointer' }}
+                                          >
+                                            <div style={affiliateFrameStyle}>
+                                              {isImageUrl ? (
+                                                <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+                                              ) : (
+                                                <a href={url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full h-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#EB1C24' }} onClick={(e) => e.stopPropagation()}>Watch</a>
+                                              )}
+                                            </div>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                              {rewardsExpand === 'videos' && media.videos.length === 0 && (
+                                <div className="mt-4 pt-4 flex justify-center" style={{ borderTop: '1px solid #e5e7eb' }}>
+                                  <p className="text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>No videos submitted yet.</p>
+                                </div>
+                              )}
+                              {rewardsExpand === 'tags' && media.socials.length > 0 && (
+                                <div className="mt-4 pt-4" style={{ borderTop: '1px solid #e5e7eb' }}>
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                    {media.socials.map((social: { platform: string; link: string }, i: number) => (
+                                      <div key={i} style={{ position: 'relative' }}>
+                                        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', textTransform: 'uppercase', margin: '0 0 8px 0', fontWeight: 500 }}>
+                                          {String(social.platform || 'LINK').toUpperCase()}:
+                                        </p>
+                                        <a
+                                          href={social.link}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textDecoration: 'underline', wordBreak: 'break-all', display: 'block', marginBottom: 0, textTransform: 'uppercase' }}
+                                        >
+                                          {String(social.link || '').toUpperCase()}
+                                        </a>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              {rewardsExpand === 'tags' && media.socials.length === 0 && (
+                                <div className="mt-4 pt-4 flex justify-center" style={{ borderTop: '1px solid #e5e7eb' }}>
+                                  <p className="text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>No socials submitted yet.</p>
+                                </div>
+                              )}
                             </div>
-                          </div>
-                        )}
+                          );
+                        })()}
                         <div className="bg-white border border-gray-200 p-4 mb-6">
-                          <div className="space-y-3 text-sm">
+                          <div className="flex flex-col gap-y-[9px] text-sm">
                             <div className="flex justify-between">
-                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '11px' }}>JOIN DATE:</span>
-                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px' }}>{selectedJoinDate}</span>
+                              <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>JOIN DATE:</span>
+                              <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '11px' }}>{selectedJoinDate}</span>
                             </div>
                             <div className="flex justify-between">
-                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '11px' }}>EMAIL:</span>
-                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px' }}>{(selectedClient?.email || '').toUpperCase()}</span>
+                              <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>EMAIL:</span>
+                              <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '11px' }}>{(selectedClient?.email || '').toUpperCase()}</span>
                             </div>
                             <div className="flex justify-between">
-                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '11px' }}>BIRTHDAY:</span>
-                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px' }}>{selectedBirthday}</span>
+                              <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>BIRTHDAY:</span>
+                              <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '11px' }}>{selectedBirthday}</span>
                             </div>
                             <div className="flex justify-between">
-                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '11px' }}>PHONE:</span>
-                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px' }}>{(selectedClient?.phone || '—').toUpperCase()}</span>
+                              <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>PHONE:</span>
+                              <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '11px' }}>{(selectedClient?.phone || '—').toUpperCase()}</span>
                             </div>
                             {(['facebook', 'instagram', 'twitter', 'tiktok', 'youtube', 'linkedin'] as const).map((key) => {
+                              /* Profile socials: from sign-up or account profile settings */
                               const val = (selectedClient as any)?.[key];
                               if (!val || String(val).trim() === '') return null;
                               const label = key.toLowerCase() + ':';
+                              const url = getSocialUrl(key, String(val).trim());
+                              const displayVal = String(val).trim().toUpperCase();
                               return (
                                 <div key={key} className="flex justify-between">
-                                  <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '11px' }}>{label}</span>
-                                  <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px' }}>{String(val).trim().toUpperCase()}</span>
+                                  <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>{label}</span>
+                                  {url !== '#' ? (
+                                    <a
+                                      href={url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      style={{ fontFamily: '"Futura PT Demi"', color: '#EB1C24', fontSize: '11px', textDecoration: 'none' }}
+                                    >
+                                      {displayVal}
+                                    </a>
+                                  ) : (
+                                    <span style={{ fontFamily: '"Futura PT Demi"', color: '#EB1C24', fontSize: '11px' }}>{displayVal}</span>
+                                  )}
                                 </div>
                               );
                             })}
                             <div className="flex justify-between items-start">
-                              <span style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '11px' }}>ADDRESS:</span>
-                              <span className="text-right" style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', maxWidth: '60%' }}>
+                              <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>ADDRESS:</span>
+                              <span className="text-right" style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '11px', maxWidth: '60%' }}>
                                 {selectedPrimaryAddress === '—' ? (
                                   '—'
                                 ) : (
@@ -1380,8 +1840,10 @@ export default function AdminClients() {
                                   )}
                                 </div>
                               );
-                            })() : (
-                              selectedOrderHistory.map((order: any, index: number) => (
+                            })(                            ) : (
+                              selectedOrderHistory.map((order: any, index: number) => {
+                                const rawOrder = selectedRawOrders.find((o: any) => o.id === order.id);
+                                return (
                                 <div
                                   key={order.id || index}
                                   className="bg-white border border-gray-200 p-4 cursor-pointer hover:bg-gray-50 transition-colors"
@@ -1389,23 +1851,46 @@ export default function AdminClients() {
                                   role="button"
                                   tabIndex={0}
                                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandedOrderId(order.id); } }}
+                                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'stretch', gap: '12px' }}
                                 >
-                                  <div className="flex justify-between items-center mb-2">
-                                    <div>
-                                      <h4 style={{ fontFamily: '"Futura PT Book"', fontSize: '13px', color: '#000000' }}>{(() => {
-                                        const raw = (selectedRawOrders.find((o: any) => o.id === order.id)?.orderNumber || order.id || '').toString();
+                                  <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                    <p className="text-xs" style={{ fontFamily: '"Covered By Your Grace", cursive', fontSize: '16px', color: '#000000', margin: 0, lineHeight: 1.25 }}>{order.date}</p>
+                                    <div style={{ marginTop: '2px' }}>
+                                      <h4 style={{ fontFamily: '"Futura PT Demi"', fontSize: '11px', color: '#808080', margin: 0 }}>{(() => {
+                                        const raw = (rawOrder?.orderNumber || order.id || '').toString();
                                         const num = raw.replace(/^ORDER\s*#?\s*/i, '').trim() || raw.replace(/^#/, '');
                                         return num ? `ORDER #${num}` : '—';
                                       })()}</h4>
-                                      <p className="text-xs mt-1" style={{ fontFamily: '"Futura PT Demi"', color: '#808080' }}>{order.date}</p>
-                                      <p className="text-sm mt-1" style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24' }}>${order.amount.toLocaleString()}</p>
                                     </div>
-                                    <div className="text-right">
-                                      <p className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">{order.status}</p>
-                                    </div>
+                                    <p className="text-sm mt-1" style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: 0, marginTop: '2px', transform: 'translateY(-4px)' }}>${order.amount.toLocaleString()}</p>
+                                  </div>
+                                  <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                                    {(() => {
+                                      const s = (order.status || '').toUpperCase().replace(/\s+/g, ' ');
+                                      const pillStyle: Record<string, string> = {
+                                        height: '24px',
+                                        padding: '0 8px',
+                                        boxSizing: 'border-box',
+                                        borderRadius: '4px',
+                                        fontFamily: '"Futura PT Medium"',
+                                        fontSize: '11px',
+                                        ...(s === 'DELIVERED' ? { backgroundColor: 'rgba(235, 28, 36, 0.15)', color: '#EB1C24' }
+                                          : s === 'SHIPPED' ? { backgroundColor: 'rgba(34, 197, 94, 0.2)', color: '#15803d' }
+                                          : s === 'AWAITING FORM' || s === 'AWAITING ORDER FORM' ? { backgroundColor: 'rgba(234, 179, 8, 0.2)', color: '#a16207' }
+                                          : s === 'CANCELED' || s === 'CANCELLED' ? { backgroundColor: 'rgba(107, 114, 128, 0.2)', color: '#6b7280' }
+                                          : { backgroundColor: '#f3f4f6', color: '#808080' }),
+                                      };
+                                      const displayStatus = s === 'AWAITING ORDER FORM' ? 'AWAITING FORM' : order.status;
+                                      return (
+                                        <span className="admin-order-status-pill" style={pillStyle}>
+                                          <span style={{ lineHeight: 1 }}>{displayStatus}</span>
+                                        </span>
+                                      );
+                                    })()}
                                   </div>
                                 </div>
-                              ))
+                                );
+                              })
                             )}
                           </div>
                         )}
@@ -1426,24 +1911,67 @@ export default function AdminClients() {
                             ))}
                           </div>
                         )}
-                        {detailsTab === 'reviews' && selectedClient && (
-                          <div className="bg-white border border-gray-200 p-4">
-                            <div className="grid grid-cols-3 gap-4 text-center">
-                              <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{getReviewsTabRow(selectedClient, 0).totalReviews}</p>
-                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>TOTAL</p>
+                        {detailsTab === 'reviews' && selectedClient && (() => {
+                          const email = (selectedClient.email || '').trim().toLowerCase();
+                          let reviewList: Array<{ id?: string; date?: string; createdAt?: string; submittedAt?: string; text?: string; rating?: number; hasPhoto?: boolean; hasVideo?: boolean; status?: string; pending?: boolean }> = [];
+                          try {
+                            const raw = email ? localStorage.getItem(`userSubmittedReviews_${email}`) : null;
+                            if (raw) {
+                              const data = JSON.parse(raw);
+                              const list = Array.isArray(data) ? data : (data?.reviews || []);
+                              const sortTime = (r: any) => {
+                                const t = r.updatedAt ?? r.updated_at ?? r.date ?? r.createdAt ?? r.submittedAt;
+                                if (!t) return 0;
+                                try { return new Date(t).getTime(); } catch { return 0; }
+                              };
+                              reviewList = [...list].sort((a, b) => sortTime(b) - sortTime(a));
+                            }
+                          } catch {
+                            // ignore
+                          }
+                          const row = getReviewsTabRow(selectedClient, 0);
+                          return (
+                            <div className="bg-white border border-gray-200 p-4">
+                              <div className="grid grid-cols-3 gap-4 text-center">
+                                <div>
+                                  <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{row.totalReviews}</p>
+                                  <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>TOTAL</p>
+                                </div>
+                                <div>
+                                  <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{row.reviewsWithPhotosVideos}</p>
+                                  <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>MEDIA</p>
+                                </div>
+                                <div>
+                                  <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{row.pendingReviews}</p>
+                                  <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>PENDING</p>
+                                </div>
                               </div>
-                              <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{getReviewsTabRow(selectedClient, 0).reviewsWithPhotosVideos}</p>
-                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>MEDIA</p>
-                              </div>
-                              <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{getReviewsTabRow(selectedClient, 0).pendingReviews}</p>
-                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>PENDING</p>
-                              </div>
+                              {reviewList.length > 0 && (
+                                <div className="mt-4 pt-4" style={{ borderTop: '1px solid #e5e7eb' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', marginBottom: '8px', textTransform: 'uppercase' }}>ALL REVIEWS (NEWEST FIRST)</p>
+                                  <div className="space-y-3 max-h-64 overflow-y-auto">
+                                    {reviewList.map((r: any, i: number) => {
+                                      const dateStr = (r.updatedAt ?? r.updated_at ?? r.date ?? r.createdAt ?? r.submittedAt) || '—';
+                                      const displayDate = typeof dateStr === 'string' ? (() => { try { return new Date(dateStr).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }); } catch { return dateStr; } })() : '—';
+                                      return (
+                                        <div key={r.id ?? i} className="py-3 border-b border-gray-100 last:border-0">
+                                          <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', margin: 0 }}>{displayDate}</p>
+                                          {(r.rating != null) && <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '2px 0 0 0' }}>Rating: {r.rating}</p>}
+                                          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', margin: (r.rating != null ? '2px' : '4px') + ' 0 0 0' }}>{r.text ?? r.message ?? r.content ?? '—'}</p>
+                                          {(r.hasPhoto || r.hasVideo) && (
+                                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '4px 0 0 0' }}>
+                                              {(r.status === 'pending' || r.pending) ? 'PENDING' : 'APPROVED'}
+                                            </p>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
                             </div>
-                          </div>
-                        )}
+                          );
+                        })()}
                         {detailsTab === 'messages' && selectedClient && (() => {
                           const email = (selectedClient.email || '').trim().toLowerCase();
                           let messages: Array<{ id: string; message: string; timestamp?: string | number; type?: string; subject?: string }> = [];
@@ -1587,7 +2115,7 @@ export default function AdminClients() {
                           className="absolute left-0 py-1 bg-white border border-black shadow-lg z-20 min-w-[120px]"
                         style={{ borderWidth: '1.3px', marginTop: '7px' }}
                       >
-                        {SORT_OPTIONS.map((opt) => (
+                        {SORT_OPTIONS.filter((opt) => opt !== sortOption).map((opt) => (
                           <button
                             key={opt}
                             type="button"
@@ -1598,8 +2126,8 @@ export default function AdminClients() {
                             className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
                             style={{
                               fontFamily: '"Futura PT Book"',
-                              color: sortOption === opt ? '#EB1C24' : '#000',
-                              fontWeight: sortOption === opt ? 500 : 400,
+                              color: '#000',
+                              fontWeight: 400,
                             }}
                           >
                             {sortOptionToLabel(opt)}
@@ -1768,6 +2296,22 @@ export default function AdminClients() {
                 )}
               </div>
 
+              {selectedClientEmail && selectedClient && detailsTab === 'orders' && expandedOrderId && (() => {
+                const expandedOrder = selectedRawOrders.find((o: any) => o.id === expandedOrderId);
+                const status = (expandedOrder?.status || '').toUpperCase();
+                const isCancellable = expandedOrder && status !== 'DELIVERED' && status !== 'SHIPPED' && status !== 'CANCELED';
+                if (!isCancellable) return null;
+                return (
+                  <button
+                    type="button"
+                    onClick={() => setShowCancelOrderConfirm(true)}
+                    className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                    style={{ ...pageActionButtonStyle, marginTop: '14px' }}
+                  >
+                    CANCEL ORDER
+                  </button>
+                );
+              })()}
               {selectedClientEmail && selectedClient && (
                 <button
                   type="button"
@@ -1812,6 +2356,114 @@ export default function AdminClients() {
         cancelText="CANCEL"
         dataAttribute="block-client-confirm"
       />
+      <ConfirmationModal
+        isOpen={showCancelOrderConfirm}
+        onClose={() => setShowCancelOrderConfirm(false)}
+        onConfirm={() => {
+          const email = (selectedClientEmail || '').trim().toLowerCase();
+          if (!email || !expandedOrderId) {
+            setShowCancelOrderConfirm(false);
+            setExpandedOrderId(null);
+            return;
+          }
+          try {
+            const raw = localStorage.getItem(`userOrders_${email}`);
+            const data = raw ? JSON.parse(raw) : null;
+            if (data && (Array.isArray(data.activeOrders) || Array.isArray(data.pastOrders))) {
+              const active = [...(data.activeOrders || [])];
+              const past = [...(data.pastOrders || [])];
+              const id = expandedOrderId;
+              const inActiveIdx = active.findIndex((o: any) => (o.id || '').toString() === (id || '').toString());
+              const inPastIdx = past.findIndex((o: any) => (o.id || '').toString() === (id || '').toString());
+              const canceledOrder = { status: 'CANCELED', canceledAt: new Date().toISOString() };
+              if (inActiveIdx >= 0) {
+                const [order] = active.splice(inActiveIdx, 1);
+                past.push({ ...order, ...canceledOrder });
+              } else if (inPastIdx >= 0) {
+                past[inPastIdx] = { ...past[inPastIdx], ...canceledOrder };
+              }
+              localStorage.setItem(`userOrders_${email}`, JSON.stringify({ ...data, activeOrders: active, pastOrders: past }));
+            }
+          } catch {
+            // ignore
+          }
+          setExpandedOrderId(null);
+          setShowCancelOrderConfirm(false);
+        }}
+        title="CANCEL ORDER?"
+        message="THIS ORDER WILL BE MARKED AS CANCELLED AND REFUNDED."
+        confirmText="CONFIRM"
+        cancelText="CANCEL"
+        dataAttribute="cancel-order-confirm"
+      />
+      <ImageViewerModal
+        isOpen={showMediaViewer}
+        onClose={() => setShowMediaViewer(false)}
+        images={mediaViewerUrls}
+        currentIndex={mediaViewerIndex}
+        onNavigate={setMediaViewerIndex}
+      />
+      {showInvitesPopup && (
+        <div
+          className="fixed inset-0 z-[99999] flex items-center justify-center"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)' }}
+          onClick={() => setShowInvitesPopup(false)}
+          aria-hidden="true"
+        >
+          <div
+            className="p-4 overflow-hidden bg-white"
+            style={{
+              maxWidth: '360px',
+              width: '90%',
+              maxHeight: '85vh',
+              border: '1.3px solid black',
+              borderRadius: 0,
+              transform: 'translateY(-6px)',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center flex-shrink-0" style={{ marginBottom: '12px', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }}>
+              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: 0, textTransform: 'uppercase', fontWeight: 500, textAlign: 'left' }}>INVITE HISTORY</p>
+              <button
+                type="button"
+                onClick={() => setShowInvitesPopup(false)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                aria-label="Close"
+              >
+                <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+              </button>
+            </div>
+            <div className="overflow-y-auto flex-1 min-h-0" style={{ fontSize: '10px' }}>
+              {invitesDetailRows.length === 0 ? (
+                <p style={{ fontFamily: '"Futura PT Book"', color: '#808080', margin: 0, textAlign: 'center', padding: '16px 0', fontSize: '10px', textTransform: 'uppercase' }}>NO INVITES YET.</p>
+              ) : (
+                <table className="w-full" style={{ borderCollapse: 'collapse', fontFamily: '"Futura PT Book"' }}>
+                  <thead>
+                    <tr>
+                      <th style={{ textAlign: 'left', padding: '5px 10px', fontFamily: '"Futura PT Medium"', fontWeight: 500, color: '#000000', fontSize: '10px', textTransform: 'uppercase' }}>DATE USED</th>
+                      <th style={{ textAlign: 'center', padding: '5px 10px', fontFamily: '"Futura PT Medium"', fontWeight: 500, color: '#000000', fontSize: '10px', textTransform: 'uppercase' }}>CLIENT</th>
+                      <th style={{ textAlign: 'center', padding: '5px 10px', fontFamily: '"Futura PT Medium"', fontWeight: 500, color: '#000000', fontSize: '10px', textTransform: 'uppercase' }}>INVITES</th>
+                      <th style={{ textAlign: 'right', padding: '5px 10px', fontFamily: '"Futura PT Medium"', fontWeight: 500, color: '#000000', fontSize: '10px', textTransform: 'uppercase' }}>AMOUNT</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {invitesDetailRows.map((row, i) => (
+                      <tr key={i}>
+                        <td style={{ padding: '5px 10px', color: '#000000', fontSize: '10px', fontFamily: '"Futura PT Book"', textTransform: 'uppercase' }}>{row.dateUsed.toUpperCase()}</td>
+                        <td style={{ padding: '5px 10px', color: '#808080', fontSize: '10px', fontFamily: '"Futura PT Medium"', textTransform: 'uppercase', textAlign: 'center' }}>{row.userName}</td>
+                        <td style={{ padding: '5px 10px', color: row.inviteCount >= 1 ? '#EB1C24' : '#000000', fontSize: '10px', fontFamily: '"Futura PT Book"', textAlign: 'center' }}>{row.inviteCount}</td>
+                        <td style={{ padding: '5px 10px', color: '#15803d', fontSize: '10px', fontFamily: '"Futura PT Medium"', textAlign: 'right' }}>+${row.spent.toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

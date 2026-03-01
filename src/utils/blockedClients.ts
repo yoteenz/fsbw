@@ -6,9 +6,14 @@
  * To prevent blocked clients from making purchases (including guest checkout),
  * call isClientBlocked({ email, phone, firstName, lastName, address, ... }) before
  * allowing checkout.
+ *
+ * Referral-code-used tracking uses the same credential matching so the same
+ * person cannot use a referral code again on a different account (same name,
+ * phone, address, etc.).
  */
 
 const BLOCKED_CREDENTIALS_KEY = 'blockedCredentials';
+const REFERRAL_CODE_USED_CREDENTIALS_KEY = 'referralCodeUsedCredentials';
 const DELETED_USERS_KEY = 'deletedUsers';
 const REGISTERED_USERS_KEY = 'registeredUsers';
 
@@ -87,6 +92,39 @@ export function getBlockedCredentials(): BlockedCredential[] {
     return Array.isArray(arr) ? arr : [];
   } catch {
     return [];
+  }
+}
+
+// ---- Referral code used (same identity cannot use a referral code again) ----
+
+/** Get all credential fingerprints that have already used a referral code (first-purchase discount) */
+export function getReferralCodeUsedCredentials(): BlockedCredential[] {
+  try {
+    const raw = localStorage.getItem(REFERRAL_CODE_USED_CREDENTIALS_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Check if this client identity has already used a referral code (any account with same name/phone/email/address). Prevents multiple accounts from reusing referral codes. */
+export function hasIdentityAlreadyUsedReferralCode(client: Record<string, unknown>): boolean {
+  const fp = getCredentialFingerprint(client);
+  const used = getReferralCodeUsedCredentials();
+  return used.some((u) => credentialsMatch(u, fp));
+}
+
+/** Record that this client identity used a referral code (call after successful first purchase with referral). Use same shape as getCredentialFingerprint (email, firstName, lastName, phone, address). */
+export function recordReferralCodeUsedByClient(client: Record<string, unknown>): void {
+  const fp = getCredentialFingerprint(client);
+  const used = getReferralCodeUsedCredentials();
+  if (used.some((u) => credentialsMatch(u, fp))) return;
+  used.push(fp);
+  try {
+    localStorage.setItem(REFERRAL_CODE_USED_CREDENTIALS_KEY, JSON.stringify(used));
+  } catch {
+    // ignore
   }
 }
 

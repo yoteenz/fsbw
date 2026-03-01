@@ -107,7 +107,7 @@ function ReferralsPage() {
       }
       const data = JSON.parse(raw);
       const allOrders = [...(data.activeOrders || []), ...(data.pastOrders || [])];
-      const hasDelivered = allOrders.some((o: any) => o.status === 'DELIVERED');
+      const hasDelivered = allOrders.some((o: any) => (o.status || '').toUpperCase() === 'DELIVERED' || (o.status || '').toUpperCase() === 'SHIPPED');
       if (hasDelivered) {
         setCodeStatus('active');
         return;

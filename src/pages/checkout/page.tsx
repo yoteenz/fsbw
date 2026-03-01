@@ -6,6 +6,7 @@ import { handlePaymentOption, PaymentProvider, PaymentData } from '../../utils/p
 import { createRouteProtection, prepareRouteProtectionData } from '../../utils/routeProtection';
 import { getPointsMultiplier } from '../../constants/tiers';
 import { getEffectiveSubscriptionTier, getEffectiveTierName } from '../../utils/adminAuth';
+import { hasIdentityAlreadyUsedReferralCode, recordReferralCodeUsedByClient } from '../../utils/blockedClients';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 
@@ -1158,26 +1159,29 @@ function CheckoutPage() {
     }
   }, [giftCardBalance, orderAmount, taxesProcessing, shippingHandling, selectedProcessing, packageProtection, isSubscriptionUpgrade, appliedReferralCode, appliedDiscount]);
   
-  // Check if code is a referral code
+  // Check if code is a referral code (matches referralCode or referralNumber so admin-created codes work)
   const isReferralCode = (code: string): boolean => {
     try {
       const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
       const upperCode = code.trim().toUpperCase();
-      return registeredUsers.some((user: any) =>
-        user.referralCode && user.referralCode.toUpperCase() === upperCode
-      );
+      return registeredUsers.some((user: any) => {
+        const codeMatch = (user.referralCode && user.referralCode.toUpperCase() === upperCode) ||
+          (user.referralNumber && user.referralNumber.toUpperCase() === upperCode);
+        return !!codeMatch;
+      });
     } catch (e) {
       return false;
     }
   };
 
-  // Referral codes are inactive until the owner has an order marked complete & delivered. Existing users with orders but no hasMadeFirstPurchase flag are treated as active.
+  // Referral codes are inactive until the owner has an order marked complete & delivered (or SHIPPED). Existing users with orders but no hasMadeFirstPurchase flag are treated as active.
   const getReferralCodeOwner = (code: string): { user: any; isActive: boolean } | null => {
     try {
       const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
       const upperCode = code.trim().toUpperCase();
       const owner = registeredUsers.find((user: any) =>
-        user.referralCode && user.referralCode.toUpperCase() === upperCode
+        (user.referralCode && user.referralCode.toUpperCase() === upperCode) ||
+        (user.referralNumber && user.referralNumber.toUpperCase() === upperCode)
       );
       if (!owner) return null;
       let isActive = false;
@@ -1189,7 +1193,7 @@ function CheckoutPage() {
           const activeOrders = data.activeOrders || [];
           const pastOrders = data.pastOrders || [];
           const allOrders = [...activeOrders, ...pastOrders];
-          const hasDelivered = allOrders.some((o: any) => o.status === 'DELIVERED');
+          const hasDelivered = allOrders.some((o: any) => (o.status || '').toUpperCase() === 'DELIVERED' || (o.status || '').toUpperCase() === 'SHIPPED');
           if (hasDelivered) isActive = true;
           if (!isActive && owner.hasMadeFirstPurchase !== true && allOrders.length > 0) isActive = true;
         }
@@ -1285,16 +1289,35 @@ function CheckoutPage() {
         setDiscountCodeError('THIS REFERRAL CODE IS NOT YET ACTIVE.');
         return;
       }
-      // Referrer cannot use their own code
+      // Rule: users cannot use their own referral code
       const buyerEmail = (email || '').trim().toLowerCase();
       const ownerEmail = (ownerResult.user?.email || '').trim().toLowerCase();
       if (buyerEmail && ownerEmail && buyerEmail === ownerEmail) {
         setDiscountCodeError('YOU CANNOT USE YOUR OWN REFERRAL CODE.');
         return;
       }
-      // Referral codes can only be used on the referred customer's first purchase
+      // Rule: referral codes apply to first purchase only; existing customers cannot use a referral code
       if (currentUserHasExistingOrders()) {
         setDiscountCodeError('REFERRAL CODES CAN ONLY BE USED ON YOUR FIRST PURCHASE.');
+        return;
+      }
+      // Rule: same customer identity (name, phone, email, address) cannot use a referral code more than once across any account
+      let currentUser: any = null;
+      try {
+        currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      } catch {
+        // ignore
+      }
+      const addressStr = [shippingAddress, city, state, zip].filter(Boolean).join(', ').trim();
+      const buyerIdentity = {
+        email: (email || currentUser?.email || '').trim(),
+        firstName: (firstName || currentUser?.firstName || '').trim(),
+        lastName: (lastName || currentUser?.lastName || '').trim(),
+        phone: (phoneNumber || currentUser?.phoneNumber || currentUser?.phone || '').trim(),
+        address: addressStr,
+      };
+      if (hasIdentityAlreadyUsedReferralCode(buyerIdentity)) {
+        setDiscountCodeError('REFERRAL CODES ARE FOR FIRST TIME CUSTOMERS ONLY.');
         return;
       }
       if (appliedGiftCardBalance > 0) {
@@ -5185,6 +5208,22 @@ function CheckoutPage() {
                       }
                     } catch (error) {
                       console.error('Error crediting referrer:', error);
+                    }
+                  }
+                  
+                  // Record this identity as having used a referral code (prevents same person reusing on another account)
+                  if (appliedReferralCode && appliedReferralCode.trim() && email) {
+                    try {
+                      const addressStr = [shippingAddress, city, state, zip].filter(Boolean).join(', ').trim();
+                      recordReferralCodeUsedByClient({
+                        email: (email || '').trim(),
+                        firstName: (firstName || '').trim(),
+                        lastName: (lastName || '').trim(),
+                        phone: (phoneNumber || '').trim(),
+                        address: addressStr,
+                      });
+                    } catch (e) {
+                      // non-fatal
                     }
                   }
                   
