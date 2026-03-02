@@ -100,7 +100,7 @@ function AffiliatePage() {
   };
 
   // Only the admin (mock-data) account gets test orders; all others use real data only
-  const isMockOrdersAccount = () => userData && !userData.authProvider && isMockDataAccount(userData);
+  const isMockOrdersAccount = () => userData && isMockDataAccount(userData);
 
   // Helper function to get a date X days ago
   const getDateDaysAgo = (daysAgo: number): string => {
@@ -412,12 +412,9 @@ function AffiliatePage() {
         return raw ? JSON.parse(raw) : null;
       } catch { return null; }
     })();
-    if (currentUser?.authProvider) {
-      return { ...storedContent };
-    }
-    
+
     // Mock data for admin (mock-data) account orders only - merge with stored content
-    const useMockContent = currentUser && !currentUser.authProvider && isMockDataAccount(currentUser);
+    const useMockContent = currentUser && isMockDataAccount(currentUser);
     const mockContent: { [orderId: string]: { photos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; videos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; socials: Array<{ id: string; platform: string; link: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }> } } = {};
     
     // Mock data for NOIR order (kateena-delivered-1) - has some approved content

@@ -151,6 +151,14 @@ interface AdminHeaderProps {
   breadcrumbParentPath?: string;
   /** Optional custom breadcrumb click handler; when set, used instead of navigate(breadcrumbParentPath) */
   breadcrumbParentOnClick?: () => void;
+  /** When provided, the nav bar search input is controlled by the parent (e.g. client search on clients page) */
+  externalSearchValue?: string;
+  /** Called when the nav bar search input changes; when set with externalSearchValue, search filters are driven by parent */
+  onExternalSearchChange?: (value: string) => void;
+  /** Placeholder for the nav bar search input when using external search */
+  externalSearchPlaceholder?: string;
+  /** When true, hide the search icon (e.g. on client details view) */
+  hideSearchIcon?: boolean;
 }
 
 /**
@@ -165,6 +173,10 @@ export default function AdminHeader({
   breadcrumbParentLabel,
   breadcrumbParentPath,
   breadcrumbParentOnClick,
+  externalSearchValue,
+  onExternalSearchChange,
+  externalSearchPlaceholder,
+  hideSearchIcon = false,
 }: AdminHeaderProps) {
   const navigate = useNavigate();
 
@@ -211,6 +223,18 @@ export default function AdminHeader({
     }
   }, [showNotificationsDropdown, showMessagesDropdown]);
 
+  // Keep search expanded when external search has a value so the filter stays visible (including when returning from client details so user can clear search without clicking search again)
+  useEffect(() => {
+    if (onExternalSearchChange != null && (externalSearchValue ?? '').trim() !== '') {
+      setIsSearchActive(true);
+    }
+  }, [onExternalSearchChange, externalSearchValue, hideSearchIcon]);
+
+  // When hideSearchIcon is true (e.g. client details), always show nav text + back button, not search
+  useEffect(() => {
+    if (hideSearchIcon) setIsSearchActive(false);
+  }, [hideSearchIcon]);
+
   // Debounce function
   const debounce = (func: Function, wait: number) => {
     let timeout: ReturnType<typeof setTimeout>;
@@ -237,7 +261,8 @@ export default function AdminHeader({
 
   // Handle search input blur
   const handleSearchBlur = () => {
-    if (searchQuery.trim() === '') {
+    const value = onExternalSearchChange != null ? (externalSearchValue ?? '') : searchQuery;
+    if (value.trim() === '') {
       setIsSearchActive(false);
     }
   };
@@ -245,13 +270,24 @@ export default function AdminHeader({
   // Handle search input key press
   const handleSearchKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      console.log('Searching for:', searchQuery);
+      const value = onExternalSearchChange != null ? (externalSearchValue ?? '') : searchQuery;
+      console.log('Searching for:', value);
     }
     if (e.key === 'Escape') {
-      setSearchQuery('');
+      if (onExternalSearchChange) {
+        onExternalSearchChange('');
+      } else {
+        setSearchQuery('');
+      }
       setIsSearchActive(false);
     }
   };
+
+  const searchInputValue = onExternalSearchChange != null ? (externalSearchValue ?? '') : searchQuery;
+  const searchInputOnChange = onExternalSearchChange != null
+    ? (e: React.ChangeEvent<HTMLInputElement>) => onExternalSearchChange(e.target.value)
+    : (e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value);
+  const searchPlaceholder = externalSearchPlaceholder ?? 'SEARCH ADMIN...';
 
   // Handle messages: long-press toggles active/inactive (debug: test "no new messages" state)
   const handleMessagesPointerDown = () => {
@@ -461,6 +497,7 @@ export default function AdminHeader({
                     style={{ opacity: isBackPressed ? 0.7 : 1 }}
                   />
                 </button>
+                {!hideSearchIcon && (
                 <button
                   type="button"
                   className="cursor-pointer"
@@ -474,9 +511,10 @@ export default function AdminHeader({
                     height="15"
                   />
                 </button>
+                )}
               </>
             ) : (
-              !isSearchActive && (
+              !isSearchActive && !hideSearchIcon && (
                 <button
                   type="button"
                   className="cursor-pointer"
@@ -496,15 +534,15 @@ export default function AdminHeader({
 
           {/* Center title or search input - Fixed positioning */}
           <div className="flex-1 text-center flex items-center justify-center h-full">
-            {isSearchActive ? (
+            {isSearchActive && !hideSearchIcon ? (
               <div className="w-full flex items-center absolute left-4 right-4">
                 <input
                   type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  value={searchInputValue}
+                  onChange={searchInputOnChange}
                   onBlur={handleSearchBlur}
                   onKeyDown={handleSearchKeyPress}
-                  placeholder="SEARCH ADMIN..."
+                  placeholder={searchPlaceholder}
                   className="w-full bg-transparent border-none outline-none text-xs uppercase placeholder-gray-400"
                   style={{
                     fontFamily: "'Futura PT Medium'",

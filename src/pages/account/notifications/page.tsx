@@ -385,7 +385,7 @@ function NotificationsPage() {
     try {
       const raw = localStorage.getItem('currentUser');
       const user = raw ? JSON.parse(raw) : null;
-      const key = user?.authProvider && user?.email ? `notifications_${user.email}` : 'notifications';
+      const key = user?.email ? `notifications_${user.email}` : 'notifications';
       const stored = localStorage.getItem(key);
       const list: Notification[] = stored && Array.isArray(JSON.parse(stored)) ? JSON.parse(stored) : [];
       const account = getAccountNotifications(user);
@@ -402,7 +402,7 @@ function NotificationsPage() {
     try {
       const rawUser = localStorage.getItem('currentUser');
       const user = rawUser ? JSON.parse(rawUser) : null;
-      const key = user?.authProvider && user?.email ? `notifications_${user.email}` : 'notifications';
+      const key = user?.email ? `notifications_${user.email}` : 'notifications';
       localStorage.setItem(key, JSON.stringify(list));
     } catch (_) {}
   };
@@ -413,7 +413,7 @@ function NotificationsPage() {
     try {
       const rawUser = localStorage.getItem('currentUser');
       const user = rawUser ? JSON.parse(rawUser) : null;
-      const key = user?.authProvider && user?.email ? `notifications_${user.email}` : 'notifications';
+      const key = user?.email ? `notifications_${user.email}` : 'notifications';
       const raw = localStorage.getItem(key);
       const stored: Notification[] = raw && Array.isArray(JSON.parse(raw)) ? JSON.parse(raw) : [];
       const account = getAccountNotifications(user);
@@ -432,7 +432,7 @@ function NotificationsPage() {
       try {
         const rawUser = localStorage.getItem('currentUser');
         const user = rawUser ? JSON.parse(rawUser) : null;
-        const key = user?.authProvider && user?.email ? `notifications_${user.email}` : 'notifications';
+        const key = user?.email ? `notifications_${user.email}` : 'notifications';
         const raw = localStorage.getItem(key);
         const stored: Notification[] = raw && Array.isArray(JSON.parse(raw)) ? JSON.parse(raw) : [];
         const account = getAccountNotifications(user);
@@ -584,14 +584,6 @@ function NotificationsPage() {
                         width="21"
                         height="15"
                         src="/assets/back-button.svg"
-                      />
-                    </button>
-                    <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                      <img
-                        alt="Search icon"
-                        width="16"
-                        height="15"
-                        src="/assets/search-icon.svg"
                       />
                     </button>
                   </>

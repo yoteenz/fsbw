@@ -39,14 +39,6 @@ const sectionHeaderTextStyle: React.CSSProperties = {
   textTransform: 'uppercase'
 };
 
-/** Helper text below OAuth/settings inputs – matches reset password text styling & placement */
-const oauthHelperStyle: React.CSSProperties = {
-  fontFamily: '"Futura PT Book"',
-  fontSize: '10px',
-  color: '#000',
-  margin: '4px 0 0 0'
-};
-
 function SettingsPage() {
   const navigate = useNavigate();
   const [cartCount, setCartCount] = useState(() => {
@@ -138,8 +130,6 @@ function SettingsPage() {
   const [resetNewPassword, setResetNewPassword] = useState('');
   const [resetConfirmPassword, setResetConfirmPassword] = useState('');
   const [resetPasswordError, setResetPasswordError] = useState('');
-  const [oauthPassword, setOauthPassword] = useState('');
-  const [oauthConfirmPassword, setOauthConfirmPassword] = useState('');
   const [showDeleteAccountConfirm, setShowDeleteAccountConfirm] = useState(false);
 
   const socialPrefixes: Record<string, string> = {
@@ -179,11 +169,6 @@ function SettingsPage() {
     } catch (_) {}
   };
 
-  const isOAuthUser = userData?.authProvider === 'google' || userData?.authProvider === 'facebook';
-  const oauthNameBirthdayConfirmed = userData?.nameAndBirthdayConfirmed === true;
-  const birthdayLocked = isOAuthUser && oauthNameBirthdayConfirmed;
-  const nameLocked = isOAuthUser && oauthNameBirthdayConfirmed;
-
   const persistPersonalInfo = (updates: { birthday?: string; firstName?: string; lastName?: string }) => {
     try {
       const email = (userData?.email || '').trim().toLowerCase();
@@ -207,39 +192,6 @@ function SettingsPage() {
         }
       }
       setUserData((prev: any) => (prev ? { ...prev, ...payload } : prev));
-    } catch (_) {}
-  };
-
-  const confirmOAuthNameAndBirthday = () => {
-    try {
-      const email = (userData?.email || '').trim().toLowerCase();
-      if (!email || !isOAuthUser || oauthNameBirthdayConfirmed) return;
-      const pwd = oauthPassword.trim();
-      const pwdConfirm = oauthConfirmPassword.trim();
-      if (!pwd || pwd !== pwdConfirm) return;
-      const payload = {
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
-        birthday: birthday.trim(),
-        password: pwd,
-        nameAndBirthdayConfirmed: true as const
-      };
-      const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-      const idx = registered.findIndex((u: any) => (u.email || '').trim().toLowerCase() === email);
-      if (idx !== -1) {
-        registered[idx] = { ...registered[idx], ...payload };
-        localStorage.setItem('registeredUsers', JSON.stringify(registered));
-      }
-      const current = localStorage.getItem('currentUser');
-      if (current) {
-        const parsed = JSON.parse(current);
-        if ((parsed.email || '').trim().toLowerCase() === email) {
-          localStorage.setItem('currentUser', JSON.stringify({ ...parsed, ...payload }));
-        }
-      }
-      setUserData((prev: any) => (prev ? { ...prev, ...payload } : prev));
-      setOauthPassword('');
-      setOauthConfirmPassword('');
     } catch (_) {}
   };
 
@@ -539,9 +491,6 @@ function SettingsPage() {
                   <button onClick={handleBack} className="cursor-pointer" style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}>
                     <img alt="Back" width="21" height="15" src="/assets/back-button.svg" />
                   </button>
-                  <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                    <img alt="Search" width="16" height="15" src="/assets/search-icon.svg" />
-                  </button>
                 </>
               )}
             </div>
@@ -690,59 +639,30 @@ function SettingsPage() {
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={sectionHeaderWrapperStyle}>
                   <h2 style={sectionHeaderTextStyle}>PERSONAL INFORMATION</h2>
                 </div>
-                {isOAuthUser && !oauthNameBirthdayConfirmed && (
-                  <div style={{ marginBottom: '16px' }}>
-                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24', margin: '0 0 10px 0', textTransform: 'uppercase' }}>
-                      PLEASE CONFIRM YOUR NAME AND BIRTHDAY BELOW. ONCE CONFIRMED, THEY CANNOT BE CHANGED.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={confirmOAuthNameAndBirthday}
-                      disabled={!firstName.trim() || !lastName.trim() || !birthday.trim() || birthday.replace(/\D/g, '').length !== 8 || !oauthPassword.trim() || oauthPassword.trim() !== oauthConfirmPassword.trim()}
-                      style={{
-                        fontFamily: '"Futura PT Medium"',
-                        fontSize: '10px',
-                        color: '#FFFFFF',
-                        backgroundColor: '#EB1C24',
-                        border: '1.3px solid #000',
-                        padding: '8px 12px',
-                        cursor: (firstName.trim() && lastName.trim() && birthday.replace(/\D/g, '').length === 8 && oauthPassword.trim() && oauthPassword.trim() === oauthConfirmPassword.trim()) ? 'pointer' : 'not-allowed',
-                        opacity: (firstName.trim() && lastName.trim() && birthday.replace(/\D/g, '').length === 8 && oauthPassword.trim() && oauthPassword.trim() === oauthConfirmPassword.trim()) ? 1 : 0.6,
-                        textTransform: 'uppercase'
-                      }}
-                    >
-                      CONFIRM NAME & BIRTHDAY
-                    </button>
-                  </div>
-                )}
                 <div style={{ marginBottom: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div>
                     <label style={{ ...labelStyle, marginBottom: '4px' }}>FIRST NAME</label>
                     <input
                       type="text"
                       value={firstName}
-                      readOnly={!isOAuthUser || nameLocked}
-                      placeholder={isOAuthUser && !nameLocked ? 'please confirm your first name' : 'FIRST NAME'}
+                      placeholder="FIRST NAME"
                       className="settings-personal-input"
-                      onChange={isOAuthUser && !nameLocked ? (e) => setFirstName(e.target.value.toUpperCase()) : undefined}
-                      onBlur={isOAuthUser && !nameLocked ? () => persistPersonalInfo({ firstName: firstName.trim(), lastName: lastName.trim() }) : undefined}
+                      onChange={(e) => setFirstName(e.target.value.toUpperCase())}
+                      onBlur={() => persistPersonalInfo({ firstName: firstName.trim(), lastName: lastName.trim() })}
                       style={{ ...inputBaseStyle, marginBottom: 0 }}
                     />
-                    {isOAuthUser && !nameLocked && <p style={oauthHelperStyle}>confirm your first name</p>}
                   </div>
                   <div>
                     <label style={{ ...labelStyle, marginBottom: '4px' }}>LAST NAME</label>
                     <input
                       type="text"
                       value={lastName}
-                      readOnly={!isOAuthUser || nameLocked}
-                      placeholder={isOAuthUser && !nameLocked ? 'please confirm your last name' : 'LAST NAME'}
+                      placeholder="LAST NAME"
                       className="settings-personal-input"
-                      onChange={isOAuthUser && !nameLocked ? (e) => setLastName(e.target.value.toUpperCase()) : undefined}
-                      onBlur={isOAuthUser && !nameLocked ? () => persistPersonalInfo({ firstName: firstName.trim(), lastName: lastName.trim() }) : undefined}
+                      onChange={(e) => setLastName(e.target.value.toUpperCase())}
+                      onBlur={() => persistPersonalInfo({ firstName: firstName.trim(), lastName: lastName.trim() })}
                       style={{ ...inputBaseStyle, marginBottom: 0 }}
                     />
-                    {isOAuthUser && !nameLocked && <p style={oauthHelperStyle}>confirm your last name</p>}
                   </div>
                 </div>
                 <div style={{ marginBottom: '20px', width: 'calc((100% - 12px) / 2)' }}>
@@ -750,45 +670,13 @@ function SettingsPage() {
                   <input
                     type="text"
                     value={birthday}
-                    readOnly={!isOAuthUser || birthdayLocked}
-                    placeholder={isOAuthUser && !birthdayLocked ? 'please confirm your birthday' : 'MM/DD/YYYY'}
+                    placeholder="MM/DD/YYYY"
                     className="settings-personal-input"
-                    onChange={isOAuthUser && !birthdayLocked ? (e) => setBirthday(formatBirthday(e.target.value)) : undefined}
-                    onBlur={isOAuthUser && !birthdayLocked ? () => persistPersonalInfo({ birthday }) : undefined}
+                    onChange={(e) => setBirthday(formatBirthday(e.target.value))}
+                    onBlur={() => persistPersonalInfo({ birthday })}
                     style={{ ...inputBaseStyle, marginBottom: 0 }}
                   />
-                  {isOAuthUser && !birthdayLocked && <p style={oauthHelperStyle}>confirm your birthday</p>}
                 </div>
-                {isOAuthUser && !oauthNameBirthdayConfirmed && (
-                  <>
-                    <div style={{ marginBottom: '12px' }}>
-                      <label style={{ ...labelStyle, marginBottom: '4px' }}>PASSWORD</label>
-                      <input
-                        type="password"
-                        value={oauthPassword}
-                        onChange={(e) => setOauthPassword(e.target.value)}
-                        placeholder="please create your account password"
-                        className="settings-personal-input"
-                        style={{ ...inputBaseStyle }}
-                        autoComplete="new-password"
-                      />
-                      <p style={oauthHelperStyle}>create your account password</p>
-                    </div>
-                    <div style={{ marginBottom: '20px' }}>
-                      <label style={{ ...labelStyle, marginBottom: '4px' }}>CONFIRM PASSWORD</label>
-                      <input
-                        type="password"
-                        value={oauthConfirmPassword}
-                        onChange={(e) => setOauthConfirmPassword(e.target.value)}
-                        placeholder="please create your account password"
-                        className="settings-personal-input"
-                        style={{ ...inputBaseStyle }}
-                        autoComplete="new-password"
-                      />
-                      <p style={oauthHelperStyle}>confirm your password</p>
-                    </div>
-                  </>
-                )}
                 <div style={{ marginBottom: '20px' }}>
                   <label style={labelStyle}>EMAIL</label>
                   <input
@@ -803,15 +691,6 @@ function SettingsPage() {
                 <div style={{ marginBottom: '20px' }}>
                   {!showResetPasswordForm && <label style={labelStyle}>PASSWORD</label>}
                   {!showResetPasswordForm ? (
-                    isOAuthUser ? (
-                      <input
-                        type="password"
-                        readOnly
-                        value="••••••••••"
-                        style={{ ...inputBaseStyle }}
-                        autoComplete="off"
-                      />
-                    ) : (
                     <>
                       <div style={{ position: 'relative' }}>
                         <input
@@ -866,8 +745,7 @@ function SettingsPage() {
                         </button>
                       </div>
                     </>
-                    )
-                  ) : !isOAuthUser ? (
+                  ) : (
                     <>
                       <label style={{ ...labelStyle, marginBottom: '4px' }}>CURRENT PASSWORD</label>
                       <input
@@ -944,13 +822,6 @@ function SettingsPage() {
                         </button>
                       </div>
                     </>
-                  ) : (
-                    <input
-                      type="text"
-                      readOnly
-                      value={userData?.authProvider === 'google' ? 'SIGNED IN WITH GOOGLE' : userData?.authProvider === 'facebook' ? 'SIGNED IN WITH FACEBOOK' : 'SIGNED IN WITH SOCIAL'}
-                      style={{ ...inputBaseStyle, fontFamily: '"Futura PT Demi"', color: '#808080' }}
-                    />
                   )}
                 </div>
                 <div style={{ marginBottom: '24px' }}>

@@ -1729,7 +1729,9 @@ const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length 
                              style={{ 
                                minHeight: '180px',
                                height: 'auto',
-                               marginBottom: '20px'
+                               marginBottom: '20px',
+                               display: 'flex',
+                               justifyContent: 'flex-start'
                              }}
                            >
                              <div
@@ -1738,8 +1740,10 @@ const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length 
                                  gap: '20px',
                                  minHeight: '180px',
                                  alignItems: 'flex-start',
-                                 justifyContent: orderProducts.length === 1 ? 'center' : 'flex-start',
-                                 paddingRight: '10px'
+                                 justifyContent: orderProducts.length === 1 ? 'center' : orderProducts.length === 2 ? 'center' : 'flex-start',
+                                 paddingRight: '10px',
+                                 paddingLeft: orderProducts.length >= 3 ? 'calc(50% - 160px)' : undefined,
+                                 marginLeft: orderProducts.length >= 2 ? '-10px' : undefined,
                                }}
                              >
                               {orderProducts.map((product) => {
@@ -2467,7 +2471,9 @@ const orderProductsArchived = expandedOrder.lineItems && expandedOrder.lineItems
                              style={{ 
                                minHeight: '180px',
                                height: 'auto',
-                               marginBottom: '20px'
+                               marginBottom: '20px',
+                               display: 'flex',
+                               justifyContent: 'flex-start'
                              }}
                            >
                              <div
@@ -2476,8 +2482,10 @@ const orderProductsArchived = expandedOrder.lineItems && expandedOrder.lineItems
                                  gap: '20px',
                                  minHeight: '180px',
                                  alignItems: 'flex-start',
-                                 justifyContent: orderProductsArchived.length === 1 ? 'center' : 'flex-start',
-                                 paddingRight: '10px'
+                                 justifyContent: orderProductsArchived.length === 1 ? 'center' : orderProductsArchived.length === 2 ? 'center' : 'flex-start',
+                                 paddingRight: '10px',
+                                 paddingLeft: orderProductsArchived.length >= 3 ? 'calc(50% - 160px)' : undefined,
+                                 marginLeft: orderProductsArchived.length >= 2 ? '-10px' : undefined,
                                }}
                              >
                               {orderProductsArchived.map((product) => {

@@ -207,7 +207,6 @@ function CheckoutPage() {
   // Validation modals
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [validationMessage, setValidationMessage] = useState('');
-  const [showOAuthConfirmRequiredModal, setShowOAuthConfirmRequiredModal] = useState(false);
   const [fieldToFocus, setFieldToFocus] = useState<string | null>(null);
   const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
   
@@ -1447,28 +1446,10 @@ function CheckoutPage() {
     };
   };
 
-  // OAuth users must confirm name + birthday in settings before placing an order
-  const isOAuthUnconfirmedCheckoutBlocked = (): boolean => {
-    try {
-      const raw = localStorage.getItem('currentUser');
-      if (!raw) return false;
-      const user = JSON.parse(raw);
-      const isOAuth = user?.authProvider === 'google' || user?.authProvider === 'facebook';
-      return !!(isOAuth && !user?.nameAndBirthdayConfirmed);
-    } catch {
-      return false;
-    }
-  };
-
   // Handle payment option click
   const handlePaymentClick = async (provider: PaymentProvider) => {
     if (processingPayment) return; // Prevent multiple clicks
 
-    if (isOAuthUnconfirmedCheckoutBlocked()) {
-      setShowOAuthConfirmRequiredModal(true);
-      return;
-    }
-    
     // Validate shipping method is selected (skip for subscription upgrades)
     if (!isSubscriptionUpgrade && !selectedShippingMethod) {
       setValidationMessage('SHIPPING METHOD IS REQUIRED.');
@@ -4753,10 +4734,6 @@ function CheckoutPage() {
             <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                   <button
                     onClick={() => {
-                  if (isOAuthUnconfirmedCheckoutBlocked()) {
-                    setShowOAuthConfirmRequiredModal(true);
-                    return;
-                  }
                   // Validate required fields (shipping fields only for non-digital orders)
                   if (!isOnlyDigitalProducts && !isSubscriptionUpgrade) {
                     if (!firstName.trim()) {
@@ -5845,21 +5822,6 @@ function CheckoutPage() {
       confirmText="CONFIRM"
       cancelText="CANCEL"
       dataAttribute="sign-out-confirm"
-    />
-
-      {/* OAuth: name + birthday must be confirmed in settings before checkout */}
-      <ConfirmationModal
-      isOpen={showOAuthConfirmRequiredModal}
-      onClose={() => setShowOAuthConfirmRequiredModal(false)}
-      onConfirm={() => {
-        setShowOAuthConfirmRequiredModal(false);
-        navigate('/account/settings');
-      }}
-      title="CONFIRM YOUR DETAILS"
-      message="YOU MUST CONFIRM YOUR NAME AND BIRTHDAY IN ACCOUNT SETTINGS BEFORE PLACING AN ORDER."
-      confirmText="GO TO SETTINGS"
-      cancelText="CLOSE"
-      messageTextTransform="uppercase"
     />
     </>
   );

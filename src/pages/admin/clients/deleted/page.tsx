@@ -184,7 +184,7 @@ export default function AdminDeletedAccounts() {
         registered.push(userWithoutDeletedAt);
       }
       const newDeleted = deleted.filter((u: DeletedUser) => (u.email || '').toLowerCase() !== email)
-        .sort((a: DeletedUser, b: DeletedUser) => new Date(b.deletedAt).getTime() - new Date(a.deletedAt).getTime());
+        .sort((a, b) => new Date(b.deletedAt).getTime() - new Date(a.deletedAt).getTime());
       localStorage.setItem('registeredUsers', JSON.stringify(registered));
       localStorage.setItem('deletedUsers', JSON.stringify(newDeleted));
       setDeletedUsers(newDeleted);

@@ -286,12 +286,12 @@ function ReviewsPage() {
     };
   }, []);
 
-  // Clear shop/tool alert only when that tab is viewed. OAuth users have no mock reviews so skip last-seen updates.
+  // Clear shop/tool alert only when that tab is viewed.
   useEffect(() => {
     try {
       const currentUser = localStorage.getItem('currentUser');
       const user = currentUser ? JSON.parse(currentUser) : null;
-      if (!user?.email || user?.authProvider) return;
+      if (!user?.email) return;
       if (activeTab === 'SHOP') {
         setLastSeenShopCount(user.email, getMockShopReviewCount());
       } else if (activeTab === 'TOOLS') {
@@ -321,15 +321,8 @@ function ReviewsPage() {
   };
 
   const handleBack = () => navigate('/account');
-  const isOAuth = (() => {
-    try {
-      const currentUser = localStorage.getItem('currentUser');
-      const user = currentUser ? JSON.parse(currentUser) : null;
-      return !!(user?.authProvider);
-    } catch { return false; }
-  })();
-  const shopReviewsList = isOAuth ? userSubmittedReviews : [...userSubmittedReviews, ...mockShopReviews];
-  const toolReviewsList = isOAuth ? [] : mockToolReviews;
+  const shopReviewsList = [...userSubmittedReviews, ...mockShopReviews];
+  const toolReviewsList = mockToolReviews;
   const totalShop = shopReviewsList.length;
   const handleLoadMoreShop = () => setShopVisibleCount(totalShop);
   const handleLoadMoreTool = () => setToolVisibleCount(toolReviewsList.length);
@@ -494,9 +487,6 @@ function ReviewsPage() {
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
                   >
                     <img alt="Back" width="21" height="15" src="/assets/back-button.svg" />
-                  </button>
-                  <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                    <img alt="Search" width="16" height="15" src="/assets/search-icon.svg" />
                   </button>
                 </>
               )}

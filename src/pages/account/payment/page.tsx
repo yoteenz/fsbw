@@ -486,9 +486,6 @@ function PaymentPage() {
                   <button onClick={handleBack} className="cursor-pointer" style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}>
                     <img alt="Back" width="21" height="15" src="/assets/back-button.svg" />
                   </button>
-                  <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                    <img alt="Search" width="16" height="15" src="/assets/search-icon.svg" />
-                  </button>
                 </>
               )}
             </div>

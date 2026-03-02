@@ -20,7 +20,7 @@ const SORT_OPTIONS = [
   'Z to A',
   'Most spent',
   'Least spent',
-  'Newsletter',
+  'International',
   'Socials',
   'Standard',
   'Premium',
@@ -74,6 +74,7 @@ function getClientSearchableText(u: any): string {
   if (membership === 'standard') parts.push('standard');
   if (tier) parts.push(tier);
   if (isClientNewsletterSubscribed(u)) parts.push('newsletter');
+  if (isClientInternational(u)) parts.push('international');
   if (isClientHasSocials(u)) parts.push('socials');
   if (clientHasUnreadPriorityMessages(u)) parts.push('alerts');
   try {
@@ -127,6 +128,19 @@ function isClientNewsletterSubscribed(u: any): boolean {
   } catch {
     return false;
   }
+}
+
+/** Check if client is international (non-USA). Uses defaultAddress/shippingAddress country or parses address string (5 parts = last is country). */
+function isClientInternational(u: any): boolean {
+  if (!u) return false;
+  let country = (u.defaultAddress?.country || u.shippingAddress?.country || '').toString().trim().toUpperCase();
+  if (!country && u.address && typeof u.address === 'string') {
+    const parts = u.address.split(',').map((s: string) => s.trim());
+    if (parts.length >= 5) country = (parts[4] || '').toUpperCase();
+  }
+  if (!country) return false;
+  if (country === 'US' || country === 'USA' || /^UNITED\s*STATES/i.test(country)) return false;
+  return true;
 }
 
 const PROFILE_SOCIAL_KEYS = ['facebook', 'instagram', 'twitter', 'tiktok', 'youtube', 'linkedin'] as const;
@@ -191,7 +205,45 @@ function calculateProcessingTimeline(orderDateStr: string, processingTime: strin
   }
 }
 
-/** Product image path for order summary */
+/** End date of completion range for "DUE BY APRIL 6TH". Uses same parsing as calculateProcessingTimeline. */
+function getDueByEndDate(orderDateStr: string, processingTime: string): string {
+  try {
+    let orderDate: Date;
+    const parsed = new Date(orderDateStr);
+    if (!isNaN(parsed.getTime())) {
+      orderDate = parsed;
+    } else {
+      const parts = (orderDateStr || '').split(/[-\/]/).map(Number);
+      const [month, day, year] = parts.length >= 3 ? parts : [1, 1, new Date().getFullYear()];
+      orderDate = new Date(year, month - 1, day);
+    }
+    let maxWeeks = 8;
+    if (processingTime && /4/.test(processingTime)) maxWeeks = 6;
+    else if (processingTime && /10/.test(processingTime)) maxWeeks = 10;
+    const maxDate = new Date(orderDate);
+    maxDate.setDate(maxDate.getDate() + maxWeeks * 7);
+    const monthNames = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
+    const getSuffix = (d: number) => { if (d >= 11 && d <= 13) return 'TH'; const n = d % 10; return n === 1 ? 'ST' : n === 2 ? 'ND' : n === 3 ? 'RD' : 'TH'; };
+    const d = maxDate.getDate();
+    return `${monthNames[maxDate.getMonth()]} ${d}${getSuffix(d)}`;
+  } catch {
+    return '';
+  }
+}
+
+/** Format delivered timestamp as "DELIVERED MARCH 15TH, 2026". */
+function formatDeliveredOn(timestamp: number): string {
+  try {
+    const d = new Date(timestamp);
+    if (isNaN(d.getTime())) return '';
+    const monthNames = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
+    const getSuffix = (n: number) => { if (n >= 11 && n <= 13) return 'TH'; const x = n % 10; return x === 1 ? 'ST' : x === 2 ? 'ND' : x === 3 ? 'RD' : 'TH'; };
+    const day = d.getDate();
+    return `DELIVERED ${monthNames[d.getMonth()]} ${day}${getSuffix(day)}`;
+  } catch {
+    return '';
+  }
+}
 function getProductImage(productName: string): string {
   switch ((productName || '').toUpperCase()) {
     case 'BLANCO': return '/assets/2D BLANCO FRONT.png';
@@ -289,6 +341,11 @@ function getMockClientsForAyoteenz(): any[] {
     { id: 'mock-20', email: 'mock20@test.com', firstName: 'Uma', lastName: 'Vance', membershipType: 'STANDARD', createdAt: new Date(now - 3 * day).toISOString(), totalSpent: 740, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 1, birthMonth: 4, birthYear: 1996, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '(555) 210-2390', address: '319 LAUREL ST, MINNEAPOLIS, MN 55401' },
     /* Dedicated invites/referral test account – ACTIVE code, 5 invites, easy to find in INVITES tab */
     { id: 'mock-invites', email: 'mock21@test.com', firstName: 'Invites', lastName: 'Demo', membershipType: 'PREMIUM', createdAt: new Date(now - 5 * day).toISOString(), totalSpent: 2200, ordersCount: 3, newCount: 0, alertCount: 0, bookingCount: 1, birthDay: 15, birthMonth: 6, birthYear: 1990, invitesCount: 5, status: 'ACTIVE', reviewsCount: 1, photosCount: 2, videosCount: 0, tagsCount: 3, totalReviews: 1, reviewsWithPhotosVideos: 1, pendingReviews: 0, currentTierName: 'RED', phone: '(555) 555-0100', address: '100 REFERRAL LN, TEST CITY, TC 12345' },
+    /* Mock clients from different countries/regions – for address/country display */
+    { id: 'mock-22', email: 'mock22@test.com', firstName: 'Yuki', lastName: 'Tanaka', membershipType: 'STANDARD', createdAt: new Date(now - 15 * day).toISOString(), totalSpent: 1480, ordersCount: 2, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 18, birthMonth: 5, birthYear: 1991, invitesCount: 0, status: 'ACTIVE', reviewsCount: 1, photosCount: 1, videosCount: 0, tagsCount: 1, totalReviews: 1, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '+81 3-1234-5678', address: '2-1-1 SHIBUYA, SHIBUYA-KU, TOKYO, 150-0002, JAPAN' },
+    { id: 'mock-23', email: 'mock23@test.com', firstName: 'Sienna', lastName: 'Okonkwo', membershipType: 'PREMIUM', createdAt: new Date(now - 8 * day).toISOString(), totalSpent: 2100, ordersCount: 3, newCount: 1, alertCount: 0, bookingCount: 1, birthDay: 7, birthMonth: 11, birthYear: 1988, invitesCount: 2, status: 'ACTIVE', reviewsCount: 2, photosCount: 2, videosCount: 0, tagsCount: 4, totalReviews: 2, reviewsWithPhotosVideos: 1, pendingReviews: 0, currentTierName: 'RED', phone: '+234 1 234 5678', address: '12 ADEMOLA ST, VICTORIA ISLAND, LAGOS, 101001, NIGERIA' },
+    { id: 'mock-24', email: 'mock24@test.com', firstName: 'Liam', lastName: 'O\'Brien', membershipType: 'STANDARD', createdAt: new Date(now - 22 * day).toISOString(), totalSpent: 1100, ordersCount: 1, newCount: 0, alertCount: 0, bookingCount: 0, birthDay: 14, birthMonth: 3, birthYear: 1993, invitesCount: 0, status: 'INACTIVE', reviewsCount: 0, photosCount: 0, videosCount: 0, tagsCount: 0, totalReviews: 0, reviewsWithPhotosVideos: 0, pendingReviews: 0, currentTierName: 'SILVER', phone: '+353 1 234 5678', address: '15 GRAFTON ST, DUBLIN 2, DUBLIN, D02 XY45, IRELAND' },
+    { id: 'mock-25', email: 'mock25@test.com', firstName: 'Camila', lastName: 'Silva', membershipType: 'PREMIUM', createdAt: new Date(now - 4 * day).toISOString(), totalSpent: 3200, ordersCount: 4, newCount: 0, alertCount: 1, bookingCount: 2, birthDay: 25, birthMonth: 9, birthYear: 1989, invitesCount: 1, status: 'ACTIVE', reviewsCount: 2, photosCount: 3, videosCount: 1, tagsCount: 5, totalReviews: 3, reviewsWithPhotosVideos: 2, pendingReviews: 0, currentTierName: 'RED', phone: '+55 11 2345-6789', address: 'AV PAULISTA 1000, BELA VISTA, SAO PAULO, 01310-100, BRAZIL' },
   ];
   const min = 60 * 1000;
   const MOCK_CARD_BRANDS = ['VISA', 'MASTERCARD', 'AMERICAN_EXPRESS', 'DISCOVER'] as const;
@@ -320,7 +377,9 @@ function getMockClientsForAyoteenz(): any[] {
     const addrStr = (row.address || '').toString().trim();
     const addrParts = addrStr ? addrStr.split(', ').map((s: string) => s.trim()) : [];
     const defaultAddress = addrParts.length >= 3
-      ? addrParts.length >= 4
+      ? addrParts.length >= 5
+        ? { address: addrParts[0], city: addrParts[1], state: addrParts[2], zip: addrParts[3], country: addrParts[4] }
+        : addrParts.length >= 4
         ? { address: addrParts[0], city: addrParts[1], state: addrParts[2], zip: addrParts[3], country: 'US' }
         : {
             address: addrParts[0],
@@ -631,6 +690,10 @@ export default function AdminClients() {
             tier: found?.currentTierName || getEffectiveTierName(found) || 'SILVER',
             paymentMethod: `${brand} ENDING IN ${last4}`,
           };
+          if (isDelivered) {
+            const orderDate = m.date ? new Date(m.date) : new Date();
+            base.deliveredAt = !isNaN(orderDate.getTime()) ? orderDate.getTime() : Date.now();
+          }
           if (i % 4 === 0) base.discountCode = ['WELCOME10', 'WIG20', 'PREMIUM15', 'NEWYEAR25'][Math.floor(i / 4) % 4];
           if (i % 4 === 1) base.giftCard = `GC-${String(4000 + i).padStart(4, '0')}-${String(1000 + i * 37).slice(-4)}`;
           if (i % 4 === 3) {
@@ -1031,8 +1094,8 @@ export default function AdminClients() {
       list.sort((a, b) => charges(b) - charges(a));
     } else if (sortOption === 'Least spent') {
       list.sort((a, b) => charges(a) - charges(b));
-    } else if (sortOption === 'Newsletter') {
-      list = list.filter((u) => isClientNewsletterSubscribed(u));
+    } else if (sortOption === 'International') {
+      list = list.filter((u) => isClientInternational(u));
       list.sort((a, b) => created(b) - created(a));
     } else if (sortOption === 'Socials') {
       list = list.filter((u) => isClientHasSocials(u));
@@ -1052,7 +1115,6 @@ export default function AdminClients() {
     if (!q) return sortedClients;
     return sortedClients.filter((u: any) => getClientSearchableText(u).includes(q));
   })();
-
   return (
     <>
       <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -1074,6 +1136,9 @@ export default function AdminClients() {
             breadcrumbParentPath="/admin/dashboard"
             onBack={selectedClientEmail ? () => { setSelectedClientEmail(null); setDetailsTab('orders'); setExpandedOrderId(null); } : undefined}
             breadcrumbParentOnClick={() => navigate('/admin/dashboard')}
+            externalSearchValue={clientSearchQuery}
+            onExternalSearchChange={setClientSearchQuery}
+            hideSearchIcon={!!selectedClientEmail}
           />
 
           <div className="pb-6 px-4">
@@ -1161,36 +1226,6 @@ export default function AdminClients() {
                 </div>
                 {/* Gray underline – same inset as content below */}
                 <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
-
-                {!selectedClientEmail && (
-                  <div className="px-4 pb-2" style={{ marginBottom: '4px' }}>
-                    <div className="flex items-center gap-2 bg-white/80 border border-gray-200 rounded" style={{ padding: '6px 10px', borderWidth: '1px' }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, color: '#808080' }} aria-hidden>
-                        <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        <path d="M21 21L16.65 16.65" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                      <input
-                        type="text"
-                        value={clientSearchQuery}
-                        onChange={(e) => setClientSearchQuery(e.target.value)}
-                        placeholder="Search clients, products, premium, standard..."
-                        className="flex-1 min-w-0 bg-transparent border-none outline-none placeholder-gray-400"
-                        style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000' }}
-                        aria-label="Search clients by name, product, membership, tier"
-                      />
-                      {clientSearchQuery && (
-                        <button
-                          type="button"
-                          onClick={() => setClientSearchQuery('')}
-                          aria-label="Clear search"
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: '#808080', fontSize: '14px' }}
-                        >
-                          ×
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                )}
 
                 {selectedClientEmail ? (
                   /* Details view: profile, orders, appointments */
@@ -1328,6 +1363,7 @@ export default function AdminClients() {
                         </div>
                         {/* Rewards section: photos, videos, tags – tap to expand/collapse */}
                         {selectedClient && (() => {
+                          const rewards = getRewardsRow(selectedClient, 0);
                           const media = getAffiliateMediaForClient(selectedClient);
                           const toggle = (key: 'photos' | 'videos' | 'tags') => {
                             setRewardsExpand((prev) => (prev === key ? null : key));
@@ -1483,19 +1519,19 @@ export default function AdminClients() {
                           <div className="flex flex-col gap-y-[9px] text-sm">
                             <div className="flex justify-between">
                               <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>JOIN DATE:</span>
-                              <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '11px' }}>{selectedJoinDate}</span>
+                              <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px' }}>{selectedJoinDate}</span>
                             </div>
                             <div className="flex justify-between">
                               <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>EMAIL:</span>
-                              <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '11px' }}>{(selectedClient?.email || '').toUpperCase()}</span>
+                              <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px' }}>{(selectedClient?.email || '').toUpperCase()}</span>
                             </div>
                             <div className="flex justify-between">
                               <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>BIRTHDAY:</span>
-                              <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '11px' }}>{selectedBirthday}</span>
+                              <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px' }}>{selectedBirthday}</span>
                             </div>
                             <div className="flex justify-between">
                               <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>PHONE:</span>
-                              <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '11px' }}>{(selectedClient?.phone || '—').toUpperCase()}</span>
+                              <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px' }}>{(selectedClient?.phone || '—').toUpperCase()}</span>
                             </div>
                             {(['facebook', 'instagram', 'twitter', 'tiktok', 'youtube', 'linkedin'] as const).map((key) => {
                               /* Profile socials: from sign-up or account profile settings */
@@ -1506,34 +1542,39 @@ export default function AdminClients() {
                               const displayVal = String(val).trim().toUpperCase();
                               return (
                                 <div key={key} className="flex justify-between">
-                                  <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>{label}</span>
+                                  <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>{label}</span>
                                   {url !== '#' ? (
                                     <a
                                       href={url}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      style={{ fontFamily: '"Futura PT Demi"', color: '#EB1C24', fontSize: '11px', textDecoration: 'none' }}
+                                      style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', textDecoration: 'none' }}
                                     >
                                       {displayVal}
                                     </a>
                                   ) : (
-                                    <span style={{ fontFamily: '"Futura PT Demi"', color: '#EB1C24', fontSize: '11px' }}>{displayVal}</span>
+                                    <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px' }}>{displayVal}</span>
                                   )}
                                 </div>
                               );
                             })}
                             <div className="flex justify-between items-start">
                               <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>ADDRESS:</span>
-                              <span className="text-right" style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '11px', maxWidth: '60%' }}>
+                              <span className="text-right" style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px', maxWidth: '60%', lineHeight: '13px' }}>
                                 {selectedPrimaryAddress === '—' ? (
                                   '—'
                                 ) : (
-                                  selectedPrimaryAddress.split('\n').map((line: string, i: number) => (
-                                    <span key={i}>
-                                      {i > 0 && <br />}
-                                      {line}
-                                    </span>
-                                  ))
+                                  (() => {
+                                    const lines = selectedPrimaryAddress.split('\n');
+                                    return lines.map((line: string, i: number) => (
+                                      <span key={i}>
+                                        {i > 0 && <br />}
+                                        <span style={i === lines.length - 1 ? { fontFamily: '"Futura PT Medium"', color: '#EB1C24' } : undefined}>
+                                          {line}
+                                        </span>
+                                      </span>
+                                    ));
+                                  })()
                                 )}
                               </span>
                             </div>
@@ -1593,8 +1634,9 @@ export default function AdminClients() {
                                   }));
                               const discounts = (expandedOrder as any).discounts || [];
                               const subtotal = (expandedOrder as any).subtotal ?? expandedOrder.total;
+                              const hasDiscounts = discounts.length > 0 || (subtotal != null && subtotal > (expandedOrder.total ?? 0));
                               return (
-                                <div className="bg-white border border-gray-200 p-4" style={orderProducts.length >= 3 ? { minWidth: 0 } : undefined}>
+                                <div className="bg-white border border-gray-200 p-4">
                                   <div className="flex justify-between items-center mb-4">
                                     <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px' }}>
                                       {(() => {
@@ -1619,7 +1661,6 @@ export default function AdminClients() {
                                       height: 'auto',
                                       marginBottom: '20px',
                                       overflowX: orderProducts.length >= 3 ? 'auto' : 'hidden',
-                                      ...(orderProducts.length >= 3 ? { width: '100%', minWidth: 0 } : {})
                                     }}
                                   >
                                     <div
@@ -1628,10 +1669,9 @@ export default function AdminClients() {
                                         gap: '20px',
                                         minHeight: '180px',
                                         alignItems: 'flex-start',
-                                        justifyContent: orderProducts.length <= 2 ? 'center' : 'flex-start',
+                                        justifyContent: orderProducts.length === 1 ? 'center' : 'flex-start',
                                         paddingRight: orderProducts.length >= 3 ? '10px' : 0,
-                                        boxSizing: 'border-box',
-                                        ...(orderProducts.length >= 3 ? { paddingLeft: 'calc(50% - 160px)' } : {})
+                                        marginLeft: orderProducts.length >= 2 ? '-10px' : 0,
                                       }}
                                     >
                                       {orderProducts.map((product: any) => {
@@ -1982,6 +2022,13 @@ export default function AdminClients() {
                             })(                            ) : (
                               selectedOrderHistory.map((order: any, index: number) => {
                                 const rawOrder = selectedRawOrders.find((o: any) => o.id === order.id);
+                                const itemCount = rawOrder?.items ?? (rawOrder?.lineItems?.length) ?? 1;
+                                const firstItemImage = (() => {
+                                  if (rawOrder?.lineItems?.[0]?.productName) {
+                                    return getProductImage(rawOrder.lineItems[0].productName);
+                                  }
+                                  return rawOrder?.productImage || getProductImage((rawOrder?.productName || order?.productName || 'NOIR').toString());
+                                })();
                                 return (
                                 <div
                                   key={order.id || index}
@@ -1990,29 +2037,65 @@ export default function AdminClients() {
                                   role="button"
                                   tabIndex={0}
                                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandedOrderId(order.id); } }}
-                                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'stretch', gap: '12px' }}
+                                  style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
                                 >
-                                  <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                  {/* Thumbnail + items (same as account/orders page) */}
+                                  <div className="flex flex-col items-center" style={{ flexShrink: 0, transform: 'translateX(-12px)' }}>
+                                    <img
+                                      src={firstItemImage}
+                                      alt=""
+                                      style={{
+                                        width: '85px',
+                                        height: '85px',
+                                        objectFit: 'contain'
+                                      }}
+                                    />
+                                    <p
+                                      style={{
+                                        fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                        color: '#EB1C24',
+                                        fontSize: '12px',
+                                        margin: '2px 0 0 0',
+                                        textTransform: 'uppercase'
+                                      }}
+                                    >
+                                      {itemCount} {itemCount === 1 ? 'ITEM' : 'ITEMS'}
+                                    </p>
+                                  </div>
+                                  <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', transform: 'translate(-10px, -12px)' }}>
                                     <p className="text-xs" style={{ fontFamily: '"Covered By Your Grace", cursive', fontSize: '16px', color: '#000000', margin: 0, lineHeight: 1.25 }}>{order.date}</p>
                                     <div style={{ marginTop: '2px' }}>
-                                      <h4 style={{ fontFamily: '"Futura PT Demi"', fontSize: '11px', color: '#808080', margin: 0 }}>{(() => {
+                                      <h4 style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: 0 }}>{(() => {
                                         const raw = (rawOrder?.orderNumber || order.id || '').toString();
                                         const num = raw.replace(/^ORDER\s*#?\s*/i, '').trim() || raw.replace(/^#/, '');
                                         return num ? `ORDER #${num}` : '—';
                                       })()}</h4>
                                     </div>
-                                    <p className="text-sm mt-1" style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: 0, marginTop: '2px', transform: 'translateY(-4px)' }}>${order.amount.toLocaleString()}</p>
+                                    <p className="text-sm mt-1" style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#808080', margin: 0, marginTop: '2px', transform: 'translateY(-4px)' }}>${order.amount.toLocaleString()}</p>
+                                    {(() => {
+                                      const s = (order.status || '').toUpperCase();
+                                      const isDelivered = s === 'DELIVERED';
+                                      const deliveredTs = rawOrder?.deliveredAt ?? (order as any).deliveredAt;
+                                      const orderDateStr = (rawOrder?.date ?? order.date) || '';
+                                      const processingTime = rawOrder?.processingTime || '6-8 WEEKS';
+                                      const dueBy = getDueByEndDate(orderDateStr, processingTime);
+                                      if (isDelivered && deliveredTs != null) {
+                                        const text = formatDeliveredOn(deliveredTs);
+                                        return text ? <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000000', margin: 0, marginTop: '-4px' }}>{text}</p> : null;
+                                      }
+                                      return dueBy ? <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000000', margin: 0, marginTop: '-4px' }}>DUE {dueBy}</p> : null;
+                                    })()}
                                   </div>
-                                  <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0, transform: 'translateX(-6px)' }}>
                                     {(() => {
                                       const s = (order.status || '').toUpperCase().replace(/\s+/g, ' ');
                                       const pillStyle: Record<string, string> = {
-                                        height: '24px',
-                                        padding: '0 8px',
+                                        height: '15px',
+                                        padding: '0 6px',
                                         boxSizing: 'border-box',
-                                        borderRadius: '4px',
+                                        borderRadius: '2px',
                                         fontFamily: '"Futura PT Medium"',
-                                        fontSize: '11px',
+                                        fontSize: '8px',
                                         ...(s === 'DELIVERED' ? { backgroundColor: 'rgba(235, 28, 36, 0.15)', color: '#EB1C24' }
                                           : s === 'SHIPPED' ? { backgroundColor: 'rgba(34, 197, 94, 0.2)', color: '#15803d' }
                                           : s === 'AWAITING FORM' || s === 'AWAITING ORDER FORM' ? { backgroundColor: 'rgba(234, 179, 8, 0.2)', color: '#a16207' }
@@ -2035,19 +2118,67 @@ export default function AdminClients() {
                         )}
                         {detailsTab === 'appointments' && (
                           <div className="space-y-3">
-                            {appointments.map((appointment: any, index: number) => (
-                              <div key={index} className="bg-white border border-gray-200 p-4">
-                                <div className="flex justify-between items-center">
-                                  <div>
-                                    <h4 className="font-medium text-sm">{appointment.type}</h4>
-                                    <p className="text-xs text-gray-600">{appointment.date} AT {appointment.time}</p>
+                            {appointments.length === 0 ? (
+                              <div className="bg-white border border-gray-200 p-4 text-center text-sm text-gray-600" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#808080', textTransform: 'uppercase' }}>NO APPOINTMENTS YET</div>
+                            ) : (
+                            appointments.map((appointment: any, index: number) => {
+                              const s = (appointment.status || '').toUpperCase().replace(/\s+/g, ' ');
+                              const pillStyle: Record<string, string> = {
+                                height: '15px',
+                                padding: '0 6px',
+                                boxSizing: 'border-box',
+                                borderRadius: '2px',
+                                fontFamily: '"Futura PT Medium"',
+                                fontSize: '8px',
+                                ...(s === 'SCHEDULED' ? { backgroundColor: 'rgba(234, 179, 8, 0.2)', color: '#a16207' }
+                                  : s === 'COMPLETED' ? { backgroundColor: 'rgba(235, 28, 36, 0.15)', color: '#EB1C24' }
+                                  : s === 'CANCELED' || s === 'CANCELLED' ? { backgroundColor: 'rgba(107, 114, 128, 0.2)', color: '#6b7280' }
+                                  : { backgroundColor: '#f3f4f6', color: '#808080' }),
+                              };
+                              return (
+                                <div
+                                  key={index}
+                                  className="bg-white border border-gray-200 p-4"
+                                  style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+                                >
+                                  <div className="flex flex-col items-center justify-center" style={{ flexShrink: 0, width: '85px', minHeight: '85px', transform: 'translateX(-12px)' }}>
+                                    <div
+                                      style={{
+                                        width: '85px',
+                                        height: '85px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        backgroundColor: '#f9fafb',
+                                        border: '1px solid #e5e7eb',
+                                        borderRadius: '2px'
+                                      }}
+                                    >
+                                      <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>APT</span>
+                                    </div>
                                   </div>
-                                  <span className={`text-xs px-2 py-1 rounded ${appointment.status === 'SCHEDULED' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>
-                                    {appointment.status}
-                                  </span>
+                                  <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', transform: 'translate(-10px, -12px)' }}>
+                                    <p style={{ fontFamily: '"Covered By Your Grace", cursive', fontSize: '16px', color: '#000000', margin: 0, lineHeight: 1.25 }}>
+                                      {appointment.date}
+                                    </p>
+                                    <div style={{ marginTop: '2px' }}>
+                                      <h4 style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>
+                                        {appointment.type || 'APPOINTMENT'}
+                                      </h4>
+                                    </div>
+                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#808080', margin: 0, marginTop: '2px', transform: 'translateY(-4px)', textTransform: 'uppercase' }}>
+                                      {appointment.time || '—'}
+                                    </p>
+                                  </div>
+                                  <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0, transform: 'translateX(-6px)' }}>
+                                    <span className="admin-order-status-pill" style={pillStyle}>
+                                      <span style={{ lineHeight: 1 }}>{appointment.status}</span>
+                                    </span>
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
+                              );
+                            })
+                            )}
                           </div>
                         )}
                         {detailsTab === 'reviews' && selectedClient && (() => {
@@ -2310,7 +2441,7 @@ export default function AdminClients() {
                       NO REGISTERED CLIENTS YET. LIST IS PER BROWSER.
                     </div>
                   ) : clientsFilteredBySearch.length === 0 ? (
-                    <div className="px-5 py-8 text-center text-sm text-gray-500">
+                    <div className="px-5 py-8 text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>
                       {clientSearchQuery.trim() ? 'NO CLIENTS MATCH YOUR SEARCH.' : 'NO CLIENTS MATCH THIS FILTER.'}
                     </div>
                   ) : activeTab === 'INVITES' ? (

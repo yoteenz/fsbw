@@ -780,13 +780,9 @@ function AccountPage() {
     let totalSpending = 0;
     const highestTierEver = getHighestTierEver();
 
-    // OAuth users always use real data (no mock)
-    if (userData?.authProvider) {
-      // fall through to real calculation below
-    } else {
-      if (isMockDataAccount(userData)) {
-        return null;
-      }
+    // For mock account, no tier
+    if (isMockDataAccount(userData)) {
+      return null;
     }
 
     // For real users, calculate from orders
@@ -906,7 +902,7 @@ function AccountPage() {
       if (email && localStorage.getItem(`alertsPageViewed_${email}`) === 'true') {
         return false;
       }
-      const key = userData?.authProvider && userData?.email ? `notifications_${userData.email}` : 'notifications';
+      const key = userData?.email ? `notifications_${userData.email}` : 'notifications';
       const storedStr = localStorage.getItem(key);
       const stored: any[] = storedStr && Array.isArray(JSON.parse(storedStr)) ? JSON.parse(storedStr) : [];
       const account = getAccountNotifications(userData);
