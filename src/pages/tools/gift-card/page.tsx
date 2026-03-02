@@ -883,7 +883,7 @@ function GiftCardPage() {
                 
                 {activeTab === 'REVIEWS' && (
                   <>
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px', paddingBottom: '0px', textAlign: 'center' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', whiteSpace: 'nowrap', marginBottom: '-8px', paddingBottom: '0px', textAlign: 'center', textTransform: 'uppercase' }}>
                       NO REVIEWS YET. BE THE FIRST TO REVIEW THIS PRODUCT.
                     </p>
                   </>

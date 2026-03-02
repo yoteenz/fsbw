@@ -843,7 +843,7 @@ function WishlistSelection() {
                 <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 0, paddingTop: '4.8px' }}>
                 {wishlistItems.length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '40px 20px', color: '#000' }}>
-                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', textTransform: 'uppercase' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>
                       YOUR WISHLIST IS EMPTY
                     </p>
                   </div>

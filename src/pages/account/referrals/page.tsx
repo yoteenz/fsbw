@@ -490,7 +490,7 @@ function ReferralsPage() {
                     ) : (
                       <div className="min-h-[80px]">
                         {referralList.length === 0 ? (
-                          <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>No past invites yet.</p>
+                          <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', margin: 0, textTransform: 'uppercase' }}>NO PAST INVITES YET.</p>
                         ) : (
                           <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
                             {referralList.map((item, i) => (

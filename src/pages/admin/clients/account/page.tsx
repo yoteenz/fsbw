@@ -218,7 +218,7 @@ export default function AdminClientsAccount() {
                   {activeTab === 'orders' && (
                     <div className="space-y-3">
                       {orderHistory.length === 0 ? (
-                        <div className="bg-white border border-gray-200 p-4 text-center text-sm text-gray-600">
+                        <div className="bg-white border border-gray-200 p-4 text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>
                           NO ORDERS YET
                         </div>
                       ) : (

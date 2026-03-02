@@ -179,7 +179,7 @@ export default function AdminAnalytics() {
                     </div>
                     <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>RECENT CLICKS</h3>
                     {summary.recentEvents.length === 0 ? (
-                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080', margin: '0' }}>No clicks recorded yet.</p>
+                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', margin: '0', textTransform: 'uppercase' }}>NO CLICKS RECORDED YET.</p>
                     ) : (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '140px', overflowY: 'auto' }}>
                         {summary.recentEvents.slice(0, 10).map((evt, i) => (

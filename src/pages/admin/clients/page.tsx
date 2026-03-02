@@ -1264,30 +1264,25 @@ export default function AdminClients() {
                           </div>
                         </div>
                         <div className="bg-white border border-gray-200 p-4 mb-6">
-                          <div className="mb-4">
-                            <div className="flex justify-between items-center">
-                              <p style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px', margin: 0 }}>{selectedReferralCode}</p>
-                              <div className="relative flex flex-col items-end" style={{ minWidth: '72px' }}>
-                                <span
-                                  className="inline-block px-3 py-1 text-xs rounded"
-                                  style={{
-                                    backgroundColor: selectedReferralStatus === 'ACTIVE' ? 'rgba(235, 28, 36, 0.15)' : '#f3f4f6',
-                                    color: selectedReferralStatus === 'ACTIVE' ? '#EB1C24' : '#808080',
-                                    transform: 'scale(0.8)',
-                                    transformOrigin: 'top right',
-                                  }}
-                                >
-                                  {selectedReferralStatus}
-                                </span>
-                                {selectedClient && isClientNewsletterSubscribed(selectedClient) && (
-                                  <p style={{ position: 'absolute', top: '100%', right: 0, fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, marginTop: '2px', textAlign: 'right' }}>NEWSLETTER</p>
-                                )}
-                              </div>
+                          <div className="mb-4" style={{ display: 'grid', gridTemplateColumns: '1fr 72px', alignItems: 'baseline', gap: '2px 0' }}>
+                            <p style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px', margin: 0 }}>{selectedReferralCode}</p>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start' }}>
+                              <span
+                                className="inline-block px-3 py-1 text-xs rounded"
+                                style={{
+                                  backgroundColor: selectedReferralStatus === 'ACTIVE' ? 'rgba(235, 28, 36, 0.15)' : '#f3f4f6',
+                                  color: selectedReferralStatus === 'ACTIVE' ? '#EB1C24' : '#808080',
+                                  transform: 'scale(0.8)',
+                                  transformOrigin: 'top center',
+                                }}
+                              >
+                                {selectedReferralStatus}
+                              </span>
                             </div>
                             {(() => {
                               const hasNewsletter = selectedClient && isClientNewsletterSubscribed(selectedClient);
-                              const invitesBlock = (
-                                <div style={{ width: '72px', textAlign: 'right' }}>
+                              const invitesCell = (
+                                <div style={{ width: '100%', textAlign: 'center', paddingTop: '2px' }}>
                                   {selectedInvitesCount >= 1 ? (
                                     <button
                                       type="button"
@@ -1300,7 +1295,7 @@ export default function AdminClients() {
                                         margin: 0,
                                         padding: 0,
                                         lineHeight: 1.2,
-                                        textAlign: 'right',
+                                        textAlign: 'center',
                                         display: 'block',
                                         width: '100%',
                                       }}
@@ -1308,7 +1303,7 @@ export default function AdminClients() {
                                       {selectedInvitesCount === 1 ? '1 INVITE' : `${selectedInvitesCount} INVITES`}
                                     </button>
                                   ) : (
-                                    <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: 0, lineHeight: 1.2, textAlign: 'right' }}>
+                                    <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: 0, lineHeight: 1.2, textAlign: 'center' }}>
                                       0 INVITES
                                     </p>
                                   )}
@@ -1319,28 +1314,40 @@ export default function AdminClients() {
                                   return (
                                     <>
                                       <p style={{ fontFamily: selectedTierDisplay.label === 'Silver tier' ? '"Futura PT Demi"' : '"Futura PT Medium"', color: selectedTierDisplay.color, fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedTierDisplay.label}</p>
-                                      <div className="flex justify-between items-baseline" style={{ marginTop: '2px' }}>
-                                        <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: 0 }}>{selectedMembershipDuration}</p>
-                                        {invitesBlock}
-                                      </div>
+                                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>{invitesCell}</div>
+                                      <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedMembershipDuration}</p>
+                                      <div />
+                                      {selectedClient && isClientNewsletterSubscribed(selectedClient) && (
+                                        <>
+                                          <div />
+                                          <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, marginTop: '2px', textAlign: 'center' }}>NEWSLETTER</p>
+                                        </>
+                                      )}
                                     </>
                                   );
                                 }
                                 return (
-                                  <div className="flex justify-between items-baseline" style={{ marginTop: '2px' }}>
-                                    <p style={{ fontFamily: selectedTierDisplay.label === 'Silver tier' ? '"Futura PT Demi"' : '"Futura PT Medium"', color: selectedTierDisplay.color, fontSize: '10px', margin: 0 }}>{selectedTierDisplay.label}</p>
-                                    {invitesBlock}
-                                  </div>
+                                  <>
+                                    <p style={{ fontFamily: selectedTierDisplay.label === 'Silver tier' ? '"Futura PT Demi"' : '"Futura PT Medium"', color: selectedTierDisplay.color, fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedTierDisplay.label}</p>
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>{invitesCell}</div>
+                                    {selectedClient && isClientNewsletterSubscribed(selectedClient) && (
+                                      <>
+                                        <div />
+                                        <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, marginTop: '2px', textAlign: 'center' }}>NEWSLETTER</p>
+                                      </>
+                                    )}
+                                  </>
                                 );
                               }
                               return (
                                 <>
-                                  <div className="flex justify-between items-baseline" style={{ marginTop: '2px' }}>
-                                    <p style={{ fontFamily: selectedTierDisplay.label === 'Silver tier' ? '"Futura PT Demi"' : '"Futura PT Medium"', color: selectedTierDisplay.color, fontSize: '10px', margin: 0 }}>{selectedTierDisplay.label}</p>
-                                    {invitesBlock}
-                                  </div>
+                                  <p style={{ fontFamily: selectedTierDisplay.label === 'Silver tier' ? '"Futura PT Demi"' : '"Futura PT Medium"', color: selectedTierDisplay.color, fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedTierDisplay.label}</p>
+                                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>{invitesCell}</div>
                                   {selectedMembershipDuration && (
-                                    <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedMembershipDuration}</p>
+                                    <>
+                                      <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedMembershipDuration}</p>
+                                      <div />
+                                    </>
                                   )}
                                 </>
                               );
@@ -1437,7 +1444,7 @@ export default function AdminClients() {
                               )}
                               {rewardsExpand === 'photos' && media.photos.length === 0 && (
                                 <div className="mt-4 pt-4 flex justify-center" style={{ borderTop: '1px solid #e5e7eb' }}>
-                                  <p className="text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>No photos submitted yet.</p>
+                                  <p className="text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>NO PHOTOS SUBMITTED YET.</p>
                                 </div>
                               )}
                               {rewardsExpand === 'videos' && media.videos.length > 0 && (
@@ -1482,7 +1489,7 @@ export default function AdminClients() {
                               )}
                               {rewardsExpand === 'videos' && media.videos.length === 0 && (
                                 <div className="mt-4 pt-4 flex justify-center" style={{ borderTop: '1px solid #e5e7eb' }}>
-                                  <p className="text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>No videos submitted yet.</p>
+                                  <p className="text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>NO VIDEOS SUBMITTED YET.</p>
                                 </div>
                               )}
                               {rewardsExpand === 'tags' && media.socials.length > 0 && (
@@ -1508,7 +1515,7 @@ export default function AdminClients() {
                               )}
                               {rewardsExpand === 'tags' && media.socials.length === 0 && (
                                 <div className="mt-4 pt-4 flex justify-center" style={{ borderTop: '1px solid #e5e7eb' }}>
-                                  <p className="text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>No socials submitted yet.</p>
+                                  <p className="text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>NO SOCIALS SUBMITTED YET.</p>
                                 </div>
                               )}
                             </div>
@@ -1611,7 +1618,7 @@ export default function AdminClients() {
                         {detailsTab === 'orders' && (
                           <div className="space-y-3">
                             {selectedOrderHistory.length === 0 ? (
-                              <div className="bg-white border border-gray-200 p-4 text-center text-sm text-gray-600">NO ORDERS YET</div>
+                              <div className="bg-white border border-gray-200 p-4 text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>NO ORDERS YET</div>
                             ) : expandedOrderId ? (() => {
                               const expandedOrder = selectedRawOrders.find((o: any) => o.id === expandedOrderId);
                               if (!expandedOrder) return null;
@@ -2117,7 +2124,7 @@ export default function AdminClients() {
                         {detailsTab === 'appointments' && (
                           <div className="space-y-3">
                             {appointments.length === 0 ? (
-                              <div className="bg-white border border-gray-200 p-4 text-center text-sm text-gray-600" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#808080', textTransform: 'uppercase' }}>NO APPOINTMENTS YET</div>
+                              <div className="bg-white border border-gray-200 p-4 text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>NO APPOINTMENTS YET</div>
                             ) : (
                             appointments.map((appointment: any, index: number) => {
                               const s = (appointment.status || '').toUpperCase().replace(/\s+/g, ' ');
@@ -2435,11 +2442,11 @@ export default function AdminClients() {
                 {/* Client rows – same line width as tabs */}
                 <div className="overflow-y-auto overflow-x-hidden min-w-0" style={{ maxHeight: '380px', paddingTop: '2px' }}>
                   {registeredUsers.length === 0 ? (
-                    <div className="px-5 py-8 text-center text-sm text-gray-500">
+                    <div className="px-5 py-8 text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>
                       NO REGISTERED CLIENTS YET. LIST IS PER BROWSER.
                     </div>
                   ) : clientsFilteredBySearch.length === 0 ? (
-                    <div className="px-5 py-8 text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>
+                    <div className="px-5 py-8 text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>
                       {clientSearchQuery.trim() ? 'NO CLIENTS MATCH YOUR SEARCH.' : 'NO CLIENTS MATCH THIS FILTER.'}
                     </div>
                   ) : activeTab === 'INVITES' ? (
@@ -2705,7 +2712,7 @@ export default function AdminClients() {
             </div>
             <div className="overflow-y-auto flex-1 min-h-0" style={{ fontSize: '10px' }}>
               {invitesDetailRows.length === 0 ? (
-                <p style={{ fontFamily: '"Futura PT Book"', color: '#808080', margin: 0, textAlign: 'center', padding: '16px 0', fontSize: '10px', textTransform: 'uppercase' }}>NO INVITES YET.</p>
+                <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', margin: 0, textAlign: 'center', padding: '16px 0', textTransform: 'uppercase' }}>NO INVITES YET.</p>
               ) : (
                 <table className="w-full" style={{ borderCollapse: 'collapse', fontFamily: '"Futura PT Book"' }}>
                   <thead>

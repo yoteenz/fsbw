@@ -3349,7 +3349,7 @@ function AffiliatePage() {
                                      
                                      if (photos.length === 0) {
                                        return (
-                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', textTransform: 'uppercase', margin: '20px 0', textAlign: 'center', width: '100%' }}>
+                                         <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '20px 0', textAlign: 'center', width: '100%' }}>
                                            NO PHOTOS SUBMITTED YET.
                                          </p>
                                        );
@@ -3486,7 +3486,7 @@ function AffiliatePage() {
                                      
                                      if (videos.length === 0) {
                                        return (
-                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', textTransform: 'uppercase', margin: '20px 0', textAlign: 'center' }}>
+                                         <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '20px 0', textAlign: 'center' }}>
                                            NO VIDEOS SUBMITTED YET.
                                          </p>
                                        );
@@ -3607,7 +3607,7 @@ function AffiliatePage() {
                                      
                                      if (socials.length === 0) {
                                        return (
-                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', textTransform: 'uppercase', margin: '20px 0', textAlign: 'center' }}>
+                                         <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '20px 0', textAlign: 'center' }}>
                                            NO SOCIAL TAGS SUBMITTED YET.
                                          </p>
                                        );

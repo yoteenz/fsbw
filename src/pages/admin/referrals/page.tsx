@@ -145,7 +145,7 @@ export default function AdminReferralsPage() {
                     <>
                       <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '12px' }}>EARNINGS BY REFERRER</h3>
                       {Object.entries(byReferrer).length === 0 ? (
-                        <p className="py-6 text-xs font-futura" style={{ color: '#808080' }}>No referral earnings yet.</p>
+                        <p className="py-6" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>NO REFERRAL EARNINGS YET.</p>
                       ) : (
                         <div className="space-y-2">
                           {Object.entries(byReferrer).map(([email, { count, earned }]) => (
@@ -163,7 +163,7 @@ export default function AdminReferralsPage() {
                     <>
                       <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '12px' }}>RECENT REFERRAL ACTIVITY</h3>
                       {confirmed.length === 0 ? (
-                        <p className="py-6 text-xs font-futura" style={{ color: '#808080' }}>No confirmed referrals yet.</p>
+                        <p className="py-6" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>NO CONFIRMED REFERRALS YET.</p>
                       ) : (
                         <div className="space-y-2">
                           {[...confirmed]
