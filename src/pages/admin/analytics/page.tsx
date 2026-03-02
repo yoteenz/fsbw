@@ -128,6 +128,12 @@ export default function AdminAnalytics() {
               </div>
               <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
 
+              {/* Total clicks above tabs */}
+              <div className="text-center py-4 px-5">
+                <p className="font-covered-by-your-grace text-3xl" style={{ color: '#EB1C24' }}>{summary.total}</p>
+                <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>TOTAL CLICKS</p>
+              </div>
+
               <div className="flex px-5">
                 {ANALYTICS_TABS.map((tab) => (
                   <button
@@ -162,10 +168,6 @@ export default function AdminAnalytics() {
               <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '380px' }}>
                 {activeTab === 'SUMMARY' && (
                   <>
-                    <div className="text-center py-4">
-                      <p className="font-covered-by-your-grace text-3xl" style={{ color: '#EB1C24' }}>{summary.total}</p>
-                      <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>TOTAL CLICKS</p>
-                    </div>
                     <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>BY SOURCE</h3>
                     <div className="space-y-2 mb-4">
                       <div className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
@@ -195,10 +197,6 @@ export default function AdminAnalytics() {
                 )}
                 {activeTab === 'BY PLATFORM' && (
                   <>
-                    <div className="text-center py-4">
-                      <p className="font-covered-by-your-grace text-3xl" style={{ color: '#EB1C24' }}>{summary.total}</p>
-                      <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>TOTAL CLICKS</p>
-                    </div>
                     <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>CLICKS BY PLATFORM</h3>
                     <div className="space-y-2">
                       {(['instagram', 'twitter', 'facebook', 'tiktok'] as const).map((p) => (

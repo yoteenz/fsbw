@@ -100,7 +100,24 @@ export default function AdminMeetings() {
               </div>
               <div className="flex-shrink-0" style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
 
-              <div className="flex-1 min-h-0 overflow-y-auto pb-4">
+              {/* Cards above tabs */}
+              <div className="px-5 pb-4">
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{meetings.length}</p>
+                    <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>TODAY</p>
+                  </div>
+                  <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{meetings.filter(m => m.status === 'Confirmed').length}</p>
+                    <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>CONFIRMED</p>
+                  </div>
+                  <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{meetings.filter(m => m.status === 'Pending').length}</p>
+                    <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>PENDING</p>
+                  </div>
+                </div>
+              </div>
+
               <div className="flex px-5">
                 {MEETING_TABS.map((tab) => (
                   <button
@@ -131,7 +148,9 @@ export default function AdminMeetings() {
                 ))}
               </div>
 
-              <div className="px-5 pb-4">
+              {/* Scrollable area: date, meetings list, quick schedule */}
+              <div className="flex-1 min-h-0 overflow-y-auto">
+                <div className="px-5 pb-4">
                 <input
                   type="date"
                   value={selectedDate}
@@ -139,23 +158,6 @@ export default function AdminMeetings() {
                   className="w-full p-3 border"
                   style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb' }}
                 />
-              </div>
-
-              <div className="px-5 pb-4">
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{meetings.length}</p>
-                    <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>TODAY</p>
-                  </div>
-                  <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{meetings.filter(m => m.status === 'Confirmed').length}</p>
-                    <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>CONFIRMED</p>
-                  </div>
-                  <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{meetings.filter(m => m.status === 'Pending').length}</p>
-                    <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>PENDING</p>
-                  </div>
-                </div>
               </div>
 
               <h3 className="px-5" style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>TODAY&apos;S MEETINGS</h3>

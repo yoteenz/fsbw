@@ -88,6 +88,18 @@ export default function AdminReviews() {
               </div>
               <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
 
+              {/* Cards above tabs */}
+              <div className="grid grid-cols-2 gap-4 px-5 mb-4">
+                <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>4.8</p>
+                  <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>AVERAGE RATING</p>
+                </div>
+                <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>247</p>
+                  <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>TOTAL REVIEWS</p>
+                </div>
+              </div>
+
               <div className="flex px-5">
                 {REVIEW_TABS.map((tab) => (
                   <button
@@ -122,16 +134,6 @@ export default function AdminReviews() {
               <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '380px' }}>
                 {activeTab === 'ALL' && (
                   <>
-                    <div className="grid grid-cols-2 gap-4 mb-4">
-                      <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                        <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>4.8</p>
-                        <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>AVERAGE RATING</p>
-                      </div>
-                      <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                        <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>247</p>
-                        <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>TOTAL REVIEWS</p>
-                      </div>
-                    </div>
                     <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>RECENT REVIEWS</h3>
                     <div className="space-y-0">
                       {reviews.filter((r) => r.status === 'published' || r.status === 'pending').map((review) => (

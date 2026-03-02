@@ -322,13 +322,13 @@ export default function AdminDashboard() {
 
     {
       title: 'ANALYTICS',
-      count: 'Social',
+      count: '',
       items: [
         { label: 'SOCIAL CLICKS', value: 'Menu & earn', color: 'text-red-500' },
         { label: 'FOLLOW TRACKING', value: 'Instagram, Twitter, Facebook, TikTok', color: 'text-gray-500' },
         { label: 'VIEW ANALYTICS', value: 'Clicks by source', color: 'text-red-500' }
       ],
-      activity: 'TRACK SOCIAL LINK CLICKS - MENU TOGGLE & MORE WAYS TO EARN'
+      activity: 'TRACK LINK CLICKS - MENU TOGGLE & MORE WAYS TO EARN'
     }
   ];
 
