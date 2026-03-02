@@ -1363,7 +1363,6 @@ export default function AdminClients() {
                         </div>
                         {/* Rewards section: photos, videos, tags – tap to expand/collapse */}
                         {selectedClient && (() => {
-                          const rewards = getRewardsRow(selectedClient, 0);
                           const media = getAffiliateMediaForClient(selectedClient);
                           const toggle = (key: 'photos' | 'videos' | 'tags') => {
                             setRewardsExpand((prev) => (prev === key ? null : key));
@@ -1634,7 +1633,6 @@ export default function AdminClients() {
                                   }));
                               const discounts = (expandedOrder as any).discounts || [];
                               const subtotal = (expandedOrder as any).subtotal ?? expandedOrder.total;
-                              const hasDiscounts = discounts.length > 0 || (subtotal != null && subtotal > (expandedOrder.total ?? 0));
                               return (
                                 <div className="bg-white border border-gray-200 p-4">
                                   <div className="flex justify-between items-center mb-4">
