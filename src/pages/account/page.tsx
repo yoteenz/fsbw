@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../constants/tiers';
 import { getTotalReviewCount, hasNewReviewApproved } from '../../constants/reviews';
-import { isAdminEmail, isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier } from '../../utils/adminAuth';
+import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier } from '../../utils/adminAuth';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
 import { getAccountNotifications, mergeAccountNotifications } from './notifications/page';
 import BrandMenuLinks from '../../components/BrandMenuLinks';

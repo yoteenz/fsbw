@@ -1,0 +1,4 @@
+﻿src/utils/api.ts(46,65): error TS2322: Type 'Record<string, unknown>' is not assignable to type 'BodyInit | null | undefined'.
+  Type 'Record<string, unknown>' is missing the following properties from type 'URLSearchParams': size, append, delete, get, and 9 more.
+src/utils/api.ts(71,68): error TS2353: Object literal may only specify known properties, and 'items' does not exist in type 'URLSearchParams | Blob | ArrayBuffer | ReadableStream<any> | ArrayBufferView | FormData'.
+src/utils/api.ts(85,72): error TS2353: Object literal may only specify known properties, and 'items' does not exist in type 'URLSearchParams | Blob | ArrayBuffer | ReadableStream<any> | ArrayBufferView | FormData'.

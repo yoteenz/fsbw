@@ -24,10 +24,13 @@ async function apiFetch(
     ...((options.headers as Record<string, string>) ?? {}),
   };
   if (token) headers.Authorization = `Bearer ${token}`;
+  const body =
+    options.body !== undefined ? (JSON.stringify(options.body) as BodyInit) : undefined;
+  const { body: _omit, ...rest } = options;
   return fetch(url, {
-    ...options,
+    ...rest,
     headers,
-    body: options.body !== undefined ? JSON.stringify(options.body) : options.body,
+    body,
   });
 }
 
