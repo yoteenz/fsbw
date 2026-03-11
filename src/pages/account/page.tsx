@@ -5,6 +5,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../constants/tiers';
 import { getTotalReviewCount, hasNewReviewApproved } from '../../constants/reviews';
 import { isAdminEmail, isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier } from '../../utils/adminAuth';
+import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
 import { getAccountNotifications, mergeAccountNotifications } from './notifications/page';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
@@ -576,6 +577,10 @@ function AccountPage() {
   };
 
   const handleSignOut = () => {
+    if (isSupabaseConfigured()) {
+      const supabase = getSupabase();
+      if (supabase) supabase.auth.signOut().catch(() => {});
+    }
     setIsSignedIn(false);
     localStorage.setItem('isSignedIn', 'false');
     localStorage.removeItem('currentUser');
@@ -624,47 +629,6 @@ function AccountPage() {
       fileInputRef.current.value = '';
     }
     setShowResetConfirm(false);
-  };
-
-  /** Export current admin profile as JSON so it can be saved as public/admin-profile.json for cross-browser sync (e.g. Safari → Chrome). */
-  const handleExportAdminProfile = () => {
-    if (!userData || !isAdminEmail(userData.email || '')) return;
-    const profile: Record<string, unknown> = {
-      id: userData.id,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      email: userData.email,
-      phoneNumber: userData.phoneNumber,
-      birthday: userData.birthday,
-      facebook: userData.facebook,
-      instagram: userData.instagram,
-      youtube: userData.youtube,
-      tiktok: userData.tiktok,
-      twitter: userData.twitter,
-      profileImage: userData.profileImage || localStorage.getItem('profileImage'),
-      membershipType: userData.membershipType,
-      subscriptionTier: userData.subscriptionTier,
-      defaultAddress: userData.defaultAddress,
-      shippingAddress: userData.shippingAddress,
-      savedAddresses: userData.savedAddresses,
-      referralCode: userData.referralCode,
-      giftCardBalance: userData.giftCardBalance,
-      hasMadeFirstPurchase: userData.hasMadeFirstPurchase,
-      loyaltyPoints: userData.loyaltyPoints,
-      unlockedDiscounts: userData.unlockedDiscounts,
-      voucherList: userData.voucherList,
-      voucherHistory: userData.voucherHistory,
-      digitalCashHistory: userData.digitalCashHistory,
-      welcomeDiscountTiersCreditedByPeriod: userData.welcomeDiscountTiersCreditedByPeriod,
-      createdAt: userData.createdAt
-    };
-    const blob = new Blob([JSON.stringify(profile, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'admin-profile.json';
-    a.click();
-    URL.revokeObjectURL(url);
   };
 
   // Helper function to get current 6-month period
@@ -2025,39 +1989,23 @@ function AccountPage() {
                           </p>
                           {isAyoteenzAdminAccount(userData) && (
                             <p
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => navigate('/admin/dashboard')}
+                              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/admin/dashboard'); } }}
                               style={{
                                 fontFamily: '"Futura PT Medium"',
                                 fontSize: '10px',
                                 margin: '-6px 0 0 0',
                                 textTransform: 'uppercase',
                                 fontWeight: '500',
-                                transform: 'translateY(-8px)'
+                                transform: 'translateY(-8px)',
+                                cursor: 'pointer'
                               }}
                             >
                               <span style={{ color: '#EB1C24' }}>ADMIN: </span>
                               <span style={{ color: '#000000' }}>FOUNDER</span>
                             </p>
-                          )}
-                          {userData && isAdminEmail(userData.email || '') && (
-                            <button
-                              type="button"
-                              onClick={handleExportAdminProfile}
-                              style={{
-                                fontFamily: '"Futura PT Medium"',
-                                fontSize: '9px',
-                                margin: '4px 0 0 0',
-                                textTransform: 'uppercase',
-                                fontWeight: '500',
-                                color: '#808080',
-                                background: 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                                padding: 0,
-                                textDecoration: 'underline'
-                              }}
-                            >
-                              Export admin profile (for Chrome/Safari sync)
-                            </button>
                           )}
                         </>
                       );

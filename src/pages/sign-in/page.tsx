@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
@@ -6,7 +6,8 @@ import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { isAdminEmail, isPreviewEnvironment } from '../../utils/adminAuth';
 import { normalizeEmail, normalizePassword } from '../../utils/credentialNormalize';
-import { getWebAuthnApiBase, tryPasskeySignIn } from '../../utils/webauthn';
+import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
+import { syncAllFromApi } from '../../utils/syncFromApi';
 import {
   getReviewsLastSeenShopCountKey,
   getReviewsLastSeenToolCountKey,
@@ -55,6 +56,8 @@ function SignInPage() {
   const [signInPassword, setSignInPassword] = useState('');
   const [showSignInPassword, setShowSignInPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const signInEmailRef = useRef<HTMLInputElement | null>(null);
+  const signInPasswordRef = useRef<HTMLInputElement | null>(null);
 
   // Validation modals
   const [showValidationModal, setShowValidationModal] = useState(false);
@@ -168,32 +171,33 @@ function SignInPage() {
     };
   }, []);
 
-  // When WebAuthn API is configured, start conditional passkey sign-in (Face ID / Touch ID / Windows Hello in Chrome, Safari, Edge)
+  // When Supabase is configured: restore session on load so user stays signed in across tabs/refresh
   useEffect(() => {
-    const apiBase = getWebAuthnApiBase();
-    if (!apiBase) return;
+    if (!isSupabaseConfigured()) return;
+    const supabase = getSupabase();
+    if (!supabase) return;
     let cancelled = false;
-    tryPasskeySignIn()
-      .then((result) => {
-        if (cancelled || result == null) return;
-        const user = result as Record<string, unknown>;
-        if (!user || typeof user.email !== 'string') return;
-        const userToSet = { ...user };
-        if (isAdminEmail(user.email)) (userToSet as Record<string, unknown>).role = 'admin';
-        localStorage.setItem('currentUser', JSON.stringify(userToSet));
-        if (userToSet.profileImage) {
-          localStorage.setItem('profileImage', String(userToSet.profileImage));
-        } else {
-          localStorage.removeItem('profileImage');
-        }
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (cancelled || !session) return;
+      syncAllFromApi().then((profile) => {
+        if (cancelled || !profile) return;
         localStorage.setItem('isSignedIn', 'true');
+        setIsSignedIn(true);
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+        const returnTo = new URLSearchParams(location.search).get('returnTo');
         const from = (location.state as { from?: string } | null)?.from;
-        navigate(from && (from.startsWith('/account') || from.startsWith('/wishlist')) ? from : '/account', { replace: true });
-      })
-      .catch(() => { /* user cancelled or error; ignore and show form */ });
+        if (returnTo === 'checkout') navigate('/checkout');
+        else if (returnTo?.startsWith('/admin')) navigate(returnTo);
+        else if (from?.startsWith('/account') || from?.startsWith('/wishlist')) navigate(from, { replace: true });
+        else navigate('/account', { replace: true });
+      });
+    });
     return () => { cancelled = true; };
-  }, [navigate, location.state]);
+  }, [navigate, location.search, location.state]);
+
+  // Passkey (WebAuthn) is NOT auto-run on load so that when you tap the email/password field,
+  // the browser shows saved passwords and Face ID unlocks the keychain and fills the fields.
+  // If we ran tryPasskeySignIn() here, Face ID would be used for passkey first and nothing would fill.
 
   // Update active tab based on current route
   useEffect(() => {
@@ -240,6 +244,189 @@ function SignInPage() {
   const handleMobileMenuSignInToggle = () => {
     // Already on sign-in page, do nothing (or could scroll to form)
     // The sign-in button on the page will handle authentication
+  };
+
+  /** Redirect URL after successful sign-in. Full-page navigation so Chrome can offer to save password. */
+  const getSignInRedirectUrl = (): string => {
+    const returnTo = new URLSearchParams(location.search).get('returnTo');
+    const from = (location.state as { from?: string } | null)?.from;
+    if (returnTo === 'checkout') return '/checkout';
+    if (returnTo?.startsWith('/admin')) return returnTo;
+    if (from?.startsWith('/account') || from?.startsWith('/wishlist')) return from;
+    return '/account';
+  };
+
+  const doRedirectAfterSignIn = () => {
+    const url = getSignInRedirectUrl();
+    setTimeout(() => { window.location.href = url; }, 350);
+  };
+
+  const handleSignInSubmit = async () => {
+    const email = (signInEmailRef.current?.value ?? signInEmail).trim();
+    const password = signInPasswordRef.current?.value ?? signInPassword;
+    if (!email) {
+      setValidationMessage('EMAIL ADDRESS IS REQUIRED.');
+      setShowValidationModal(true);
+      return;
+    }
+    if (!password) {
+      setValidationMessage('PASSWORD IS REQUIRED.');
+      setShowValidationModal(true);
+      return;
+    }
+    if (isSupabaseConfigured()) {
+      const supabase = getSupabase();
+      if (supabase) {
+        try {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+          });
+          if (!error && data.session) {
+            const profile = await syncAllFromApi();
+            if (profile) {
+              localStorage.setItem('isSignedIn', 'true');
+              setIsSignedIn(true);
+              window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+              if (signInEmailRef.current) signInEmailRef.current.value = '';
+              if (signInPasswordRef.current) signInPasswordRef.current.value = '';
+              setSignInEmail('');
+              setSignInPassword('');
+              doRedirectAfterSignIn();
+              return;
+            }
+          }
+          if (error) {
+            setValidationMessage(error.message === 'Invalid login credentials' ? 'INVALID EMAIL OR PASSWORD.' : error.message);
+            setShowValidationModal(true);
+            return;
+          }
+        } catch (e) {
+          setValidationMessage('SIGN-IN FAILED. TRY AGAIN.');
+          setShowValidationModal(true);
+          return;
+        }
+      }
+    }
+    try {
+      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const emailNorm = normalizeEmail(email);
+      const passwordNorm = normalizePassword(password);
+      const userByEmail = registeredUsers.find((u: any) => normalizeEmail(u.email || '') === emailNorm);
+      const user = userByEmail && normalizePassword(userByEmail.password || '') === passwordNorm ? userByEmail : null;
+      if (user) {
+        const userToSet = { ...user };
+        if (isAdminEmail(user.email || '')) userToSet.role = 'admin';
+        const existingCurrentRaw = localStorage.getItem('currentUser');
+        if (existingCurrentRaw) {
+          try {
+            const existingUser = JSON.parse(existingCurrentRaw);
+            if (existingUser && typeof existingUser === 'object' && user.email?.toLowerCase() === (existingUser.email || '').toLowerCase()) {
+              const profileFields = ['firstName', 'lastName', 'phoneNumber', 'birthday', 'profileImage', 'facebook', 'instagram', 'youtube', 'tiktok', 'twitter', 'membershipType', 'subscriptionTier', 'referralCode', 'giftCardBalance', 'hasMadeFirstPurchase', 'loyaltyPoints', 'unlockedDiscounts', 'voucherList', 'voucherHistory', 'digitalCashHistory', 'welcomeDiscountTiersCreditedByPeriod', 'defaultAddress', 'shippingAddress', 'savedAddresses', 'createdAt', 'id'] as const;
+              for (const key of profileFields) {
+                const existingVal = existingUser[key];
+                if (existingVal !== undefined && existingVal !== null) {
+                  if (key === 'profileImage' && typeof existingVal === 'string' && existingVal.trim() === '') continue;
+                  (userToSet as any)[key] = existingVal;
+                }
+              }
+              if (typeof existingUser.giftCardBalance === 'number') userToSet.giftCardBalance = existingUser.giftCardBalance;
+              if (typeof existingUser.loyaltyPoints === 'number') userToSet.loyaltyPoints = existingUser.loyaltyPoints;
+              if (existingUser.hasMadeFirstPurchase !== undefined) userToSet.hasMadeFirstPurchase = Boolean(existingUser.hasMadeFirstPurchase);
+              const userIndex = registeredUsers.findIndex((u: any) => u.email?.toLowerCase() === user.email?.toLowerCase());
+              if (userIndex !== -1) {
+                registeredUsers[userIndex] = { ...userToSet };
+                delete (registeredUsers[userIndex] as any).role;
+                localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+              }
+            }
+          } catch (_) {}
+        }
+        localStorage.setItem('currentUser', JSON.stringify(userToSet));
+        if (userToSet.profileImage && String(userToSet.profileImage).trim()) localStorage.setItem('profileImage', String(userToSet.profileImage));
+        else localStorage.removeItem('profileImage');
+        localStorage.setItem('isSignedIn', 'true');
+        setIsSignedIn(true);
+        window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+        if (signInEmailRef.current) signInEmailRef.current.value = '';
+        if (signInPasswordRef.current) signInPasswordRef.current.value = '';
+        setSignInEmail('');
+        setSignInPassword('');
+        doRedirectAfterSignIn();
+        return;
+      }
+      if (isAdminEmail(email)) {
+        let existingCurrent: Record<string, any> = {};
+        try {
+          const raw = localStorage.getItem('currentUser');
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && typeof parsed === 'object' && normalizeEmail(parsed.email || '') === emailNorm) existingCurrent = parsed;
+          }
+        } catch (_) {}
+        const canonical = await fetchCanonicalAdminProfile();
+        const firstInitial = (email[0] || 'A').toUpperCase();
+        const lastInitial = (email.split('@')[0]?.slice(1, 2) || 'A').toUpperCase();
+        let referralCode = (existingCurrent.referralCode as string) || (canonical.referralCode as string) || firstInitial + lastInitial + '01' + Math.floor(10 + Math.random() * 90);
+        while (registeredUsers.some((u: any) => u.referralCode === referralCode)) referralCode = firstInitial + lastInitial + '01' + Math.floor(10 + Math.random() * 90);
+        const str = (a: unknown, b: unknown): string => (a != null && String(a).trim() !== '') ? String(a).trim() : (b != null && String(b).trim() !== '') ? String(b).trim() : '';
+        const profileImageVal = str(existingCurrent.profileImage, canonical.profileImage) || (existingCurrent.profileImage as string) || (canonical.profileImage as string) || '';
+        const bootstrapUser = {
+          id: (existingCurrent.id as string) || (canonical.id as string) || `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          firstName: str(existingCurrent.firstName, canonical.firstName) || ((existingCurrent.firstName as string) ?? (canonical.firstName as string) ?? ''),
+          lastName: str(existingCurrent.lastName, canonical.lastName) || ((existingCurrent.lastName as string) ?? (canonical.lastName as string) ?? ''),
+          email: emailNorm,
+          phoneNumber: str(existingCurrent.phoneNumber, canonical.phoneNumber) || ((existingCurrent.phoneNumber as string) ?? (canonical.phoneNumber as string) ?? ''),
+          birthday: str(existingCurrent.birthday, canonical.birthday) || ((existingCurrent.birthday as string) ?? (canonical.birthday as string) ?? ''),
+          password: passwordNorm,
+          facebook: str(existingCurrent.facebook, canonical.facebook) || ((existingCurrent.facebook as string) ?? (canonical.facebook as string) ?? ''),
+          instagram: str(existingCurrent.instagram, canonical.instagram) || ((existingCurrent.instagram as string) ?? (canonical.instagram as string) ?? ''),
+          youtube: str(existingCurrent.youtube, canonical.youtube) || ((existingCurrent.youtube as string) ?? (canonical.youtube as string) ?? ''),
+          tiktok: str(existingCurrent.tiktok, canonical.tiktok) || ((existingCurrent.tiktok as string) ?? (canonical.tiktok as string) ?? ''),
+          twitter: str(existingCurrent.twitter, canonical.twitter) || ((existingCurrent.twitter as string) ?? (canonical.twitter as string) ?? ''),
+          profileImage: profileImageVal,
+          membershipType: (existingCurrent.membershipType as string) ?? (canonical.membershipType as string) ?? 'STANDARD',
+          subscriptionTier: (existingCurrent.subscriptionTier as string) ?? (canonical.subscriptionTier as string) ?? undefined,
+          defaultAddress: existingCurrent.defaultAddress ?? canonical.defaultAddress ?? undefined,
+          shippingAddress: existingCurrent.shippingAddress ?? canonical.shippingAddress ?? undefined,
+          savedAddresses: Array.isArray(existingCurrent.savedAddresses) ? existingCurrent.savedAddresses : (Array.isArray(canonical.savedAddresses) ? canonical.savedAddresses : undefined),
+          referralCode,
+          giftCardBalance: typeof existingCurrent.giftCardBalance === 'number' ? existingCurrent.giftCardBalance : (typeof canonical.giftCardBalance === 'number' ? canonical.giftCardBalance : 10),
+          hasMadeFirstPurchase: Boolean(existingCurrent.hasMadeFirstPurchase ?? canonical.hasMadeFirstPurchase),
+          loyaltyPoints: typeof existingCurrent.loyaltyPoints === 'number' ? existingCurrent.loyaltyPoints : (typeof canonical.loyaltyPoints === 'number' ? canonical.loyaltyPoints : 0),
+          unlockedDiscounts: Array.isArray(existingCurrent.unlockedDiscounts) ? existingCurrent.unlockedDiscounts : (Array.isArray(canonical.unlockedDiscounts) ? canonical.unlockedDiscounts : ['signup']),
+          voucherList: Array.isArray(existingCurrent.voucherList) ? existingCurrent.voucherList : (Array.isArray(canonical.voucherList) ? canonical.voucherList : undefined),
+          voucherHistory: Array.isArray(existingCurrent.voucherHistory) ? existingCurrent.voucherHistory : (Array.isArray(canonical.voucherHistory) ? canonical.voucherHistory : undefined),
+          digitalCashHistory: Array.isArray(existingCurrent.digitalCashHistory) ? existingCurrent.digitalCashHistory : (Array.isArray(canonical.digitalCashHistory) ? canonical.digitalCashHistory : undefined),
+          welcomeDiscountTiersCreditedByPeriod: existingCurrent.welcomeDiscountTiersCreditedByPeriod && typeof existingCurrent.welcomeDiscountTiersCreditedByPeriod === 'object' ? existingCurrent.welcomeDiscountTiersCreditedByPeriod : (canonical.welcomeDiscountTiersCreditedByPeriod && typeof canonical.welcomeDiscountTiersCreditedByPeriod === 'object' ? canonical.welcomeDiscountTiersCreditedByPeriod : undefined),
+          createdAt: (existingCurrent.createdAt as string) || (canonical.createdAt as string) || new Date().toISOString()
+        };
+        registeredUsers.push(bootstrapUser);
+        localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+        const userToSet = { ...bootstrapUser, role: 'admin' };
+        localStorage.setItem('currentUser', JSON.stringify(userToSet));
+        if (userToSet.profileImage && String(userToSet.profileImage).trim()) localStorage.setItem('profileImage', String(userToSet.profileImage));
+        else localStorage.removeItem('profileImage');
+        localStorage.setItem('isSignedIn', 'true');
+        setIsSignedIn(true);
+        window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+        if (signInEmailRef.current) signInEmailRef.current.value = '';
+        if (signInPasswordRef.current) signInPasswordRef.current.value = '';
+        setSignInEmail('');
+        setSignInPassword('');
+        doRedirectAfterSignIn();
+        return;
+      }
+      const hasAnyUsers = registeredUsers.length > 0;
+      const hasMatchingEmail = registeredUsers.some((u: any) => normalizeEmail(u.email || '') === emailNorm);
+      const message = !hasAnyUsers ? 'NO ACCOUNT IN THIS BROWSER. CREATE AN ACCOUNT ON THIS DEVICE FIRST.' : !hasMatchingEmail ? 'NO ACCOUNT FOR THIS EMAIL IN THIS BROWSER. CREATE AN ACCOUNT HERE WITH THE SAME EMAIL TO USE THIS DEVICE.' : 'INVALID EMAIL OR PASSWORD.';
+      setValidationMessage(message);
+      setShowValidationModal(true);
+    } catch (error) {
+      console.error('Error signing in:', error);
+      setValidationMessage('AN ERROR OCCURRED. PLEASE TRY AGAIN.');
+      setShowValidationModal(true);
+    }
   };
 
   return (
@@ -657,10 +844,21 @@ function SignInPage() {
                     </button>
                   </div>
                   
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
-                    {/* Email Input */}
+                  <form
+                    id="signin-form"
+                    method="post"
+                    action="/account"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleSignInSubmit();
+                    }}
+                    style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}
+                    autoComplete="on"
+                  >
+                    {/* Email Input - uncontrolled so Chrome can autofill full value */}
                     <div style={{ marginTop: '8px' }}>
                       <label
+                        htmlFor="signin-email"
                         style={{
                           fontFamily: '"Futura PT Book"',
                           fontSize: '10px',
@@ -673,10 +871,12 @@ function SignInPage() {
                         EMAIL ADDRESS<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
                       </label>
                       <input
+                        ref={signInEmailRef}
+                        id="signin-email"
                         type="email"
-                        autoComplete="username email webauthn"
-                        value={signInEmail}
-                        onChange={(e) => setSignInEmail(e.target.value)}
+                        name="email"
+                        autoComplete="email"
+                        defaultValue=""
                         style={{
                           width: '100%',
                           height: '36px',
@@ -692,9 +892,10 @@ function SignInPage() {
                       />
                     </div>
 
-                    {/* Password Input */}
+                    {/* Password Input - uncontrolled so Chrome can autofill full value */}
                     <div>
                       <label
+                        htmlFor="signin-password"
                         style={{
                           fontFamily: '"Futura PT Book"',
                           fontSize: '10px',
@@ -708,10 +909,12 @@ function SignInPage() {
                       </label>
                       <div style={{ position: 'relative' }}>
                         <input
+                          ref={signInPasswordRef}
+                          id="signin-password"
                           type={showSignInPassword ? "text" : "password"}
-                          autoComplete="current-password webauthn"
-                          value={signInPassword}
-                          onChange={(e) => setSignInPassword(e.target.value)}
+                          name="password"
+                          autoComplete="current-password"
+                          defaultValue=""
                           className="password-field"
                           style={{
                             width: '100%',
@@ -805,210 +1008,18 @@ function SignInPage() {
                         FORGOT PASSWORD?
                       </button>
                     </div>
-                  </div>
+                  </form>
                 </div>
               </div>
 
             {/* SIGN IN BUTTON - Outside card */}
             <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                 <button
-                  type="button"
-                  onClick={async () => {
-                    if (!signInEmail.trim()) {
-                      setValidationMessage('EMAIL ADDRESS IS REQUIRED.');
-                      setShowValidationModal(true);
-                      return;
-                    }
-                    if (!signInPassword.trim()) {
-                      setValidationMessage('PASSWORD IS REQUIRED.');
-                      setShowValidationModal(true);
-                      return;
-                    }
-                    // Validate credentials: normalize so Chrome/Safari/autofill behave the same (invisible chars, trim, NFC)
-                    try {
-                      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-                      const emailNorm = normalizeEmail(signInEmail);
-                      const passwordNorm = normalizePassword(signInPassword);
-                      const userByEmail = registeredUsers.find((u: any) => normalizeEmail(u.email || '') === emailNorm);
-                      const user = userByEmail && normalizePassword(userByEmail.password || '') === passwordNorm ? userByEmail : null;
-
-                      if (user) {
-                        // Authentication successful: start from registered user then merge existing currentUser so profile (photo, name, birthday, address, etc.) stays intact across sign-in and matches this browser's stored data
-                        const userToSet = { ...user };
-                        // Grant admin role only if email is in the allowed admin list
-                        if (isAdminEmail(user.email || '')) {
-                          userToSet.role = 'admin';
-                        }
-                        const existingCurrentRaw = localStorage.getItem('currentUser');
-                        if (existingCurrentRaw) {
-                          try {
-                            const existingUser = JSON.parse(existingCurrentRaw);
-                            if (existingUser && typeof existingUser === 'object' && user.email?.toLowerCase() === (existingUser.email || '').toLowerCase()) {
-                              // Merge all profile fields from existing currentUser so both accounts are identical (e.g. after clearing registeredUsers but not currentUser, or re-sign-in on same browser)
-                              const profileFields = [
-                                'firstName', 'lastName', 'phoneNumber', 'birthday', 'profileImage',
-                                'facebook', 'instagram', 'youtube', 'tiktok', 'twitter',
-                                'membershipType', 'subscriptionTier', 'referralCode',
-                                'giftCardBalance', 'hasMadeFirstPurchase', 'loyaltyPoints',
-                                'unlockedDiscounts', 'voucherList', 'voucherHistory', 'digitalCashHistory',
-                                'welcomeDiscountTiersCreditedByPeriod', 'defaultAddress', 'shippingAddress', 'savedAddresses',
-                                'createdAt', 'id'
-                              ] as const;
-                              for (const key of profileFields) {
-                                const existingVal = existingUser[key];
-                                if (existingVal !== undefined && existingVal !== null) {
-                                  if (key === 'profileImage' && typeof existingVal === 'string' && existingVal.trim() === '') continue;
-                                  if (Array.isArray(existingVal) || (typeof existingVal === 'object' && existingVal !== null)) {
-                                    (userToSet as any)[key] = existingVal;
-                                  } else {
-                                    (userToSet as any)[key] = existingVal;
-                                  }
-                                }
-                              }
-                              if (typeof existingUser.giftCardBalance === 'number') userToSet.giftCardBalance = existingUser.giftCardBalance;
-                              if (typeof existingUser.loyaltyPoints === 'number') userToSet.loyaltyPoints = existingUser.loyaltyPoints;
-                              if (existingUser.hasMadeFirstPurchase !== undefined) userToSet.hasMadeFirstPurchase = Boolean(existingUser.hasMadeFirstPurchase);
-                              // Persist merged user back to registeredUsers so profile stays in sync
-                              const userIndex = registeredUsers.findIndex((u: any) => u.email?.toLowerCase() === user.email?.toLowerCase());
-                              if (userIndex !== -1) {
-                                registeredUsers[userIndex] = { ...userToSet };
-                                delete (registeredUsers[userIndex] as any).role;
-                                localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
-                              }
-                            }
-                          } catch (e) {
-                            // If parsing fails, just use the user from registeredUsers
-                          }
-                        }
-                        localStorage.setItem('currentUser', JSON.stringify(userToSet));
-                        if (userToSet.profileImage && String(userToSet.profileImage).trim()) {
-                          localStorage.setItem('profileImage', String(userToSet.profileImage));
-                        } else {
-                          localStorage.removeItem('profileImage');
-                        }
-                        localStorage.setItem('isSignedIn', 'true');
-                        setIsSignedIn(true);
-                        
-                        // Dispatch event to update other pages
-                        window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
-                        
-                        // Clear form
-                        setSignInEmail('');
-                        setSignInPassword('');
-                        
-                        // Determine where to route: state.from (account guard), returnTo param, or default to account
-                        const fromAccountGuard = (location.state as { from?: string } | null)?.from;
-                        const searchParams = new URLSearchParams(location.search);
-                        const returnTo = searchParams.get('returnTo');
-                        
-                        if (returnTo === 'checkout') {
-                          navigate('/checkout');
-                        } else if (returnTo && returnTo.startsWith('/admin') && (userToSet.role === 'admin' || isPreviewEnvironment())) {
-                          navigate(returnTo);
-                        } else if (fromAccountGuard && (fromAccountGuard.startsWith('/account') || fromAccountGuard.startsWith('/wishlist'))) {
-                          navigate(fromAccountGuard, { replace: true });
-                        } else {
-                          navigate('/account');
-                        }
-                      } else if (isAdminEmail(signInEmail)) {
-                        // Allowed admin email but not in this browser: bootstrap admin user and merge existing currentUser + canonical profile so profile is identical across browsers
-                        let existingCurrent: Record<string, any> = {};
-                        try {
-                          const raw = localStorage.getItem('currentUser');
-                          if (raw) {
-                            const parsed = JSON.parse(raw);
-                            if (parsed && typeof parsed === 'object' && normalizeEmail(parsed.email || '') === emailNorm) {
-                              existingCurrent = parsed;
-                            }
-                          }
-                        } catch (_) {}
-                        const canonical = await fetchCanonicalAdminProfile();
-                        const firstInitial = (signInEmail.trim()[0] || 'A').toUpperCase();
-                        const lastInitial = (signInEmail.trim().split('@')[0]?.slice(1, 2) || 'A').toUpperCase();
-                        let referralCode = (existingCurrent.referralCode as string) || (canonical.referralCode as string) || firstInitial + lastInitial + '01' + Math.floor(10 + Math.random() * 90);
-                        while (registeredUsers.some((u: any) => u.referralCode === referralCode)) {
-                          referralCode = firstInitial + lastInitial + '01' + Math.floor(10 + Math.random() * 90);
-                        }
-                        // Prefer non-empty values so canonical (admin-profile.json from Safari) is used when existingCurrent is empty (e.g. Chrome)
-                        const str = (a: unknown, b: unknown): string => (a != null && String(a).trim() !== '') ? String(a).trim() : (b != null && String(b).trim() !== '') ? String(b).trim() : '';
-                        const profileImageVal = str(existingCurrent.profileImage, canonical.profileImage) || (existingCurrent.profileImage as string) || (canonical.profileImage as string) || '';
-                        const bootstrapUser = {
-                          id: (existingCurrent.id as string) || (canonical.id as string) || `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-                          firstName: str(existingCurrent.firstName, canonical.firstName) || ((existingCurrent.firstName as string) ?? (canonical.firstName as string) ?? ''),
-                          lastName: str(existingCurrent.lastName, canonical.lastName) || ((existingCurrent.lastName as string) ?? (canonical.lastName as string) ?? ''),
-                          email: emailNorm,
-                          phoneNumber: str(existingCurrent.phoneNumber, canonical.phoneNumber) || ((existingCurrent.phoneNumber as string) ?? (canonical.phoneNumber as string) ?? ''),
-                          birthday: str(existingCurrent.birthday, canonical.birthday) || ((existingCurrent.birthday as string) ?? (canonical.birthday as string) ?? ''),
-                          password: passwordNorm,
-                          facebook: str(existingCurrent.facebook, canonical.facebook) || ((existingCurrent.facebook as string) ?? (canonical.facebook as string) ?? ''),
-                          instagram: str(existingCurrent.instagram, canonical.instagram) || ((existingCurrent.instagram as string) ?? (canonical.instagram as string) ?? ''),
-                          youtube: str(existingCurrent.youtube, canonical.youtube) || ((existingCurrent.youtube as string) ?? (canonical.youtube as string) ?? ''),
-                          tiktok: str(existingCurrent.tiktok, canonical.tiktok) || ((existingCurrent.tiktok as string) ?? (canonical.tiktok as string) ?? ''),
-                          twitter: str(existingCurrent.twitter, canonical.twitter) || ((existingCurrent.twitter as string) ?? (canonical.twitter as string) ?? ''),
-                          profileImage: profileImageVal,
-                          membershipType: (existingCurrent.membershipType as string) ?? (canonical.membershipType as string) ?? 'STANDARD',
-                          subscriptionTier: (existingCurrent.subscriptionTier as string) ?? (canonical.subscriptionTier as string) ?? undefined,
-                          defaultAddress: existingCurrent.defaultAddress ?? canonical.defaultAddress ?? undefined,
-                          shippingAddress: existingCurrent.shippingAddress ?? canonical.shippingAddress ?? undefined,
-                          savedAddresses: Array.isArray(existingCurrent.savedAddresses) ? existingCurrent.savedAddresses : (Array.isArray(canonical.savedAddresses) ? canonical.savedAddresses : undefined),
-                          referralCode,
-                          giftCardBalance: typeof existingCurrent.giftCardBalance === 'number' ? existingCurrent.giftCardBalance : (typeof canonical.giftCardBalance === 'number' ? canonical.giftCardBalance : 10),
-                          hasMadeFirstPurchase: Boolean(existingCurrent.hasMadeFirstPurchase ?? canonical.hasMadeFirstPurchase),
-                          loyaltyPoints: typeof existingCurrent.loyaltyPoints === 'number' ? existingCurrent.loyaltyPoints : (typeof canonical.loyaltyPoints === 'number' ? canonical.loyaltyPoints : 0),
-                          unlockedDiscounts: Array.isArray(existingCurrent.unlockedDiscounts) ? existingCurrent.unlockedDiscounts : (Array.isArray(canonical.unlockedDiscounts) ? canonical.unlockedDiscounts : ['signup']),
-                          voucherList: Array.isArray(existingCurrent.voucherList) ? existingCurrent.voucherList : (Array.isArray(canonical.voucherList) ? canonical.voucherList : undefined),
-                          voucherHistory: Array.isArray(existingCurrent.voucherHistory) ? existingCurrent.voucherHistory : (Array.isArray(canonical.voucherHistory) ? canonical.voucherHistory : undefined),
-                          digitalCashHistory: Array.isArray(existingCurrent.digitalCashHistory) ? existingCurrent.digitalCashHistory : (Array.isArray(canonical.digitalCashHistory) ? canonical.digitalCashHistory : undefined),
-                          welcomeDiscountTiersCreditedByPeriod: existingCurrent.welcomeDiscountTiersCreditedByPeriod && typeof existingCurrent.welcomeDiscountTiersCreditedByPeriod === 'object' ? existingCurrent.welcomeDiscountTiersCreditedByPeriod : (canonical.welcomeDiscountTiersCreditedByPeriod && typeof canonical.welcomeDiscountTiersCreditedByPeriod === 'object' ? canonical.welcomeDiscountTiersCreditedByPeriod : undefined),
-                          createdAt: (existingCurrent.createdAt as string) || (canonical.createdAt as string) || new Date().toISOString()
-                        };
-                        registeredUsers.push(bootstrapUser);
-                        localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
-                        const userToSet = { ...bootstrapUser, role: 'admin' };
-                        localStorage.setItem('currentUser', JSON.stringify(userToSet));
-                        if (userToSet.profileImage && String(userToSet.profileImage).trim()) {
-                          localStorage.setItem('profileImage', String(userToSet.profileImage));
-                        } else {
-                          localStorage.removeItem('profileImage');
-                        }
-                        localStorage.setItem('isSignedIn', 'true');
-                        setIsSignedIn(true);
-                        window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
-                        setSignInEmail('');
-                        setSignInPassword('');
-                        const fromAccountGuard = (location.state as { from?: string } | null)?.from;
-                        const returnTo = new URLSearchParams(location.search).get('returnTo');
-                        if (returnTo === 'checkout') {
-                          navigate('/checkout');
-                        } else if (returnTo && returnTo.startsWith('/admin')) {
-                          navigate(returnTo);
-                        } else if (fromAccountGuard && (fromAccountGuard.startsWith('/account') || fromAccountGuard.startsWith('/wishlist'))) {
-                          navigate(fromAccountGuard, { replace: true });
-                        } else {
-                          navigate('/account');
-                        }
-                        return;
-                      } else {
-                        // No matching user: this browser has no account (e.g. created on another device)
-                        const hasAnyUsers = registeredUsers.length > 0;
-                        const hasMatchingEmail = registeredUsers.some((u: any) => normalizeEmail(u.email || '') === emailNorm);
-                        const message = !hasAnyUsers
-                          ? 'NO ACCOUNT IN THIS BROWSER. CREATE AN ACCOUNT ON THIS DEVICE FIRST.'
-                          : !hasMatchingEmail
-                            ? 'NO ACCOUNT FOR THIS EMAIL IN THIS BROWSER. CREATE AN ACCOUNT HERE WITH THE SAME EMAIL TO USE THIS DEVICE.'
-                            : 'INVALID EMAIL OR PASSWORD.';
-                        setValidationMessage(message);
-                        setShowValidationModal(true);
-                      }
-                    } catch (error) {
-                      console.error('Error signing in:', error);
-                      setValidationMessage('AN ERROR OCCURRED. PLEASE TRY AGAIN.');
-                      setShowValidationModal(true);
-                    }
-                  }}
+                  type="submit"
+                  form="signin-form"
                   className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                   style={{
-                    borderWidth: '1.3px', 
+                    borderWidth: '1.3px',
                     color: '#EB1C24',
                     fontFamily: '"Futura PT Medium"',
                     backgroundColor: '#FFFFFF',
@@ -1570,7 +1581,7 @@ function SignInPage() {
             <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                 <button
                   type="button"
-                  onClick={() => {
+                  onClick={async () => {
                     try {
                       setSignUpAttempted(true);
                       
@@ -1624,13 +1635,88 @@ function SignInPage() {
                         return;
                       }
                       
-                      // Check if email already exists
+                      // Check if email already exists (local or Supabase when backend is on)
                       const existingUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
                       const emailExists = existingUsers.some((user: any) => user.email.toLowerCase() === email.toLowerCase().trim());
-                      
                       if (emailExists) {
                         setEmailError('THIS EMAIL ALREADY EXISTS.');
                         return;
+                      }
+
+                      if (isSupabaseConfigured()) {
+                        const supabase = getSupabase();
+                        if (supabase) {
+                          try {
+                            const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+                              email: email.trim(),
+                              password: password,
+                              options: {
+                                data: {
+                                  first_name: firstName.trim(),
+                                  last_name: lastName.trim(),
+                                  birthday: birthday.trim(),
+                                  phone_number: phoneNumber.trim(),
+                                },
+                              },
+                            });
+                            if (signUpError) {
+                              if (signUpError.message.includes('already registered')) {
+                                setEmailError('THIS EMAIL ALREADY EXISTS.');
+                              } else {
+                                setValidationMessage(signUpError.message.toUpperCase());
+                                setShowValidationModal(true);
+                              }
+                              return;
+                            }
+                            if (signUpData.session) {
+                              const { patchProfile } = await import('../../utils/api');
+                              const referralCode = (() => {
+                                const fi = (firstName.trim()[0] || 'K').toUpperCase();
+                                const li = (lastName.trim()[0] || 'A').toUpperCase();
+                                const day = birthday.split('/')[1]?.padStart(2, '0') || '30';
+                                const digits = phoneNumber.replace(/\D/g, '').slice(-2) || '47';
+                                return `${fi}${li}${day}${digits}`;
+                              })();
+                              await patchProfile({
+                                firstName: firstName.trim(),
+                                lastName: lastName.trim(),
+                                email: normalizeEmail(email),
+                                phoneNumber: phoneNumber.trim(),
+                                birthday: birthday.trim(),
+                                facebook: facebook.trim() || undefined,
+                                instagram: instagram.trim() || undefined,
+                                youtube: youtube.trim() || undefined,
+                                tiktok: tiktok.trim() || undefined,
+                                twitter: twitter.trim() || undefined,
+                                profileImage: '/assets/profile-thumb.png',
+                                membershipType: 'STANDARD',
+                                referralCode,
+                                giftCardBalance: 10,
+                                hasMadeFirstPurchase: false,
+                                loyaltyPoints: 0,
+                                unlockedDiscounts: ['signup'],
+                              });
+                              const profile = await syncAllFromApi();
+                              if (profile) {
+                                localStorage.setItem('isSignedIn', 'true');
+                                setIsSignedIn(true);
+                                window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+                                setFirstName(''); setLastName(''); setBirthday(''); setPhoneNumber(''); setEmail(''); setPassword(''); setConfirmPassword('');
+                                setFacebook(''); setInstagram(''); setYoutube(''); setTiktok(''); setTwitter('');
+                                navigate('/account');
+                                return;
+                              }
+                            } else {
+                              setValidationMessage('CHECK YOUR EMAIL TO CONFIRM YOUR ACCOUNT.');
+                              setShowValidationModal(true);
+                              return;
+                            }
+                          } catch (e) {
+                            setValidationMessage('SIGN-UP FAILED. TRY AGAIN.');
+                            setShowValidationModal(true);
+                            return;
+                          }
+                        }
                       }
                       
                       // Generate referral code with conflict checking
