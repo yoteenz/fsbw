@@ -13,10 +13,10 @@ export async function getAccessToken(): Promise<string | null> {
   return session?.access_token ?? null;
 }
 
-async function apiFetch(
-  path: string,
-  options: RequestInit & { method?: string; body?: unknown } = {}
-): Promise<Response> {
+/** Options for apiFetch; body can be any JSON-serializable value (not limited to RequestInit.body). */
+type ApiFetchOptions = Omit<RequestInit, 'body'> & { body?: unknown };
+
+async function apiFetch(path: string, options: ApiFetchOptions = {}): Promise<Response> {
   const token = await getAccessToken();
   const url = `${API_BASE.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
   const headers: Record<string, string> = {
@@ -24,8 +24,8 @@ async function apiFetch(
     ...((options.headers as Record<string, string>) ?? {}),
   };
   if (token) headers.Authorization = `Bearer ${token}`;
-  const body =
-    options.body !== undefined ? (JSON.stringify(options.body) as BodyInit) : undefined;
+  const body: BodyInit | null | undefined =
+    options.body !== undefined ? JSON.stringify(options.body) : undefined;
   const { body: _omit, ...rest } = options;
   return fetch(url, {
     ...rest,
