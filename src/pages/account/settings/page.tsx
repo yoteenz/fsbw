@@ -7,6 +7,7 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import { getDeletedPlatformFromUserAgent } from '../../../utils/platformDetection';
 import { patchProfile } from '../../../utils/api';
 import { trackActivity } from '../../../utils/activity';
+import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
 
 const inputBaseStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Demi"',
@@ -248,8 +249,14 @@ function SettingsPage() {
     }
   };
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     try {
+      setShowDeleteAccountConfirm(false);
+      // Sign out from Supabase first so the sign-in page doesn't see a session and redirect back to /account
+      if (isSupabaseConfigured()) {
+        const supabase = getSupabase();
+        if (supabase) await supabase.auth.signOut().catch(() => {});
+      }
       const currentUser = userData ? userData : (() => {
         try {
           const raw = localStorage.getItem('currentUser');
@@ -276,7 +283,6 @@ function SettingsPage() {
       localStorage.setItem('isSignedIn', 'false');
       localStorage.removeItem('currentUser');
       window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
-      setShowDeleteAccountConfirm(false);
       navigate('/sign-in');
     } catch (e) {
       console.error('Delete account failed', e);
