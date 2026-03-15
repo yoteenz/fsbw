@@ -1,19 +1,48 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AdminHeader from '../components/AdminHeader';
 import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
+import { getAdminBrand } from '../../../utils/api';
+import { isSupabaseConfigured } from '../../../utils/supabase';
+import { isAdminEmail } from '../../../utils/adminAuth';
 
 const BRAND_TABS = ['OVERVIEW', 'METRICS', 'ACHIEVEMENTS'] as const;
 
+const defaultBrandMetrics = {
+  retention: '94%',
+  referralRate: '23%',
+  repeatBookings: '78%',
+  growthRate: '+15%',
+  brandScore: 94,
+  marketPenetration: '15%',
+};
+
 export default function AdminBrand() {
   const [activeTab, setActiveTab] = useState<typeof BRAND_TABS[number]>('OVERVIEW');
-  const [brandMetrics] = useState({
-    retention: '94%',
-    referralRate: '23%',
-    repeatBookings: '78%',
-    growthRate: '+15%',
-    brandScore: 94,
-    marketPenetration: '15%'
-  });
+  const [brandMetrics, setBrandMetrics] = useState(defaultBrandMetrics);
+
+  useEffect(() => {
+    let currentUser: { email?: string } | null = null;
+    try {
+      const raw = localStorage.getItem('currentUser');
+      currentUser = raw ? JSON.parse(raw) : null;
+    } catch {
+      /* ignore */
+    }
+    if (isSupabaseConfigured() && currentUser?.email && isAdminEmail(currentUser.email)) {
+      getAdminBrand()
+        .then((r) => {
+          setBrandMetrics({
+            retention: String(r.retention ?? defaultBrandMetrics.retention),
+            referralRate: String(r.referralRate ?? defaultBrandMetrics.referralRate),
+            repeatBookings: String(r.repeatBookings ?? defaultBrandMetrics.repeatBookings),
+            growthRate: String(r.growthRate ?? defaultBrandMetrics.growthRate),
+            brandScore: Number(r.brandScore) ?? defaultBrandMetrics.brandScore,
+            marketPenetration: String(r.marketPenetration ?? defaultBrandMetrics.marketPenetration),
+          });
+        })
+        .catch(() => {});
+    }
+  }, []);
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>

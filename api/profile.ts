@@ -1,6 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getAuthUser } from './_lib/auth';
 import { getSupabaseUser } from './_lib/supabase';
+import { fromProfileRow } from './_lib/profileMapping';
+import { writeAuditLog } from './_lib/auditLog';
 
 function toProfileRow(profile: Record<string, unknown>) {
   return {
@@ -31,40 +33,6 @@ function toProfileRow(profile: Record<string, unknown>) {
     voucher_history: profile.voucherHistory ?? null,
     digital_cash_history: profile.digitalCashHistory ?? null,
     welcome_discount_tiers_credited_by_period: profile.welcomeDiscountTiersCreditedByPeriod ?? null,
-  };
-}
-
-function fromProfileRow(row: Record<string, unknown>): Record<string, unknown> {
-  return {
-    id: row.id,
-    email: row.email,
-    role: row.role,
-    firstName: row.first_name,
-    lastName: row.last_name,
-    phoneNumber: row.phone_number,
-    birthday: row.birthday,
-    facebook: row.facebook,
-    instagram: row.instagram,
-    youtube: row.youtube,
-    tiktok: row.tiktok,
-    twitter: row.twitter,
-    profileImage: row.profile_image,
-    membershipType: row.membership_type,
-    subscriptionTier: row.subscription_tier,
-    defaultAddress: row.default_address,
-    shippingAddress: row.shipping_address,
-    savedAddresses: row.saved_addresses,
-    referralCode: row.referral_code,
-    giftCardBalance: row.gift_card_balance,
-    hasMadeFirstPurchase: row.has_made_first_purchase,
-    loyaltyPoints: row.loyalty_points,
-    unlockedDiscounts: row.unlocked_discounts,
-    voucherList: row.voucher_list,
-    voucherHistory: row.voucher_history,
-    digitalCashHistory: row.digital_cash_history,
-    welcomeDiscountTiersCreditedByPeriod: row.welcome_discount_tiers_credited_by_period,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
   };
 }
 
@@ -111,6 +79,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .select()
         .single();
       if (error) return res.status(500).json({ error: error.message });
+      try {
+        await writeAuditLog({
+          actorId: user.id,
+          actorEmail: user.email,
+          action: 'profile.update',
+          resourceType: 'profiles',
+          resourceId: user.id,
+          details: { updated: true },
+        });
+      } catch {
+        /* ignore */
+      }
       return res.status(200).json(fromProfileRow(data as Record<string, unknown>));
     } else {
       const { data, error } = await supabase

@@ -159,6 +159,8 @@ interface AdminHeaderProps {
   externalSearchPlaceholder?: string;
   /** When true, hide the search icon (e.g. on client details view) */
   hideSearchIcon?: boolean;
+  /** When true, show account icon to the right of search (e.g. on dashboard only) */
+  showAccountIcon?: boolean;
 }
 
 /**
@@ -177,6 +179,7 @@ export default function AdminHeader({
   onExternalSearchChange,
   externalSearchPlaceholder,
   hideSearchIcon = false,
+  showAccountIcon = false,
 }: AdminHeaderProps) {
   const navigate = useNavigate();
 
@@ -512,9 +515,26 @@ export default function AdminHeader({
                   />
                 </button>
                 )}
+                {showAccountIcon && (
+                <button
+                  type="button"
+                  className="cursor-pointer flex items-center justify-center"
+                  onClick={() => navigate('/account')}
+                  aria-label="Account profile"
+                  style={{ width: '20px', height: '20px', padding: 0, border: 'none', background: 'none', marginLeft: '2px', transform: 'translateX(-2px)' }}
+                >
+                  <img
+                    src="/assets/NOIR/account-icon.svg"
+                    alt="Account"
+                    width="15"
+                    height="15"
+                  />
+                </button>
+                )}
               </>
             ) : (
-              !isSearchActive && !hideSearchIcon && (
+              <>
+              {!isSearchActive && !hideSearchIcon && (
                 <button
                   type="button"
                   className="cursor-pointer"
@@ -528,7 +548,24 @@ export default function AdminHeader({
                     height="15"
                   />
                 </button>
-              )
+              )}
+              {showAccountIcon && (
+              <button
+                type="button"
+                className="cursor-pointer flex items-center justify-center"
+                onClick={() => navigate('/account')}
+                aria-label="Account profile"
+                style={{ width: '20px', height: '20px', padding: 0, border: 'none', background: 'none', marginLeft: '2px', transform: 'translateX(-2px)' }}
+              >
+                <img
+                  src="/assets/NOIR/account-icon.svg"
+                  alt="Account"
+                  width="15"
+                  height="15"
+                />
+              </button>
+              )}
+              </>
             )}
           </div>
 

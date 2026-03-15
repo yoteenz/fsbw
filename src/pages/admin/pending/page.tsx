@@ -1,13 +1,54 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
+import { getAdminPending } from '../../../utils/api';
+import { isSupabaseConfigured } from '../../../utils/supabase';
+import { isAdminEmail } from '../../../utils/adminAuth';
 
 const PENDING_TABS = ['ALL', 'REVIEWS', 'FORMS', 'ALERTS'] as const;
 
 export default function AdminPending() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<typeof PENDING_TABS[number]>('ALL');
+  const [pendingReviews, setPendingReviews] = useState(12);
+  const [orderForms, setOrderForms] = useState(8);
+  const [pendingItems, setPendingItems] = useState<{ label: string; value: string }[]>([]);
+
+  useEffect(() => {
+    let currentUser: { email?: string } | null = null;
+    try {
+      const raw = localStorage.getItem('currentUser');
+      currentUser = raw ? JSON.parse(raw) : null;
+    } catch {
+      /* ignore */
+    }
+    if (isSupabaseConfigured() && currentUser?.email && isAdminEmail(currentUser.email)) {
+      getAdminPending()
+        .then((r) => {
+          setPendingReviews(r.pendingReviews);
+          setOrderForms(r.orderForms);
+          setPendingItems(r.pendingItems.length ? r.pendingItems : [
+            { label: 'PENDING REVIEWS', value: String(r.pendingReviews) },
+            { label: 'ORDER FORMS', value: String(r.orderForms) },
+            { label: 'TIER UPGRADES', value: '0' },
+            { label: 'AFFILIATE REQUESTS', value: '0' },
+            { label: 'REFUND REQUESTS', value: '0' },
+            { label: 'SYSTEM ALERTS', value: '0' },
+          ]);
+        })
+        .catch(() => {});
+    }
+  }, []);
+
+  const displayItems = pendingItems.length > 0 ? pendingItems : [
+    { label: 'PENDING REVIEWS', value: String(pendingReviews) },
+    { label: 'ORDER FORMS', value: String(orderForms) },
+    { label: 'TIER UPGRADES', value: '23' },
+    { label: 'AFFILIATE REQUESTS', value: '47' },
+    { label: 'REFUND REQUESTS', value: '3' },
+    { label: 'SYSTEM ALERTS', value: '5' },
+  ];
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -61,11 +102,11 @@ export default function AdminPending() {
               {/* Cards above tabs */}
               <div className="grid grid-cols-2 gap-4 px-5 mb-4">
                 <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>12</p>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{pendingReviews}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>PENDING REVIEWS</p>
                 </div>
                 <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>8</p>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{orderForms}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>ORDER FORMS</p>
                 </div>
               </div>
@@ -106,14 +147,7 @@ export default function AdminPending() {
                   <>
                     <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>ALL PENDING ITEMS</h3>
                     <div className="space-y-2">
-                      {[
-                        { label: 'PENDING REVIEWS', value: '12' },
-                        { label: 'ORDER FORMS', value: '8' },
-                        { label: 'TIER UPGRADES', value: '23' },
-                        { label: 'AFFILIATE REQUESTS', value: '47' },
-                        { label: 'REFUND REQUESTS', value: '3' },
-                        { label: 'SYSTEM ALERTS', value: '5' },
-                      ].map((row) => (
+                      {displayItems.map((row) => (
                         <div key={row.label} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
                           <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>{row.label}</span>
                           <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>{row.value}</span>

@@ -2,7 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import ConfirmationModal from '../../../components/ConfirmationModal';
-import { isAyoteenzAdminAccount, getEffectiveTierName } from '../../../utils/adminAuth';
+import { isAyoteenzAdminAccount, getEffectiveTierName, isAdminEmail } from '../../../utils/adminAuth';
+import { getAdminClients, getAdminOrders, getAdminCart, getAdminWishlist, getAdminActivity, exportClientsCsv } from '../../../utils/api';
+import { isSupabaseConfigured } from '../../../utils/supabase';
 import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import summaryIcon from '../../../assets/icons/summary-icon.svg?url';
 import { blockClient, isClientBlocked } from '../../../utils/blockedClients';
@@ -521,7 +523,48 @@ function getMockOrdersForClient(client: any): MockOrder[] {
   return orders.reverse();
 }
 
-const DETAILS_TABS = ['orders', 'appointments', 'reviews', 'messages'] as const;
+const DETAILS_TABS = ['activity', 'orders', 'appointments', 'messages'] as const;
+const PERSONAL_SECTION_TABS = ['personal', 'cart', 'wishlist'] as const;
+
+const MAYA_OWEN_MOCK_EMAIL = 'mock13@test.com';
+
+/** Mock activity for Maya Owen (mock13@test.com) – all event types for demo. Newest first. */
+function getMockActivityForMayaOwen(): Array<{ id: string; eventType: string; payload?: Record<string, unknown>; createdAt: string }> {
+  const now = Date.now();
+  const hour = 60 * 60 * 1000;
+  const day = 24 * hour;
+  const ts = (offsetMs: number) => new Date(now - offsetMs).toISOString();
+  return [
+    { id: 'mock-act-1', eventType: 'sign_out', payload: {}, createdAt: ts(5 * 60 * 1000) },
+    { id: 'mock-act-2', eventType: 'view_page', payload: { page: '/account' }, createdAt: ts(12 * 60 * 1000) },
+    { id: 'mock-act-3', eventType: 'profile_update', payload: { field: 'phone' }, createdAt: ts(25 * 60 * 1000) },
+    { id: 'mock-act-4', eventType: 'redeem_points', payload: { points: 500, reward: '10% off' }, createdAt: ts(1 * hour) },
+    { id: 'mock-act-5', eventType: 'add_review', payload: { productName: 'NOIR', rating: 5 }, createdAt: ts(2 * hour) },
+    { id: 'mock-act-6', eventType: 'checkout_complete', payload: { orderId: 'ORD-007', total: 920 }, createdAt: ts(3 * hour) },
+    { id: 'mock-act-7', eventType: 'checkout_start', payload: { cartItems: 1 }, createdAt: ts(3 * hour + 15 * 60 * 1000) },
+    { id: 'mock-act-8', eventType: 'place_order', payload: { orderId: 'ORD-007', productName: 'BLANCO', total: 920 }, createdAt: ts(4 * hour) },
+    { id: 'mock-act-9', eventType: 'remove_from_cart', payload: { productName: 'SOFT CURL' }, createdAt: ts(5 * hour) },
+    { id: 'mock-act-10', eventType: 'add_to_cart', payload: { productName: 'BLANCO' }, createdAt: ts(5 * hour + 30 * 60 * 1000) },
+    { id: 'mock-act-11', eventType: 'view_product', payload: { productName: 'BLANCO', path: '/straight/blanco' }, createdAt: ts(6 * hour) },
+    { id: 'mock-act-12', eventType: 'add_to_wishlist', payload: { productName: 'OCEAN CURL' }, createdAt: ts(8 * hour) },
+    { id: 'mock-act-13', eventType: 'remove_from_wishlist', payload: { productName: 'SOFT WAVE' }, createdAt: ts(10 * hour) },
+    { id: 'mock-act-14', eventType: 'cancel_order', payload: { orderId: 'ORD-006' }, createdAt: ts(1 * day) },
+    { id: 'mock-act-15', eventType: 'view_page', payload: { page: '/admin/dashboard' }, createdAt: ts(1 * day + 2 * hour) },
+    { id: 'mock-act-16', eventType: 'view_product', payload: { productName: 'NOIR', path: '/straight/noir' }, createdAt: ts(1 * day + 4 * hour) },
+    { id: 'mock-act-17', eventType: 'view_product', payload: { productName: 'SOFT CURL', path: '/curly/soft-curl' }, createdAt: ts(1 * day + 5 * hour) },
+    { id: 'mock-act-18', eventType: 'add_to_cart', payload: { productName: 'NOIR' }, createdAt: ts(1 * day + 6 * hour) },
+    { id: 'mock-act-19', eventType: 'sign_in', payload: {}, createdAt: ts(1 * day + 8 * hour) },
+    { id: 'mock-act-20', eventType: 'view_page', payload: { page: '/' }, createdAt: ts(2 * day) },
+    { id: 'mock-act-21', eventType: 'view_page', payload: { page: '/products' }, createdAt: ts(2 * day + 1 * hour) },
+    { id: 'mock-act-22', eventType: 'add_to_wishlist', payload: { productName: 'BEACH WAVE' }, createdAt: ts(2 * day + 3 * hour) },
+    { id: 'mock-act-23', eventType: 'place_order', payload: { orderId: 'ORD-005', productName: 'NOIR', total: 780 }, createdAt: ts(3 * day) },
+    { id: 'mock-act-24', eventType: 'checkout_complete', payload: { orderId: 'ORD-005', total: 780 }, createdAt: ts(3 * day) },
+    { id: 'mock-act-25', eventType: 'add_review', payload: { productName: 'BLANCO', rating: 4 }, createdAt: ts(4 * day) },
+    { id: 'mock-act-26', eventType: 'profile_update', payload: { field: 'shipping_address' }, createdAt: ts(5 * day) },
+    { id: 'mock-act-27', eventType: 'sign_out', payload: {}, createdAt: ts(5 * day + 2 * hour) },
+    { id: 'mock-act-28', eventType: 'sign_in', payload: {}, createdAt: ts(6 * day) },
+  ];
+}
 
 export default function AdminClients() {
   const navigate = useNavigate();
@@ -532,7 +575,7 @@ export default function AdminClients() {
   const [sortOption, setSortOption] = useState<SortOption>('Most recent');
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [selectedClientEmail, setSelectedClientEmail] = useState<string | null>(null);
-  const [detailsTab, setDetailsTab] = useState<typeof DETAILS_TABS[number]>('orders');
+  const [detailsTab, setDetailsTab] = useState<typeof DETAILS_TABS[number]>('activity');
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
   const [showCancelOrderConfirm, setShowCancelOrderConfirm] = useState(false);
@@ -543,6 +586,12 @@ export default function AdminClients() {
   const [mediaViewerIndex, setMediaViewerIndex] = useState(0);
   const [showInvitesPopup, setShowInvitesPopup] = useState(false);
   const [clientSearchQuery, setClientSearchQuery] = useState('');
+  const [adminOrdersByUserId, setAdminOrdersByUserId] = useState<Record<string, { activeOrders: unknown[]; pastOrders: unknown[] }>>({});
+  const [adminCartByUserId, setAdminCartByUserId] = useState<Record<string, unknown[]>>({});
+  const [adminWishlistByUserId, setAdminWishlistByUserId] = useState<Record<string, unknown[]>>({});
+  const [adminActivityByUserId, setAdminActivityByUserId] = useState<Record<string, Array<{ id: string; eventType: string; payload?: unknown; createdAt: string }>>>({});
+  const [personalSectionTab, setPersonalSectionTab] = useState<typeof PERSONAL_SECTION_TABS[number]>('personal');
+  const [exportingCsv, setExportingCsv] = useState(false);
 
   // Sync selectedClientEmail from URL (e.g. when redirected from /admin/clients/account?email=...)
   useEffect(() => {
@@ -563,6 +612,9 @@ export default function AdminClients() {
   }, [selectedClientEmail]);
   useEffect(() => {
     setShowInvitesPopup(false);
+  }, [selectedClientEmail]);
+  useEffect(() => {
+    setPersonalSectionTab('personal');
   }, [selectedClientEmail]);
 
   const loadData = useCallback(() => {
@@ -596,6 +648,28 @@ export default function AdminClients() {
       // Filter out blocked clients
       reg = reg.filter((u: any) => !isClientBlocked(u));
       setRegisteredUsers(reg);
+
+      // Admin + Supabase: fetch all clients from API so dashboard shows everyone (not just this browser)
+      if (currentUser && currentUser.email && isAdminEmail(currentUser.email) && isSupabaseConfigured()) {
+        getAdminClients()
+          .then((apiClients) => {
+            if (apiClients.length > 0) {
+              let fromApi = apiClients as any[];
+              const mockClients = getMockClientsForAyoteenz();
+              const mockByEmail = new Map(mockClients.map((m: any) => [(m.email || '').toLowerCase(), m]));
+              const existingEmails = new Set(fromApi.map((u: any) => (u.email || '').toLowerCase()));
+              const toAdd = mockClients.filter((m: any) => !existingEmails.has((m.email || '').toLowerCase()));
+              fromApi = fromApi.map((u: any) => {
+                const fresh = mockByEmail.get((u.email || '').toLowerCase());
+                return fresh ? { ...u, ...fresh } : u;
+              });
+              if (toAdd.length > 0) fromApi = [...fromApi, ...toAdd];
+              fromApi = fromApi.filter((u: any) => !isClientBlocked(u));
+              setRegisteredUsers(fromApi);
+            }
+          })
+          .catch(() => {});
+      }
     } catch {
       setRegisteredUsers([]);
     }
@@ -614,6 +688,39 @@ export default function AdminClients() {
       window.removeEventListener('focus', onStorage);
     };
   }, [loadData]);
+
+  // When selected client has Supabase id, fetch their orders/cart/wishlist from API
+  const selectedClientForOrders = registeredUsers.find(
+    (u: any) => (u.email || '').toLowerCase() === (selectedClientEmail || '').trim().toLowerCase()
+  );
+  useEffect(() => {
+    const id = selectedClientForOrders?.id as string | undefined;
+    if (!id || adminOrdersByUserId[id]) return;
+    getAdminOrders(id)
+      .then((data) => setAdminOrdersByUserId((prev) => ({ ...prev, [id]: data })))
+      .catch(() => {});
+  }, [selectedClientForOrders?.id]);
+  useEffect(() => {
+    const id = selectedClientForOrders?.id as string | undefined;
+    if (!id || adminCartByUserId[id] !== undefined) return;
+    getAdminCart(id)
+      .then((data) => setAdminCartByUserId((prev) => ({ ...prev, [id]: data.items || [] })))
+      .catch(() => setAdminCartByUserId((prev) => ({ ...prev, [id as string]: [] })));
+  }, [selectedClientForOrders?.id]);
+  useEffect(() => {
+    const id = selectedClientForOrders?.id as string | undefined;
+    if (!id || adminWishlistByUserId[id] !== undefined) return;
+    getAdminWishlist(id)
+      .then((data) => setAdminWishlistByUserId((prev) => ({ ...prev, [id]: data.items || [] })))
+      .catch(() => setAdminWishlistByUserId((prev) => ({ ...prev, [id as string]: [] })));
+  }, [selectedClientForOrders?.id]);
+  useEffect(() => {
+    const id = selectedClientForOrders?.id as string | undefined;
+    if (!id || adminActivityByUserId[id] !== undefined) return;
+    getAdminActivity(id)
+      .then((list) => setAdminActivityByUserId((prev) => ({ ...prev, [id]: list })))
+      .catch(() => setAdminActivityByUserId((prev) => ({ ...prev, [id as string]: [] })));
+  }, [selectedClientForOrders?.id]);
 
   // Selected client, order history (simplified), and raw orders (full objects for expand view)
   const { selectedClient, selectedOrderHistory, selectedRawOrders } = (() => {
@@ -634,6 +741,31 @@ export default function AdminClients() {
     }
     let orderHistory: any[] = [];
     let rawOrders: any[] = [];
+    // Use orders from Supabase when this client has id and we fetched admin orders
+    const adminOrders = found?.id ? adminOrdersByUserId[found.id as string] : null;
+    if (adminOrders && (adminOrders.activeOrders.length > 0 || adminOrders.pastOrders.length > 0)) {
+      rawOrders = [...adminOrders.activeOrders, ...adminOrders.pastOrders].map((o: any, idx: number) => ({
+        ...o,
+        id: o.id || `order-${idx}`,
+      }));
+      const orderSortTime = (o: any) => {
+        const t = o.updatedAt ?? o.updated_at ?? o.date ?? o.createdAt ?? o.placedAt;
+        if (!t) return 0;
+        try {
+          return new Date(t).getTime();
+        } catch {
+          return 0;
+        }
+      };
+      rawOrders.sort((a: any, b: any) => orderSortTime(b) - orderSortTime(a));
+      orderHistory = rawOrders.map((o: any) => ({
+        id: o.id,
+        date: o.date || o.createdAt || '—',
+        product: o.items?.[0]?.name || o.productName || 'Order',
+        amount: Number(o.total) || 0,
+        status: (o.status || 'COMPLETED').toUpperCase(),
+      }));
+    } else {
     try {
       const raw = localStorage.getItem(`userOrders_${email}`);
       const data = raw ? JSON.parse(raw) : null;
@@ -718,6 +850,7 @@ export default function AdminClients() {
       }
     } catch {
       // ignore
+    }
     }
     return { selectedClient: found || null, selectedOrderHistory: orderHistory, selectedRawOrders: rawOrders };
   })();
@@ -1134,7 +1267,7 @@ export default function AdminClients() {
             showBack
             breadcrumbParentLabel="CLIENTS"
             breadcrumbParentPath="/admin/dashboard"
-            onBack={selectedClientEmail ? () => { setSelectedClientEmail(null); setDetailsTab('orders'); setExpandedOrderId(null); } : undefined}
+            onBack={selectedClientEmail ? () => { setSelectedClientEmail(null); setDetailsTab('activity'); setExpandedOrderId(null); } : undefined}
             breadcrumbParentOnClick={() => navigate('/admin/dashboard')}
             externalSearchValue={clientSearchQuery}
             onExternalSearchChange={setClientSearchQuery}
@@ -1168,7 +1301,7 @@ export default function AdminClients() {
                       </h2>
                       <button
                         type="button"
-                        onClick={() => { setSelectedClientEmail(null); setDetailsTab('orders'); setExpandedOrderId(null); }}
+                        onClick={() => { setSelectedClientEmail(null); setDetailsTab('activity'); setExpandedOrderId(null); }}
                         style={{
                           background: 'none',
                           border: 'none',
@@ -1208,6 +1341,31 @@ export default function AdminClients() {
                   >
                     CLIENTS
                   </h2>
+                  {isSupabaseConfigured() && (
+                    <button
+                      type="button"
+                      disabled={exportingCsv}
+                      onClick={async () => {
+                        setExportingCsv(true);
+                        try {
+                          const url = await exportClientsCsv();
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = 'clients-export.csv';
+                          a.click();
+                          URL.revokeObjectURL(url);
+                        } catch {
+                          /* ignore */
+                        } finally {
+                          setExportingCsv(false);
+                        }
+                      }}
+                      className="text-xs px-2 py-1 border border-gray-500 rounded mr-2 disabled:opacity-50"
+                      style={{ fontFamily: '"Futura PT Medium"', color: '#374151' }}
+                    >
+                      {exportingCsv ? 'Exporting…' : 'Export CSV'}
+                    </button>
+                  )}
                   <svg
                     width="15"
                     height="15"
@@ -1521,70 +1679,198 @@ export default function AdminClients() {
                             </div>
                           );
                         })()}
-                        <div className="bg-white border border-gray-200 p-4 mb-6">
-                          <div className="flex flex-col gap-y-[9px] text-sm">
-                            <div className="flex justify-between">
-                              <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>JOIN DATE:</span>
-                              <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px' }}>{selectedJoinDate}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>EMAIL:</span>
-                              <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px' }}>{(selectedClient?.email || '').toUpperCase()}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>BIRTHDAY:</span>
-                              <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px' }}>{selectedBirthday}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>PHONE:</span>
-                              <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px' }}>{(selectedClient?.phone || '—').toUpperCase()}</span>
-                            </div>
-                            {(['facebook', 'instagram', 'twitter', 'tiktok', 'youtube', 'linkedin'] as const).map((key) => {
-                              /* Profile socials: from sign-up or account profile settings */
-                              const val = (selectedClient as any)?.[key];
-                              if (!val || String(val).trim() === '') return null;
-                              const label = key.toLowerCase() + ':';
-                              const url = getSocialUrl(key, String(val).trim());
-                              const displayVal = String(val).trim().toUpperCase();
-                              return (
-                                <div key={key} className="flex justify-between">
-                                  <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>{label}</span>
-                                  {url !== '#' ? (
-                                    <a
-                                      href={url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', textDecoration: 'none' }}
-                                    >
-                                      {displayVal}
-                                    </a>
-                                  ) : (
-                                    <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px' }}>{displayVal}</span>
-                                  )}
+                        {/* Reviews panel – below affiliate (Rewards) content */}
+                        {selectedClient && (() => {
+                          const email = (selectedClient.email || '').trim().toLowerCase();
+                          let reviewList: Array<{ id?: string; date?: string; createdAt?: string; submittedAt?: string; text?: string; rating?: number; hasPhoto?: boolean; hasVideo?: boolean; status?: string; pending?: boolean }> = [];
+                          try {
+                            const raw = email ? localStorage.getItem(`userSubmittedReviews_${email}`) : null;
+                            if (raw) {
+                              const data = JSON.parse(raw);
+                              const list = Array.isArray(data) ? data : (data?.reviews || []);
+                              const sortTime = (r: any) => {
+                                const t = r.updatedAt ?? r.updated_at ?? r.date ?? r.createdAt ?? r.submittedAt;
+                                if (!t) return 0;
+                                try { return new Date(t).getTime(); } catch { return 0; }
+                              };
+                              reviewList = [...list].sort((a, b) => sortTime(b) - sortTime(a));
+                            }
+                          } catch {
+                            // ignore
+                          }
+                          const row = getReviewsTabRow(selectedClient, 0);
+                          return (
+                            <div className="bg-white border border-gray-200 p-4 mb-6">
+                              <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', margin: '0 0 12px 0', textTransform: 'uppercase' }}>REVIEWS</h3>
+                              <div className="grid grid-cols-3 gap-4 text-center">
+                                <div>
+                                  <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{row.totalReviews}</p>
+                                  <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>TOTAL</p>
                                 </div>
-                              );
-                            })}
-                            <div className="flex justify-between items-start">
-                              <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>ADDRESS:</span>
-                              <span className="text-right" style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px', maxWidth: '60%', lineHeight: '13px' }}>
-                                {selectedPrimaryAddress === '—' ? (
-                                  '—'
-                                ) : (
-                                  (() => {
-                                    const lines = selectedPrimaryAddress.split('\n');
-                                    return lines.map((line: string, i: number) => (
-                                      <span key={i}>
-                                        {i > 0 && <br />}
-                                        <span style={i === lines.length - 1 ? { fontFamily: '"Futura PT Medium"', color: '#EB1C24' } : undefined}>
-                                          {line}
-                                        </span>
-                                      </span>
-                                    ));
-                                  })()
-                                )}
-                              </span>
+                                <div>
+                                  <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{row.reviewsWithPhotosVideos}</p>
+                                  <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>MEDIA</p>
+                                </div>
+                                <div>
+                                  <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{row.pendingReviews}</p>
+                                  <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>PENDING</p>
+                                </div>
+                              </div>
+                              {reviewList.length > 0 && (
+                                <div className="mt-4 pt-4" style={{ borderTop: '1px solid #e5e7eb' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', marginBottom: '8px', textTransform: 'uppercase' }}>ALL REVIEWS (NEWEST FIRST)</p>
+                                  <div className="space-y-3 max-h-64 overflow-y-auto">
+                                    {reviewList.map((r: any, i: number) => {
+                                      const dateStr = (r.updatedAt ?? r.updated_at ?? r.date ?? r.createdAt ?? r.submittedAt) || '—';
+                                      const displayDate = typeof dateStr === 'string' ? (() => { try { return new Date(dateStr).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }); } catch { return dateStr; } })() : '—';
+                                      return (
+                                        <div key={r.id ?? i} className="py-3 border-b border-gray-100 last:border-0">
+                                          <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', margin: 0 }}>{displayDate}</p>
+                                          {(r.rating != null) && <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '2px 0 0 0' }}>Rating: {r.rating}</p>}
+                                          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', margin: (r.rating != null ? '2px' : '4px') + ' 0 0 0' }}>{r.text ?? r.message ?? r.content ?? '—'}</p>
+                                          {(r.hasPhoto || r.hasVideo) && (
+                                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '4px 0 0 0' }}>
+                                              {(r.status === 'pending' || r.pending) ? 'PENDING' : 'APPROVED'}
+                                            </p>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
                             </div>
+                          );
+                        })()}
+                        {/* Personal section: Personal | Cart | Wishlist tabs */}
+                        <div className="bg-white border border-gray-200 p-4 mb-6">
+                          <div className="flex justify-center gap-6 mb-4">
+                            {PERSONAL_SECTION_TABS.map((tab) => (
+                              <button
+                                key={tab}
+                                type="button"
+                                onClick={() => setPersonalSectionTab(tab)}
+                                className="py-2 font-medium transition-colors"
+                                style={{
+                                  fontFamily: '"Futura PT Medium"',
+                                  fontSize: '11px',
+                                  color: personalSectionTab === tab ? '#EB1C24' : '#808080',
+                                  border: 'none',
+                                  paddingBottom: '4px',
+                                  background: 'none',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    display: 'inline-block',
+                                    borderBottom: personalSectionTab === tab ? '1px solid #EB1C24' : '1px solid transparent',
+                                    paddingBottom: '4px'
+                                  }}
+                                >
+                                  {tab.toUpperCase()}
+                                </span>
+                              </button>
+                            ))}
                           </div>
+                          {personalSectionTab === 'personal' && (
+                            <div className="flex flex-col gap-y-[9px] text-sm">
+                              <div className="flex justify-between">
+                                <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>JOIN DATE:</span>
+                                <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px' }}>{selectedJoinDate}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>EMAIL:</span>
+                                <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px' }}>{(selectedClient?.email || '').toUpperCase()}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>BIRTHDAY:</span>
+                                <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px' }}>{selectedBirthday}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>PHONE:</span>
+                                <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px' }}>{(selectedClient?.phone || '—').toUpperCase()}</span>
+                              </div>
+                              {(['facebook', 'instagram', 'twitter', 'tiktok', 'youtube', 'linkedin'] as const).map((key) => {
+                                const val = (selectedClient as any)?.[key];
+                                if (!val || String(val).trim() === '') return null;
+                                const label = key.toLowerCase() + ':';
+                                const url = getSocialUrl(key, String(val).trim());
+                                const displayVal = String(val).trim().toUpperCase();
+                                return (
+                                  <div key={key} className="flex justify-between">
+                                    <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>{label}</span>
+                                    {url !== '#' ? (
+                                      <a
+                                        href={url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', textDecoration: 'none' }}
+                                      >
+                                        {displayVal}
+                                      </a>
+                                    ) : (
+                                      <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px' }}>{displayVal}</span>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                              <div className="flex justify-between items-start">
+                                <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>ADDRESS:</span>
+                                <span className="text-right" style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px', maxWidth: '60%', lineHeight: '13px' }}>
+                                  {selectedPrimaryAddress === '—' ? (
+                                    '—'
+                                  ) : (
+                                    (() => {
+                                      const lines = selectedPrimaryAddress.split('\n');
+                                      return lines.map((line: string, i: number) => (
+                                        <span key={i}>
+                                          {i > 0 && <br />}
+                                          <span style={i === lines.length - 1 ? { fontFamily: '"Futura PT Medium"', color: '#EB1C24' } : undefined}>
+                                            {line}
+                                          </span>
+                                        </span>
+                                      ));
+                                    })()
+                                  )}
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                          {personalSectionTab === 'cart' && selectedClient && (() => {
+                            const id = selectedClient.id as string | undefined;
+                            const items = (id ? adminCartByUserId[id] : null) ?? [];
+                            const list = Array.isArray(items) ? items : [];
+                            return list.length === 0 ? (
+                              <p className="text-center py-4 text-sm text-gray-500" style={{ fontFamily: '"Futura PT Medium"' }}>CART IS EMPTY</p>
+                            ) : (
+                              <div className="space-y-2">
+                                {list.map((item: any, i: number) => (
+                                  <div key={item?.id ?? i} className="flex justify-between items-center border-b border-gray-100 py-2">
+                                    <span className="text-xs" style={{ fontFamily: '"Futura PT Book"' }}>{(item?.name ?? item?.productName ?? 'Item').toString().toUpperCase()}</span>
+                                    {item?.price != null && <span className="text-xs text-gray-600">${Number(item.price).toLocaleString()}</span>}
+                                  </div>
+                                ))}
+                              </div>
+                            );
+                          })()}
+                          {personalSectionTab === 'wishlist' && selectedClient && (() => {
+                            const id = selectedClient.id as string | undefined;
+                            const items = (id ? adminWishlistByUserId[id] : null) ?? [];
+                            const list = Array.isArray(items) ? items : [];
+                            return list.length === 0 ? (
+                              <p className="text-center py-4 text-sm text-gray-500" style={{ fontFamily: '"Futura PT Medium"' }}>WISHLIST IS EMPTY</p>
+                            ) : (
+                              <div className="space-y-2">
+                                {list.map((item: any, i: number) => (
+                                  <div key={item?.id ?? i} className="flex justify-between items-center border-b border-gray-100 py-2">
+                                    <span className="text-xs" style={{ fontFamily: '"Futura PT Book"' }}>{(item?.name ?? item?.productName ?? 'Item').toString().toUpperCase()}</span>
+                                    {item?.price != null && <span className="text-xs text-gray-600">${Number(item.price).toLocaleString()}</span>}
+                                  </div>
+                                ))}
+                              </div>
+                            );
+                          })()}
                         </div>
                         <div className="flex justify-center gap-8 mb-6">
                           {DETAILS_TABS.map((tab) => (
@@ -1615,6 +1901,60 @@ export default function AdminClients() {
                             </button>
                           ))}
                         </div>
+                        {detailsTab === 'activity' && selectedClient && (() => {
+                          const isMayaOwen = (selectedClient.email || '').toString().trim().toLowerCase() === MAYA_OWEN_MOCK_EMAIL;
+                          const id = selectedClient.id as string | undefined;
+                          const list = isMayaOwen ? getMockActivityForMayaOwen() : ((id ? adminActivityByUserId[id] : null) ?? []);
+                          const formatEventLabel = (eventType: string, payload?: Record<string, unknown>) => {
+                            const labels: Record<string, string> = {
+                              sign_in: 'Signed in',
+                              sign_out: 'Signed out',
+                              view_product: 'Viewed product',
+                              add_to_cart: 'Added to cart',
+                              add_to_wishlist: 'Added to wishlist',
+                              remove_from_cart: 'Removed from cart',
+                              remove_from_wishlist: 'Removed from wishlist',
+                              place_order: 'Placed order',
+                              cancel_order: 'Cancelled order',
+                              add_review: 'Added review',
+                              redeem_points: 'Redeemed points',
+                              view_page: 'Viewed page',
+                              profile_update: 'Updated profile',
+                              checkout_start: 'Started checkout',
+                              checkout_complete: 'Completed checkout',
+                            };
+                            let label = labels[eventType] || eventType.replace(/_/g, ' ');
+                            if (payload?.productName) label += `: ${String(payload.productName).toUpperCase()}`;
+                            else if (payload?.page) label += `: ${String(payload.page)}`;
+                            else if (payload?.orderId) label += ` #${String(payload.orderId).replace(/^#/, '')}`;
+                            return label;
+                          };
+                          return (
+                            <div className="space-y-3">
+                              {list.length === 0 ? (
+                                <div className="bg-white border border-gray-200 p-4 text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>NO ACTIVITY YET. EVENTS WILL APPEAR HERE AS THE CLIENT USES THE SITE.</div>
+                              ) : (
+                                <div className="space-y-2 max-h-96 overflow-y-auto">
+                                  {list.map((evt) => {
+                                    const createdAt = evt.createdAt ? new Date(evt.createdAt).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'medium' }) : '—';
+                                    const payload = evt.payload && typeof evt.payload === 'object' ? evt.payload as Record<string, unknown> : undefined;
+                                    return (
+                                      <div key={evt.id} className="bg-white border border-gray-200 p-3 flex flex-col gap-1">
+                                        <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '11px', color: '#000', margin: 0 }}>
+                                          {formatEventLabel(evt.eventType, payload)}
+                                        </p>
+                                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: 0 }}>{createdAt}</p>
+                                        {payload && Object.keys(payload).length > 0 && (
+                                          <pre className="text-left text-xs text-gray-500 mt-1 overflow-x-auto whitespace-pre-wrap break-words" style={{ fontFamily: '"Futura PT Book"', margin: 0 }}>{JSON.stringify(payload)}</pre>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })()}
                         {detailsTab === 'orders' && (
                           <div className="space-y-3">
                             {selectedOrderHistory.length === 0 ? (
@@ -2186,67 +2526,6 @@ export default function AdminClients() {
                             )}
                           </div>
                         )}
-                        {detailsTab === 'reviews' && selectedClient && (() => {
-                          const email = (selectedClient.email || '').trim().toLowerCase();
-                          let reviewList: Array<{ id?: string; date?: string; createdAt?: string; submittedAt?: string; text?: string; rating?: number; hasPhoto?: boolean; hasVideo?: boolean; status?: string; pending?: boolean }> = [];
-                          try {
-                            const raw = email ? localStorage.getItem(`userSubmittedReviews_${email}`) : null;
-                            if (raw) {
-                              const data = JSON.parse(raw);
-                              const list = Array.isArray(data) ? data : (data?.reviews || []);
-                              const sortTime = (r: any) => {
-                                const t = r.updatedAt ?? r.updated_at ?? r.date ?? r.createdAt ?? r.submittedAt;
-                                if (!t) return 0;
-                                try { return new Date(t).getTime(); } catch { return 0; }
-                              };
-                              reviewList = [...list].sort((a, b) => sortTime(b) - sortTime(a));
-                            }
-                          } catch {
-                            // ignore
-                          }
-                          const row = getReviewsTabRow(selectedClient, 0);
-                          return (
-                            <div className="bg-white border border-gray-200 p-4">
-                              <div className="grid grid-cols-3 gap-4 text-center">
-                                <div>
-                                  <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{row.totalReviews}</p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>TOTAL</p>
-                                </div>
-                                <div>
-                                  <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{row.reviewsWithPhotosVideos}</p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>MEDIA</p>
-                                </div>
-                                <div>
-                                  <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{row.pendingReviews}</p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>PENDING</p>
-                                </div>
-                              </div>
-                              {reviewList.length > 0 && (
-                                <div className="mt-4 pt-4" style={{ borderTop: '1px solid #e5e7eb' }}>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', marginBottom: '8px', textTransform: 'uppercase' }}>ALL REVIEWS (NEWEST FIRST)</p>
-                                  <div className="space-y-3 max-h-64 overflow-y-auto">
-                                    {reviewList.map((r: any, i: number) => {
-                                      const dateStr = (r.updatedAt ?? r.updated_at ?? r.date ?? r.createdAt ?? r.submittedAt) || '—';
-                                      const displayDate = typeof dateStr === 'string' ? (() => { try { return new Date(dateStr).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }); } catch { return dateStr; } })() : '—';
-                                      return (
-                                        <div key={r.id ?? i} className="py-3 border-b border-gray-100 last:border-0">
-                                          <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', margin: 0 }}>{displayDate}</p>
-                                          {(r.rating != null) && <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '2px 0 0 0' }}>Rating: {r.rating}</p>}
-                                          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', margin: (r.rating != null ? '2px' : '4px') + ' 0 0 0' }}>{r.text ?? r.message ?? r.content ?? '—'}</p>
-                                          {(r.hasPhoto || r.hasVideo) && (
-                                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '4px 0 0 0' }}>
-                                              {(r.status === 'pending' || r.pending) ? 'PENDING' : 'APPROVED'}
-                                            </p>
-                                          )}
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })()}
                         {detailsTab === 'messages' && selectedClient && (() => {
                           const email = (selectedClient.email || '').trim().toLowerCase();
                           let messages: Array<{ id: string; message: string; timestamp?: string | number; type?: string; subject?: string }> = [];

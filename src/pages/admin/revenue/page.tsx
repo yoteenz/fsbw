@@ -1,13 +1,41 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
+import { getAdminRevenue } from '../../../utils/api';
+import { isSupabaseConfigured } from '../../../utils/supabase';
+import { isAdminEmail } from '../../../utils/adminAuth';
 
 const REVENUE_TABS = ['OVERVIEW', 'ORDERS', 'PRODUCTS', 'PAYMENTS'] as const;
 
 export default function AdminRevenue() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<typeof REVENUE_TABS[number]>('OVERVIEW');
+  const [totalRevenue, setTotalRevenue] = useState(45700);
+  const [totalOrders, setTotalOrders] = useState(53);
+  const [breakdown, setBreakdown] = useState<{ month: string; value: number }[]>([]);
+
+  useEffect(() => {
+    let currentUser: { email?: string } | null = null;
+    try {
+      const raw = localStorage.getItem('currentUser');
+      currentUser = raw ? JSON.parse(raw) : null;
+    } catch {
+      /* ignore */
+    }
+    if (isSupabaseConfigured() && currentUser?.email && isAdminEmail(currentUser.email)) {
+      getAdminRevenue()
+        .then((r) => {
+          setTotalRevenue(r.totalRevenue);
+          setTotalOrders(r.totalOrders);
+          setBreakdown(r.breakdown || []);
+        })
+        .catch(() => {});
+    }
+  }, []);
+
+  const revenueK = totalRevenue >= 1000 ? `${(totalRevenue / 1000).toFixed(1)}K` : String(totalRevenue);
+  const revenueFormatted = totalRevenue.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).replace('$', '$');
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -61,11 +89,11 @@ export default function AdminRevenue() {
               {/* Total revenue & orders – above tabs */}
               <div className="grid grid-cols-2 gap-4 px-5 mb-4">
                 <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>$45.7K</p>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>${revenueK}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>TOTAL REVENUE</p>
                 </div>
                 <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>53</p>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{totalOrders}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>ORDERS</p>
                 </div>
               </div>
@@ -107,11 +135,18 @@ export default function AdminRevenue() {
                   <>
                     <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>REVENUE BREAKDOWN</h3>
                     <div className="space-y-2 mb-4">
-                      {[
-                        { label: 'THIS MONTH', value: '$45,670' },
-                        { label: 'LAST MONTH', value: '$40,650' },
-                        { label: 'THIS YEAR', value: '$467,890' },
-                        { label: 'GROWTH RATE', value: '+12.5%' },
+                      {breakdown.length > 0
+                        ? breakdown.slice(0, 4).map((row) => (
+                        <div key={row.month} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
+                          <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>{row.month}</span>
+                          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>${row.value.toLocaleString()}</span>
+                        </div>
+                      ))
+                        : [
+                        { label: 'THIS MONTH', value: revenueFormatted },
+                        { label: 'LAST MONTH', value: '$0' },
+                        { label: 'THIS YEAR', value: revenueFormatted },
+                        { label: 'GROWTH RATE', value: '—' },
                       ].map((row) => (
                         <div key={row.label} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
                           <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>{row.label}</span>

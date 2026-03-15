@@ -85,6 +85,9 @@ const AdminRevenue = lazyWithLogging(() => import('./pages/admin/revenue/page'),
 const AdminReviews = lazyWithLogging(() => import('./pages/admin/reviews/page'), 'AdminReviews');
 const AdminReferrals = lazyWithLogging(() => import('./pages/admin/referrals/page'), 'AdminReferrals');
 const AdminAnalytics = lazyWithLogging(() => import('./pages/admin/analytics/page'), 'AdminAnalytics');
+const AdminUsers = lazyWithLogging(() => import('./pages/admin/users/page'), 'AdminUsers');
+const AdminNotifications = lazyWithLogging(() => import('./pages/admin/notifications/page'), 'AdminNotifications');
+const AdminAudit = lazyWithLogging(() => import('./pages/admin/audit/page'), 'AdminAudit');
 const NoirUnitPage = lazyWithLogging(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
 const BlancoUnitPage = lazyWithLogging(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
 const SoftCurlUnitPage = lazyWithLogging(() => import('./pages/curly/soft-curl/page'), 'SoftCurlUnitPage');
@@ -347,6 +350,21 @@ function App() {
           <Route path="analytics" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminAnalytics />
+            </Suspense>
+          } />
+          <Route path="users" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminUsers />
+            </Suspense>
+          } />
+          <Route path="notifications" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminNotifications />
+            </Suspense>
+          } />
+          <Route path="audit" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminAudit />
             </Suspense>
           } />
         </Route>

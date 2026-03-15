@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AdminHeader from '../components/AdminHeader';
 import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
+import { getAdminReviews } from '../../../utils/api';
+import { isSupabaseConfigured } from '../../../utils/supabase';
+import { isAdminEmail } from '../../../utils/adminAuth';
 
 const REVIEW_TABS = ['ALL', 'PENDING', 'PUBLISHED'] as const;
 
-export default function AdminReviews() {
-  const [activeTab, setActiveTab] = useState<typeof REVIEW_TABS[number]>('ALL');
-  const [reviews] = useState([
+const DEFAULT_REVIEWS = [
     {
       id: 1,
       client: 'SARAH JOHNSON',
@@ -37,7 +38,34 @@ export default function AdminReviews() {
       status: 'published',
       photos: 3
     }
-  ]);
+  ];
+
+export default function AdminReviews() {
+  const [activeTab, setActiveTab] = useState<typeof REVIEW_TABS[number]>('ALL');
+  const [reviews, setReviews] = useState(DEFAULT_REVIEWS);
+  const [averageRating, setAverageRating] = useState(4.8);
+  const [totalReviews, setTotalReviews] = useState(247);
+
+  useEffect(() => {
+    let currentUser: { email?: string } | null = null;
+    try {
+      const raw = localStorage.getItem('currentUser');
+      currentUser = raw ? JSON.parse(raw) : null;
+    } catch {
+      /* ignore */
+    }
+    if (isSupabaseConfigured() && currentUser?.email && isAdminEmail(currentUser.email)) {
+      getAdminReviews()
+        .then((r) => {
+          if (r.reviews.length > 0) {
+            setReviews(r.reviews as typeof DEFAULT_REVIEWS);
+            setAverageRating(r.averageRating || 0);
+            setTotalReviews(r.totalReviews || 0);
+          }
+        })
+        .catch(() => {});
+    }
+  }, []);
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -91,11 +119,11 @@ export default function AdminReviews() {
               {/* Cards above tabs */}
               <div className="grid grid-cols-2 gap-4 px-5 mb-4">
                 <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>4.8</p>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{averageRating}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>AVERAGE RATING</p>
                 </div>
                 <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>247</p>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{totalReviews}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>TOTAL REVIEWS</p>
                 </div>
               </div>

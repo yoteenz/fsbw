@@ -1,8 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useState, useEffect } from 'react';
 import AdminHeader from '../components/AdminHeader';
 import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { getSocialAnalyticsSummary } from '../../../utils/socialAnalytics';
 import type { SocialPlatform, SocialSource } from '../../../utils/socialAnalytics';
+import { getAdminAnalytics } from '../../../utils/api';
+import { isSupabaseConfigured } from '../../../utils/supabase';
+import { isAdminEmail } from '../../../utils/adminAuth';
 
 const ANALYTICS_TABS = ['SUMMARY', 'BY PLATFORM', 'BY SOURCE'] as const;
 
@@ -33,8 +36,34 @@ function formatEventTime(timestamp: number): string {
 }
 
 export default function AdminAnalytics() {
-  const summary = useMemo(() => getSocialAnalyticsSummary(), []);
+  const localSummary = getSocialAnalyticsSummary();
+  const [summary, setSummary] = useState(localSummary);
   const [activeTab, setActiveTab] = useState<typeof ANALYTICS_TABS[number]>('SUMMARY');
+
+  useEffect(() => {
+    let currentUser: { email?: string } | null = null;
+    try {
+      const raw = localStorage.getItem('currentUser');
+      currentUser = raw ? JSON.parse(raw) : null;
+    } catch {
+      /* ignore */
+    }
+    if (isSupabaseConfigured() && currentUser?.email && isAdminEmail(currentUser.email)) {
+      getAdminAnalytics()
+        .then((r) => {
+          if (r && Number(r.total) > 0) {
+            setSummary({
+              total: r.total,
+              bySource: r.bySource as Record<SocialSource, number>,
+              byPlatform: r.byPlatform as Record<SocialPlatform, number>,
+              byPlatformAndSource: r.byPlatformAndSource as Record<SocialPlatform, Record<SocialSource, number>>,
+              recentEvents: [],
+            });
+          }
+        })
+        .catch(() => {});
+    }
+  }, []);
 
   void ([
     {

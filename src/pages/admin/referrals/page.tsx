@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import AdminHeader from '../components/AdminHeader';
 import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
+import { getAdminReferrals } from '../../../utils/api';
+import { isSupabaseConfigured } from '../../../utils/supabase';
+import { isAdminEmail } from '../../../utils/adminAuth';
 
 const REFERRAL_TABS = ['OVERVIEW', 'BY REFERRER', 'ACTIVITY'] as const;
 
@@ -20,13 +23,46 @@ export default function AdminReferralsPage() {
   const [activeTab, setActiveTab] = useState<typeof REFERRAL_TABS[number]>('OVERVIEW');
 
   useEffect(() => {
+    let currentUser: { email?: string } | null = null;
     try {
-      const raw = localStorage.getItem('referralEarnings');
-      const data = raw ? JSON.parse(raw) : [];
-      setLog(Array.isArray(data) ? data : []);
+      const raw = localStorage.getItem('currentUser');
+      currentUser = raw ? JSON.parse(raw) : null;
     } catch {
-      setLog([]);
-    } finally {
+      /* ignore */
+    }
+    if (isSupabaseConfigured() && currentUser?.email && isAdminEmail(currentUser.email)) {
+      getAdminReferrals()
+        .then((r) => {
+          if (r.log.length > 0) {
+            setLog(r.log as ReferralEntry[]);
+          } else {
+            try {
+              const raw = localStorage.getItem('referralEarnings');
+              const data = raw ? JSON.parse(raw) : [];
+              setLog(Array.isArray(data) ? data : []);
+            } catch {
+              setLog([]);
+            }
+          }
+        })
+        .catch(() => {
+          try {
+            const raw = localStorage.getItem('referralEarnings');
+            const data = raw ? JSON.parse(raw) : [];
+            setLog(Array.isArray(data) ? data : []);
+          } catch {
+            setLog([]);
+          }
+        })
+        .finally(() => setLoading(false));
+    } else {
+      try {
+        const raw = localStorage.getItem('referralEarnings');
+        const data = raw ? JSON.parse(raw) : [];
+        setLog(Array.isArray(data) ? data : []);
+      } catch {
+        setLog([]);
+      }
       setLoading(false);
     }
   }, []);

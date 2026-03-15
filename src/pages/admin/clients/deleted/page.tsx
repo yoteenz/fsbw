@@ -2,6 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import AdminHeader from '../../components/AdminHeader';
 import ConfirmationModal from '../../../../components/ConfirmationModal';
 import { unblockClient } from '../../../../utils/blockedClients';
+import { getAdminDeletedAccounts } from '../../../../utils/api';
+import { isSupabaseConfigured } from '../../../../utils/supabase';
+import { isAdminEmail } from '../../../../utils/adminAuth';
 
 type DeletedUser = {
   email?: string;
@@ -162,7 +165,27 @@ export default function AdminDeletedAccounts() {
   }, []);
 
   useEffect(() => {
-    loadDeleted();
+    let currentUser: { email?: string } | null = null;
+    try {
+      const raw = localStorage.getItem('currentUser');
+      currentUser = raw ? JSON.parse(raw) : null;
+    } catch {
+      /* ignore */
+    }
+    if (isSupabaseConfigured() && currentUser?.email && isAdminEmail(currentUser.email)) {
+      getAdminDeletedAccounts()
+        .then((r) => {
+          if (r.deleted.length > 0) {
+            const list = [...(r.deleted as DeletedUser[])].sort((a, b) => new Date(b.deletedAt).getTime() - new Date(a.deletedAt).getTime());
+            setDeletedUsers(list);
+          } else {
+            loadDeleted();
+          }
+        })
+        .catch(() => loadDeleted());
+    } else {
+      loadDeleted();
+    }
   }, [loadDeleted]);
 
   const handleRestore = (user: DeletedUser) => {

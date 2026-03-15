@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AdminHeader from '../components/AdminHeader';
 import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
+import { getAdminMeetings } from '../../../utils/api';
+import { isSupabaseConfigured } from '../../../utils/supabase';
+import { isAdminEmail } from '../../../utils/adminAuth';
 
 const MEETING_TABS = ['DAY', 'WEEK'] as const;
 
@@ -8,44 +11,30 @@ export default function AdminMeetings() {
   const [selectedDate, setSelectedDate] = useState('2024-01-20');
   const [viewMode, setViewMode] = useState<'day' | 'week'>('day');
 
-  const meetings = [
-    {
-      id: 1,
-      time: '9:00 AM',
-      client: 'Sarah Johnson',
-      type: 'Consultation',
-      duration: '60 min',
-      status: 'Confirmed',
-      notes: 'Initial consultation for custom wig'
-    },
-    {
-      id: 2,
-      time: '11:30 AM',
-      client: 'Maria Garcia',
-      type: 'Fitting',
-      duration: '45 min',
-      status: 'Confirmed',
-      notes: 'Final fitting and adjustments'
-    },
-    {
-      id: 3,
-      time: '2:00 PM',
-      client: 'Ashley Brown',
-      type: 'Color Match',
-      duration: '30 min',
-      status: 'Pending',
-      notes: 'Color matching session'
-    },
-    {
-      id: 4,
-      time: '4:00 PM',
-      client: 'Jennifer Davis',
-      type: 'Delivery',
-      duration: '30 min',
-      status: 'Confirmed',
-      notes: 'Product delivery and styling tips'
-    }
+  const defaultMeetings = [
+    { id: 1, time: '9:00 AM', client: 'Sarah Johnson', type: 'Consultation', duration: '60 min', status: 'Confirmed', notes: 'Initial consultation for custom wig' },
+    { id: 2, time: '11:30 AM', client: 'Maria Garcia', type: 'Fitting', duration: '45 min', status: 'Confirmed', notes: 'Final fitting and adjustments' },
+    { id: 3, time: '2:00 PM', client: 'Ashley Brown', type: 'Color Match', duration: '30 min', status: 'Pending', notes: 'Color matching session' },
+    { id: 4, time: '4:00 PM', client: 'Jennifer Davis', type: 'Delivery', duration: '30 min', status: 'Confirmed', notes: 'Product delivery and styling tips' },
   ];
+  const [meetings, setMeetings] = useState(defaultMeetings);
+
+  useEffect(() => {
+    let currentUser: { email?: string } | null = null;
+    try {
+      const raw = localStorage.getItem('currentUser');
+      currentUser = raw ? JSON.parse(raw) : null;
+    } catch {
+      /* ignore */
+    }
+    if (isSupabaseConfigured() && currentUser?.email && isAdminEmail(currentUser.email)) {
+      getAdminMeetings()
+        .then((r) => {
+          if (r.meetings.length > 0) setMeetings(r.meetings as typeof defaultMeetings);
+        })
+        .catch(() => {});
+    }
+  }, []);
 
   const handleEditMeeting = (meetingId: number) => {
     alert(`Edit meeting ${meetingId}`);

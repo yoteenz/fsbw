@@ -1,15 +1,18 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import StatsCard from '../components/StatsCard';
 import RecentActivity from '../components/RecentActivity';
 import ActivityFeed from '../components/ActivityFeed';
+import { getAdminDashboard } from '../../../utils/api';
+import { isSupabaseConfigured } from '../../../utils/supabase';
+import { isAdminEmail } from '../../../utils/adminAuth';
 
 // Mock data types and functions to replace Supabase imports
 type DashboardStats = {
   activeClients: number;
   referralCount: number;
+  signUpsThisMonth?: number;
 };
 
 type Client = {
@@ -74,18 +77,45 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Initialize database and load data
+  // Load data: from Supabase admin API when configured and admin, else mock
   useEffect(() => {
     const initializeData = async () => {
       try {
         setLoading(true);
-        
-        // Use mock API instead of Supabase
+        let currentUser: { email?: string } | null = null;
+        try {
+          const raw = localStorage.getItem('currentUser');
+          currentUser = raw ? JSON.parse(raw) : null;
+        } catch {
+          /* ignore */
+        }
+        if (isSupabaseConfigured() && currentUser?.email && isAdminEmail(currentUser.email)) {
+          try {
+            const api = await getAdminDashboard();
+            setDashboardData({
+              stats: {
+                activeClients: api.stats.activeClients ?? 0,
+                referralCount: api.stats.referralCount ?? 0,
+                signUpsThisMonth: api.stats.signUpsThisMonth ?? 0,
+              },
+              clients: api.clients?.map((c) => ({ tier: c.tier || 'Standard' })) ?? [],
+              bookings: api.bookings ?? [],
+              revenue: (api.revenue ?? []).map((r) => ({
+                transaction_date: r.date,
+                amount: r.amount,
+                status: r.status,
+              })),
+              notifications: api.notifications ?? [],
+            });
+            return;
+          } catch {
+            /* fall through to mock */
+          }
+        }
         await mockAPI.setupDatabase();
         await mockAPI.seedData();
         const data = await mockAPI.getDashboardData();
         setDashboardData(data);
-        
       } catch (err) {
         console.error('Failed to initialize dashboard:', err);
         setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
@@ -228,9 +258,9 @@ export default function AdminDashboard() {
       title: 'CLIENTS',
       count: stats.activeClients,
       items: [
-        { label: 'EMAIL MARKETING', value: '1,247', color: 'text-gray-500' },
-        { label: 'STANDARD MEMBERS', value: (clientTiers.Standard || 0).toString(), color: 'text-red-500' },
-        { label: 'PREMIUM MEMBERS', value: (clientTiers.Standard || 0).toString(), color: 'text-red-500' },
+        { label: 'SIGN-UPS THIS MONTH', value: String(stats.signUpsThisMonth ?? 0), color: 'text-red-500' },
+        { label: 'STANDARD MEMBERS', value: (clientTiers.Standard || 0).toString(), color: 'text-gray-500' },
+        { label: 'PREMIUM MEMBERS', value: (clientTiers.Premium || 0).toString(), color: 'text-red-500' },
         { label: 'REFERRALS', value: stats.referralCount.toString(), color: 'text-gray-500' }
       ],
       actions: [
@@ -329,6 +359,37 @@ export default function AdminDashboard() {
         { label: 'VIEW ANALYTICS', value: 'Clicks by source', color: 'text-red-500' }
       ],
       activity: 'TRACK LINK CLICKS - MENU TOGGLE & MORE WAYS TO EARN'
+    },
+
+    {
+      title: 'USERS',
+      count: '',
+      items: [
+        { label: 'AUTH USERS', value: 'List & manage', color: 'text-red-500' },
+        { label: 'DISABLE / ENABLE', value: 'Account actions', color: 'text-gray-500' },
+        { label: 'PASSWORD RESET', value: 'Send reset email', color: 'text-red-500' }
+      ],
+      activity: 'MANAGE AUTH USERS - DISABLE OR TRIGGER PASSWORD RESET'
+    },
+
+    {
+      title: 'NOTIFICATIONS',
+      count: '',
+      items: [
+        { label: 'SEND TO USER', value: 'Push notification', color: 'text-red-500' },
+        { label: 'VIEW ALL', value: 'By user', color: 'text-gray-500' }
+      ],
+      activity: 'SEND NOTIFICATIONS TO CLIENTS'
+    },
+
+    {
+      title: 'AUDIT LOG',
+      count: '',
+      items: [
+        { label: 'PROFILE UPDATES', value: 'Who changed what', color: 'text-red-500' },
+        { label: 'ORDER UPDATES', value: 'Audit trail', color: 'text-gray-500' }
+      ],
+      activity: 'VIEW AUDIT TRAIL - PROFILE & ORDER CHANGES'
     }
   ];
 
@@ -359,6 +420,15 @@ export default function AdminDashboard() {
       case 'ANALYTICS':
         navigate('/admin/analytics');
         break;
+      case 'USERS':
+        navigate('/admin/users');
+        break;
+      case 'NOTIFICATIONS':
+        navigate('/admin/notifications');
+        break;
+      case 'AUDIT LOG':
+        navigate('/admin/audit');
+        break;
       default:
         break;
     }
@@ -383,7 +453,7 @@ export default function AdminDashboard() {
       
       {/* Scrollable Content */}
       <div className="relative z-10" style={{ textTransform: 'uppercase' }}>
-        <AdminHeader title="DASHBOARD" />
+        <AdminHeader title="DASHBOARD" showAccountIcon />
         
         <div className="pb-6 px-4">
           <div className="max-w-md mx-auto" style={{ minHeight: 'calc(100dvh - 160px)' }}>
