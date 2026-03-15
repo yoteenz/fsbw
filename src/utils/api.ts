@@ -273,15 +273,6 @@ export async function getAdminActivity(userId: string, limit = 200): Promise<Arr
   return Array.isArray(data) ? data : [];
 }
 
-/** Record a user activity event (call from app when user does something). Event types: sign_in, sign_out, view_product, add_to_cart, add_to_wishlist, remove_from_cart, remove_from_wishlist, place_order, cancel_order, add_review, redeem_points, view_page, etc. */
-export async function recordActivity(eventType: string, payload?: Record<string, unknown>): Promise<void> {
-  try {
-    await apiFetch('/api/activity', { method: 'POST', body: { eventType, payload: payload ?? {} } });
-  } catch {
-    /* ignore */
-  }
-}
-
 /** Admin: list notifications (optionally by user_id). */
 export async function getAdminNotifications(userId?: string): Promise<Array<{ userId: string; items: unknown[]; updatedAt?: string }>> {
   const url = userId ? `/api/admin/notifications?user_id=${encodeURIComponent(userId)}` : '/api/admin/notifications';
