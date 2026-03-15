@@ -99,7 +99,12 @@ export default function AdminDashboard() {
                 signUpsThisMonth: api.stats.signUpsThisMonth ?? 0,
               },
               clients: api.clients?.map((c) => ({ tier: c.tier || 'Standard' })) ?? [],
-              bookings: api.bookings ?? [],
+              bookings: (api.bookings ?? []).map((b) => ({
+                status: b.status ?? '',
+                appointment_date: b.appointment_date ?? '',
+                service_name: b.service_name ?? '',
+                client_name: b.client_name ?? '',
+              })),
               revenue: (api.revenue ?? []).map((r) => ({
                 transaction_date: r.date,
                 amount: r.amount,
