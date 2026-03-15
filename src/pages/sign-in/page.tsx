@@ -8,7 +8,7 @@ import { isAdminEmail } from '../../utils/adminAuth';
 import { saveCartAndWishlistToUserKeys, swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
 import { normalizeEmail, normalizePassword } from '../../utils/credentialNormalize';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
-import { syncAllFromApi } from '../../utils/syncFromApi';
+import { syncAllFromApi, buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage } from '../../utils/syncFromApi';
 import { trackActivity } from '../../utils/activity';
 import {
   getReviewsLastSeenShopCountKey,
@@ -76,6 +76,7 @@ function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [signUpAttempted, setSignUpAttempted] = useState(false);
+  const [showSignUpConfirmMessage, setShowSignUpConfirmMessage] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
   const [facebook, setFacebook] = useState('');
@@ -173,7 +174,7 @@ function SignInPage() {
     };
   }, []);
 
-  // When Supabase is configured: restore session on load so user stays signed in across tabs/refresh
+  // When Supabase is configured: restore session on load (e.g. after email confirm redirect) so user is signed in
   useEffect(() => {
     if (!isSupabaseConfigured()) return;
     const supabase = getSupabase();
@@ -182,8 +183,22 @@ function SignInPage() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (cancelled || !session) return;
       syncAllFromApi().then((profile) => {
-        if (cancelled || !profile) return;
-        localStorage.setItem('isSignedIn', 'true');
+        if (cancelled) return;
+        if (profile) {
+          localStorage.setItem('isSignedIn', 'true');
+          setIsSignedIn(true);
+          window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+          const returnTo = new URLSearchParams(location.search).get('returnTo');
+          const from = (location.state as { from?: string } | null)?.from;
+          if (returnTo === 'checkout') navigate('/checkout');
+          else if (returnTo?.startsWith('/admin')) navigate(returnTo);
+          else if (from?.startsWith('/account') || from?.startsWith('/wishlist')) navigate(from, { replace: true });
+          else navigate('/account', { replace: true });
+          return;
+        }
+        // Session exists but getProfile failed (e.g. just confirmed email, API not ready): still sign in from session
+        const minimal = buildMinimalUserFromSupabaseSession(session.user);
+        applyMinimalUserToStorage(minimal);
         setIsSignedIn(true);
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
         const returnTo = new URLSearchParams(location.search).get('returnTo');
@@ -305,6 +320,18 @@ function SignInPage() {
               doRedirectAfterSignIn();
               return;
             }
+            // Session valid but getProfile failed (e.g. no API or profile not ready): still sign in from session so we don't show "create account on this device first"
+            const minimal = buildMinimalUserFromSupabaseSession(data.session.user);
+            applyMinimalUserToStorage(minimal);
+            setIsSignedIn(true);
+            trackActivity('sign_in');
+            window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+            if (signInEmailRef.current) signInEmailRef.current.value = '';
+            if (signInPasswordRef.current) signInPasswordRef.current.value = '';
+            setSignInEmail('');
+            setSignInPassword('');
+            doRedirectAfterSignIn();
+            return;
           }
           if (error) {
             setValidationMessage(error.message === 'Invalid login credentials' ? 'INVALID EMAIL OR PASSWORD.' : error.message);
@@ -1075,6 +1102,37 @@ function SignInPage() {
                     </button>
                   </div>
 
+                  {showSignUpConfirmMessage ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px', alignItems: 'center', textAlign: 'center' }}>
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '12px',
+                          color: '#808080',
+                          margin: 0,
+                          lineHeight: 1.4,
+                          textTransform: 'none'
+                        }}
+                      >
+                        Sign up complete! Check your email to confirm your account.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setShowSignUpConfirmMessage(false)}
+                        className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                        style={{
+                          borderWidth: '1.3px',
+                          color: '#EB1C24',
+                          fontFamily: '"Futura PT Medium"',
+                          backgroundColor: '#FFFFFF',
+                          textTransform: 'uppercase',
+                          marginTop: '8px'
+                        }}
+                      >
+                        SIGN IN
+                      </button>
+                    </div>
+                  ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
                     {/* Form Fields */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
@@ -1599,9 +1657,10 @@ function SignInPage() {
 
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* SIGN UP BUTTON - Outside card */}
+            {/* SIGN UP BUTTON - Outside card (hidden when showing confirm message) */}
+            {!showSignUpConfirmMessage && (
             <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                 <button
                   type="button"
@@ -1675,6 +1734,7 @@ function SignInPage() {
                               email: email.trim(),
                               password: password,
                               options: {
+                                emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/account` : undefined,
                                 data: {
                                   first_name: firstName.trim(),
                                   last_name: lastName.trim(),
@@ -1732,8 +1792,7 @@ function SignInPage() {
                                 return;
                               }
                             } else {
-                              setValidationMessage('CHECK YOUR EMAIL TO CONFIRM YOUR ACCOUNT.');
-                              setShowValidationModal(true);
+                              setShowSignUpConfirmMessage(true);
                               return;
                             }
                           } catch (e) {
@@ -1894,6 +1953,7 @@ function SignInPage() {
                   SIGN UP
                 </button>
               </div>
+            )}
             </>
           )}
         </div>

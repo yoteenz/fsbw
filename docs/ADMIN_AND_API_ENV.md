@@ -55,7 +55,31 @@ Use the same **name** `SUPABASE_SERVICE_ROLE_KEY` and the same **value** in that
 
 ---
 
-## 4. Quick checklist
+## 4. Why new sign-ups (e.g. “frontal slayer”) don’t show in the admin client list
+
+The admin **Clients** page and dashboard cards get data from your API:
+
+- **GET /api/admin/clients** — list shown on Admin → Clients.
+- **GET /api/admin/dashboard** — used for dashboard cards (e.g. client count, referrals).
+
+If a user appears under **Supabase → Authentication → Users** but not in **Admin → Clients**:
+
+1. **Backend must read from the same place as auth**  
+   Ensure both endpoints use the **same source** for “clients”:
+   - Either query **`public.profiles`** (recommended), with a trigger that inserts a row on `auth.users` insert (see `supabase/README_PROFILE_ON_SIGNUP.md` and `supabase/migrations/20250314000000_create_profile_on_signup.sql`).
+   - Or use Supabase Auth Admin (e.g. `auth.admin.listUsers()`) and map those users into the shape your admin UI expects.
+
+2. **Dashboard stats must match that source**  
+   For dashboard cards to match the Clients page:
+   - **GET /api/admin/dashboard** should set `stats.activeClients` (and optionally `stats.referralCount`, `stats.signUpsThisMonth`) from the **same** list (e.g. count of `public.profiles` or auth users).
+   - The dashboard’s `clients` array should come from that same query so the “CLIENTS” card count matches the number on the Clients page.
+
+3. **Email confirmation redirect**  
+   If the user clicks the Supabase “Confirm email” link and Safari says it “couldn’t connect to the server”, the **redirect URL** in the email is likely pointing to a host or path your app isn’t serving (e.g. `localhost` in production). In **Supabase Dashboard → Authentication → URL Configuration**, set **Site URL** and **Redirect URLs** to your real app URL (e.g. `https://fsbw.vercel.app` and `https://fsbw.vercel.app/**`). The user is still created in `auth.users`; only the redirect after confirm fails.
+
+---
+
+## 5. Quick checklist
 
 | Item | Where | Notes |
 |------|--------|--------|
@@ -63,3 +87,5 @@ Use the same **name** `SUPABASE_SERVICE_ROLE_KEY` and the same **value** in that
 | `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` | Frontend env (e.g. Vercel) | Used by the browser; anon key only. |
 | `VITE_API_BASE` | Frontend env | Base URL of your API so the app can call `/api/profile`, `/api/admin/clients`, etc. |
 | Redeploy after changing env | Vercel (or your host) | So new builds/runs pick up the new variables. |
+| Admin clients list source | Backend `GET /api/admin/clients` | Must return rows from `public.profiles` (or auth users) so new sign-ups appear. |
+| Dashboard stats | Backend `GET /api/admin/dashboard` | `stats.activeClients` and `clients` array should come from the same source as the client list. |

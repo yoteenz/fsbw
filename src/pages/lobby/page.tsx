@@ -3,11 +3,46 @@ import { useNavigate } from 'react-router-dom';
 import LoadingScreen from '../../components/base/LoadingScreen';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { isMockDataAccount } from '../../utils/adminAuth';
+import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
+import { syncAllFromApi, buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage } from '../../utils/syncFromApi';
 
 // Lobby Component
 const LobbyPage: React.FC = () => {
   const navigate = useNavigate();
   console.log('✅✅✅ LobbyPage component rendering - ROOT ROUTE');
+
+  // After email confirm Supabase redirects to Site URL (often /). Recover session here so user is signed in.
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return;
+    const supabase = getSupabase();
+    if (!supabase) return;
+    let cancelled = false;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (cancelled || !session) return;
+      // Already signed in locally with same user – no need to re-sync
+      try {
+        const cur = localStorage.getItem('currentUser');
+        if (cur) {
+          const parsed = JSON.parse(cur);
+          if (parsed?.email && (session.user?.email || '').toLowerCase() === (parsed.email as string).toLowerCase()) return;
+        }
+      } catch (_) {}
+      syncAllFromApi().then((profile) => {
+        if (cancelled) return;
+        if (profile) {
+          localStorage.setItem('isSignedIn', 'true');
+          window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+          navigate('/account', { replace: true });
+          return;
+        }
+        const minimal = buildMinimalUserFromSupabaseSession(session.user);
+        applyMinimalUserToStorage(minimal);
+        window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+        navigate('/account', { replace: true });
+      });
+    });
+    return () => { cancelled = true; };
+  }, [navigate]);
   
   // Ensure we're on the root route
   useEffect(() => {

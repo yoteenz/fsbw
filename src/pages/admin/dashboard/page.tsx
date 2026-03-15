@@ -4,7 +4,7 @@ import AdminHeader from '../components/AdminHeader';
 import StatsCard from '../components/StatsCard';
 import RecentActivity from '../components/RecentActivity';
 import ActivityFeed from '../components/ActivityFeed';
-import { getAdminDashboard } from '../../../utils/api';
+import { getAdminDashboard, getAdminPending, getAdminReviews, getAdminReferrals } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 
@@ -74,6 +74,9 @@ export default function AdminDashboard() {
     revenue: Revenue[];
     notifications: Notification[];
   } | null>(null);
+  const [pendingData, setPendingData] = useState<{ pendingReviews: number; orderForms: number } | null>(null);
+  const [reviewsData, setReviewsData] = useState<{ totalReviews: number; averageRating: number } | null>(null);
+  const [referralsData, setReferralsData] = useState<{ inviteeCount: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -91,7 +94,12 @@ export default function AdminDashboard() {
         }
         if (isSupabaseConfigured() && currentUser?.email && isAdminEmail(currentUser.email)) {
           try {
-            const api = await getAdminDashboard();
+            const [api, pending, reviews, referrals] = await Promise.all([
+              getAdminDashboard(),
+              getAdminPending().catch(() => ({ pendingReviews: 0, orderForms: 0, pendingItems: [] })),
+              getAdminReviews().catch(() => ({ reviews: [], averageRating: 0, totalReviews: 0 })),
+              getAdminReferrals().catch(() => ({ log: [], totalEarned: 0, inviteeCount: 0, byReferrer: {} })),
+            ]);
             setDashboardData({
               stats: {
                 activeClients: api.stats.activeClients ?? 0,
@@ -112,6 +120,9 @@ export default function AdminDashboard() {
               })),
               notifications: api.notifications ?? [],
             });
+            setPendingData({ pendingReviews: pending.pendingReviews ?? 0, orderForms: pending.orderForms ?? 0 });
+            setReviewsData({ totalReviews: reviews.totalReviews ?? 0, averageRating: reviews.averageRating ?? 0 });
+            setReferralsData({ inviteeCount: referrals.inviteeCount ?? 0 });
             return;
           } catch {
             /* fall through to mock */
@@ -258,15 +269,23 @@ export default function AdminDashboard() {
     return `${month}/${day}`;
   };
 
+  // Card counts synced with actual data so dashboard matches Clients/Referrals/Pending/Reviews pages
+  const clientsCount = clients?.length ?? stats.activeClients ?? 0;
+  const referralCountDisplay = referralsData?.inviteeCount ?? stats.referralCount ?? 0;
+  const pendingReviewsCount = pendingData?.pendingReviews ?? 0;
+  const orderFormsCount = pendingData?.orderForms ?? 0;
+  const totalReviewsCount = reviewsData?.totalReviews ?? 0;
+  const averageRatingDisplay = reviewsData?.averageRating ?? 0;
+
   const statsData = [
     {
       title: 'CLIENTS',
-      count: stats.activeClients,
+      count: clientsCount,
       items: [
         { label: 'SIGN-UPS THIS MONTH', value: String(stats.signUpsThisMonth ?? 0), color: 'text-red-500' },
         { label: 'STANDARD MEMBERS', value: (clientTiers.Standard || 0).toString(), color: 'text-gray-500' },
         { label: 'PREMIUM MEMBERS', value: (clientTiers.Premium || 0).toString(), color: 'text-red-500' },
-        { label: 'REFERRALS', value: stats.referralCount.toString(), color: 'text-gray-500' }
+        { label: 'REFERRALS', value: String(referralCountDisplay), color: 'text-gray-500' }
       ],
       actions: [
         { label: 'Preferences', action: 'preferences' },
@@ -284,7 +303,7 @@ export default function AdminDashboard() {
       count: formatCurrencyK(currentYearRevenue),
       items: [
         { label: 'INVENTORY', value: '145/250', color: 'text-gray-500' },
-        { label: 'ORDERS RECEIVED', value: stats.activeClients.toString(), color: 'text-red-500' },
+        { label: 'ORDERS RECEIVED', value: String(clientsCount), color: 'text-red-500' },
         { label: 'QUARTERLY SALES', value: formatCurrencyK(quarterlyNetIncome), color: 'text-gray-500' },
         { label: 'TAX DEDUCTIONS', value: formatCurrency(Math.round(taxesPaid)), color: 'text-gray-500' }
       ],
@@ -298,14 +317,14 @@ export default function AdminDashboard() {
 
     {
       title: 'PENDING',
-      count: revenue.filter(r => r.status === 'Pending').length.toString(),
+      count: (revenue.filter(r => r.status === 'Pending').length + pendingReviewsCount + orderFormsCount).toString(),
       items: [
-        { label: 'REVIEWS', value: '12', color: 'text-gray-500' },
-        { label: 'ORDER FORMS', value: '8', color: 'text-red-500' },
+        { label: 'REVIEWS', value: String(pendingReviewsCount), color: 'text-gray-500' },
+        { label: 'ORDER FORMS', value: String(orderFormsCount), color: 'text-red-500' },
         { label: 'TIER UPGRADES', value: '23', color: 'text-red-500' },
         { label: 'AFFILIATE', value: '47', color: 'text-gray-500' }
       ],
-      activity: revenue.filter(r => r.status === 'Pending').length > 0 ? 'URGENT: REVIEWS AND APPROVALS REQUIRE ATTENTION' : 'ALL APPROVALS UP TO DATE'
+      activity: (revenue.filter(r => r.status === 'Pending').length > 0 || pendingReviewsCount > 0 || orderFormsCount > 0) ? 'URGENT: REVIEWS AND APPROVALS REQUIRE ATTENTION' : 'ALL APPROVALS UP TO DATE'
     },
 
     {
@@ -321,14 +340,14 @@ export default function AdminDashboard() {
 
     {
       title: 'REVIEWS',
-      count: '4.8',
+      count: averageRatingDisplay > 0 ? averageRatingDisplay.toFixed(1) : '—',
       items: [
-        { label: 'TOTAL REVIEWS', value: '247', color: 'text-gray-500' },
+        { label: 'TOTAL REVIEWS', value: String(totalReviewsCount), color: 'text-gray-500' },
         { label: 'PHOTOS/VIDEOS', value: '34', color: 'text-red-500' },
         { label: 'REVIEWS PER MONTH', value: '18', color: 'text-gray-500' },
         { label: 'POSITIVE SENTIMENT', value: '94%', color: 'text-gray-500' }
       ],
-      activity: 'EXCELLENT CLIENT FEEDBACK - HIGH SATISFACTION RATINGS'
+      activity: totalReviewsCount > 0 ? 'EXCELLENT CLIENT FEEDBACK - HIGH SATISFACTION RATINGS' : 'EXCELLENT CLIENT FEEDBACK - HIGH SATISFACTION RATINGS'
     },
 
     {
@@ -345,9 +364,9 @@ export default function AdminDashboard() {
 
     {
       title: 'REFERRALS',
-      count: stats.referralCount,
+      count: referralCountDisplay,
       items: [
-        { label: 'INVITEES', value: stats.referralCount.toString(), color: 'text-gray-500' },
+        { label: 'INVITEES', value: String(referralCountDisplay), color: 'text-gray-500' },
         { label: 'CODE STATUS', value: 'Active/Inactive', color: 'text-red-500' },
         { label: 'EARNINGS TRACKING', value: 'Digital cash', color: 'text-gray-500' },
         { label: 'VIEW DETAILS', value: 'Referrals', color: 'text-red-500' }

@@ -88,3 +88,41 @@ export async function syncAllFromApi(): Promise<Record<string, unknown> | null> 
   await Promise.all([syncOrdersFromApi(), syncCartFromApi(), syncWishlistFromApi()]);
   return profile;
 }
+
+/**
+ * Build minimal currentUser from Supabase session when getProfile() fails (e.g. no API or profile not ready).
+ * Call after email confirm or sign-in so the user is signed in and not shown "create account on this device first".
+ */
+export function buildMinimalUserFromSupabaseSession(sessionUser: { id: string; email?: string; user_metadata?: Record<string, unknown> }): Record<string, unknown> {
+  const email = (sessionUser.email || '').trim().toLowerCase();
+  const meta = sessionUser.user_metadata || {};
+  const firstName = (meta.first_name as string) || (meta.firstName as string) || '';
+  const lastName = (meta.last_name as string) || (meta.lastName as string) || '';
+  const merged = {
+    id: sessionUser.id,
+    email: sessionUser.email || '',
+    firstName: firstName || email.split('@')[0] || 'User',
+    lastName: lastName || '',
+    first_name: firstName,
+    last_name: lastName,
+    membershipType: 'STANDARD',
+    role: isAdminEmail(email) ? 'admin' : undefined,
+  } as Record<string, unknown>;
+  return merged;
+}
+
+/**
+ * Apply minimal user to localStorage and registeredUsers so the app treats them as signed in.
+ * Use when we have a Supabase session but syncProfileFromApi() failed.
+ */
+export function applyMinimalUserToStorage(merged: Record<string, unknown>): void {
+  const email = (merged.email as string) || '';
+  if (!email) return;
+  localStorage.setItem('currentUser', JSON.stringify(merged));
+  localStorage.setItem('isSignedIn', 'true');
+  const registeredUsers: unknown[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+  const idx = registeredUsers.findIndex((u: unknown) => ((u as { email?: string }).email || '').toLowerCase() === email.toLowerCase());
+  if (idx !== -1) (registeredUsers as Record<string, unknown>[])[idx] = { ...(registeredUsers[idx] as object), ...merged } as Record<string, unknown>;
+  else registeredUsers.push(merged);
+  localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+}
