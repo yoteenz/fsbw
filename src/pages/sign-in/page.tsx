@@ -133,16 +133,12 @@ function SignInPage() {
   const hasLowercase = (pwd: string) => /[a-z]/.test(pwd);
   const hasNumber = (pwd: string) => /[0-9]/.test(pwd);
 
-  // Format social media usernames with @ prefix only
+  // Format social media usernames with @ prefix only; empty or only @ becomes ''
   const formatSocialUsername = (value: string): string => {
-    // If empty, return empty string
     if (!value) return '';
-    
-    // Remove any existing @ symbols and platform names, then add @ prefix
     let cleaned = value.replace(/@/g, '');
-    // Remove common platform names if they appear at the start
-    cleaned = cleaned.replace(/^(facebook|instagram|youtube|tiktok|twitter)/i, '');
-    
+    cleaned = cleaned.replace(/^(facebook|instagram|youtube|tiktok|twitter)/i, '').trim();
+    if (!cleaned) return '';
     return '@' + cleaned;
   };
 
@@ -1522,7 +1518,7 @@ function SignInPage() {
                       onFocus={() => setInstagramFocused(true)}
                       onBlur={() => {
                         setInstagramFocused(false);
-                        if (!instagram) {
+                        if (!instagram || instagram === '@') {
                           setInstagram('');
                         }
                       }}
@@ -1551,7 +1547,7 @@ function SignInPage() {
                       onFocus={() => setYoutubeFocused(true)}
                       onBlur={() => {
                         setYoutubeFocused(false);
-                        if (!youtube) {
+                        if (!youtube || youtube === '@') {
                           setYoutube('');
                         }
                       }}
@@ -1579,7 +1575,7 @@ function SignInPage() {
                       onFocus={() => setTiktokFocused(true)}
                       onBlur={() => {
                         setTiktokFocused(false);
-                        if (!tiktok) {
+                        if (!tiktok || tiktok === '@') {
                           setTiktok('');
                         }
                       }}
@@ -1607,7 +1603,7 @@ function SignInPage() {
                       onFocus={() => setFacebookFocused(true)}
                       onBlur={() => {
                         setFacebookFocused(false);
-                        if (!facebook) {
+                        if (!facebook || facebook === '@') {
                           setFacebook('');
                         }
                       }}
@@ -1635,7 +1631,7 @@ function SignInPage() {
                       onFocus={() => setTwitterFocused(true)}
                       onBlur={() => {
                         setTwitterFocused(false);
-                        if (!twitter) {
+                        if (!twitter || twitter === '@') {
                           setTwitter('');
                         }
                       }}
