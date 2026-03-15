@@ -5,6 +5,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import AddToListModal from '../../components/AddToListModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
+import { isMockDataAccount } from '../../utils/adminAuth';
 
 function WishlistSelection() {
   const navigate = useNavigate();
@@ -100,7 +101,8 @@ function WishlistSelection() {
     };
   }, []);
 
-  useEffect(() => {
+  // Load wishlist from localStorage; re-run when user changes so this page shows the signed-in user's wishlist
+  const loadWishlist = () => {
     try {
       const stored = localStorage.getItem('wishlistItems');
       if (stored) {
@@ -110,48 +112,73 @@ function WishlistSelection() {
           return;
         }
       }
-      // Add sample products if wishlist is empty
-      const sampleProducts = [
-        {
-          id: 'wishlist-1',
-          name: 'NOIR',
-          price: 740,
-          quantity: 1,
-          image: '/assets/NOIR/noir-thumb.png',
-          length: '24"',
-          hairOrigin: 'CAMBODIAN',
-          capSize: 'M',
-          density: '200%',
-          lace: '13X6',
-          texture: 'SILKY',
-          color: 'OFF BLACK',
-          hairline: 'NATURAL',
-          styling: 'STRAIGHT',
-          addedFrom: 'unit'
-        },
-        {
-          id: 'wishlist-2',
-          name: 'BLANCO',
-          price: 780,
-          quantity: 1,
-          image: '/assets/NOIR/blanco-thumb.png',
-          length: '24"',
-          hairOrigin: 'RUSSIAN',
-          capSize: 'M',
-          density: '200%',
-          lace: '13X6',
-          texture: 'SILKY',
-          color: 'PLATINUM',
-          hairline: 'NATURAL',
-          styling: 'STRAIGHT',
-          addedFrom: 'unit'
-        }
-      ];
-      setWishlistItems(sampleProducts);
-      localStorage.setItem('wishlistItems', JSON.stringify(sampleProducts));
+      // Only add sample products for mock data (admin) accounts; new accounts start with empty wishlist
+      let currentUser: { email?: string; role?: string } | null = null;
+      try {
+        const raw = localStorage.getItem('currentUser');
+        if (raw) currentUser = JSON.parse(raw);
+      } catch (_) {}
+      if (isMockDataAccount(currentUser)) {
+        const sampleProducts = [
+          {
+            id: 'wishlist-1',
+            name: 'NOIR',
+            price: 740,
+            quantity: 1,
+            image: '/assets/NOIR/noir-thumb.png',
+            length: '24"',
+            hairOrigin: 'CAMBODIAN',
+            capSize: 'M',
+            density: '200%',
+            lace: '13X6',
+            texture: 'SILKY',
+            color: 'OFF BLACK',
+            hairline: 'NATURAL',
+            styling: 'STRAIGHT',
+            addedFrom: 'unit'
+          },
+          {
+            id: 'wishlist-2',
+            name: 'BLANCO',
+            price: 780,
+            quantity: 1,
+            image: '/assets/NOIR/blanco-thumb.png',
+            length: '24"',
+            hairOrigin: 'RUSSIAN',
+            capSize: 'M',
+            density: '200%',
+            lace: '13X6',
+            texture: 'SILKY',
+            color: 'PLATINUM',
+            hairline: 'NATURAL',
+            styling: 'STRAIGHT',
+            addedFrom: 'unit'
+          }
+        ];
+        setWishlistItems(sampleProducts);
+        localStorage.setItem('wishlistItems', JSON.stringify(sampleProducts));
+      } else {
+        setWishlistItems([]);
+      }
     } catch (e) {
       setWishlistItems([]);
     }
+  };
+
+  useEffect(() => {
+    loadWishlist();
+    window.addEventListener('wishlistUpdated', loadWishlist);
+    window.addEventListener('userListsUpdated', loadWishlist);
+    window.addEventListener('signInStateChanged', loadWishlist);
+    window.addEventListener('storage', loadWishlist);
+    window.addEventListener('focus', loadWishlist);
+    return () => {
+      window.removeEventListener('wishlistUpdated', loadWishlist);
+      window.removeEventListener('userListsUpdated', loadWishlist);
+      window.removeEventListener('signInStateChanged', loadWishlist);
+      window.removeEventListener('storage', loadWishlist);
+      window.removeEventListener('focus', loadWishlist);
+    };
   }, []);
 
   // Load selected currency from localStorage on mount only

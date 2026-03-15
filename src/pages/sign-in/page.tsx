@@ -5,6 +5,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { isAdminEmail } from '../../utils/adminAuth';
+import { saveCartAndWishlistToUserKeys, swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
 import { normalizeEmail, normalizePassword } from '../../utils/credentialNormalize';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
 import { syncAllFromApi } from '../../utils/syncFromApi';
@@ -283,6 +284,13 @@ function SignInPage() {
             password
           });
           if (!error && data.session) {
+            try {
+              const raw = localStorage.getItem('currentUser');
+              if (raw) {
+                const prev = JSON.parse(raw);
+                if (prev?.email) saveCartAndWishlistToUserKeys((prev.email as string).trim().toLowerCase());
+              }
+            } catch (_) {}
             const profile = await syncAllFromApi();
             if (profile) {
               localStorage.setItem('isSignedIn', 'true');
@@ -318,9 +326,11 @@ function SignInPage() {
         const userToSet = { ...user };
         if (isAdminEmail(user.email || '')) userToSet.role = 'admin';
         const existingCurrentRaw = localStorage.getItem('currentUser');
+        let previousEmail: string | null = null;
         if (existingCurrentRaw) {
           try {
             const existingUser = JSON.parse(existingCurrentRaw);
+            if (existingUser?.email) previousEmail = (existingUser.email as string).trim().toLowerCase();
             if (existingUser && typeof existingUser === 'object' && user.email?.toLowerCase() === (existingUser.email || '').toLowerCase()) {
               const profileFields = ['firstName', 'lastName', 'phoneNumber', 'birthday', 'profileImage', 'facebook', 'instagram', 'youtube', 'tiktok', 'twitter', 'membershipType', 'subscriptionTier', 'referralCode', 'giftCardBalance', 'hasMadeFirstPurchase', 'loyaltyPoints', 'unlockedDiscounts', 'voucherList', 'voucherHistory', 'digitalCashHistory', 'welcomeDiscountTiersCreditedByPeriod', 'defaultAddress', 'shippingAddress', 'savedAddresses', 'createdAt', 'id'] as const;
               for (const key of profileFields) {
@@ -343,6 +353,7 @@ function SignInPage() {
           } catch (_) {}
         }
         localStorage.setItem('currentUser', JSON.stringify(userToSet));
+        swapCartAndWishlistToUser(previousEmail, emailNorm);
         if (userToSet.profileImage && String(userToSet.profileImage).trim()) localStorage.setItem('profileImage', String(userToSet.profileImage));
         else localStorage.removeItem('profileImage');
         localStorage.setItem('isSignedIn', 'true');
@@ -403,8 +414,17 @@ function SignInPage() {
         };
         registeredUsers.push(bootstrapUser);
         localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+        let previousEmail: string | null = null;
+        try {
+          const raw = localStorage.getItem('currentUser');
+          if (raw) {
+            const prev = JSON.parse(raw);
+            if (prev?.email) previousEmail = (prev.email as string).trim().toLowerCase();
+          }
+        } catch (_) {}
         const userToSet = { ...bootstrapUser, role: 'admin' };
         localStorage.setItem('currentUser', JSON.stringify(userToSet));
+        swapCartAndWishlistToUser(previousEmail, emailNorm);
         if (userToSet.profileImage && String(userToSet.profileImage).trim()) localStorage.setItem('profileImage', String(userToSet.profileImage));
         else localStorage.removeItem('profileImage');
         localStorage.setItem('isSignedIn', 'true');
@@ -1800,10 +1820,18 @@ function SignInPage() {
                       const updatedUsers = [...existingUsers, newUser];
                       localStorage.setItem('registeredUsers', JSON.stringify(updatedUsers));
                       
-                      // New account: clear cart, wishlist, bag state, orders (no mock or guest data)
-                      localStorage.setItem('cartItems', '[]');
-                      localStorage.setItem('cartCount', '0');
-                      localStorage.setItem('wishlistItems', '[]');
+                      // Swap cart/wishlist/lists to new user (saves previous user's data, loads new user's empty state)
+                      let previousEmail: string | null = null;
+                      try {
+                        const raw = localStorage.getItem('currentUser');
+                        if (raw) {
+                          const prev = JSON.parse(raw);
+                          if (prev?.email) previousEmail = (prev.email as string).trim().toLowerCase();
+                        }
+                      } catch (_) {}
+                      localStorage.setItem('currentUser', JSON.stringify(newUser));
+                      swapCartAndWishlistToUser(previousEmail, newUser.email.trim().toLowerCase());
+                      
                       localStorage.removeItem('addToBagButtonState');
                       localStorage.removeItem('lastAddedItemId');
                       localStorage.removeItem('editingCartItem');
@@ -1811,19 +1839,13 @@ function SignInPage() {
                       try {
                         localStorage.setItem(`userOrders_${newUser.email.trim().toLowerCase()}`, JSON.stringify({ activeOrders: [], pastOrders: [] }));
                       } catch (_) {}
-                      // Clear all mock data for new sign-up: empty notifications, no mock review alerts
                       try {
                         const newEmail = newUser.email.trim().toLowerCase();
                         localStorage.setItem('notifications', '[]');
                         localStorage.setItem(getReviewsLastSeenShopCountKey(newEmail), String(MOCK_SHOP_REVIEWS_COUNT));
                         localStorage.setItem(getReviewsLastSeenToolCountKey(newEmail), String(MOCK_TOOL_REVIEWS_COUNT));
                       } catch (_) {}
-                      window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: 0 }));
-                      window.dispatchEvent(new CustomEvent('cartUpdated'));
-                      window.dispatchEvent(new CustomEvent('wishlistUpdated'));
                       
-                      // Set current user session
-                      localStorage.setItem('currentUser', JSON.stringify(newUser));
                       localStorage.setItem('isSignedIn', 'true');
                       
                       // Sign user in

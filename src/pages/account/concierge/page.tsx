@@ -648,8 +648,17 @@ function ConciergePage() {
         setActiveOrders([]);
       }
     };
-    
+
     getActiveOrders();
+    // Re-fetch orders when signed-in user changes (e.g. new account) so page shows that account's data
+    window.addEventListener('storage', getActiveOrders);
+    window.addEventListener('signInStateChanged', getActiveOrders);
+    window.addEventListener('focus', getActiveOrders);
+    return () => {
+      window.removeEventListener('storage', getActiveOrders);
+      window.removeEventListener('signInStateChanged', getActiveOrders);
+      window.removeEventListener('focus', getActiveOrders);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
 

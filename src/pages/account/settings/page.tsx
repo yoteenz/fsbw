@@ -387,11 +387,13 @@ function SettingsPage() {
     window.addEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
     window.addEventListener('cartUpdated', handleStorageChange);
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('signInStateChanged', handleStorageChange);
     window.addEventListener('focus', handleStorageChange);
     return () => {
       window.removeEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
       window.removeEventListener('cartUpdated', handleStorageChange);
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('signInStateChanged', handleStorageChange);
       window.removeEventListener('focus', handleStorageChange);
     };
   }, []);
@@ -672,9 +674,10 @@ function SettingsPage() {
                     value={birthday}
                     placeholder="MM/DD/YYYY"
                     className="settings-personal-input"
-                    onChange={(e) => setBirthday(formatBirthday(e.target.value))}
-                    onBlur={() => persistPersonalInfo({ birthday })}
-                    style={{ ...inputBaseStyle, marginBottom: 0 }}
+                    readOnly={isSignedIn}
+                    onChange={(e) => !isSignedIn && setBirthday(formatBirthday(e.target.value))}
+                    onBlur={() => !isSignedIn && persistPersonalInfo({ birthday })}
+                    style={{ ...inputBaseStyle, marginBottom: 0, ...(isSignedIn && { cursor: 'default', color: '#808080' }) }}
                   />
                 </div>
                 <div style={{ marginBottom: '20px' }}>

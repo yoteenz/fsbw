@@ -70,7 +70,7 @@ function AffiliatePage() {
     }
     return false;
   });
-  const [userData] = useState<any>(() => {
+  const [userData, setUserData] = useState<any>(() => {
     if (typeof window !== 'undefined') {
       try {
         const currentUser = localStorage.getItem('currentUser');
@@ -81,6 +81,32 @@ function AffiliatePage() {
     }
     return null;
   });
+
+  // Keep userData in sync with signed-in user so new accounts see their own data, not a previous (e.g. admin) user's
+  useEffect(() => {
+    const syncUser = () => {
+      try {
+        const currentUser = localStorage.getItem('currentUser');
+        const signedIn = localStorage.getItem('isSignedIn') === 'true';
+        if (signedIn && currentUser) {
+          setUserData(JSON.parse(currentUser));
+        } else {
+          setUserData(null);
+        }
+      } catch {
+        setUserData(null);
+      }
+    };
+    syncUser();
+    window.addEventListener('storage', syncUser);
+    window.addEventListener('signInStateChanged', syncUser);
+    window.addEventListener('focus', syncUser);
+    return () => {
+      window.removeEventListener('storage', syncUser);
+      window.removeEventListener('signInStateChanged', syncUser);
+      window.removeEventListener('focus', syncUser);
+    };
+  }, []);
 
   // Helper function to get 2D mannequin image based on product name
   const getProductImage = (productName: string): string => {
@@ -3830,7 +3856,7 @@ function AffiliatePage() {
                             lineHeight: '1.4'
                           }}
                         >
-                          YOU DON'T HAVE ANY ORDERS ELIGIBLE FOR CONTENT YET, CHECK BACK SOON.
+                          <>YOU DON'T HAVE ANY ORDERS ELIGIBLE FOR CONTENT YET.<br />CHECK BACK SOON.</>
                         </p>
                       </div>
                     ) : (

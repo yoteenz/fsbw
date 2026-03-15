@@ -3,8 +3,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../constants/tiers';
-import { getTotalReviewCount, hasNewReviewApproved } from '../../constants/reviews';
+import { getTotalReviewCount, getUserSubmittedReviewCount, hasNewReviewApproved } from '../../constants/reviews';
 import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier } from '../../utils/adminAuth';
+import { swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
 import { getAccountNotifications, mergeAccountNotifications } from './notifications/page';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
@@ -61,7 +62,7 @@ function AccountPage() {
     try {
       const currentUser = localStorage.getItem('currentUser');
       const user = currentUser ? JSON.parse(currentUser) : null;
-      return getTotalReviewCount(user?.email);
+      return isMockDataAccount(user) ? getTotalReviewCount(user?.email) : getUserSubmittedReviewCount(user?.email);
     } catch {
       return 0;
     }
@@ -253,20 +254,28 @@ function AccountPage() {
       if (currentUser && signedIn) {
         const user = JSON.parse(currentUser);
         let didUpdate = false;
-        // Add test vouchers for checkout if none exist (so you can test voucher logic), and seed voucher history with traceable origin + date
+        // Only seed test vouchers for mock/data accounts (e.g. admin). New sign-up accounts start with 0 vouchers and empty history.
+        const isMock = isMockDataAccount(user);
         if (!user.voucherList || !Array.isArray(user.voucherList) || user.voucherList.length === 0) {
-          const today = getTodayDateStr();
-          user.voucherList = ['1X COLOR', '1X HAIRLINE', '1X STYLING', '1X FLEXIBLE CAP'];
-          user.voucherCount = user.voucherList.length;
-          user.voucherHistory = [
-            { date: today, transaction: '1X COLOR', amount: 1 },
-            { date: today, transaction: '1X HAIRLINE', amount: 1 },
-            { date: today, transaction: '1X STYLING', amount: 1 },
-            { date: today, transaction: '1X FLEXIBLE CAP', amount: 1 }
-          ];
-          didUpdate = true;
-        } else {
-          // Migration: add 1X STYLING and 1X FLEXIBLE CAP if missing; ensure Color and Hairline have voucher history dates too
+          if (isMock) {
+            const today = getTodayDateStr();
+            user.voucherList = ['1X COLOR', '1X HAIRLINE', '1X STYLING', '1X FLEXIBLE CAP'];
+            user.voucherCount = user.voucherList.length;
+            user.voucherHistory = [
+              { date: today, transaction: '1X COLOR', amount: 1 },
+              { date: today, transaction: '1X HAIRLINE', amount: 1 },
+              { date: today, transaction: '1X STYLING', amount: 1 },
+              { date: today, transaction: '1X FLEXIBLE CAP', amount: 1 }
+            ];
+            didUpdate = true;
+          } else {
+            user.voucherList = [];
+            user.voucherCount = 0;
+            user.voucherHistory = [];
+            didUpdate = true;
+          }
+        } else if (isMock) {
+          // Migration (mock accounts only): add 1X STYLING and 1X FLEXIBLE CAP if missing; ensure Color and Hairline have voucher history dates too
           const list = user.voucherList as string[];
           const hasStyling = list.some((v: string) => /STYLING/i.test(v));
           const hasFlexCap = list.some((v: string) => /FLEXIBLE CAP|FLEX CAP/i.test(v));
@@ -351,12 +360,14 @@ function AccountPage() {
     window.addEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
     window.addEventListener('cartUpdated', handleStorageChange);
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('signInStateChanged', handleStorageChange);
     window.addEventListener('focus', handleStorageChange);
 
     return () => {
       window.removeEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
       window.removeEventListener('cartUpdated', handleStorageChange);
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('signInStateChanged', handleStorageChange);
       window.removeEventListener('focus', handleStorageChange);
     };
   }, []);
@@ -462,10 +473,10 @@ function AccountPage() {
     };
   }, [userData]);
 
-  // Update review count when user data or stored reviews change (synced with reviews page); also re-run when landing on account so count is current
+  // Update review count when user data or stored reviews change (synced with reviews page). New accounts show only their submitted count (0); mock data accounts see mock + submitted.
   useEffect(() => {
     const updateReviewCount = () => {
-      const count = getTotalReviewCount(userData?.email);
+      const count = isMockDataAccount(userData) ? getTotalReviewCount(userData?.email) : getUserSubmittedReviewCount(userData?.email);
       setReviewCount(count);
     };
 
@@ -577,6 +588,14 @@ function AccountPage() {
   };
 
   const handleSignOut = () => {
+    try {
+      const raw = localStorage.getItem('currentUser');
+      if (raw) {
+        const user = JSON.parse(raw);
+        const email = (user?.email || '').trim().toLowerCase();
+        if (email) swapCartAndWishlistToUser(email, null);
+      }
+    } catch (_) {}
     if (isSupabaseConfigured()) {
       const supabase = getSupabase();
       if (supabase) supabase.auth.signOut().catch(() => {});
@@ -584,7 +603,6 @@ function AccountPage() {
     setIsSignedIn(false);
     localStorage.setItem('isSignedIn', 'false');
     localStorage.removeItem('currentUser');
-    // Dispatch custom event to update other pages in same tab
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
     setShowSignOutConfirm(false);
     // Close mobile menu

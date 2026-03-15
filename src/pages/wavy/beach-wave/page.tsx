@@ -1715,15 +1715,15 @@ fontSize: '11px',
                   onTouchEnd={handleTouchEnd}
                 >
                   <img
-                    src="/assets/BEACH WAVE FRONT.JPG"
-                    alt="BEACH WAVE Front View"
+                    src="/assets/BEACH WAVE LEFT.JPG"
+                    alt="BEACH WAVE Left View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/BEACH WAVE FRONT.JPG',
                         '/assets/BEACH WAVE LEFT.JPG',
+                        '/assets/BEACH WAVE FRONT.JPG',
                         '/assets/BEACH WAVE RIGHT.JPG'
                       ];
                       setViewerImages(productShotImages);
@@ -1732,15 +1732,15 @@ fontSize: '11px',
                     }}
                   />
                   <img
-                    src="/assets/BEACH WAVE LEFT.JPG"
-                    alt="BEACH WAVE Left View"
+                    src="/assets/BEACH WAVE FRONT.JPG"
+                    alt="BEACH WAVE Front View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/BEACH WAVE FRONT.JPG',
                         '/assets/BEACH WAVE LEFT.JPG',
+                        '/assets/BEACH WAVE FRONT.JPG',
                         '/assets/BEACH WAVE RIGHT.JPG'
                       ];
                       setViewerImages(productShotImages);
@@ -1756,8 +1756,8 @@ fontSize: '11px',
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/BEACH WAVE FRONT.JPG',
                         '/assets/BEACH WAVE LEFT.JPG',
+                        '/assets/BEACH WAVE FRONT.JPG',
                         '/assets/BEACH WAVE RIGHT.JPG'
                       ];
                       setViewerImages(productShotImages);

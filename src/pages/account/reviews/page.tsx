@@ -4,6 +4,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { clearNewReviewApproved, getUserSubmittedReviewsKey, getMockShopReviewCount, getMockToolReviewCount, setLastSeenShopCount, setLastSeenToolCount } from '../../../constants/reviews';
+import { isMockDataAccount } from '../../../utils/adminAuth';
 
 interface Review {
   id: string;
@@ -234,6 +235,7 @@ function ReviewsPage() {
   const [shopVisibleCount, setShopVisibleCount] = useState(REVIEWS_INITIAL);
   const [toolVisibleCount, setToolVisibleCount] = useState(REVIEWS_INITIAL);
   const [userSubmittedReviews, setUserSubmittedReviews] = useState<Review[]>([]);
+  const [currentUser, setCurrentUser] = useState<{ email?: string; role?: string } | null>(null);
 
   useEffect(() => {
     const handleCartCountUpdate = (event: CustomEvent) => {
@@ -258,12 +260,13 @@ function ReviewsPage() {
     };
   }, []);
 
-  // Load user-submitted reviews (synced with account page count). Clear only the user-submitted alert on visit.
+  // Load user-submitted reviews and current user (synced with account page count). Clear only the user-submitted alert on visit.
   useEffect(() => {
     const load = () => {
       try {
-        const currentUser = localStorage.getItem('currentUser');
-        const user = currentUser ? JSON.parse(currentUser) : null;
+        const rawUser = localStorage.getItem('currentUser');
+        const user = rawUser ? JSON.parse(rawUser) : null;
+        setCurrentUser(user);
         if (!user?.email) {
           setUserSubmittedReviews([]);
           return;
@@ -275,14 +278,19 @@ function ReviewsPage() {
         window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
       } catch (_) {
         setUserSubmittedReviews([]);
+        setCurrentUser(null);
       }
     };
     load();
     window.addEventListener('storage', load);
     window.addEventListener('reviewsUpdated', load);
+    window.addEventListener('signInStateChanged', load);
+    window.addEventListener('focus', load);
     return () => {
       window.removeEventListener('storage', load);
       window.removeEventListener('reviewsUpdated', load);
+      window.removeEventListener('signInStateChanged', load);
+      window.removeEventListener('focus', load);
     };
   }, []);
 
@@ -321,8 +329,9 @@ function ReviewsPage() {
   };
 
   const handleBack = () => navigate('/account');
-  const shopReviewsList = [...userSubmittedReviews, ...mockShopReviews];
-  const toolReviewsList = mockToolReviews;
+  const showMockReviews = isMockDataAccount(currentUser);
+  const shopReviewsList = showMockReviews ? [...userSubmittedReviews, ...mockShopReviews] : [...userSubmittedReviews];
+  const toolReviewsList = showMockReviews ? mockToolReviews : [];
   const totalShop = shopReviewsList.length;
   const handleLoadMoreShop = () => setShopVisibleCount(totalShop);
   const handleLoadMoreTool = () => setToolVisibleCount(toolReviewsList.length);

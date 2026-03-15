@@ -1679,15 +1679,15 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   onTouchEnd={handleTouchEnd}
                 >
                   <img
-                    src="/assets/BLANCO-FRONT.png"
-                    alt="BLANCO Front View"
+                    src="/assets/BLANCO-LEFT.png"
+                    alt="BLANCO Left View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/BLANCO-FRONT.png',
                         '/assets/BLANCO-LEFT.png',
+                        '/assets/BLANCO-FRONT.png',
                         '/assets/BLANCO-RIGHT.png'
                       ];
                       setViewerImages(productShotImages);
@@ -1696,15 +1696,15 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     }}
                   />
                   <img
-                    src="/assets/BLANCO-LEFT.png"
-                    alt="BLANCO Left View"
+                    src="/assets/BLANCO-FRONT.png"
+                    alt="BLANCO Front View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/BLANCO-FRONT.png',
                         '/assets/BLANCO-LEFT.png',
+                        '/assets/BLANCO-FRONT.png',
                         '/assets/BLANCO-RIGHT.png'
                       ];
                       setViewerImages(productShotImages);
@@ -1720,8 +1720,8 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/BLANCO-FRONT.png',
                         '/assets/BLANCO-LEFT.png',
+                        '/assets/BLANCO-FRONT.png',
                         '/assets/BLANCO-RIGHT.png'
                       ];
                       setViewerImages(productShotImages);

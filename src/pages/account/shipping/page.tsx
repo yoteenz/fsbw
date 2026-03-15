@@ -104,11 +104,13 @@ function ShippingPage() {
     window.addEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
     window.addEventListener('cartUpdated', handleStorageChange);
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('signInStateChanged', handleStorageChange);
     window.addEventListener('focus', handleStorageChange);
     return () => {
       window.removeEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
       window.removeEventListener('cartUpdated', handleStorageChange);
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('signInStateChanged', handleStorageChange);
       window.removeEventListener('focus', handleStorageChange);
     };
   }, []);
@@ -802,7 +804,7 @@ function ShippingPage() {
                               borderRadius: '0'
                             }}
                           >
-                            <option value="">STATE</option>
+                            <option value=""></option>
                             <option value="AL">AL</option>
                             <option value="AK">AK</option>
                             <option value="AZ">AZ</option>

@@ -1665,15 +1665,15 @@ function SoftCurlSelection() {
                   onTouchEnd={handleTouchEnd}
                 >
                   <img
-                    src="/assets/SOFT CURL FRONT.JPG"
-                    alt="SOFT CURL Front View"
+                    src="/assets/SOFT CURL LEFT.JPG"
+                    alt="SOFT CURL Left View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/SOFT CURL FRONT.JPG',
                         '/assets/SOFT CURL LEFT.JPG',
+                        '/assets/SOFT CURL FRONT.JPG',
                         '/assets/SOFT CURL RIGHT.JPG'
                       ];
                       setViewerImages(productShotImages);
@@ -1682,15 +1682,15 @@ function SoftCurlSelection() {
                     }}
                   />
                   <img
-                    src="/assets/SOFT CURL LEFT.JPG"
-                    alt="SOFT CURL Left View"
+                    src="/assets/SOFT CURL FRONT.JPG"
+                    alt="SOFT CURL Front View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/SOFT CURL FRONT.JPG',
                         '/assets/SOFT CURL LEFT.JPG',
+                        '/assets/SOFT CURL FRONT.JPG',
                         '/assets/SOFT CURL RIGHT.JPG'
                       ];
                       setViewerImages(productShotImages);
@@ -1706,8 +1706,8 @@ function SoftCurlSelection() {
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/SOFT CURL FRONT.JPG',
                         '/assets/SOFT CURL LEFT.JPG',
+                        '/assets/SOFT CURL FRONT.JPG',
                         '/assets/SOFT CURL RIGHT.JPG'
                       ];
                       setViewerImages(productShotImages);

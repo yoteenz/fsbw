@@ -33,12 +33,22 @@ export function getMockReviewCount(): number {
   return MOCK_REVIEWS_BASE_COUNT;
 }
 
-export function getTotalReviewCount(email: string | undefined): number {
-  if (!email) return MOCK_REVIEWS_BASE_COUNT;
+/** Number of reviews the user has submitted (used for non–mock accounts so new sign-ups show 0). */
+export function getUserSubmittedReviewCount(email: string | undefined): number {
+  if (!email) return 0;
   try {
     const raw = localStorage.getItem(getUserSubmittedReviewsKey(email));
     const list = raw ? JSON.parse(raw) : [];
-    const userCount = Array.isArray(list) ? list.length : 0;
+    return Array.isArray(list) ? list.length : 0;
+  } catch {
+    return 0;
+  }
+}
+
+export function getTotalReviewCount(email: string | undefined): number {
+  if (!email) return MOCK_REVIEWS_BASE_COUNT;
+  try {
+    const userCount = getUserSubmittedReviewCount(email);
     return MOCK_REVIEWS_BASE_COUNT + userCount;
   } catch {
     return MOCK_REVIEWS_BASE_COUNT;

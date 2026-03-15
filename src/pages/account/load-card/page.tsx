@@ -34,7 +34,7 @@ function LoadCardPage() {
     }
     return false;
   });
-  const [userData] = useState(() => {
+  const [userData, setUserData] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
         const currentUser = localStorage.getItem('currentUser');
@@ -46,6 +46,32 @@ function LoadCardPage() {
     return null;
   });
   const [barcodes, setBarcodes] = useState(['', '', '']);
+
+  // Keep userData in sync with signed-in user so new accounts see their own data, not a previous (e.g. admin) user's
+  useEffect(() => {
+    const syncUser = () => {
+      try {
+        const currentUser = localStorage.getItem('currentUser');
+        const signedIn = localStorage.getItem('isSignedIn') === 'true';
+        if (signedIn && currentUser) {
+          setUserData(JSON.parse(currentUser));
+        } else {
+          setUserData(null);
+        }
+      } catch {
+        setUserData(null);
+      }
+    };
+    syncUser();
+    window.addEventListener('storage', syncUser);
+    window.addEventListener('signInStateChanged', syncUser);
+    window.addEventListener('focus', syncUser);
+    return () => {
+      window.removeEventListener('storage', syncUser);
+      window.removeEventListener('signInStateChanged', syncUser);
+      window.removeEventListener('focus', syncUser);
+    };
+  }, []);
 
   // Listen for cart count changes
   useEffect(() => {

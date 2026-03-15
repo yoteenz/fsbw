@@ -439,8 +439,15 @@ function NotificationsPage() {
         setNotifications(mergeAccountNotifications(stored, account));
       } catch (_) {}
     };
+    sync();
     window.addEventListener('storage', sync);
-    return () => window.removeEventListener('storage', sync);
+    window.addEventListener('signInStateChanged', sync);
+    window.addEventListener('focus', sync);
+    return () => {
+      window.removeEventListener('storage', sync);
+      window.removeEventListener('signInStateChanged', sync);
+      window.removeEventListener('focus', sync);
+    };
   }, []);
 
   // Listen for cart count changes and profile image updates

@@ -1763,15 +1763,15 @@ function OceanCurlSelection() {
                   onTouchEnd={handleTouchEnd}
                 >
                   <img
-                    src="/assets/OCEAN CURL FRONT.JPG"
-                    alt="OCEAN CURL Front View"
+                    src="/assets/OCEAN CURL LEFT.JPG"
+                    alt="OCEAN CURL Left View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/OCEAN CURL FRONT.JPG',
                         '/assets/OCEAN CURL LEFT.JPG',
+                        '/assets/OCEAN CURL FRONT.JPG',
                         '/assets/OCEAN CURL RIGHT.JPG'
                       ];
                       setViewerImages(productShotImages);
@@ -1780,15 +1780,15 @@ function OceanCurlSelection() {
                     }}
                   />
                   <img
-                    src="/assets/OCEAN CURL LEFT.JPG"
-                    alt="OCEAN CURL Left View"
+                    src="/assets/OCEAN CURL FRONT.JPG"
+                    alt="OCEAN CURL Front View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/OCEAN CURL FRONT.JPG',
                         '/assets/OCEAN CURL LEFT.JPG',
+                        '/assets/OCEAN CURL FRONT.JPG',
                         '/assets/OCEAN CURL RIGHT.JPG'
                       ];
                       setViewerImages(productShotImages);
@@ -1804,8 +1804,8 @@ function OceanCurlSelection() {
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/OCEAN CURL FRONT.JPG',
                         '/assets/OCEAN CURL LEFT.JPG',
+                        '/assets/OCEAN CURL FRONT.JPG',
                         '/assets/OCEAN CURL RIGHT.JPG'
                       ];
                       setViewerImages(productShotImages);

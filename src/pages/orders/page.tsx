@@ -84,7 +84,33 @@ function OrdersPage() {
     }
     return null;
   });
-  
+
+  // Keep currentUser in sync with signed-in user so new accounts see their own data, not a previous (e.g. admin) user's
+  useEffect(() => {
+    const syncUser = () => {
+      try {
+        const user = localStorage.getItem('currentUser');
+        const signedIn = localStorage.getItem('isSignedIn') === 'true';
+        if (signedIn && user) {
+          setCurrentUser(JSON.parse(user));
+        } else {
+          setCurrentUser(null);
+        }
+      } catch {
+        setCurrentUser(null);
+      }
+    };
+    syncUser();
+    window.addEventListener('storage', syncUser);
+    window.addEventListener('signInStateChanged', syncUser);
+    window.addEventListener('focus', syncUser);
+    return () => {
+      window.removeEventListener('storage', syncUser);
+      window.removeEventListener('signInStateChanged', syncUser);
+      window.removeEventListener('focus', syncUser);
+    };
+  }, []);
+
   // Only the admin (mock-data) account gets test orders; all other accounts see real data only (empty if none)
   const isMockOrdersAccount = () => isMockDataAccount(currentUser);
 

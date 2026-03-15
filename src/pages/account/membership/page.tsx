@@ -70,7 +70,7 @@ function MembershipPage() {
     }
     return false;
   });
-  const [userData] = useState<any>(() => {
+  const [userData, setUserData] = useState<any>(() => {
     if (typeof window !== 'undefined') {
       try {
         const currentUser = localStorage.getItem('currentUser');
@@ -81,6 +81,32 @@ function MembershipPage() {
     }
     return null;
   });
+
+  // Keep userData in sync with signed-in user so new accounts see their own data, not a previous (e.g. admin) user's
+  useEffect(() => {
+    const syncUser = () => {
+      try {
+        const currentUser = localStorage.getItem('currentUser');
+        const signedIn = localStorage.getItem('isSignedIn') === 'true';
+        if (signedIn && currentUser) {
+          setUserData(JSON.parse(currentUser));
+        } else {
+          setUserData(null);
+        }
+      } catch {
+        setUserData(null);
+      }
+    };
+    syncUser();
+    window.addEventListener('storage', syncUser);
+    window.addEventListener('signInStateChanged', syncUser);
+    window.addEventListener('focus', syncUser);
+    return () => {
+      window.removeEventListener('storage', syncUser);
+      window.removeEventListener('signInStateChanged', syncUser);
+      window.removeEventListener('focus', syncUser);
+    };
+  }, []);
 
   // Earn-task completion: backend only. Set userData.earnedEarnTaskIds when verified: newsletter list, first referral; content_review = from reviews tab/page; photo_video_tags = from affiliate page (social tags); social tasks = tracked links + follow.
   const earnedTaskIds: string[] = Array.isArray(userData?.earnedEarnTaskIds) ? userData.earnedEarnTaskIds : [];

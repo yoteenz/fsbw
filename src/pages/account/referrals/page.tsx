@@ -34,7 +34,7 @@ function ReferralsPage() {
     }
     return false;
   });
-  const [userData] = useState<any>(() => {
+  const [userData, setUserData] = useState<any>(() => {
     if (typeof window !== 'undefined') {
       try {
         const currentUser = localStorage.getItem('currentUser');
@@ -45,6 +45,33 @@ function ReferralsPage() {
     }
     return null;
   });
+
+  // Keep userData in sync with signed-in user so new accounts see their own referral code, not a previous (e.g. admin) user's
+  useEffect(() => {
+    const syncUser = () => {
+      try {
+        const currentUser = localStorage.getItem('currentUser');
+        const signedIn = localStorage.getItem('isSignedIn') === 'true';
+        if (signedIn && currentUser) {
+          setUserData(JSON.parse(currentUser));
+        } else {
+          setUserData(null);
+        }
+      } catch {
+        setUserData(null);
+      }
+    };
+    syncUser();
+    window.addEventListener('storage', syncUser);
+    window.addEventListener('signInStateChanged', syncUser);
+    window.addEventListener('focus', syncUser);
+    return () => {
+      window.removeEventListener('storage', syncUser);
+      window.removeEventListener('signInStateChanged', syncUser);
+      window.removeEventListener('focus', syncUser);
+    };
+  }, []);
+
   const [referralStats, setReferralStats] = useState<{ invitees: number; earned: number }>({ invitees: 0, earned: 0 });
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [inviteCopied, setInviteCopied] = useState<'link' | 'code' | null>(null);

@@ -89,11 +89,13 @@ function PaymentPage() {
     window.addEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
     window.addEventListener('cartUpdated', handleStorageChange);
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('signInStateChanged', handleStorageChange);
     window.addEventListener('focus', handleStorageChange);
     return () => {
       window.removeEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
       window.removeEventListener('cartUpdated', handleStorageChange);
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('signInStateChanged', handleStorageChange);
       window.removeEventListener('focus', handleStorageChange);
     };
   }, []);

@@ -2812,15 +2812,15 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 onTouchEnd={handleTouchEnd}
               >
                 <img
-                  src="/assets/NOIR/noir front.png"
-                  alt="NOIR Front View"
+                  src="/assets/NOIR/noir left.png"
+                  alt="NOIR Left View"
                   className="h-full object-cover"
                   style={{ width: '18%', cursor: 'pointer' }}
                   draggable={false}
                   onClick={() => {
                     const productShotImages = [
-                      '/assets/NOIR/noir front.png',
                       '/assets/NOIR/noir left.png',
+                      '/assets/NOIR/noir front.png',
                       '/assets/NOIR/noir right.png'
                     ];
                     setViewerImages(productShotImages);
@@ -2829,15 +2829,15 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   }}
                 />
                 <img
-                  src="/assets/NOIR/noir left.png"
-                  alt="NOIR Left View"
+                  src="/assets/NOIR/noir front.png"
+                  alt="NOIR Front View"
                   className="h-full object-cover"
                   style={{ width: '18%', cursor: 'pointer' }}
                   draggable={false}
                   onClick={() => {
                     const productShotImages = [
-                      '/assets/NOIR/noir front.png',
                       '/assets/NOIR/noir left.png',
+                      '/assets/NOIR/noir front.png',
                       '/assets/NOIR/noir right.png'
                     ];
                     setViewerImages(productShotImages);
@@ -2853,8 +2853,8 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   draggable={false}
                   onClick={() => {
                     const productShotImages = [
-                      '/assets/NOIR/noir front.png',
                       '/assets/NOIR/noir left.png',
+                      '/assets/NOIR/noir front.png',
                       '/assets/NOIR/noir right.png'
                     ];
                     setViewerImages(productShotImages);

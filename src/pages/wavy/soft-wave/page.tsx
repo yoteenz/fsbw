@@ -1686,15 +1686,15 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   onTouchEnd={handleTouchEnd}
                 >
                   <img
-                    src="/assets/SOFT-WAVE FRONT.png"
-                    alt="SOFT WAVE Front View"
+                    src="/assets/SOFT-WAVE LEFT.png"
+                    alt="SOFT WAVE Left View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/SOFT-WAVE FRONT.png',
                         '/assets/SOFT-WAVE LEFT.png',
+                        '/assets/SOFT-WAVE FRONT.png',
                         '/assets/SOFT-WAVE RIGHT.png'
                       ];
                       setViewerImages(productShotImages);
@@ -1703,15 +1703,15 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     }}
                   />
                   <img
-                    src="/assets/SOFT-WAVE LEFT.png"
-                    alt="SOFT WAVE Left View"
+                    src="/assets/SOFT-WAVE FRONT.png"
+                    alt="SOFT WAVE Front View"
                     className="object-cover"
                     style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/SOFT-WAVE FRONT.png',
                         '/assets/SOFT-WAVE LEFT.png',
+                        '/assets/SOFT-WAVE FRONT.png',
                         '/assets/SOFT-WAVE RIGHT.png'
                       ];
                       setViewerImages(productShotImages);
@@ -1727,8 +1727,8 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     draggable={false}
                     onClick={() => {
                       const productShotImages = [
-                        '/assets/SOFT-WAVE FRONT.png',
                         '/assets/SOFT-WAVE LEFT.png',
+                        '/assets/SOFT-WAVE FRONT.png',
                         '/assets/SOFT-WAVE RIGHT.png'
                       ];
                       setViewerImages(productShotImages);
