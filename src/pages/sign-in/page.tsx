@@ -1658,6 +1658,7 @@ function SignInPage() {
                 </div>
               </div>
             )}
+                </div>
 
             {/* SIGN UP BUTTON - Outside card (hidden when showing confirm message) */}
             {!showSignUpConfirmMessage && (
@@ -1954,6 +1955,8 @@ function SignInPage() {
                 </button>
               </div>
             )}
+            </div>
+            </div>
             </>
           )}
         </div>
