@@ -1443,12 +1443,12 @@ function ShoppingBagPage() {
                    </p>
                  )}
 
-                 {/* Subtotal - Fixed at bottom; minimal spacing above black line (no excess padding) */}
+                 {/* Subtotal - Fixed at bottom; match Saved for Later spacing above (pt-1 when 2+, same inner margin/padding) */}
                  {cartItems.length > 0 && (
-                   <div className="overflow-hidden mt-auto flex-shrink-0">
+                   <div className={`overflow-hidden mt-auto flex-shrink-0 ${cartItems.length === 1 ? '' : 'pt-1'}`}>
                      <div style={{ 
-                       marginTop: '2px', 
-                       paddingTop: '2px',
+                       marginTop: cartItems.length === 1 ? '2px' : '5px', 
+                       paddingTop: cartItems.length === 1 ? '4px' : '7px',
                        borderTop: '1.3px solid #000',
                        display: 'flex',
                        justifyContent: 'space-between',
