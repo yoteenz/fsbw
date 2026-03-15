@@ -5,6 +5,7 @@ import { unblockClient } from '../../../../utils/blockedClients';
 import { getAdminDeletedAccounts } from '../../../../utils/api';
 import { isSupabaseConfigured } from '../../../../utils/supabase';
 import { isAdminEmail } from '../../../../utils/adminAuth';
+import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
 
 type DeletedUser = {
   email?: string;
@@ -143,6 +144,7 @@ function displayName(u: DeletedUser) {
 }
 
 export default function AdminDeletedAccounts() {
+  useRequireAdminPageAccess();
   const [deletedUsers, setDeletedUsers] = useState<DeletedUser[]>([]);
   const [expandedEmail, setExpandedEmail] = useState<string | null>(null);
   const [userToRestore, setUserToRestore] = useState<DeletedUser | null>(null);

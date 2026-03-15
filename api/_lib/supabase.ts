@@ -6,6 +6,11 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 let adminClient: SupabaseClient | null = null;
 
+/** True if service role key is set (required for auth.admin operations like deleteUser). */
+export function hasSupabaseServiceRole(): boolean {
+  return Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+}
+
 export function getSupabaseAdmin(): SupabaseClient {
   if (!adminClient) {
     const url = process.env.SUPABASE_URL;

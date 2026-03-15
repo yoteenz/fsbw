@@ -1,19 +1,18 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireAdmin } from '../_lib/adminAuth';
 import { getSupabaseAdmin } from '../_lib/supabase';
+import { fromProfileRow } from '../_lib/profileMapping';
 
-type OrderItem = { total?: number; amount?: number; date?: string; createdAt?: string; status?: string; [k: string]: unknown };
+type OrderItem = { total?: number; amount?: number; date?: string; createdAt?: string; status?: string; deliveredAt?: unknown; [k: string]: unknown };
 
 function orderAmount(o: OrderItem): number {
   const n = Number((o as OrderItem).total ?? (o as OrderItem).amount ?? 0);
   return Number.isFinite(n) ? n : 0;
 }
 
-function orderDate(o: OrderItem): number {
-  const d = (o as OrderItem).date ?? (o as OrderItem).createdAt;
-  if (!d) return 0;
-  const t = new Date(d).getTime();
-  return Number.isFinite(t) ? t : 0;
+function hasDeliveredOrShipped(o: OrderItem): boolean {
+  const s = String((o.status ?? '')).toUpperCase();
+  return s === 'DELIVERED' || s === 'SHIPPED' || !!(o as OrderItem).deliveredAt;
 }
 
 /** GET /api/admin/dashboard – stats and recent activity from Supabase (admin only). */
@@ -31,8 +30,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const supabase = getSupabaseAdmin();
 
     const [profilesRes, ordersRes] = await Promise.all([
-      supabase.from('profiles').select('id, referral_code'),
-      supabase.from('orders').select('active_orders, past_orders'),
+      supabase.from('profiles').select('*').order('created_at', { ascending: false }),
+      supabase.from('orders').select('user_id, active_orders, past_orders'),
     ]);
 
     if (profilesRes.error) return res.status(500).json({ error: profilesRes.error.message });
@@ -41,12 +40,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const profiles = Array.isArray(profilesRes.data) ? profilesRes.data : [];
     const orders = Array.isArray(ordersRes.data) ? ordersRes.data : [];
 
-    const activeClients = profiles.length;
+    const userIdsWithDelivered = new Set<string>();
+    for (const row of orders) {
+      const uid = (row as { user_id?: string }).user_id;
+      if (!uid) continue;
+      const active = Array.isArray((row as { active_orders?: unknown[] }).active_orders) ? (row as { active_orders: OrderItem[] }).active_orders : [];
+      const past = Array.isArray((row as { past_orders?: unknown[] }).past_orders) ? (row as { past_orders: OrderItem[] }).past_orders : [];
+      const hasDelivered = [...active, ...past].some(hasDeliveredOrShipped);
+      if (hasDelivered) userIdsWithDelivered.add(uid);
+    }
+    const clientsWithDeliveredOrder = userIdsWithDelivered.size;
     const referralCount = profiles.filter((p: { referral_code?: string | null }) => (p.referral_code || '').trim() !== '').length;
 
     const now = new Date();
-    const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-    const signUpsThisMonth = profiles.filter((p: { created_at?: string | null }) => (p.created_at || '') >= thisMonthStart).length;
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const signUpsThisMonth = profiles.filter((p: { created_at?: string | null }) => (p.created_at || '') >= thirtyDaysAgo).length;
 
     let totalRevenue = 0;
     let totalOrders = 0;
@@ -74,16 +82,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     allTransactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     const recentRevenue = allTransactions.slice(0, 6);
 
+    const clients = profiles.map((p) => fromProfileRow(p as Record<string, unknown>));
+
     return res.status(200).json({
       stats: {
-        activeClients,
+        activeClients: profiles.length,
+        clientsWithDeliveredOrder,
         referralCount,
         totalRevenue,
         totalOrders,
         pendingForms,
         signUpsThisMonth,
       },
-      clients: profiles.slice(0, 12).map(() => ({ tier: 'Standard' })),
+      clients,
       bookings: [],
       revenue: recentRevenue,
       notifications: [],

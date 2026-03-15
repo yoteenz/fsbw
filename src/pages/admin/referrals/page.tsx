@@ -4,6 +4,7 @@ import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { getAdminReferrals } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
+import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 
 const REFERRAL_TABS = ['OVERVIEW', 'BY REFERRER', 'ACTIVITY'] as const;
 
@@ -18,6 +19,7 @@ type ReferralEntry = {
 };
 
 export default function AdminReferralsPage() {
+  useRequireAdminPageAccess();
   const [log, setLog] = useState<ReferralEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<typeof REFERRAL_TABS[number]>('OVERVIEW');

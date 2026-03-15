@@ -25,7 +25,8 @@ begin
     first_name,
     last_name,
     phone_number,
-    birthday
+    birthday,
+    gift_card_balance
   )
   values (
     new.id,
@@ -33,7 +34,8 @@ begin
     coalesce(new.raw_user_meta_data ->> 'first_name', ''),
     coalesce(new.raw_user_meta_data ->> 'last_name', ''),
     coalesce(new.raw_user_meta_data ->> 'phone_number', ''),
-    coalesce(new.raw_user_meta_data ->> 'birthday', '')
+    coalesce(new.raw_user_meta_data ->> 'birthday', ''),
+    10
   );
   return new;
 end;

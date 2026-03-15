@@ -8,6 +8,7 @@ import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import moreWaysIcon from '../../../assets/icons/more-ways.svg?url';
 import affiliateIcon from '../../../assets/icons/affiliate-icon.svg?url';
 import { isMockDataAccount } from '../../../utils/adminAuth';
+import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 
 interface Order {
   id: string;
@@ -422,8 +423,15 @@ function AffiliatePage() {
     // Load from localStorage first
     let storedContent: { [orderId: string]: { photos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; videos: Array<{ id: string; file: File | string; preview: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>; socials: Array<{ id: string; platform: string; link: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }> } } = {};
     
+    const currentUser = (() => {
+      try {
+        const raw = localStorage.getItem('currentUser');
+        return raw ? JSON.parse(raw) : null;
+      } catch { return null; }
+    })();
     try {
-      const stored = localStorage.getItem('affiliateSubmittedContent');
+      const key = getPerUserKey(PER_USER_KEYS.affiliateSubmittedContent, (currentUser as { email?: string })?.email);
+      const stored = localStorage.getItem(key);
       if (stored) {
         storedContent = JSON.parse(stored);
         console.log('✅ Loaded submitted content from localStorage:', Object.keys(storedContent).length, 'orders');
@@ -431,13 +439,6 @@ function AffiliatePage() {
     } catch (e) {
       console.error('❌ Error loading submitted content from localStorage:', e);
     }
-
-    const currentUser = (() => {
-      try {
-        const raw = localStorage.getItem('currentUser');
-        return raw ? JSON.parse(raw) : null;
-      } catch { return null; }
-    })();
 
     // Mock data for admin (mock-data) account orders only - merge with stored content
     const useMockContent = currentUser && isMockDataAccount(currentUser);
@@ -941,8 +942,9 @@ function AffiliatePage() {
       });
       
       console.log('💾 Saving to localStorage:', Object.keys(contentToStore).length, 'orders');
-      
-      localStorage.setItem('affiliateSubmittedContent', JSON.stringify(contentToStore));
+      const email = getCurrentUserEmailFromStorage();
+      const key = getPerUserKey(PER_USER_KEYS.affiliateSubmittedContent, email);
+      localStorage.setItem(key, JSON.stringify(contentToStore));
     } catch (e) {
       console.error('Error saving submitted content to localStorage:', e);
     }
@@ -1585,7 +1587,8 @@ function AffiliatePage() {
   // Clear affiliate card badge when user visits (mark all content as seen so badge clears)
   useEffect(() => {
     try {
-      const raw = localStorage.getItem('affiliateSubmittedContent');
+      const key = getPerUserKey(PER_USER_KEYS.affiliateSubmittedContent, getCurrentUserEmailFromStorage());
+      const raw = localStorage.getItem(key);
       if (!raw) return;
       const submitted = JSON.parse(raw);
       for (const orderId of Object.keys(submitted)) {

@@ -7,6 +7,7 @@ import ImageViewerModal from '../../../components/ImageViewerModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { trackActivity } from '../../../utils/activity';
+import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 
 function BlancoSelection() {
   const navigate = useNavigate();
@@ -28,11 +29,12 @@ function BlancoSelection() {
     return parseInt(localStorage.getItem('cartCount') || '0');
   });
   
-  // Currency state - load from localStorage on mount
+  // Currency state - per user
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const savedCurrency = localStorage.getItem('selectedCurrency');
+        const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+        const savedCurrency = localStorage.getItem(key);
         return savedCurrency || 'USD';
       } catch (e) {
         return 'USD';
@@ -646,43 +648,40 @@ function BlancoSelection() {
     return basePrice;
   };
 
-  // Load selected currency from localStorage on mount only
-  // Initial state already loads from localStorage, this is a safety check
+  // Load selected currency from localStorage on mount only (per-user key)
   useEffect(() => {
-    const savedCurrency = localStorage.getItem('selectedCurrency');
+    const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+    const savedCurrency = localStorage.getItem(key);
     if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
-      // Only update if different to avoid unnecessary re-renders
-      if (savedCurrency !== selectedCurrency) {
-      setSelectedCurrency(savedCurrency);
-    }
+      if (savedCurrency !== selectedCurrency) setSelectedCurrency(savedCurrency);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run on mount, not when currencyRates changes
+  }, []);
 
-  // Save selected currency to localStorage
+  // Save selected currency to localStorage (per-user key)
   useEffect(() => {
-    localStorage.setItem('selectedCurrency', selectedCurrency);
+    const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+    localStorage.setItem(key, selectedCurrency);
   }, [selectedCurrency]);
 
   // Listen for currency changes from cart dropdown
   useEffect(() => {
     const handleCurrencyChange = () => {
-      const savedCurrency = localStorage.getItem('selectedCurrency');
+      const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+      const savedCurrency = localStorage.getItem(key);
       if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
         setSelectedCurrency(savedCurrency);
       }
     };
 
-    // Listen for storage events (from other tabs/windows)
     window.addEventListener('storage', handleCurrencyChange);
     
-    // Listen for custom currencyChanged event (from same window)
     const handleCustomCurrencyChange = (event: CustomEvent) => {
       const newCurrency = event.detail;
       if (newCurrency && currencyRates[newCurrency as keyof typeof currencyRates]) {
         setSelectedCurrency(newCurrency);
-        // Also update localStorage to ensure consistency
-        localStorage.setItem('selectedCurrency', newCurrency);
+        const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+        localStorage.setItem(key, newCurrency);
       }
     };
     

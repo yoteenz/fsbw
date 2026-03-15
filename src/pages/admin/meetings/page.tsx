@@ -4,10 +4,12 @@ import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { getAdminMeetings } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
+import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 
 const MEETING_TABS = ['DAY', 'WEEK'] as const;
 
 export default function AdminMeetings() {
+  useRequireAdminPageAccess();
   const [selectedDate, setSelectedDate] = useState('2024-01-20');
   const [viewMode, setViewMode] = useState<'day' | 'week'>('day');
 

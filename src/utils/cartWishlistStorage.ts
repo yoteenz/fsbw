@@ -39,12 +39,18 @@ export function saveCartAndWishlistToUserKeys(email: string): void {
   }
 }
 
+/** Cart UI keys that are global; clear on user switch so the next user doesn't see previous user's state. */
+const CART_UI_KEYS = ['addToBagButtonState', 'lastAddedItemId', 'editingCartItem', 'editingCartItemId'] as const;
+
 /**
  * Load the given user's cart, wishlist, and userLists into global keys.
  * Use null to clear globals (e.g. on sign-out).
+ * Clears cart UI state (editingCartItem, addToBagButtonState, etc.) so it doesn't bleed between users.
  */
 function loadFromUserKeys(email: string | null): void {
   try {
+    // Clear cart UI state when switching user so the new user doesn't see previous user's add-to-bag/edit state
+    CART_UI_KEYS.forEach((k) => localStorage.removeItem(k));
     if (email) {
       const e = normalizeEmail(email);
       const cart = localStorage.getItem(cartKey(e));

@@ -6,6 +6,7 @@ import AddToListModal from '../../components/AddToListModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { isMockDataAccount } from '../../utils/adminAuth';
+import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 
 function WishlistSelection() {
   const navigate = useNavigate();
@@ -46,11 +47,12 @@ function WishlistSelection() {
   const [addToListModalOpen, setAddToListModalOpen] = useState(false);
   const [addToListModalItem, setAddToListModalItem] = useState<any>(null);
 
-  // Currency state - load from localStorage on mount
+  // Currency state - per user
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const savedCurrency = localStorage.getItem('selectedCurrency');
+        const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+        const savedCurrency = localStorage.getItem(key);
         return savedCurrency || 'USD';
       } catch (e) {
         return 'USD';
@@ -181,42 +183,40 @@ function WishlistSelection() {
     };
   }, []);
 
-  // Load selected currency from localStorage on mount only
-  // Initial state already loads from localStorage, this is a safety check
+  // Load selected currency from localStorage on mount only (per-user key)
   useEffect(() => {
-    const savedCurrency = localStorage.getItem('selectedCurrency');
+    const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+    const savedCurrency = localStorage.getItem(key);
     if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
-      // Only update if different to avoid unnecessary re-renders
-      if (savedCurrency !== selectedCurrency) {
-      setSelectedCurrency(savedCurrency);
-      }
+      if (savedCurrency !== selectedCurrency) setSelectedCurrency(savedCurrency);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run on mount, not when currencyRates changes
+  }, []);
 
-  // Save selected currency to localStorage
+  // Save selected currency to localStorage (per-user key)
   useEffect(() => {
-    localStorage.setItem('selectedCurrency', selectedCurrency);
+    const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+    localStorage.setItem(key, selectedCurrency);
   }, [selectedCurrency]);
 
   // Listen for currency changes from cart dropdown
   useEffect(() => {
     const handleCurrencyChange = () => {
-      const savedCurrency = localStorage.getItem('selectedCurrency');
+      const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+      const savedCurrency = localStorage.getItem(key);
       if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
         setSelectedCurrency(savedCurrency);
       }
     };
 
-    // Listen for storage events (from other tabs/windows)
     window.addEventListener('storage', handleCurrencyChange);
     
-    // Listen for custom currencyChanged event (from same window)
     const handleCustomCurrencyChange = (event: CustomEvent) => {
       const newCurrency = event.detail;
       if (newCurrency && currencyRates[newCurrency as keyof typeof currencyRates]) {
         setSelectedCurrency(newCurrency);
-        localStorage.setItem('selectedCurrency', newCurrency);
+        const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+        localStorage.setItem(key, newCurrency);
       }
     };
     
@@ -518,25 +518,27 @@ function WishlistSelection() {
                   <button 
                     onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
                     className="cursor-pointer" 
-                    style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
+                    style={{ height: '21px', width: '21px', padding: 0, border: 'none', background: 'none', transform: 'translateX(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     <img
                       alt="Account icon"
-                      width="16"
-                      height="16"
+                      width={16}
+                      height={16}
                       src="/assets/NOIR/account-icon.svg"
+                      style={{ display: 'block' }}
                     />
                   </button>
                   <button 
                     onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
                     className="cursor-pointer"
-                    style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
+                    style={{ height: '21px', width: '21px', padding: 0, border: 'none', background: 'none', transform: 'translateX(2px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     <img
                       alt="Wishlist"
-                      width="18"
-                      height="18"
+                      width={18}
+                      height={18}
                       src="/assets/wishlist-heart.svg"
+                      style={{ display: 'block' }}
                     />
                   </button>
                 </>
@@ -934,17 +936,17 @@ function WishlistSelection() {
                   const itemQuantity = item.quantity || 1;
 
                   return (
-                    <div
-                      key={itemId}
-                      className={`flex items-center justify-start space-x-3 ${index < wishlistItems.length - 1 ? 'border-b border-black' : ''}`}
-                      style={{
-                        height: '130px',
-                        paddingTop: '0',
-                        paddingBottom: '0',
-                        width: '100%',
-                        flexShrink: 0
-                      }}
-                    >
+                    <div key={itemId} className="bg-white border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box' }}>
+                      <div
+                        className="flex items-center justify-start space-x-3"
+                        style={{
+                          height: '130px',
+                          paddingTop: '0',
+                          paddingBottom: '0',
+                          width: '100%',
+                          flexShrink: 0
+                        }}
+                      >
                       {/* Thumbnail - matching cart: image (click -> product page) then EDIT IN BUILD-A-WIG below */}
                       <div className="flex flex-col items-center justify-center" style={{ flexShrink: 0, width: '88px', height: '100%' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', transform: 'translateY(-4px)' }}>
@@ -1178,6 +1180,7 @@ function WishlistSelection() {
                           )}
                         </div>
                       </div>
+                    </div>
                     </div>
                   );
                   });

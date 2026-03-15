@@ -66,41 +66,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'PATCH') {
     const body = typeof req.body === 'object' && req.body !== null ? req.body : {};
-    const row = toProfileRow({ ...body, id: user.id, email: user.email });
-    delete (row as Record<string, unknown>).id;
-    (row as Record<string, unknown>).updated_at = new Date().toISOString();
+    // Merge body with auth user so id/email always come from token; then build DB row.
+    const row = toProfileRow({ ...body, id: user.id, email: user.email }) as Record<string, unknown>;
+    row.id = user.id;
+    row.email = user.email;
+    row.updated_at = new Date().toISOString();
 
-    const { data: existing } = await supabase.from('profiles').select('id').eq('id', user.id).single();
-    if (existing) {
-      const { data, error } = await supabase
-        .from('profiles')
-        .update(row)
-        .eq('id', user.id)
-        .select()
-        .single();
-      if (error) return res.status(500).json({ error: error.message });
-      try {
-        await writeAuditLog({
-          actorId: user.id,
-          actorEmail: user.email,
-          action: 'profile.update',
-          resourceType: 'profiles',
-          resourceId: user.id,
-          details: { updated: true },
-        });
-      } catch {
-        /* ignore */
-      }
-      return res.status(200).json(fromProfileRow(data as Record<string, unknown>));
-    } else {
-      const { data, error } = await supabase
-        .from('profiles')
-        .insert({ id: user.id, email: user.email, ...row })
-        .select()
-        .single();
-      if (error) return res.status(500).json({ error: error.message });
-      return res.status(200).json(fromProfileRow(data as Record<string, unknown>));
+    // Upsert: create profile if none exists (e.g. after email confirm), otherwise update.
+    // Ensures users who just confirmed their email get a profile row and show up in admin clients.
+    const { data, error } = await supabase
+      .from('profiles')
+      .upsert(row, { onConflict: 'id' })
+      .select()
+      .single();
+    if (error) return res.status(500).json({ error: error.message });
+    try {
+      await writeAuditLog({
+        actorId: user.id,
+        actorEmail: user.email,
+        action: 'profile.update',
+        resourceType: 'profiles',
+        resourceId: user.id,
+        details: { updated: true },
+      });
+    } catch {
+      /* ignore */
     }
+    return res.status(200).json(fromProfileRow(data as Record<string, unknown>));
   }
 
   return res.status(405).json({ error: 'Method not allowed' });

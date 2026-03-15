@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { isAyoteenzAdminAccount, getEffectiveTierName, isAdminEmail } from '../../../utils/adminAuth';
+import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { getAdminClients, getAdminOrders, getAdminCart, getAdminWishlist, getAdminActivity, exportClientsCsv } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
@@ -113,8 +114,8 @@ function getTierDisplayLabelAndColor(u: any): { label: string; color: string } {
   return { label: membership === 'PREMIUM' ? 'Premium rewards' : 'Standard rewards', color: '#808080' };
 }
 
-/** Check if client is subscribed to the email newsletter (client.newsletterSubscribed or localStorage userNewsletter_${email}) */
-function isClientNewsletterSubscribed(u: any): boolean {
+/** Check if client is subscribed to the email newsletter (client.newsletterSubscribed or localStorage userNewsletter_${email}). Exported for admin dashboard. */
+export function isClientNewsletterSubscribed(u: any): boolean {
   if (u?.newsletterSubscribed === true) return true;
   try {
     const email = (u?.email || '').toString().trim().toLowerCase();
@@ -306,8 +307,8 @@ function getNonDefaultDetailLines(productName: string, options: Record<string, s
   return lines;
 }
 
-/** 20 mock clients for ayoteenz admin only – mix of Standard/Premium, spend, bookings, alerts for testing sort tags. Most names are female to reflect a hair/wig brand client base. */
-function getMockClientsForAyoteenz(): any[] {
+/** 20 mock clients for ayoteenz admin only – mix of Standard/Premium, spend, bookings, alerts for testing sort tags. Most names are female to reflect a hair/wig brand client base. Exported for admin dashboard tier counts. */
+export function getMockClientsForAyoteenz(): any[] {
   const now = Date.now();
   const day = 24 * 60 * 60 * 1000;
   const mockRows: Array<{
@@ -409,11 +410,11 @@ const MOCK_PRODUCTS = ['NOIR', 'BLANCO', 'SOFT WAVE', 'SOFT CURL', 'BEACH WAVE',
 /** Add-on price variations (flexible cap +$40, length/density/color, etc.) for realistic order totals */
 const MOCK_ADDON_VARIATIONS = [0, 40, 50, 100, 20, 60, 80];
 
-/** Mock orders for mock clients when localStorage has no userOrders data. Uses client's ordersCount, totalSpent, newCount. Prices reflect actual product base prices + add-ons. No order goes below product base price. */
-type MockOrderSingle = { id: string; date: string; product: string; amount: number; status: string };
-type MockOrderMulti = { id: string; date: string; status: string; lineItems: Array<{ productName: string; subtotal: number; options?: Record<string, string> }>; total: number };
-type MockOrder = MockOrderSingle | MockOrderMulti;
-function getMockOrdersForClient(client: any): MockOrder[] {
+/** Mock orders for mock clients when localStorage has no userOrders data. Uses client's ordersCount, totalSpent, newCount. Prices reflect actual product base prices + add-ons. No order goes below product base price. Exported for admin dashboard mock data consistency. */
+export type MockOrderSingle = { id: string; date: string; product: string; amount: number; status: string };
+export type MockOrderMulti = { id: string; date: string; status: string; lineItems: Array<{ productName: string; subtotal: number; options?: Record<string, string> }>; total: number };
+export type MockOrder = MockOrderSingle | MockOrderMulti;
+export function getMockOrdersForClient(client: any): MockOrder[] {
   const email = (client?.email || '').toString().trim().toLowerCase();
   if (email === 'mock13@test.com') {
     const now = Date.now();
@@ -567,6 +568,7 @@ function getMockActivityForMayaOwen(): Array<{ id: string; eventType: string; pa
 }
 
 export default function AdminClients() {
+  useRequireAdminPageAccess();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const emailFromUrl = searchParams.get('email') || '';
@@ -627,15 +629,15 @@ export default function AdminClients() {
         reg = [...reg, currentUser];
         localStorage.setItem('registeredUsers', JSON.stringify(reg));
       }
-      // Ayoteenz admin only: merge 20 mock clients so all sort tags can be tested
+      // Ayoteenz admin only: merge mock clients so all sort tags can be tested (same email normalization as dashboard)
+      const norm = (e: string) => (e || '').trim().toLowerCase();
       if (currentUser && isAyoteenzAdminAccount(currentUser)) {
         const mockClients = getMockClientsForAyoteenz();
-        const mockByEmail = new Map(mockClients.map((m: any) => [(m.email || '').toLowerCase(), m]));
-        const existingEmails = new Set((reg || []).map((u: any) => (u.email || '').toLowerCase()));
-        const toAdd = mockClients.filter((m: any) => !existingEmails.has((m.email || '').toLowerCase()));
-        // Refresh existing mock clients so they get latest fields (referralNumber, birthDay, etc.)
+        const mockByEmail = new Map(mockClients.map((m: any) => [norm(m.email || ''), m]));
+        const existingEmails = new Set((reg || []).map((u: any) => norm(u.email || '')));
+        const toAdd = mockClients.filter((m: any) => !existingEmails.has(norm(m.email || '')));
         reg = reg.map((u: any) => {
-          const fresh = mockByEmail.get((u.email || '').toLowerCase());
+          const fresh = mockByEmail.get(norm(u.email || ''));
           return fresh ? { ...u, ...fresh } : u;
         });
         if (toAdd.length > 0) {
@@ -649,26 +651,33 @@ export default function AdminClients() {
       reg = reg.filter((u: any) => !isClientBlocked(u));
       setRegisteredUsers(reg);
 
-      // Admin + Supabase: fetch all clients from API so dashboard shows everyone (not just this browser)
+      // Admin + Supabase: fetch all clients from API (same source as dashboard so tier counts match)
       if (currentUser && currentUser.email && isAdminEmail(currentUser.email) && isSupabaseConfigured()) {
         getAdminClients()
           .then((apiClients) => {
-            if (apiClients.length > 0) {
-              let fromApi = apiClients as any[];
+            const list = Array.isArray(apiClients) ? apiClients : [];
+            if (list.length > 0) {
+              let fromApi = list as any[];
               const mockClients = getMockClientsForAyoteenz();
-              const mockByEmail = new Map(mockClients.map((m: any) => [(m.email || '').toLowerCase(), m]));
-              const existingEmails = new Set(fromApi.map((u: any) => (u.email || '').toLowerCase()));
-              const toAdd = mockClients.filter((m: any) => !existingEmails.has((m.email || '').toLowerCase()));
+              const mockByEmail = new Map(mockClients.map((m: any) => [norm(m.email || ''), m]));
+              const existingEmails = new Set(fromApi.map((u: any) => norm(u.email || '')));
+              const toAdd = mockClients.filter((m: any) => !existingEmails.has(norm(m.email || '')));
               fromApi = fromApi.map((u: any) => {
-                const fresh = mockByEmail.get((u.email || '').toLowerCase());
+                const fresh = mockByEmail.get(norm(u.email || ''));
                 return fresh ? { ...u, ...fresh } : u;
               });
               if (toAdd.length > 0) fromApi = [...fromApi, ...toAdd];
               fromApi = fromApi.filter((u: any) => !isClientBlocked(u));
               setRegisteredUsers(fromApi);
+            } else if (currentUser && isAyoteenzAdminAccount(currentUser)) {
+              setRegisteredUsers(getMockClientsForAyoteenz().filter((u: any) => !isClientBlocked(u)));
             }
           })
-          .catch(() => {});
+          .catch(() => {
+            if (currentUser && isAyoteenzAdminAccount(currentUser)) {
+              setRegisteredUsers(getMockClientsForAyoteenz().filter((u: any) => !isClientBlocked(u)));
+            }
+          });
       }
     } catch {
       setRegisteredUsers([]);
@@ -1341,31 +1350,6 @@ export default function AdminClients() {
                   >
                     CLIENTS
                   </h2>
-                  {isSupabaseConfigured() && (
-                    <button
-                      type="button"
-                      disabled={exportingCsv}
-                      onClick={async () => {
-                        setExportingCsv(true);
-                        try {
-                          const url = await exportClientsCsv();
-                          const a = document.createElement('a');
-                          a.href = url;
-                          a.download = 'clients-export.csv';
-                          a.click();
-                          URL.revokeObjectURL(url);
-                        } catch {
-                          /* ignore */
-                        } finally {
-                          setExportingCsv(false);
-                        }
-                      }}
-                      className="text-xs px-2 py-1 border border-gray-500 rounded mr-2 disabled:opacity-50"
-                      style={{ fontFamily: '"Futura PT Medium"', color: '#374151' }}
-                    >
-                      {exportingCsv ? 'Exporting…' : 'Export CSV'}
-                    </button>
-                  )}
                   <svg
                     width="15"
                     height="15"
@@ -2640,7 +2624,7 @@ export default function AdminClients() {
                     marginLeft: '-4px',
                   }}
                 >
-                  <div className="relative" style={{ paddingLeft: '10px' }}>
+                  <div className="relative" style={{ paddingLeft: '10px', marginLeft: '6px' }}>
                   <button
                     type="button"
                     onClick={() => setShowSortDropdown((v) => !v)}
@@ -2693,33 +2677,33 @@ export default function AdminClients() {
                 </div>
                   {activeTab === 'INVITES' ? (
                     <>
-                      <div className="flex justify-center w-full" style={{ textAlign: 'center' }}>REFERRAL</div>
-                      <div className="flex justify-center w-full" style={{ textAlign: 'center' }}>STATUS</div>
-                      <div className="flex justify-center w-full" style={{ textAlign: 'center' }}>INVITES</div>
+                      <div className="flex justify-center w-full" style={{ textAlign: 'center', marginLeft: '-6px' }}>REFERRAL</div>
+                      <div className="flex justify-center w-full" style={{ textAlign: 'center', marginLeft: '-6px' }}>STATUS</div>
+                      <div className="flex justify-center w-full" style={{ textAlign: 'center', marginLeft: '-6px' }}>INVITES</div>
                     </>
                   ) : activeTab === 'REWARDS' ? (
                     <>
-                      <div className="flex justify-center w-full" style={{ textAlign: 'center' }}>PHOTOS</div>
-                      <div className="flex justify-center w-full" style={{ textAlign: 'center' }}>VIDEOS</div>
-                      <div className="flex justify-center w-full" style={{ textAlign: 'center' }}>TAGS</div>
+                      <div className="flex justify-center w-full" style={{ textAlign: 'center', marginLeft: '-6px' }}>PHOTOS</div>
+                      <div className="flex justify-center w-full" style={{ textAlign: 'center', marginLeft: '-6px' }}>VIDEOS</div>
+                      <div className="flex justify-center w-full" style={{ textAlign: 'center', marginLeft: '-6px' }}>TAGS</div>
                     </>
                   ) : activeTab === 'REVIEWS' ? (
                     <>
-                      <div className="flex justify-center w-full" style={{ textAlign: 'center' }}>TOTAL</div>
-                      <div className="flex justify-center w-full" style={{ textAlign: 'center' }}>MEDIA</div>
-                      <div className="flex justify-center w-full" style={{ textAlign: 'center' }}>PENDING</div>
+                      <div className="flex justify-center w-full" style={{ textAlign: 'center', marginLeft: '-6px' }}>TOTAL</div>
+                      <div className="flex justify-center w-full" style={{ textAlign: 'center', marginLeft: '-6px' }}>MEDIA</div>
+                      <div className="flex justify-center w-full" style={{ textAlign: 'center', marginLeft: '-6px' }}>PENDING</div>
                     </>
                   ) : (
                     <>
-                  <div className="flex justify-center w-full" style={{ textAlign: 'center' }}>NEW</div>
-                  <div className="flex justify-center w-full" style={{ textAlign: 'center' }}>ORDERS</div>
-                  <div className="flex justify-center w-full" style={{ textAlign: 'center' }}>CHARGES</div>
+                  <div className="flex justify-center w-full" style={{ textAlign: 'center', marginLeft: '-6px' }}>NEW</div>
+                  <div className="flex justify-center w-full" style={{ textAlign: 'center', marginLeft: '-6px' }}>ORDERS</div>
+                  <div className="flex justify-center w-full" style={{ textAlign: 'center', marginLeft: '-6px' }}>CHARGES</div>
                     </>
                   )}
                 </div>
 
-                {/* Client rows – same line width as tabs */}
-                <div className="overflow-y-auto overflow-x-hidden min-w-0" style={{ maxHeight: '380px', paddingTop: '2px' }}>
+                {/* Client rows – same line width as tabs (20px inset to match gray underline under header) */}
+                <div className="overflow-y-auto overflow-x-hidden min-w-0" style={{ maxHeight: '380px', paddingTop: '2px', marginLeft: '20px', marginRight: '20px' }}>
                   {registeredUsers.length === 0 ? (
                     <div className="px-5 py-8 text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>
                       NO REGISTERED CLIENTS YET. LIST IS PER BROWSER.
@@ -2732,28 +2716,29 @@ export default function AdminClients() {
                     clientsFilteredBySearch.map((u: any, i: number) => {
                       const row = getInvitesRow(u, i);
                       return (
-                        <div
-                          key={u.email || u.id || i}
-                          className={`grid grid-cols-[1fr_auto_auto_auto] gap-2 px-5 py-3 text-sm items-start ${i === clientsFilteredBySearch.length - 1 ? '' : 'border-b border-gray-100'}`}
-                          style={{ gridTemplateColumns: '1fr 3.5rem 3.5rem 3.5rem', marginLeft: '-4px', paddingTop: '10px' }}
-                        >
-                          <button
-                            type="button"
-                            onClick={() => setSelectedClientEmail(u.email || null)}
-                            className="min-w-0 text-left w-full bg-transparent border-none p-0 cursor-pointer hover:opacity-80 transition-opacity"
-                            style={{ paddingLeft: '8px' }}
+                        <div key={u.email || u.id || i} className="bg-white border border-gray-200 px-4 py-3 mb-2">
+                          <div
+                            className="grid grid-cols-[1fr_auto_auto_auto] gap-2 text-sm items-start"
+                            style={{ gridTemplateColumns: '1fr 3.5rem 3.5rem 3.5rem', marginLeft: '-4px' }}
                           >
-                            <span className="font-medium block truncate" style={{ fontSize: '12px', color: '#EB1C24' }}>
-                              {row.index}. {row.name}
-                            </span>
-                            <span className={`block truncate ${(u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? 'text-black' : 'text-gray-500'}`} style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '13px', marginTop: '2px' }}>
-                              {getMembershipTierLabel(u)}
-                            </span>
-                          </button>
-                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', textAlign: 'center' }}>{row.referralNumber}</div>
-                          <div className="flex justify-center w-full" style={{ fontFamily: row.status === 'ACTIVE' ? '"Futura PT Book"' : '"Futura PT Medium"', fontSize: '11px', color: row.status === 'ACTIVE' ? '#EB1C24' : '#808080', textAlign: 'center' }}>{row.status}</div>
-                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.invitesCount) !== 0 ? '#EB1C24' : '#000000', textAlign: 'center' }}>
-                            {row.invitesCount}
+                            <button
+                              type="button"
+                              onClick={() => setSelectedClientEmail(u.email || null)}
+                              className="min-w-0 text-left w-full bg-transparent border-none p-0 cursor-pointer hover:opacity-80 transition-opacity flex flex-col justify-center"
+                              style={{ paddingLeft: '8px' }}
+                            >
+                              <span className="font-medium block truncate" style={{ fontSize: '12px', color: '#EB1C24' }}>
+                                {row.index}. {row.name}
+                              </span>
+                              <span className={`block truncate ${(u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? 'text-black' : 'text-gray-500'}`} style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '13px', marginTop: '2px' }}>
+                                {getMembershipTierLabel(u)}
+                              </span>
+                            </button>
+                            <div className="flex items-center justify-end w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', textAlign: 'right', marginRight: '2px' }}>{row.referralNumber}</div>
+                            <div className="flex items-center justify-end w-full" style={{ fontFamily: row.status === 'ACTIVE' ? '"Futura PT Book"' : '"Futura PT Medium"', fontSize: '11px', color: row.status === 'ACTIVE' ? '#EB1C24' : '#808080', textAlign: 'right', marginRight: '2px' }}>{row.status}</div>
+                            <div className="flex items-center justify-end w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.invitesCount) !== 0 ? '#EB1C24' : '#000000', textAlign: 'right', marginRight: '2px' }}>
+                              {row.invitesCount}
+                            </div>
                           </div>
                         </div>
                       );
@@ -2762,27 +2747,28 @@ export default function AdminClients() {
                     clientsFilteredBySearch.map((u: any, i: number) => {
                       const row = getReviewsTabRow(u, i);
                       return (
-                        <div
-                          key={u.email || u.id || i}
-                          className={`grid gap-2 px-5 py-3 text-sm items-start ${i === clientsFilteredBySearch.length - 1 ? '' : 'border-b border-gray-100'}`}
-                          style={{ gridTemplateColumns: '1fr 3.5rem 3.5rem 3.5rem', marginLeft: '-4px', paddingTop: '10px' }}
-                        >
-                          <button
-                            type="button"
-                            onClick={() => setSelectedClientEmail(u.email || null)}
-                            className="min-w-0 text-left w-full bg-transparent border-none p-0 cursor-pointer hover:opacity-80 transition-opacity"
-                            style={{ paddingLeft: '8px' }}
+                        <div key={u.email || u.id || i} className="bg-white border border-gray-200 px-4 py-3 mb-2">
+                          <div
+                            className="grid gap-2 text-sm items-start"
+                            style={{ gridTemplateColumns: '1fr 3.5rem 3.5rem 3.5rem', marginLeft: '-4px' }}
                           >
-                            <span className="font-medium block truncate" style={{ fontSize: '12px', color: '#EB1C24' }}>
-                              {row.index}. {row.name}
-                            </span>
-                            <span className={`block truncate ${(u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? 'text-black' : 'text-gray-500'}`} style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '13px', marginTop: '2px' }}>
-                              {getMembershipTierLabel(u)}
-                            </span>
-                          </button>
-                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.totalReviews) !== 0 ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.totalReviews}</div>
-                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.reviewsWithPhotosVideos) !== 0 ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.reviewsWithPhotosVideos}</div>
-                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.pendingReviews) !== 0 ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.pendingReviews}</div>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedClientEmail(u.email || null)}
+                              className="min-w-0 text-left w-full bg-transparent border-none p-0 cursor-pointer hover:opacity-80 transition-opacity flex flex-col justify-center"
+                              style={{ paddingLeft: '8px' }}
+                            >
+                              <span className="font-medium block truncate" style={{ fontSize: '12px', color: '#EB1C24' }}>
+                                {row.index}. {row.name}
+                              </span>
+                              <span className={`block truncate ${(u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? 'text-black' : 'text-gray-500'}`} style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '13px', marginTop: '2px' }}>
+                                {getMembershipTierLabel(u)}
+                              </span>
+                            </button>
+                            <div className="flex items-center justify-end w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.totalReviews) !== 0 ? '#EB1C24' : '#000000', textAlign: 'right', marginRight: '2px' }}>{row.totalReviews}</div>
+                            <div className="flex items-center justify-end w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.reviewsWithPhotosVideos) !== 0 ? '#EB1C24' : '#000000', textAlign: 'right', marginRight: '2px' }}>{row.reviewsWithPhotosVideos}</div>
+                            <div className="flex items-center justify-end w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.pendingReviews) !== 0 ? '#EB1C24' : '#000000', textAlign: 'right', marginRight: '2px' }}>{row.pendingReviews}</div>
+                          </div>
                         </div>
                       );
                     })
@@ -2790,27 +2776,28 @@ export default function AdminClients() {
                     clientsFilteredBySearch.map((u: any, i: number) => {
                       const row = getRewardsRow(u, i);
                       return (
-                        <div
-                          key={u.email || u.id || i}
-                          className={`grid gap-2 px-5 py-3 text-sm items-start ${i === clientsFilteredBySearch.length - 1 ? '' : 'border-b border-gray-100'}`}
-                          style={{ gridTemplateColumns: '1fr 3.5rem 3.5rem 3.5rem', marginLeft: '-4px', paddingTop: '10px' }}
-                        >
-                          <button
-                            type="button"
-                            onClick={() => setSelectedClientEmail(u.email || null)}
-                            className="min-w-0 text-left w-full bg-transparent border-none p-0 cursor-pointer hover:opacity-80 transition-opacity"
-                            style={{ paddingLeft: '8px' }}
+                        <div key={u.email || u.id || i} className="bg-white border border-gray-200 px-4 py-3 mb-2">
+                          <div
+                            className="grid gap-2 text-sm items-start"
+                            style={{ gridTemplateColumns: '1fr 3.5rem 3.5rem 3.5rem', marginLeft: '-4px' }}
                           >
-                            <span className="font-medium block truncate" style={{ fontSize: '12px', color: '#EB1C24' }}>
-                              {row.index}. {row.name}
-                            </span>
-                            <span className={`block truncate ${(u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? 'text-black' : 'text-gray-500'}`} style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '13px', marginTop: '2px' }}>
-                              {getMembershipTierLabel(u)}
-                            </span>
-                          </button>
-                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.photosCount) !== 0 ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.photosCount}</div>
-                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.videosCount) !== 0 ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.videosCount}</div>
-                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.tagsCount) !== 0 ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.tagsCount}</div>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedClientEmail(u.email || null)}
+                              className="min-w-0 text-left w-full bg-transparent border-none p-0 cursor-pointer hover:opacity-80 transition-opacity flex flex-col justify-center"
+                              style={{ paddingLeft: '8px' }}
+                            >
+                              <span className="font-medium block truncate" style={{ fontSize: '12px', color: '#EB1C24' }}>
+                                {row.index}. {row.name}
+                              </span>
+                              <span className={`block truncate ${(u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? 'text-black' : 'text-gray-500'}`} style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '13px', marginTop: '2px' }}>
+                                {getMembershipTierLabel(u)}
+                              </span>
+                            </button>
+                            <div className="flex items-center justify-end w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.photosCount) !== 0 ? '#EB1C24' : '#000000', textAlign: 'right', marginRight: '2px' }}>{row.photosCount}</div>
+                            <div className="flex items-center justify-end w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.videosCount) !== 0 ? '#EB1C24' : '#000000', textAlign: 'right', marginRight: '2px' }}>{row.videosCount}</div>
+                            <div className="flex items-center justify-end w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: Number(row.tagsCount) !== 0 ? '#EB1C24' : '#000000', textAlign: 'right', marginRight: '2px' }}>{row.tagsCount}</div>
+                          </div>
                         </div>
                       );
                     })
@@ -2818,28 +2805,29 @@ export default function AdminClients() {
                     clientsFilteredBySearch.map((u: any, i: number) => {
                       const row = getClientRow(u, i);
                       return (
-                        <div
-                          key={u.email || u.id || i}
-                          className={`grid grid-cols-[1fr_auto_auto_auto] gap-2 px-5 py-3 text-sm items-start ${i === clientsFilteredBySearch.length - 1 ? '' : 'border-b border-gray-100'}`}
-                          style={{ gridTemplateColumns: '1fr 3.5rem 3.5rem 3.5rem', marginLeft: '-4px', paddingTop: '10px' }}
-                        >
-                          <button
-                            type="button"
-                            onClick={() => setSelectedClientEmail(u.email || null)}
-                            className="min-w-0 text-left w-full bg-transparent border-none p-0 cursor-pointer hover:opacity-80 transition-opacity"
-                            style={{ paddingLeft: '8px' }}
+                        <div key={u.email || u.id || i} className="bg-white border border-gray-200 px-4 py-3 mb-2">
+                          <div
+                            className="grid grid-cols-[1fr_auto_auto_auto] gap-2 text-sm items-start"
+                            style={{ gridTemplateColumns: '1fr 3.5rem 3.5rem 3.5rem', marginLeft: '-4px' }}
                           >
-                            <span className="font-medium block truncate" style={{ fontSize: '12px', color: '#EB1C24' }}>
-                              {row.index}. {row.name}
-                            </span>
-                            <span className={`block truncate ${(u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? 'text-black' : 'text-gray-500'}`} style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '13px', marginTop: '2px' }}>
-                              {getMembershipTierLabel(u)}
-                            </span>
-                          </button>
-                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: (row.newCount !== 0 && row.newCount !== '0') ? '#EB1C24' : '#000000', textAlign: 'center' }}>{row.newCount}</div>
-                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000000', textAlign: 'center' }}>{row.ordersCount}</div>
-                          <div className="flex justify-center w-full" style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#808080', textAlign: 'center' }}>
-                            ${row.charges.toLocaleString()}
+                            <button
+                              type="button"
+                              onClick={() => setSelectedClientEmail(u.email || null)}
+                              className="min-w-0 text-left w-full bg-transparent border-none p-0 cursor-pointer hover:opacity-80 transition-opacity"
+                              style={{ paddingLeft: '8px' }}
+                            >
+                              <span className="font-medium block truncate" style={{ fontSize: '12px', color: '#EB1C24' }}>
+                                {row.index}. {row.name}
+                              </span>
+                              <span className={`block truncate ${(u.membershipType || '').toString().toUpperCase() === 'PREMIUM' ? 'text-black' : 'text-gray-500'}`} style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '13px', marginTop: '2px' }}>
+                                {getMembershipTierLabel(u)}
+                              </span>
+                            </button>
+                            <div className="flex items-center justify-end w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: (row.newCount !== 0 && row.newCount !== '0') ? '#EB1C24' : '#000000', textAlign: 'right', marginRight: '2px' }}>{row.newCount}</div>
+                            <div className="flex items-center justify-end w-full" style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000000', textAlign: 'right', marginRight: '2px' }}>{row.ordersCount}</div>
+                            <div className="flex items-center justify-end w-full" style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#808080', textAlign: 'right', marginRight: '2px' }}>
+                              ${row.charges.toLocaleString()}
+                            </div>
                           </div>
                         </div>
                       );
@@ -2877,14 +2865,41 @@ export default function AdminClients() {
                 </button>
               )}
               {!selectedClientEmail && (
-                <button
-                  type="button"
-                  onClick={() => navigate('/admin/clients/deleted')}
-                  className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-                  style={{ ...pageActionButtonStyle, marginTop: '14px' }}
-                >
-                  VIEW DELETED ACCOUNTS
-                </button>
+                <>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/admin/clients/deleted')}
+                    className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                    style={{ ...pageActionButtonStyle, marginTop: '14px' }}
+                  >
+                    VIEW DELETED ACCOUNTS
+                  </button>
+                  {isSupabaseConfigured() && (
+                    <button
+                      type="button"
+                      disabled={exportingCsv}
+                      onClick={async () => {
+                        setExportingCsv(true);
+                        try {
+                          const url = await exportClientsCsv();
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = 'clients-export.csv';
+                          a.click();
+                          URL.revokeObjectURL(url);
+                        } catch {
+                          /* ignore */
+                        } finally {
+                          setExportingCsv(false);
+                        }
+                      }}
+                      className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50 disabled:opacity-50"
+                      style={{ ...pageActionButtonStyle, marginTop: '14px' }}
+                    >
+                      {exportingCsv ? 'Exporting…' : 'EXPORT CSV'}
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </div>

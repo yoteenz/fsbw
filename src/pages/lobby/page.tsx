@@ -27,7 +27,7 @@ const LobbyPage: React.FC = () => {
           if (parsed?.email && (session.user?.email || '').toLowerCase() === (parsed.email as string).toLowerCase()) return;
         }
       } catch (_) {}
-      syncAllFromApi().then((profile) => {
+      syncAllFromApi().then(async (profile) => {
         if (cancelled) return;
         if (profile) {
           localStorage.setItem('isSignedIn', 'true');
@@ -37,9 +37,8 @@ const LobbyPage: React.FC = () => {
         }
         const minimal = buildMinimalUserFromSupabaseSession(session.user);
         applyMinimalUserToStorage(minimal);
-        import('../../utils/api').then(({ patchProfile }) => {
-          patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
-        });
+        const { patchProfile } = await import('../../utils/api');
+        await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
         navigate('/account', { replace: true });
       });

@@ -67,7 +67,13 @@ function getVoucherExpirations(user: { voucherList?: string[]; voucherHistory?: 
   return result;
 }
 
-/** Build account-specific notifications. All text UPPERCASE. Header (title) = short summary. Body (message) = one descriptive sentence that summarizes the alert. Exported so account page can compute badge (hasAlertsNotifications) from current list including mock voucher alerts. */
+/** True when the account has not yet made a first purchase; only core onboarding alerts (tier, membership, shipping+payment, update profile) should show. */
+export function isNewAccount(user: { hasMadeFirstPurchase?: boolean; [k: string]: any } | null): boolean {
+  if (!user) return true;
+  return user.hasMadeFirstPurchase !== true;
+}
+
+/** Build account-specific notifications. All text UPPERCASE. Header (title) = short summary. Body (message) = one descriptive sentence that summarizes the alert. Exported so account page can compute badge (hasAlertsNotifications) from current list including mock voucher alerts. For new accounts (no first purchase yet) only tier, membership, shipping+payment, and update profile alerts are shown; all others fire only after activity. */
 export function getAccountNotifications(user: { email?: string; [k: string]: any } | null): Notification[] {
   if (!user?.email) return [];
   const email = (user.email || '').trim().toLowerCase();
@@ -76,6 +82,75 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
     return `${d.getMonth() + 1}-${d.getDate()}-${d.getFullYear()}`;
   })();
   const notifs: Notification[] = [];
+  const newAccount = isNewAccount(user);
+
+  // New accounts: only these four alerts (no spend tier, standard member, add shipping+payment, update profile)
+  const storedTier = typeof window !== 'undefined' ? localStorage.getItem(`lastKnownTier_${email}`) : null;
+  const tier = (user.currentTierName || user.tier || storedTier || '').toUpperCase() || 'PENDING';
+  const tierDisplay = tier === 'PENDING' ? 'NO TIER YET' : tier;
+  notifs.push({
+    id: `${ACCOUNT_NOTIFICATION_PREFIX}tier`,
+    title: tier === 'PENDING' ? 'NO SPEND TIER YET' : `YOU'RE NOW ${tierDisplay} TIER STATUS`,
+    message: tier === 'PENDING'
+      ? 'EARN 1,000 POINTS TO UNLOCK SILVER TIER.'
+      : 'VIEW YOUR TIER BENEFITS ON REWARDS PAGE.',
+    actionText: 'VIEW TIER',
+    actionRoute: '/account/rewards',
+    date: today,
+    isRead: false,
+    icon: 'f'
+  });
+
+  const membership = (user.membershipType || 'STANDARD').toUpperCase();
+  const isPremium = membership === 'PREMIUM' || user.subscriptionTier;
+  notifs.push({
+    id: `${ACCOUNT_NOTIFICATION_PREFIX}membership`,
+    title: isPremium ? 'PREMIUM MEMBERSHIP IS ACTIVE' : "YOU'RE STANDARD MEMBER",
+    message: isPremium
+      ? 'MANAGE YOUR PREMIUM PERKS ON REWARDS PAGE.'
+      : 'UPGRADE TO PREMIUM FOR 2X POINTS + PERKS.',
+    actionText: 'VIEW MEMBERSHIP',
+    actionRoute: '/account/rewards',
+    date: today,
+    isRead: false,
+    icon: 'f'
+  });
+
+  const hasAddress = Array.isArray(user.savedAddresses) && user.savedAddresses.length > 0;
+  const hasPayment = !!user.defaultPaymentMethod || (Array.isArray(user.savedPaymentMethods) && user.savedPaymentMethods.length > 0);
+  notifs.push({
+    id: `${ACCOUNT_NOTIFICATION_PREFIX}shipping_payment`,
+    title: hasAddress && hasPayment ? 'SHIPPING + PAYMENT SAVED' : hasAddress ? 'SHIPPING SAVED, ADD PAYMENT' : hasPayment ? 'PAYMENT SAVED, ADD SHIPPING' : 'ADD SHIPPING + PAYMENT',
+    message: hasAddress && hasPayment
+      ? 'UPDATE YOUR SAVED ADDRESS + PAYMENT IN SETTINGS.'
+      : hasAddress
+        ? 'ADD A PAYMENT METHOD IN SETTINGS.'
+        : hasPayment
+          ? 'ADD A SHIPPING ADDRESS IN SETTINGS.'
+          : 'ADD SHIPPING + PAYMENT IN SETTINGS.',
+    actionText: 'MANAGE',
+    actionRoute: '/account/shipping',
+    date: today,
+    isRead: false,
+    icon: 'f'
+  });
+
+  notifs.push({
+    id: `${ACCOUNT_NOTIFICATION_PREFIX}settings`,
+    title: 'UPDATE PROFILE + PREFERENCES',
+    message: 'KEEP YOUR PROFILE + PREFERENCES UP TO DATE.',
+    actionText: 'OPEN SETTINGS',
+    actionRoute: '/account/settings',
+    date: today,
+    isRead: false,
+    icon: 'f'
+  });
+
+  if (newAccount) {
+    return notifs;
+  }
+
+  // Below: only for accounts that have had activity (hasMadeFirstPurchase or equivalent)
 
   const voucherCount = Array.isArray(user.voucherList) ? user.voucherList.length : (user.voucherCount ?? 0);
   notifs.push({
@@ -123,7 +198,6 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
     });
   }
 
-  // Admin ayoteenz only: mock expiring voucher alerts for all voucher types × all time states (24h, 1 week, 1 month) for UI confirmation
   if (isAyoteenzAdminAccount(user)) {
     const mockVoucherTypes = ['COLOR', 'HAIRLINE', 'STYLING', 'FLEXIBLE CAP'];
     const mockTimeStates: Array<{ label: string; key: string }> = [
@@ -174,37 +248,6 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
       icon: 'f'
     });
   }
-
-  const storedTier = typeof window !== 'undefined' ? localStorage.getItem(`lastKnownTier_${email}`) : null;
-  const tier = (user.currentTierName || user.tier || storedTier || '').toUpperCase() || 'PENDING';
-  const tierDisplay = tier === 'PENDING' ? 'NO TIER YET' : tier;
-  notifs.push({
-    id: `${ACCOUNT_NOTIFICATION_PREFIX}tier`,
-    title: tier === 'PENDING' ? 'NO SPEND TIER YET' : `YOU'RE NOW ${tierDisplay} TIER STATUS`,
-    message: tier === 'PENDING'
-      ? 'EARN 1,000 POINTS TO UNLOCK SILVER TIER.'
-      : 'VIEW YOUR TIER BENEFITS ON REWARDS PAGE.',
-    actionText: 'VIEW TIER',
-    actionRoute: '/account/rewards',
-    date: today,
-    isRead: false,
-    icon: 'f'
-  });
-
-  const membership = (user.membershipType || 'STANDARD').toUpperCase();
-  const isPremium = membership === 'PREMIUM' || user.subscriptionTier;
-  notifs.push({
-    id: `${ACCOUNT_NOTIFICATION_PREFIX}membership`,
-    title: isPremium ? 'PREMIUM MEMBERSHIP IS ACTIVE' : "YOU'RE STANDARD MEMBER",
-    message: isPremium
-      ? 'MANAGE YOUR PREMIUM PERKS ON REWARDS PAGE.'
-      : 'UPGRADE TO PREMIUM FOR 2X POINTS + PERKS.',
-    actionText: 'VIEW MEMBERSHIP',
-    actionRoute: '/account/rewards',
-    date: today,
-    isRead: false,
-    icon: 'f'
-  });
 
   try {
     const ordersRaw = localStorage.getItem(`userOrders_${email}`);
@@ -268,36 +311,6 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
       : 'GET YOUR REFERRAL CODE ON REFERRALS PAGE.',
     actionText: 'VIEW REFERRALS',
     actionRoute: '/account/referrals',
-    date: today,
-    isRead: false,
-    icon: 'f'
-  });
-
-  const hasAddress = Array.isArray(user.savedAddresses) && user.savedAddresses.length > 0;
-  const hasPayment = !!user.defaultPaymentMethod || (Array.isArray(user.savedPaymentMethods) && user.savedPaymentMethods.length > 0);
-  notifs.push({
-    id: `${ACCOUNT_NOTIFICATION_PREFIX}shipping_payment`,
-    title: hasAddress && hasPayment ? 'SHIPPING + PAYMENT SAVED' : hasAddress ? 'SHIPPING SAVED, ADD PAYMENT' : hasPayment ? 'PAYMENT SAVED, ADD SHIPPING' : 'ADD SHIPPING + PAYMENT',
-    message: hasAddress && hasPayment
-      ? 'UPDATE YOUR SAVED ADDRESS + PAYMENT IN SETTINGS.'
-      : hasAddress
-        ? 'ADD A PAYMENT METHOD IN SETTINGS.'
-        : hasPayment
-          ? 'ADD A SHIPPING ADDRESS IN SETTINGS.'
-          : 'ADD SHIPPING + PAYMENT IN SETTINGS.',
-    actionText: 'MANAGE',
-    actionRoute: '/account/shipping',
-    date: today,
-    isRead: false,
-    icon: 'f'
-  });
-
-  notifs.push({
-    id: `${ACCOUNT_NOTIFICATION_PREFIX}settings`,
-    title: 'UPDATE PROFILE + PREFERENCES',
-    message: 'KEEP YOUR PROFILE + PREFERENCES UP TO DATE.',
-    actionText: 'OPEN SETTINGS',
-    actionRoute: '/account/settings',
     date: today,
     isRead: false,
     icon: 'f'

@@ -5,10 +5,12 @@ import { getAdminClients } from '../../../utils/api';
 import { getAdminNotifications, postAdminNotification } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
+import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 
 type NotifEntry = { userId: string; items: Array<{ id?: string; text?: string; read?: boolean; createdAt?: string }>; updatedAt?: string };
 
 export default function AdminNotifications() {
+  useRequireAdminPageAccess();
   const navigate = useNavigate();
   const [list, setList] = useState<NotifEntry[]>([]);
   const [clients, setClients] = useState<Array<{ id?: string; email?: string; firstName?: string; lastName?: string }>>([]);

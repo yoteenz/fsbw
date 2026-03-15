@@ -4,20 +4,25 @@ import AdminHeader from '../components/AdminHeader';
 import StatsCard from '../components/StatsCard';
 import RecentActivity from '../components/RecentActivity';
 import ActivityFeed from '../components/ActivityFeed';
-import { getAdminDashboard, getAdminPending, getAdminReviews, getAdminReferrals } from '../../../utils/api';
+import { getAdminDashboard, getAdminClients, getAdminPending, getAdminReviews, getAdminReferrals, getAdminMeetings } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
-import { isAdminEmail } from '../../../utils/adminAuth';
+import { isAdminEmail, getEffectiveTierName, isAyoteenzAdminAccount } from '../../../utils/adminAuth';
+import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { getMockClientsForAyoteenz, getMockOrdersForClient, isClientNewsletterSubscribed } from '../clients/page';
+import { isClientBlocked } from '../../../utils/blockedClients';
 
 // Mock data types and functions to replace Supabase imports
 type DashboardStats = {
   activeClients: number;
+  clientsWithDeliveredOrder?: number;
   referralCount: number;
   signUpsThisMonth?: number;
+  totalRevenue?: number;
+  totalOrders?: number;
+  pendingForms?: number;
 };
 
-type Client = {
-  tier: string;
-};
+type Client = Record<string, unknown>;
 
 type Booking = {
   status: string;
@@ -37,34 +42,139 @@ type Notification = {
   text: string;
 };
 
-// Mock API functions
+/** Normalize mock order date "MM-DD-YYYY" or "M/D/YYYY" to "YYYY-MM-DD" for revenue/transaction_date. */
+function mockOrderDateToIso(dateStr: string): string {
+  const parts = (dateStr || '').trim().split(/[-/]/);
+  if (parts.length !== 3) return new Date().toISOString().slice(0, 10);
+  const [m, d, y] = parts.map((p) => p.trim());
+  const pad = (n: string) => n.padStart(2, '0');
+  return `${y}-${pad(m)}-${pad(d)}`;
+}
+
+/** Build full mock dashboard data from getMockClientsForAyoteenz + getMockOrdersForClient so admin cards track the same data/logic as the clients page. */
+function buildMockDashboardData(): {
+  stats: DashboardStats;
+  clients: Client[];
+  bookings: Booking[];
+  revenue: Revenue[];
+  notifications: Notification[];
+  pendingReviews: number;
+  orderForms: number;
+  pendingItems: { label: string; value: string }[];
+  totalReviews: number;
+  averageRating: number;
+  inviteeCount: number;
+  meetings: Array<{ meetingDate?: string; meetingTime?: string; type?: string; clientName?: string }>;
+} {
+  const now = Date.now();
+  const day = 24 * 60 * 60 * 1000;
+  const mockClients = getMockClientsForAyoteenz();
+
+  const activeClients = mockClients.length;
+  const clientsWithDeliveredOrder = mockClients.filter(
+    (c: any) => (c.ordersCount ?? 0) > (c.newCount ?? 0)
+  ).length;
+  const totalRevenue = mockClients.reduce((s: number, c: any) => s + (c.totalSpent ?? 0), 0);
+  const totalOrders = mockClients.reduce((s: number, c: any) => s + (c.ordersCount ?? 0), 0);
+  const referralCount = mockClients.filter(
+    (c: any) => (c.invitesCount ?? 0) > 0 || (c as any).referralNumber
+  ).length;
+  const thirtyDaysAgo = now - 30 * day;
+  const signUpsThisMonth = mockClients.filter(
+    (c: any) => new Date(c.createdAt || 0).getTime() >= thirtyDaysAgo
+  ).length;
+
+  let pendingForms = 0;
+  const allRevenueRows: { date: string; amount: number; status: string }[] = [];
+  mockClients.forEach((c: any) => {
+    const orders = getMockOrdersForClient(c);
+    orders.forEach((o: any) => {
+      const amt = o.amount ?? o.total ?? 0;
+      const dateStr = o.date ? mockOrderDateToIso(o.date) : new Date().toISOString().slice(0, 10);
+      const st = (o.status || '').toUpperCase();
+      const status = st === 'AWAITING FORM' || st === 'IN PROGRESS' ? 'Pending' : 'Completed';
+      if (st === 'AWAITING FORM') pendingForms += 1;
+      allRevenueRows.push({ date: dateStr, amount: Number(amt), status });
+    });
+  });
+  allRevenueRows.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const revenue = allRevenueRows.slice(0, 6).map((r) => ({
+    transaction_date: r.date,
+    amount: r.amount,
+    status: r.status,
+  }));
+
+  const pendingReviews = mockClients.reduce((s: number, c: any) => s + (c.pendingReviews ?? 0), 0);
+  const pendingItems = [
+    { label: 'REVIEWS', value: String(pendingReviews) },
+    { label: 'ORDER FORMS', value: String(pendingForms) },
+    { label: 'TIER UPGRADES', value: '0' },
+    { label: 'AFFILIATE', value: '0' },
+  ];
+
+  const totalReviews = mockClients.reduce((s: number, c: any) => s + (c.totalReviews ?? c.reviewsCount ?? 0), 0);
+  const avgRating = activeClients > 0 ? 4.2 + (totalReviews % 10) * 0.02 : 0;
+  const inviteeCount = mockClients.reduce((s: number, c: any) => s + (c.invitesCount ?? 0), 0);
+
+  const serviceTypes = ['INSTALL', 'CONSULTATION', 'WIG & INSTALL', 'REINSTALL', 'VIRTUAL CLASS'];
+  const bookings: Booking[] = [];
+  const meetings: Array<{ meetingDate?: string; meetingTime?: string; type?: string; clientName?: string }> = [];
+  mockClients
+    .filter((c: any) => (c.bookingCount ?? 0) > 0)
+    .slice(0, 8)
+    .forEach((c: any, i: number) => {
+      const d = new Date(now + (i + 1) * 2 * day);
+      const dateStr = d.toISOString().slice(0, 10);
+      const time = ['10:00', '14:30', '09:15', '16:45', '11:30', '13:00', '10:30', '15:00'][i % 8];
+      const clientName = `${(c.firstName || '').trim()} ${(c.lastName || '').trim()}`.trim().toUpperCase() || (c.email || '').toUpperCase();
+      const service = serviceTypes[i % serviceTypes.length];
+      bookings.push({
+        status: 'Scheduled',
+        appointment_date: `${dateStr}T${time}:00`,
+        service_name: service,
+        client_name: clientName,
+      });
+      meetings.push({
+        meetingDate: dateStr,
+        meetingTime: time,
+        type: service,
+        clientName: clientName,
+      });
+    });
+
+  return {
+    stats: {
+      activeClients,
+      clientsWithDeliveredOrder,
+      referralCount,
+      signUpsThisMonth,
+      totalRevenue,
+      totalOrders,
+      pendingForms,
+    },
+    clients: mockClients as Client[],
+    bookings,
+    revenue,
+    notifications: [],
+    pendingReviews,
+    orderForms: pendingForms,
+    pendingItems,
+    totalReviews,
+    averageRating: avgRating,
+    inviteeCount,
+    meetings,
+  };
+}
+
+// Mock API – uses buildMockDashboardData() so fallback data is aligned with getMockClientsForAyoteenz and getMockOrdersForClient
 const mockAPI = {
   setupDatabase: async () => Promise.resolve(),
   seedData: async () => Promise.resolve(),
-  getDashboardData: async () => ({
-    stats: { activeClients: 89, referralCount: 23 },
-    clients: [
-      { tier: 'Premium' }, { tier: 'Premium' }, { tier: 'Premium' },
-      { tier: 'Standard' }, { tier: 'Standard' }, { tier: 'Standard' }, { tier: 'Standard' },
-      { tier: 'Standard' }, { tier: 'Standard' }, { tier: 'Standard' }, { tier: 'Standard' }, { tier: 'Standard' }
-    ],
-    bookings: [
-      { status: 'Scheduled', appointment_date: '2025-01-24T10:00:00', service_name: 'Install', client_name: 'Sarah J.' },
-      { status: 'Scheduled', appointment_date: '2025-01-24T14:00:00', service_name: 'Consultation', client_name: 'Maria R.' }
-    ],
-    revenue: [
-      { transaction_date: '2025-01-15', amount: 15000, status: 'Completed' },
-      { transaction_date: '2025-01-10', amount: 8500, status: 'Completed' },
-      { transaction_date: '2025-01-20', amount: 3200, status: 'Pending' },
-      { transaction_date: '2024-10-15', amount: 12000, status: 'Completed' },
-      { transaction_date: '2024-07-10', amount: 9500, status: 'Completed' },
-      { transaction_date: '2024-04-20', amount: 11200, status: 'Completed' }
-    ],
-    notifications: []
-  })
+  getDashboardData: async () => buildMockDashboardData(),
 };
 
 export default function AdminDashboard() {
+  useRequireAdminPageAccess();
   const navigate = useNavigate();
   const [notificationViewMode, setNotificationViewMode] = useState('list');
   const [dashboardData, setDashboardData] = useState<{
@@ -74,9 +184,10 @@ export default function AdminDashboard() {
     revenue: Revenue[];
     notifications: Notification[];
   } | null>(null);
-  const [pendingData, setPendingData] = useState<{ pendingReviews: number; orderForms: number } | null>(null);
+  const [pendingData, setPendingData] = useState<{ pendingReviews: number; orderForms: number; pendingItems: { label: string; value: string }[] } | null>(null);
   const [reviewsData, setReviewsData] = useState<{ totalReviews: number; averageRating: number } | null>(null);
   const [referralsData, setReferralsData] = useState<{ inviteeCount: number } | null>(null);
+  const [meetingsData, setMeetingsData] = useState<{ meetings: Array<{ meetingDate?: string; meetingTime?: string; type?: string; clientName?: string }> } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -94,19 +205,38 @@ export default function AdminDashboard() {
         }
         if (isSupabaseConfigured() && currentUser?.email && isAdminEmail(currentUser.email)) {
           try {
-            const [api, pending, reviews, referrals] = await Promise.all([
+            const [api, clientsFromClientsApi, pending, reviews, referrals, meetings] = await Promise.all([
               getAdminDashboard(),
+              getAdminClients().catch(() => []),
               getAdminPending().catch(() => ({ pendingReviews: 0, orderForms: 0, pendingItems: [] })),
               getAdminReviews().catch(() => ({ reviews: [], averageRating: 0, totalReviews: 0 })),
               getAdminReferrals().catch(() => ({ log: [], totalEarned: 0, inviteeCount: 0, byReferrer: {} })),
+              getAdminMeetings().catch(() => ({ meetings: [] })),
             ]);
+            // Use same client list as admin clients page: only getAdminClients() (never api.clients) so tier counts always match overview
+            let clientsList: Client[] = Array.isArray(clientsFromClientsApi) ? (clientsFromClientsApi as Client[]) : [];
+            if (currentUser && isAyoteenzAdminAccount(currentUser)) {
+              const mockClients = getMockClientsForAyoteenz();
+              const mockByEmail = new Map(mockClients.map((m: any) => [(m.email || '').trim().toLowerCase(), m]));
+              const existingEmails = new Set(clientsList.map((u: any) => (u.email || '').trim().toLowerCase()));
+              const toAdd = mockClients.filter((m: any) => !existingEmails.has((m.email || '').trim().toLowerCase()));
+              clientsList = clientsList.map((u: any) => {
+                const fresh = mockByEmail.get((u.email || '').trim().toLowerCase());
+                return fresh ? { ...u, ...fresh } : u;
+              });
+              if (toAdd.length > 0) clientsList = [...clientsList, ...toAdd];
+            }
             setDashboardData({
               stats: {
                 activeClients: api.stats.activeClients ?? 0,
+                clientsWithDeliveredOrder: api.stats.clientsWithDeliveredOrder ?? 0,
                 referralCount: api.stats.referralCount ?? 0,
                 signUpsThisMonth: api.stats.signUpsThisMonth ?? 0,
+                totalRevenue: api.stats.totalRevenue ?? 0,
+                totalOrders: api.stats.totalOrders ?? 0,
+                pendingForms: api.stats.pendingForms ?? 0,
               },
-              clients: api.clients?.map((c) => ({ tier: c.tier || 'Standard' })) ?? [],
+              clients: clientsList,
               bookings: (api.bookings ?? []).map((b) => ({
                 status: b.status ?? '',
                 appointment_date: b.appointment_date ?? '',
@@ -120,9 +250,14 @@ export default function AdminDashboard() {
               })),
               notifications: api.notifications ?? [],
             });
-            setPendingData({ pendingReviews: pending.pendingReviews ?? 0, orderForms: pending.orderForms ?? 0 });
+            setPendingData({
+              pendingReviews: pending.pendingReviews ?? 0,
+              orderForms: pending.orderForms ?? 0,
+              pendingItems: pending.pendingItems ?? [],
+            });
             setReviewsData({ totalReviews: reviews.totalReviews ?? 0, averageRating: reviews.averageRating ?? 0 });
             setReferralsData({ inviteeCount: referrals.inviteeCount ?? 0 });
+            setMeetingsData({ meetings: Array.isArray(meetings.meetings) ? meetings.meetings : [] });
             return;
           } catch {
             /* fall through to mock */
@@ -131,7 +266,21 @@ export default function AdminDashboard() {
         await mockAPI.setupDatabase();
         await mockAPI.seedData();
         const data = await mockAPI.getDashboardData();
-        setDashboardData(data);
+        setDashboardData({
+          stats: data.stats,
+          clients: data.clients,
+          bookings: data.bookings,
+          revenue: data.revenue,
+          notifications: data.notifications,
+        });
+        setPendingData({
+          pendingReviews: data.pendingReviews ?? 0,
+          orderForms: data.orderForms ?? 0,
+          pendingItems: data.pendingItems ?? [],
+        });
+        setReviewsData({ totalReviews: data.totalReviews ?? 0, averageRating: data.averageRating ?? 0 });
+        setReferralsData({ inviteeCount: data.inviteeCount ?? 0 });
+        setMeetingsData({ meetings: data.meetings ?? [] });
       } catch (err) {
         console.error('Failed to initialize dashboard:', err);
         setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
@@ -214,14 +363,18 @@ export default function AdminDashboard() {
 
   const { stats, clients, revenue } = dashboardData;
 
-  // Get recent completed bookings for meeting display with diverse appointment types
-  const diverseBookings = [
-    { service_name: 'NEW BOOKING: INSTALL', appointment_date: '2025-02-07T10:00:00', client_name: 'SARAH S.' },
-    { service_name: 'NEW CONSULT: WIG & INSTALL', appointment_date: '2025-02-07T14:30:00', client_name: 'MARIA R.' },
-    { service_name: 'VIRTUAL CLASS', appointment_date: '2025-02-08T09:15:00', client_name: 'ASHLEY W.' },
-    { service_name: 'NEW CONSULT: WIG ONLY', appointment_date: '2025-02-08T16:45:00', client_name: 'JENNIFER D.' },
-    { service_name: 'NEW BOOKING: REINSTALL', appointment_date: '2025-02-09T11:30:00', client_name: 'LISA M.' }
+  // Use dashboard bookings when available (mock or API); else fallback list with names consistent with mock clients
+  const defaultDiverseBookings = [
+    { service_name: 'INSTALL', appointment_date: '2025-02-07T10:00:00', client_name: 'ZARA ADAMS' },
+    { service_name: 'WIG & INSTALL', appointment_date: '2025-02-07T14:30:00', client_name: 'ELENA GARCIA' },
+    { service_name: 'VIRTUAL CLASS', appointment_date: '2025-02-08T09:15:00', client_name: 'GRACE INGRAM' },
+    { service_name: 'CONSULTATION', appointment_date: '2025-02-08T16:45:00', client_name: 'MAYA OWEN' },
+    { service_name: 'REINSTALL', appointment_date: '2025-02-09T11:30:00', client_name: 'TESSA UPTON' },
   ];
+  const diverseBookings =
+    (dashboardData.bookings?.length ?? 0) > 0
+      ? dashboardData.bookings
+      : defaultDiverseBookings;
 
   // Filter only upcoming meetings (future dates)
   const upcomingMeetings = diverseBookings.filter(booking => {
@@ -230,11 +383,34 @@ export default function AdminDashboard() {
     return appointmentDate > now;
   });
 
-  // Get client tier distribution
-  const clientTiers = clients.reduce((acc, client) => {
-    acc[client.tier] = (acc[client.tier] || 0) + 1;
+  // Same logic as clients overview page: exclude blocked clients so tier counts match the overview (overview filters with !isClientBlocked)
+  const visibleClients = clients.filter((c: any) => !isClientBlocked(c));
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).getTime();
+  const clientTiers = (() => {
+    const acc: Record<string, number> = { Standard: 0, Premium: 0, Silver: 0, Red: 0, Black: 0, emailMarketing: 0 };
+    for (const client of visibleClients) {
+      const c = client as { membershipType?: string; tier?: string; currentTierName?: string; email?: string };
+      const membership = (c.membershipType || 'STANDARD').toString().toUpperCase();
+      if (membership === 'PREMIUM') acc.Premium += 1;
+      else acc.Standard += 1;
+      const spendTier = getEffectiveTierName(c);
+      if (spendTier === 'SILVER') acc.Silver += 1;
+      else if (spendTier === 'RED') acc.Red += 1;
+      else if (spendTier === 'BLACK') acc.Black += 1;
+      if (isClientNewsletterSubscribed(c)) acc.emailMarketing += 1;
+    }
     return acc;
-  }, {} as Record<string, number>);
+  })();
+  const newAccountsFromList = visibleClients.filter(
+    (c: any) => (c.createdAt ? new Date(c.createdAt).getTime() : 0) >= thirtyDaysAgo
+  ).length;
+  const referralsFromList = visibleClients.reduce((s: number, c: any) => s + (c.invitesCount ?? 0), 0);
+  const canComputeDeliveredFromList = visibleClients.length > 0 && visibleClients.every(
+    (c: any) => c.ordersCount != null || c.newCount != null
+  );
+  const clientsWithDeliveredFromList = visibleClients.filter(
+    (c: any) => (c.ordersCount ?? 0) > (c.newCount ?? 0)
+  ).length;
 
   // Calculate quarterly revenue
   const currentYear = new Date().getFullYear();
@@ -269,22 +445,55 @@ export default function AdminDashboard() {
     return `${month}/${day}`;
   };
 
-  // Card counts synced with actual data so dashboard matches Clients/Referrals/Pending/Reviews pages
-  const clientsCount = clients?.length ?? stats.activeClients ?? 0;
-  const referralCountDisplay = referralsData?.inviteeCount ?? stats.referralCount ?? 0;
+  // Client header count = total clients who have at least one delivered order (same list as card; when list has ordersCount/newCount use it, else API stats)
+  const clientsWithDeliveredCount = canComputeDeliveredFromList ? clientsWithDeliveredFromList : (stats.clientsWithDeliveredOrder ?? 0);
+  const referralCountDisplay = referralsFromList;
   const pendingReviewsCount = pendingData?.pendingReviews ?? 0;
   const orderFormsCount = pendingData?.orderForms ?? 0;
   const totalReviewsCount = reviewsData?.totalReviews ?? 0;
   const averageRatingDisplay = reviewsData?.averageRating ?? 0;
 
+  // PENDING card: use API pendingItems when available so counts match admin Pending page
+  const pendingCardItems = (pendingData?.pendingItems?.length ?? 0) > 0
+    ? pendingData!.pendingItems.map((p) => ({
+        label: p.label,
+        value: p.value,
+        color: (p.label.includes('ORDER FORMS') || p.label.includes('REVIEWS')) ? 'text-red-500' as const : 'text-gray-500' as const,
+      }))
+    : [
+        { label: 'REVIEWS', value: String(pendingReviewsCount), color: 'text-gray-500' as const },
+        { label: 'ORDER FORMS', value: String(orderFormsCount), color: 'text-red-500' as const },
+        { label: 'TIER UPGRADES', value: '0', color: 'text-red-500' as const },
+        { label: 'AFFILIATE', value: '0', color: 'text-gray-500' as const },
+      ];
+
+  // MEETINGS: use getAdminMeetings() (same API as admin Meetings page); fallback to dashboard bookings or diverseBookings
+  const meetingsFromMeetingsApi = (meetingsData?.meetings ?? [])
+    .filter((m) => {
+      const d = m.meetingDate ? new Date(m.meetingDate) : null;
+      return d && d >= new Date(new Date().toDateString());
+    })
+    .map((m) => ({
+      appointment_date: [m.meetingDate, m.meetingTime].filter(Boolean).join('T') || '',
+      service_name: m.type || 'Meeting',
+      client_name: m.clientName || '',
+    }));
+  const meetingsFromDashboard = (dashboardData?.bookings ?? []).filter((b) => {
+    const d = b.appointment_date ? new Date(b.appointment_date) : null;
+    return d && d > new Date();
+  });
+  const meetingsFromApi = meetingsFromMeetingsApi.length > 0 ? meetingsFromMeetingsApi : meetingsFromDashboard;
+  const meetingsForCard = meetingsFromApi.length > 0 ? meetingsFromApi : diverseBookings;
+  const upcomingMeetingsFromData = meetingsFromApi.length > 0 ? meetingsFromApi : upcomingMeetings;
+
   const statsData = [
     {
       title: 'CLIENTS',
-      count: clientsCount,
+      count: clientsWithDeliveredCount,
       items: [
-        { label: 'SIGN-UPS THIS MONTH', value: String(stats.signUpsThisMonth ?? 0), color: 'text-red-500' },
-        { label: 'STANDARD MEMBERS', value: (clientTiers.Standard || 0).toString(), color: 'text-gray-500' },
-        { label: 'PREMIUM MEMBERS', value: (clientTiers.Premium || 0).toString(), color: 'text-red-500' },
+        { label: 'NEW ACCOUNTS', value: String(newAccountsFromList), color: 'text-red-500' },
+        { label: 'STANDARD MEMBERS', value: String(clientTiers.Standard ?? 0), color: 'text-black' },
+        { label: 'PREMIUM MEMBERS', value: String(clientTiers.Premium ?? 0), color: 'text-red-500' },
         { label: 'REFERRALS', value: String(referralCountDisplay), color: 'text-gray-500' }
       ],
       actions: [
@@ -292,18 +501,18 @@ export default function AdminDashboard() {
         { label: 'Settings', action: 'settings' }
       ],
       tiers: [
-        { label: 'PREM', value: (clientTiers.Premium || 0).toString(), color: 'text-black' },
-        { label: 'STD', value: (clientTiers.Standard || 0).toString(), color: 'text-red-500' },
-        { label: 'STANDARD', value: (clientTiers.Standard || 0).toString(), color: 'text-gray-500' }
+        { label: 'BLACK', value: String(clientTiers.Black ?? 0), color: 'text-black' },
+        { label: 'RED', value: String(clientTiers.Red ?? 0), color: 'text-red-500' },
+        { label: 'SILVER', value: String(clientTiers.Silver ?? 0), color: 'text-gray-500' }
       ]
     },
 
     {
       title: 'REVENUE',
-      count: formatCurrencyK(currentYearRevenue),
+      count: formatCurrencyK(stats.totalRevenue ?? currentYearRevenue),
       items: [
         { label: 'INVENTORY', value: '145/250', color: 'text-gray-500' },
-        { label: 'ORDERS RECEIVED', value: String(clientsCount), color: 'text-red-500' },
+        { label: 'ORDERS RECEIVED', value: String(stats.totalOrders ?? clientsWithDeliveredCount), color: 'text-red-500' },
         { label: 'QUARTERLY SALES', value: formatCurrencyK(quarterlyNetIncome), color: 'text-gray-500' },
         { label: 'TAX DEDUCTIONS', value: formatCurrency(Math.round(taxesPaid)), color: 'text-gray-500' }
       ],
@@ -318,24 +527,19 @@ export default function AdminDashboard() {
     {
       title: 'PENDING',
       count: (revenue.filter(r => r.status === 'Pending').length + pendingReviewsCount + orderFormsCount).toString(),
-      items: [
-        { label: 'REVIEWS', value: String(pendingReviewsCount), color: 'text-gray-500' },
-        { label: 'ORDER FORMS', value: String(orderFormsCount), color: 'text-red-500' },
-        { label: 'TIER UPGRADES', value: '23', color: 'text-red-500' },
-        { label: 'AFFILIATE', value: '47', color: 'text-gray-500' }
-      ],
+      items: pendingCardItems,
       activity: (revenue.filter(r => r.status === 'Pending').length > 0 || pendingReviewsCount > 0 || orderFormsCount > 0) ? 'URGENT: REVIEWS AND APPROVALS REQUIRE ATTENTION' : 'ALL APPROVALS UP TO DATE'
     },
 
     {
       title: 'MEETINGS',
-      count: upcomingMeetings.length,
-      items: diverseBookings.map(booking => ({
-        label: booking.service_name.toUpperCase(),
-        value: `${formatDateWithoutYear(booking.appointment_date)} ${booking.client_name}`,
-        color: isWithin24Hours(booking.appointment_date) ? 'text-red-500' : 'text-gray-500'
+      count: upcomingMeetingsFromData.length,
+      items: meetingsForCard.map((booking) => ({
+        label: (booking.service_name || '').toUpperCase(),
+        value: `${formatDateWithoutYear(booking.appointment_date || '')} ${booking.client_name || ''}`,
+        color: isWithin24Hours(booking.appointment_date || '') ? 'text-red-500' : 'text-gray-500'
       })),
-      highlight: upcomingMeetings.length > 0 ? `${upcomingMeetings.length} UPCOMING APPOINTMENTS SCHEDULED` : 'NO UPCOMING APPPOINTMENTS'
+      highlight: upcomingMeetingsFromData.length > 0 ? `${upcomingMeetingsFromData.length} UPCOMING APPOINTMENTS SCHEDULED` : 'NO UPCOMING APPPOINTMENTS'
     },
 
     {

@@ -28,6 +28,12 @@ export const ADMIN_KATEENA_EMAIL = 'kateena.armstrong@frontalslayer.com';
 /** Ayoteenz admin account – used for UI helpers (e.g. colored tier names on membership page). */
 export const AYOTEENZ_ADMIN_EMAIL = 'ayoteenz@yahoo.com';
 
+/**
+ * Emails that are allowed to access admin/sensitive pages (dashboard, clients, etc.).
+ * ONLY these accounts may view any /admin/* route; all others are redirected (signed-in → /account, signed-out → /sign-in).
+ */
+export const ALLOWED_ADMIN_PAGE_EMAILS: string[] = [AYOTEENZ_ADMIN_EMAIL];
+
 /** True if user is the one admin Kateena account (by email only). Use for mock/premium exception only; other "Kateena Armstrong" accounts (e.g. OAuth with different email) are not included. */
 export function isAdminKateenaAccount(user: { email?: string } | null): boolean {
   if (!user?.email) return false;
@@ -154,6 +160,18 @@ export function isAdminUser(): boolean {
   if (user.role === 'admin' || isAdminEmail(user.email || '')) return true;
   if (isPreviewEnvironment() && isPreviewOnlyAdminEmail(user.email || '')) return true;
   return false;
+}
+
+/**
+ * True only when signed in AND current user email is in ALLOWED_ADMIN_PAGE_EMAILS (e.g. ayoteenz@yahoo.com).
+ * Use this to gate access to /admin/* routes. All other accounts must be redirected.
+ */
+export function canAccessAdminPages(): boolean {
+  if (!isSignedIn()) return false;
+  const user = getCurrentUser();
+  if (!user?.email) return false;
+  const email = (user.email || '').trim().toLowerCase();
+  return ALLOWED_ADMIN_PAGE_EMAILS.some((allowed) => allowed.trim().toLowerCase() === email);
 }
 
 /** True if current user is a preview-only admin (must also pass IP check in guard). */

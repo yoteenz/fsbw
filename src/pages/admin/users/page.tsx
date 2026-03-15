@@ -4,10 +4,12 @@ import AdminHeader from '../components/AdminHeader';
 import { getAdminUsers, postAdminUserAction } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
+import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 
 type AuthUser = { id: string; email: string; created_at?: string; last_sign_in_at?: string; banned_until?: string; email_confirmed_at?: string };
 
 export default function AdminUsers() {
+  useRequireAdminPageAccess();
   const navigate = useNavigate();
   const [users, setUsers] = useState<AuthUser[]>([]);
   const [loading, setLoading] = useState(true);

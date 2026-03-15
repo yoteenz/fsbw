@@ -5,6 +5,9 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import AddToListModal from '../../components/AddToListModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
+import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
+import { getPointsMultiplier } from '../../constants/tiers';
+import { getEffectiveTierName, getEffectiveSubscriptionTier } from '../../utils/adminAuth';
 
 function ShoppingBagPage() {
   const navigate = useNavigate();
@@ -47,11 +50,12 @@ function ShoppingBagPage() {
   const [addToListModalOpen, setAddToListModalOpen] = useState(false);
   const [addToListModalItem, setAddToListModalItem] = useState<any>(null);
 
-  // Currency state - load from localStorage on mount
+  // Currency state - per user
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const savedCurrency = localStorage.getItem('selectedCurrency');
+        const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+        const savedCurrency = localStorage.getItem(key);
         return savedCurrency || 'USD';
       } catch (e) {
         return 'USD';
@@ -169,26 +173,27 @@ function ShoppingBagPage() {
     };
   }, []);
 
-  // Load selected currency from localStorage on mount only
+  // Load selected currency from localStorage on mount (per-user key)
   useEffect(() => {
-    const savedCurrency = localStorage.getItem('selectedCurrency');
+    const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+    const savedCurrency = localStorage.getItem(key);
     if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
-      if (savedCurrency !== selectedCurrency) {
-        setSelectedCurrency(savedCurrency);
-      }
+      if (savedCurrency !== selectedCurrency) setSelectedCurrency(savedCurrency);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Save selected currency to localStorage
+  // Save selected currency to localStorage (per-user key)
   useEffect(() => {
-    localStorage.setItem('selectedCurrency', selectedCurrency);
+    const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+    localStorage.setItem(key, selectedCurrency);
   }, [selectedCurrency]);
 
   // Listen for currency changes from cart dropdown
   useEffect(() => {
     const handleCurrencyChange = () => {
-      const savedCurrency = localStorage.getItem('selectedCurrency');
+      const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+      const savedCurrency = localStorage.getItem(key);
       if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
         setSelectedCurrency(savedCurrency);
       }
@@ -200,7 +205,8 @@ function ShoppingBagPage() {
       const newCurrency = event.detail;
       if (newCurrency && currencyRates[newCurrency as keyof typeof currencyRates]) {
         setSelectedCurrency(newCurrency);
-        localStorage.setItem('selectedCurrency', newCurrency);
+        const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+        localStorage.setItem(key, newCurrency);
       }
     };
     
@@ -232,6 +238,34 @@ function ShoppingBagPage() {
       }) + ' ' + selectedCurrency
     };
   }, [currencyRates, selectedCurrency]);
+
+  // Points-eligible amount (exclude gift cards and digital) for loyalty line
+  const pointsEligibleAmount = cartItems.reduce((sum, item) => {
+    const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+    const isDigital = item.type === 'digital';
+    if (isGiftCard || isDigital) return sum;
+    return sum + (item.price || 0) * (item.quantity || 1);
+  }, 0);
+
+  const getPointsMultiplierForUser = (): number => {
+    if (!isSignedIn) return 1;
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      if (!currentUser) return 1;
+      const user = JSON.parse(currentUser);
+      const tier = getEffectiveTierName(user) || (user.currentTierName || user.tier || (user.email ? localStorage.getItem(`lastKnownTier_${(user.email || '').trim().toLowerCase()}`) : null) || '').toString().toUpperCase() || null;
+      const subscriptionTier = (() => {
+        try {
+          const u = JSON.parse(localStorage.getItem('currentUser') || '{}');
+          return getEffectiveSubscriptionTier(u);
+        } catch (_) { return null; }
+      })();
+      const { multiplier } = getPointsMultiplier(tier, subscriptionTier);
+      return multiplier;
+    } catch (_) {
+      return 1;
+    }
+  };
 
   const handleQuantityChange = (itemId: string, delta: number) => {
     try {
@@ -1007,10 +1041,10 @@ function ShoppingBagPage() {
                 <SocialMenuIcons />
               </div>
             ) : (
-              /* CART ITEMS */
-              <>
+              /* CART ITEMS - match wishlist: flex column with flex-1 + minHeight:0 so scroll fills space, paddingBottom inside scroll */
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 0, flex: 1, minHeight: 0, overflow: 'hidden' }}>
                  {/* Shopping Bag Header */}
-                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
+                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ flexShrink: 0 }}>
                    <button
                      className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
                      style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
@@ -1025,10 +1059,10 @@ function ShoppingBagPage() {
                    </span>
                  </div>
 
-                 {/* Body */}
-                 <div className={`${cartItems.length > 1 ? 'flex-1' : ''} flex flex-col ${cartItems.length > 1 ? 'overflow-hidden' : ''}`} style={{ marginTop: '4.8px' }}>
-                   {/* Cart Items - scrollable */}
-                   <div className={`flex flex-col justify-start items-start gap-0 flex-shrink-0 ${cartItems.length > 1 ? 'overflow-y-auto' : ''}`} style={{ maxHeight: cartItems.length > 1 ? (savedForLater.length > 0 ? '250px' : '382px') : 'auto', scrollBehavior: 'smooth', width: '100%', marginTop: cartItems.length === 1 ? '4.8px' : '4.8px', marginBottom: cartItems.length > 1 ? '4.8px' : '0' }}>
+                 {/* Body - flex-1 minHeight:0 so scroll area gets remaining height (like wishlist) */}
+                 <div className="flex flex-col" style={{ flex: 1, minHeight: 0, marginTop: '4.8px', overflow: 'hidden' }}>
+                   {/* Cart Items - scrollable; like wishlist: flex-1 minHeight:0 overflowY:auto, paddingBottom so last item not cut off */}
+                   <div className={`flex flex-col justify-start items-start gap-0 ${cartItems.length > 1 ? 'overflow-y-auto' : ''}`} style={{ flex: cartItems.length > 1 ? 1 : undefined, minHeight: cartItems.length > 1 ? 0 : undefined, scrollBehavior: 'smooth', width: '100%', marginTop: cartItems.length === 1 ? '4.8px' : '4.8px', paddingTop: 0, paddingBottom: cartItems.length > 1 ? '16px' : '0' }}>
                      {cartItems.length === 0 ? (
                        <div style={{ 
                          textAlign: 'center', 
@@ -1111,17 +1145,17 @@ function ShoppingBagPage() {
                       const itemQuantity = item.quantity ?? 1;
 
                        return (
-                         <div
-                           key={itemId}
-                           className={`flex items-center justify-start space-x-3 ${index < cartItems.length - 1 ? 'border-b border-black' : ''}`}
-                           style={{
-                             height: '130px',
-                             paddingTop: '0',
-                             paddingBottom: '0',
-                             width: '100%',
-                             flexShrink: 0
-                           }}
-                         >
+                         <div key={itemId} className="bg-white border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box' }}>
+                           <div
+                             className="flex items-center justify-start space-x-3"
+                             style={{
+                               height: '130px',
+                               paddingTop: '0',
+                               paddingBottom: '0',
+                               width: '100%',
+                               flexShrink: 0
+                             }}
+                           >
                           {/* Thumbnail Container - Matching cart dropdown */}
                           <div className="flex flex-col items-center justify-center" style={{ flexShrink: 0, width: '88px', height: '100%' }}>
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', transform: !(item.name === 'GIFT CARD' || item.type === 'gift-card') ? 'translateY(-4px)' : 'none' }}>
@@ -1384,6 +1418,7 @@ function ShoppingBagPage() {
                             </div>
                             </div>
                           </div>
+                         </div>
                       );
                     })}
                        </>
@@ -1391,12 +1426,29 @@ function ShoppingBagPage() {
                    </div>
                  </div>
 
-                 {/* Subtotal - Fixed at bottom */}
+                 {/* Loyalty points line - above black border (like checkout); Futura Book, points in red only */}
                  {cartItems.length > 0 && (
-                   <div className={`overflow-hidden mt-auto ${cartItems.length === 1 ? '' : 'pt-1'}`}>
+                   <p className="text-center w-full flex-shrink-0" style={{ flexShrink: 0, marginTop: '0', marginBottom: '0', fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
+                     {isSignedIn ? (
+                       (() => {
+                         const basePoints = Math.round(pointsEligibleAmount);
+                         const multiplier = getPointsMultiplierForUser();
+                         const actualPoints = Math.round(basePoints * multiplier);
+                         const punctuation = actualPoints === 0 ? '.' : '!';
+                         return <>YOU'RE EARNING <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{actualPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span> LOYALTY POINTS WITH THIS ORDER{punctuation}</>;
+                       })()
+                     ) : (
+                       <>SIGN IN TO EARN LOYALTY POINTS FOR THIS ORDER.</>
+                     )}
+                   </p>
+                 )}
+
+                 {/* Subtotal - Fixed at bottom; minimal spacing above black line (no excess padding) */}
+                 {cartItems.length > 0 && (
+                   <div className="overflow-hidden mt-auto flex-shrink-0">
                      <div style={{ 
-                       marginTop: cartItems.length === 1 ? '2px' : '5px', 
-                       paddingTop: cartItems.length === 1 ? '2px' : '5px', 
+                       marginTop: '2px', 
+                       paddingTop: '2px',
                        borderTop: '1.3px solid #000',
                        display: 'flex',
                        justifyContent: 'space-between',
@@ -1422,7 +1474,7 @@ function ShoppingBagPage() {
                      </div>
                    </div>
                  )}
-              </>
+              </div>
             )}
           </div>
 
@@ -1461,7 +1513,7 @@ function ShoppingBagPage() {
           {/* SAVED FOR LATER SECTION - Only show when menu is closed and there are saved items */}
           {!showMobileMenu && savedForLater.length > 0 && (
             <div
-              className={`border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm overflow-hidden transition-all duration-300 ease-out ${savedForLater.length > 1 ? 'min-h-[360px]' : ''}`}
+              className="border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm overflow-hidden transition-all duration-300 ease-out"
               style={{ 
                 borderWidth: '1.3px', 
                 minWidth: '100%', 
@@ -1470,11 +1522,13 @@ function ShoppingBagPage() {
                 WebkitBackdropFilter: 'blur(10px)',
                 willChange: 'backdrop-filter',
                 marginTop: '10px',
-                minHeight: savedForLater.length > 1 ? '360px' : 'auto'
+                ...(savedForLater.length > 1 ? { height: 'calc(100vh - 270px)', minHeight: 'calc(100vh - 270px)', maxHeight: 'calc(100vh - 270px)' } : {})
               }}
             >
+              {/* Saved For Later - match wishlist: flex column with flex-1 + minHeight:0, scroll fills space, paddingBottom inside scroll */}
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 0, flex: 1, minHeight: 0, overflow: 'hidden' }}>
               {/* Saved For Later Header */}
-              <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
+              <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ flexShrink: 0 }}>
                 <button
                   className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
                   style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
@@ -1489,10 +1543,10 @@ function ShoppingBagPage() {
                 </span>
               </div>
 
-              {/* Body */}
-              <div className={`${savedForLater.length > 1 ? 'flex-1' : ''} flex flex-col ${savedForLater.length > 1 ? 'overflow-hidden' : ''}`} style={{ marginTop: '4.8px' }}>
-                {/* Saved Items - scrollable */}
-                <div className={`flex flex-col justify-start items-start gap-0 flex-shrink-0 ${savedForLater.length > 1 ? 'overflow-y-auto' : ''}`} style={{ maxHeight: savedForLater.length > 1 ? '251px' : 'auto', scrollBehavior: 'smooth', width: '100%', marginTop: '4.8px', marginBottom: savedForLater.length > 1 ? '4.8px' : '0' }}>
+              {/* Body - flex-1 minHeight:0 so scroll area gets remaining height (like wishlist) */}
+              <div className="flex flex-col" style={{ flex: savedForLater.length > 1 ? 1 : undefined, minHeight: savedForLater.length > 1 ? 0 : undefined, marginTop: '4.8px', overflow: 'hidden' }}>
+                {/* Saved Items - scrollable; like wishlist: flex-1 minHeight:0 overflowY:auto, paddingBottom so last item not cut off */}
+                <div className={`flex flex-col justify-start items-start gap-0 ${savedForLater.length > 1 ? 'overflow-y-auto' : ''}`} style={{ flex: savedForLater.length > 1 ? 1 : undefined, minHeight: savedForLater.length > 1 ? 0 : undefined, scrollBehavior: 'smooth', width: '100%', marginTop: '4.8px', paddingBottom: savedForLater.length > 1 ? '16px' : '0' }}>
                   {savedForLater.map((item, index) => {
                   const itemId = item.id || `saved-item-${index}`;
                   const itemName = item.name || 'NOIR';
@@ -1544,17 +1598,17 @@ function ShoppingBagPage() {
                   const itemQuantity = item.quantity ?? 0;
 
                   return (
-                    <div
-                      key={itemId}
-                      className={`flex items-center justify-start space-x-3 ${index < savedForLater.length - 1 ? 'border-b border-black' : ''}`}
-                      style={{
-                        height: '130px',
-                        paddingTop: '0',
-                        paddingBottom: '0',
-                        width: '100%',
-                        flexShrink: 0
-                      }}
-                    >
+                    <div key={itemId} className="bg-white border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box' }}>
+                      <div
+                        className="flex items-center justify-start space-x-3"
+                        style={{
+                          height: '130px',
+                          paddingTop: '0',
+                          paddingBottom: '0',
+                          width: '100%',
+                          flexShrink: 0
+                        }}
+                      >
                       {/* Thumbnail Container - Matching cart dropdown */}
                       <div className="flex flex-col items-center justify-center" style={{ flexShrink: 0, width: '88px', height: '100%' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', transform: !(item.name === 'GIFT CARD' || item.type === 'gift-card') ? 'translateY(-4px)' : 'none' }}>
@@ -1818,17 +1872,18 @@ function ShoppingBagPage() {
                          </div>
                       </div>
                     </div>
+                    </div>
                   );
                   })}
                 </div>
               </div>
 
-              {/* Subtotal - Fixed at bottom */}
+              {/* Subtotal - Fixed at bottom (match Vercel/original: pt-1 wrapper, conditional inner spacing) */}
               {savedForLater.length > 0 && (
-                <div className={`overflow-hidden mt-auto ${savedForLater.length === 1 ? '' : 'pt-1'}`}>
+                <div className={`overflow-hidden mt-auto flex-shrink-0 ${savedForLater.length === 1 ? '' : 'pt-1'}`}>
                   <div style={{ 
                     marginTop: savedForLater.length === 1 ? '2px' : '5px', 
-                    paddingTop: savedForLater.length === 1 ? '4px' : '7px', 
+                    paddingTop: savedForLater.length === 1 ? '4px' : '7px',
                     borderTop: '1.3px solid #000',
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -1854,6 +1909,7 @@ function ShoppingBagPage() {
                   </div>
                 </div>
               )}
+              </div>
             </div>
           )}
 

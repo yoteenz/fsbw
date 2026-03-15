@@ -12,6 +12,7 @@ import membershipIcon from '../../../assets/icons/membership-icon.svg?url';
 import moreWaysIcon from '../../../assets/icons/more-ways.svg?url';
 import additionalFeaturesIcon from '../../../assets/icons/additional-features.svg?url';
 import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier, getEffectiveTierName, ADMIN_SUBSCRIPTION_OVERRIDE_KEY, ADMIN_TIER_OVERRIDE_KEY } from '../../../utils/adminAuth';
+import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 
 const BRAND_GRAY = '#808080';
 const CHART_BORDER = '0.8px solid #000';
@@ -480,11 +481,12 @@ function MembershipPage() {
     ]
   };
 
-  // Currency state - load from localStorage on mount (same as CartDropdown / shopping-bag)
+  // Currency state - per user
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const savedCurrency = localStorage.getItem('selectedCurrency');
+        const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+        const savedCurrency = localStorage.getItem(key);
         return savedCurrency || 'USD';
       } catch (e) {
         return 'USD';
@@ -506,9 +508,10 @@ function MembershipPage() {
     MXN: { symbol: '&#36;', rate: 20.0, name: 'Mexican Peso' }
   }), []);
 
-  // Load selected currency from localStorage on mount
+  // Load selected currency from localStorage on mount (per-user key)
   useEffect(() => {
-    const savedCurrency = localStorage.getItem('selectedCurrency');
+    const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+    const savedCurrency = localStorage.getItem(key);
     if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
       if (savedCurrency !== selectedCurrency) {
         setSelectedCurrency(savedCurrency);
@@ -517,15 +520,17 @@ function MembershipPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Save selected currency to localStorage
+  // Save selected currency to localStorage (per-user key)
   useEffect(() => {
-    localStorage.setItem('selectedCurrency', selectedCurrency);
+    const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+    localStorage.setItem(key, selectedCurrency);
   }, [selectedCurrency]);
 
   // Listen for currency changes from cart dropdown
   useEffect(() => {
     const handleCurrencyChange = () => {
-      const savedCurrency = localStorage.getItem('selectedCurrency');
+      const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+      const savedCurrency = localStorage.getItem(key);
       if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
         setSelectedCurrency(savedCurrency);
       }
@@ -535,7 +540,7 @@ function MembershipPage() {
       const newCurrency = event.detail;
       if (newCurrency && currencyRates[newCurrency as keyof typeof currencyRates]) {
         setSelectedCurrency(newCurrency);
-        localStorage.setItem('selectedCurrency', newCurrency);
+        try { const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage()); localStorage.setItem(key, newCurrency); } catch (_) {}
       }
     };
     window.addEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);

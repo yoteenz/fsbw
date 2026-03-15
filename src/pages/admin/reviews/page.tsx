@@ -4,6 +4,7 @@ import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { getAdminReviews } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
+import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 
 const REVIEW_TABS = ['ALL', 'PENDING', 'PUBLISHED'] as const;
 
@@ -41,6 +42,7 @@ const DEFAULT_REVIEWS = [
   ];
 
 export default function AdminReviews() {
+  useRequireAdminPageAccess();
   const [activeTab, setActiveTab] = useState<typeof REVIEW_TABS[number]>('ALL');
   const [reviews, setReviews] = useState(DEFAULT_REVIEWS);
   const [averageRating, setAverageRating] = useState(4.8);

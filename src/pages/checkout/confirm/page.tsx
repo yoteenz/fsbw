@@ -8,6 +8,7 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import summaryIcon from '../../../assets/icons/summary-icon.svg?url';
 import { trackActivity } from '../../../utils/activity';
+import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 
 function CheckoutConfirmPage() {
   const navigate = useNavigate();
@@ -207,11 +208,12 @@ function CheckoutConfirmPage() {
     }
   };
 
-  // Currency state
+  // Currency state - per user
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const savedCurrency = localStorage.getItem('selectedCurrency');
+        const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+        const savedCurrency = localStorage.getItem(key);
         return savedCurrency || 'USD';
       } catch (e) {
         return 'USD';
@@ -283,29 +285,30 @@ function CheckoutConfirmPage() {
     } catch (_) {}
   }, [location.state]);
 
-  // Save selected currency to localStorage
+  // Save selected currency to localStorage (per-user key)
   useEffect(() => {
-    localStorage.setItem('selectedCurrency', selectedCurrency);
+    const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+    localStorage.setItem(key, selectedCurrency);
   }, [selectedCurrency]);
 
   // Listen for currency changes from cart dropdown
   useEffect(() => {
     const handleCurrencyChange = () => {
-      const savedCurrency = localStorage.getItem('selectedCurrency');
+      const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+      const savedCurrency = localStorage.getItem(key);
       if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
         setSelectedCurrency(savedCurrency);
       }
     };
 
-    // Listen for storage events (from other tabs/windows)
     window.addEventListener('storage', handleCurrencyChange);
     
-    // Listen for custom currencyChanged event (from same window)
     const handleCustomCurrencyChange = (event: CustomEvent) => {
       const newCurrency = event.detail;
       if (newCurrency && currencyRates[newCurrency as keyof typeof currencyRates]) {
         setSelectedCurrency(newCurrency);
-        localStorage.setItem('selectedCurrency', newCurrency);
+        const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+        localStorage.setItem(key, newCurrency);
       }
     };
     

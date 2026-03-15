@@ -5,10 +5,12 @@ import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { getAdminRevenue } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
+import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 
 const REVENUE_TABS = ['OVERVIEW', 'ORDERS', 'PRODUCTS', 'PAYMENTS'] as const;
 
 export default function AdminRevenue() {
+  useRequireAdminPageAccess();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<typeof REVENUE_TABS[number]>('OVERVIEW');
   const [totalRevenue, setTotalRevenue] = useState(45700);

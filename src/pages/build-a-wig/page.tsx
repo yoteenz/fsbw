@@ -5,6 +5,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
+import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 
 interface WigCustomization {
   capSize: string;
@@ -2660,8 +2661,18 @@ export default function BuildAWigPage() {
     };
   }, []);
 
-  // Currency state
-  const [selectedCurrency, setSelectedCurrency] = useState<string>('USD');
+  // Currency state (per user)
+  const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+        return localStorage.getItem(key) || 'USD';
+      } catch (e) {
+        return 'USD';
+      }
+    }
+    return 'USD';
+  });
 
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -3729,23 +3740,26 @@ export default function BuildAWigPage() {
     };
   }, [customization, basePrice, refreshTrigger, location, calculatePricesFromSelections, savePricesToLocalStorage, hasChanges]);
 
-  // Load selected currency from localStorage
+  // Load selected currency from localStorage (per-user key)
   useEffect(() => {
-    const savedCurrency = localStorage.getItem('selectedCurrency');
+    const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+    const savedCurrency = localStorage.getItem(key);
     if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
       setSelectedCurrency(savedCurrency);
     }
   }, [currencyRates]);
 
-  // Save selected currency to localStorage
+  // Save selected currency to localStorage (per-user key)
   useEffect(() => {
-    localStorage.setItem('selectedCurrency', selectedCurrency);
+    const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+    localStorage.setItem(key, selectedCurrency);
   }, [selectedCurrency]);
 
   // Listen for currency changes from cart dropdown
   useEffect(() => {
     const handleCurrencyChange = () => {
-      const savedCurrency = localStorage.getItem('selectedCurrency');
+      const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+      const savedCurrency = localStorage.getItem(key);
       if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
         setSelectedCurrency(savedCurrency);
       }

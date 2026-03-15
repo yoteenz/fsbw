@@ -4,10 +4,12 @@ import AdminHeader from '../components/AdminHeader';
 import { getAdminAuditLog } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
+import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 
 type AuditEntry = { id: string; actorEmail?: string; action: string; resourceType: string; resourceId?: string; details?: unknown; createdAt: string };
 
 export default function AdminAudit() {
+  useRequireAdminPageAccess();
   const navigate = useNavigate();
   const [entries, setEntries] = useState<AuditEntry[]>([]);
   const [loading, setLoading] = useState(true);

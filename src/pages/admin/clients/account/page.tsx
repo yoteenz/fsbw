@@ -1,36 +1,9 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import AdminHeader from '../../components/AdminHeader';
 import { isAyoteenzAdminAccount } from '../../../../utils/adminAuth';
 import { formatBirthday } from '../../../../utils/formatBirthday';
-
-function getMockClientsForAyoteenz(): any[] {
-  const now = Date.now();
-  const day = 24 * 60 * 60 * 1000;
-  return [
-    { id: 'mock-1', email: 'mock1@test.com', firstName: 'Zara', lastName: 'Adams', membershipType: 'PREMIUM', totalSpent: 4200, ordersCount: 5, createdAt: new Date(now - 2 * day).toISOString() },
-    { id: 'mock-2', email: 'mock2@test.com', firstName: 'Amy', lastName: 'Brooks', membershipType: 'STANDARD', totalSpent: 890, ordersCount: 2, createdAt: new Date(now - 10 * day).toISOString() },
-    { id: 'mock-3', email: 'mock3@test.com', firstName: 'Quinn', lastName: 'Chen', membershipType: 'PREMIUM', totalSpent: 3100, ordersCount: 4, createdAt: new Date(now - 1 * day).toISOString() },
-    { id: 'mock-4', email: 'mock4@test.com', firstName: 'Diana', lastName: 'Foster', membershipType: 'STANDARD', totalSpent: 1500, ordersCount: 3, createdAt: new Date(now - 45 * day).toISOString() },
-    { id: 'mock-5', email: 'mock5@test.com', firstName: 'Evan', lastName: 'Garcia', membershipType: 'PREMIUM', totalSpent: 5800, ordersCount: 8, createdAt: new Date(now - 5 * day).toISOString() },
-    { id: 'mock-6', email: 'mock6@test.com', firstName: 'Fiona', lastName: 'Hayes', membershipType: 'STANDARD', totalSpent: 420, ordersCount: 1, createdAt: new Date(now - 90 * day).toISOString() },
-    { id: 'mock-7', email: 'mock7@test.com', firstName: 'Grant', lastName: 'Ingram', membershipType: 'PREMIUM', totalSpent: 2100, ordersCount: 3, createdAt: new Date(now - 3 * day).toISOString() },
-    { id: 'mock-8', email: 'mock8@test.com', firstName: 'Hannah', lastName: 'Jones', membershipType: 'STANDARD', totalSpent: 1200, ordersCount: 2, createdAt: new Date(now - 14 * day).toISOString() },
-    { id: 'mock-9', email: 'mock9@test.com', firstName: 'Ivan', lastName: 'Kim', membershipType: 'PREMIUM', totalSpent: 6700, ordersCount: 6, createdAt: new Date(now - 7 * day).toISOString() },
-    { id: 'mock-10', email: 'mock10@test.com', firstName: 'Julia', lastName: 'Lee', membershipType: 'STANDARD', totalSpent: 650, ordersCount: 1, createdAt: new Date(now - 21 * day).toISOString() },
-    { id: 'mock-11', email: 'mock11@test.com', firstName: 'Kyle', lastName: 'Martinez', membershipType: 'PREMIUM', totalSpent: 3900, ordersCount: 5, createdAt: new Date(now - 4 * day).toISOString() },
-    { id: 'mock-12', email: 'mock12@test.com', firstName: 'Luna', lastName: 'Nguyen', membershipType: 'STANDARD', totalSpent: 2100, ordersCount: 4, createdAt: new Date(now - 60 * day).toISOString() },
-    { id: 'mock-13', email: 'mock13@test.com', firstName: 'Marcus', lastName: 'Owen', membershipType: 'PREMIUM', totalSpent: 5100, ordersCount: 7, createdAt: new Date(now - 1 * day).toISOString() },
-    { id: 'mock-14', email: 'mock14@test.com', firstName: 'Nina', lastName: 'Patel', membershipType: 'STANDARD', totalSpent: 780, ordersCount: 2, createdAt: new Date(now - 30 * day).toISOString() },
-    { id: 'mock-15', email: 'mock15@test.com', firstName: 'Oscar', lastName: 'Quinn', membershipType: 'PREMIUM', totalSpent: 4400, ordersCount: 5, createdAt: new Date(now - 6 * day).toISOString() },
-    { id: 'mock-16', email: 'mock16@test.com', firstName: 'Paula', lastName: 'Rivera', membershipType: 'STANDARD', totalSpent: 3200, ordersCount: 6, createdAt: new Date(now - 120 * day).toISOString() },
-    { id: 'mock-17', email: 'mock17@test.com', firstName: 'Ryan', lastName: 'Scott', membershipType: 'PREMIUM', totalSpent: 1900, ordersCount: 3, createdAt: new Date(now - 2 * day).toISOString() },
-    { id: 'mock-18', email: 'mock18@test.com', firstName: 'Sara', lastName: 'Torres', membershipType: 'STANDARD', totalSpent: 1100, ordersCount: 2, createdAt: new Date(now - 8 * day).toISOString() },
-    { id: 'mock-19', email: 'mock19@test.com', firstName: 'Tyler', lastName: 'Upton', membershipType: 'PREMIUM', totalSpent: 7200, ordersCount: 9, createdAt: new Date(now - 12 * day).toISOString() },
-    { id: 'mock-20', email: 'mock20@test.com', firstName: 'Uma', lastName: 'Vance', membershipType: 'STANDARD', totalSpent: 340, ordersCount: 1, createdAt: new Date(now - 3 * day).toISOString() },
-  ];
-}
+import { getMockClientsForAyoteenz } from '../page';
 
 export default function AdminClientsAccount() {
   const [searchParams] = useSearchParams();

@@ -178,7 +178,7 @@ function SignInPage() {
     let cancelled = false;
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (cancelled || !session) return;
-      syncAllFromApi().then((profile) => {
+      syncAllFromApi().then(async (profile) => {
         if (cancelled) return;
         if (profile) {
           localStorage.setItem('isSignedIn', 'true');
@@ -192,12 +192,11 @@ function SignInPage() {
           else navigate('/account', { replace: true });
           return;
         }
-        // Session exists but getProfile failed (e.g. just confirmed email, API not ready): still sign in from session
+        // Session exists but getProfile failed (e.g. just confirmed email, API not ready): still sign in from session; create profile so user appears in admin clients
         const minimal = buildMinimalUserFromSupabaseSession(session.user);
         applyMinimalUserToStorage(minimal);
-        import('../../utils/api').then(({ patchProfile }) => {
-          patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
-        });
+        const { patchProfile } = await import('../../utils/api');
+        await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
         setIsSignedIn(true);
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
         const returnTo = new URLSearchParams(location.search).get('returnTo');
@@ -319,12 +318,11 @@ function SignInPage() {
               doRedirectAfterSignIn();
               return;
             }
-            // Session valid but getProfile failed (e.g. no API or profile not ready): still sign in from session so we don't show "create account on this device first"
+            // Session valid but getProfile failed (e.g. no API or profile not ready): still sign in from session; create profile so user appears in admin clients
             const minimal = buildMinimalUserFromSupabaseSession(data.session.user);
             applyMinimalUserToStorage(minimal);
-            import('../../utils/api').then(({ patchProfile }) => {
-              patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
-            });
+            const { patchProfile } = await import('../../utils/api');
+            await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
             setIsSignedIn(true);
             trackActivity('sign_in');
             window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
@@ -973,7 +971,7 @@ function SignInPage() {
                             width: '100%',
                             height: '36px',
                             padding: '8px',
-                            paddingRight: '120px',
+                            paddingRight: '40px',
                             border: '1.3px solid #000000',
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
@@ -984,24 +982,25 @@ function SignInPage() {
                             textTransform: 'none'
                           }}
                         />
-                        <span
+                        <img
+                          src={showSignInPassword ? '/assets/hide-password.svg' : '/assets/show-password.svg'}
+                          alt={showSignInPassword ? 'Hide password' : 'Show password'}
+                          role="button"
+                          tabIndex={0}
                           onClick={() => setShowSignInPassword(!showSignInPassword)}
+                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowSignInPassword(!showSignInPassword); } }}
                           style={{
                             position: 'absolute',
-                            right: '8px',
+                            right: '11px',
                             top: '50%',
                             transform: 'translateY(-50%)',
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '9px',
-                            color: '#EB1C24',
+                            width: '16px',
+                            height: '16px',
                             cursor: 'pointer',
-                            textTransform: 'uppercase',
                             userSelect: 'none',
                             pointerEvents: 'auto'
                           }}
-                        >
-                          {showSignInPassword ? 'HIDE PASSWORD' : 'SHOW PASSWORD'}
-                        </span>
+                        />
                       </div>
                     </div>
 
@@ -1336,7 +1335,7 @@ function SignInPage() {
                             width: '100%',
                             height: '36px',
                             padding: '8px',
-                            paddingRight: passwordFocused ? '8px' : '120px',
+                            paddingRight: passwordFocused ? '8px' : '40px',
                             border: '1.3px solid #000000',
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
@@ -1348,23 +1347,24 @@ function SignInPage() {
                           }}
                         />
                         {!passwordFocused && password && (
-                          <span
+                          <img
+                            src={showPassword ? '/assets/hide-password.svg' : '/assets/show-password.svg'}
+                            alt={showPassword ? 'Hide password' : 'Show password'}
+                            role="button"
+                            tabIndex={0}
                             onClick={() => setShowPassword(!showPassword)}
+                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowPassword(!showPassword); } }}
                             style={{
                               position: 'absolute',
                               right: '8px',
                               top: '50%',
                               transform: 'translateY(-50%)',
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '9px',
-                              color: '#EB1C24',
+                              width: '16px',
+                              height: '16px',
                               cursor: 'pointer',
-                              textTransform: 'uppercase',
                               userSelect: 'none'
                             }}
-                          >
-                            {showPassword ? 'HIDE PASSWORD' : 'SHOW PASSWORD'}
-                          </span>
+                          />
                         )}
                       </div>
                       {/* Password Requirements - Only show when sign up is attempted and password doesn't meet requirements */}
@@ -1437,7 +1437,7 @@ function SignInPage() {
                             width: '100%',
                             height: '36px',
                             padding: '8px',
-                            paddingRight: confirmPasswordFocused ? '8px' : '120px',
+                            paddingRight: confirmPasswordFocused ? '8px' : '40px',
                             border: '1.3px solid #000000',
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
@@ -1449,23 +1449,24 @@ function SignInPage() {
                           }}
                         />
                         {!confirmPasswordFocused && confirmPassword && (
-                          <span
+                          <img
+                            src={showConfirmPassword ? '/assets/hide-password.svg' : '/assets/show-password.svg'}
+                            alt={showConfirmPassword ? 'Hide password' : 'Show password'}
+                            role="button"
+                            tabIndex={0}
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowConfirmPassword(!showConfirmPassword); } }}
                             style={{
                               position: 'absolute',
-                              right: '8px',
+                              right: '11px',
                               top: '50%',
                               transform: 'translateY(-50%)',
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '9px',
-                              color: '#EB1C24',
+                              width: '16px',
+                              height: '16px',
                               cursor: 'pointer',
-                              textTransform: 'uppercase',
                               userSelect: 'none'
                             }}
-                          >
-                            {showConfirmPassword ? 'HIDE PASSWORD' : 'SHOW PASSWORD'}
-                          </span>
+                          />
                         )}
                       </div>
                       {/* Confirm Password Requirements - Only show when sign up is attempted and password doesn't meet requirements */}
@@ -1895,6 +1896,7 @@ function SignInPage() {
                         }
                       } catch (_) {}
                       localStorage.setItem('currentUser', JSON.stringify(newUser));
+                      localStorage.setItem('profileImage', (newUser.profileImage && String(newUser.profileImage).trim()) ? String(newUser.profileImage) : '/assets/profile-thumb.png');
                       swapCartAndWishlistToUser(previousEmail, newUser.email.trim().toLowerCase());
                       
                       localStorage.removeItem('addToBagButtonState');
@@ -1906,7 +1908,7 @@ function SignInPage() {
                       } catch (_) {}
                       try {
                         const newEmail = newUser.email.trim().toLowerCase();
-                        localStorage.setItem('notifications', '[]');
+                        localStorage.setItem(`notifications_${newEmail}`, '[]');
                         localStorage.setItem(getReviewsLastSeenShopCountKey(newEmail), String(MOCK_SHOP_REVIEWS_COUNT));
                         localStorage.setItem(getReviewsLastSeenToolCountKey(newEmail), String(MOCK_TOOL_REVIEWS_COUNT));
                       } catch (_) {}

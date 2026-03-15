@@ -5,6 +5,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { isMockDataAccount } from '../../utils/adminAuth';
+import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { formatCountryDisplay } from '../../utils/formatCountry';
 import summaryIcon from '../../assets/icons/summary-icon.svg?url';
 
@@ -114,11 +115,12 @@ function OrdersPage() {
   // Only the admin (mock-data) account gets test orders; all other accounts see real data only (empty if none)
   const isMockOrdersAccount = () => isMockDataAccount(currentUser);
 
-  // Currency state - load from localStorage on mount
+  // Currency state - per user
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const savedCurrency = localStorage.getItem('selectedCurrency');
+        const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+        const savedCurrency = localStorage.getItem(key);
         return savedCurrency || 'USD';
       } catch (e) {
         return 'USD';
@@ -831,7 +833,8 @@ function OrdersPage() {
 
   const [ordersAnimationsEnabled, setOrdersAnimationsEnabled] = useState(() => {
     try {
-      return localStorage.getItem('ordersPageAnimationsEnabled') !== 'false';
+      const key = getPerUserKey(PER_USER_KEYS.ordersPageAnimationsEnabled, getCurrentUserEmailFromStorage());
+      return localStorage.getItem(key) !== 'false';
     } catch {
       return true;
     }
@@ -945,11 +948,12 @@ function OrdersPage() {
     };
   }, []);
 
-  // Listen for currency changes
+  // Listen for currency changes (per-user key)
   useEffect(() => {
     const handleCurrencyChange = () => {
       try {
-        const savedCurrency = localStorage.getItem('selectedCurrency');
+        const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+        const savedCurrency = localStorage.getItem(key);
         if (savedCurrency) {
           setSelectedCurrency(savedCurrency);
         }
@@ -970,7 +974,8 @@ function OrdersPage() {
   useEffect(() => {
     const handleOrdersAnimationsChange = () => {
       try {
-        setOrdersAnimationsEnabled(localStorage.getItem('ordersPageAnimationsEnabled') !== 'false');
+        const key = getPerUserKey(PER_USER_KEYS.ordersPageAnimationsEnabled, getCurrentUserEmailFromStorage());
+        setOrdersAnimationsEnabled(localStorage.getItem(key) !== 'false');
       } catch (_) {}
     };
     window.addEventListener('ordersAnimationsChanged', handleOrdersAnimationsChange as EventListener);

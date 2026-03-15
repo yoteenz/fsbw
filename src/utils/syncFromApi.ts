@@ -20,9 +20,8 @@ export async function syncProfileFromApi(): Promise<Record<string, unknown> | nu
     } as Record<string, unknown>;
 
     localStorage.setItem('currentUser', JSON.stringify(merged));
-    if (merged.profileImage && typeof merged.profileImage === 'string') {
-      localStorage.setItem('profileImage', merged.profileImage);
-    }
+    const img = merged.profileImage && typeof merged.profileImage === 'string' && String(merged.profileImage).trim();
+    localStorage.setItem('profileImage', img ? String(merged.profileImage) : '/assets/profile-thumb.png');
 
     const registeredUsers: unknown[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
     const idx = registeredUsers.findIndex(
@@ -112,6 +111,7 @@ export function buildMinimalUserFromSupabaseSession(sessionUser: { id: string; e
     birthday,
     membershipType: 'STANDARD',
     role: isAdminEmail(email) ? 'admin' : undefined,
+    giftCardBalance: 10, // Welcome discount Standard: $10 digital cash per subscription chart
   } as Record<string, unknown>;
   return merged;
 }
@@ -124,6 +124,7 @@ export function applyMinimalUserToStorage(merged: Record<string, unknown>): void
   const email = (merged.email as string) || '';
   if (!email) return;
   localStorage.setItem('currentUser', JSON.stringify(merged));
+  localStorage.setItem('profileImage', '/assets/profile-thumb.png');
   localStorage.setItem('isSignedIn', 'true');
   const registeredUsers: unknown[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
   const idx = registeredUsers.findIndex((u: unknown) => ((u as { email?: string }).email || '').toLowerCase() === email.toLowerCase());
@@ -147,5 +148,6 @@ export function buildProfilePayloadForBackend(minimal: Record<string, unknown>):
     birthday: (minimal.birthday as string) || '',
     membershipType: 'STANDARD',
     profileImage: '/assets/profile-thumb.png',
+    giftCardBalance: 10, // Welcome discount Standard: $10 digital cash per subscription chart
   };
 }

@@ -5,10 +5,12 @@ import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { getAdminPending } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
+import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 
 const PENDING_TABS = ['ALL', 'REVIEWS', 'FORMS', 'ALERTS'] as const;
 
 export default function AdminPending() {
+  useRequireAdminPageAccess();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<typeof PENDING_TABS[number]>('ALL');
   const [pendingReviews, setPendingReviews] = useState(12);

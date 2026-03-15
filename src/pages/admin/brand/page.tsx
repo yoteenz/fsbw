@@ -4,6 +4,7 @@ import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { getAdminBrand } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
+import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 
 const BRAND_TABS = ['OVERVIEW', 'METRICS', 'ACHIEVEMENTS'] as const;
 
@@ -17,6 +18,7 @@ const defaultBrandMetrics = {
 };
 
 export default function AdminBrand() {
+  useRequireAdminPageAccess();
   const [activeTab, setActiveTab] = useState<typeof BRAND_TABS[number]>('OVERVIEW');
   const [brandMetrics, setBrandMetrics] = useState(defaultBrandMetrics);
 

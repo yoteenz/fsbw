@@ -6,6 +6,7 @@ import type { SocialPlatform, SocialSource } from '../../../utils/socialAnalytic
 import { getAdminAnalytics } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
+import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 
 const ANALYTICS_TABS = ['SUMMARY', 'BY PLATFORM', 'BY SOURCE'] as const;
 
@@ -36,6 +37,7 @@ function formatEventTime(timestamp: number): string {
 }
 
 export default function AdminAnalytics() {
+  useRequireAdminPageAccess();
   const localSummary = getSocialAnalyticsSummary();
   const [summary, setSummary] = useState(localSummary);
   const [activeTab, setActiveTab] = useState<typeof ANALYTICS_TABS[number]>('SUMMARY');

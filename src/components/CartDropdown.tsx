@@ -4,6 +4,9 @@ import { createPortal } from 'react-dom';
 import { CartItem } from '../types/cart';
 import ConfirmationModal from './ConfirmationModal';
 import { trackActivity } from '../utils/activity';
+import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../utils/perUserStorage';
+import { getPointsMultiplier } from '../constants/tiers';
+import { getEffectiveTierName, getEffectiveSubscriptionTier } from '../utils/adminAuth';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -56,11 +59,12 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     }
   }, [isOpen]);
 
-  // Currency state - load from localStorage on mount; invalid codes are corrected in useEffect below
+  // Currency state - per user so it doesn't bleed between accounts
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const savedCurrency = localStorage.getItem('selectedCurrency');
+        const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+        const savedCurrency = localStorage.getItem(key);
         return savedCurrency || 'USD';
       } catch (e) {
         return 'USD';
@@ -381,22 +385,24 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     }
   }, [cartItems, viewingDetailsFor]);
 
-  // Save selected currency to localStorage whenever it changes
+  // Save selected currency to localStorage whenever it changes (per-user key)
   useEffect(() => {
     if (selectedCurrency) {
-      localStorage.setItem('selectedCurrency', selectedCurrency);
+      const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+      localStorage.setItem(key, selectedCurrency);
     }
   }, [selectedCurrency]);
 
   // Load selected currency from localStorage on mount; validate so invalid/stale codes don't stick
   useEffect(() => {
-    const savedCurrency = localStorage.getItem('selectedCurrency');
+    const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+    const savedCurrency = localStorage.getItem(key);
     const isValid = savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates];
     if (isValid && savedCurrency !== selectedCurrency) {
       setSelectedCurrency(savedCurrency);
     } else if (!isValid && savedCurrency) {
       // Stale or invalid saved code (e.g. from old build) – reset to USD and persist
-      localStorage.setItem('selectedCurrency', 'USD');
+      localStorage.setItem(key, 'USD');
       setSelectedCurrency('USD');
       window.dispatchEvent(new CustomEvent('currencyChanged', { detail: 'USD' }));
     }
@@ -406,7 +412,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   // Listen for currency changes from other components
   useEffect(() => {
     const handleCurrencyChange = () => {
-      const savedCurrency = localStorage.getItem('selectedCurrency');
+      const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+      const savedCurrency = localStorage.getItem(key);
       if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
         setSelectedCurrency(savedCurrency);
       }
@@ -668,6 +675,36 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
 
+  // Points-eligible amount (exclude gift cards and digital) for loyalty line
+  const pointsEligibleAmount = cartItems.reduce((sum, item) => {
+    const isGiftCard = item.name === 'GIFT CARD' || (item as any).type === 'gift-card';
+    const isDigital = (item as any).type === 'digital';
+    if (isGiftCard || isDigital) return sum;
+    return sum + (item.price || 0) * (item.quantity || 1);
+  }, 0);
+
+  const isSignedIn = typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true';
+
+  const getPointsMultiplierForUser = (): number => {
+    if (!isSignedIn) return 1;
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      if (!currentUser) return 1;
+      const user = JSON.parse(currentUser);
+      const tier = getEffectiveTierName(user) || (user.currentTierName || user.tier || (user.email ? localStorage.getItem(`lastKnownTier_${(user.email || '').trim().toLowerCase()}`) : null) || '').toString().toUpperCase() || null;
+      const subscriptionTier = (() => {
+        try {
+          const u = JSON.parse(localStorage.getItem('currentUser') || '{}');
+          return getEffectiveSubscriptionTier(u);
+        } catch (_) { return null; }
+      })();
+      const { multiplier } = getPointsMultiplier(tier, subscriptionTier);
+      return multiplier;
+    } catch (_) {
+      return 1;
+    }
+  };
+
   // Debug function to get all price-related localStorage data
 
 
@@ -745,8 +782,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             e.stopPropagation();
         }}
       >
-        {/* Header */}
-          <div className="px-3 py-2 border-b border-gray-100" style={{ marginTop: '6px', paddingBottom: '9px' }}>
+        {/* Header - reduced paddingBottom to cut excess space above loyalty line */}
+          <div className="px-3 py-2 border-b border-gray-100" style={{ marginTop: '6px', paddingBottom: '5px' }}>
             <div className="flex items-center justify-between" style={{ flexWrap: 'wrap', gap: '8px' }}>
             <h3 
               className="text-black uppercase" 
@@ -775,6 +812,21 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             </div>
         </div>
 
+        {/* Loyalty points line - top, below header, above cart items (cart dropdown only); spacing reduced via padding not text shift */}
+        {cartItems.length > 0 && (
+          <p className="text-center w-full flex-shrink-0 px-3" style={{ marginTop: '10px', marginBottom: '6px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+            {isSignedIn ? (
+              (() => {
+                const basePoints = Math.round(pointsEligibleAmount);
+                const multiplier = getPointsMultiplierForUser();
+                const actualPoints = Math.round(basePoints * multiplier);
+                return <>YOU'RE EARNING <span style={{ color: '#808080', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{actualPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span> LOYALTY POINTS WITH THIS ORDER{actualPoints === 0 ? '.' : '!'}</>;
+              })()
+            ) : (
+              <>SIGN IN TO EARN LOYALTY POINTS FOR THIS ORDER.</>
+            )}
+          </p>
+        )}
 
         {/* Cart Items */}
           <div 
@@ -788,17 +840,31 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             }}
           >
           {cartItems.length === 0 ? (
-              <div className="text-center py-4">
+              <div className="text-center py-4 flex flex-col items-center gap-3">
               <p 
                 style={{ 
                     fontSize: '11px',
                   fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                     color: '#808080',
-                    textTransform: 'uppercase'
+                    textTransform: 'uppercase',
+                    margin: '0'
                 }}
               >
                   JUST DUST & LINT HERE.
               </p>
+              <button
+                onClick={handleViewCart}
+                className="w-full max-w-[200px] py-2 px-3 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
+                style={{ 
+                  borderWidth: '1.3px',
+                  fontSize: '11px',
+                  fontFamily: '"Futura PT Medium"',
+                  color: '#EB1C24',
+                  textTransform: 'uppercase'
+                }}
+              >
+                VIEW BAG
+              </button>
             </div>
           ) : (
               <div className="space-y-3">
@@ -813,7 +879,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                   }
                   
                   return itemsToShow.map((item, index) => (
-                    <div key={item.id} className={`flex items-center justify-start space-x-3 ${index < itemsToShow.length - 1 ? 'border-b border-black' : ''}`} style={{ minHeight: '120px', height: viewingDetailsFor === item.id ? 'auto' : '120px', paddingTop: '0', paddingBottom: '0' }}>
+                    <div key={item.id} className="bg-white border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box', ...(viewingDetailsFor === item.id ? { paddingBottom: '16px' } : {}) }}>
+                    <div className="flex items-center justify-start space-x-3" style={{ minHeight: '120px', height: viewingDetailsFor === item.id ? 'auto' : '120px', paddingTop: '0', paddingBottom: '0' }}>
                     {/* Thumbnail Container */}
                     <div className="flex flex-col items-center justify-center" style={{ height: '120px', minHeight: '120px', alignSelf: 'flex-start' }}>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', transform: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? 'translateY(-8px)' : 'translateY(-8px)', position: 'relative' }}>
@@ -1116,7 +1183,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               textTransform: 'uppercase',
                               fontSize: '9px',
                               marginTop: '2px',
-                              marginBottom: '0',
+                              marginBottom: '12px',
                               marginRight: '20px',
                               lineHeight: '1.44',
                               wordBreak: 'break-word',
@@ -1529,6 +1596,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                       })()}
                     </div>
                 </div>
+                </div>
                   ));
                 })()}
             </div>
@@ -1705,8 +1773,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     onClick={(e) => {
                       e.stopPropagation();
                     setSelectedCurrency(code);
-                    // Save to localStorage immediately
-                    localStorage.setItem('selectedCurrency', code);
+                    const currencyKey = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+                    localStorage.setItem(currencyKey, code);
                     setShowCurrencyModal(false);
                     // Dispatch custom event to notify other components in the same window
                     window.dispatchEvent(new CustomEvent('currencyChanged', { detail: code }));

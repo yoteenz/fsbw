@@ -10,6 +10,7 @@ import { hasIdentityAlreadyUsedReferralCode, recordReferralCodeUsedByClient } fr
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { trackActivity } from '../../utils/activity';
+import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 
 function getCardBrandDisplay(fullNumber: string): string {
   const digits = fullNumber.replace(/\D/g, '');
@@ -244,11 +245,12 @@ function CheckoutPage() {
     trackActivity('checkout_start');
   }, []);
 
-  // Currency state
+  // Currency state - per user so it doesn't bleed between accounts
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const savedCurrency = localStorage.getItem('selectedCurrency');
+        const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+        const savedCurrency = localStorage.getItem(key);
         return savedCurrency || 'USD';
       } catch (e) {
         return 'USD';
@@ -398,9 +400,10 @@ function CheckoutPage() {
     };
   }, []);
 
-  // Load selected currency
+  // Load selected currency (per-user key)
   useEffect(() => {
-    const savedCurrency = localStorage.getItem('selectedCurrency');
+    const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+    const savedCurrency = localStorage.getItem(key);
     if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
       if (savedCurrency !== selectedCurrency) {
         setSelectedCurrency(savedCurrency);
@@ -416,7 +419,8 @@ function CheckoutPage() {
   }, [hasColorStylingOrAddOns, selectedProcessing]);
 
   useEffect(() => {
-    localStorage.setItem('selectedCurrency', selectedCurrency);
+    const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+    localStorage.setItem(key, selectedCurrency);
   }, [selectedCurrency]);
 
   // Check sign-in status on mount and listen for changes
@@ -643,7 +647,8 @@ function CheckoutPage() {
 
   useEffect(() => {
     const handleCurrencyChange = () => {
-      const savedCurrency = localStorage.getItem('selectedCurrency');
+      const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+      const savedCurrency = localStorage.getItem(key);
       if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
         setSelectedCurrency(savedCurrency);
       }
@@ -655,7 +660,8 @@ function CheckoutPage() {
       const newCurrency = event.detail;
       if (newCurrency && currencyRates[newCurrency as keyof typeof currencyRates]) {
         setSelectedCurrency(newCurrency);
-        localStorage.setItem('selectedCurrency', newCurrency);
+        const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+        localStorage.setItem(key, newCurrency);
       }
     };
     
@@ -5174,8 +5180,10 @@ function CheckoutPage() {
                               }
                             }
                           }
-                          const referralLog = JSON.parse(localStorage.getItem('referralEarnings') || '[]');
-                          referralLog.push({
+                          const referrerEmail = (referrer.email || '').trim().toLowerCase();
+                          const earningsKey = getPerUserKey(PER_USER_KEYS.referralEarnings, referrerEmail);
+                          const referralLog = JSON.parse(localStorage.getItem(earningsKey) || '[]');
+                          const newEntry = {
                             referrerEmail: referrer.email,
                             referredEmail: email || '',
                             orderId: `order-${nextOrderNumber}`,
@@ -5183,8 +5191,15 @@ function CheckoutPage() {
                             amount: 20,
                             status: 'confirmed',
                             date: new Date().toISOString()
-                          });
-                          localStorage.setItem('referralEarnings', JSON.stringify(referralLog));
+                          };
+                          referralLog.push(newEntry);
+                          localStorage.setItem(earningsKey, JSON.stringify(referralLog));
+                          // Also append to global list so admin referrals/clients can show full list
+                          try {
+                            const allLog = JSON.parse(localStorage.getItem('referralEarnings') || '[]');
+                            allLog.push(newEntry);
+                            localStorage.setItem('referralEarnings', JSON.stringify(allLog));
+                          } catch (_) {}
                           const referrerKey = `referralNewActivity_${(referrer.email || '').trim().toLowerCase()}`;
                           localStorage.setItem(referrerKey, 'true');
                         }

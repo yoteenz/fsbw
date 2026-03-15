@@ -30,7 +30,7 @@ export default function AccountRouteGuard({ children }: { children: React.ReactN
         setRecoveryDone(true);
         return;
       }
-      syncAllFromApi().then((profile) => {
+      syncAllFromApi().then(async (profile) => {
         if (cancelled) return;
         if (profile) {
           localStorage.setItem('isSignedIn', 'true');
@@ -38,10 +38,9 @@ export default function AccountRouteGuard({ children }: { children: React.ReactN
         } else {
           const minimal = buildMinimalUserFromSupabaseSession(session.user);
           applyMinimalUserToStorage(minimal);
-          // Ensure backend has a profile row so user appears in admin clients list
-          import('../utils/api').then(({ patchProfile }) => {
-            patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
-          });
+          // Ensure backend has a profile row so user appears in admin clients list (await so it exists before navigation)
+          const { patchProfile } = await import('../utils/api');
+          await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
           window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
         }
         setRecoveryDone(true);

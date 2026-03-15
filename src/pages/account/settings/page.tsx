@@ -5,7 +5,8 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { getDeletedPlatformFromUserAgent } from '../../../utils/platformDetection';
-import { patchProfile } from '../../../utils/api';
+import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
+import { patchProfile, deleteAccount } from '../../../utils/api';
 import { trackActivity } from '../../../utils/activity';
 import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
 
@@ -120,7 +121,8 @@ function SettingsPage() {
   const [ordersAnimations, setOrdersAnimations] = useState(() => {
     try {
       if (typeof window === 'undefined') return true;
-      const v = localStorage.getItem('ordersPageAnimationsEnabled');
+      const key = getPerUserKey(PER_USER_KEYS.ordersPageAnimationsEnabled, getCurrentUserEmailFromStorage());
+      const v = localStorage.getItem(key);
       return v !== 'false';
     } catch {
       return true;
@@ -134,6 +136,7 @@ function SettingsPage() {
   const [resetConfirmPassword, setResetConfirmPassword] = useState('');
   const [resetPasswordError, setResetPasswordError] = useState('');
   const [showDeleteAccountConfirm, setShowDeleteAccountConfirm] = useState(false);
+  const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
 
   const socialPrefixes: Record<string, string> = {
     facebook: 'FACEBOOK.COM/',
@@ -250,10 +253,25 @@ function SettingsPage() {
   };
 
   const handleDeleteAccount = async () => {
+    setDeleteAccountError(null);
+    setShowDeleteAccountConfirm(false);
     try {
-      setShowDeleteAccountConfirm(false);
-      // Sign out from Supabase first so the sign-in page doesn't see a session and redirect back to /account
+      // Delete the user from Supabase Auth first (while still signed in) so they cannot sign back in
       if (isSupabaseConfigured()) {
+        try {
+          await deleteAccount();
+        } catch (e) {
+          console.error('Delete account API failed:', e);
+          const msg = typeof (e as any)?.message === 'string' ? (e as any).message : String(e ?? '');
+          const raw = (msg || '').trim().toLowerCase();
+          const isNetworkError = /load\s*failed|failed\s*to\s*fetch|failed\s*to\s*load|network\s*error|networkrequestfailed|request\s*failed/i.test(raw) || raw === 'load failed';
+          setDeleteAccountError(
+            isNetworkError
+              ? 'Network error. Check your connection and try again. If the problem continues, check that the app is using the correct API URL and that the delete-account API is deployed.'
+              : (msg || 'Could not delete account. Try again or contact support.')
+          );
+          return;
+        }
         const supabase = getSupabase();
         if (supabase) await supabase.auth.signOut().catch(() => {});
       }
@@ -282,12 +300,27 @@ function SettingsPage() {
       }
       localStorage.setItem('isSignedIn', 'false');
       localStorage.removeItem('currentUser');
-      window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
-      navigate('/sign-in');
+      // Clear any Supabase auth keys so a full reload doesn't see a session
+      try {
+        const keysToRemove: string[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith('sb-') && k.endsWith('-auth-token')) keysToRemove.push(k);
+        }
+        keysToRemove.forEach((k) => localStorage.removeItem(k));
+      } catch (_) {}
+      // Full page redirect so the app reloads with no in-memory session; avoids sign-in page restoring session and redirecting back to /account
+      window.location.href = '/sign-in';
     } catch (e) {
       console.error('Delete account failed', e);
-      setShowDeleteAccountConfirm(false);
-      navigate('/sign-in');
+      const msg = typeof (e as any)?.message === 'string' ? (e as any).message : String(e ?? '');
+      const raw = (msg || '').trim().toLowerCase();
+      const isNetworkError = /load\s*failed|failed\s*to\s*fetch|failed\s*to\s*load|network\s*error|networkrequestfailed|request\s*failed/i.test(raw) || raw === 'load failed';
+      setDeleteAccountError(
+        isNetworkError
+          ? 'Network error. Check your connection and try again. If the problem continues, check that the app is using the correct API URL and that the delete-account API is deployed.'
+          : (msg || 'Could not delete account. Try again.')
+      );
     }
   };
 
@@ -722,30 +755,28 @@ function SettingsPage() {
                           value={showPassword ? accountPassword : '••••••••••'}
                           style={{
                             ...inputBaseStyle,
-                            paddingRight: '120px',
+                            paddingRight: '40px',
                             ...(showPassword && { fontFamily: '"Futura PT Medium"', color: '#808080' })
                           }}
                         />
-                        <span
+                        <img
+                          src={showPassword ? '/assets/hide-password.svg' : '/assets/show-password.svg'}
+                          alt={showPassword ? 'Hide password' : 'Show password'}
                           role="button"
                           tabIndex={0}
                           onClick={() => setShowPassword((p) => !p)}
-                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setShowPassword((p) => !p); }}
+                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowPassword((p) => !p); } }}
                           style={{
                             position: 'absolute',
-                            right: '8px',
+                            right: '11px',
                             top: '50%',
                             transform: 'translateY(-50%)',
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '9px',
-                            color: '#EB1C24',
+                            width: '16px',
+                            height: '16px',
                             cursor: 'pointer',
-                            textTransform: 'uppercase',
                             userSelect: 'none'
                           }}
-                        >
-                          {showPassword ? 'HIDE PASSWORD' : 'SHOW PASSWORD'}
-                        </span>
+                        />
                       </div>
                       <div style={{ marginTop: '0px' }}>
                         <button
@@ -948,7 +979,9 @@ function SettingsPage() {
                         const next = !ordersAnimations;
                         setOrdersAnimations(next);
                         try {
-                          localStorage.setItem('ordersPageAnimationsEnabled', next ? 'true' : 'false');
+                          const email = userData?.email ?? getCurrentUserEmailFromStorage();
+                          const key = getPerUserKey(PER_USER_KEYS.ordersPageAnimationsEnabled, email);
+                          localStorage.setItem(key, next ? 'true' : 'false');
                           window.dispatchEvent(new CustomEvent('ordersAnimationsChanged', { detail: next }));
                         } catch (_) {}
                       }}
@@ -1043,9 +1076,14 @@ function SettingsPage() {
 
               {/* Delete Account - below main card, matches account profile sign out button */}
               <div className="px-0 md:px-0" style={{ marginTop: '-4px', marginBottom: '20px' }}>
+                {deleteAccountError && (
+                  <p className="text-red-600 text-xs font-futura mb-2" style={{ textTransform: 'uppercase' }}>
+                    {deleteAccountError}
+                  </p>
+                )}
                 <button
                   type="button"
-                  onClick={() => setShowDeleteAccountConfirm(true)}
+                  onClick={() => { setDeleteAccountError(null); setShowDeleteAccountConfirm(true); }}
                   className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                   style={{
                     borderWidth: '1.3px',
@@ -1064,7 +1102,7 @@ function SettingsPage() {
 
       <ConfirmationModal
         isOpen={showDeleteAccountConfirm}
-        onClose={() => setShowDeleteAccountConfirm(false)}
+        onClose={() => { setDeleteAccountError(null); setShowDeleteAccountConfirm(false); }}
         onConfirm={handleDeleteAccount}
         title="DELETE ACCOUNT"
         message={<>ARE YOU SURE YOU WANT TO DELETE YOUR ACCOUNT?<br />THIS ACTION IS PERMANENT & CANNOT BE UNDONE.</>}

@@ -8,7 +8,8 @@ import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier
 import { swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
 import { trackActivity } from '../../utils/activity';
-import { getAccountNotifications, mergeAccountNotifications } from './notifications/page';
+import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
+import { getAccountNotifications, mergeAccountNotifications, isNewAccount } from './notifications/page';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 
@@ -85,7 +86,8 @@ function AccountPage() {
   const [cardAnimationsEnabled, setCardAnimationsEnabled] = useState(() => {
     try {
       if (typeof window === 'undefined') return true;
-      return localStorage.getItem('ordersPageAnimationsEnabled') !== 'false';
+      const key = getPerUserKey(PER_USER_KEYS.ordersPageAnimationsEnabled, getCurrentUserEmailFromStorage());
+      return localStorage.getItem(key) !== 'false';
     } catch {
       return true;
     }
@@ -139,11 +141,12 @@ function AccountPage() {
     return getOrderedCards();
   };
 
-  // Currency state - load from localStorage on mount
+  // Currency state - per user so it doesn't bleed between accounts
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const savedCurrency = localStorage.getItem('selectedCurrency');
+        const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+        const savedCurrency = localStorage.getItem(key);
         return savedCurrency || 'USD';
       } catch (e) {
         return 'USD';
@@ -179,7 +182,8 @@ function AccountPage() {
   // Listen for animations toggle (settings) so card transitions can be turned off
   useEffect(() => {
     const handleAnimationsChanged = () => {
-      setCardAnimationsEnabled(localStorage.getItem('ordersPageAnimationsEnabled') !== 'false');
+      const key = getPerUserKey(PER_USER_KEYS.ordersPageAnimationsEnabled, userData?.email ?? getCurrentUserEmailFromStorage());
+      setCardAnimationsEnabled(localStorage.getItem(key) !== 'false');
     };
     handleAnimationsChanged();
     window.addEventListener('ordersAnimationsChanged', handleAnimationsChanged);
@@ -190,10 +194,12 @@ function AccountPage() {
     };
   }, []);
 
-  // Listen for currency changes from cart dropdown
+  // Listen for currency changes from cart dropdown (per-user key)
   useEffect(() => {
+    const email = userData?.email ?? getCurrentUserEmailFromStorage();
+    const currencyKey = getPerUserKey(PER_USER_KEYS.selectedCurrency, email);
     const handleCurrencyChange = () => {
-      const savedCurrency = localStorage.getItem('selectedCurrency');
+      const savedCurrency = localStorage.getItem(currencyKey);
       if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
         setSelectedCurrency(savedCurrency);
       }
@@ -205,7 +211,8 @@ function AccountPage() {
       const newCurrency = event.detail;
       if (newCurrency && currencyRates[newCurrency as keyof typeof currencyRates]) {
         setSelectedCurrency(newCurrency);
-        localStorage.setItem('selectedCurrency', newCurrency);
+        const k = getPerUserKey(PER_USER_KEYS.selectedCurrency, userData?.email ?? getCurrentUserEmailFromStorage());
+        localStorage.setItem(k, newCurrency);
       }
     };
     
@@ -220,7 +227,17 @@ function AccountPage() {
       window.removeEventListener('storage', handleCurrencyChange);
       window.removeEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
     };
-  }, [currencyRates]);
+  }, [currencyRates, userData?.email]);
+
+  // When signed-in user changes, re-read per-user preferences so we don't show the previous user's currency/animations
+  useEffect(() => {
+    const email = userData?.email ?? getCurrentUserEmailFromStorage();
+    const currencyKey = getPerUserKey(PER_USER_KEYS.selectedCurrency, email);
+    const savedCurrency = localStorage.getItem(currencyKey);
+    if (savedCurrency) setSelectedCurrency(savedCurrency);
+    const animKey = getPerUserKey(PER_USER_KEYS.ordersPageAnimationsEnabled, email);
+    setCardAnimationsEnabled(localStorage.getItem(animKey) !== 'false');
+  }, [userData?.email]);
 
   // Format price with currency
   const formatPrice = React.useCallback((price: number): string => {
@@ -325,10 +342,12 @@ function AccountPage() {
         setUserData(user);
         setIsSignedIn(true);
         
-        // Load profile image if available
-        if (user.profileImage) {
-          setProfileImage(user.profileImage);
-        }
+        // Always set profile image to current user's (or default) so we never show a previous user's photo
+        const img = (user.profileImage && String(user.profileImage).trim()) ? String(user.profileImage) : '/assets/profile-thumb.png';
+        setProfileImage(img);
+        try {
+          localStorage.setItem('profileImage', img);
+        } catch (_) {}
         
         // Update membership type from user data
         if (user.membershipType) {
@@ -356,7 +375,11 @@ function AccountPage() {
         if (currentUser && signedIn) {
           const user = JSON.parse(currentUser);
           setUserData(user);
-          if (user.profileImage) setProfileImage(user.profileImage);
+          const img = (user.profileImage && String(user.profileImage).trim()) ? String(user.profileImage) : '/assets/profile-thumb.png';
+          setProfileImage(img);
+          try {
+            localStorage.setItem('profileImage', img);
+          } catch (_) {}
           if (user.membershipType) _setMembershipType(user.membershipType.toUpperCase() === 'PREMIUM' ? 'PREMIUM' : 'STANDARD');
         }
       } catch (e) {
@@ -898,7 +921,8 @@ function AccountPage() {
       const account = getAccountNotifications(userData);
       const merged = mergeAccountNotifications(stored, account);
       if (merged.some((n: any) => !n.isRead)) return true;
-      return localStorage.getItem('hasUnreadNotifications') === 'true';
+      const unreadKey = getPerUserKey(PER_USER_KEYS.hasUnreadNotifications, userData?.email ?? getCurrentUserEmailFromStorage());
+      return localStorage.getItem(unreadKey) === 'true';
     } catch (e) {
       return false;
     }
@@ -926,7 +950,8 @@ function AccountPage() {
   const hasAffiliateNotifications = (): boolean => {
     if (!userData) return false;
     try {
-      const submittedContentStr = localStorage.getItem('affiliateSubmittedContent');
+      const key = getPerUserKey(PER_USER_KEYS.affiliateSubmittedContent, userData.email);
+      const submittedContentStr = localStorage.getItem(key);
       if (!submittedContentStr) return false;
       
       const submittedContent = JSON.parse(submittedContentStr);
@@ -975,7 +1000,8 @@ function AccountPage() {
     try {
       const key = `referralNewActivity_${(userData.email || '').trim().toLowerCase()}`;
       if (localStorage.getItem(key) === 'true') return true;
-      const log = JSON.parse(localStorage.getItem('referralEarnings') || '[]');
+      const earningsKey = getPerUserKey(PER_USER_KEYS.referralEarnings, userData.email);
+      const log = JSON.parse(localStorage.getItem(earningsKey) || '[]');
       const email = (userData.email || '').trim().toLowerCase();
       const lastSeenKey = `referralLastSeenCount_${email}`;
       const lastSeen = parseInt(localStorage.getItem(lastSeenKey) || '0', 10);
@@ -1011,7 +1037,8 @@ function AccountPage() {
   };
 
   const hasReviewsNotifications = (): boolean => {
-    // Alert when user's review is posted or new shop/tool reviews; clears when they visit reviews page and view shop/tool tab
+    // No reviews badge for new accounts (no activity yet); badge only when user has activity and has new review approved or unseen shop/tool counts
+    if (isNewAccount(userData)) return false;
     return hasNewReviewApproved(userData?.email) ?? false;
   };
 
@@ -1087,7 +1114,8 @@ function AccountPage() {
     let referralInvitesUsed = 0;
     if (userData?.email) {
       try {
-        const log = JSON.parse(localStorage.getItem('referralEarnings') || '[]');
+        const earningsKey = getPerUserKey(PER_USER_KEYS.referralEarnings, userData.email);
+        const log = JSON.parse(localStorage.getItem(earningsKey) || '[]');
         const email = (userData.email || '').trim().toLowerCase();
         referralInvitesUsed = log.filter((e: { referrerEmail?: string }) => (e.referrerEmail || '').trim().toLowerCase() === email).length;
       } catch (_) {}

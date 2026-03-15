@@ -48,6 +48,17 @@ export async function patchProfile(profile: Record<string, unknown>): Promise<Re
   return (await res.json()) as Record<string, unknown>;
 }
 
+/** Delete the current user from Supabase Auth so they cannot sign back in. Call before sign-out when user confirms delete account. Throws if unauthenticated (401), not configured (503), or any API error so the UI does not sign out and pretend success. */
+export async function deleteAccount(): Promise<void> {
+  const res = await apiFetch('/api/delete-account', { method: 'DELETE' });
+  if (!res.ok) {
+    const text = await res.text();
+    if (res.status === 401) throw new Error('Not signed in. Sign in and try again.');
+    if (res.status === 503) throw new Error('Account deletion is not available. Please contact support.');
+    throw new Error(text || 'Failed to delete account');
+  }
+}
+
 /** Record activity for admin Activity tab. No-op if no API or not authenticated. */
 export async function recordActivity(eventType: string, payload?: Record<string, unknown>): Promise<void> {
   if (!API_BASE) return;
@@ -118,8 +129,8 @@ export async function getAdminOrders(userId: string): Promise<{ activeOrders: un
 
 /** Admin: dashboard stats and recent activity. */
 export async function getAdminDashboard(): Promise<{
-  stats: { activeClients: number; referralCount: number; signUpsThisMonth?: number; totalRevenue?: number; totalOrders?: number; pendingForms?: number };
-  clients: { tier: string }[];
+  stats: { activeClients: number; clientsWithDeliveredOrder?: number; referralCount: number; signUpsThisMonth?: number; totalRevenue?: number; totalOrders?: number; pendingForms?: number };
+  clients: Record<string, unknown>[];
   bookings: Array<{ status: string; appointment_date?: string; service_name?: string; client_name?: string }>;
   revenue: { date: string; amount: number; status: string }[];
   notifications: Array<{ id: number; text: string }>;

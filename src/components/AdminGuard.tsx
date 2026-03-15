@@ -1,119 +1,43 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
-import ConfirmationModal from './ConfirmationModal';
-import {
-  isSignedIn,
-  isAdminUser,
-  getPreviewAdminAllowedIp,
-  isPreviewEnvironment,
-} from '../utils/adminAuth';
-
-async function getClientIp(): Promise<string | null> {
-  try {
-    const res = await fetch('https://api.ipify.org?format=json', { method: 'GET' });
-    const data = await res.json();
-    return data?.ip ?? null;
-  } catch {
-    return null;
-  }
-}
+import { isSignedIn, canAccessAdminPages } from '../utils/adminAuth';
 
 /**
- * Protects admin routes. On preview (localhost/dev) with allowed IP set, grant admin even when signed out (for testing).
- * On production Vercel deploy, only listed admin emails get access and sign-in is required.
+ * Protects all /admin/* routes. Only the allowed admin account (e.g. ayoteenz@yahoo.com) may access.
+ * - Signed out → redirect to /sign-in
+ * - Signed in but not allowed → redirect to /account
+ * - Allowed admin only → render child routes.
  */
 export default function AdminGuard() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [showDeniedModal, setShowDeniedModal] = useState(false);
   const [checked, setChecked] = useState(false);
-  const [previewIpAllowed, setPreviewIpAllowed] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const onPreview = isPreviewEnvironment();
-    const allowedIp = getPreviewAdminAllowedIp();
     const signedIn = isSignedIn();
-
-    if (onPreview && allowedIp) {
-      getClientIp().then((clientIp) => {
-        const allowed = clientIp !== null && clientIp.trim() === allowedIp.trim();
-        setPreviewIpAllowed(allowed);
-        setChecked(true);
-      });
-      return;
-    }
-
-    if (onPreview && !allowedIp) {
-      setPreviewIpAllowed(true);
+    if (!signedIn) {
+      const returnTo = encodeURIComponent(location.pathname + location.search);
+      navigate(`/sign-in?returnTo=${returnTo}`, { replace: true });
       setChecked(true);
       return;
     }
-
-    if (!signedIn) {
-      const returnTo = encodeURIComponent(location.pathname);
-      navigate(`/sign-in?returnTo=${returnTo}`, { replace: true });
+    if (!canAccessAdminPages()) {
+      navigate('/account', { replace: true });
+      setChecked(true);
       return;
     }
-
-    const admin = isAdminUser();
-    if (!admin) {
-      setShowDeniedModal(true);
-    }
-    setPreviewIpAllowed(null);
     setChecked(true);
-  }, [location.pathname, navigate]);
-
-  useEffect(() => {
-    if (!checked) return;
-    const onPreview = isPreviewEnvironment();
-    const allowedIp = getPreviewAdminAllowedIp();
-    if (onPreview && allowedIp && previewIpAllowed === false && !isSignedIn()) {
-      const returnTo = encodeURIComponent(location.pathname);
-      navigate(`/sign-in?returnTo=${returnTo}`, { replace: true });
-    }
-  }, [checked, previewIpAllowed, location.pathname, navigate]);
-
-  const handleDeniedConfirm = () => {
-    setShowDeniedModal(false);
-    navigate('/account', { replace: true });
-  };
+  }, [location.pathname, location.search, navigate]);
 
   if (!checked) {
     return null;
   }
 
-  const admin = isAdminUser();
-  const onPreview = isPreviewEnvironment();
-  const allowedIp = getPreviewAdminAllowedIp();
-  const waitingForIp = onPreview && !!allowedIp && previewIpAllowed === null;
-  const previewAccessByIp = onPreview && !!allowedIp && previewIpAllowed === true;
-  const previewAccessNoIpCheck = onPreview && !allowedIp;
-  const deniedByIp = onPreview && !!allowedIp && previewIpAllowed === false;
-
-  const hasAccess =
-    (admin || previewAccessByIp || previewAccessNoIpCheck) && !waitingForIp && !deniedByIp;
-  const showModal = showDeniedModal || deniedByIp;
-
-  if (waitingForIp) {
+  if (!isSignedIn()) {
     return null;
   }
-
-  if (!hasAccess) {
-    return (
-      <>
-        {null}
-        <ConfirmationModal
-          isOpen={showModal}
-          onClose={handleDeniedConfirm}
-          onConfirm={handleDeniedConfirm}
-          title="ACCESS RESTRICTED"
-          message="This page is for administrators only."
-          confirmText="OK"
-          cancelText=""
-          messageTextTransform="uppercase"
-        />
-      </>
-    );
+  if (!canAccessAdminPages()) {
+    return null;
   }
 
   return <Outlet />;
