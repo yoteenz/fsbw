@@ -32,7 +32,7 @@ export default function AdminNotifications() {
     }
     Promise.all([getAdminNotifications(), getAdminClients()])
       .then(([notifs, clientList]) => {
-        setList(Array.isArray(notifs) ? notifs : []);
+        setList(Array.isArray(notifs) ? (notifs as NotifEntry[]) : []);
         setClients(Array.isArray(clientList) ? clientList : []);
         if (clientList?.length && !selectedUserId) setSelectedUserId((clientList[0] as { id?: string }).id || '');
       })
@@ -55,7 +55,7 @@ export default function AdminNotifications() {
       setFeedback({ type: 'success', msg: 'Notification sent.' });
       setMessage('');
       const updated = await getAdminNotifications();
-      setList(Array.isArray(updated) ? updated : []);
+      setList(Array.isArray(updated) ? (updated as NotifEntry[]) : []);
     } catch (e) {
       setFeedback({ type: 'error', msg: e instanceof Error ? e.message : 'Send failed' });
     } finally {

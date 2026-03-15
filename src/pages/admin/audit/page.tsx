@@ -97,11 +97,13 @@ export default function AdminAudit() {
                       </p>
                       {e.actorEmail && <p className="text-gray-600 mt-0.5">By: {e.actorEmail}</p>}
                       <p className="text-gray-500 mt-0.5">{formatDate(e.createdAt)}</p>
-                      {e.details && typeof e.details === 'object' && Object.keys(e.details as object).length > 0 && (
+                      {e.details != null && typeof e.details === 'object' && Object.keys(e.details as object).length > 0
+                        ? (
                         <pre className="mt-1 text-gray-500 overflow-x-auto whitespace-pre-wrap break-words" style={{ fontSize: '10px' }}>
                           {JSON.stringify(e.details)}
                         </pre>
-                      )}
+                          )
+                        : null}
                     </div>
                   ))}
                 </div>

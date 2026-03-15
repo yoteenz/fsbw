@@ -110,11 +110,11 @@ export async function getAdminOrders(userId: string): Promise<{ activeOrders: un
 
 /** Admin: dashboard stats and recent activity. */
 export async function getAdminDashboard(): Promise<{
-  stats: { activeClients: number; referralCount: number; totalRevenue?: number; totalOrders?: number; pendingForms?: number };
+  stats: { activeClients: number; referralCount: number; signUpsThisMonth?: number; totalRevenue?: number; totalOrders?: number; pendingForms?: number };
   clients: { tier: string }[];
-  bookings: unknown[];
+  bookings: Array<{ status: string; appointment_date?: string; service_name?: string; client_name?: string }>;
   revenue: { date: string; amount: number; status: string }[];
-  notifications: unknown[];
+  notifications: Array<{ id: number; text: string }>;
 }> {
   const res = await apiFetch('/api/admin/dashboard');
   if (res.status === 403) throw new Error('Forbidden');
