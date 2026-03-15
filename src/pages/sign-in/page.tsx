@@ -8,7 +8,7 @@ import { isAdminEmail } from '../../utils/adminAuth';
 import { saveCartAndWishlistToUserKeys, swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
 import { normalizeEmail, normalizePassword } from '../../utils/credentialNormalize';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
-import { syncAllFromApi, buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage } from '../../utils/syncFromApi';
+import { syncAllFromApi, buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage, buildProfilePayloadForBackend } from '../../utils/syncFromApi';
 import { trackActivity } from '../../utils/activity';
 import {
   getReviewsLastSeenShopCountKey,
@@ -195,6 +195,9 @@ function SignInPage() {
         // Session exists but getProfile failed (e.g. just confirmed email, API not ready): still sign in from session
         const minimal = buildMinimalUserFromSupabaseSession(session.user);
         applyMinimalUserToStorage(minimal);
+        import('../../utils/api').then(({ patchProfile }) => {
+          patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
+        });
         setIsSignedIn(true);
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
         const returnTo = new URLSearchParams(location.search).get('returnTo');
@@ -319,6 +322,9 @@ function SignInPage() {
             // Session valid but getProfile failed (e.g. no API or profile not ready): still sign in from session so we don't show "create account on this device first"
             const minimal = buildMinimalUserFromSupabaseSession(data.session.user);
             applyMinimalUserToStorage(minimal);
+            import('../../utils/api').then(({ patchProfile }) => {
+              patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
+            });
             setIsSignedIn(true);
             trackActivity('sign_in');
             window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));

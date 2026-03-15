@@ -98,6 +98,8 @@ export function buildMinimalUserFromSupabaseSession(sessionUser: { id: string; e
   const meta = sessionUser.user_metadata || {};
   const firstName = (meta.first_name as string) || (meta.firstName as string) || '';
   const lastName = (meta.last_name as string) || (meta.lastName as string) || '';
+  const phoneNumber = (meta.phone_number as string) || (meta.phoneNumber as string) || '';
+  const birthday = (meta.birthday as string) || '';
   const merged = {
     id: sessionUser.id,
     email: sessionUser.email || '',
@@ -105,6 +107,9 @@ export function buildMinimalUserFromSupabaseSession(sessionUser: { id: string; e
     lastName: lastName || '',
     first_name: firstName,
     last_name: lastName,
+    phoneNumber,
+    phone_number: phoneNumber,
+    birthday,
     membershipType: 'STANDARD',
     role: isAdminEmail(email) ? 'admin' : undefined,
   } as Record<string, unknown>;
@@ -125,4 +130,22 @@ export function applyMinimalUserToStorage(merged: Record<string, unknown>): void
   if (idx !== -1) (registeredUsers as Record<string, unknown>[])[idx] = { ...(registeredUsers[idx] as object), ...merged } as Record<string, unknown>;
   else registeredUsers.push(merged);
   localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+}
+
+/**
+ * Build a profile payload for PATCH /api/profile so the backend creates/upserts a profile row.
+ * Call this when we have a session but getProfile() failed (e.g. after email confirm), so the
+ * user appears in the admin clients list and future getProfile() works.
+ */
+export function buildProfilePayloadForBackend(minimal: Record<string, unknown>): Record<string, unknown> {
+  const email = (minimal.email as string) || '';
+  return {
+    email,
+    firstName: (minimal.firstName as string) || email.split('@')[0] || 'User',
+    lastName: (minimal.lastName as string) || '',
+    phoneNumber: (minimal.phoneNumber as string) || (minimal.phone_number as string) || '',
+    birthday: (minimal.birthday as string) || '',
+    membershipType: 'STANDARD',
+    profileImage: '/assets/profile-thumb.png',
+  };
 }

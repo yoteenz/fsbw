@@ -4,7 +4,7 @@ import LoadingScreen from '../../components/base/LoadingScreen';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { isMockDataAccount } from '../../utils/adminAuth';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
-import { syncAllFromApi, buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage } from '../../utils/syncFromApi';
+import { syncAllFromApi, buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage, buildProfilePayloadForBackend } from '../../utils/syncFromApi';
 
 // Lobby Component
 const LobbyPage: React.FC = () => {
@@ -37,6 +37,9 @@ const LobbyPage: React.FC = () => {
         }
         const minimal = buildMinimalUserFromSupabaseSession(session.user);
         applyMinimalUserToStorage(minimal);
+        import('../../utils/api').then(({ patchProfile }) => {
+          patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
+        });
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
         navigate('/account', { replace: true });
       });

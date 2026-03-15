@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, Navigate } from 'react-router-dom';
 import { isSignedIn } from '../utils/adminAuth';
 import { getSupabase, isSupabaseConfigured } from '../utils/supabase';
-import { syncAllFromApi, buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage } from '../utils/syncFromApi';
+import { syncAllFromApi, buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage, buildProfilePayloadForBackend } from '../utils/syncFromApi';
 
 /**
  * Wraps account routes. Redirects to /sign-in when not signed in.
@@ -38,6 +38,10 @@ export default function AccountRouteGuard({ children }: { children: React.ReactN
         } else {
           const minimal = buildMinimalUserFromSupabaseSession(session.user);
           applyMinimalUserToStorage(minimal);
+          // Ensure backend has a profile row so user appears in admin clients list
+          import('../utils/api').then(({ patchProfile }) => {
+            patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
+          });
           window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
         }
         setRecoveryDone(true);
