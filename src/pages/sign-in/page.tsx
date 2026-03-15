@@ -1133,9 +1133,9 @@ function SignInPage() {
                       </button>
                     </div>
                   ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
-                    {/* Form Fields */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
+                      {/* Form Fields */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
                     <div>
                       <label
                         style={{
@@ -1653,10 +1653,8 @@ function SignInPage() {
                         marginBottom: '8px'
                       }}
                     />
-                  </div>
-
-                </div>
-              </div>
+                      </div>
+                    </div>
             )}
                 </div>
 
@@ -1955,7 +1953,6 @@ function SignInPage() {
                 </button>
               </div>
             )}
-            </div>
             </div>
             </>
           )}
