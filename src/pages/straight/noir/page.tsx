@@ -9,6 +9,7 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import ImageViewerModal from '../../../components/ImageViewerModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
+import { trackActivity } from '../../../utils/activity';
 
 interface DensityOption {
   id: string;
@@ -290,6 +291,10 @@ function NoirSelection() {
     };
   }, []);
 
+  useEffect(() => {
+    trackActivity('view_product', { productName: 'NOIR', path: location.pathname });
+  }, [location.pathname]);
+
   // Toggle wishlist handler
   const handleToggleWishlist = () => {
     try {
@@ -305,6 +310,7 @@ function NoirSelection() {
         const updatedItems = wishlistItems.filter((item: any) => (item.name || item.productName || '').toUpperCase() !== 'NOIR');
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(false);
+        trackActivity('remove_from_wishlist', { productName: 'NOIR' });
       } else {
         // Add to wishlist
         const noirItem = {
@@ -328,6 +334,7 @@ function NoirSelection() {
         const updatedItems = [...wishlistItems, noirItem];
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(true);
+        trackActivity('add_to_wishlist', { productName: 'NOIR' });
       }
       
       // Dispatch event to notify other components
@@ -1020,6 +1027,7 @@ function NoirSelection() {
   };
 
   const handleSignOut = () => {
+    trackActivity('sign_out');
     setIsSignedIn(false);
     localStorage.setItem('isSignedIn', 'false');
     localStorage.removeItem('currentUser');
@@ -1524,6 +1532,8 @@ function NoirSelection() {
         window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
         window.dispatchEvent(new CustomEvent('cartUpdated'));
       }, 100);
+
+      trackActivity('add_to_cart', { productName: 'NOIR', quantity });
       
     } catch (error) {
       console.error('Error in handleAddToBag:', error);

@@ -7,6 +7,7 @@ import { getEffectiveSubscriptionTier, getEffectiveTierName } from '../../../uti
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import summaryIcon from '../../../assets/icons/summary-icon.svg?url';
+import { trackActivity } from '../../../utils/activity';
 
 function CheckoutConfirmPage() {
   const navigate = useNavigate();
@@ -124,6 +125,15 @@ function CheckoutConfirmPage() {
   const [startX, setStartX] = useState(0);
   const [startScrollPosition, setStartScrollPosition] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const hasTrackedOrderRef = useRef(false);
+
+  // Track place_order and checkout_complete once when order is confirmed (for admin Activity tab)
+  useEffect(() => {
+    if (!orderData?.orderNumber || hasTrackedOrderRef.current) return;
+    hasTrackedOrderRef.current = true;
+    trackActivity('place_order', { orderId: orderData.orderNumber, total: orderData.orderTotal });
+    trackActivity('checkout_complete');
+  }, [orderData?.orderNumber, orderData?.orderTotal]);
 
   // Authoritative points/tier from checkout (sessionStorage written by checkout before navigate; survives location.state loss)
   const [rewardsFromCheckout, setRewardsFromCheckout] = useState<{ pointsEarned?: number; tier?: string }>(() => {

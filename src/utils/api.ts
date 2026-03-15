@@ -48,6 +48,14 @@ export async function patchProfile(profile: Record<string, unknown>): Promise<Re
   return (await res.json()) as Record<string, unknown>;
 }
 
+/** Record activity for admin Activity tab. No-op if no API or not authenticated. */
+export async function recordActivity(eventType: string, payload?: Record<string, unknown>): Promise<void> {
+  if (!API_BASE) return;
+  const res = await apiFetch('/api/activity', { method: 'POST', body: payload ? { eventType, payload } : { eventType } });
+  if (res.status === 401) return;
+  if (!res.ok) throw new Error(await res.text());
+}
+
 export async function getOrders(): Promise<{ activeOrders: unknown[]; pastOrders: unknown[] }> {
   const res = await apiFetch('/api/orders');
   if (res.status === 401) return { activeOrders: [], pastOrders: [] };

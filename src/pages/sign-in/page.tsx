@@ -9,6 +9,7 @@ import { saveCartAndWishlistToUserKeys, swapCartAndWishlistToUser } from '../../
 import { normalizeEmail, normalizePassword } from '../../utils/credentialNormalize';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
 import { syncAllFromApi } from '../../utils/syncFromApi';
+import { trackActivity } from '../../utils/activity';
 import {
   getReviewsLastSeenShopCountKey,
   getReviewsLastSeenToolCountKey,
@@ -295,6 +296,7 @@ function SignInPage() {
             if (profile) {
               localStorage.setItem('isSignedIn', 'true');
               setIsSignedIn(true);
+              trackActivity('sign_in');
               window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
               if (signInEmailRef.current) signInEmailRef.current.value = '';
               if (signInPasswordRef.current) signInPasswordRef.current.value = '';
@@ -358,6 +360,7 @@ function SignInPage() {
         else localStorage.removeItem('profileImage');
         localStorage.setItem('isSignedIn', 'true');
         setIsSignedIn(true);
+        trackActivity('sign_in');
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
         if (signInEmailRef.current) signInEmailRef.current.value = '';
         if (signInPasswordRef.current) signInPasswordRef.current.value = '';
@@ -429,6 +432,7 @@ function SignInPage() {
         else localStorage.removeItem('profileImage');
         localStorage.setItem('isSignedIn', 'true');
         setIsSignedIn(true);
+        trackActivity('sign_in');
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
         if (signInEmailRef.current) signInEmailRef.current.value = '';
         if (signInPasswordRef.current) signInPasswordRef.current.value = '';
@@ -1720,6 +1724,7 @@ function SignInPage() {
                               if (profile) {
                                 localStorage.setItem('isSignedIn', 'true');
                                 setIsSignedIn(true);
+                                trackActivity('sign_in');
                                 window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
                                 setFirstName(''); setLastName(''); setBirthday(''); setPhoneNumber(''); setEmail(''); setPassword(''); setConfirmPassword('');
                                 setFacebook(''); setInstagram(''); setYoutube(''); setTiktok(''); setTwitter('');
@@ -1850,6 +1855,7 @@ function SignInPage() {
                       
                       // Sign user in
                       setIsSignedIn(true);
+                      trackActivity('sign_in');
                       
                       // Clear form
                       setFirstName('');

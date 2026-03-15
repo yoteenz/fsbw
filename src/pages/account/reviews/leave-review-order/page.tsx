@@ -5,6 +5,7 @@ import BrandMenuLinks from '../../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../../components/SocialMenuIcons';
 import ConfirmationModal from '../../../../components/ConfirmationModal';
 import { getUserSubmittedReviewsKey, getReviewsNewApprovedKey } from '../../../../constants/reviews';
+import { trackActivity } from '../../../../utils/activity';
 
 interface OrderLineItem {
   productName: string;
@@ -227,6 +228,7 @@ function LeaveReviewOrderPage() {
         localStorage.setItem(getReviewsNewApprovedKey(email), 'true');
         if (order?.id) localStorage.setItem(`reviewSubmitted_${order.id}`, 'true');
         window.dispatchEvent(new CustomEvent('reviewsUpdated'));
+        trackActivity('add_review', { productName: currentItem.productName, rating });
       } catch (e) {
         console.error('Error saving review:', e);
       }

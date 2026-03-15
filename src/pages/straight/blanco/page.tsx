@@ -6,6 +6,7 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import ImageViewerModal from '../../../components/ImageViewerModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
+import { trackActivity } from '../../../utils/activity';
 
 function BlancoSelection() {
   const navigate = useNavigate();
@@ -86,6 +87,10 @@ function BlancoSelection() {
     localStorage.setItem('selectedAddOns', JSON.stringify([]));
     localStorage.setItem('selectedAddOnsPrice', '0');
   }, []);
+
+  useEffect(() => {
+    trackActivity('view_product', { productName: 'BLANCO', path: location.pathname });
+  }, [location.pathname]);
 
   // Helper function to check if a cart item matches the default configuration exactly
   // This does explicit field-by-field comparison to ensure no false matches
@@ -172,6 +177,7 @@ function BlancoSelection() {
         const updatedItems = wishlistItems.filter((item: any) => (item.name || item.productName || '').toUpperCase() !== 'BLANCO');
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(false);
+        trackActivity('remove_from_wishlist', { productName: 'BLANCO' });
       } else {
         // Add to wishlist
         const blancoItem = {
@@ -195,6 +201,7 @@ function BlancoSelection() {
         const updatedItems = [...wishlistItems, blancoItem];
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(true);
+        trackActivity('add_to_wishlist', { productName: 'BLANCO' });
       }
       
       // Dispatch event to notify other components
@@ -785,6 +792,8 @@ function BlancoSelection() {
       
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
+
+      trackActivity('add_to_cart', { productName: 'BLANCO', quantity });
       
       setAddToBagState('added');
     } catch (error) {

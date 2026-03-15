@@ -6,6 +6,7 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import ImageViewerModal from '../../../components/ImageViewerModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
+import { trackActivity } from '../../../utils/activity';
 
 function SoftWaveSelection() {
   const navigate = useNavigate();
@@ -77,6 +78,10 @@ function SoftWaveSelection() {
     };
   }, []);
 
+  useEffect(() => {
+    trackActivity('view_product', { productName: 'SOFT WAVE', path: location.pathname });
+  }, [location.pathname]);
+
   // Toggle wishlist handler
   const handleToggleWishlist = () => {
     try {
@@ -89,6 +94,7 @@ function SoftWaveSelection() {
         const updatedItems = wishlistItems.filter((item: any) => (item.name || item.productName || '').toUpperCase() !== 'SOFT WAVE');
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(false);
+        trackActivity('remove_from_wishlist', { productName: 'SOFT WAVE' });
       } else {
         // Add to wishlist
         const softWaveItem = {
@@ -112,6 +118,7 @@ function SoftWaveSelection() {
         const updatedItems = [...wishlistItems, softWaveItem];
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(true);
+        trackActivity('add_to_wishlist', { productName: 'SOFT WAVE' });
       }
       
       // Dispatch event to notify other components
@@ -789,6 +796,8 @@ function SoftWaveSelection() {
       
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
+
+      trackActivity('add_to_cart', { productName: 'SOFT WAVE', quantity });
       
       setAddToBagState('added');
     } catch (error) {

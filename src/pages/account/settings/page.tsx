@@ -5,6 +5,8 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { getDeletedPlatformFromUserAgent } from '../../../utils/platformDetection';
+import { patchProfile } from '../../../utils/api';
+import { trackActivity } from '../../../utils/activity';
 
 const inputBaseStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Demi"',
@@ -178,20 +180,32 @@ function SettingsPage() {
       if (updates.firstName !== undefined) payload.firstName = updates.firstName.trim();
       if (updates.lastName !== undefined) payload.lastName = updates.lastName.trim();
       if (Object.keys(payload).length === 0) return;
+      // Keep localStorage in sync with both camelCase and snake_case so form and API stay consistent
+      const payloadWithSnake = { ...payload } as Record<string, string>;
+      if (payload.firstName !== undefined) payloadWithSnake.first_name = payload.firstName;
+      if (payload.lastName !== undefined) payloadWithSnake.last_name = payload.lastName;
       const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
       const idx = registered.findIndex((u: any) => (u.email || '').trim().toLowerCase() === email);
       if (idx !== -1) {
-        registered[idx] = { ...registered[idx], ...payload };
+        registered[idx] = { ...registered[idx], ...payloadWithSnake };
         localStorage.setItem('registeredUsers', JSON.stringify(registered));
       }
       const current = localStorage.getItem('currentUser');
       if (current) {
         const parsed = JSON.parse(current);
         if ((parsed.email || '').trim().toLowerCase() === email) {
-          localStorage.setItem('currentUser', JSON.stringify({ ...parsed, ...payload }));
+          localStorage.setItem('currentUser', JSON.stringify({ ...parsed, ...payloadWithSnake }));
         }
       }
-      setUserData((prev: any) => (prev ? { ...prev, ...payload } : prev));
+      setUserData((prev: any) => (prev ? { ...prev, ...payloadWithSnake } : prev));
+      // Persist to backend so name survives sync/reload when using Supabase/API (camelCase to match sign-up)
+      const apiPayload: Record<string, string> = {};
+      if (updates.firstName !== undefined) apiPayload.firstName = updates.firstName.trim();
+      if (updates.lastName !== undefined) apiPayload.lastName = updates.lastName.trim();
+      if (updates.birthday !== undefined) apiPayload.birthday = updates.birthday.trim();
+      if (Object.keys(apiPayload).length > 0) {
+        patchProfile(apiPayload).then(() => trackActivity('profile_update')).catch(() => {});
+      }
     } catch (_) {}
   };
 
@@ -329,8 +343,8 @@ function SettingsPage() {
 
   useEffect(() => {
     if (userData) {
-      setFirstName((userData.firstName || '').toUpperCase());
-      setLastName((userData.lastName || '').toUpperCase());
+      setFirstName((userData.firstName || userData.first_name || '').toString().toUpperCase());
+      setLastName((userData.lastName || userData.last_name || '').toString().toUpperCase());
       setEmail((userData.email || '').toUpperCase());
       const normalizedBirthday = normalizeBirthdayDisplay(userData.birthday || '');
       setBirthday(normalizedBirthday);

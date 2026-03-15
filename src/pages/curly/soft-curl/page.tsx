@@ -6,6 +6,7 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import ImageViewerModal from '../../../components/ImageViewerModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
+import { trackActivity } from '../../../utils/activity';
 
 function SoftCurlSelection() {
   const navigate = useNavigate();
@@ -77,6 +78,10 @@ function SoftCurlSelection() {
     };
   }, []);
 
+  useEffect(() => {
+    trackActivity('view_product', { productName: 'SOFT CURL', path: location.pathname });
+  }, [location.pathname]);
+
   // Toggle wishlist handler
   const handleToggleWishlist = () => {
     try {
@@ -88,6 +93,7 @@ function SoftCurlSelection() {
         const updatedItems = wishlistItems.filter((item: any) => item.name !== 'SOFT CURL');
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(false);
+        trackActivity('remove_from_wishlist', { productName: 'SOFT CURL' });
       } else {
         // Add to wishlist
         const softCurlItem = {
@@ -111,6 +117,7 @@ function SoftCurlSelection() {
         const updatedItems = [...wishlistItems, softCurlItem];
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(true);
+        trackActivity('add_to_wishlist', { productName: 'SOFT CURL' });
       }
       
       // Dispatch event to notify other components
@@ -783,6 +790,8 @@ function SoftCurlSelection() {
       
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
+
+      trackActivity('add_to_cart', { productName: 'SOFT CURL', quantity });
       
       setAddToBagState('added');
     } catch (error) {

@@ -7,6 +7,7 @@ import { getTotalReviewCount, getUserSubmittedReviewCount, hasNewReviewApproved 
 import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier } from '../../utils/adminAuth';
 import { swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
+import { trackActivity } from '../../utils/activity';
 import { getAccountNotifications, mergeAccountNotifications } from './notifications/page';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
@@ -274,6 +275,12 @@ function AccountPage() {
             user.voucherHistory = [];
             didUpdate = true;
           }
+        } else if (!isMock) {
+          // Non-mock accounts must start with 0 vouchers; clear any that came from backend/default so new sign-ups show 0.
+          user.voucherList = [];
+          user.voucherCount = 0;
+          user.voucherHistory = [];
+          didUpdate = true;
         } else if (isMock) {
           // Migration (mock accounts only): add 1X STYLING and 1X FLEXIBLE CAP if missing; ensure Color and Hairline have voucher history dates too
           const list = user.voucherList as string[];
@@ -588,6 +595,7 @@ function AccountPage() {
   };
 
   const handleSignOut = () => {
+    trackActivity('sign_out');
     try {
       const raw = localStorage.getItem('currentUser');
       if (raw) {

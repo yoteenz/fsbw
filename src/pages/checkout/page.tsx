@@ -9,6 +9,7 @@ import { getEffectiveSubscriptionTier, getEffectiveTierName } from '../../utils/
 import { hasIdentityAlreadyUsedReferralCode, recordReferralCodeUsedByClient } from '../../utils/blockedClients';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
+import { trackActivity } from '../../utils/activity';
 
 function getCardBrandDisplay(fullNumber: string): string {
   const digits = fullNumber.replace(/\D/g, '');
@@ -237,6 +238,11 @@ function CheckoutPage() {
   const [startX, setStartX] = useState(0);
   const [startScrollPosition, setStartScrollPosition] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Track when user enters checkout (for admin Activity tab)
+  useEffect(() => {
+    trackActivity('checkout_start');
+  }, []);
 
   // Currency state
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {

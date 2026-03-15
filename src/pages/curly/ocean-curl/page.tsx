@@ -6,6 +6,7 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import ImageViewerModal from '../../../components/ImageViewerModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
+import { trackActivity } from '../../../utils/activity';
 
 function OceanCurlSelection() {
   const navigate = useNavigate();
@@ -77,6 +78,10 @@ function OceanCurlSelection() {
     };
   }, []);
 
+  useEffect(() => {
+    trackActivity('view_product', { productName: 'OCEAN CURL', path: location.pathname });
+  }, [location.pathname]);
+
   // Toggle wishlist handler
   const handleToggleWishlist = () => {
     try {
@@ -88,6 +93,7 @@ function OceanCurlSelection() {
         const updatedItems = wishlistItems.filter((item: any) => (item.name || item.productName || '').toUpperCase() !== 'OCEAN CURL');
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(false);
+        trackActivity('remove_from_wishlist', { productName: 'OCEAN CURL' });
       } else {
         // Add to wishlist
         const oceanCurlItem = {
@@ -111,6 +117,7 @@ function OceanCurlSelection() {
         const updatedItems = [...wishlistItems, oceanCurlItem];
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(true);
+        trackActivity('add_to_wishlist', { productName: 'OCEAN CURL' });
       }
       
       // Dispatch event to notify other components
@@ -794,6 +801,8 @@ function OceanCurlSelection() {
       
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
+
+      trackActivity('add_to_cart', { productName: 'OCEAN CURL', quantity });
       
       setAddToBagState('added');
     } catch (error) {

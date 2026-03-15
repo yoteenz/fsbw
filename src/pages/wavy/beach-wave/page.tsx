@@ -6,6 +6,7 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import ImageViewerModal from '../../../components/ImageViewerModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
+import { trackActivity } from '../../../utils/activity';
 
 function BeachWaveSelection() {
   const navigate = useNavigate();
@@ -77,6 +78,10 @@ function BeachWaveSelection() {
     };
   }, []);
 
+  useEffect(() => {
+    trackActivity('view_product', { productName: 'BEACH WAVE', path: location.pathname });
+  }, [location.pathname]);
+
   // Toggle wishlist handler
   const handleToggleWishlist = () => {
     try {
@@ -88,6 +93,7 @@ function BeachWaveSelection() {
         const updatedItems = wishlistItems.filter((item: any) => (item.name || item.productName || '').toUpperCase() !== 'BEACH WAVE');
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(false);
+        trackActivity('remove_from_wishlist', { productName: 'BEACH WAVE' });
       } else {
         // Add to wishlist
         const beachWaveItem = {
@@ -111,6 +117,7 @@ function BeachWaveSelection() {
         const updatedItems = [...wishlistItems, beachWaveItem];
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(true);
+        trackActivity('add_to_wishlist', { productName: 'BEACH WAVE' });
       }
       
       // Dispatch event to notify other components
@@ -818,6 +825,8 @@ function BeachWaveSelection() {
       
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
+
+      trackActivity('add_to_cart', { productName: 'BEACH WAVE', quantity });
       
       setAddToBagState('added');
     } catch (error) {

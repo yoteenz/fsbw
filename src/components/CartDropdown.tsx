@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { CartItem } from '../types/cart';
 import ConfirmationModal from './ConfirmationModal';
+import { trackActivity } from '../utils/activity';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -634,6 +635,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
 
   const confirmRemoveItem = () => {
     if (!itemToRemove) return;
+
+    const removedItem = cartItems.find((item) => item.id === itemToRemove);
+    const productName = removedItem?.name ?? 'Unknown';
     
     if (itemToRemove === viewingDetailsFor) {
       setViewingDetailsFor(null);
@@ -649,6 +653,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     // Dispatch both events to ensure all components are notified
     window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
     window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: updatedItems, count: newCount } }));
+
+    trackActivity('remove_from_cart', { productName });
     
     // Reset state
     setShowRemoveConfirm(false);
