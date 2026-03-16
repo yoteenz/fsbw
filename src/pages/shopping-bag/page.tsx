@@ -1059,10 +1059,27 @@ function ShoppingBagPage() {
                    </span>
                  </div>
 
-                 {/* Body - flex-1 minHeight:0 so scroll area gets remaining height (like wishlist) */}
-                 <div className="flex flex-col" style={{ flex: 1, minHeight: 0, marginTop: '4.8px', overflow: 'hidden' }}>
-                   {/* Cart Items - scrollable; like wishlist: flex-1 minHeight:0 overflowY:auto, paddingBottom so last item not cut off */}
-                   <div className={`flex flex-col justify-start items-start gap-0 ${cartItems.length > 1 ? 'overflow-y-auto' : ''}`} style={{ flex: 1, minHeight: 0, scrollBehavior: 'smooth', width: '100%', marginTop: cartItems.length === 1 ? '4.8px' : '4.8px', paddingTop: 0, paddingBottom: cartItems.length > 1 ? '16px' : '0' }}>
+                 {/* Loyalty points line - same position and styling as Saved for Later stock line (top, below header) */}
+                 {cartItems.length > 0 && (
+                   <p className="text-center w-full flex-shrink-0" style={{ marginTop: '10px', marginBottom: '6px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                     {isSignedIn ? (
+                       (() => {
+                         const basePoints = Math.round(pointsEligibleAmount);
+                         const multiplier = getPointsMultiplierForUser();
+                         const actualPoints = Math.round(basePoints * multiplier);
+                         const punctuation = actualPoints === 0 ? '.' : '!';
+                         return <>YOU&apos;RE EARNING <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{actualPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span> LOYALTY POINTS WITH THIS ORDER{punctuation}</>;
+                       })()
+                     ) : (
+                       <>SIGN IN TO EARN LOYALTY POINTS FOR THIS ORDER.</>
+                     )}
+                   </p>
+                 )}
+
+                 {/* Body - flex-1 minHeight:0; single 4.8px below loyalty line to match saved-for-later spacing */}
+                 <div className="flex flex-col" style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+                   {/* Cart Items - scrollable; paddingTop 4.8px matches saved card spacing below status line */}
+                   <div className={`flex flex-col justify-start items-start gap-0 ${cartItems.length > 1 ? 'overflow-y-auto' : ''}`} style={{ flex: 1, minHeight: 0, scrollBehavior: 'smooth', width: '100%', paddingTop: '4.8px', paddingBottom: cartItems.length > 1 ? '16px' : '0' }}>
                      {cartItems.length === 0 ? (
                        <div style={{ 
                          flex: 1,
@@ -1426,23 +1443,6 @@ function ShoppingBagPage() {
                    </div>
                  </div>
 
-                 {/* Loyalty points line - above black border (like checkout); Futura Book, points in red only */}
-                 {cartItems.length > 0 && (
-                   <p className="text-center w-full flex-shrink-0" style={{ flexShrink: 0, marginTop: '0', marginBottom: '0', fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
-                     {isSignedIn ? (
-                       (() => {
-                         const basePoints = Math.round(pointsEligibleAmount);
-                         const multiplier = getPointsMultiplierForUser();
-                         const actualPoints = Math.round(basePoints * multiplier);
-                         const punctuation = actualPoints === 0 ? '.' : '!';
-                         return <>YOU'RE EARNING <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{actualPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span> LOYALTY POINTS WITH THIS ORDER{punctuation}</>;
-                       })()
-                     ) : (
-                       <>SIGN IN TO EARN LOYALTY POINTS FOR THIS ORDER.</>
-                     )}
-                   </p>
-                 )}
-
                  {/* Subtotal - Fixed at bottom; match Saved for Later spacing above (pt-1 when 2+, same inner margin/padding) */}
                  {cartItems.length > 0 && (
                    <div className={`overflow-hidden mt-auto flex-shrink-0 ${cartItems.length === 1 ? '' : 'pt-1'}`}>
@@ -1575,10 +1575,10 @@ function ShoppingBagPage() {
                 );
               })()}
 
-              {/* Body - flex-1 minHeight:0 so scroll area gets remaining height (like wishlist) */}
-              <div className="flex flex-col" style={{ flex: savedForLater.length > 1 ? 1 : undefined, minHeight: savedForLater.length > 1 ? 0 : undefined, marginTop: '4.8px', overflow: 'hidden' }}>
-                {/* Saved Items - scrollable; like wishlist: flex-1 minHeight:0 overflowY:auto, paddingBottom so last item not cut off */}
-                <div className={`flex flex-col justify-start items-start gap-0 ${savedForLater.length > 1 ? 'overflow-y-auto' : ''}`} style={{ flex: savedForLater.length > 1 ? 1 : undefined, minHeight: savedForLater.length > 1 ? 0 : undefined, scrollBehavior: 'smooth', width: '100%', marginTop: '4.8px', paddingBottom: savedForLater.length > 1 ? '16px' : '0' }}>
+              {/* Body - flex-1 minHeight:0 so scroll area gets remaining height; single 4.8px below stock line to match wishlist */}
+              <div className="flex flex-col" style={{ flex: savedForLater.length > 1 ? 1 : undefined, minHeight: savedForLater.length > 1 ? 0 : undefined, overflow: 'hidden' }}>
+                {/* Saved Items - scrollable; paddingTop 4.8px matches wishlist spacing below stock line */}
+                <div className={`flex flex-col justify-start items-start gap-0 ${savedForLater.length > 1 ? 'overflow-y-auto' : ''}`} style={{ flex: savedForLater.length > 1 ? 1 : undefined, minHeight: savedForLater.length > 1 ? 0 : undefined, scrollBehavior: 'smooth', width: '100%', paddingTop: '4.8px', paddingBottom: savedForLater.length > 1 ? '16px' : '0' }}>
                   {savedForLater.map((item, index) => {
                   const itemId = item.id || `saved-item-${index}`;
                   const itemName = item.name || 'NOIR';

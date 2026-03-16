@@ -633,10 +633,13 @@ function PaymentPage() {
                   height: 'calc(100vh * 520 / 745)',
                   minHeight: 'calc(100vh * 520 / 745)',
                   maxHeight: 'calc(100vh * 520 / 745)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  overflow: 'hidden',
                   ...(showAddPaymentForm && { paddingBottom: '24px' })
                 }}
               >
-                <div className="account-payment-card-header flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
+                <div className="account-payment-card-header flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px', flexShrink: 0 }}>
                   <h2
                     style={{
                       fontFamily: '"Futura PT Medium"',
@@ -651,7 +654,7 @@ function PaymentPage() {
                   </h2>
                   <img src="/assets/payment-icon.svg?v=2" alt="" className="account-payment-header-icon" style={{ width: 20, height: 20, opacity: 1 }} />
                 </div>
-                <div className="account-payment-card-fields">
+                <div className="account-payment-card-fields" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
                 {showAddPaymentForm ? (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <div>
@@ -762,10 +765,11 @@ function PaymentPage() {
                 ) : (
                   <>
                     {paymentList.length === 0 ? (
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(510px - 60px)' }}>
-                        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#808080', margin: 0, textTransform: 'uppercase', textAlign: 'center' }}>
-                          YOU DON'T HAVE ANY PAYMENT METHODS ON FILE.
-                        </p>
+                      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '40px 20px', color: '#000' }}>
+                        <p
+                          style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}
+                          dangerouslySetInnerHTML={{ __html: "YOU DON'T HAVE A PAYMENT METHOD ON FILE.<br>ADD A NEW ONE BELOW!" }}
+                        />
                       </div>
                     ) : (
                       paymentList.map((entry, i) => renderPaymentRow(entry, i))
@@ -791,7 +795,7 @@ function PaymentPage() {
                       marginTop: '-5px'
                     }}
                   >
-                    SAVE PAYMENT
+                    SAVE CARD
                   </button>
                   <button
                     type="button"
@@ -827,7 +831,7 @@ function PaymentPage() {
                     marginTop: '-5px'
                   }}
                 >
-                  ADD PAYMENT
+                  ADD NEW CARD
                 </button>
               )}
             </div>

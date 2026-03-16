@@ -525,7 +525,7 @@ export function getMockOrdersForClient(client: any): MockOrder[] {
 }
 
 const DETAILS_TABS = ['activity', 'orders', 'appointments', 'messages'] as const;
-const PERSONAL_SECTION_TABS = ['personal', 'cart', 'wishlist'] as const;
+const PERSONAL_SECTION_TABS = ['details', 'cart', 'wishlist'] as const;
 
 const MAYA_OWEN_MOCK_EMAIL = 'mock13@test.com';
 
@@ -592,7 +592,7 @@ export default function AdminClients() {
   const [adminCartByUserId, setAdminCartByUserId] = useState<Record<string, unknown[]>>({});
   const [adminWishlistByUserId, setAdminWishlistByUserId] = useState<Record<string, unknown[]>>({});
   const [adminActivityByUserId, setAdminActivityByUserId] = useState<Record<string, Array<{ id: string; eventType: string; payload?: unknown; createdAt: string }>>>({});
-  const [personalSectionTab, setPersonalSectionTab] = useState<typeof PERSONAL_SECTION_TABS[number]>('personal');
+  const [personalSectionTab, setPersonalSectionTab] = useState<typeof PERSONAL_SECTION_TABS[number]>('details');
   const [exportingCsv, setExportingCsv] = useState(false);
 
   // Sync selectedClientEmail from URL (e.g. when redirected from /admin/clients/account?email=...)
@@ -616,7 +616,7 @@ export default function AdminClients() {
     setShowInvitesPopup(false);
   }, [selectedClientEmail]);
   useEffect(() => {
-    setPersonalSectionTab('personal');
+    setPersonalSectionTab('details');
   }, [selectedClientEmail]);
 
   const loadData = useCallback(() => {
@@ -1408,14 +1408,14 @@ export default function AdminClients() {
                         <div className="bg-white border border-gray-200 p-4 mb-6">
                           <div className="mb-4" style={{ display: 'grid', gridTemplateColumns: '1fr 72px', alignItems: 'baseline', gap: '2px 0' }}>
                             <p style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px', margin: 0 }}>{selectedReferralCode}</p>
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'flex-start', width: '100%', boxSizing: 'border-box' }}>
                               <span
                                 className="inline-block px-3 py-1 text-xs rounded"
                                 style={{
                                   backgroundColor: selectedReferralStatus === 'ACTIVE' ? 'rgba(235, 28, 36, 0.15)' : '#f3f4f6',
                                   color: selectedReferralStatus === 'ACTIVE' ? '#EB1C24' : '#808080',
                                   transform: 'scale(0.8)',
-                                  transformOrigin: 'top center',
+                                  transformOrigin: 'top right',
                                 }}
                               >
                                 {selectedReferralStatus}
@@ -1424,7 +1424,7 @@ export default function AdminClients() {
                             {(() => {
                               const hasNewsletter = selectedClient && isClientNewsletterSubscribed(selectedClient);
                               const invitesCell = (
-                                <div style={{ width: '100%', textAlign: 'center', paddingTop: '2px' }}>
+                                <div style={{ width: '100%', textAlign: 'right', paddingTop: '2px' }}>
                                   {selectedInvitesCount >= 1 ? (
                                     <button
                                       type="button"
@@ -1437,7 +1437,7 @@ export default function AdminClients() {
                                         margin: 0,
                                         padding: 0,
                                         lineHeight: 1.2,
-                                        textAlign: 'center',
+                                        textAlign: 'right',
                                         display: 'block',
                                         width: '100%',
                                       }}
@@ -1445,7 +1445,7 @@ export default function AdminClients() {
                                       {selectedInvitesCount === 1 ? '1 INVITE' : `${selectedInvitesCount} INVITES`}
                                     </button>
                                   ) : (
-                                    <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: 0, lineHeight: 1.2, textAlign: 'center' }}>
+                                    <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: 0, lineHeight: 1.2, textAlign: 'right' }}>
                                       0 INVITES
                                     </p>
                                   )}
@@ -1456,27 +1456,25 @@ export default function AdminClients() {
                                   return (
                                     <>
                                       <p style={{ fontFamily: selectedTierDisplay.label === 'Silver tier' ? '"Futura PT Demi"' : '"Futura PT Medium"', color: selectedTierDisplay.color, fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedTierDisplay.label}</p>
-                                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>{invitesCell}</div>
-                                      <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedMembershipDuration}</p>
-                                      <div />
-                                      {selectedClient && isClientNewsletterSubscribed(selectedClient) && (
-                                        <>
-                                          <div />
-                                          <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, marginTop: '2px', textAlign: 'center' }}>NEWSLETTER</p>
-                                        </>
-                                      )}
+                                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', width: '100%', boxSizing: 'border-box' }}>{invitesCell}</div>
+                                      <p style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedMembershipDuration}</p>
+                                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'flex-start', width: '100%', boxSizing: 'border-box' }}>
+                                        {selectedClient && isClientNewsletterSubscribed(selectedClient) && (
+                                          <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, marginTop: '2px', textAlign: 'right', width: '100%' }}>NEWSLETTER</p>
+                                        )}
+                                      </div>
                                     </>
                                   );
                                 }
                                 return (
                                   <>
                                     <p style={{ fontFamily: selectedTierDisplay.label === 'Silver tier' ? '"Futura PT Demi"' : '"Futura PT Medium"', color: selectedTierDisplay.color, fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedTierDisplay.label}</p>
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>{invitesCell}</div>
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', width: '100%' }}>{invitesCell}</div>
+                                    <div />
                                     {selectedClient && isClientNewsletterSubscribed(selectedClient) && (
-                                      <>
-                                        <div />
-                                        <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, marginTop: '2px', textAlign: 'center' }}>NEWSLETTER</p>
-                                      </>
+                                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'flex-start', width: '100%' }}>
+                                        <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, marginTop: '2px', textAlign: 'right', width: '100%' }}>NEWSLETTER</p>
+                                      </div>
                                     )}
                                   </>
                                 );
@@ -1484,10 +1482,10 @@ export default function AdminClients() {
                               return (
                                 <>
                                   <p style={{ fontFamily: selectedTierDisplay.label === 'Silver tier' ? '"Futura PT Demi"' : '"Futura PT Medium"', color: selectedTierDisplay.color, fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedTierDisplay.label}</p>
-                                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>{invitesCell}</div>
+                                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', width: '100%', boxSizing: 'border-box' }}>{invitesCell}</div>
                                   {selectedMembershipDuration && (
                                     <>
-                                      <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedMembershipDuration}</p>
+                                      <p style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '10px', margin: 0, marginTop: '2px' }}>{selectedMembershipDuration}</p>
                                       <div />
                                     </>
                                   )}
@@ -1497,15 +1495,15 @@ export default function AdminClients() {
                           </div>
                           <div className="grid grid-cols-3 gap-4 text-center" style={{ paddingTop: '10px' }}>
                               <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{selectedTotalOrders}</p>
+                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '13px' }}>{selectedTotalOrders}</p>
                                 <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>ORDERS</p>
                               </div>
                               <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>${selectedTotalSpent.toLocaleString()}</p>
+                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '13px' }}>${selectedTotalSpent.toLocaleString()}</p>
                                 <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>TOTAL SPENT</p>
                               </div>
                               <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{selectedMembershipType}</p>
+                                <p className="font-bold" style={{ color: (selectedMembershipType || '').toUpperCase() === 'PREMIUM' ? '#000000' : '#808080', fontFamily: '"Futura PT Book"', fontSize: '13px' }}>{selectedMembershipType}</p>
                                 <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>MEMBERSHIP</p>
                               </div>
                             </div>
@@ -1726,7 +1724,7 @@ export default function AdminClients() {
                             </div>
                           );
                         })()}
-                        {/* Personal section: Personal | Cart | Wishlist tabs */}
+                        {/* Client details section: DETAILS | Cart | Wishlist tabs */}
                         <div className="bg-white border border-gray-200 p-4 mb-6">
                           <div className="flex justify-center gap-6 mb-4">
                             {PERSONAL_SECTION_TABS.map((tab) => (
@@ -1757,11 +1755,11 @@ export default function AdminClients() {
                               </button>
                             ))}
                           </div>
-                          {personalSectionTab === 'personal' && (
+                          {personalSectionTab === 'details' && (
                             <div className="flex flex-col gap-y-[9px] text-sm">
                               <div className="flex justify-between">
                                 <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>JOIN DATE:</span>
-                                <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px' }}>{selectedJoinDate}</span>
+                                <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px' }}>{selectedJoinDate}</span>
                               </div>
                               <div className="flex justify-between">
                                 <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>EMAIL:</span>
@@ -1769,7 +1767,7 @@ export default function AdminClients() {
                               </div>
                               <div className="flex justify-between">
                                 <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>BIRTHDAY:</span>
-                                <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px' }}>{selectedBirthday}</span>
+                                <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px' }}>{selectedBirthday}</span>
                               </div>
                               <div className="flex justify-between">
                                 <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>PHONE:</span>
@@ -1826,7 +1824,7 @@ export default function AdminClients() {
                             const items = (id ? adminCartByUserId[id] : null) ?? [];
                             const list = Array.isArray(items) ? items : [];
                             return list.length === 0 ? (
-                              <p className="text-center py-4 text-sm text-gray-500" style={{ fontFamily: '"Futura PT Medium"' }}>CART IS EMPTY</p>
+                              <p className="text-center py-4" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}>THIS CART IS EMPTY.</p>
                             ) : (
                               <div className="space-y-2">
                                 {list.map((item: any, i: number) => (
@@ -1843,7 +1841,7 @@ export default function AdminClients() {
                             const items = (id ? adminWishlistByUserId[id] : null) ?? [];
                             const list = Array.isArray(items) ? items : [];
                             return list.length === 0 ? (
-                              <p className="text-center py-4 text-sm text-gray-500" style={{ fontFamily: '"Futura PT Medium"' }}>WISHLIST IS EMPTY</p>
+                              <p className="text-center py-4" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}>THIS WISHLIST IS EMPTY.</p>
                             ) : (
                               <div className="space-y-2">
                                 {list.map((item: any, i: number) => (
@@ -1927,7 +1925,7 @@ export default function AdminClients() {
                                         <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '11px', color: '#000', margin: 0 }}>
                                           {formatEventLabel(evt.eventType, payload)}
                                         </p>
-                                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: 0 }}>{createdAt}</p>
+                                        <p style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#EB1C24', margin: 0 }}>{createdAt}</p>
                                         {payload && Object.keys(payload).length > 0 && (
                                           <pre className="text-left text-xs text-gray-500 mt-1 overflow-x-auto whitespace-pre-wrap break-words" style={{ fontFamily: '"Futura PT Book"', margin: 0 }}>{JSON.stringify(payload)}</pre>
                                         )}
@@ -3006,7 +3004,7 @@ export default function AdminClients() {
             </div>
             <div className="overflow-y-auto flex-1 min-h-0" style={{ fontSize: '10px' }}>
               {invitesDetailRows.length === 0 ? (
-                <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', margin: 0, textAlign: 'center', padding: '16px 0', textTransform: 'uppercase' }}>NO INVITES YET.</p>
+                <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', margin: 0, textAlign: 'center', padding: '16px 0', textTransform: 'uppercase' }}>THERE ARE NO INVITES YET.</p>
               ) : (
                 <table className="w-full" style={{ borderCollapse: 'collapse', fontFamily: '"Futura PT Book"' }}>
                   <thead>

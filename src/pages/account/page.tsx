@@ -1600,7 +1600,6 @@ function AccountPage() {
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
                     onClick={() => {
-                      // Check if user is premium member
                       try {
                         const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
                         if (isSignedIn) {
@@ -1608,19 +1607,13 @@ function AccountPage() {
                           if (currentUser) {
                             const user = JSON.parse(currentUser);
                             const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
-                            if (isPremium) {
-                              navigate('/'); // Lobby for premium members
-                            } else {
-                              navigate('/home/shop'); // Shop for standard/non-members
-                            }
-                          } else {
-                            navigate('/home/shop'); // Default to shop if not signed in
+                            navigate(isPremium ? '/' : '/home/shop');
+                            return;
                           }
-                        } else {
-                          navigate('/home/shop'); // Default to shop if not signed in
                         }
-                      } catch (e) {
-                        navigate('/home/shop'); // Default to shop on error
+                        navigate('/home/shop');
+                      } catch {
+                        navigate('/home/shop');
                       }
                     }}
                   >

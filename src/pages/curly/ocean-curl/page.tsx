@@ -896,7 +896,23 @@ function OceanCurlSelection() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/build-a-wig')}
+                    onClick={() => {
+                    try {
+                      const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
+                      if (isSignedIn) {
+                        const currentUser = localStorage.getItem('currentUser');
+                        if (currentUser) {
+                          const user = JSON.parse(currentUser);
+                          const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
+                          navigate(isPremium ? '/' : '/home/shop');
+                          return;
+                        }
+                      }
+                      navigate('/home/shop');
+                    } catch {
+                      navigate('/home/shop');
+                    }
+                  }}
                   >
                     HOME &gt;
                   </span>{' '}
@@ -1908,7 +1924,7 @@ function OceanCurlSelection() {
                         SINGLE STRAND KNOTS ARE LIGHTLY BLEACHED FOR A SEAMLESS, READY TO WEAR APPLICATION.
                       </p>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        UNIT COMES CO-WASHED IN ITS NATURAL STATE. CAN BE BLEACHED, DYED OR COLORED.
+                        UNIT COMES UNCUSTOMIZED IN ITS NATURAL STATE. CAN BE BLEACHED, DYED OR COLORED.
                       </p>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         USE 3D WIG GENERATOR TO CUSTOMIZE UNIT AS PICTURED, FOR MEMBERS ONLY.

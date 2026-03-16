@@ -1395,13 +1395,16 @@ function CheckoutPage() {
   const discount = appliedDiscount;
   // Gift card discount should NOT be applied to subscription upgrades. When applied, this is shown as "DIGITAL CASH" (account balance). This balance includes tier welcome discount (Silver $10, Red $40, Black $80) credited when the user reaches each spend tier. If a gift card code is applied instead, that replaces this line (label "GIFT CARD"); both cannot be applied together.
   const giftCardDiscount = isSubscriptionUpgrade ? 0 : appliedGiftCardBalance; // Automatically applied gift card balance (digital cash)
-  // Voucher discount: subtract add-on price for each voucher type (uses stored price or fallback so red (-$120) etc. always shows)
+  // Voucher discount: one voucher at a time, cannot combine. Subtract add-on price for the single voucher (uses stored price or fallback so red (-$120) etc. always shows).
   const voucherDiscount = useMemo(() => {
     if (!voucherLineApplicable) return 0;
+    const normalized: Record<string, number> = {};
+    const firstWithQty = Object.keys(VOUCHER_TYPE_CONFIG).find((type) => (appliedVoucherQuantities[type] || 0) > 0);
+    Object.keys(VOUCHER_TYPE_CONFIG).forEach((type) => { normalized[type] = type === firstWithQty ? Math.min(1, appliedVoucherQuantities[type] || 0) : 0; });
     const isPhysical = (item: any) => item.name !== 'GIFT CARD' && item.type !== 'gift-card' && item.type !== 'digital';
     let total = 0;
     Object.keys(VOUCHER_TYPE_CONFIG).forEach((type) => {
-      const vouchersToUse = appliedVoucherQuantities[type] || 0;
+      const vouchersToUse = normalized[type] || 0;
       if (vouchersToUse <= 0) return;
       const { optionKey, getDefault } = VOUCHER_TYPE_CONFIG[type];
       let left = vouchersToUse;
@@ -1800,7 +1803,23 @@ function CheckoutPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/build-a-wig')}
+                    onClick={() => {
+                      try {
+                        const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
+                        if (isSignedIn) {
+                          const currentUser = localStorage.getItem('currentUser');
+                          if (currentUser) {
+                            const user = JSON.parse(currentUser);
+                            const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
+                            navigate(isPremium ? '/' : '/home/shop');
+                            return;
+                          }
+                        }
+                        navigate('/home/shop');
+                      } catch {
+                        navigate('/home/shop');
+                      }
+                    }}
                   >
                     HOME &gt;
                   </span>{' '}
@@ -4488,10 +4507,15 @@ function CheckoutPage() {
                           onClick={() => {
                             const next: Record<string, number> = { ...appliedVoucherQuantities };
                             Object.keys(availableVouchersByType).forEach(t => { if (!cartVoucherApplicability[t]) next[t] = 0; });
+                            const total = Object.values(next).reduce((s, n) => s + (n || 0), 0);
+                            if (total > 1) {
+                              const first = Object.keys(next).find(t => (next[t] || 0) > 0);
+                              Object.keys(next).forEach(t => { next[t] = t === first ? 1 : 0; });
+                            }
                             setVoucherModalQuantities(next);
                             setShowVoucherModal(true);
                           }}
-                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); const next: Record<string, number> = { ...appliedVoucherQuantities }; Object.keys(availableVouchersByType).forEach(t => { if (!cartVoucherApplicability[t]) next[t] = 0; }); setVoucherModalQuantities(next); setShowVoucherModal(true); } }}
+                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); const next: Record<string, number> = { ...appliedVoucherQuantities }; Object.keys(availableVouchersByType).forEach(t => { if (!cartVoucherApplicability[t]) next[t] = 0; }); const total = Object.values(next).reduce((s, n) => s + (n || 0), 0); if (total > 1) { const first = Object.keys(next).find(t => (next[t] || 0) > 0); Object.keys(next).forEach(t => { next[t] = t === first ? 1 : 0; }); } setVoucherModalQuantities(next); setShowVoucherModal(true); } }}
                           style={{ fontFamily: '"Futura PT Demi"', color: '#808080', cursor: 'pointer' }}
                         >
                           {Object.entries(appliedVoucherQuantities).filter(([type, n]) => n > 0 && cartVoucherApplicability[type]).map(([type, n]) => `${n}X ${type}`).join(', ') || 'NONE'}
@@ -4501,6 +4525,11 @@ function CheckoutPage() {
                           onClick={() => {
                           const next: Record<string, number> = { ...appliedVoucherQuantities };
                           Object.keys(availableVouchersByType).forEach(t => { if (!cartVoucherApplicability[t]) next[t] = 0; });
+                          const total = Object.values(next).reduce((s, n) => s + (n || 0), 0);
+                          if (total > 1) {
+                            const first = Object.keys(next).find(t => (next[t] || 0) > 0);
+                            Object.keys(next).forEach(t => { next[t] = t === first ? 1 : 0; });
+                          }
                           setVoucherModalQuantities(next);
                           setShowVoucherModal(true);
                         }}
@@ -5474,13 +5503,18 @@ function CheckoutPage() {
             <h3 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', fontWeight: 500, marginBottom: '16px', color: '#EB1C24', textTransform: 'uppercase', textAlign: 'center' }}>
               VOUCHER
             </h3>
-            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', marginBottom: '16px', textTransform: 'uppercase' }}>
-              Choose how many of each voucher to apply to this order.
+            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', marginBottom: '8px', textTransform: 'uppercase' }}>
+              You can only use 1 voucher at a time. Vouchers cannot be combined with other vouchers.
+            </p>
+            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', marginBottom: '16px', textTransform: 'uppercase' }}>
+              Choose one voucher to apply to this order.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
               {Object.entries(availableVouchersByType).map(([type, available]) => {
                 const inCart = cartVoucherApplicability[type] === true;
                 const current = inCart ? (voucherModalQuantities[type] ?? 0) : 0;
+                const totalVouchersSelected = Object.values(voucherModalQuantities).reduce((s, n) => s + (n || 0), 0);
+                const canAddThis = inCart && available >= 1 && current < 1 && totalVouchersSelected === 0;
                 return (
                 <div key={type} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                   <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', textTransform: 'uppercase' }}>
@@ -5493,7 +5527,7 @@ function CheckoutPage() {
                   <div className="flex items-center">
                     <button
                       type="button"
-                      onClick={() => inCart && setVoucherModalQuantities(prev => ({ ...prev, [type]: Math.max(0, (prev[type] ?? 0) - 1) }))}
+                      onClick={() => inCart && setVoucherModalQuantities(prev => ({ ...prev, [type]: 0 }))}
                       disabled={!inCart || current <= 0}
                       className={(!inCart || current <= 0) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                       style={{
@@ -5540,9 +5574,13 @@ function CheckoutPage() {
                     </div>
                     <button
                       type="button"
-                      onClick={() => inCart && setVoucherModalQuantities(prev => ({ ...prev, [type]: Math.min(available, (prev[type] ?? 0) + 1) }))}
-                      disabled={!inCart || current >= (inCart ? available : 0)}
-                      className={(!inCart || current >= available) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                      onClick={() => inCart && setVoucherModalQuantities(prev => {
+                        const next: Record<string, number> = {};
+                        Object.keys(availableVouchersByType).forEach(t => { next[t] = t === type ? 1 : 0; });
+                        return next;
+                      })}
+                      disabled={!canAddThis}
+                      className={!canAddThis ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                       style={{
                         borderTop: '1.3px solid black',
                         borderRight: '1.3px solid black',
@@ -5571,9 +5609,13 @@ function CheckoutPage() {
               <button
                 type="button"
                 onClick={() => {
-                  const next = Object.fromEntries(
+                  const raw = Object.fromEntries(
                     Object.keys(availableVouchersByType).map(type => [type, cartVoucherApplicability[type] ? (voucherModalQuantities[type] ?? 0) : 0])
                   );
+                  const total = Object.values(raw).reduce((s, n) => s + (n || 0), 0);
+                  const next = total > 1
+                    ? (() => { const first = Object.keys(raw).find(t => (raw[t] || 0) > 0); return Object.fromEntries(Object.keys(raw).map(t => [t, t === first ? 1 : 0])); })()
+                    : raw;
                   setAppliedVoucherQuantities(next);
                   setShowVoucherModal(false);
                 }}

@@ -1765,7 +1765,23 @@ function AffiliatePage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/build-a-wig')}
+                    onClick={() => {
+                    try {
+                      const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
+                      if (isSignedIn) {
+                        const currentUser = localStorage.getItem('currentUser');
+                        if (currentUser) {
+                          const user = JSON.parse(currentUser);
+                          const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
+                          navigate(isPremium ? '/' : '/home/shop');
+                          return;
+                        }
+                      }
+                      navigate('/home/shop');
+                    } catch {
+                      navigate('/home/shop');
+                    }
+                  }}
                   >
                     HOME &gt;
                   </span>{' '}
@@ -3847,20 +3863,11 @@ function AffiliatePage() {
                     </div>
                     
                     {deliveredOrders.length === 0 ? (
-                      <div className="flex flex-col justify-center items-center my-2 flex-shrink-0" style={{ minHeight: '200px' }}>
+                      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '40px 20px', color: '#000' }}>
                         <p
-                          style={{
-                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                            fontSize: '11px',
-                            color: '#808080',
-                            margin: 0,
-                            textTransform: 'uppercase',
-                            textAlign: 'center',
-                            lineHeight: '1.4'
-                          }}
-                        >
-                          <>YOU DON'T HAVE ANY ORDERS ELIGIBLE FOR CONTENT YET.<br />CHECK BACK SOON.</>
-                        </p>
+                          style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}
+                          dangerouslySetInnerHTML={{ __html: "YOU DON'T HAVE ANY ORDERS ELIGIBLE FOR CONTENT.<br>CHECK BACK SOON!" }}
+                        />
                       </div>
                     ) : (
                       <div className="flex flex-col justify-start items-start gap-4 my-2 flex-shrink-0">

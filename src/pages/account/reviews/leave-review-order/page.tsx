@@ -854,9 +854,10 @@ function LeaveReviewOrderPage() {
               )}
 
               {itemCount === 0 && (
-                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: BRAND_GRAY, margin: 0, textAlign: 'center' }}>
-                  No items eligible for review.
-                </p>
+                <p
+                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', margin: 0, textTransform: 'uppercase', textAlign: 'center' }}
+                  dangerouslySetInnerHTML={{ __html: "YOU DON'T HAVE ANY ITEMS ELIGIBLE FOR REVIEWS YET.<br>CHECK BACK SOON!" }}
+                />
               )}
             </div>
 

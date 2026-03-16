@@ -681,10 +681,11 @@ function ReviewsPage() {
                   {activeTab === 'SHOP' && (
                     <>
                       {displayedShopReviews.length === 0 ? (
-                        <div className="flex flex-col justify-center items-center my-8">
-                          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#808080', margin: 0, textTransform: 'uppercase', fontWeight: '500' }}>
-                            NO SHOP REVIEWS
-                          </p>
+                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '40px 20px', color: '#000' }}>
+                          <p
+                            style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}
+                            dangerouslySetInnerHTML={{ __html: "YOU DON'T HAVE ANY SHOP REVIEWS YET.<br>CHECK BACK SOON!" }}
+                          />
                         </div>
                       ) : (
                         displayedShopReviews.map(renderReviewRow)
@@ -694,10 +695,11 @@ function ReviewsPage() {
                   {activeTab === 'TOOLS' && (
                     <>
                       {displayedToolReviews.length === 0 ? (
-                        <div className="flex flex-col justify-center items-center my-8">
-                          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#808080', margin: 0, textTransform: 'uppercase', fontWeight: '500' }}>
-                            NO TOOL REVIEWS
-                          </p>
+                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '40px 20px', color: '#000' }}>
+                          <p
+                            style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}
+                            dangerouslySetInnerHTML={{ __html: "YOU DON'T HAVE ANY TOOL REVIEWS YET.<br>CHECK BACK SOON!" }}
+                          />
                         </div>
                       ) : (
                         displayedToolReviews.map(renderReviewRow)

@@ -127,8 +127,8 @@ export default function AdminClientsAccount() {
                         <p className="text-xs text-gray-600">TOTAL SPENT</p>
                       </div>
                       <div>
-                        <p className="text-lg font-bold" style={{ color: '#EB1C24' }}>{membershipType}</p>
-                        <p className="text-xs text-gray-600">MEMBERSHIP</p>
+                        <p className="text-lg font-bold" style={{ color: membershipType === 'PREMIUM' ? '#000000' : '#808080' }}>{membershipType}</p>
+                        <p className="text-xs" style={{ color: '#000000' }}>MEMBERSHIP</p>
                       </div>
                     </div>
                   </div>
@@ -169,7 +169,7 @@ export default function AdminClientsAccount() {
                           </div>
                           <div className="flex justify-between">
                             <span className="text-gray-600">BIRTHDAY:</span>
-                            <span className="font-medium">{formatBirthday(client)}</span>
+                            <span className="font-medium" style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24' }}>{formatBirthday(client)}</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-gray-600">PHONE:</span>
@@ -181,7 +181,7 @@ export default function AdminClientsAccount() {
                           </div>
                           <div className="flex justify-between">
                             <span className="text-gray-600">JOIN DATE:</span>
-                            <span className="font-medium">{joinDate}</span>
+                            <span className="font-medium" style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24' }}>{joinDate}</span>
                           </div>
                         </div>
                       </div>

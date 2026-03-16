@@ -209,7 +209,23 @@ export default function ViewListsPage() {
             <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               {showMobileMenu ? (
                 <>
-                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => navigate('/build-a-wig')}>
+                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => {
+                    try {
+                      const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
+                      if (isSignedIn) {
+                        const currentUser = localStorage.getItem('currentUser');
+                        if (currentUser) {
+                          const user = JSON.parse(currentUser);
+                          const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
+                          navigate(isPremium ? '/' : '/home/shop');
+                          return;
+                        }
+                      }
+                      navigate('/home/shop');
+                    } catch {
+                      navigate('/home/shop');
+                    }
+                  }}>
                     HOME &gt;
                   </span>{' '}
                   <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>
@@ -426,7 +442,7 @@ export default function ViewListsPage() {
                           </div>
                         </div>
                         {expandedItems.length === 0 ? (
-                          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#666', textAlign: 'center', padding: '24px 0', textTransform: 'uppercase' }}>NO ITEMS IN THIS LIST</p>
+                          <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textAlign: 'center', padding: '24px 0', textTransform: 'uppercase', margin: '0' }}>THERE ARE NO ITEMS IN THIS LIST.</p>
                         ) : expandedViewMode === 'line' ? (
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
                             {expandedItems.map((item: any, index: number) => {

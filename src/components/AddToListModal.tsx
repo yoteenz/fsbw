@@ -290,9 +290,10 @@ export default function AddToListModal({
           {lists.length === 0 ? (
             <p
               style={{
-                fontFamily: '"Futura PT Medium"',
+                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                 fontSize: '11px',
-                color: '#000000',
+                color: '#808080',
+                margin: '0',
                 marginBottom: '8px',
                 textTransform: 'uppercase',
                 textAlign: 'center'

@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
-import { getCurrentUser, isMockDataAccount } from '../../../utils/adminAuth';
+import { getCurrentUser, isMockDataAccount, isAyoteenzAdminAccount } from '../../../utils/adminAuth';
 
 // Add pulsating animation style (recording indicator style)
 const pulsateStyle = `
@@ -83,7 +83,220 @@ function ConciergePage() {
       return '';
     }
   });
-  
+
+  // Slay Challenge: 6-month cycles (Jan–Jun, Jul–Dec). Selection window = last 3 days of cycle.
+  const SLAY_CHALLENGE_CYCLE_MONTHS = 6;
+  const SLAY_CHALLENGE_SELECTION_DAYS = 3;
+  const getSlayChallengeCycleEnd = (): Date => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth(); // 0-11
+    if (month < 6) return new Date(year, 5, 30); // Jun 30
+    return new Date(year, 11, 31); // Dec 31
+  };
+  const getSlayChallengeSelectionStart = (): Date => {
+    const end = getSlayChallengeCycleEnd();
+    const start = new Date(end);
+    start.setDate(start.getDate() - SLAY_CHALLENGE_SELECTION_DAYS + 1);
+    return start;
+  };
+  const isInSlayChallengeSelectionWindow = (): boolean => {
+    const now = new Date();
+    const selectionStart = getSlayChallengeSelectionStart();
+    const cycleEnd = getSlayChallengeCycleEnd();
+    return now >= selectionStart && now <= cycleEnd;
+  };
+  const getNextSlayChallengeCycleLabel = (): string => {
+    const end = getSlayChallengeCycleEnd();
+    const year = end.getFullYear();
+    if (end.getMonth() >= 6) return `${year + 1}-H1`; // after Dec 31 -> next year Jan–Jun
+    return `${year}-H2`; // after Jun 30 -> same year Jul–Dec
+  };
+
+  const [slayChallengeTier1Reward, setSlayChallengeTier1Reward] = useState<'voucher' | '200points' | ''>(() => {
+    try {
+      const saved = localStorage.getItem('slayChallengeTier1Reward');
+      if (saved === 'voucher' || saved === '200points') return saved;
+      // Default: show as if user made selection in time
+      return '200points';
+    } catch (e) { return '200points'; }
+  });
+  const [slayChallengeTier2Reward, setSlayChallengeTier2Reward] = useState<'2xpoints' | '1000points' | ''>(() => {
+    try {
+      const saved = localStorage.getItem('slayChallengeTier2Reward');
+      if (saved === '2xpoints' || saved === '1000points') return saved;
+      // Default: show as if user made selection in time
+      return '1000points';
+    } catch (e) { return '1000points'; }
+  });
+  const [slayChallengeSelectedCycle, setSlayChallengeSelectedCycle] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem('slayChallengeSelectedCycle');
+      if (saved) return saved;
+      // Default: show as if user made selection in time (current cycle = active challenge)
+      const now = new Date();
+      return now.getMonth() < 6 ? `${now.getFullYear()}-H1` : `${now.getFullYear()}-H2`;
+    } catch (e) {
+      const now = new Date();
+      return now.getMonth() < 6 ? `${now.getFullYear()}-H1` : `${now.getFullYear()}-H2`;
+    }
+  });
+  const [slayChallengeTier1Progress, setSlayChallengeTier1Progress] = useState<{ purchase: boolean; review: boolean; post: boolean }>(() => {
+    try {
+      const raw = localStorage.getItem('slayChallengeTier1Progress');
+      if (!raw) return { purchase: false, review: false, post: false };
+      const p = JSON.parse(raw);
+      return { purchase: !!p.purchase, review: !!p.review, post: !!p.post };
+    } catch (e) { return { purchase: false, review: false, post: false }; }
+  });
+  const [slayChallengeTier2Progress, setSlayChallengeTier2Progress] = useState<{ purchase: boolean; review: boolean; socialTag: boolean }>(() => {
+    try {
+      const raw = localStorage.getItem('slayChallengeTier2Progress');
+      if (!raw) return { purchase: false, review: false, socialTag: false };
+      const p = JSON.parse(raw);
+      return { purchase: !!p.purchase, review: !!p.review, socialTag: !!p.socialTag };
+    } catch (e) { return { purchase: false, review: false, socialTag: false }; }
+  });
+
+  const getCurrentSlayChallengeCycleLabel = (): string => {
+    const now = new Date();
+    const year = now.getFullYear();
+    return now.getMonth() < 6 ? `${year}-H1` : `${year}-H2`;
+  };
+  const slayChallengeNextCycleLabel = getNextSlayChallengeCycleLabel();
+  const slayChallengeCurrentCycleLabel = getCurrentSlayChallengeCycleLabel();
+  const slayChallengeInSelectionWindow = isInSlayChallengeSelectionWindow();
+  const slayChallengeHasSelectedForNext = slayChallengeSelectedCycle === slayChallengeNextCycleLabel;
+  const slayChallengeActive = slayChallengeSelectedCycle === slayChallengeCurrentCycleLabel;
+  const slayChallengeTier1Complete = slayChallengeTier1Progress.purchase && slayChallengeTier1Progress.review && slayChallengeTier1Progress.post;
+  const slayChallengeTier2Complete = slayChallengeTier2Progress.purchase && slayChallengeTier2Progress.review && slayChallengeTier2Progress.socialTag;
+
+  // Ayoteenz admin: disable time limit and force stage for testing (selection | selected_waiting | active | closed)
+  const SLAY_CHALLENGE_ADMIN_STAGE_KEY = 'slayChallengeAdminStage';
+  const isSlayChallengeAdmin = isAyoteenzAdminAccount(getCurrentUser());
+  const [slayChallengeAdminStage, setSlayChallengeAdminStage] = useState<string>(() => {
+    try {
+      if (!isAyoteenzAdminAccount(getCurrentUser())) return '';
+      return localStorage.getItem(SLAY_CHALLENGE_ADMIN_STAGE_KEY) || 'selection';
+    } catch (e) { return ''; }
+  });
+  const effectiveInSelectionWindow = isSlayChallengeAdmin && slayChallengeAdminStage
+    ? (slayChallengeAdminStage === 'selection' || slayChallengeAdminStage === 'selected_waiting')
+    : slayChallengeInSelectionWindow;
+  const effectiveHasSelectedForNext = isSlayChallengeAdmin && slayChallengeAdminStage
+    ? slayChallengeAdminStage === 'selected_waiting'
+    : slayChallengeHasSelectedForNext;
+  const effectiveActive = isSlayChallengeAdmin && slayChallengeAdminStage
+    ? slayChallengeAdminStage === 'active'
+    : slayChallengeActive;
+  const effectiveHasSelectedCycle = isSlayChallengeAdmin && slayChallengeAdminStage === 'closed'
+    ? false
+    : !!slayChallengeSelectedCycle;
+  const setSlayChallengeAdminStageAndSave = (stage: string) => {
+    setSlayChallengeAdminStage(stage);
+    try {
+      if (stage) localStorage.setItem(SLAY_CHALLENGE_ADMIN_STAGE_KEY, stage);
+      else localStorage.removeItem(SLAY_CHALLENGE_ADMIN_STAGE_KEY);
+    } catch (_) {}
+  };
+
+  const handleSlayChallengeConfirmSelection = () => {
+    if (!slayChallengeTier1Reward || !slayChallengeTier2Reward) return;
+    try {
+      localStorage.setItem('slayChallengeSelectedCycle', slayChallengeNextCycleLabel);
+      localStorage.setItem('slayChallengeTier1Reward', slayChallengeTier1Reward);
+      localStorage.setItem('slayChallengeTier2Reward', slayChallengeTier2Reward);
+      localStorage.setItem('slayChallengeTier1Progress', JSON.stringify({ purchase: false, review: false, post: false }));
+      localStorage.setItem('slayChallengeTier2Progress', JSON.stringify({ purchase: false, review: false, socialTag: false }));
+      setSlayChallengeSelectedCycle(slayChallengeNextCycleLabel);
+      setSlayChallengeTier1Progress({ purchase: false, review: false, post: false });
+      setSlayChallengeTier2Progress({ purchase: false, review: false, socialTag: false });
+    } catch (e) {
+      console.error('Error saving Slay Challenge selection:', e);
+    }
+  };
+
+  // Persist tier progress when it changes (e.g. from other pages)
+  useEffect(() => {
+    try {
+      localStorage.setItem('slayChallengeTier1Progress', JSON.stringify(slayChallengeTier1Progress));
+      localStorage.setItem('slayChallengeTier2Progress', JSON.stringify(slayChallengeTier2Progress));
+    } catch (_) {}
+  }, [slayChallengeTier1Progress, slayChallengeTier2Progress]);
+
+  // Special Offer: random unit of 6, random premium options, $40 off, 30-day expiration
+  const SPECIAL_OFFER_UNITS = [
+    { id: 'noir', name: 'NOIR', route: '/straight/noir', basePrice: 740, image: '/assets/natural front.png' },
+    { id: 'blanco', name: 'BLANCO', route: '/straight/blanco', basePrice: 820, image: '/assets/2D BLANCO FRONT.png' },
+    { id: 'soft-wave', name: 'SOFT WAVE', route: '/wavy/soft-wave', basePrice: 980, image: '/assets/natural front.png' },
+    { id: 'beach-wave', name: 'BEACH WAVE', route: '/wavy/beach-wave', basePrice: 980, image: '/assets/natural front.png' },
+    { id: 'soft-curl', name: 'SOFT CURL', route: '/curly/soft-curl', basePrice: 900, image: '/assets/natural front.png' },
+    { id: 'ocean-curl', name: 'OCEAN CURL', route: '/curly/ocean-curl', basePrice: 900, image: '/assets/natural front.png' }
+  ] as const;
+  const SPECIAL_OFFER_DISCOUNT = 40;
+  const SPECIAL_OFFER_DAYS = 30;
+  const PREMIUM_OPTION_SETS: Record<string, string[]> = {
+    length: ['18"', '20"', '22"', '24"'],
+    density: ['200%', '250%', '300%'],
+    texture: ['SILKY', 'BODY WAVE', 'CURLY'],
+    lace: ['13X6', '13X4', 'HD LACE'],
+    color: ['OFF BLACK', 'PLATINUM', 'HONEY BLONDE', 'BURGUNDY']
+  };
+  const pickRandom = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+
+  const [specialOffer, setSpecialOffer] = useState<{
+    unitId: string;
+    unitName: string;
+    route: string;
+    originalPrice: number;
+    discountedPrice: number;
+    options: { length?: string; density?: string; texture?: string; lace?: string; color?: string };
+    expiresAt: number;
+  } | null>(() => {
+    try {
+      const raw = localStorage.getItem('specialOffer');
+      if (!raw) return null;
+      const data = JSON.parse(raw);
+      if (data.expiresAt && Date.now() >= data.expiresAt) return null;
+      return data;
+    } catch (e) { return null; }
+  });
+
+  useEffect(() => {
+    if (specialOffer !== null && specialOffer.expiresAt > Date.now()) return;
+    const unit = pickRandom(SPECIAL_OFFER_UNITS);
+    const originalPrice = unit.basePrice + Math.floor(Math.random() * 80);
+    const discountedPrice = originalPrice - SPECIAL_OFFER_DISCOUNT;
+    const options = {
+      length: pickRandom(PREMIUM_OPTION_SETS.length),
+      density: pickRandom(PREMIUM_OPTION_SETS.density),
+      texture: pickRandom(PREMIUM_OPTION_SETS.texture),
+      lace: pickRandom(PREMIUM_OPTION_SETS.lace),
+      color: pickRandom(PREMIUM_OPTION_SETS.color)
+    };
+    const expiresAt = Date.now() + SPECIAL_OFFER_DAYS * 24 * 60 * 60 * 1000;
+    const next = {
+      unitId: unit.id,
+      unitName: unit.name,
+      route: unit.route,
+      originalPrice,
+      discountedPrice: originalPrice - SPECIAL_OFFER_DISCOUNT,
+      options,
+      expiresAt
+    };
+    setSpecialOffer(next);
+    try {
+      localStorage.setItem('specialOffer', JSON.stringify(next));
+    } catch (_) {}
+  }, []);
+
+  const specialOfferDaysLeft = specialOffer
+    ? Math.max(0, Math.ceil((specialOffer.expiresAt - Date.now()) / (24 * 60 * 60 * 1000)))
+    : 0;
+  const specialOfferProgress = specialOffer
+    ? 1 - (specialOffer.expiresAt - Date.now()) / (SPECIAL_OFFER_DAYS * 24 * 60 * 60 * 1000)
+    : 0;
+
   // Check if user is eligible for birthday gift (within 12 months of premium membership start)
   const isEligibleForBirthdayGift = () => {
     try {
@@ -3984,6 +4197,311 @@ function ConciergePage() {
                     VIEW ORDERS
                   </button>
                 </div>
+
+                {/* Slay Challenge Section - red header, gray border, icon */}
+                <div
+                  className="bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
+                  style={{
+                    border: '1.3px solid #9ca3af',
+                    paddingTop: '20px',
+                    paddingLeft: '20px',
+                    paddingRight: '20px',
+                    paddingBottom: '16px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.6)'
+                  }}
+                >
+                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
+                    <h2
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        color: '#EB1C24',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        margin: '0',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      SLAY CHALLENGE
+                    </h2>
+                    <span style={{ display: 'flex', alignItems: 'center' }} aria-hidden>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }}>
+                        <path d="M12 2L13.5 8.5L20 10L14 14L15.5 22L12 18L8.5 22L10 14L4 10L10.5 8.5L12 2Z" fill="currentColor"/>
+                      </svg>
+                    </span>
+                  </div>
+                  {isSlayChallengeAdmin && (
+                    <div style={{ marginBottom: '12px' }}>
+                      <label style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#666', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>Test stage (admin)</label>
+                      <select
+                        value={slayChallengeAdminStage || 'selection'}
+                        onChange={(e) => setSlayChallengeAdminStageAndSave(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '6px 8px',
+                          border: '1px solid #9ca3af',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          textTransform: 'uppercase',
+                          background: '#fff',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <option value="selection">Selection (choose rewards)</option>
+                        <option value="selected_waiting">Selected — waiting for cycle</option>
+                        <option value="active">Active challenge (progress)</option>
+                        <option value="closed">Selection closed</option>
+                      </select>
+                    </div>
+                  )}
+                  <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0 0 12px 0', textTransform: 'uppercase' }}>
+                    Complete tasks in 6 months. Choose your rewards for each tier; tier 2 unlocks after tier 1. You have 3 days before each cycle ends to select your challenge—or wait for the next cycle.
+                  </p>
+                  {effectiveInSelectionWindow && !effectiveHasSelectedForNext && (
+                    <>
+                      <p style={{ fontFamily: '"Futura PT Medium"', color: '#000', fontSize: '10px', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
+                        Select rewards for the next cycle ({slayChallengeNextCycleLabel}):
+                      </p>
+                      <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
+                        Tier 1 — Complete: 1 purchase, 1 content review, 1 post. Reward:
+                      </p>
+                      <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                        <button
+                          type="button"
+                          onClick={() => setSlayChallengeTier1Reward(slayChallengeTier1Reward === 'voucher' ? '' : 'voucher')}
+                          style={{
+                            flex: 1,
+                            height: '32px',
+                            border: slayChallengeTier1Reward === 'voucher' ? '1.3px solid #EB1C24' : '1.3px solid #000',
+                            background: '#FFF',
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '10px',
+                            color: slayChallengeTier1Reward === 'voucher' ? '#EB1C24' : '#000',
+                            textTransform: 'uppercase',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          RANDOM VOUCHER
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSlayChallengeTier1Reward(slayChallengeTier1Reward === '200points' ? '' : '200points')}
+                          style={{
+                            flex: 1,
+                            height: '32px',
+                            border: slayChallengeTier1Reward === '200points' ? '1.3px solid #EB1C24' : '1.3px solid #000',
+                            background: '#FFF',
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '10px',
+                            color: slayChallengeTier1Reward === '200points' ? '#EB1C24' : '#000',
+                            textTransform: 'uppercase',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          200 LOYALTY PTS
+                        </button>
+                      </div>
+                      <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
+                        Tier 2 — Complete: 1 purchase, 1 content review, 1 social tag. Reward:
+                      </p>
+                      <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                        <button
+                          type="button"
+                          onClick={() => setSlayChallengeTier2Reward(slayChallengeTier2Reward === '2xpoints' ? '' : '2xpoints')}
+                          style={{
+                            flex: 1,
+                            height: '32px',
+                            border: slayChallengeTier2Reward === '2xpoints' ? '1.3px solid #EB1C24' : '1.3px solid #000',
+                            background: '#FFF',
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '10px',
+                            color: slayChallengeTier2Reward === '2xpoints' ? '#EB1C24' : '#000',
+                            textTransform: 'uppercase',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          2X PTS NEXT PURCHASE
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSlayChallengeTier2Reward(slayChallengeTier2Reward === '1000points' ? '' : '1000points')}
+                          style={{
+                            flex: 1,
+                            height: '32px',
+                            border: slayChallengeTier2Reward === '1000points' ? '1.3px solid #EB1C24' : '1.3px solid #000',
+                            background: '#FFF',
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '10px',
+                            color: slayChallengeTier2Reward === '1000points' ? '#EB1C24' : '#000',
+                            textTransform: 'uppercase',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          1K LOYALTY PTS
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleSlayChallengeConfirmSelection}
+                        disabled={!slayChallengeTier1Reward || !slayChallengeTier2Reward}
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          border: '1.3px solid #000',
+                          background: (!slayChallengeTier1Reward || !slayChallengeTier2Reward) ? '#e5e7eb' : '#FFF',
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '11px',
+                          color: '#EB1C24',
+                          textTransform: 'uppercase',
+                          cursor: (!slayChallengeTier1Reward || !slayChallengeTier2Reward) ? 'not-allowed' : 'pointer'
+                        }}
+                      >
+                        START CHALLENGE
+                      </button>
+                    </>
+                  )}
+                  {effectiveInSelectionWindow && effectiveHasSelectedForNext && (
+                    <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
+                      You’re set for the next cycle. Your challenge begins when the new cycle starts.
+                    </p>
+                  )}
+                  {!effectiveInSelectionWindow && effectiveActive && (
+                    <>
+                      <p style={{ fontFamily: '"Futura PT Medium"', color: '#000', fontSize: '10px', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
+                        Tier 1 — Reward: {slayChallengeTier1Reward === 'voucher' ? 'Random voucher' : '200 loyalty points'}
+                      </p>
+                      <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 12px 0', fontSize: '10px', fontFamily: '"Futura PT Book"', textTransform: 'uppercase' }}>
+                        <li style={{ marginBottom: '4px' }}>{slayChallengeTier1Progress.purchase ? '✓' : '○'} Complete a purchase</li>
+                        <li style={{ marginBottom: '4px' }}>{slayChallengeTier1Progress.review ? '✓' : '○'} Complete a content review</li>
+                        <li style={{ marginBottom: '4px' }}>{slayChallengeTier1Progress.post ? '✓' : '○'} Make a post</li>
+                      </ul>
+                      {slayChallengeTier1Complete && (
+                        <>
+                          <p style={{ fontFamily: '"Futura PT Medium"', color: '#000', fontSize: '10px', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
+                            Tier 2 — Reward: {slayChallengeTier2Reward === '2xpoints' ? '2x points on next purchase' : '1,000 loyalty points'}
+                          </p>
+                          <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 12px 0', fontSize: '10px', fontFamily: '"Futura PT Book"', textTransform: 'uppercase' }}>
+                            <li style={{ marginBottom: '4px' }}>{slayChallengeTier2Progress.purchase ? '✓' : '○'} Complete another purchase</li>
+                            <li style={{ marginBottom: '4px' }}>{slayChallengeTier2Progress.review ? '✓' : '○'} Complete a content review</li>
+                            <li style={{ marginBottom: '4px' }}>{slayChallengeTier2Progress.socialTag ? '✓' : '○'} Make a social tag</li>
+                          </ul>
+                        </>
+                      )}
+                      {!slayChallengeTier1Complete && (
+                        <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
+                          Complete tier 1 to unlock tier 2.
+                        </p>
+                      )}
+                    </>
+                  )}
+                  {!effectiveInSelectionWindow && !effectiveActive && effectiveHasSelectedCycle && (
+                    <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
+                      Your next selection window is in the last 3 days of the current cycle. Complete your current challenge or wait for the next cycle.
+                    </p>
+                  )}
+                  {!effectiveInSelectionWindow && !effectiveActive && !effectiveHasSelectedCycle && (
+                    <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
+                      Selection window closed. You have 3 days before the next cycle ends to choose your challenge—or wait 6 months for the next window.
+                    </p>
+                  )}
+                </div>
+
+                {/* Special Offer Section - red header, gray border, icon; 30-day countdown below */}
+                {specialOffer && specialOffer.expiresAt > Date.now() && (
+                  <>
+                    <div
+                      className="bg-white/60 backdrop-blur-sm w-full mb-0 transition-all duration-300 ease-out"
+                      style={{
+                        border: '1.3px solid #9ca3af',
+                        paddingTop: '20px',
+                        paddingLeft: '20px',
+                        paddingRight: '20px',
+                        paddingBottom: '16px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.6)'
+                      }}
+                    >
+                      <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '14px' }}>
+                        <h2
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            color: '#EB1C24',
+                            fontSize: '12px',
+                            fontWeight: '500',
+                            margin: '0',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          SPECIAL OFFER
+                        </h2>
+                        <span style={{ display: 'flex', alignItems: 'center' }} aria-hidden>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }}>
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor"/>
+                          </svg>
+                        </span>
+                      </div>
+                      <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0 0 10px 0', textTransform: 'uppercase' }}>
+                        Limited-time: one random unit at $40 off with premium selections.
+                      </p>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '12px' }}>
+                        <div style={{ width: '72px', height: '72px', flexShrink: 0, border: '1px solid #e5e7eb', overflow: 'hidden', backgroundColor: '#f9fafb' }}>
+                          <img src={SPECIAL_OFFER_UNITS.find(u => u.id === specialOffer.unitId)?.image || '/assets/natural front.png'} alt={specialOffer.unitName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontFamily: '"Futura PT Medium"', color: '#000', fontSize: '12px', margin: '0 0 4px 0', textTransform: 'uppercase' }}>{specialOffer.unitName}</p>
+                          <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '9px', margin: '0 0 2px 0', textTransform: 'uppercase' }}>
+                            {specialOffer.options.length} · {specialOffer.options.density} · {specialOffer.options.texture} · {specialOffer.options.lace} · {specialOffer.options.color}
+                          </p>
+                          <p style={{ margin: '4px 0 0 0', fontSize: '11px' }}>
+                            <span style={{ fontFamily: '"Futura PT Book"', color: '#999', textDecoration: 'line-through' }}>${specialOffer.originalPrice}</span>
+                            <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', marginLeft: '8px' }}>${specialOffer.discountedPrice}</span>
+                            <span style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', marginLeft: '4px' }}>($40 OFF)</span>
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => navigate(specialOffer.route)}
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          border: '1.3px solid #000',
+                          background: '#FFF',
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '11px',
+                          color: '#EB1C24',
+                          textTransform: 'uppercase',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        CLAIM OFFER
+                      </button>
+                    </div>
+                    {/* 30-day expiration countdown tracker / loader */}
+                    <div
+                      className="bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
+                      style={{
+                        border: '1.3px solid #9ca3af',
+                        borderTop: 'none',
+                        padding: '10px 20px 14px',
+                        backgroundColor: 'rgba(249, 250, 251, 0.8)'
+                      }}
+                    >
+                      <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
+                        Offer expires in {specialOfferDaysLeft} days
+                      </p>
+                      <div style={{ height: '6px', backgroundColor: '#e5e7eb', borderRadius: '3px', overflow: 'hidden' }}>
+                        <div
+                          style={{
+                            height: '100%',
+                            width: `${Math.min(100, Math.max(0, specialOfferProgress * 100))}%`,
+                            backgroundColor: '#EB1C24',
+                            borderRadius: '3px',
+                            transition: 'width 0.3s ease'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 {/* Free Gift Section */}
                 <div

@@ -368,7 +368,13 @@ function MembershipPage() {
     const currentSpend = getCurrentPeriodSpending();
     const thresholds = [SPEND_TIER_THRESHOLDS.SILVER, SPEND_TIER_THRESHOLDS.RED, SPEND_TIER_THRESHOLDS.BLACK];
     const nextTierSpend = thresholds.find((t) => t > currentSpend) ?? null;
-    const currentTierName = currentSpend >= SPEND_TIER_THRESHOLDS.BLACK ? 'BLACK' : currentSpend >= SPEND_TIER_THRESHOLDS.RED ? 'RED' : currentSpend >= SPEND_TIER_THRESHOLDS.SILVER ? 'SILVER' : null;
+    const spendBasedTier = currentSpend >= SPEND_TIER_THRESHOLDS.BLACK ? 'BLACK' : currentSpend >= SPEND_TIER_THRESHOLDS.RED ? 'RED' : currentSpend >= SPEND_TIER_THRESHOLDS.SILVER ? 'SILVER' : null;
+    const effectiveTier = getEffectiveTierName(userData);
+    // Only retain stored tier if current period spend meets that tier's threshold; otherwise revert to spend-based tier (PENDING if below Silver).
+    const hasRetainedTier = (effectiveTier === 'SILVER' && currentSpend >= SPEND_TIER_THRESHOLDS.SILVER)
+      || (effectiveTier === 'RED' && currentSpend >= SPEND_TIER_THRESHOLDS.RED)
+      || (effectiveTier === 'BLACK' && currentSpend >= SPEND_TIER_THRESHOLDS.BLACK);
+    const currentTierName = hasRetainedTier && (effectiveTier === 'SILVER' || effectiveTier === 'RED' || effectiveTier === 'BLACK') ? effectiveTier : spendBasedTier;
     if (!nextTierSpend) {
       return {
         currentSpend,
@@ -382,16 +388,23 @@ function MembershipPage() {
       };
     }
     const spendRemaining = nextTierSpend - currentSpend;
-    const progressPercent = Math.min(100, (currentSpend / nextTierSpend) * 100); // pts earned count toward next tier (e.g. 1000/2000 = 50% for Silver→Red)
-    const nextTierName = nextTierSpend === SPEND_TIER_THRESHOLDS.BLACK ? 'BLACK' : nextTierSpend === SPEND_TIER_THRESHOLDS.RED ? 'RED' : 'SILVER';
+    const progressPercent = Math.min(100, (currentSpend / nextTierSpend) * 100);
+    // Next tier to unlock: one step above current (Silver→Red, Red→Black). When PENDING, next is Silver.
+    const nextTierName = currentTierName === 'BLACK' ? null
+      : currentTierName === 'RED' ? 'BLACK' as const
+      : currentTierName === 'SILVER' ? 'RED' as const
+      : 'SILVER' as const; // PENDING → next is Silver
+    const nextTierSpendForUnlock = nextTierName === 'BLACK' ? SPEND_TIER_THRESHOLDS.BLACK
+      : nextTierName === 'RED' ? SPEND_TIER_THRESHOLDS.RED
+      : SPEND_TIER_THRESHOLDS.SILVER;
     return {
       currentSpend,
       currentPoints: currentSpend,
-      nextTier: nextTierSpend,
-      nextTierSpend,
-      spendRemaining,
-      pointsRemaining: spendRemaining,
-      progressPercent,
+      nextTier: nextTierSpendForUnlock,
+      nextTierSpend: nextTierSpendForUnlock,
+      spendRemaining: Math.max(0, nextTierSpendForUnlock - currentSpend),
+      pointsRemaining: Math.max(0, nextTierSpendForUnlock - currentSpend),
+      progressPercent: nextTierSpendForUnlock != null ? Math.min(100, (currentSpend / nextTierSpendForUnlock) * 100) : 100,
       currentTierName: currentTierName ?? 'PENDING',
       nextTierName
     };
@@ -455,28 +468,30 @@ function MembershipPage() {
       'BIRTHDAY GIFT',
       'DISCOUNTED SHIPPING',
       'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
-      'ENTRY TO VIP MEMBERS ONLY LOBBY + LOUNGE',
+      'ENTRY TO VIP MEMBERS ONLY LOUNGE',
       'FAST TRACK CUSTOMER SUPPORT',
-      'PRIORITY BOOKING'
+      'PRIORITY BOOKING',
+      'MEMBER REWARDS + CHALLENGES'
     ],
     '6months': [
       'BIRTHDAY GIFT',
       'DISCOUNTED SHIPPING',
       'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
-      'ENTRY TO VIP MEMBERS ONLY LOBBY + LOUNGE',
+      'ENTRY TO VIP MEMBERS ONLY LOUNGE',
       'FAST TRACK CUSTOMER SUPPORT',
       'PRIORITY BOOKING',
+      'MEMBER REWARDS + CHALLENGES',
       'LIVE ORDER TRACKING'
     ],
     '12months': [
       'BIRTHDAY GIFT',
       'DISCOUNTED SHIPPING',
       'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
-      'ENTRY TO VIP MEMBERS ONLY LOBBY + LOUNGE',
+      'ENTRY TO VIP MEMBERS ONLY LOUNGE',
       'FAST TRACK CUSTOMER SUPPORT',
       'PRIORITY BOOKING',
+      'MEMBER REWARDS + CHALLENGES',
       'LIVE ORDER TRACKING',
-      'MEMBER REWARDS + PRIZES',
       '2X LOYALTY POINTS'
     ]
   };
@@ -867,7 +882,23 @@ function MembershipPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/build-a-wig')}
+                    onClick={() => {
+                      try {
+                        const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
+                        if (isSignedIn) {
+                          const currentUser = localStorage.getItem('currentUser');
+                          if (currentUser) {
+                            const user = JSON.parse(currentUser);
+                            const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
+                            navigate(isPremium ? '/' : '/home/shop');
+                            return;
+                          }
+                        }
+                        navigate('/home/shop');
+                      } catch {
+                        navigate('/home/shop');
+                      }
+                    }}
                   >
                     HOME &gt;
                   </span>{' '}
@@ -1249,9 +1280,9 @@ function MembershipPage() {
                                       />
                                     </div>
                                   </div>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', color: BRAND_GRAY, fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', color: nextReward ? nextLabelColor : BRAND_GRAY, fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
                                     {nextReward
-                                      ? <>{((nextReward.points - totalPoints).toLocaleString())} MORE POINTS TO EARN {nextReward.type === 'digital_cash' ? <span style={{ color: nextLabelColor }}>{nextReward.label}</span> : <>A <span style={{ color: nextLabelColor }}>{nextReward.label}</span></>}</>
+                                      ? <>{((nextReward.points - totalPoints).toLocaleString())} MORE POINTS TO EARN {nextReward.type === 'digital_cash' ? <>{nextReward.label}</> : <>A {nextReward.label}</>}!</>
                                       : 'MAX REWARD REACHED'}
                                   </p>
                                 </div>
@@ -1303,6 +1334,9 @@ function MembershipPage() {
                             );
                           })}
                         </div>
+                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: BRAND_GRAY, margin: '12px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35 }}>
+                          FREE GIFTS, DISCOUNT CODES & VOUCHERS EXPIRE 6 MONTHS FROM REDEMPTION. DIGITAL CASH / GIFT CARDS DO NOT EXPIRE.
+                        </p>
                       </div>
                     </div>
                   </>
@@ -1816,6 +1850,7 @@ function MembershipPage() {
                       <p style={{ margin: '6px 0 8px 0' }}><strong>Black only:</strong> Annual Black tier gift; status protection (stay Black when short on points, 1x per year).</p>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 6px 0', textTransform: 'uppercase' }}>HOW IT WORKS</p>
                       <p style={{ margin: 0 }}>Tiers run in 6-month cycles. Earn points from purchases to unlock or keep a tier. Hit the threshold (1,000 Silver, 2,000 Red, 4,000 Black) by period end to keep that tier and its perks for the next cycle. Intro benefits unlock once per account; recurring perks apply each cycle you maintain or reach that tier.</p>
+                      <p style={{ margin: '8px 0 0 0' }}>Free gifts, discount codes and vouchers expire 6 months from the date they&apos;re redeemed. Digital cash and gift cards do not expire.</p>
                       <p style={{ margin: '10px 0 0 0', fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000000' }}><strong>12-month Premium</strong> members earn 2x points on purchases (takes precedence over tier). Red and Black tiers earn 1.25x and 1.5x points when not on 12-month Premium. Premium also includes lounge access, fast-track support, and more.</p>
                     </div>
                   </div>
@@ -1919,9 +1954,9 @@ fontFamily: '"Futura PT Book"',
                                           />
                                         </div>
                                       </div>
-                                      <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', color: BRAND_GRAY, fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
+                                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', color: nextReward ? nextLabelColor : BRAND_GRAY, fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
                                         {nextReward
-                                          ? <>{((nextReward.points - totalPoints).toLocaleString())} MORE POINTS TO EARN {nextReward.type === 'digital_cash' ? <span style={{ color: nextLabelColor }}>{nextReward.label}</span> : <>A <span style={{ color: nextLabelColor }}>{nextReward.label}</span></>}</>
+                                          ? <>{((nextReward.points - totalPoints).toLocaleString())} MORE POINTS TO EARN {nextReward.type === 'digital_cash' ? <>{nextReward.label}</> : <>A {nextReward.label}</>}!</>
                                           : 'MAX REWARD REACHED'}
                                       </p>
                                     </div>
@@ -1973,6 +2008,9 @@ fontFamily: '"Futura PT Book"',
                                 );
                               })}
                         </div>
+                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: BRAND_GRAY, margin: '12px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35 }}>
+                          FREE GIFTS, DISCOUNT CODES & VOUCHERS EXPIRE 6 MONTHS FROM REDEMPTION. DIGITAL CASH / GIFT CARDS DO NOT EXPIRE.
+                        </p>
                   </div>
                 </div>
 
@@ -2078,23 +2116,31 @@ fontFamily: '"Futura PT Book"',
                                       : progress.nextTierName;
                                     const displayCurrentSpend = progress.currentSpend;
                                     const displayNextTierPts = displayNextTier === 'RED' ? SPEND_TIER_THRESHOLDS.RED : displayNextTier === 'BLACK' ? SPEND_TIER_THRESHOLDS.BLACK : displayNextTier === 'SILVER' ? SPEND_TIER_THRESHOLDS.SILVER : null;
+                                    const hasSecuredCurrentTier = displayNextTier != null && (
+                                      displayTier === 'SILVER' && displayCurrentSpend >= SPEND_TIER_THRESHOLDS.SILVER
+                                      || displayTier === 'RED' && displayCurrentSpend >= SPEND_TIER_THRESHOLDS.RED
+                                      || displayTier === 'BLACK' && displayCurrentSpend >= SPEND_TIER_THRESHOLDS.BLACK
+                                    );
+                                    const remainTier = displayTier === 'PENDING' ? 'SILVER' : displayTier;
+                                    const remainThreshold = remainTier === 'SILVER' ? SPEND_TIER_THRESHOLDS.SILVER : remainTier === 'RED' ? SPEND_TIER_THRESHOLDS.RED : SPEND_TIER_THRESHOLDS.BLACK;
+                                    // Bar/counter denominator: show current tier threshold until secured (e.g. 700/1,000 for "remain Silver"); then next tier (e.g. 1,500/2,000). Black at max: 4,000/4,000.
+                                    const barDenominator = (displayNextTier == null && displayTier === 'BLACK')
+                                      ? SPEND_TIER_THRESHOLDS.BLACK
+                                      : hasSecuredCurrentTier && displayNextTierPts != null
+                                        ? displayNextTierPts
+                                        : remainThreshold;
                                     const displaySpendRemaining = displayNextTierPts != null ? Math.max(0, displayNextTierPts - displayCurrentSpend) : 0;
-                                    const displayProgressPercent = displayNextTierPts != null ? Math.min(100, (displayCurrentSpend / displayNextTierPts) * 100) : 100;
+                                    const displayProgressPercent = barDenominator != null ? Math.min(100, (displayCurrentSpend / barDenominator) * 100) : 100;
                                     const nextTierColor = displayNextTier === 'BLACK' ? '#000000' : displayNextTier === 'SILVER' ? BRAND_GRAY : '#EB1C24';
                                     const tierLabel = (() => {
-                                      if (displayNextTier == null && displayTier === 'BLACK') {
+                                      if (displayTier === 'BLACK' && displayCurrentSpend >= SPEND_TIER_THRESHOLDS.BLACK) {
                                         return <>YOU'VE EARNED ENOUGH POINTS TO REMAIN <span style={{ color: '#000000', fontFamily: '"Futura PT Medium"' }}>BLACK</span> TIER!</>;
                                       }
-                                      if (displayNextTier == null) return null;
-                                      const hasSecuredCurrentTier = displayTier === 'SILVER' && displayCurrentSpend >= SPEND_TIER_THRESHOLDS.SILVER
-                                        || displayTier === 'RED' && displayCurrentSpend >= SPEND_TIER_THRESHOLDS.RED
-                                        || displayTier === 'BLACK' && displayCurrentSpend >= SPEND_TIER_THRESHOLDS.BLACK;
+                                      if (displayNextTier == null && displayTier !== 'BLACK') return null;
                                       if (hasSecuredCurrentTier) {
                                         return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{displaySpendRemaining.toLocaleString()}</span> MORE POINTS TO UNLOCK <span style={{ color: showTierColorsForAdmin ? nextTierColor : '#000000', fontFamily: '"Futura PT Medium"' }}>{displayNextTier}</span> TIER!</>;
                                       }
-                                      const remainTier = displayTier === 'PENDING' ? 'SILVER' : displayTier;
                                       const remainTierColor = remainTier === 'BLACK' ? '#000000' : remainTier === 'SILVER' ? BRAND_GRAY : '#EB1C24';
-                                      const remainThreshold = remainTier === 'SILVER' ? SPEND_TIER_THRESHOLDS.SILVER : remainTier === 'RED' ? SPEND_TIER_THRESHOLDS.RED : SPEND_TIER_THRESHOLDS.BLACK;
                                       const remainPoints = Math.max(0, remainThreshold - displayCurrentSpend);
                                       return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{remainPoints.toLocaleString()}</span> MORE POINTS TO REMAIN <span style={{ color: showTierColorsForAdmin ? remainTierColor : '#000000', fontFamily: '"Futura PT Medium"' }}>{remainTier}</span> TIER!</>;
                                     })();
@@ -2176,8 +2222,8 @@ fontFamily: '"Futura PT Book"',
                                           </p>
                                         ) : <span />}
                                         <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
-                                          {displayNextTierPts != null
-                                            ? `${displayCurrentSpend.toLocaleString()}/${displayNextTierPts.toLocaleString()} PTS`
+                                          {barDenominator != null
+                                            ? `${displayCurrentSpend.toLocaleString()}/${barDenominator.toLocaleString()} PTS`
                                             : `${displayCurrentSpend.toLocaleString()} PTS`}
                                         </p>
                                       </div>
@@ -2379,7 +2425,7 @@ fontFamily: '"Futura PT Book"',
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        PREMIUM 3D WIG SELECTION OPTIONS
+                        PREMIUM 3D WIG SELECTIONS
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
                         ADDITIONAL, MORE EXTENSIVE CUSTOMIZATION OPTIONS
@@ -2387,7 +2433,7 @@ fontFamily: '"Futura PT Book"',
                     </div>
                     <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        ENTRY TO MEMBERS ONLY LOBBY + LOUNGE
+                        ENTRY TO MEMBERS ONLY LOUNGE
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
                         EARLY ACCESS TO SALES, NEW DROPS + RESTOCKS
@@ -2403,7 +2449,7 @@ fontFamily: '"Futura PT Book"',
                     </div>
                     <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        PRIORITY BOOKING + ORDER PROCESSING
+                        PRIORITY BOOKING + PROCESSING
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
                         OPTION TO SCHEDULE IN ADVANCE + PRIORITIZED CUSTOM ORDERS
@@ -2411,7 +2457,7 @@ fontFamily: '"Futura PT Book"',
                     </div>
                     <div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        MEMBER REWARDS + PRIZES
+                        MEMBER REWARDS + CHALLENGES
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
                         ELIGIBLE FOR A CHANCE TO WIN RAFFLES, DISCOUNTS + VOUCHERS

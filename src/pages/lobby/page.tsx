@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from '../../components/base/LoadingScreen';
 import ConfirmationModal from '../../components/ConfirmationModal';
@@ -59,6 +59,26 @@ const LobbyPage: React.FC = () => {
     window.dispatchEvent(new CustomEvent('lobby-navigate-next'));
   }, []);
 
+  // Measure Products/Tools image size so debug overlay matches asset exactly
+  const productsImgRef = useRef<HTMLImageElement>(null);
+  const toolsImgRef = useRef<HTMLImageElement>(null);
+  const [productsSize, setProductsSize] = useState<{ w: number; h: number } | null>(null);
+  const [toolsSize, setToolsSize] = useState<{ w: number; h: number } | null>(null);
+  const measureProducts = useCallback(() => {
+    const el = productsImgRef.current;
+    if (el) {
+      const r = el.getBoundingClientRect();
+      setProductsSize({ w: r.width, h: r.height });
+    }
+  }, []);
+  const measureTools = useCallback(() => {
+    const el = toolsImgRef.current;
+    if (el) {
+      const r = el.getBoundingClientRect();
+      setToolsSize({ w: r.width, h: r.height });
+    }
+  }, []);
+
   return (
     <div className="bg-red-900 relative" style={{ minHeight: '100vh', width: '100vw', flexShrink: 0, backgroundColor: 'white' }}>
       {/* Background Image */}
@@ -101,7 +121,7 @@ const LobbyPage: React.FC = () => {
             <img 
               src="/assets/neon-logo.png" 
               alt="Frontal Slayer" 
-              onClick={() => navigate('/build-a-wig')}
+              onClick={() => navigate('/shop/units')}
               style={{ width: 'auto', height: '263px', maxWidth: 'none', display: 'block', cursor: 'pointer' }}
             />
           </div>
@@ -117,20 +137,68 @@ const LobbyPage: React.FC = () => {
           margin: 0,
           padding: 0
         }}>
-          <img 
-            src="/assets/neon-products.png" 
-            alt="Products" 
-            onClick={() => navigate('/home/shop')}
-            className="w-auto cursor-pointer hover:opacity-80 transition-opacity"
-            style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(4px)', height: '41px' }}
-          />
-          <img 
-            src="/assets/neon-tools.png" 
-            alt="Tools" 
-            onClick={() => navigate('/home/tools')}
-            className="w-auto cursor-pointer hover:opacity-80 transition-opacity"
-            style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(-50px)', height: '41px' }}
-          />
+          {/* Products: overlay sized from measured image so debug square matches asset */}
+          <span style={{ position: 'relative', display: 'inline-block' }}>
+            <img 
+              ref={productsImgRef}
+              src="/assets/neon-products.png" 
+              alt="Products" 
+              onLoad={measureProducts}
+              style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(4px)', height: '41px', maxWidth: 'none', width: 'auto', pointerEvents: 'none', verticalAlign: 'top' }}
+              aria-hidden
+            />
+            {productsSize && (
+              <span
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate('/home/shop')}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/home/shop'); } }}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: productsSize.w,
+                  height: productsSize.h,
+                  transform: 'translateX(4px)',
+                  border: '2px solid red',
+                  boxSizing: 'border-box',
+                  cursor: 'pointer'
+                }}
+                aria-label="Go to shop"
+              />
+            )}
+          </span>
+          {/* Tools: overlay sized from measured image so debug square matches asset */}
+          <span style={{ position: 'relative', display: 'inline-block' }}>
+            <img 
+              ref={toolsImgRef}
+              src="/assets/neon-tools.png" 
+              alt="Tools" 
+              onLoad={measureTools}
+              style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(-50px)', height: '41px', maxWidth: 'none', width: 'auto', pointerEvents: 'none', verticalAlign: 'top' }}
+              aria-hidden
+            />
+            {toolsSize && (
+              <span
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate('/home/tools')}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/home/tools'); } }}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: toolsSize.w,
+                  height: toolsSize.h,
+                  transform: 'translateX(-50px)',
+                  border: '2px solid red',
+                  boxSizing: 'border-box',
+                  cursor: 'pointer'
+                }}
+                aria-label="Go to tools"
+              />
+            )}
+          </span>
           <img 
             src="/assets/neon-booking.png" 
             alt="Booking" 
@@ -352,6 +420,7 @@ const LoungePage: React.FC = () => {
           <img 
             src="/assets/neon-logo.png" 
             alt="Frontal Slayer" 
+            onClick={() => navigate('/shop/units')}
             style={{ 
               width: 'auto', 
               height: '265px', 
@@ -361,7 +430,8 @@ const LoungePage: React.FC = () => {
               padding: 0,
               display: 'block',
               visibility: 'visible',
-              opacity: 1
+              opacity: 1,
+              cursor: 'pointer'
             }}
           />
         </div>

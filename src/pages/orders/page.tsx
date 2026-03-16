@@ -2126,20 +2126,11 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                    }
                    if (activeOrders.length === 0) {
                      return (
-                     <div className="flex flex-col justify-center items-center my-2 flex-shrink-0" style={{ minHeight: '200px' }}>
+                     <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '40px 20px', color: '#000' }}>
                        <p
-                         style={{
-                           fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                           fontSize: '11px',
-                           color: '#808080',
-                           margin: 0,
-                           textTransform: 'uppercase',
-                           textAlign: 'center',
-                           lineHeight: '1.4'
-                         }}
-                       >
-                         YOU HAVE NO ACTIVE ORDERS.<br />LET'S GO SHOPPING!
-                       </p>
+                         style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}
+                         dangerouslySetInnerHTML={{ __html: "YOU DON'T HAVE ANY ACTIVE ORDERS.<br>LET'S GO SHOPPING!" }}
+                       />
                      </div>
                      );
                    }
