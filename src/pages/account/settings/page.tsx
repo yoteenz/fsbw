@@ -265,11 +265,16 @@ function SettingsPage() {
           const msg = typeof (e as any)?.message === 'string' ? (e as any).message : String(e ?? '');
           const raw = (msg || '').trim().toLowerCase();
           const isNetworkError = /load\s*failed|failed\s*to\s*fetch|failed\s*to\s*load|network\s*error|networkrequestfailed|request\s*failed/i.test(raw) || raw === 'load failed';
-          setDeleteAccountError(
-            isNetworkError
-              ? 'Network error. Check your connection and try again. If the problem continues, check that the app is using the correct API URL and that the delete-account API is deployed.'
-              : (msg || 'Could not delete account. Try again or contact support.')
-          );
+          const isServerError = /function_invocation_failed|server\s*error|a server error has occurred/i.test(raw);
+          let displayMsg: string;
+          if (isNetworkError) {
+            displayMsg = 'Network error. Check your connection and try again. If the problem continues, check that the app is using the correct API URL and that the delete-account API is deployed.';
+          } else if (isServerError) {
+            displayMsg = 'The server is temporarily unable to process account deletion. Please try again later or contact support.';
+          } else {
+            displayMsg = msg || 'Could not delete account. Try again or contact support.';
+          }
+          setDeleteAccountError(displayMsg);
           return;
         }
         const supabase = getSupabase();
@@ -316,11 +321,16 @@ function SettingsPage() {
       const msg = typeof (e as any)?.message === 'string' ? (e as any).message : String(e ?? '');
       const raw = (msg || '').trim().toLowerCase();
       const isNetworkError = /load\s*failed|failed\s*to\s*fetch|failed\s*to\s*load|network\s*error|networkrequestfailed|request\s*failed/i.test(raw) || raw === 'load failed';
-      setDeleteAccountError(
-        isNetworkError
-          ? 'Network error. Check your connection and try again. If the problem continues, check that the app is using the correct API URL and that the delete-account API is deployed.'
-          : (msg || 'Could not delete account. Try again.')
-      );
+      const isServerError = /function_invocation_failed|server\s*error|a server error has occurred/i.test(raw);
+      let displayMsg: string;
+      if (isNetworkError) {
+        displayMsg = 'Network error. Check your connection and try again. If the problem continues, check that the app is using the correct API URL and that the delete-account API is deployed.';
+      } else if (isServerError) {
+        displayMsg = 'The server is temporarily unable to process account deletion. Please try again later or contact support.';
+      } else {
+        displayMsg = msg || 'Could not delete account. Try again.';
+      }
+      setDeleteAccountError(displayMsg);
     }
   };
 

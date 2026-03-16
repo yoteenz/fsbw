@@ -334,14 +334,23 @@ function SignInPage() {
             return;
           }
           if (error) {
-            setValidationMessage(error.message === 'Invalid login credentials' ? 'INVALID EMAIL OR PASSWORD.' : error.message);
+            // Admin emails (e.g. ayoteenz) can fall back to local sign-in if Supabase fails (no Supabase account or wrong password there)
+            if (isAdminEmail(email)) {
+              // Fall through to local sign-in / bootstrap below
+            } else {
+              setValidationMessage(error.message === 'Invalid login credentials' ? 'INVALID EMAIL OR PASSWORD.' : error.message);
+              setShowValidationModal(true);
+              return;
+            }
+          }
+        } catch (e) {
+          if (isAdminEmail(email)) {
+            // Fall through to local sign-in so admin can still sign in
+          } else {
+            setValidationMessage('SIGN-IN FAILED. TRY AGAIN.');
             setShowValidationModal(true);
             return;
           }
-        } catch (e) {
-          setValidationMessage('SIGN-IN FAILED. TRY AGAIN.');
-          setShowValidationModal(true);
-          return;
         }
       }
     }
