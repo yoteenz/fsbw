@@ -5574,7 +5574,7 @@ function CheckoutPage() {
                     </div>
                     <button
                       type="button"
-                      onClick={() => inCart && setVoucherModalQuantities(prev => {
+                      onClick={() => inCart && setVoucherModalQuantities(() => {
                         const next: Record<string, number> = {};
                         Object.keys(availableVouchersByType).forEach(t => { next[t] = t === type ? 1 : 0; });
                         return next;

@@ -121,7 +121,7 @@ const LobbyPage: React.FC = () => {
             <img 
               src="/assets/neon-logo.png" 
               alt="Frontal Slayer" 
-              onClick={() => navigate('/shop/units')}
+              onClick={() => navigate('/home/shop')}
               style={{ width: 'auto', height: '263px', maxWidth: 'none', display: 'block', cursor: 'pointer' }}
             />
           </div>
@@ -144,25 +144,26 @@ const LobbyPage: React.FC = () => {
               src="/assets/neon-products.png" 
               alt="Products" 
               onLoad={measureProducts}
-              style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(4px)', height: '41px', maxWidth: 'none', width: 'auto', pointerEvents: 'none', verticalAlign: 'top' }}
+              style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(4px)', height: '41px', maxWidth: 'none', width: 'auto', pointerEvents: 'none', verticalAlign: 'top', position: 'relative', zIndex: 0 }}
               aria-hidden
             />
             {productsSize && (
               <span
                 role="button"
                 tabIndex={0}
-                onClick={() => navigate('/home/shop')}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/home/shop'); } }}
+                onClick={() => navigate('/shop/units')}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/shop/units'); } }}
                 style={{
                   position: 'absolute',
                   top: 0,
                   left: 0,
-                  width: productsSize.w,
+                  width: Math.max(0, productsSize.w - 40),
                   height: productsSize.h,
-                  transform: 'translateX(4px)',
-                  border: '2px solid red',
+                  transform: 'translateX(24px)',
                   boxSizing: 'border-box',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  zIndex: 1,
+                  background: 'transparent'
                 }}
                 aria-label="Go to shop"
               />
@@ -175,7 +176,7 @@ const LobbyPage: React.FC = () => {
               src="/assets/neon-tools.png" 
               alt="Tools" 
               onLoad={measureTools}
-              style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(-50px)', height: '41px', maxWidth: 'none', width: 'auto', pointerEvents: 'none', verticalAlign: 'top' }}
+              style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(-50px)', height: '41px', maxWidth: 'none', width: 'auto', pointerEvents: 'none', verticalAlign: 'top', position: 'relative', zIndex: 0 }}
               aria-hidden
             />
             {toolsSize && (
@@ -188,12 +189,13 @@ const LobbyPage: React.FC = () => {
                   position: 'absolute',
                   top: 0,
                   left: 0,
-                  width: toolsSize.w,
+                  width: Math.max(0, toolsSize.w - 70),
                   height: toolsSize.h,
-                  transform: 'translateX(-50px)',
-                  border: '2px solid red',
+                  transform: 'translateX(-14px)',
                   boxSizing: 'border-box',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  zIndex: 1,
+                  background: 'transparent'
                 }}
                 aria-label="Go to tools"
               />

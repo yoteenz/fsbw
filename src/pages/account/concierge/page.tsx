@@ -85,7 +85,6 @@ function ConciergePage() {
   });
 
   // Slay Challenge: 6-month cycles (Jan–Jun, Jul–Dec). Selection window = last 3 days of cycle.
-  const SLAY_CHALLENGE_CYCLE_MONTHS = 6;
   const SLAY_CHALLENGE_SELECTION_DAYS = 3;
   const getSlayChallengeCycleEnd = (): Date => {
     const now = new Date();
@@ -169,7 +168,6 @@ function ConciergePage() {
   const slayChallengeHasSelectedForNext = slayChallengeSelectedCycle === slayChallengeNextCycleLabel;
   const slayChallengeActive = slayChallengeSelectedCycle === slayChallengeCurrentCycleLabel;
   const slayChallengeTier1Complete = slayChallengeTier1Progress.purchase && slayChallengeTier1Progress.review && slayChallengeTier1Progress.post;
-  const slayChallengeTier2Complete = slayChallengeTier2Progress.purchase && slayChallengeTier2Progress.review && slayChallengeTier2Progress.socialTag;
 
   // Ayoteenz admin: disable time limit and force stage for testing (selection | selected_waiting | active | closed)
   const SLAY_CHALLENGE_ADMIN_STAGE_KEY = 'slayChallengeAdminStage';
@@ -242,7 +240,7 @@ function ConciergePage() {
     lace: ['13X6', '13X4', 'HD LACE'],
     color: ['OFF BLACK', 'PLATINUM', 'HONEY BLONDE', 'BURGUNDY']
   };
-  const pickRandom = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+  const pickRandom = <T,>(arr: readonly T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
   const [specialOffer, setSpecialOffer] = useState<{
     unitId: string;
@@ -266,7 +264,6 @@ function ConciergePage() {
     if (specialOffer !== null && specialOffer.expiresAt > Date.now()) return;
     const unit = pickRandom(SPECIAL_OFFER_UNITS);
     const originalPrice = unit.basePrice + Math.floor(Math.random() * 80);
-    const discountedPrice = originalPrice - SPECIAL_OFFER_DISCOUNT;
     const options = {
       length: pickRandom(PREMIUM_OPTION_SETS.length),
       density: pickRandom(PREMIUM_OPTION_SETS.density),

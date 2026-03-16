@@ -387,8 +387,6 @@ function MembershipPage() {
         nextTierName: null
       };
     }
-    const spendRemaining = nextTierSpend - currentSpend;
-    const progressPercent = Math.min(100, (currentSpend / nextTierSpend) * 100);
     // Next tier to unlock: one step above current (Silver→Red, Red→Black). When PENDING, next is Silver.
     const nextTierName = currentTierName === 'BLACK' ? null
       : currentTierName === 'RED' ? 'BLACK' as const
