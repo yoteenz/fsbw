@@ -380,6 +380,7 @@ const LobbyPage: React.FC = () => {
 
 // Lounge Component
 const LoungePage: React.FC = () => {
+  const navigate = useNavigate();
   console.log('LoungePage component is rendering');
   
   const handlePrevious = useCallback(() => {
