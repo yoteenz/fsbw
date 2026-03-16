@@ -1068,6 +1068,7 @@ function ShoppingBagPage() {
                          textAlign: 'center', 
                          padding: '40px 20px',
                          display: 'flex',
+                         flexDirection: 'column',
                          alignItems: 'center',
                          justifyContent: 'center',
                          minHeight: '40px',
@@ -1081,9 +1082,8 @@ function ShoppingBagPage() {
                              textTransform: 'uppercase',
                              margin: '0'
                            }}
-                         >
-                           JUST DUST & LINT HERE.
-                         </p>
+                           dangerouslySetInnerHTML={{ __html: "YOUR BAG IS CURRENTLY EMPTY.<br>LET'S GO SHOPPING!" }}
+                         />
                        </div>
                      ) : (
                        <>

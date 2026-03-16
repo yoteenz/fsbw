@@ -820,7 +820,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                 const basePoints = Math.round(pointsEligibleAmount);
                 const multiplier = getPointsMultiplierForUser();
                 const actualPoints = Math.round(basePoints * multiplier);
-                return <>YOU'RE EARNING <span style={{ color: '#808080', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{actualPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span> LOYALTY POINTS WITH THIS ORDER{actualPoints === 0 ? '.' : '!'}</>;
+                return <>YOU'RE EARNING <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{actualPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span> LOYALTY POINTS WITH THIS ORDER{actualPoints === 0 ? '.' : '!'}</>;
               })()
             ) : (
               <>SIGN IN TO EARN LOYALTY POINTS FOR THIS ORDER.</>
@@ -840,7 +840,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             }}
           >
           {cartItems.length === 0 ? (
-              <div className="text-center py-4 flex flex-col items-center gap-3">
+              <div className="text-center py-4 flex flex-col items-center">
               <p 
                 style={{ 
                     fontSize: '11px',
@@ -852,19 +852,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
               >
                   JUST DUST & LINT HERE.
               </p>
-              <button
-                onClick={handleViewCart}
-                className="w-full max-w-[200px] py-2 px-3 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
-                style={{ 
-                  borderWidth: '1.3px',
-                  fontSize: '11px',
-                  fontFamily: '"Futura PT Medium"',
-                  color: '#EB1C24',
-                  textTransform: 'uppercase'
-                }}
-              >
-                VIEW BAG
-              </button>
             </div>
           ) : (
               <div className="space-y-3">
@@ -878,8 +865,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     return null;
                   }
                   
-                  return itemsToShow.map((item, index) => (
-                    <div key={item.id} className="bg-white border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box', ...(viewingDetailsFor === item.id ? { paddingBottom: '16px' } : {}) }}>
+                  return itemsToShow.map((item) => (
+                    <div key={item.id} className="bg-transparent border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box', ...(viewingDetailsFor === item.id ? { paddingBottom: '16px' } : {}) }}>
                     <div className="flex items-center justify-start space-x-3" style={{ minHeight: '120px', height: viewingDetailsFor === item.id ? 'auto' : '120px', paddingTop: '0', paddingBottom: '0' }}>
                     {/* Thumbnail Container */}
                     <div className="flex flex-col items-center justify-center" style={{ height: '120px', minHeight: '120px', alignSelf: 'flex-start' }}>
@@ -1603,9 +1590,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
           )}
         </div>
 
-          {/* Footer with Total and Actions */}
+          {/* Footer with Total and Actions - same padding so empty VIEW BAG matches filled state distance from border */}
           <div className="px-3 py-2" style={{ paddingBottom: '16px' }}>
-            {/* Separator line above footer */}
+            {/* Separator line above footer - only when cart has items (no line above empty VIEW BAG) */}
             {cartItems.length > 0 && <div className="border-t border-gray-200 mb-2"></div>}
             
             {/* Total Due - only show when cart has items */}
@@ -1627,7 +1614,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             )}
             
             <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-              {/* VIEW BAG and CHECKOUT buttons - only show when cart has items */}
+              {/* VIEW BAG and CHECKOUT when cart has items */}
               {cartItems.length > 0 && (
                 <>
                   <button
@@ -1659,35 +1646,56 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                   </button>
                 </>
               )}
+              {/* VIEW BAG only when cart is empty - same footer position as above so same distance from dropdown border */}
+              {cartItems.length === 0 && (
+                <button
+                  onClick={handleViewCart}
+                  className="w-full py-2 px-3 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
+                  style={{ 
+                    borderWidth: '1.3px',
+                    fontSize: '11px',
+                    fontFamily: '"Futura PT Medium"',
+                    color: '#EB1C24',
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  VIEW BAG
+                </button>
+              )}
             </div>
           </div>
 
-        {/* Currency Modal */}
-        {showCurrencyModal && (
-    <div 
-            data-currency-modal
+          </div>
+        </div>
+    </div>
+  );
+
+  // Currency modal in its own portal so it overlaps the cart dropdown and isn't clipped by scroll/overflow
+  const currencyModalContent = showCurrencyModal && (
+    <div
+      data-currency-modal
       className="fixed z-50"
       style={{
         top: '0',
         left: '0',
         right: '0',
         bottom: '0',
-        zIndex: 999999999,
+        zIndex: 1000000000,
         pointerEvents: 'none'
       }}
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowCurrencyModal(false);
-            }}
+      onClick={(e) => {
+        e.stopPropagation();
+        setShowCurrencyModal(false);
+      }}
     >
-      <div 
-              className="absolute bg-white border border-black shadow-lg"
-        style={{ 
+      <div
+        className="absolute bg-white border border-black shadow-lg"
+        style={{
           borderWidth: '1.3px',
           display: 'flex',
           flexDirection: 'column',
           boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
-                top: '50px',
+          top: '50px',
           bottom: '14px',
           left: '12px',
           right: '12px',
@@ -1699,121 +1707,114 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
         }}
         onClick={(e) => e.stopPropagation()}
       >
-              {/* Header */}
-              <div className="flex justify-between items-center mb-2 relative">
-                <div className="flex-1"></div>
-              <h3 
-                  className="uppercase absolute left-1/2 transform -translate-x-1/2"
-                style={{ 
-                    fontSize: '13px',
-                    fontWeight: 'normal',
-                  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                    color: '#000000',
-                    transform: 'translateX(-50%) translateY(1px)'
-                }}
-              >
-                SELECT CURRENCY
-              </h3>
-              <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowCurrencyModal(false);
-                    }}
-                    style={{ 
-                      border: 'none',
-                      background: 'none',
-                      cursor: 'pointer',
-                      padding: 0,
-                      margin: 0,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                      transform: 'translate(-2px, 1px)'
-                    }}
-                  >
-                    <img
-                      src="/assets/close-icon.svg"
-                      alt="Close"
-                      style={{
-                        width: '12.32px',
-                        height: '12.32px',
-                        filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
-                      }}
-                    />
-              </button>
-            </div>
-            
-              {/* Scroll Indicator */}
-              <div 
-                className="text-center mb-1"
-                style={{ 
-                  fontSize: '9px',
-                  color: '#808080',
-                  fontFamily: '"Futura PT Book"',
-                  transform: 'translateY(-1px)'
-                }}
-              >
-                SCROLL TO SEE MORE
-            </div>
-            
-              {/* Currency Options */}
-              <div 
-                className="space-y-1 overflow-y-auto flex-1"
-                  style={{ 
-                    flex: '1 1 auto',
-                    minHeight: '0',
-                    maxHeight: 'calc(100% - 6px)',
-                    marginBottom: '6px'
-                  }}
-            >
-              {Object.entries(currencyRates).map(([code, currency], index, array) => (
-                <button
-                  key={code}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    setSelectedCurrency(code);
-                    const currencyKey = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
-                    localStorage.setItem(currencyKey, code);
-                    setShowCurrencyModal(false);
-                    // Dispatch custom event to notify other components in the same window
-                    window.dispatchEvent(new CustomEvent('currencyChanged', { detail: code }));
-                  }}
-                    className={`w-full p-2 text-left border-t border-l border-r hover:bg-gray-50 transition-colors ${
-                      selectedCurrency === code ? 'bg-gray-100' : 'bg-white'
-                  } ${index === array.length - 1 ? 'border-b' : ''}`}
-                  style={{ 
-                    borderWidth: '1.3px',
-                    borderColor: '#000000',
-                    borderStyle: 'solid',
-                      fontSize: '10px',
-                      fontFamily: '"Futura PT Medium"',
-                      color: '#000000',
-                    textTransform: 'uppercase',
-                    marginBottom: index < array.length - 1 ? '-1.3px' : '0'
-                  }}
-                >
-                  <div className="flex justify-between items-center">
-                      <div className="flex items-center" style={{ gap: '8px' }}>
-                        <span>{currency.name}</span>
-                      </div>
-                      <span style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{currency.symbol}</span>
-                  </div>
-                  <div 
-                      className="text-xs mt-0.5"
-                      style={{ fontSize: '8px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}
-                    >
-                      <span style={{ color: '#EB1C24' }}>1 USD</span>
-                      <span className="text-gray-500"> = {currency.symbol}{currency.rate.toFixed(2)}</span>
-                    </div>
-                </button>
-              ))}
-            </div>
-            </div>
-          </div>
-        )}
-          </div>
+        <div className="flex justify-between items-center mb-2 relative">
+          <div className="flex-1"></div>
+          <h3
+            className="uppercase absolute left-1/2 transform -translate-x-1/2"
+            style={{
+              fontSize: '12px',
+              fontWeight: 'normal',
+              fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+              color: '#000000',
+              transform: 'translateX(-50%) translateY(1px)',
+              marginTop: '20px'
+            }}
+          >
+            SELECT CURRENCY
+          </h3>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowCurrencyModal(false);
+            }}
+            style={{
+              border: 'none',
+              background: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              margin: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              transform: 'translate(-2px, 1px)'
+            }}
+          >
+            <img
+              src="/assets/close-icon.svg"
+              alt="Close"
+              style={{
+                width: '12.32px',
+                height: '12.32px',
+                filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+              }}
+            />
+          </button>
         </div>
+        <div
+          className="text-center"
+          style={{
+            fontSize: '9px',
+            color: '#808080',
+            fontFamily: '"Futura PT Book"',
+            transform: 'translateY(-1px)',
+            marginTop: '10px',
+            marginBottom: '6px'
+          }}
+        >
+          SCROLL TO SEE MORE
+        </div>
+        <div
+          className="space-y-1 overflow-y-auto flex-1"
+          style={{
+            flex: '1 1 auto',
+            minHeight: '0',
+            maxHeight: 'calc(100% - 6px)',
+            marginBottom: '6px'
+          }}
+        >
+          {Object.entries(currencyRates).map(([code, currency], index, array) => (
+            <button
+              key={code}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedCurrency(code);
+                const currencyKey = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+                localStorage.setItem(currencyKey, code);
+                setShowCurrencyModal(false);
+                window.dispatchEvent(new CustomEvent('currencyChanged', { detail: code }));
+              }}
+              className={`w-full p-2 text-left border-t border-l border-r hover:bg-gray-50 transition-colors ${
+                selectedCurrency === code ? 'bg-gray-100' : 'bg-white'
+              } ${index === array.length - 1 ? 'border-b' : ''}`}
+              style={{
+                borderWidth: '1.3px',
+                borderColor: '#000000',
+                borderStyle: 'solid',
+                fontSize: '10px',
+                fontFamily: '"Futura PT Medium"',
+                color: '#000000',
+                textTransform: 'uppercase',
+                marginBottom: index < array.length - 1 ? '-1.3px' : '0'
+              }}
+            >
+              <div className="flex justify-between items-center">
+                <div className="flex items-center" style={{ gap: '8px' }}>
+                  <span>{currency.name}</span>
+                </div>
+                <span style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{currency.symbol}</span>
+              </div>
+              <div
+                className="text-xs mt-0.5"
+                style={{ fontSize: '8px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}
+              >
+                <span style={{ color: '#EB1C24' }}>1 USD</span>
+                <span className="text-gray-500"> = {currency.symbol}{currency.rate.toFixed(2)}</span>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 
@@ -1821,6 +1822,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   return (
     <>
       {createPortal(dropdownContent, document.body)}
+      {currencyModalContent && createPortal(currencyModalContent, document.body)}
       {createPortal(
         <ConfirmationModal
           isOpen={showRemoveConfirm}

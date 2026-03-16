@@ -186,7 +186,7 @@ export default function AdminDashboard() {
   } | null>(null);
   const [pendingData, setPendingData] = useState<{ pendingReviews: number; orderForms: number; pendingItems: { label: string; value: string }[] } | null>(null);
   const [reviewsData, setReviewsData] = useState<{ totalReviews: number; averageRating: number } | null>(null);
-  const [referralsData, setReferralsData] = useState<{ inviteeCount: number } | null>(null);
+  const [_referralsData, setReferralsData] = useState<{ inviteeCount: number } | null>(null);
   const [meetingsData, setMeetingsData] = useState<{ meetings: Array<{ meetingDate?: string; meetingTime?: string; type?: string; clientName?: string }> } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -280,7 +280,9 @@ export default function AdminDashboard() {
         });
         setReviewsData({ totalReviews: data.totalReviews ?? 0, averageRating: data.averageRating ?? 0 });
         setReferralsData({ inviteeCount: data.inviteeCount ?? 0 });
-        setMeetingsData({ meetings: data.meetings ?? [] });
+        setMeetingsData({
+          meetings: (data.meetings ?? []) as Array<{ meetingDate?: string; meetingTime?: string; type?: string; clientName?: string }>,
+        });
       } catch (err) {
         console.error('Failed to initialize dashboard:', err);
         setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
