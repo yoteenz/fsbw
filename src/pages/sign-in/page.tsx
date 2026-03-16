@@ -276,6 +276,21 @@ function SignInPage() {
     setTimeout(() => { window.location.href = url; }, 350);
   };
 
+  /** After admin local sign-in: if a Supabase session exists for the same email, sync profile/orders/cart/wishlist from API so stored info loads. */
+  const trySyncAdminStoredInfoIfSession = async (emailNorm: string) => {
+    if (!isAdminEmail(emailNorm) || !isSupabaseConfigured()) return;
+    const supabase = getSupabase();
+    if (!supabase) return;
+    try {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session?.user || normalizeEmail((data.session.user as { email?: string }).email || '') !== emailNorm) return;
+      const profile = await syncAllFromApi();
+      if (profile) saveCartAndWishlistToUserKeys(emailNorm);
+    } catch (_) {
+      // ignore
+    }
+  };
+
   const handleSignInSubmit = async () => {
     const email = (signInEmailRef.current?.value ?? signInEmail).trim();
     const password = signInPasswordRef.current?.value ?? signInPassword;
