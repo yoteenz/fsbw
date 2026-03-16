@@ -257,7 +257,9 @@ export default function AdminDashboard() {
             });
             setReviewsData({ totalReviews: reviews.totalReviews ?? 0, averageRating: reviews.averageRating ?? 0 });
             setReferralsData({ inviteeCount: referrals.inviteeCount ?? 0 });
-            setMeetingsData({ meetings: Array.isArray(meetings.meetings) ? meetings.meetings : [] });
+            setMeetingsData({
+              meetings: (Array.isArray(meetings.meetings) ? meetings.meetings : []) as Array<{ meetingDate?: string; meetingTime?: string; type?: string; clientName?: string }>,
+            });
             return;
           } catch {
             /* fall through to mock */

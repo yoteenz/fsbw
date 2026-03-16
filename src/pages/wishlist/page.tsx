@@ -868,13 +868,46 @@ function WishlistSelection() {
                   </span>
                 </div>
 
+                {/* Stock status line - same top spacing as cart dropdown "you're earning" (when items exist) */}
+                {wishlistItems.length > 0 && (() => {
+                  const outOfStockCount = wishlistItems.filter((i: any) => (i.stockStatus || 'in_stock') === 'out_of_stock').length;
+                  const lowStockCount = wishlistItems.filter((i: any) => (i.stockStatus || 'in_stock') === 'low_stock').length;
+                  const allInStock = outOfStockCount === 0 && lowStockCount === 0;
+                  if (allInStock) {
+                    return (
+                      <p className="text-center w-full flex-shrink-0" style={{ marginTop: '10px', marginBottom: '6px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                        ALL OF YOUR WISHLIST ITEMS ARE IN STOCK!
+                      </p>
+                    );
+                  }
+                  if (outOfStockCount > 0) {
+                    const n = outOfStockCount;
+                    const isOne = n === 1;
+                    return (
+                      <p className="text-center w-full flex-shrink-0" style={{ marginTop: '10px', marginBottom: '6px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                        <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{n}</span>
+                        {isOne ? ' ITEM ON YOUR WISHLIST IS OUT OF STOCK.' : ' ITEMS ON YOUR WISHLIST ARE OUT OF STOCK.'}
+                      </p>
+                    );
+                  }
+                  const n = lowStockCount;
+                  const isOne = n === 1;
+                  return (
+                    <p className="text-center w-full flex-shrink-0" style={{ marginTop: '10px', marginBottom: '6px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                      <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{n}</span>
+                      {isOne ? ' ITEM ON YOUR WISHLIST IS LOW IN STOCK.' : ' ITEMS ON YOUR WISHLIST ARE LOW IN STOCK.'}
+                    </p>
+                  );
+                })()}
+
                 {/* WISHLIST PRODUCT CARDS - scrollable */}
                 <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 0, paddingTop: '4.8px' }}>
                 {wishlistItems.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '40px 20px', color: '#000' }}>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>
-                      YOUR WISHLIST IS EMPTY
-                    </p>
+                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '40px 20px', color: '#000' }}>
+                    <p
+                      style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}
+                      dangerouslySetInnerHTML={{ __html: "YOUR WISHLIST IS EMPTY.<br>LET'S GO WINDOW SHOPPING!" }}
+                    />
                   </div>
                 ) : (
                   (() => {
@@ -1158,6 +1191,19 @@ function WishlistSelection() {
                               <img src="/assets/check.svg" alt="Check" width="9" height="9" />
                               <span>IN THE BAG</span>
                             </button>
+                          ) : (item.stockStatus || 'in_stock') === 'out_of_stock' ? (
+                            <span
+                              style={{
+                                fontFamily: '"Futura PT Demi"',
+                                fontSize: '9px',
+                                color: '#808080',
+                                textTransform: 'uppercase',
+                                marginTop: '6px',
+                                textAlign: 'center'
+                              }}
+                            >
+                              OUT OF STOCK
+                            </span>
                           ) : (
                             <button
                               onClick={() => handleAddToBag(item)}

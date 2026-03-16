@@ -361,7 +361,7 @@ export default function ViewListsPage() {
                   const expandedList = expandedListId ? lists.find((l) => l.id === expandedListId) : null;
                   const expandedItemCount = expandedList ? (expandedList.items?.length ?? 0) : 0;
                   const headerLabel = expandedListId && expandedList ? (expandedList.name ?? '').toUpperCase() : 'LISTS';
-                  const headerCount = expandedListId && expandedList ? expandedItemCount : lists.length + 1;
+                  const headerCount = expandedListId && expandedList ? expandedItemCount : lists.length + (wishlistCount > 0 ? 1 : 0);
                   return (
                     <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ flexShrink: 0 }}>
                       <span
@@ -381,7 +381,7 @@ export default function ViewListsPage() {
                 })()}
 
                 {/* Scrollable lists/content area */}
-                <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+                <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
                 {expandedListId ? (
                   (() => {
                     const isWishlist = expandedListId === 'wishlist';
@@ -482,9 +482,20 @@ export default function ViewListsPage() {
                   })()
                 ) : (
                 <>
-                {/* List rows: WISHLIST (primary) first, then user lists with delete */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 0, paddingTop: '20.8px' }}>
-                  {/* Primary list: WISHLIST */}
+                {/* List rows: when no user lists created, show only message (no default WISHLIST row); otherwise WISHLIST row + user lists */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 0, paddingTop: '20.8px', ...(lists.length === 0 ? { flex: 1, alignItems: 'center', justifyContent: 'center' } : {}) }}>
+                  {/* When no lists created: only show message (no default WISHLIST row) */}
+                  {lists.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '40px 20px', color: '#000' }}>
+                      <p
+                        style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}
+                        dangerouslySetInnerHTML={{ __html: "YOU DON'T HAVE ANY LISTS YET.<br>CREATE A NEW ONE BELOW!" }}
+                      />
+                    </div>
+                  ) : (
+                  <>
+                  {/* Primary list: WISHLIST (only when wishlist has items and there are user lists) */}
+                  {wishlistCount > 0 && (
                   <div
                     role="button"
                     tabIndex={0}
@@ -537,6 +548,7 @@ export default function ViewListsPage() {
                       <p style={{ fontFamily: '"Futura PT Medium", Futura, sans-serif', fontSize: '11px', color: '#EB1C24', margin: '2px 0 0 0', textTransform: 'uppercase' }}>DEFAULT</p>
                     </div>
                   </div>
+                  )}
 
                   {/* Secondary lists (user-created) with delete */}
                   {lists.length === 0 ? null : (
@@ -597,10 +609,7 @@ export default function ViewListsPage() {
                     </div>
                   )}
 
-                  {lists.length === 0 && (
-                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: '#000', textAlign: 'center', padding: '24px 0', textTransform: 'uppercase' }}>
-                      YOU DON&apos;T HAVE ANY OTHER LISTS YET. CREATE ONE FROM THE WISHLIST.
-                    </p>
+                  </>
                   )}
                 </div>
                 </>

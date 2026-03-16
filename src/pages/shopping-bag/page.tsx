@@ -1062,16 +1062,16 @@ function ShoppingBagPage() {
                  {/* Body - flex-1 minHeight:0 so scroll area gets remaining height (like wishlist) */}
                  <div className="flex flex-col" style={{ flex: 1, minHeight: 0, marginTop: '4.8px', overflow: 'hidden' }}>
                    {/* Cart Items - scrollable; like wishlist: flex-1 minHeight:0 overflowY:auto, paddingBottom so last item not cut off */}
-                   <div className={`flex flex-col justify-start items-start gap-0 ${cartItems.length > 1 ? 'overflow-y-auto' : ''}`} style={{ flex: cartItems.length > 1 ? 1 : undefined, minHeight: cartItems.length > 1 ? 0 : undefined, scrollBehavior: 'smooth', width: '100%', marginTop: cartItems.length === 1 ? '4.8px' : '4.8px', paddingTop: 0, paddingBottom: cartItems.length > 1 ? '16px' : '0' }}>
+                   <div className={`flex flex-col justify-start items-start gap-0 ${cartItems.length > 1 ? 'overflow-y-auto' : ''}`} style={{ flex: 1, minHeight: 0, scrollBehavior: 'smooth', width: '100%', marginTop: cartItems.length === 1 ? '4.8px' : '4.8px', paddingTop: 0, paddingBottom: cartItems.length > 1 ? '16px' : '0' }}>
                      {cartItems.length === 0 ? (
                        <div style={{ 
+                         flex: 1,
                          textAlign: 'center', 
                          padding: '40px 20px',
                          display: 'flex',
                          flexDirection: 'column',
                          alignItems: 'center',
                          justifyContent: 'center',
-                         minHeight: '40px',
                          width: '100%'
                        }}>
                          <p 
@@ -1543,6 +1543,38 @@ function ShoppingBagPage() {
                 </span>
               </div>
 
+              {/* Stock status line - same spacing as cart dropdown "you're earning" (when saved items exist) */}
+              {savedForLater.length > 0 && (() => {
+                const outOfStockCount = savedForLater.filter((i: any) => (i.stockStatus || 'in_stock') === 'out_of_stock').length;
+                const lowStockCount = savedForLater.filter((i: any) => (i.stockStatus || 'in_stock') === 'low_stock').length;
+                const allInStock = outOfStockCount === 0 && lowStockCount === 0;
+                if (allInStock) {
+                  return (
+                    <p className="text-center w-full flex-shrink-0" style={{ marginTop: '10px', marginBottom: '6px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                      ALL OF YOUR SAVED ITEMS ARE IN STOCK!
+                    </p>
+                  );
+                }
+                if (outOfStockCount > 0) {
+                  const n = outOfStockCount;
+                  const isOne = n === 1;
+                  return (
+                    <p className="text-center w-full flex-shrink-0" style={{ marginTop: '10px', marginBottom: '6px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                      <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{n}</span>
+                      {isOne ? ' ITEM IN YOUR SAVED ITEMS IS OUT OF STOCK.' : ' ITEMS IN YOUR SAVED ITEMS ARE OUT OF STOCK.'}
+                    </p>
+                  );
+                }
+                const n = lowStockCount;
+                const isOne = n === 1;
+                return (
+                  <p className="text-center w-full flex-shrink-0" style={{ marginTop: '10px', marginBottom: '6px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                    <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{n}</span>
+                    {isOne ? ' ITEM IN YOUR SAVED ITEMS IS LOW IN STOCK.' : ' ITEMS IN YOUR SAVED ITEMS ARE LOW IN STOCK.'}
+                  </p>
+                );
+              })()}
+
               {/* Body - flex-1 minHeight:0 so scroll area gets remaining height (like wishlist) */}
               <div className="flex flex-col" style={{ flex: savedForLater.length > 1 ? 1 : undefined, minHeight: savedForLater.length > 1 ? 0 : undefined, marginTop: '4.8px', overflow: 'hidden' }}>
                 {/* Saved Items - scrollable; like wishlist: flex-1 minHeight:0 overflowY:auto, paddingBottom so last item not cut off */}
@@ -1851,24 +1883,39 @@ function ShoppingBagPage() {
                                <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px' }}>+</span>
                              </button>
                            </div>
-                           <button
-                             onClick={() => handleMoveToCart(item)}
-                             style={{
-                               fontFamily: '"Futura PT Demi"',
-                               fontSize: '9px',
-                               color: '#808080',
-                               background: 'none',
-                               border: 'none',
-                               cursor: 'pointer',
-                               padding: '0',
-                               textTransform: 'uppercase',
-                               marginTop: '6px',
-                               textAlign: 'center'
-                             }}
-                             type="button"
-                           >
-                            MOVE TO BAG
-                           </button>
+                           {(item.stockStatus || 'in_stock') === 'out_of_stock' ? (
+                             <span
+                               style={{
+                                 fontFamily: '"Futura PT Demi"',
+                                 fontSize: '9px',
+                                 color: '#808080',
+                                 textTransform: 'uppercase',
+                                 marginTop: '6px',
+                                 textAlign: 'center'
+                               }}
+                             >
+                               OUT OF STOCK
+                             </span>
+                           ) : (
+                             <button
+                               onClick={() => handleMoveToCart(item)}
+                               style={{
+                                 fontFamily: '"Futura PT Demi"',
+                                 fontSize: '9px',
+                                 color: '#808080',
+                                 background: 'none',
+                                 border: 'none',
+                                 cursor: 'pointer',
+                                 padding: '0',
+                                 textTransform: 'uppercase',
+                                 marginTop: '6px',
+                                 textAlign: 'center'
+                               }}
+                               type="button"
+                             >
+                              MOVE TO BAG
+                             </button>
+                           )}
                          </div>
                       </div>
                     </div>
