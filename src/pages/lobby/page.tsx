@@ -5,6 +5,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import { isMockDataAccount } from '../../utils/adminAuth';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
 import { syncAllFromApi, buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage, buildProfilePayloadForBackend } from '../../utils/syncFromApi';
+import { onSignInSuccess } from '../../utils/adminAuth';
 
 // Lobby Component
 const LobbyPage: React.FC = () => {
@@ -31,12 +32,14 @@ const LobbyPage: React.FC = () => {
         if (cancelled) return;
         if (profile) {
           localStorage.setItem('isSignedIn', 'true');
+          onSignInSuccess('session_restore'); // Face ID / Supabase cookie from lobby
           window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
           navigate('/account', { replace: true });
           return;
         }
         const minimal = buildMinimalUserFromSupabaseSession(session.user);
         applyMinimalUserToStorage(minimal);
+        onSignInSuccess('session_restore');
         const { patchProfile } = await import('../../utils/api');
         await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));

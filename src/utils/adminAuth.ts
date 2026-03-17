@@ -12,6 +12,35 @@ export const AUTH_BACKUP_KEY = 'baw_auth_backup';
 
 const AUTH_BACKUP_COOKIE = 'baw_auth_b';
 
+/** Track how user signed in (session_restore = Face ID / Supabase cookie auto-login; password = tapped Sign in). Used so we persist backup reliably on Safari. */
+export const LAST_SIGN_IN_METHOD_KEY = 'baw_last_sign_in_method';
+export const LAST_SIGN_IN_AT_KEY = 'baw_last_sign_in_at';
+
+function isSafariIos(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent || '';
+  return /iP(?:hone|ad|od)/.test(ua) && /Safari|AppleWebKit/.test(ua) && !/Chrome|CriOS|FxiOS/.test(ua);
+}
+
+/** Call once after every successful sign-in (session restore, password submit, or passkey). Records method, persists backup, and on Safari iOS schedules extra persist retries so backup sticks before app is closed. */
+export function onSignInSuccess(method: 'session_restore' | 'password' | 'passkey'): void {
+  if (typeof window === 'undefined' || !window.localStorage) return;
+  try {
+    window.localStorage.setItem(LAST_SIGN_IN_METHOD_KEY, method);
+    window.localStorage.setItem(LAST_SIGN_IN_AT_KEY, String(Date.now()));
+    persistAuthBackup();
+    if (isSafariIos()) {
+      const delays = [150, 400, 800];
+      delays.forEach((ms) => {
+        setTimeout(() => persistAuthBackup(), ms);
+      });
+      authDebugLog(`signInSuccess: method=${method} (Safari iOS — scheduled ${delays.length} backup retries)`);
+    } else {
+      authDebugLog(`signInSuccess: method=${method}`);
+    }
+  } catch (_) {}
+}
+
 /** Enable auth debug: set localStorage 'baw_auth_debug' = 'true' or open site with ?auth_debug=1. Logs persist so you can see what happened after reopening the browser. */
 export const AUTH_DEBUG_KEY = 'baw_auth_debug';
 export const AUTH_DEBUG_LOG_KEY = 'baw_auth_debug_log';
@@ -69,6 +98,19 @@ export function authDebugLogIfEnabled(message: string): void {
   authDebugLog(message);
 }
 
+/** For debug panel: last sign-in method and timestamp (session_restore = Face ID/auto-login, password = tapped Sign in). */
+export function getLastSignInInfo(): { method: string; at: number } | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const method = window.localStorage.getItem(LAST_SIGN_IN_METHOD_KEY);
+    const at = window.localStorage.getItem(LAST_SIGN_IN_AT_KEY);
+    if (method && at) return { method, at: parseInt(at, 10) };
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 /** Get recent auth debug log lines for the on-page panel. Returns { enabled, lines }. */
 export function getAuthDebugLog(): { enabled: boolean; lines: { t: number; m: string }[] } {
   if (typeof window === 'undefined') return { enabled: false, lines: [] };
@@ -124,7 +166,7 @@ export function persistAuthBackup(): void {
       localStorage.setItem(AUTH_BACKUP_KEY, payload);
       const wroteCookie = payload.length <= 3800;
       if (wroteCookie) writeBackupToCookie(payload);
-      authDebugLog(`persist: ls=ok cookie=${wroteCookie ? 'ok' : 'skip(>3800)'} len=${payload.length}`);
+      authDebugLog(`persist: ls=ok cookie=${wroteCookie ? 'ok' : 'skip(>3800)'} len=${payload.length} — backup written; close Safari and reopen with ?auth_debug=1 to test`);
     } else {
       authDebugLog(`persist: skip (signedIn=${signedIn} hasUser=${!!currentUser})`);
     }

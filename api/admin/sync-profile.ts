@@ -47,7 +47,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const url = process.env.SUPABASE_URL;
   const anonKey = process.env.SUPABASE_ANON_KEY;
   if (!url || !anonKey) {
-    return res.status(503).json({ error: 'Server not configured' });
+    return res.status(503).json({ error: 'Server not configured (missing SUPABASE_URL or SUPABASE_ANON_KEY)' });
+  }
+
+  let admin;
+  try {
+    admin = getSupabaseAdmin();
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : 'Missing Supabase env';
+    console.error('Admin sync-profile getSupabaseAdmin:', msg);
+    return res.status(503).json({ error: msg });
   }
 
   try {
@@ -62,7 +71,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const userId = signInData.user.id;
-    const admin = getSupabaseAdmin();
 
     const [profileRes, ordersRes, cartRes, wishlistRes] = await Promise.all([
       admin.from('profiles').select('*').eq('id', userId).maybeSingle(),
@@ -71,10 +79,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       admin.from('wishlist').select('items').eq('user_id', userId).maybeSingle(),
     ]);
 
+    if (profileRes.error) {
+      console.error('Admin sync-profile profiles query:', profileRes.error);
+    }
+
     const profileRow = profileRes.data as Record<string, unknown> | null;
-    const profile = profileRow
-      ? fromProfileRow(profileRow)
-      : { id: userId, email: signInData.user.email ?? '' };
+    let profile: Record<string, unknown>;
+    try {
+      profile = profileRow
+        ? fromProfileRow(profileRow)
+        : { id: userId, email: signInData.user.email ?? '' };
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Profile mapping failed';
+      console.error('Admin sync-profile fromProfileRow:', msg);
+      return res.status(500).json({ error: msg });
+    }
 
     const ordersRow = ordersRes.data as { active_orders?: unknown; past_orders?: unknown } | null;
     const activeOrders = Array.isArray(ordersRow?.active_orders) ? ordersRow.active_orders : [];
@@ -95,7 +114,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       wishlist: { items: wishlistItems },
     });
   } catch (e) {
+    const msg = e instanceof Error ? e.message : 'Sync failed';
     console.error('Admin sync-profile error:', e);
-    return res.status(500).json({ error: e instanceof Error ? e.message : 'Sync failed' });
+    return res.status(500).json({ error: msg });
   }
 }

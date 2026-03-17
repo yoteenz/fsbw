@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
-import { isAdminEmail, persistAuthBackup, ensureAuthRestoredFromBackup } from '../../utils/adminAuth';
+import { isAdminEmail, persistAuthBackup, ensureAuthRestoredFromBackup, onSignInSuccess } from '../../utils/adminAuth';
 import { saveCartAndWishlistToUserKeys, swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
 import { normalizeEmail, normalizePassword } from '../../utils/credentialNormalize';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
@@ -50,6 +50,7 @@ function SignInPage() {
     return 'SHOP';
   });
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
+  const [safariNoticeDismissed, setSafariNoticeDismissed] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState(() => {
     if (typeof window === 'undefined') return false;
     return localStorage.getItem('isSignedIn') === 'true';
@@ -196,6 +197,7 @@ function SignInPage() {
         if (profile) {
           localStorage.setItem('isSignedIn', 'true');
           setIsSignedIn(true);
+          onSignInSuccess('session_restore'); // Face ID / Supabase cookie auto-login — track and persist (Safari retries)
           window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
           const returnTo = new URLSearchParams(location.search).get('returnTo');
           const from = (location.state as { from?: string } | null)?.from;
@@ -208,6 +210,7 @@ function SignInPage() {
         // Session exists but getProfile failed (e.g. just confirmed email, API not ready): still sign in from session; create profile so user appears in admin clients
         const minimal = buildMinimalUserFromSupabaseSession(session.user);
         applyMinimalUserToStorage(minimal);
+        onSignInSuccess('session_restore');
         const { patchProfile } = await import('../../utils/api');
         await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
         setIsSignedIn(true);
@@ -346,6 +349,7 @@ function SignInPage() {
             if (profile) {
               localStorage.setItem('isSignedIn', 'true');
               setIsSignedIn(true);
+              onSignInSuccess('password'); // user tapped Sign in — track and persist (Safari retries)
               trackActivity('sign_in');
               window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
               if (signInEmailRef.current) signInEmailRef.current.value = '';
@@ -358,6 +362,7 @@ function SignInPage() {
             // Session valid but getProfile failed (e.g. no API or profile not ready): still sign in from session; create profile so user appears in admin clients
             const minimal = buildMinimalUserFromSupabaseSession(data.session.user);
             applyMinimalUserToStorage(minimal);
+            onSignInSuccess('password');
             const { patchProfile } = await import('../../utils/api');
             await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
             setIsSignedIn(true);
@@ -432,7 +437,7 @@ function SignInPage() {
         if (userToSet.profileImage && String(userToSet.profileImage).trim()) localStorage.setItem('profileImage', String(userToSet.profileImage));
         else localStorage.removeItem('profileImage');
         localStorage.setItem('isSignedIn', 'true');
-        persistAuthBackup();
+        onSignInSuccess('password');
         setIsSignedIn(true);
         trackActivity('sign_in');
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
@@ -506,7 +511,7 @@ function SignInPage() {
         if (userToSet.profileImage && String(userToSet.profileImage).trim()) localStorage.setItem('profileImage', String(userToSet.profileImage));
         else localStorage.removeItem('profileImage');
         localStorage.setItem('isSignedIn', 'true');
-        persistAuthBackup();
+        onSignInSuccess('password');
         setIsSignedIn(true);
         trackActivity('sign_in');
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
@@ -925,6 +930,55 @@ function SignInPage() {
             <>
               {/* SIGN IN CONTENT */}
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0' }}>
+              {/* Safari iOS: closing the app clears storage, so we show a short notice so users know why they were signed out */}
+              {(() => {
+                const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+                const isSafariIos = /iP(?:hone|ad|od)/.test(ua) && /Safari|AppleWebKit/.test(ua) && !/Chrome|CriOS|FxiOS/.test(ua);
+                const dismissedKey = 'signin_safari_notice_dismissed';
+                try {
+                  if (!isSafariIos) return null;
+                  if (safariNoticeDismissed || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem(dismissedKey) === '1')) return null;
+                } catch (_) { return null; }
+                return (
+                  <div
+                    role="status"
+                    style={{
+                      marginBottom: '12px',
+                      padding: '10px 12px',
+                      backgroundColor: 'rgba(0,0,0,0.06)',
+                      border: '1px solid rgba(0,0,0,0.12)',
+                      fontFamily: '"Futura PT Book"',
+                      fontSize: '10px',
+                      color: '#333',
+                      textTransform: 'uppercase',
+                      position: 'relative',
+                      paddingRight: '32px',
+                    }}
+                  >
+                    On Safari (iPhone/iPad), closing the browser can sign you out. Sign in again below to continue.
+                    <button
+                      type="button"
+                      aria-label="Dismiss"
+                      onClick={() => { try { sessionStorage.setItem(dismissedKey, '1'); setSafariNoticeDismissed(true); } catch (_) {} }}
+                      style={{
+                        position: 'absolute',
+                        top: '8px',
+                        right: '8px',
+                        background: 'none',
+                        border: 'none',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        color: '#666',
+                        padding: '0 4px',
+                        lineHeight: 1,
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                );
+              })()}
+
               {/* SIGN IN TO YOUR ACCOUNT CARD */}
               <div
                 className="border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
@@ -1165,23 +1219,10 @@ function SignInPage() {
                           textTransform: 'none'
                         }}
                       >
-                        Sign up complete! Check your email to confirm your account.
+                        SIGN UP IS ALMOST COMPLETE!
+                        <br />
+                        CHECK YOUR EMAIL TO CONFIRM YOUR ACCOUNT.
                       </p>
-                      <button
-                        type="button"
-                        onClick={() => setShowSignUpConfirmMessage(false)}
-                        className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                        style={{
-                          borderWidth: '1.3px',
-                          color: '#EB1C24',
-                          fontFamily: '"Futura PT Medium"',
-                          backgroundColor: '#FFFFFF',
-                          textTransform: 'uppercase',
-                          marginTop: '8px'
-                        }}
-                      >
-                        SIGN IN
-                      </button>
                     </div>
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
@@ -1703,6 +1744,26 @@ function SignInPage() {
             )}
                 </div>
 
+            {/* SIGN UP BUTTON - Below card when showing confirm message (reverts to create account form) */}
+            {showSignUpConfirmMessage && (
+            <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowSignUpConfirmMessage(false)}
+                  className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                  style={{
+                    borderWidth: '1.3px',
+                    color: '#EB1C24',
+                    fontFamily: '"Futura PT Medium"',
+                    backgroundColor: '#FFFFFF',
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  SIGN UP
+                </button>
+              </div>
+            )}
+
             {/* SIGN UP BUTTON - Outside card (hidden when showing confirm message) */}
             {!showSignUpConfirmMessage && (
             <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
@@ -1985,7 +2046,7 @@ function SignInPage() {
                       } catch (_) {}
                       
                       localStorage.setItem('isSignedIn', 'true');
-                      persistAuthBackup();
+                      onSignInSuccess('password'); // new account = same persist + Safari retries
                       // Sign user in
                       setIsSignedIn(true);
                       trackActivity('sign_in');

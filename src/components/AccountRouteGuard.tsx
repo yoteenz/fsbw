@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, Navigate } from 'react-router-dom';
-import { isSignedIn, persistAuthBackup, ensureAuthRestoredFromBackup } from '../utils/adminAuth';
+import { isSignedIn, persistAuthBackup, ensureAuthRestoredFromBackup, onSignInSuccess } from '../utils/adminAuth';
 import { getSupabase, isSupabaseConfigured } from '../utils/supabase';
 import { syncAllFromApi, buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage, buildProfilePayloadForBackend } from '../utils/syncFromApi';
 
@@ -47,10 +47,12 @@ export default function AccountRouteGuard({ children }: { children: React.ReactN
       if (cancelled) return;
       if (profile) {
         localStorage.setItem('isSignedIn', 'true');
+        onSignInSuccess('session_restore'); // Face ID / Supabase when opening account route directly
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
       } else {
         const minimal = buildMinimalUserFromSupabaseSession(session.user);
         applyMinimalUserToStorage(minimal);
+        onSignInSuccess('session_restore');
         const { patchProfile } = await import('../utils/api');
         await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));

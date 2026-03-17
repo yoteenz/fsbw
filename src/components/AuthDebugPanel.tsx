@@ -1,10 +1,10 @@
 /**
  * Auth debug panel: visible when auth debug is on (?auth_debug=1 or localStorage baw_auth_debug=true).
- * Logs persist so after closing/reopening the browser (e.g. Safari) you can see what happened on load.
- * Renders at TOP of viewport so it's visible on mobile and not covered by browser chrome.
+ * Shows when URL has ?auth_debug=1 even if localStorage was cleared (e.g. Safari), so you can see load/restore after reopen.
  */
 import { useState, useEffect } from 'react';
-import { getAuthDebugLog, AUTH_DEBUG_KEY, AUTH_DEBUG_LOG_KEY } from '../utils/adminAuth';
+import { useLocation } from 'react-router-dom';
+import { getAuthDebugLog, getLastSignInInfo, AUTH_DEBUG_KEY, AUTH_DEBUG_LOG_KEY } from '../utils/adminAuth';
 
 const LOG_REFRESH_MS = 2000;
 
@@ -14,15 +14,20 @@ function formatTime(t: number): string {
 }
 
 export default function AuthDebugPanel() {
+  const location = useLocation();
   const [log, setLog] = useState(getAuthDebugLog());
   const [collapsed, setCollapsed] = useState(false);
+
+  const params = new URLSearchParams(location.search || '');
+  const urlHasDebug = params.get('auth_debug') === '1' || params.get('auth_debug') === 'true';
+  const enabled = log.enabled || urlHasDebug;
 
   useEffect(() => {
     const interval = setInterval(() => setLog(getAuthDebugLog()), LOG_REFRESH_MS);
     return () => clearInterval(interval);
   }, []);
 
-  if (!log.enabled) return null;
+  if (!enabled) return null;
 
   const clearLog = () => {
     try {
@@ -40,6 +45,7 @@ export default function AuthDebugPanel() {
   };
 
   const lines = log.lines.slice(-25);
+  const lastSignIn = getLastSignInInfo();
 
   return (
     <div
@@ -80,8 +86,13 @@ export default function AuthDebugPanel() {
       </button>
       {!collapsed && (
         <>
+          {lastSignIn && (
+            <div style={{ padding: '4px 8px', fontSize: '10px', color: '#fff', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+              Last sign-in: <strong>{lastSignIn.method}</strong> {lastSignIn.method === 'session_restore' ? '(Face ID / auto-login)' : '(tapped Sign in)'} at {formatTime(lastSignIn.at)}
+            </div>
+          )}
           <div style={{ flex: 1, overflow: 'auto', padding: '6px 8px', whiteSpace: 'pre-wrap', wordBreak: 'break-all', backgroundColor: 'rgba(0,0,0,0.85)', color: '#0f0', maxHeight: '180px' }}>
-            {lines.length === 0 ? '(no log yet — sign in and close/reopen browser to see load/restore lines)' : lines.map((entry, i) => (
+            {lines.length === 0 ? '(no log yet — or Safari cleared it. This load just wrote the line above; check "load: lsBackup= cookieBackup=" to see why you were signed out.)' : lines.map((entry, i) => (
               <div key={`${entry.t}-${i}`} style={{ marginBottom: '2px' }}>
                 <span style={{ color: '#888' }}>{formatTime(entry.t)}</span> {entry.m}
               </div>

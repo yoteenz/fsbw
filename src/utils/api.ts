@@ -82,7 +82,10 @@ export async function syncProfileWithPassword(
     }
     if (res.status === 401) throw new Error('Invalid Supabase password. Use the same password you use to sign in with Supabase.');
     if (res.status === 403) throw new Error('Sync not allowed for this account.');
-    if (res.status >= 500) throw new Error('Server error during sync. Try again later.');
+    if (res.status >= 500) {
+      const fallback = text && text.length < 200 ? text : 'Server error during sync. Try again later. Check Vercel function logs for details.';
+      throw new Error(fallback);
+    }
     throw new Error(text || 'Sync failed.');
   }
   return text ? JSON.parse(text) : {};
