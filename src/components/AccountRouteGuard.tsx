@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, Navigate } from 'react-router-dom';
-import { isSignedIn, persistAuthBackup } from '../utils/adminAuth';
+import { isSignedIn, persistAuthBackup, ensureAuthRestoredFromBackup } from '../utils/adminAuth';
 import { getSupabase, isSupabaseConfigured } from '../utils/supabase';
 import { syncAllFromApi, buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage, buildProfilePayloadForBackend } from '../utils/syncFromApi';
 
@@ -24,18 +24,22 @@ export default function AccountRouteGuard({ children }: { children: React.ReactN
       setRecoveryDone(true);
       return;
     }
+    const supabase = client;
     let cancelled = false;
     async function run() {
-      let { data: { session } } = await client.auth.getSession();
+      let { data: { session } } = await supabase.auth.getSession();
       if (cancelled) return;
       if (!session) {
         try {
-          const { data } = await client.auth.refreshSession();
+          const { data } = await supabase.auth.refreshSession();
           if (data?.session) session = data.session;
         } catch (_) {}
         if (cancelled) return;
       }
       if (!session) {
+        // Restore from backup before we decide to redirect (guard may run after Supabase cleared session)
+        ensureAuthRestoredFromBackup();
+        persistAuthBackup();
         setRecoveryDone(true);
         return;
       }
@@ -43,12 +47,10 @@ export default function AccountRouteGuard({ children }: { children: React.ReactN
       if (cancelled) return;
       if (profile) {
         localStorage.setItem('isSignedIn', 'true');
-        persistAuthBackup();
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
       } else {
         const minimal = buildMinimalUserFromSupabaseSession(session.user);
         applyMinimalUserToStorage(minimal);
-        persistAuthBackup();
         const { patchProfile } = await import('../utils/api');
         await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));

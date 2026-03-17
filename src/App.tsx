@@ -313,7 +313,7 @@ function App() {
     if (typeof window === 'undefined') return;
     const interval = setInterval(() => {
       if (isSignedIn()) persistAuthBackup();
-    }, 20000);
+    }, 10000);
     return () => clearInterval(interval);
   }, []);
 

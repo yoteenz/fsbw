@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
-import { isAdminEmail, persistAuthBackup } from '../../utils/adminAuth';
+import { isAdminEmail, persistAuthBackup, ensureAuthRestoredFromBackup } from '../../utils/adminAuth';
 import { saveCartAndWishlistToUserKeys, swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
 import { normalizeEmail, normalizePassword } from '../../utils/credentialNormalize';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
@@ -175,6 +175,7 @@ function SignInPage() {
 
   // If already signed in (localStorage), redirect so user is not shown the sign-in form after e.g. reopening browser
   useEffect(() => {
+    ensureAuthRestoredFromBackup();
     if (localStorage.getItem('isSignedIn') !== 'true') return;
     const returnTo = new URLSearchParams(location.search).get('returnTo');
     const from = (location.state as { from?: string } | null)?.from;

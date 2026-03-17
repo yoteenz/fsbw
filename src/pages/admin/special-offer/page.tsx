@@ -6,7 +6,6 @@ import {
   getOptionsForUnit,
   getDefaultColorForUnit,
   getDefaultDensityForUnit,
-  ADDON_OPTIONS,
   ADDON_COMBO_OPTIONS,
   type UnitId
 } from '../../../utils/productOptions';
