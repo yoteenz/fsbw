@@ -4,6 +4,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import ConfirmationModal from '../../../components/ConfirmationModal';
+import { clearAppAuth } from '../../../utils/adminAuth';
 
 interface PaymentEntry {
   cardholder?: string;

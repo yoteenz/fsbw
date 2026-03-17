@@ -6,6 +6,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
+import { clearAppAuth } from '../../utils/adminAuth';
 
 function ProductsPage() {
   const navigate = useNavigate();
@@ -807,7 +808,7 @@ function ProductsPage() {
                             color: 'black',
                             fontWeight: '500',
                             textTransform: 'uppercase',
-                            transform: 'translateX(13px)'
+                            transform: 'translateX(7px)'
                           }}>
                             {item}
                           </span>
@@ -843,7 +844,7 @@ function ProductsPage() {
                                 fontWeight: '500',
                                 textTransform: 'uppercase',
                                 cursor: 'pointer',
-                                transform: 'translateX(13px)'
+                                transform: 'translateX(7px)'
                               }}
                               onClick={() => {
                                 if (item.isExpandable) {

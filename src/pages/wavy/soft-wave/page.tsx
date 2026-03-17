@@ -8,6 +8,7 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { trackActivity } from '../../../utils/activity';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
+import { clearAppAuth } from '../../../utils/adminAuth';
 
 function SoftWaveSelection() {
   const navigate = useNavigate();

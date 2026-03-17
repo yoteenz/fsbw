@@ -4,6 +4,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import ConfirmationModal from '../../../components/ConfirmationModal';
+import { clearAppAuth } from '../../../utils/adminAuth';
 
 interface AddressEntry {
   firstName?: string;
@@ -621,7 +622,7 @@ function ShippingPage() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
                     {mobileMenuActiveTab === 'TOOLS' ? (
                       <div className="flex items-center justify-between cursor-pointer" onClick={() => navigate('/tools/gift-card')}>
-                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', color: 'black', fontWeight: '500', textTransform: 'uppercase', transform: 'translateX(13px)' }}>GIFT CARD</span>
+                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', color: 'black', fontWeight: '500', textTransform: 'uppercase', transform: 'translateX(7px)' }}>GIFT CARD</span>
                       </div>
                     ) : mobileMenuActiveTab === 'BRAND' ? (
                       <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />
@@ -635,7 +636,7 @@ function ShippingPage() {
                         <div key={index}>
                           <div className="flex items-center justify-between" style={{ alignItems: 'center' }}>
                             <span
-                              style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', color: 'black', fontWeight: '500', textTransform: 'uppercase', cursor: 'pointer', transform: 'translateX(13px)' }}
+                              style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', color: 'black', fontWeight: '500', textTransform: 'uppercase', cursor: 'pointer', transform: 'translateX(7px)' }}
                               onClick={() => {
                                 if (item.isExpandable) {
                                   if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) navigate('/shop/units');

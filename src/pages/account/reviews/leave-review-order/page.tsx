@@ -6,6 +6,7 @@ import SocialMenuIcons from '../../../../components/SocialMenuIcons';
 import ConfirmationModal from '../../../../components/ConfirmationModal';
 import { getUserSubmittedReviewsKey, getReviewsNewApprovedKey } from '../../../../constants/reviews';
 import { trackActivity } from '../../../../utils/activity';
+import { clearAppAuth } from '../../../../utils/adminAuth';
 
 interface OrderLineItem {
   productName: string;
@@ -438,7 +439,7 @@ function LeaveReviewOrderPage() {
                             color: 'black',
                             fontWeight: '500',
                             textTransform: 'uppercase',
-                            transform: 'translateX(13px)'
+                            transform: 'translateX(7px)'
                           }}>
                             {item}
                           </span>
@@ -466,7 +467,7 @@ function LeaveReviewOrderPage() {
                                 fontWeight: '500',
                                 textTransform: 'uppercase',
                                 cursor: 'pointer',
-                                transform: 'translateX(13px)'
+                                transform: 'translateX(7px)'
                               }}
                               onClick={() => {
                                 if (item.isExpandable) {
