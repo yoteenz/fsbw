@@ -1178,7 +1178,7 @@ function OceanCurlSelection() {
                 </div>
 
                 {/* Social Media Icons - Fixed at bottom */}
-                <SocialMenuIcons />
+                <div style={{ marginBottom: '20px' }}><SocialMenuIcons /></div>
               </div>
             </div>
           ) : (

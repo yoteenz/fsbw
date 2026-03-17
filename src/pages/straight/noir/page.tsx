@@ -2172,7 +2172,7 @@ function NoirSelection() {
                             color: 'black',
                             fontWeight: '500',
                             textTransform: 'uppercase',
-                            transform: 'translateX(7px)'
+                            transform: 'translateX(13px)'
                           }}>
                             {item}
                           </span>
@@ -2200,7 +2200,7 @@ function NoirSelection() {
                                 color: 'black',
                                 fontWeight: '500',
                                 textTransform: 'uppercase',
-                                transform: 'translateX(7px)',
+                                transform: 'translateX(13px)',
                                 cursor: 'pointer'
                               }}
                               onClick={() => {

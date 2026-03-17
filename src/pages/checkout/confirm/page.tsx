@@ -1052,7 +1052,7 @@ function CheckoutConfirmPage() {
                             color: 'black',
                             fontWeight: '500',
                             textTransform: 'uppercase',
-                            transform: 'translateX(7px)'
+                            transform: 'translateX(13px)'
                           }}>
                             {item}
                           </span>
@@ -1081,7 +1081,7 @@ function CheckoutConfirmPage() {
                                 fontWeight: '500',
                                 textTransform: 'uppercase',
                                 cursor: 'pointer',
-                                transform: 'translateX(7px)'
+                                transform: 'translateX(13px)'
                               }}
                               onClick={() => {
                                 if (item.isExpandable) {
@@ -1106,7 +1106,7 @@ function CheckoutConfirmPage() {
                                 style={{ 
                                   width: '16px', 
                                   height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-5px) translateY(-4px) rotate(90deg)' : 'translateX(-5px) translateY(-4px) rotate(0deg)'}`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-11px) translateY(-4px) rotate(90deg)' : 'translateX(-11px) translateY(-4px) rotate(0deg)'}`,
                                   display: 'flex',
                                   alignItems: 'center',
                                   cursor: 'pointer'
@@ -1173,7 +1173,7 @@ function CheckoutConfirmPage() {
                 </div>
 
                 {/* Social Media Icons - Fixed at bottom */}
-                <SocialMenuIcons />
+                <div style={{ marginBottom: '20px' }}><SocialMenuIcons /></div>
                 </div>
               </div>
             ) : (

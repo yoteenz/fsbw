@@ -649,7 +649,7 @@ function ToolsPage() {
                             color: 'black',
                             fontWeight: '500',
                             textTransform: 'uppercase',
-                            transform: 'translateX(7px)'
+                            transform: 'translateX(13px)'
                           }}>
                             {item}
                           </span>
@@ -678,7 +678,7 @@ function ToolsPage() {
                                 fontWeight: '500',
                                 textTransform: 'uppercase',
                                 cursor: 'pointer',
-                                transform: 'translateX(7px)'
+                                transform: 'translateX(13px)'
                               }}
                               onClick={() => {
                                 if (item.isExpandable) {
