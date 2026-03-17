@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
-import { isAdminEmail, persistAuthBackup, ensureAuthRestoredFromBackup, onSignInSuccess } from '../../utils/adminAuth';
+import { isAdminEmail, ensureAuthRestoredFromBackup, onSignInSuccess } from '../../utils/adminAuth';
 import { saveCartAndWishlistToUserKeys, swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
 import { normalizeEmail, normalizePassword } from '../../utils/credentialNormalize';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
@@ -50,7 +50,6 @@ function SignInPage() {
     return 'SHOP';
   });
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
-  const [safariNoticeDismissed, setSafariNoticeDismissed] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState(() => {
     if (typeof window === 'undefined') return false;
     return localStorage.getItem('isSignedIn') === 'true';
@@ -930,55 +929,6 @@ function SignInPage() {
             <>
               {/* SIGN IN CONTENT */}
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0' }}>
-              {/* Safari iOS: closing the app clears storage, so we show a short notice so users know why they were signed out */}
-              {(() => {
-                const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
-                const isSafariIos = /iP(?:hone|ad|od)/.test(ua) && /Safari|AppleWebKit/.test(ua) && !/Chrome|CriOS|FxiOS/.test(ua);
-                const dismissedKey = 'signin_safari_notice_dismissed';
-                try {
-                  if (!isSafariIos) return null;
-                  if (safariNoticeDismissed || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem(dismissedKey) === '1')) return null;
-                } catch (_) { return null; }
-                return (
-                  <div
-                    role="status"
-                    style={{
-                      marginBottom: '12px',
-                      padding: '10px 12px',
-                      backgroundColor: 'rgba(0,0,0,0.06)',
-                      border: '1px solid rgba(0,0,0,0.12)',
-                      fontFamily: '"Futura PT Book"',
-                      fontSize: '10px',
-                      color: '#333',
-                      textTransform: 'uppercase',
-                      position: 'relative',
-                      paddingRight: '32px',
-                    }}
-                  >
-                    On Safari (iPhone/iPad), closing the browser can sign you out. Sign in again below to continue.
-                    <button
-                      type="button"
-                      aria-label="Dismiss"
-                      onClick={() => { try { sessionStorage.setItem(dismissedKey, '1'); setSafariNoticeDismissed(true); } catch (_) {} }}
-                      style={{
-                        position: 'absolute',
-                        top: '8px',
-                        right: '8px',
-                        background: 'none',
-                        border: 'none',
-                        fontSize: '14px',
-                        cursor: 'pointer',
-                        color: '#666',
-                        padding: '0 4px',
-                        lineHeight: 1,
-                      }}
-                    >
-                      ×
-                    </button>
-                  </div>
-                );
-              })()}
-
               {/* SIGN IN TO YOUR ACCOUNT CARD */}
               <div
                 className="border border-black flex flex-col p-4 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
@@ -987,7 +937,8 @@ function SignInPage() {
                   minWidth: '100%', 
                   maxWidth: 'none', 
                   overflow: 'visible',
-                  backgroundColor: 'rgba(255, 255, 255, 0.6)'
+                  backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                  minHeight: '220px'
                 }}
               >
                   <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
@@ -1195,7 +1146,8 @@ function SignInPage() {
                     minWidth: '100%', 
                     maxWidth: 'none', 
                     overflow: 'visible',
-                    backgroundColor: 'rgba(255, 255, 255, 0.6)'
+                    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                    ...(showSignUpConfirmMessage ? { minHeight: '220px' } : {})
                   }}
                 >
                   <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
