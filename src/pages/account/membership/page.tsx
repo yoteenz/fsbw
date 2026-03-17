@@ -11,7 +11,7 @@ import pointsHistoryIcon from '../../../assets/icons/points-history.svg?url';
 import membershipIcon from '../../../assets/icons/membership-icon.svg?url';
 import moreWaysIcon from '../../../assets/icons/more-ways.svg?url';
 import additionalFeaturesIcon from '../../../assets/icons/additional-features.svg?url';
-import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier, getEffectiveTierName, ADMIN_SUBSCRIPTION_OVERRIDE_KEY, ADMIN_TIER_OVERRIDE_KEY } from '../../../utils/adminAuth';
+import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier, getEffectiveTierName, ADMIN_SUBSCRIPTION_OVERRIDE_KEY, ADMIN_TIER_OVERRIDE_KEY, clearAppAuth } from '../../../utils/adminAuth';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 
 const BRAND_GRAY = '#808080';
@@ -633,8 +633,7 @@ function MembershipPage() {
 
   const handleMobileMenuSignInToggle = () => {
     if (isSignedIn) {
-      localStorage.setItem('isSignedIn', 'false');
-      localStorage.removeItem('currentUser');
+      clearAppAuth();
       window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
       setShowMobileMenu(false);
       navigate('/sign-in');

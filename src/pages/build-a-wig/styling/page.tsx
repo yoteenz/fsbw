@@ -400,12 +400,9 @@ export default function StylingSelectionPage() {
 
   const handleSignOut = () => {
     setIsSignedIn(false);
-    localStorage.setItem('isSignedIn', 'false');
-    localStorage.removeItem('currentUser');
-    // Dispatch custom event to update other pages in same tab
+    clearAppAuth();
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
     setShowSignOutConfirm(false);
-    // Close mobile menu
     setShowMobileMenu(false);
   };
 

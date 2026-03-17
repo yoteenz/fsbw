@@ -6,6 +6,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
+import { clearAppAuth } from '../../utils/adminAuth';
 
 interface WigCustomization {
   capSize: string;
@@ -4595,12 +4596,9 @@ export default function BuildAWigPage() {
 
   const handleSignOut = () => {
     setIsSignedIn(false);
-    localStorage.setItem('isSignedIn', 'false');
-    localStorage.removeItem('currentUser');
-    // Dispatch custom event to update other pages in same tab
+    clearAppAuth();
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
     setShowSignOutConfirm(false);
-    // Close mobile menu
     setShowMobileMenu(false);
   };
 

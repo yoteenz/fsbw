@@ -3,8 +3,10 @@
  * Only used when VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set.
  * Auth is stored in localStorage so the session persists across refresh and browser close;
  * sign-out happens ONLY when the user explicitly clicks Sign Out.
+ * When Supabase fires SIGNED_OUT (e.g. after token refresh failure), we restore app auth from backup so the user stays signed in.
  */
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { ensureAuthRestoredFromBackup } from './adminAuth';
 
 let client: SupabaseClient | null = null;
 
@@ -21,6 +23,9 @@ export function getSupabase(): SupabaseClient | null {
       autoRefreshToken: true,
       detectSessionInUrl: true
     }
+  });
+  client.auth.onAuthStateChange((event) => {
+    if (event === 'SIGNED_OUT') ensureAuthRestoredFromBackup();
   });
   return client;
 }

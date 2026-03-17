@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
-import { isAyoteenzAdminAccount } from '../../../utils/adminAuth';
+import { isAyoteenzAdminAccount, clearAppAuth } from '../../../utils/adminAuth';
 
 interface Notification {
   id: string;
@@ -525,8 +525,7 @@ function NotificationsPage() {
 
   const handleSignOut = () => {
     setIsSignedIn(false);
-    localStorage.setItem('isSignedIn', 'false');
-    localStorage.removeItem('currentUser');
+    clearAppAuth();
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
     setShowSignOutConfirm(false);
     setShowMobileMenu(false);

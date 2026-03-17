@@ -5,7 +5,7 @@
  * We never remove adminSubscriptionOverride or adminTierOverride (rewards/membership page); only explicit Sign Out clears auth.
  */
 import { getProfile, getOrders, getCart, getWishlist } from './api';
-import { isAdminEmail } from './adminAuth';
+import { isAdminEmail, persistAuthBackup } from './adminAuth';
 
 export async function syncProfileFromApi(): Promise<Record<string, unknown> | null> {
   try {
@@ -35,6 +35,7 @@ export async function syncProfileFromApi(): Promise<Record<string, unknown> | nu
     }
     localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
     localStorage.setItem('isSignedIn', 'true');
+    persistAuthBackup();
     return merged;
   } catch {
     return null;
@@ -137,6 +138,7 @@ export function applyAdminSyncPayload(
   localStorage.setItem('wishlistItems', JSON.stringify(wishlistItems));
 
   localStorage.setItem('isSignedIn', 'true');
+  persistAuthBackup();
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: cartItems.length }));
     window.dispatchEvent(new CustomEvent('cartUpdated'));
@@ -188,6 +190,7 @@ export function applyMinimalUserToStorage(merged: Record<string, unknown>): void
   if (idx !== -1) (registeredUsers as Record<string, unknown>[])[idx] = { ...(registeredUsers[idx] as object), ...merged } as Record<string, unknown>;
   else registeredUsers.push(merged);
   localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+  persistAuthBackup();
 }
 
 /**

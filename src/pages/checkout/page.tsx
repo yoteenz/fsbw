@@ -5,7 +5,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import { handlePaymentOption, PaymentProvider, PaymentData } from '../../utils/paymentHandlers';
 import { createRouteProtection, prepareRouteProtectionData } from '../../utils/routeProtection';
 import { getPointsMultiplier } from '../../constants/tiers';
-import { getEffectiveSubscriptionTier, getEffectiveTierName } from '../../utils/adminAuth';
+import { getEffectiveSubscriptionTier, getEffectiveTierName, clearAppAuth } from '../../utils/adminAuth';
 import { hasIdentityAlreadyUsedReferralCode, recordReferralCodeUsedByClient } from '../../utils/blockedClients';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
@@ -967,12 +967,9 @@ function CheckoutPage() {
 
   const handleSignOut = () => {
     setIsSignedIn(false);
-    localStorage.setItem('isSignedIn', 'false');
-    localStorage.removeItem('currentUser');
-    // Dispatch custom event to update other pages in same tab
+    clearAppAuth();
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
     setShowSignOutConfirm(false);
-    // Close mobile menu
     setShowMobileMenu(false);
   };
 

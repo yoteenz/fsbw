@@ -7,6 +7,55 @@
 const STORAGE_IS_SIGNED_IN = 'isSignedIn';
 const STORAGE_CURRENT_USER = 'currentUser';
 
+/** Backup key for auth so we can restore if something else clears isSignedIn/currentUser. Only cleared on explicit Sign Out. */
+export const AUTH_BACKUP_KEY = 'baw_auth_backup';
+
+/** Call after setting isSignedIn and currentUser (sign-in). Persists a backup so we can restore if they get cleared. */
+export function persistAuthBackup(): void {
+  if (typeof window === 'undefined' || !window.localStorage) return;
+  try {
+    const signedIn = localStorage.getItem(STORAGE_IS_SIGNED_IN) === 'true';
+    const currentUser = localStorage.getItem(STORAGE_CURRENT_USER);
+    localStorage.setItem(AUTH_BACKUP_KEY, JSON.stringify({ isSignedIn: signedIn, currentUser: currentUser || null }));
+  } catch (_) {}
+}
+
+/** Call only on explicit Sign Out (and delete account). Removes the auth backup. */
+export function clearAuthBackup(): void {
+  if (typeof window === 'undefined' || !window.localStorage) return;
+  try {
+    localStorage.removeItem(AUTH_BACKUP_KEY);
+  } catch (_) {}
+}
+
+/** Clear app auth state (isSignedIn, currentUser, backup). Call only on explicit Sign Out or delete account. */
+export function clearAppAuth(): void {
+  if (typeof window === 'undefined' || !window.localStorage) return;
+  try {
+    localStorage.setItem(STORAGE_IS_SIGNED_IN, 'false');
+    localStorage.removeItem(STORAGE_CURRENT_USER);
+    localStorage.removeItem(AUTH_BACKUP_KEY);
+  } catch (_) {}
+}
+
+function restoreAuthFromBackupIfNeeded(): void {
+  try {
+    const raw = localStorage.getItem(AUTH_BACKUP_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw) as { isSignedIn?: boolean; currentUser?: string | null };
+    if (data.isSignedIn === true && data.currentUser) {
+      localStorage.setItem(STORAGE_IS_SIGNED_IN, 'true');
+      localStorage.setItem(STORAGE_CURRENT_USER, data.currentUser);
+    }
+  } catch (_) {}
+}
+
+/** Call when Supabase or anything else may have cleared auth (e.g. SIGNED_OUT). Restores from backup so user stays signed in unless they explicitly signed out. */
+export function ensureAuthRestoredFromBackup(): void {
+  if (typeof window === 'undefined') return;
+  restoreAuthFromBackupIfNeeded();
+}
+
 /** Allowed admin emails (case-insensitive). From env REACT_APP_ADMIN_EMAILS or VITE_ADMIN_EMAILS (Vite). */
 function getAdminEmailsRaw(): string {
   if (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_ADMIN_EMAILS) {
@@ -146,8 +195,13 @@ export function isPreviewOnlyAdminEmail(email: string): boolean {
 }
 
 export function getCurrentUser(): { email?: string; role?: string } | null {
+  if (typeof window === 'undefined') return null;
   try {
-    const raw = localStorage.getItem(STORAGE_CURRENT_USER);
+    let raw = localStorage.getItem(STORAGE_CURRENT_USER);
+    if (!raw) {
+      restoreAuthFromBackupIfNeeded();
+      raw = localStorage.getItem(STORAGE_CURRENT_USER);
+    }
     if (!raw) return null;
     const user = JSON.parse(raw);
     return user && typeof user === 'object' ? user : null;
@@ -157,7 +211,14 @@ export function getCurrentUser(): { email?: string; role?: string } | null {
 }
 
 export function isSignedIn(): boolean {
-  return localStorage.getItem(STORAGE_IS_SIGNED_IN) === 'true';
+  if (typeof window === 'undefined') return false;
+  try {
+    if (localStorage.getItem(STORAGE_IS_SIGNED_IN) === 'true') return true;
+    restoreAuthFromBackupIfNeeded();
+    return localStorage.getItem(STORAGE_IS_SIGNED_IN) === 'true';
+  } catch {
+    return false;
+  }
 }
 
 /** True if signed in and current user has full admin or (on preview only) preview-only admin. */

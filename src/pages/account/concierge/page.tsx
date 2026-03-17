@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
-import { getCurrentUser, getEffectiveSubscriptionTier, isMockDataAccount, isAyoteenzAdminAccount } from '../../../utils/adminAuth';
+import { getCurrentUser, getEffectiveSubscriptionTier, isMockDataAccount, isAyoteenzAdminAccount, clearAppAuth } from '../../../utils/adminAuth';
 import { calculateSpecialOfferPrice } from '../../../utils/specialOfferPrice';
 import { getOptionsForUnit, type UnitId } from '../../../utils/productOptions';
 import specialOfferIconUrl from '../../../assets/special-offer2.svg?url';
@@ -1827,8 +1827,7 @@ function ConciergePage() {
 
   const handleMobileMenuSignInToggle = () => {
     if (isSignedIn) {
-      localStorage.setItem('isSignedIn', 'false');
-      localStorage.removeItem('currentUser');
+      clearAppAuth();
       window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
       setShowMobileMenu(false);
       navigate('/sign-in');

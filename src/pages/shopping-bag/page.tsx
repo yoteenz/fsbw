@@ -7,7 +7,7 @@ import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { getPointsMultiplier } from '../../constants/tiers';
-import { getEffectiveTierName, getEffectiveSubscriptionTier } from '../../utils/adminAuth';
+import { getEffectiveTierName, getEffectiveSubscriptionTier, clearAppAuth } from '../../utils/adminAuth';
 
 function ShoppingBagPage() {
   const navigate = useNavigate();
@@ -690,12 +690,9 @@ function ShoppingBagPage() {
 
   const handleSignOut = () => {
     setIsSignedIn(false);
-    localStorage.setItem('isSignedIn', 'false');
-    localStorage.removeItem('currentUser');
-    // Dispatch custom event to update other pages in same tab
+    clearAppAuth();
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
     setShowSignOutConfirm(false);
-    // Close mobile menu
     setShowMobileMenu(false);
   };
 

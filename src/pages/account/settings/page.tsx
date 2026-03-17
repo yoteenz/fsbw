@@ -9,7 +9,7 @@ import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '..
 import { patchProfile, deleteAccount } from '../../../utils/api';
 import { trackActivity } from '../../../utils/activity';
 import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
-import { getCurrentUser, isAdminUser } from '../../../utils/adminAuth';
+import { getCurrentUser, isAdminUser, clearAppAuth } from '../../../utils/adminAuth';
 import { syncAllFromApi, applyAdminSyncPayload } from '../../../utils/syncFromApi';
 import { saveCartAndWishlistToUserKeys } from '../../../utils/cartWishlistStorage';
 import { normalizeEmail } from '../../../utils/credentialNormalize';
@@ -310,9 +310,7 @@ function SettingsPage() {
         const filtered = registeredUsers.filter((u: any) => (u.email || '').toLowerCase() !== email);
         localStorage.setItem('registeredUsers', JSON.stringify(filtered));
       }
-      localStorage.setItem('isSignedIn', 'false');
-      localStorage.removeItem('currentUser');
-      // Clear any Supabase auth keys so a full reload doesn't see a session
+      clearAppAuth();
       try {
         const keysToRemove: string[] = [];
         for (let i = 0; i < localStorage.length; i++) {
@@ -321,7 +319,6 @@ function SettingsPage() {
         }
         keysToRemove.forEach((k) => localStorage.removeItem(k));
       } catch (_) {}
-      // Full page redirect so the app reloads with no in-memory session; avoids sign-in page restoring session and redirecting back to /account
       window.location.href = '/sign-in';
     } catch (e) {
       console.error('Delete account failed', e);
@@ -541,8 +538,11 @@ function SettingsPage() {
   };
   const handleMobileMenuSignInToggle = () => {
     if (isSignedIn) {
-      localStorage.setItem('isSignedIn', 'false');
-      localStorage.removeItem('currentUser');
+      if (isSupabaseConfigured()) {
+        const supabase = getSupabase();
+        if (supabase) supabase.auth.signOut().catch(() => {});
+      }
+      clearAppAuth();
       window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
       setShowMobileMenu(false);
     }

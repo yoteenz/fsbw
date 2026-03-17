@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
-import { isAdminEmail } from '../../utils/adminAuth';
+import { isAdminEmail, persistAuthBackup } from '../../utils/adminAuth';
 import { saveCartAndWishlistToUserKeys, swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
 import { normalizeEmail, normalizePassword } from '../../utils/credentialNormalize';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
@@ -433,6 +433,7 @@ function SignInPage() {
         if (userToSet.profileImage && String(userToSet.profileImage).trim()) localStorage.setItem('profileImage', String(userToSet.profileImage));
         else localStorage.removeItem('profileImage');
         localStorage.setItem('isSignedIn', 'true');
+        persistAuthBackup();
         setIsSignedIn(true);
         trackActivity('sign_in');
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
@@ -506,6 +507,7 @@ function SignInPage() {
         if (userToSet.profileImage && String(userToSet.profileImage).trim()) localStorage.setItem('profileImage', String(userToSet.profileImage));
         else localStorage.removeItem('profileImage');
         localStorage.setItem('isSignedIn', 'true');
+        persistAuthBackup();
         setIsSignedIn(true);
         trackActivity('sign_in');
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
@@ -1963,7 +1965,7 @@ function SignInPage() {
                       } catch (_) {}
                       
                       localStorage.setItem('isSignedIn', 'true');
-                      
+                      persistAuthBackup();
                       // Sign user in
                       setIsSignedIn(true);
                       trackActivity('sign_in');

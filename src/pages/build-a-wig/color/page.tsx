@@ -7,6 +7,7 @@ import LoadingScreen from '../../../components/base/LoadingScreen';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
+import { clearAppAuth } from '../../../utils/adminAuth';
 
 interface ColorOption {
   id: string;
@@ -466,12 +467,9 @@ function ColorSelection() {
 
   const handleSignOut = () => {
     setIsSignedIn(false);
-    localStorage.setItem('isSignedIn', 'false');
-    localStorage.removeItem('currentUser');
-    // Dispatch custom event to update other pages in same tab
+    clearAppAuth();
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
     setShowSignOutConfirm(false);
-    // Close mobile menu
     setShowMobileMenu(false);
   };
 

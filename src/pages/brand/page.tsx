@@ -4,6 +4,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { BRAND_MENU_ITEMS } from '../../constants/brandMenu';
+import { clearAppAuth } from '../../utils/adminAuth';
 
 const VALID_SLUGS: string[] = ['about', 'contact', 'care', 'member', 'faq', 'payment', 'reviews', 'terms'];
 
@@ -78,8 +79,7 @@ function BrandPage() {
   };
   const handleMobileMenuSignInToggle = () => {
     if (isSignedIn) {
-      localStorage.setItem('isSignedIn', 'false');
-      localStorage.removeItem('currentUser');
+      clearAppAuth();
       window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
       setShowMobileMenu(false);
     }

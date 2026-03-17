@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
-import { isMockDataAccount } from '../../utils/adminAuth';
+import { isMockDataAccount, clearAppAuth } from '../../utils/adminAuth';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { formatCountryDisplay } from '../../utils/formatCountry';
 import summaryIcon from '../../assets/icons/summary-icon.svg?url';
@@ -1253,14 +1253,10 @@ function OrdersPage() {
 
   const handleSignOut = () => {
     setIsSignedIn(false);
-    localStorage.setItem('isSignedIn', 'false');
-    localStorage.removeItem('currentUser');
-    // Dispatch custom event to update other pages in same tab
+    clearAppAuth();
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
     setShowSignOutConfirm(false);
-    // Close mobile menu
     setShowMobileMenu(false);
-    // Navigate to sign-in page
     navigate('/sign-in');
   };
 

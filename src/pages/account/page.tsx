@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../constants/tiers';
 import { getTotalReviewCount, getUserSubmittedReviewCount, hasNewReviewApproved } from '../../constants/reviews';
-import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier } from '../../utils/adminAuth';
+import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier, clearAppAuth } from '../../utils/adminAuth';
 import { swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
 import { trackActivity } from '../../utils/activity';
@@ -632,13 +632,10 @@ function AccountPage() {
       if (supabase) supabase.auth.signOut().catch(() => {});
     }
     setIsSignedIn(false);
-    localStorage.setItem('isSignedIn', 'false');
-    localStorage.removeItem('currentUser');
+    clearAppAuth();
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
     setShowSignOutConfirm(false);
-    // Close mobile menu
     setShowMobileMenu(false);
-    // Navigate to home or sign-in page
     navigate('/sign-in');
   };
 

@@ -7,7 +7,7 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import moreWaysIcon from '../../../assets/icons/more-ways.svg?url';
 import affiliateIcon from '../../../assets/icons/affiliate-icon.svg?url';
-import { isMockDataAccount } from '../../../utils/adminAuth';
+import { isMockDataAccount, clearAppAuth } from '../../../utils/adminAuth';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 
 interface Order {
@@ -1674,8 +1674,7 @@ function AffiliatePage() {
 
   const handleMobileMenuSignInToggle = () => {
     if (isSignedIn) {
-      localStorage.setItem('isSignedIn', 'false');
-      localStorage.removeItem('currentUser');
+      clearAppAuth();
       window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
       setShowMobileMenu(false);
       navigate('/sign-in');
