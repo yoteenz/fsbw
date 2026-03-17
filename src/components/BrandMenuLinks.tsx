@@ -23,7 +23,7 @@ export default function BrandMenuLinks({ onClose }: BrandMenuLinksProps) {
               color: 'black',
               fontWeight: '500',
               textTransform: 'uppercase',
-              transform: 'translateX(7px)'
+              transform: 'translateX(13px)'
             }}
           >
             {item.label}
