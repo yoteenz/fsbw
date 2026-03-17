@@ -2466,9 +2466,9 @@ function ConciergePage() {
                             {specialOffer.options.length} · {specialOffer.options.density} · {specialOffer.options.texture} · {specialOffer.options.lace} · {specialOffer.options.color}
                           </p>
                           <p style={{ margin: '4px 0 0 0', fontSize: '11px' }}>
-                            <span style={{ fontFamily: '"Futura PT Book"', color: '#999', textDecoration: 'line-through' }}>${specialOffer.originalPrice}</span>
-                            <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', marginLeft: '8px' }}>${specialOffer.discountedPrice}</span>
-                            <span style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', marginLeft: '4px' }}>($40 OFF)</span>
+                            <span style={{ fontFamily: '"Futura PT Book"', color: '#999', textDecoration: 'line-through' }}>{formatSpecialOfferPrice(Number(specialOffer.originalPrice))}</span>
+                            <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', marginLeft: '8px' }}>{formatSpecialOfferPrice(Number(specialOffer.discountedPrice))}</span>
+                            <span style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', marginLeft: '4px' }}>({formatSpecialOfferPrice(40)} OFF)</span>
                           </p>
                         </div>
                       </div>
