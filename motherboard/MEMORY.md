@@ -363,6 +363,23 @@ User asked if there is a way to capture the **entire current codebase** (and its
 
 ---
 
+## 2025-03-18 — Add to motherboard: user reiterated AGENTS.md / MOTHERBOARD_COMMANDS.md
+
+**Context:** User said "add to motherboard." When the agent did not have motherboard context, the user clarified: "When I say 'add to motherboard', read AGENTS.md or docs/MOTHERBOARD_COMMANDS.md in this repo—they explain where the motherboard is and what to do."
+
+**Topics covered (this chat):**
+- User requested add to motherboard.
+- User directed the agent to read **AGENTS.md** (project root) or **docs/MOTHERBOARD_COMMANDS.md** when unsure where the motherboard is or what to do.
+- Agent read AGENTS.md, docs/MOTHERBOARD_COMMANDS.md, then motherboard/README.md, motherboard/ADDING.md, motherboard/CORE.md, and motherboard/MEMORY.md, and appended this entry per ADDING.md.
+
+**Decisions / outcomes:** No change to protocol. Reconfirms that when the user says "add to motherboard" and the agent is unsure, the agent should read AGENTS.md or docs/MOTHERBOARD_COMMANDS.md first; those docs state that the motherboard is the folder `motherboard/` at project root and describe the commands (add = append to MEMORY per ADDING.md; load = read README → CORE → CODEBASE → MEMORY; snapshot = overwrite CODEBASE.md).
+
+**Changes:** This MEMORY entry only.
+
+**Conventions:** Same as MEMORY entry 2025-02-15 (Add to motherboard: user pointed to AGENTS.md and MOTHERBOARD_COMMANDS.md). Do not reply that there is no motherboard or ask the user to specify what to add; read AGENTS.md or docs/MOTHERBOARD_COMMANDS.md, then follow motherboard/README and ADDING.md.
+
+---
+
 ## 2026-02-15 — Vouchers, membership copy, history order, points history sort, EXPLORE ALL BENEFITS spacing
 
 **Context:** Multiple UX and copy fixes: voucher modal and applicability, premium/membership section text, history sort order, points history date logic, and spacing below "EXPLORE ALL BENEFITS."
