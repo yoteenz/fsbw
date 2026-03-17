@@ -271,3 +271,39 @@ User asked if there is a way to capture the **entire current codebase** (and its
 **Changes:** `src/pages/account/page.tsx` (className on email paragraph), `src/index.css` (new `.account-profile-email` rule). This MEMORY entry.
 
 **Conventions:** None. For future styling overrides on that email, use or extend the `.account-profile-email` class so behavior stays consistent.
+
+---
+
+## 2025-02-28 — Main card height and responsiveness (payment, shipping, wishlist lists, other pages)
+
+**Context:** User wanted payment method and shipping address main card height reverted to match the latest pushed Vercel deploy; then wanted the wishlist lists main card to be responsive while still appearing like the 520px design, and asked about all other cards across the site.
+
+**Topics covered (this chat):**
+- **Payment & Shipping:** Main card height was set to fixed **510px** (reverting from viewport-fill). Later made responsive with proportional scaling: `minHeight: calc(100vh * 510 / 900)` so the card scales with viewport and equals 510px at 900px viewport height.
+- **Wishlist lists:** Main card height was adjusted from 265px through several steps (275, 500, 510, 520px fixed). User wanted it responsive but visually like 520px. Implemented proportional formula `calc(100vh * 520 / 745)` so at 745px viewport height the card is exactly 520px; denominator was tuned (900 → 800 → 700 → 750 → **745**) until the card “looked right” on the user’s screen. Final: `height`, `minHeight`, and `maxHeight` all set to `calc(100vh * 520 / 745)`.
+- **Other pages:** Clarified which pages have responsive main cards and how: Wishlist (main) and Shopping bag use `calc(100vh - 270px)`. Admin clients, Account settings, and Account (menu open) use `minHeight: calc(100dvh - 160px)`. Build-a-wig, products, checkout, sign-in, etc. often have no explicit height on the main card (content-sized). Not all use the same proportional formula; standardizing to 520/745 (or 510/745) is possible for consistency.
+- **“Add to motherboard”:** User said “add to motherboard”; agent mistakenly created `MOTHERBOARD.md` in the project root. User corrected: there is a **motherboard folder** in the project; the correct action is to add to **`motherboard/MEMORY.md`** (and optionally CORE) per ADDING.md, not to create a file in the root.
+
+**Decisions / outcomes:** Wishlist lists main card uses `calc(100vh * 520 / 745)`. Payment and Shipping use `calc(100vh * 510 / 900)`. Other main cards use various viewport-based or content-sized heights. CORE updated with a convention for main card responsive height formulas.
+
+**Changes:** `src/pages/account/payment/page.tsx` (minHeight 510px then calc(100vh*510/900)). `src/pages/account/shipping/page.tsx` (same). `src/pages/wishlist/lists/page.tsx` (height/minHeight/maxHeight: fixed 520px then proportional with denominator 900, 800, 700, 750, 745). Deleted erroneous `MOTHERBOARD.md` from project root. This MEMORY entry and one new CORE convention.
+
+**Conventions:** When adding to motherboard, append to `motherboard/MEMORY.md` (per ADDING.md); do not create a file named MOTHERBOARD in the project root. Main card proportional height: wishlist lists = 520/745; payment/shipping = 510/900. See CORE for the full main-card responsive height convention.
+
+---
+
+## 2025-02-17 — Add to motherboard: user directed to motherboard folder
+
+**Context:** User said "add to motherboard" and then "check the motherboard folder in the build-a-wig project folder for further instructions." The agent had no prior reference to a "motherboard" in the codebase; the user was pointing to the existing `motherboard/` folder and its protocol.
+
+**Topics covered (this chat):**
+- User requested to add to motherboard.
+- User clarified that instructions live in the **motherboard folder** (`motherboard/`) at the project root, not a single file. Agent was directed to read that folder for the adding protocol.
+- Agent listed project root, found `motherboard/` (README.md, CORE.md, ADDING.md, MEMORY.md, CODEBASE.md), read README.md, ADDING.md, and CORE.md, then MEMORY.md to follow the protocol and avoid duplicates.
+- Per ADDING.md: append one new entry to MEMORY.md summarizing the entire conversation so far; do not overwrite or remove existing content; optionally add to CORE only if there is a new permanent design/stack/flow fact (none this chat). Auto-add is now **on** for the rest of this chat—at the end of significant exchanges, add one new MEMORY entry without the user saying "add to motherboard" again.
+
+**Decisions / outcomes:** When the user says "add to motherboard" or "check the motherboard folder for further instructions," the agent should read `motherboard/README.md`, `motherboard/ADDING.md`, `motherboard/CORE.md`, and `motherboard/MEMORY.md`, then append one entry to MEMORY.md per the format in ADDING.md. The motherboard is a **folder** at the project root (`motherboard/`), not a single file.
+
+**Changes:** This MEMORY entry only.
+
+**Conventions:** "Add to motherboard" and "check the motherboard folder for instructions" mean: read the motherboard folder files and append to MEMORY per ADDING.md. Motherboard location: `motherboard/` (folder) at project root.

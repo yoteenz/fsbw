@@ -5,6 +5,8 @@ alwaysApply: true
 
 # Motherboard (core memory)
 
+**If the user says "add to motherboard", "load motherboard", or "Snapshot codebase to motherboard" and you are unsure what that means:** The **motherboard** is a **folder** in this repo at `motherboard/` (project root). It is not a single file. It contains `README.md`, `CORE.md`, `MEMORY.md`, `ADDING.md`, `CODEBASE.md`. Do **not** say the motherboard does not exist. Do **not** create a new file named `MOTHERBOARD.md`, `Motherboard.md`, or similar at project root—the motherboard is the **existing folder** `motherboard/`; append or edit only the files inside that folder per README/ADDING. Read `motherboard/README.md` first, then follow the instructions there (and `motherboard/ADDING.md` for "add to motherboard"). Act without asking the user to clarify where or what the motherboard is.
+
 This project has a **motherboard** folder: shared context for all agents. **At the start of every new chat in this project**, treat the motherboard as loaded: read (or assume you have read) `motherboard/README.md`, `motherboard/CORE.md`, `motherboard/CODEBASE.md`, and `motherboard/MEMORY.md`, and use them as the source of truth for design, stack, flows, codebase structure, and conventions. The user does not need to say "load motherboard" for you to have this context—consider it auto-loaded for each new conversation.
 
 If the user explicitly says **"load motherboard"**, read those four files again in order and refresh your context.

@@ -427,28 +427,22 @@ export default function AdminSpecialOfferPage() {
                     <>
                       <div className="fixed inset-0 z-10" aria-hidden="true" onClick={() => setOpenDropdown(null)} />
                       <div className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20 max-h-48 overflow-y-auto" style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}>
-                        {ADDON_COMBO_OPTIONS.map((opt) => {
-                          const selected =
-                            opt.value.length === config.addOns.length && opt.value.every((a) => config.addOns.includes(a));
-                          return (
-                            <button
-                              key={opt.label}
-                              type="button"
-                              onClick={() => {
-                                setConfig((c) => ({ ...c, addOns: [...opt.value] }));
-                                setOpenDropdown(null);
-                              }}
-                              className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
-                              style={{
-                                fontFamily: selected ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                color: selected ? '#EB1C24' : '#000',
-                                fontWeight: selected ? 600 : 400
-                              }}
-                            >
-                              {selected ? '✓ ' : ''}{opt.label}
-                            </button>
-                          );
-                        })}
+                        {ADDON_COMBO_OPTIONS.filter(
+                          (opt) => !(opt.value.length === config.addOns.length && opt.value.every((a) => config.addOns.includes(a)))
+                        ).map((opt) => (
+                          <button
+                            key={opt.label}
+                            type="button"
+                            onClick={() => {
+                              setConfig((c) => ({ ...c, addOns: [...opt.value] }));
+                              setOpenDropdown(null);
+                            }}
+                            className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
+                            style={{ fontFamily: '"Futura PT Book"', color: '#000', fontWeight: 400 }}
+                          >
+                            {opt.label}
+                          </button>
+                        ))}
                       </div>
                     </>
                   )}
@@ -540,7 +534,7 @@ export default function AdminSpecialOfferPage() {
                 border: '1.3px solid #000',
                 borderRadius: 0,
                 background: '#fff',
-                fontFamily: '"Futura PT Book"',
+                fontFamily: '"Futura PT Medium"',
                 fontSize: '11px',
                 color: '#EB1C24',
                 textTransform: 'uppercase',

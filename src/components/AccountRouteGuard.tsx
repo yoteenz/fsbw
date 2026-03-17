@@ -24,7 +24,7 @@ export default function AccountRouteGuard({ children }: { children: React.ReactN
       setRecoveryDone(true);
       return;
     }
-    const supabase = client;
+    const supabase = client as NonNullable<typeof client>;
     let cancelled = false;
     async function run() {
       let { data: { session } } = await supabase.auth.getSession();

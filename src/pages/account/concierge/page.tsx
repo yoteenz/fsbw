@@ -2394,19 +2394,19 @@ function ConciergePage() {
                           }}
                         />
                       </div>
-                      <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0 0 10px 0', textTransform: 'uppercase', textAlign: 'center' }}>
-                        LIMITED TIME OFFER CAN NOT BE COMBINED WITH REFERRAL CODES OR DISCOUNT CODES.
+                      <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0 0 25px 0', textTransform: 'uppercase', textAlign: 'center', lineHeight: 1.45 }}>
+                        LIMITED TIME OFFER CAN NOT BE COMBINED WITH DISCOUNT CODES.
                         <br />
-                        CAN REDEEM 2 QTY OF EACH CAP SIZE.
+                        YOU MAY REDEEM A TOTAL OF <span style={{ color: '#EB1C24' }}>2 QTY</span> AMOUNTS FOR EACH CAP SIZE.
                         <br />
-                        VALID ONLY WHILE SUPPLIES LAST.
+                        OFFER IS ONLY VALID WHILE SUPPLIES LAST.
                       </p>
                       <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '12px' }}>
                         <div style={{ width: '72px', height: '72px', flexShrink: 0, border: '1px solid #e5e7eb', overflow: 'hidden', backgroundColor: '#f9fafb' }}>
                           <img src={specialOffer.thumbnailDataUrl || SPECIAL_OFFER_UNITS.find(u => u.id === specialOffer.unitId)?.image || '/assets/natural front.png'} alt={specialOffer.unitName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <p style={{ fontFamily: '"Covered By Your Grace"', color: '#000', fontSize: '15px', margin: '0 0 4px 0', textTransform: 'uppercase' }}>{specialOffer.unitName}</p>
+                          <p style={{ fontFamily: '"Covered By Your Grace"', color: '#000', fontSize: '17px', margin: '0 0 4px 0', textTransform: 'uppercase' }}>{specialOffer.unitName}</p>
                           <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '9px', margin: '0 0 2px 0', textTransform: 'uppercase' }}>
                             {specialOffer.options.length} · {specialOffer.options.density} · {specialOffer.options.texture} · {specialOffer.options.lace} · {specialOffer.options.color}
                           </p>

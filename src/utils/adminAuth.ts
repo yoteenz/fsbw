@@ -10,13 +10,15 @@ const STORAGE_CURRENT_USER = 'currentUser';
 /** Backup key for auth so we can restore if something else clears isSignedIn/currentUser. Only cleared on explicit Sign Out. */
 export const AUTH_BACKUP_KEY = 'baw_auth_backup';
 
-/** Call after setting isSignedIn and currentUser (sign-in). Persists a backup so we can restore if they get cleared. */
+/** Call after setting isSignedIn and currentUser (sign-in). Persists a backup so we can restore if they get cleared. Only writes when signed in so we never overwrite a good backup with signed-out state (e.g. if something clears auth right before unload). */
 export function persistAuthBackup(): void {
   if (typeof window === 'undefined' || !window.localStorage) return;
   try {
     const signedIn = localStorage.getItem(STORAGE_IS_SIGNED_IN) === 'true';
     const currentUser = localStorage.getItem(STORAGE_CURRENT_USER);
-    localStorage.setItem(AUTH_BACKUP_KEY, JSON.stringify({ isSignedIn: signedIn, currentUser: currentUser || null }));
+    if (signedIn && currentUser) {
+      localStorage.setItem(AUTH_BACKUP_KEY, JSON.stringify({ isSignedIn: true, currentUser }));
+    }
   } catch (_) {}
 }
 

@@ -313,9 +313,15 @@ function App() {
     if (typeof window === 'undefined') return;
     const interval = setInterval(() => {
       if (isSignedIn()) persistAuthBackup();
-    }, 10000);
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  // Persist backup on every navigation when signed in (e.g. product page, lobby, account) so backup is always fresh
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (isSignedIn()) persistAuthBackup();
+  }, [location.pathname]);
 
   return (
     <ErrorBoundary>

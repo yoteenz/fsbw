@@ -17,6 +17,8 @@ if (typeof window !== 'undefined') {
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') saveAuth();
   });
+  // When page is shown again (reopen browser, switch back to tab, bfcache restore), restore from backup
+  window.addEventListener('pageshow', () => { ensureAuthRestoredFromBackup(); });
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

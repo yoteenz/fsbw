@@ -1,5 +1,7 @@
 # Motherboard — Core Memory for Build-a-Wig
 
+**Location:** This folder is `motherboard/` at the project root (not a single file named "motherboard"). Do **not** create a file `MOTHERBOARD.md` or `Motherboard.md` at project root—this folder and its existing files are the only motherboard.
+
 The **motherboard** is a shared, persistent context store for all agents (past, current, future) working on this project. It holds project design, logic, flows, conventions, and learnings so you don’t have to repeat yourself and agents stay aligned.
 
 A Cursor rule (`.cursor/rules/motherboard.mdc`) is set to **always apply**, so agents in this project will recognize **“load motherboard”** and **“add to motherboard”** without further explanation.
