@@ -725,7 +725,7 @@ function SettingsPage() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
                     {mobileMenuActiveTab === 'TOOLS' ? (
                       <div className="flex items-center justify-between cursor-pointer" onClick={() => navigate('/tools/gift-card')}>
-                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', color: 'black', fontWeight: '500', textTransform: 'uppercase', transform: 'translateX(7px)' }}>GIFT CARD</span>
+                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', color: 'black', fontWeight: '500', textTransform: 'uppercase', transform: 'translateX(13px)' }}>GIFT CARD</span>
                       </div>
                     ) : mobileMenuActiveTab === 'BRAND' ? (
                       <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />
@@ -739,7 +739,7 @@ function SettingsPage() {
                         <div key={index}>
                           <div className="flex items-center justify-between" style={{ alignItems: 'center' }}>
                             <span
-                              style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', color: 'black', fontWeight: '500', textTransform: 'uppercase', cursor: 'pointer', transform: 'translateX(7px)' }}
+                              style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', color: 'black', fontWeight: '500', textTransform: 'uppercase', cursor: 'pointer', transform: 'translateX(13px)' }}
                               onClick={() => {
                                 if (item.isExpandable) {
                                   if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) navigate('/shop/units');
@@ -757,7 +757,7 @@ function SettingsPage() {
                                 style={{
                                   width: '16px',
                                   height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-5px) translateY(-4px) rotate(90deg)' : 'translateX(-5px) translateY(-4px) rotate(0deg)'}`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-11px) translateY(-4px) rotate(90deg)' : 'translateX(-11px) translateY(-4px) rotate(0deg)'}`,
                                   display: 'flex',
                                   alignItems: 'center',
                                   cursor: 'pointer'
@@ -798,7 +798,7 @@ function SettingsPage() {
                     {isSignedIn ? 'SIGN OUT' : 'SIGN IN'}
                   </span>
                 </div>
-                <SocialMenuIcons />
+                <div style={{ marginBottom: '20px' }}><SocialMenuIcons /></div>
               </div>
             </div>
           ) : (

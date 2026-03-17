@@ -4,7 +4,6 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import ConfirmationModal from '../../../components/ConfirmationModal';
-import { clearAppAuth } from '../../../utils/adminAuth';
 
 interface AddressEntry {
   firstName?: string;
@@ -654,7 +653,7 @@ function ShippingPage() {
                                 style={{
                                   width: '16px',
                                   height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-5px) translateY(-4px) rotate(90deg)' : 'translateX(-5px) translateY(-4px) rotate(0deg)'}`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-11px) translateY(-4px) rotate(90deg)' : 'translateX(-11px) translateY(-4px) rotate(0deg)'}`,
                                   display: 'flex',
                                   alignItems: 'center',
                                   cursor: 'pointer'
@@ -695,7 +694,7 @@ function ShippingPage() {
                     {isSignedIn ? 'SIGN OUT' : 'SIGN IN'}
                   </span>
                 </div>
-                <SocialMenuIcons />
+                <div style={{ marginBottom: '20px' }}><SocialMenuIcons /></div>
               </div>
             </div>
           ) : (

@@ -6,7 +6,6 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
-import { clearAppAuth } from '../../../utils/adminAuth';
 
 function CurlyUnitsPage() {
   const navigate = useNavigate();
@@ -741,7 +740,7 @@ function CurlyUnitsPage() {
                                 style={{ 
                                   width: '16px', 
                                   height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-5px) translateY(-4px) rotate(90deg)' : 'translateX(-5px) translateY(-4px) rotate(0deg)'}`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-11px) translateY(-4px) rotate(90deg)' : 'translateX(-11px) translateY(-4px) rotate(0deg)'}`,
                                   display: 'flex',
                                   alignItems: 'center',
                                   cursor: 'pointer'
@@ -808,7 +807,7 @@ function CurlyUnitsPage() {
                 </div>
 
                 {/* Social Media Icons - Fixed at bottom */}
-                <SocialMenuIcons />
+                <div style={{ marginBottom: '20px' }}><SocialMenuIcons /></div>
               </div>
             </div>
           ) : (

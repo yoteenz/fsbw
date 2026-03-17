@@ -1995,7 +1995,7 @@ function CheckoutPage() {
                             color: 'black',
                             fontWeight: '500',
                             textTransform: 'uppercase',
-                            transform: 'translateX(7px)'
+                            transform: 'translateX(13px)'
                           }}>
                             {item}
                           </span>
@@ -2030,7 +2030,7 @@ function CheckoutPage() {
                                 fontWeight: '500',
                                 textTransform: 'uppercase',
                                 cursor: 'pointer',
-                                transform: 'translateX(7px)'
+                                transform: 'translateX(13px)'
                               }}
                               onClick={() => {
                                 if (item.isExpandable) {
@@ -2055,7 +2055,7 @@ function CheckoutPage() {
                                 style={{ 
                                   width: '16px', 
                                   height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-5px) translateY(-4px) rotate(90deg)' : 'translateX(-5px) translateY(-4px) rotate(0deg)'}`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-11px) translateY(-4px) rotate(90deg)' : 'translateX(-11px) translateY(-4px) rotate(0deg)'}`,
                                   display: 'flex',
                                   alignItems: 'center',
                                   cursor: 'pointer'
@@ -2122,7 +2122,7 @@ function CheckoutPage() {
                 </div>
 
                 {/* Social Media Icons */}
-                <SocialMenuIcons />
+                <div style={{ marginBottom: '20px' }}><SocialMenuIcons /></div>
               </div>
             ) : (
               /* CHECKOUT CONTENT */

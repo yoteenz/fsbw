@@ -8,7 +8,6 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { trackActivity } from '../../../utils/activity';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
-import { clearAppAuth } from '../../../utils/adminAuth';
 
 function OceanCurlSelection() {
   const navigate = useNavigate();
@@ -1051,7 +1050,7 @@ function OceanCurlSelection() {
                             color: 'black',
                             fontWeight: '500',
                             textTransform: 'uppercase',
-                            transform: 'translateX(7px)'
+                            transform: 'translateX(13px)'
                           }}>
                             {item}
                           </span>
@@ -1087,7 +1086,7 @@ function OceanCurlSelection() {
                                 fontWeight: '500',
                                 textTransform: 'uppercase',
                                 cursor: 'pointer',
-                                transform: 'translateX(7px)'
+                                transform: 'translateX(13px)'
                               }}
                               onClick={() => {
                                 if (item.isExpandable) {
@@ -1112,7 +1111,7 @@ function OceanCurlSelection() {
                                 style={{ 
                                   width: '16px', 
                                   height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-5px) translateY(-4px) rotate(90deg)' : 'translateX(-5px) translateY(-4px) rotate(0deg)'}`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-11px) translateY(-4px) rotate(90deg)' : 'translateX(-11px) translateY(-4px) rotate(0deg)'}`,
                                   display: 'flex',
                                   alignItems: 'center',
                                   cursor: 'pointer'
