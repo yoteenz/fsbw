@@ -332,13 +332,14 @@ function SignInPage() {
       const supabase = getSupabase();
       if (supabase) {
         try {
+          const passwordTrimmed = typeof password === 'string' ? password.trim() : password;
           const { data, error } = await supabase.auth.signInWithPassword({
             email,
-            password
+            password: passwordTrimmed
           });
           if (!error && data.session) {
-            // Store exact password (no normalization) so "Sync my account" sends the same string Supabase accepted
-            const passwordToStore = password;
+            // Store the same password we sent to Supabase (trimmed) so "Sync my account" works
+            const passwordToStore = passwordTrimmed;
             const emailNorm = normalizeEmail(email);
             try {
               const raw = localStorage.getItem('currentUser');
@@ -405,15 +406,23 @@ function SignInPage() {
             return;
           }
           if (error) {
-            // Require Supabase auth for everyone when Supabase is configured (no local fallback for admin — prevents duplicate clients from wrong passwords)
-            setValidationMessage(error.message === 'Invalid login credentials' ? 'INVALID EMAIL OR PASSWORD.' : error.message);
+            // Admin: allow fallback to existing local account only (no new bootstrap — prevents duplicates)
+            if (isAdminEmail(email)) {
+              // Fall through to local sign-in below; will only succeed if email+password match an existing registeredUsers entry
+            } else {
+              setValidationMessage(error.message === 'Invalid login credentials' ? 'INVALID EMAIL OR PASSWORD.' : error.message);
+              setShowValidationModal(true);
+              return;
+            }
+          }
+        } catch (e) {
+          if (isAdminEmail(email)) {
+            // Fall through to local sign-in for admin
+          } else {
+            setValidationMessage('SIGN-IN FAILED. TRY AGAIN.');
             setShowValidationModal(true);
             return;
           }
-        } catch (e) {
-          setValidationMessage('SIGN-IN FAILED. TRY AGAIN.');
-          setShowValidationModal(true);
-          return;
         }
       }
     }
@@ -471,7 +480,12 @@ function SignInPage() {
         return;
       }
       if (isAdminEmail(email)) {
-        // Do not create a second local account for the same admin email (prevents duplicate clients)
+        // When Supabase is configured, never create a new local admin (prevents duplicates); only existing local match is allowed
+        if (isSupabaseConfigured()) {
+          setValidationMessage('INVALID EMAIL OR PASSWORD. Use your Supabase password, or reset it in Supabase Dashboard.');
+          setShowValidationModal(true);
+          return;
+        }
         const existingByEmail = registeredUsers.find((u: any) => normalizeEmail(u.email || '') === emailNorm);
         if (existingByEmail) {
           setValidationMessage('INVALID EMAIL OR PASSWORD.');
