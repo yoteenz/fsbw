@@ -307,6 +307,18 @@ function getNonDefaultDetailLines(productName: string, options: Record<string, s
   return lines;
 }
 
+/** One client per email (first occurrence wins). Stops duplicate rows from showing in client overview. */
+function dedupeClientsByEmail(clients: any[]): any[] {
+  const norm = (e: string) => (e || '').trim().toLowerCase();
+  const seen = new Set<string>();
+  return clients.filter((u: any) => {
+    const e = norm(u.email || '');
+    if (seen.has(e)) return false;
+    seen.add(e);
+    return true;
+  });
+}
+
 /** 20 mock clients for ayoteenz admin only – mix of Standard/Premium, spend, bookings, alerts for testing sort tags. Most names are female to reflect a hair/wig brand client base. Exported for admin dashboard tier counts. */
 export function getMockClientsForAyoteenz(): any[] {
   const now = Date.now();
@@ -624,6 +636,11 @@ export default function AdminClients() {
     try {
       let reg = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
       if (!Array.isArray(reg)) reg = [];
+      const beforeDedupe = reg.length;
+      reg = dedupeClientsByEmail(reg);
+      if (reg.length !== beforeDedupe) {
+        localStorage.setItem('registeredUsers', JSON.stringify(reg));
+      }
       const currentUserRaw = localStorage.getItem('currentUser');
       const currentUser = currentUserRaw ? JSON.parse(currentUserRaw) : null;
       if (currentUser?.email && !reg.some((u: any) => (u.email || '').toLowerCase() === (currentUser.email || '').toLowerCase())) {
@@ -665,7 +682,7 @@ export default function AdminClients() {
             }
             // API returns ALL clients (profiles + auth users without profile) from Supabase – single source of truth for all browsers
             if (list.length > 0) {
-              let fromApi = list as any[];
+              let fromApi = dedupeClientsByEmail(list as any[]);
               const mockClients = getMockClientsForAyoteenz();
               const mockByEmail = new Map(mockClients.map((m: any) => [norm(m.email || ''), m]));
               const existingEmails = new Set(fromApi.map((u: any) => norm(u.email || '')));
@@ -682,7 +699,7 @@ export default function AdminClients() {
               let fallback = list as any[];
               try {
                 const localReg = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-                fallback = Array.isArray(localReg) ? localReg : [];
+                fallback = dedupeClientsByEmail(Array.isArray(localReg) ? localReg : []);
                 if (currentUser && isAyoteenzAdminAccount(currentUser)) {
                   const mockClients = getMockClientsForAyoteenz();
                   const mockByEmail = new Map(mockClients.map((m: any) => [norm(m.email || ''), m]));
@@ -703,7 +720,7 @@ export default function AdminClients() {
             if (currentUser && isAyoteenzAdminAccount(currentUser)) {
               try {
                 const localReg = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-                const fallback = Array.isArray(localReg) ? localReg : [];
+                const fallback = dedupeClientsByEmail(Array.isArray(localReg) ? localReg : []);
                 const mockClients = getMockClientsForAyoteenz();
                 const existingFallback = new Set(fallback.map((u: any) => norm(u.email || '')));
                 const toAddMock = mockClients.filter((m: any) => !existingFallback.has(norm(m.email || '')));

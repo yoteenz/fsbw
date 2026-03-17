@@ -13,7 +13,7 @@ import { isAdminUser, clearAppAuth, isAyoteenzAdminAccount } from '../../../util
 import { syncAllFromApi, applyAdminSyncPayload } from '../../../utils/syncFromApi';
 import { saveCartAndWishlistToUserKeys } from '../../../utils/cartWishlistStorage';
 import { normalizeEmail } from '../../../utils/credentialNormalize';
-import { syncProfileWithPassword } from '../../../utils/api';
+import { syncProfileWithPassword, syncProfileWithToken } from '../../../utils/api';
 
 const inputBaseStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Demi"',
@@ -144,6 +144,8 @@ function SettingsPage() {
   const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
   const [syncAccountMessage, setSyncAccountMessage] = useState<string | null>(null);
   const [syncAccountLoading, setSyncAccountLoading] = useState(false);
+  /** Optional: re-enter Supabase password for sync when stored password fails or is missing */
+  const [syncPasswordInput, setSyncPasswordInput] = useState('');
 
   const socialPrefixes: Record<string, string> = {
     facebook: 'FACEBOOK.COM/',
@@ -371,9 +373,21 @@ function SettingsPage() {
         return;
       }
       const { data } = await supabase.auth.getSession();
-      const hasSession = data.session?.user && normalizeEmail((data.session.user as { email?: string }).email || '') === normalizeEmail(email);
+      // Prefer session when present (token identifies user); strict email match can fail due to casing/format
+      const hasSession = Boolean(data.session?.user);
 
       if (hasSession) {
+        // Prefer token-based sync (same auth as sign-in; no password sent)
+        const tokenPayload = await syncProfileWithToken();
+        if (tokenPayload?.profile) {
+          applyAdminSyncPayload(email, tokenPayload, { preservePassword: userData?.password ?? undefined });
+          saveCartAndWishlistToUserKeys(email);
+          const updated = localStorage.getItem('currentUser');
+          if (updated) setUserData(JSON.parse(updated));
+          setSyncAccountMessage('Account synced. Profile, orders, cart, and wishlist updated.');
+          window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+          return;
+        }
         const profile = await syncAllFromApi();
         if (profile) {
           saveCartAndWishlistToUserKeys(email);
@@ -396,14 +410,16 @@ function SettingsPage() {
         return;
       }
 
-      const localPassword = userData?.password;
-      if (localPassword) {
-        const payload = await syncProfileWithPassword(email, localPassword);
-        applyAdminSyncPayload(email, payload, { preservePassword: localPassword });
+      // Use re-entered password if provided (exact as typed), otherwise stored
+      const passwordToUse = (syncPasswordInput.length > 0 ? syncPasswordInput : '') || userData?.password;
+      if (passwordToUse) {
+        const payload = await syncProfileWithPassword(email, passwordToUse);
+        applyAdminSyncPayload(email, payload, { preservePassword: passwordToUse });
         saveCartAndWishlistToUserKeys(email);
         const updated = localStorage.getItem('currentUser');
         if (updated) setUserData(JSON.parse(updated));
         setSyncAccountMessage('Account synced. Profile, orders, cart, and wishlist updated.');
+        setSyncPasswordInput(''); // clear so it's not left in state
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
         return;
       }
@@ -1213,6 +1229,18 @@ function SettingsPage() {
                       )}
                     </div>
                   )}
+                  <p className="text-[10px] font-futura mb-1.5" style={{ color: '#888', textTransform: 'uppercase' }}>
+                    Supabase password for sync (optional — if sync fails, enter it here and click Sync)
+                  </p>
+                  <input
+                    type="password"
+                    value={syncPasswordInput}
+                    onChange={(e) => setSyncPasswordInput(e.target.value)}
+                    placeholder="Supabase password"
+                    className="w-full max-w-m border border-gray-300 font-futura text-sm py-1.5 px-2 mb-2"
+                    style={{ borderWidth: '1.3px' }}
+                    autoComplete="current-password"
+                  />
                   <button
                     type="button"
                     onClick={handleSyncAccount}
@@ -1228,7 +1256,7 @@ function SettingsPage() {
                     {syncAccountLoading ? 'SYNCING…' : 'SYNC MY ACCOUNT'}
                   </button>
                   <p className="text-[10px] font-futura mt-1" style={{ color: '#888', textTransform: 'uppercase' }}>
-                    Sync uses your Supabase password (the one for sign-in with email/password). If sync fails, set your local password to match Supabase, or sign in with Supabase once.
+                    Sync uses your Supabase password (the one for sign-in with email/password). If sync fails, enter it above and click Sync.
                   </p>
                 </div>
               )}

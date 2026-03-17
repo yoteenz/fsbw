@@ -7,6 +7,7 @@ import { getTotalReviewCount, getUserSubmittedReviewCount, hasNewReviewApproved 
 import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier, clearAppAuth } from '../../utils/adminAuth';
 import { swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
+import { patchProfile } from '../../utils/api';
 import { trackActivity } from '../../utils/activity';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { getAccountNotifications, mergeAccountNotifications, isNewAccount } from './notifications/page';
@@ -1499,6 +1500,9 @@ function AccountPage() {
             localStorage.setItem('registeredUsers', JSON.stringify(registered));
           }
         }
+      }
+      if (isSupabaseConfigured()) {
+        patchProfile({ profileImage: croppedImage }).then(() => trackActivity('profile_update')).catch(() => {});
       }
     } catch (e) {
       console.warn('Failed to save profile image:', e);

@@ -67,14 +67,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'PATCH') {
     const body = typeof req.body === 'object' && req.body !== null ? req.body : {};
-    // Merge body with auth user so id/email always come from token; then build DB row.
-    const row = toProfileRow({ ...body, id: user.id, email: user.email }) as Record<string, unknown>;
+    // Partial update: fetch existing profile so we only overwrite fields that are in the request body.
+    // Otherwise e.g. PATCH { firstName } would set profile_image to null.
+    const { data: existing } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .maybeSingle();
+    const existingApp = existing ? fromProfileRow(existing as Record<string, unknown>) : {};
+    const merged = { ...existingApp, ...body, id: user.id, email: user.email };
+    const row = toProfileRow(merged) as Record<string, unknown>;
     row.id = user.id;
     row.email = user.email;
     row.updated_at = new Date().toISOString();
 
     // Upsert: create profile if none exists (e.g. after email confirm), otherwise update.
-    // Ensures users who just confirmed their email get a profile row and show up in admin clients.
     const { data, error } = await supabase
       .from('profiles')
       .upsert(row, { onConflict: 'id' })

@@ -42,17 +42,39 @@ export async function getProfile(): Promise<Record<string, unknown> | null> {
   return data as Record<string, unknown> | null;
 }
 
-/** Admin sync without session: POST email + password to /api/admin/sync-profile, returns profile + orders + cart + wishlist. */
-export async function syncProfileWithPassword(
-  email: string,
-  password: string
-): Promise<{
+export type SyncProfilePayload = {
   profile: Record<string, unknown> | null;
   activeOrders: unknown[];
   pastOrders: unknown[];
   cart: { items: unknown[] };
   wishlist: { items: unknown[] };
-}> {
+};
+
+/** Admin sync using session token (no password). POST /api/admin/sync-profile with Authorization: Bearer <token>. */
+export async function syncProfileWithToken(): Promise<SyncProfilePayload | null> {
+  const token = await getAccessToken();
+  if (!token) return null;
+  const base = API_BASE.replace(/\/$/, '');
+  const url = base ? `${base}/api/admin/sync-profile` : '/api/admin/sync-profile';
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({}),
+  });
+  if (res.status === 401 || res.status === 403) return null;
+  if (!res.ok) return null;
+  const text = await res.text();
+  return text ? JSON.parse(text) : {};
+}
+
+/** Admin sync without session: POST email + password to /api/admin/sync-profile, returns profile + orders + cart + wishlist. */
+export async function syncProfileWithPassword(
+  email: string,
+  password: string
+): Promise<SyncProfilePayload> {
   const base = API_BASE.replace(/\/$/, '');
   const url = base ? `${base}/api/admin/sync-profile` : '/api/admin/sync-profile';
   let res: Response;

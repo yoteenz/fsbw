@@ -1,7 +1,7 @@
 /**
  * Supabase client for the frontend (auth + optional API token).
- * Uses a custom storage that mirrors the auth session to a cookie so that when Safari (or any
- * browser) clears localStorage on app close, the session can be restored from the cookie — same
+ * Uses a custom storage that mirrors the auth session and user to cookies so that when Safari (or any
+ * browser) clears localStorage on app close, the session can be restored from cookies — same
  * effective behavior as Chrome keeping localStorage. Sign-out happens ONLY when the user
  * explicitly clicks Sign Out. When Supabase fires SIGNED_OUT we restore app auth from backup.
  */
@@ -9,8 +9,10 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { ensureAuthRestoredFromBackup } from './adminAuth';
 
 const SUPABASE_SESSION_COOKIE = 'baw_sb_session';
+const SUPABASE_USER_COOKIE = 'baw_sb_user';
 const COOKIE_MAX_AGE = 365 * 24 * 60 * 60;
-const MAX_SESSION_LENGTH = 3500; // stay under 4k cookie limit
+const MAX_SESSION_LENGTH = 4000; // under 4k cookie limit; session JSON can be ~2–3k
+const MAX_USER_LENGTH = 4000;
 
 function getCookie(name: string): string | null {
   if (typeof document === 'undefined') return null;
@@ -42,30 +44,80 @@ function clearCookie(name: string): void {
   } catch (_) {}
 }
 
-/** Storage adapter that mirrors Supabase auth keys to a cookie so session survives when localStorage is cleared (e.g. Safari on app close). */
+/** Session key is e.g. sb-xxx-auth-token (no -user suffix). */
+function isSessionStorageKey(k: string): boolean {
+  return /^sb-.+-auth-token$/.test(k);
+}
+
+/** User key is e.g. sb-xxx-auth-token-user. */
+function isUserStorageKey(k: string): boolean {
+  return k.endsWith('-user');
+}
+
+/**
+ * Restore Supabase session and user from cookies into localStorage at bootstrap.
+ * Call this in main.tsx right after ensureAuthRestoredFromBackup() so that when
+ * getSupabase() runs, storage.getItem() finds the session in localStorage (and we
+ * don't rely on Supabase reading our cookie path on first getItem).
+ */
+export function restoreSupabaseSessionFromCookie(): void {
+  if (typeof window === 'undefined' || !window.localStorage) return;
+  const url = (import.meta as unknown as { env?: { VITE_SUPABASE_URL?: string } }).env?.VITE_SUPABASE_URL;
+  if (!url) return;
+  try {
+    const projectRef = new URL(url).hostname.split('.')[0];
+    if (!projectRef) return;
+    const storageKey = `sb-${projectRef}-auth-token`;
+    const sessionVal = getCookie(SUPABASE_SESSION_COOKIE);
+    const userVal = getCookie(SUPABASE_USER_COOKIE);
+    if (sessionVal) {
+      window.localStorage.setItem(storageKey, sessionVal);
+    }
+    if (userVal) {
+      window.localStorage.setItem(storageKey + '-user', userVal);
+    }
+  } catch (_) {}
+}
+
+/** Storage adapter that mirrors Supabase auth session and user to separate cookies so session survives when localStorage is cleared (e.g. Safari on app close). */
 function createSupabaseStorage(): { getItem: (key: string) => string | null; setItem: (key: string, value: string) => void; removeItem: (key: string) => void } {
   const ls = typeof window !== 'undefined' ? window.localStorage : null;
-  const isAuthKey = (k: string) => k.includes('auth') || /^sb-.*-auth-token$/i.test(k);
 
   return {
     getItem(key: string): string | null {
       if (!ls) return null;
       let val = ls.getItem(key);
-      if (!val && isAuthKey(key)) {
+      if (val) return val;
+      if (isSessionStorageKey(key)) {
         const fromCookie = getCookie(SUPABASE_SESSION_COOKIE);
-        if (fromCookie) val = fromCookie;
+        if (fromCookie) {
+          ls.setItem(key, fromCookie);
+          return fromCookie;
+        }
       }
-      return val;
+      if (isUserStorageKey(key)) {
+        const fromCookie = getCookie(SUPABASE_USER_COOKIE);
+        if (fromCookie) {
+          ls.setItem(key, fromCookie);
+          return fromCookie;
+        }
+      }
+      return null;
     },
     setItem(key: string, value: string): void {
       if (!ls) return;
       ls.setItem(key, value);
-      if (isAuthKey(key) && value && value.length <= MAX_SESSION_LENGTH) setCookie(SUPABASE_SESSION_COOKIE, value);
+      if (isSessionStorageKey(key) && value && value.length <= MAX_SESSION_LENGTH) {
+        setCookie(SUPABASE_SESSION_COOKIE, value);
+      } else if (isUserStorageKey(key) && value && value.length <= MAX_USER_LENGTH) {
+        setCookie(SUPABASE_USER_COOKIE, value);
+      }
     },
     removeItem(key: string): void {
       if (!ls) return;
       ls.removeItem(key);
-      if (isAuthKey(key)) clearCookie(SUPABASE_SESSION_COOKIE);
+      if (isSessionStorageKey(key)) clearCookie(SUPABASE_SESSION_COOKIE);
+      if (isUserStorageKey(key)) clearCookie(SUPABASE_USER_COOKIE);
     },
   };
 }

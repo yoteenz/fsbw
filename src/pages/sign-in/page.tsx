@@ -337,6 +337,9 @@ function SignInPage() {
             password
           });
           if (!error && data.session) {
+            // Store exact password (no normalization) so "Sync my account" sends the same string Supabase accepted
+            const passwordToStore = password;
+            const emailNorm = normalizeEmail(email);
             try {
               const raw = localStorage.getItem('currentUser');
               if (raw) {
@@ -346,6 +349,24 @@ function SignInPage() {
             } catch (_) {}
             const profile = await syncAllFromApi();
             if (profile) {
+              // Store password so "Sync my account" later uses the same Supabase password
+              try {
+                const cur = localStorage.getItem('currentUser');
+                if (cur) {
+                  const parsed = JSON.parse(cur) as Record<string, unknown>;
+                  parsed.password = passwordToStore;
+                  localStorage.setItem('currentUser', JSON.stringify(parsed));
+                  const ru = JSON.parse(localStorage.getItem('registeredUsers') || '[]') as { email?: string; password?: string }[];
+                  const idx = ru.findIndex((u) => normalizeEmail(u.email || '') === emailNorm);
+                  if (idx !== -1) {
+                    ru[idx] = { ...ru[idx], password: passwordToStore };
+                    localStorage.setItem('registeredUsers', JSON.stringify(ru));
+                  } else {
+                    ru.push({ ...(parsed as object), email: parsed.email, password: passwordToStore });
+                    localStorage.setItem('registeredUsers', JSON.stringify(ru));
+                  }
+                }
+              } catch (_) {}
               localStorage.setItem('isSignedIn', 'true');
               setIsSignedIn(true);
               onSignInSuccess('password'); // user tapped Sign in — track and persist (Safari retries)
@@ -359,8 +380,17 @@ function SignInPage() {
               return;
             }
             // Session valid but getProfile failed (e.g. no API or profile not ready): still sign in from session; create profile so user appears in admin clients
-            const minimal = buildMinimalUserFromSupabaseSession(data.session.user);
+            const minimal = buildMinimalUserFromSupabaseSession(data.session.user) as Record<string, unknown>;
+            minimal.password = passwordToStore;
             applyMinimalUserToStorage(minimal);
+            try {
+              const ru = JSON.parse(localStorage.getItem('registeredUsers') || '[]') as { email?: string; password?: string }[];
+              const idx = ru.findIndex((u) => normalizeEmail(u.email || '') === emailNorm);
+              if (idx !== -1) {
+                ru[idx] = { ...ru[idx], password: passwordToStore };
+                localStorage.setItem('registeredUsers', JSON.stringify(ru));
+              }
+            } catch (_) {}
             onSignInSuccess('password');
             const { patchProfile } = await import('../../utils/api');
             await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
@@ -375,23 +405,15 @@ function SignInPage() {
             return;
           }
           if (error) {
-            // Admin emails (e.g. ayoteenz) can fall back to local sign-in if Supabase fails (no Supabase account or wrong password there)
-            if (isAdminEmail(email)) {
-              // Fall through to local sign-in / bootstrap below
-            } else {
-              setValidationMessage(error.message === 'Invalid login credentials' ? 'INVALID EMAIL OR PASSWORD.' : error.message);
-              setShowValidationModal(true);
-              return;
-            }
-          }
-        } catch (e) {
-          if (isAdminEmail(email)) {
-            // Fall through to local sign-in so admin can still sign in
-          } else {
-            setValidationMessage('SIGN-IN FAILED. TRY AGAIN.');
+            // Require Supabase auth for everyone when Supabase is configured (no local fallback for admin — prevents duplicate clients from wrong passwords)
+            setValidationMessage(error.message === 'Invalid login credentials' ? 'INVALID EMAIL OR PASSWORD.' : error.message);
             setShowValidationModal(true);
             return;
           }
+        } catch (e) {
+          setValidationMessage('SIGN-IN FAILED. TRY AGAIN.');
+          setShowValidationModal(true);
+          return;
         }
       }
     }
@@ -449,6 +471,13 @@ function SignInPage() {
         return;
       }
       if (isAdminEmail(email)) {
+        // Do not create a second local account for the same admin email (prevents duplicate clients)
+        const existingByEmail = registeredUsers.find((u: any) => normalizeEmail(u.email || '') === emailNorm);
+        if (existingByEmail) {
+          setValidationMessage('INVALID EMAIL OR PASSWORD.');
+          setShowValidationModal(true);
+          return;
+        }
         let existingCurrent: Record<string, any> = {};
         try {
           const raw = localStorage.getItem('currentUser');
