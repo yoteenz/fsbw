@@ -362,7 +362,7 @@ function SignInPage() {
                     ru[idx] = { ...ru[idx], password: passwordToStore };
                     localStorage.setItem('registeredUsers', JSON.stringify(ru));
                   } else {
-                    ru.push({ ...(parsed as object), email: parsed.email, password: passwordToStore });
+                    ru.push({ ...(parsed as Record<string, unknown>), email: String(parsed?.email ?? ''), password: passwordToStore });
                     localStorage.setItem('registeredUsers', JSON.stringify(ru));
                   }
                 }
