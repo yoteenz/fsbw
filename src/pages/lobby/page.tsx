@@ -6,6 +6,7 @@ import { isMockDataAccount } from '../../utils/adminAuth';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
 import { syncAllFromApi, buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage, buildProfilePayloadForBackend } from '../../utils/syncFromApi';
 import { onSignInSuccess } from '../../utils/adminAuth';
+import { registerServerSessionCookie } from '../../utils/sessionRestore';
 
 // Lobby Component
 const LobbyPage: React.FC = () => {
@@ -33,6 +34,7 @@ const LobbyPage: React.FC = () => {
         if (profile) {
           localStorage.setItem('isSignedIn', 'true');
           onSignInSuccess('session_restore'); // Face ID / Supabase cookie from lobby
+          registerServerSessionCookie(session.access_token, session.refresh_token);
           window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
           navigate('/account', { replace: true });
           return;
@@ -40,6 +42,7 @@ const LobbyPage: React.FC = () => {
         const minimal = buildMinimalUserFromSupabaseSession(session.user);
         applyMinimalUserToStorage(minimal);
         onSignInSuccess('session_restore');
+        registerServerSessionCookie(session.access_token, session.refresh_token);
         const { patchProfile } = await import('../../utils/api');
         await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));

@@ -192,6 +192,8 @@ export function clearAppAuth(): void {
     localStorage.removeItem(STORAGE_CURRENT_USER);
     localStorage.removeItem(AUTH_BACKUP_KEY);
     clearBackupCookie();
+    // Fire-and-forget: clear server HttpOnly session cookie (Safari restore) so next load is signed out
+    import('./sessionRestore').then((m) => m.clearServerSessionCookie()).catch(() => {});
   } catch (_) {}
 }
 

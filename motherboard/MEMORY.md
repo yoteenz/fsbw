@@ -430,3 +430,22 @@ User asked if there is a way to capture the **entire current codebase** (and its
 **Changes:** `motherboard/ADDING.md` (Auto-add section: "When to add" / "When to skip" bullets; "significant" replaced with task-based wording; Rule 3 updated). `.cursor/rules/motherboard.mdc` (auto-add paragraph: same task-based trigger + explicit "Do not skip because the change was small"). This MEMORY entry.
 
 **Conventions:** When auto-add is on, append to MEMORY after any exchange where you completed a user-requested task (code change, fix, feature, or decision). Do not skip for small scope; only skip for no-outcome exchanges (conversation only, no code or decision).
+
+---
+
+## 2025-03-17 — Mobile menu toggle spacing and text aligned to account profile
+
+**Context:** User reported that menu toggle spacing and text adjustments (20px below social icons, 6px right for subtext, 6px left for arrows) were not applied consistently; some tabs/pages (e.g. unit & shop pages, wishlist, product pages) didn’t match. They wanted all pages to mirror the account profile page and be symmetrical.
+
+**Topics covered (this chat):**
+- **Canonical reference:** Account profile page (`src/pages/account/page.tsx`) uses: menu item labels `transform: 'translateX(13px)'`, SHOP tab arrows `translateX(-11px) translateY(-4px)`, scroll area `flex: 1, overflowY: 'auto', marginBottom: '20px'`, Sign In/Out block `marginBottom: '20px', marginTop: 'auto'`, and social icons wrapped in `<div style={{ marginBottom: '20px' }}><SocialMenuIcons /></div>`.
+- **Label subtext (6px right):** Replaced remaining `translateX(7px)` with `translateX(13px)` in: `src/pages/products/page.tsx` (2), `src/pages/account/shipping/page.tsx` (2), `src/pages/account/reviews/leave-review-order/page.tsx` (2). `BrandMenuLinks.tsx` and most other pages already had 13px.
+- **Arrow position (6px left):** Replaced remaining `translateX(-5px) translateY(-4px)` with `translateX(-11px) translateY(-4px)` in: `src/pages/wavy/beach-wave/page.tsx`, `src/pages/units/curly/page.tsx`, `src/pages/straight/blanco/page.tsx`, `src/pages/curly/soft-curl/page.tsx`.
+- **tools/gift-card:** Grep reported `translateX(7px)` at two menu label lines; read_file showed 13px (possible workspace/index difference). If still 7px on disk, apply same replace: `transform: 'translateX(7px)'` → `transform: 'translateX(13px)'` only for the two menu label spans (TOOLS GIFT CARD and SHOP items), not the cart badge.
+- **Layout note:** build-a-wig addons, lace, texture, styling, cap-size use absolute positioning for Sign In/Out and social icons (bottom: 86px / 37px). Account and most other pages use flex with marginBottom: 20px. To make those build-a-wig pages match account’s flex layout would require restructuring that bottom section.
+
+**Decisions / outcomes:** Menu labels use `translateX(13px)` and SHOP tab arrows use `translateX(-11px) translateY(-4px)` everywhere. Social icons are wrapped with `marginBottom: '20px'` on all pages that use the standard menu. One-off back-button or cart-badge transforms (e.g. translateX(4px), translateX(-2.5px)) were left unchanged.
+
+**Changes:** `src/pages/products/page.tsx`, `src/pages/account/shipping/page.tsx`, `src/pages/account/reviews/leave-review-order/page.tsx` (7px → 13px for menu labels). `src/pages/wavy/beach-wave/page.tsx`, `src/pages/units/curly/page.tsx`, `src/pages/straight/blanco/page.tsx`, `src/pages/curly/soft-curl/page.tsx` (-5px → -11px for menu arrows). This MEMORY entry.
+
+**Conventions:** Mobile menu toggle: label subtext = `translateX(13px)`, SHOP arrows = `translateX(-11px) translateY(-4px)`, 20px below social icons via wrapper. Use account profile page as reference for any new or updated menu implementations.

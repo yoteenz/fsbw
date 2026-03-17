@@ -14,9 +14,9 @@ const KEY_LEN = 32;
 
 function getKey(): Buffer | null {
   const secret = process.env.SESSION_COOKIE_SECRET;
-  if (!secret || secret.length < 16) return null;
+  if (!secret || (typeof secret === 'string' && secret.length < 16)) return null;
   if (Buffer.isBuffer(secret)) return secret.length === KEY_LEN ? secret : crypto.createHash('sha256').update(secret).digest();
-  return crypto.createHash('sha256').update(secret, 'utf8').digest();
+  return crypto.createHash('sha256').update(String(secret), 'utf8').digest();
 }
 
 export interface SessionPayload {

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import {
@@ -49,7 +49,9 @@ const defaultConfig: SpecialOfferConfig = {
   startDate: new Date().toISOString().slice(0, 10)
 };
 
-export default function AdminSpecialOfferPage() {
+type AdminSpecialOfferPageProps = { embedded?: boolean };
+
+export default function AdminSpecialOfferPage({ embedded = false }: AdminSpecialOfferPageProps) {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -144,33 +146,12 @@ export default function AdminSpecialOfferPage() {
     setOpenDropdown(null);
   };
 
-  return (
-    <div className="min-h-screen" style={{ position: 'relative' }}>
+  const formCard = (
+    <>
       <div
-        className="fixed inset-0 -z-10"
-        style={{
-          backgroundImage: `url('/assets/marble-half.png')`,
-          backgroundSize: 'contain',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'repeat',
-          backgroundAttachment: 'fixed'
-        }}
-      />
-      <div className="relative z-10" style={{ textTransform: 'uppercase' }}>
-        <AdminHeader
-          title="MARKETING"
-          showBack
-          onBack={() => navigate('/admin/dashboard')}
-          breadcrumbParentLabel="ADMIN"
-          breadcrumbParentPath="/admin/dashboard"
-        />
-
-        <div className="pb-6 px-4">
-          <div className="max-w-md mx-auto">
-            <div
-              className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
-              style={{ borderWidth: '1.3px', borderRadius: 0 }}
-            >
+        className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
+        style={{ borderWidth: '1.3px', borderRadius: 0 }}
+      >
               <div className="px-4 pt-4 pb-2">
                 <h2
                   style={{
@@ -504,45 +485,75 @@ export default function AdminSpecialOfferPage() {
               </div>
             </div>
 
-            {/* Save Config button below card – same height as concierge page buttons (py-2) */}
-            <button
-              type="button"
-              onClick={handleSave}
-              style={{
-                width: '100%',
-                marginTop: '10px',
-                padding: '8px 10px',
-                border: '1.3px solid #000',
-                borderRadius: 0,
-                background: saved ? '#e5e7eb' : '#fff',
-                fontFamily: '"Futura PT Medium"',
-                fontSize: '11px',
-                color: '#EB1C24',
-                textTransform: 'uppercase',
-                cursor: 'pointer'
-              }}
-            >
-              {saved ? 'SAVED' : 'SAVE CONFIG'}
-            </button>
-            <button
-              type="button"
-              onClick={handleRandomize}
-              style={{
-                width: '100%',
-                marginTop: '8px',
-                padding: '8px 10px',
-                border: '1.3px solid #000',
-                borderRadius: 0,
-                background: '#fff',
-                fontFamily: '"Futura PT Medium"',
-                fontSize: '11px',
-                color: '#EB1C24',
-                textTransform: 'uppercase',
-                cursor: 'pointer'
-              }}
-            >
-              RANDOMIZE
-            </button>
+      {/* Save Config button below card – same height as concierge page buttons (py-2) */}
+      <button
+        type="button"
+        onClick={handleSave}
+        style={{
+          width: '100%',
+          marginTop: '10px',
+          padding: '8px 10px',
+          border: '1.3px solid #000',
+          borderRadius: 0,
+          background: saved ? '#e5e7eb' : '#fff',
+          fontFamily: '"Futura PT Medium"',
+          fontSize: '11px',
+          color: '#EB1C24',
+          textTransform: 'uppercase',
+          cursor: 'pointer'
+        }}
+      >
+        {saved ? 'SAVED' : 'SAVE CONFIG'}
+      </button>
+      <button
+        type="button"
+        onClick={handleRandomize}
+        style={{
+          width: '100%',
+          marginTop: '8px',
+          padding: '8px 10px',
+          border: '1.3px solid #000',
+          borderRadius: 0,
+          background: '#fff',
+          fontFamily: '"Futura PT Medium"',
+          fontSize: '11px',
+          color: '#EB1C24',
+          textTransform: 'uppercase',
+          cursor: 'pointer'
+        }}
+      >
+        RANDOMIZE
+      </button>
+    </>
+  );
+
+  if (embedded) {
+    return <div className="w-full">{formCard}</div>;
+  }
+
+  return (
+    <div className="min-h-screen" style={{ position: 'relative' }}>
+      <div
+        className="fixed inset-0 -z-10"
+        style={{
+          backgroundImage: `url('/assets/marble-half.png')`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'repeat',
+          backgroundAttachment: 'fixed'
+        }}
+      />
+      <div className="relative z-10" style={{ textTransform: 'uppercase' }}>
+        <AdminHeader
+          title={isUnderMarketing ? 'OFFERS' : 'MARKETING'}
+          showBack
+          onBack={() => navigate(isUnderMarketing ? '/admin/marketing' : '/admin/dashboard')}
+          breadcrumbParentLabel="ADMIN"
+          breadcrumbParentPath={isUnderMarketing ? '/admin/marketing' : '/admin/dashboard'}
+        />
+        <div className="pb-6 px-4">
+          <div className="max-w-md mx-auto">
+            {formCard}
           </div>
         </div>
       </div>

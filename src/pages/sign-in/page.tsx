@@ -212,6 +212,7 @@ function SignInPage() {
         const minimal = buildMinimalUserFromSupabaseSession(session.user);
         applyMinimalUserToStorage(minimal);
         onSignInSuccess('session_restore');
+        registerServerSessionCookie(session.access_token, session.refresh_token);
         const { patchProfile } = await import('../../utils/api');
         await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
         setIsSignedIn(true);
@@ -318,13 +319,16 @@ function SignInPage() {
   };
 
   const handleSignInSubmit = async () => {
-    let email = (signInEmailRef.current?.value ?? signInEmail).trim();
-    let password = signInPasswordRef.current?.value ?? signInPassword;
-    if (!password && signInPasswordRef.current) {
+    const form = document.getElementById('signin-form') as HTMLFormElement | null;
+    const emailInput = form?.querySelector<HTMLInputElement>('[name="email"]') ?? signInEmailRef.current;
+    const passwordInput = form?.querySelector<HTMLInputElement>('[name="password"]') ?? signInPasswordRef.current;
+    let email = (emailInput?.value ?? signInEmailRef.current?.value ?? signInEmail).trim();
+    let password = passwordInput?.value ?? signInPasswordRef.current?.value ?? signInPassword;
+    if (!password) {
       await new Promise((r) => requestAnimationFrame(r));
-      password = signInPasswordRef.current?.value ?? signInPassword;
+      password = signInPasswordRef.current?.value ?? form?.querySelector<HTMLInputElement>('[name="password"]')?.value ?? signInPassword ?? '';
     }
-    if (!email && signInEmailRef.current) {
+    if (!email) {
       email = (signInEmailRef.current?.value ?? signInEmail).trim();
     }
     if (!email) {
@@ -341,15 +345,18 @@ function SignInPage() {
       const supabase = getSupabase();
       if (supabase) {
         try {
-          const passwordTrimmed = typeof password === 'string' ? password.trim() : password;
+          const emailEl = document.getElementById('signin-email') as HTMLInputElement | null;
+          const passwordEl = document.getElementById('signin-password') as HTMLInputElement | null;
+          const emailToSend = (emailEl?.value ?? email).trim();
+          const passwordToSend = (passwordEl?.value ?? password);
+          const passwordTrimmed = typeof passwordToSend === 'string' ? passwordToSend.trim() : passwordToSend;
           const { data, error } = await supabase.auth.signInWithPassword({
-            email,
+            email: emailToSend,
             password: passwordTrimmed
           });
           if (!error && data.session) {
-            // Store the same password we sent to Supabase (trimmed) so "Sync my account" works
             const passwordToStore = passwordTrimmed;
-            const emailNorm = normalizeEmail(email);
+            const emailNorm = normalizeEmail(emailToSend);
             try {
               const raw = localStorage.getItem('currentUser');
               if (raw) {
@@ -380,6 +387,7 @@ function SignInPage() {
               localStorage.setItem('isSignedIn', 'true');
               setIsSignedIn(true);
               onSignInSuccess('password'); // user tapped Sign in — track and persist (Safari retries)
+              registerServerSessionCookie(data.session.access_token, data.session.refresh_token); // so Safari can restore session after close (HttpOnly cookie)
               trackActivity('sign_in');
               window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
               if (signInEmailRef.current) signInEmailRef.current.value = '';
@@ -402,6 +410,7 @@ function SignInPage() {
               }
             } catch (_) {}
             onSignInSuccess('password');
+            registerServerSessionCookie(data.session.access_token, data.session.refresh_token);
             const { patchProfile } = await import('../../utils/api');
             await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
             setIsSignedIn(true);
@@ -415,11 +424,12 @@ function SignInPage() {
             return;
           }
           if (error) {
-            // Admin: allow fallback to existing local account only (no new bootstrap — prevents duplicates)
             if (isAdminEmail(email)) {
-              // Fall through to local sign-in below; will only succeed if email+password match an existing registeredUsers entry
+              // Fall through to local sign-in below
             } else {
-              setValidationMessage(error.message === 'Invalid login credentials' ? 'INVALID EMAIL OR PASSWORD.' : error.message);
+              const isInvalidCreds = error.message === 'Invalid login credentials';
+              const msg = isInvalidCreds ? 'INVALID EMAIL OR PASSWORD.' : error.message;
+              setValidationMessage(import.meta.env.DEV && error.message ? `${msg} (${error.message})` : msg);
               setShowValidationModal(true);
               return;
             }
@@ -489,18 +499,14 @@ function SignInPage() {
         return;
       }
       if (isAdminEmail(email)) {
-        // When Supabase is configured, never create a new local admin (prevents duplicates); only existing local match is allowed
-        if (isSupabaseConfigured()) {
-          setValidationMessage('INVALID EMAIL OR PASSWORD. Use your Supabase password, or reset it in Supabase Dashboard.');
-          setShowValidationModal(true);
-          return;
-        }
+        // If this browser already has a local account for this email, require that password (no duplicate accounts).
         const existingByEmail = registeredUsers.find((u: any) => normalizeEmail(u.email || '') === emailNorm);
         if (existingByEmail) {
           setValidationMessage('INVALID EMAIL OR PASSWORD.');
           setShowValidationModal(true);
           return;
         }
+        // No existing local account: allow one bootstrap sign-in so admin can get in on this browser (e.g. Safari where Supabase may fail). Prevents duplicates by only creating when no entry exists.
         let existingCurrent: Record<string, any> = {};
         try {
           const raw = localStorage.getItem('currentUser');
@@ -1074,9 +1080,7 @@ function SignInPage() {
                           type={showSignInPassword ? "text" : "password"}
                           name="password"
                           autoComplete="current-password"
-                          value={signInPassword}
-                          onChange={(e) => setSignInPassword(e.target.value)}
-                          onInput={() => { if (signInPasswordRef.current) setSignInPassword(signInPasswordRef.current.value); }}
+                          defaultValue=""
                           className="password-field"
                           style={{
                             width: '100%',

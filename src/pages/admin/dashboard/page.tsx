@@ -565,7 +565,8 @@ export default function AdminDashboard() {
         { label: 'CLIENT RETENTION', value: '94%', color: 'text-gray-500' },
         { label: 'REFERRAL RATE', value: '23%', color: 'text-gray-500' },
         { label: 'REPEAT BOOKINGS', value: '78%', color: 'text-gray-500' },
-        { label: 'GROWTH RATE', value: '+15%', color: 'text-gray-500' }
+        { label: 'GROWTH RATE', value: '+15%', color: 'text-gray-500' },
+        { label: 'ANALYTICS', value: 'Clicks by source', color: 'text-red-500' }
       ],
       highlight: 'BRAND GROWTH STRONG - EXCELLENT CLIENT RETENTION'
     },
@@ -583,25 +584,14 @@ export default function AdminDashboard() {
     },
 
     {
-      title: 'ANALYTICS',
+      title: 'BACKEND',
       count: '',
       items: [
-        { label: 'SOCIAL CLICKS', value: 'Menu & earn', color: 'text-red-500' },
-        { label: 'FOLLOW TRACKING', value: 'Instagram, Twitter, Facebook, TikTok', color: 'text-gray-500' },
-        { label: 'VIEW ANALYTICS', value: 'Clicks by source', color: 'text-red-500' }
-      ],
-      activity: 'TRACK LINK CLICKS - MENU TOGGLE & MORE WAYS TO EARN'
-    },
-
-    {
-      title: 'USERS',
-      count: '',
-      items: [
+        { label: 'AUDIT LOG', value: 'Profile & order trail', color: 'text-red-500' },
         { label: 'AUTH USERS', value: 'List & manage', color: 'text-red-500' },
-        { label: 'DISABLE / ENABLE', value: 'Account actions', color: 'text-gray-500' },
-        { label: 'PASSWORD RESET', value: 'Send reset email', color: 'text-red-500' }
+        { label: 'DISABLE / RESET', value: 'Account actions', color: 'text-gray-500' }
       ],
-      activity: 'MANAGE AUTH USERS - DISABLE OR TRIGGER PASSWORD RESET'
+      activity: 'AUDIT TRAIL & MANAGE AUTH USERS'
     },
 
     (() => {
@@ -661,32 +651,14 @@ export default function AdminDashboard() {
         title: 'MARKETING',
         count: '',
         items: [
-          { label: 'CONFIGURE', value: 'Unit, options, thumbnail', color: 'text-red-500' },
-          { label: 'START DATE', value: 'Set offer period', color: 'text-gray-500' }
+          { label: 'AFFILIATE', value: 'Campaign stats', color: 'text-red-500' },
+          { label: 'CHALLENGES', value: 'Slay & more', color: 'text-gray-500' },
+          { label: 'OFFERS', value: 'Special offer config', color: 'text-red-500' },
+          { label: 'ALERTS', value: 'Send notifications', color: 'text-red-500' }
         ],
         activity: getMarketingActivity()
       };
-    })(),
-
-    {
-      title: 'NOTIFICATIONS',
-      count: '',
-      items: [
-        { label: 'SEND TO USER', value: 'Push notification', color: 'text-red-500' },
-        { label: 'VIEW ALL', value: 'By user', color: 'text-gray-500' }
-      ],
-      activity: 'SEND NOTIFICATIONS TO CLIENTS'
-    },
-
-    {
-      title: 'AUDIT LOG',
-      count: '',
-      items: [
-        { label: 'PROFILE UPDATES', value: 'Who changed what', color: 'text-red-500' },
-        { label: 'ORDER UPDATES', value: 'Audit trail', color: 'text-gray-500' }
-      ],
-      activity: 'VIEW AUDIT TRAIL - PROFILE & ORDER CHANGES'
-    }
+    })()
   ];
 
   // Handle card click navigation
@@ -716,17 +688,8 @@ export default function AdminDashboard() {
       case 'REFERRALS':
         navigate('/admin/referrals');
         break;
-      case 'ANALYTICS':
-        navigate('/admin/analytics');
-        break;
-      case 'USERS':
-        navigate('/admin/users');
-        break;
-      case 'NOTIFICATIONS':
-        navigate('/admin/notifications');
-        break;
-      case 'AUDIT LOG':
-        navigate('/admin/audit');
+      case 'BACKEND':
+        navigate('/admin/backend');
         break;
       default:
         break;

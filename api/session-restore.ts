@@ -12,7 +12,9 @@ const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
  * the client can rehydrate. If no cookie or invalid, returns 401.
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader('Access-Control-Allow-Origin', req.headers.origin ?? '*');
+  // Must be a concrete origin when using credentials (Safari/browsers reject '*' with credentials)
+  const origin = req.headers.origin ?? (req.headers.referer ? new URL(req.headers.referer).origin : null) ?? (req.headers.host ? `https://${req.headers.host}` : null);
+  if (origin) res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   if (req.method === 'OPTIONS') return res.status(204).end();

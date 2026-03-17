@@ -1100,7 +1100,7 @@ function BlancoSelection() {
                                 style={{ 
                                   width: '16px', 
                                   height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-5px) translateY(-4px) rotate(90deg)' : 'translateX(-5px) translateY(-4px) rotate(0deg)'}`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-11px) translateY(-4px) rotate(90deg)' : 'translateX(-11px) translateY(-4px) rotate(0deg)'}`,
                                   display: 'flex',
                                   alignItems: 'center',
                                   cursor: 'pointer'

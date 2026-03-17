@@ -74,6 +74,24 @@ export async function tryServerSessionRestore(): Promise<boolean> {
 }
 
 /**
+ * Clear the server HttpOnly session cookie. Call on sign-out so the server forgets the session.
+ */
+export async function clearServerSessionCookie(): Promise<void> {
+  if (typeof window === 'undefined') return;
+  const url = `${API_BASE.replace(/\/$/, '')}/api/session-cookie`;
+  try {
+    await fetch(url, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clear: true }),
+    });
+  } catch {
+    // ignore
+  }
+}
+
+/**
  * Register the session's refresh_token with the server so it can set the HttpOnly cookie.
  * Call after sign-in with the session you just received. Uses credentials: 'include' so the cookie is set.
  */
