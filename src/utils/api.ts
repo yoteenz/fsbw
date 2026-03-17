@@ -152,13 +152,15 @@ export async function putWishlist(items: unknown[]): Promise<{ items: unknown[] 
   return (await res.json()) as { items: unknown[] };
 }
 
-/** Admin: fetch all clients (profiles) from Supabase. Requires admin session. */
-export async function getAdminClients(): Promise<Record<string, unknown>[]> {
+/** Admin: fetch all clients (profiles + auth users). Requires admin session and SUPABASE_SERVICE_ROLE_KEY on API. */
+export async function getAdminClients(): Promise<{ clients: Record<string, unknown>[]; error?: 'forbidden' | 'service_unavailable' }> {
   const res = await apiFetch('/api/admin/clients');
-  if (res.status === 403) return [];
+  if (res.status === 403) return { clients: [], error: 'forbidden' };
+  if (res.status === 503) return { clients: [], error: 'service_unavailable' };
   if (!res.ok) throw new Error(await res.text());
   const data = await res.json();
-  return Array.isArray(data) ? data : [];
+  const clients = Array.isArray(data) ? data : [];
+  return { clients };
 }
 
 /** Admin: fetch orders for a user by Supabase user id. Requires admin session. */

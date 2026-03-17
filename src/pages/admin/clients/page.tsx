@@ -594,6 +594,7 @@ export default function AdminClients() {
   const [adminActivityByUserId, setAdminActivityByUserId] = useState<Record<string, Array<{ id: string; eventType: string; payload?: unknown; createdAt: string }>>>({});
   const [personalSectionTab, setPersonalSectionTab] = useState<typeof PERSONAL_SECTION_TABS[number]>('details');
   const [exportingCsv, setExportingCsv] = useState(false);
+  const [adminClientsApiError, setAdminClientsApiError] = useState<'forbidden' | 'service_unavailable' | null>(null);
 
   // Sync selectedClientEmail from URL (e.g. when redirected from /admin/clients/account?email=...)
   useEffect(() => {
@@ -654,8 +655,15 @@ export default function AdminClients() {
       // Admin + Supabase: fetch all clients from API (same source as dashboard so tier counts match)
       if (currentUser && currentUser.email && isAdminEmail(currentUser.email) && isSupabaseConfigured()) {
         getAdminClients()
-          .then((apiClients) => {
-            const list = Array.isArray(apiClients) ? apiClients : [];
+          .then((result) => {
+            const list = Array.isArray(result.clients) ? result.clients : [];
+            const apiError = result.error;
+            if (apiError) {
+              setAdminClientsApiError(apiError);
+            } else {
+              setAdminClientsApiError(null);
+            }
+            // API returns ALL clients (profiles + auth users without profile) from Supabase – single source of truth for all browsers
             if (list.length > 0) {
               let fromApi = list as any[];
               const mockClients = getMockClientsForAyoteenz();
@@ -667,15 +675,6 @@ export default function AdminClients() {
                 return fresh ? { ...u, ...fresh } : u;
               });
               if (toAdd.length > 0) fromApi = [...fromApi, ...toAdd];
-              // Merge in local-only registeredUsers (e.g. new accounts not yet in API / Supabase profiles)
-              try {
-                const localReg = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-                const apiEmailsNow = new Set(fromApi.map((u: any) => norm(u.email || '')));
-                const localOnly = (Array.isArray(localReg) ? localReg : []).filter(
-                  (u: any) => u && u.email && !apiEmailsNow.has(norm(u.email)) && !isClientBlocked(u)
-                );
-                if (localOnly.length > 0) fromApi = [...fromApi, ...localOnly];
-              } catch (_) {}
               fromApi = fromApi.filter((u: any) => !isClientBlocked(u));
               setRegisteredUsers(fromApi);
             } else {
@@ -700,6 +699,7 @@ export default function AdminClients() {
             }
           })
           .catch(() => {
+            setAdminClientsApiError(null);
             if (currentUser && isAyoteenzAdminAccount(currentUser)) {
               try {
                 const localReg = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
@@ -1320,6 +1320,17 @@ export default function AdminClients() {
 
           <div className="pb-6 px-4">
             <div className="max-w-md mx-auto">
+              {/* Banner when API returns 403 or 503 so admin knows why Supabase users are missing */}
+              {adminClientsApiError === 'forbidden' && (
+                <div className="mb-3 px-3 py-2 border border-black bg-amber-50" style={{ borderWidth: '1.3px', fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', textTransform: 'uppercase' }}>
+                  Sign in with your Supabase account (same email as admin) to load all clients from Supabase. Right now the list is from this browser only.
+                </div>
+              )}
+              {adminClientsApiError === 'service_unavailable' && (
+                <div className="mb-3 px-3 py-2 border border-black bg-amber-50" style={{ borderWidth: '1.3px', fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', textTransform: 'uppercase' }}>
+                  Set SUPABASE_SERVICE_ROLE_KEY in your API environment (e.g. Vercel) to show all clients from Supabase. Right now the list is from this browser only.
+                </div>
+              )}
               {/* Single main card – client list (reference structure) */}
               <div
                 className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"

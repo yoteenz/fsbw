@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
-import { clearAppAuth } from '../../utils/adminAuth';
+import { clearAppAuth } from '../../../utils/adminAuth';
 
 function OrderFormPage() {
   const navigate = useNavigate();

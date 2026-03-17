@@ -307,3 +307,39 @@ User asked if there is a way to capture the **entire current codebase** (and its
 **Changes:** This MEMORY entry only.
 
 **Conventions:** "Add to motherboard" and "check the motherboard folder for instructions" mean: read the motherboard folder files and append to MEMORY per ADDING.md. Motherboard location: `motherboard/` (folder) at project root.
+
+---
+
+## 2026-02-15 — Motherboard folder confirmed; add to motherboard + where we left off
+
+**Context:** User said "add to motherboard" and "check the build-a-wig project files again for the motherboard folder." They wanted to confirm the motherboard location and then add to it. They also asked "where did we last leave off?"
+
+**Topics covered (this chat):**
+- User asked "?" (status check), then "where did we last leave off?", then "add to motherboard."
+- First search for "motherboard" in the codebase returned no matches; user asked to check project files again. Grep then found the **motherboard folder** at `motherboard/` (project root) with: `README.md`, `ADDING.md`, `MEMORY.md`, `CODEBASE.md`, and `.cursor/rules/motherboard.mdc`. No file named "motherboard" or "MOTHERBOARD.md" at root—only the folder.
+- User requested add to motherboard per protocol: read README, ADDING, CORE, MEMORY and append one entry summarizing the full conversation.
+
+**Where we left off (from prior session):** Admin subscription override for ayoteenz was implemented so they can toggle Standard / 3 MONTH / 6 MONTH / 12 MONTH next to "INCLUDED IN YOUR MEMBERSHIP" and verify benefits and logic across pages. Implemented: `getEffectiveSubscriptionTier()` and `ADMIN_SUBSCRIPTION_OVERRIDE_KEY` in `src/utils/adminAuth.ts`; state and toggle buttons on membership page with persistence to localStorage. **Not yet done:** Checkout page `getPremiumTier()` and checkout confirm page (points calculation) were not yet updated to use `getEffectiveSubscriptionTier(currentUser)`, so the override does not yet apply site-wide (checkout, orders). To finish: in checkout replace `getPremiumTier` logic with `getEffectiveSubscriptionTier(user)` (or call it inside `getPremiumTier`); in confirm page use `getEffectiveSubscriptionTier(user)` instead of `user.subscriptionTier` when computing points multiplier.
+
+**Decisions / outcomes:** Motherboard is the folder `motherboard/` at project root; "add to motherboard" means follow ADDING.md and append to MEMORY. This entry records the chat and the unfinished wiring of admin subscription override to checkout/confirm.
+
+**Changes:** This MEMORY entry only.
+
+**Conventions:** When searching for "motherboard," check for the **folder** `motherboard/` (and its files); grep for "motherboard" will hit README, ADDING, MEMORY, CODEBASE, and .cursor/rules/motherboard.mdc.
+
+---
+
+## 2025-02-15 — Add to motherboard: user pointed to AGENTS.md and MOTHERBOARD_COMMANDS.md
+
+**Context:** User said "add to motherboard" and then clarified: "When I say 'add to motherboard', read AGENTS.md or docs/MOTHERBOARD_COMMANDS.md in this repo—they explain where the motherboard is and what to do."
+
+**Topics covered (this chat):**
+- User requested add to motherboard.
+- User directed the agent to read **AGENTS.md** (project root) or **docs/MOTHERBOARD_COMMANDS.md** for the motherboard location and protocol when the agent is unsure.
+- Agent read AGENTS.md, docs/MOTHERBOARD_COMMANDS.md, then motherboard/README.md, motherboard/ADDING.md, motherboard/CORE.md, and motherboard/MEMORY.md, and appended this entry per ADDING.md.
+
+**Decisions / outcomes:** When the user says "add to motherboard" and the agent does not already have motherboard context, the agent should read **AGENTS.md** or **docs/MOTHERBOARD_COMMANDS.md** first; those docs state that the motherboard is the **folder** `motherboard/` at project root and describe the commands (add = append to MEMORY per ADDING.md; load = read README → CORE → CODEBASE → MEMORY; snapshot = overwrite CODEBASE.md). No new CORE facts this chat.
+
+**Changes:** This MEMORY entry only.
+
+**Conventions:** Do not reply that there is no motherboard or ask the user to specify what to add. Read AGENTS.md or docs/MOTHERBOARD_COMMANDS.md when the user says "add to motherboard" and you need the protocol; then read motherboard/README.md and motherboard/ADDING.md and append one entry to motherboard/MEMORY.md summarizing the entire conversation so far.

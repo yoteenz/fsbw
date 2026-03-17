@@ -207,7 +207,7 @@ export default function AdminDashboard() {
           try {
             const [api, clientsFromClientsApi, pending, reviews, referrals, meetings] = await Promise.all([
               getAdminDashboard(),
-              getAdminClients().catch(() => []),
+              getAdminClients().then((r) => r.clients).catch(() => []),
               getAdminPending().catch(() => ({ pendingReviews: 0, orderForms: 0, pendingItems: [] })),
               getAdminReviews().catch(() => ({ reviews: [], averageRating: 0, totalReviews: 0 })),
               getAdminReferrals().catch(() => ({ log: [], totalEarned: 0, inviteeCount: 0, byReferrer: {} })),

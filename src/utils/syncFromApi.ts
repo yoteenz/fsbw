@@ -110,10 +110,23 @@ export function applyAdminSyncPayload(
     const existing = (existingRaw ? JSON.parse(existingRaw) : null) as Record<string, unknown> | null;
     const sameEmail = existing && (existing.email as string || '').trim().toLowerCase() === e;
 
+    // Normalize snake_case from API so UI always has camelCase (photo, name, socials, birthday, rewards)
+    const p = payload.profile as Record<string, unknown>;
+    const normalized = {
+      ...p,
+      firstName: p.firstName ?? p.first_name,
+      lastName: p.lastName ?? p.last_name,
+      phoneNumber: p.phoneNumber ?? p.phone_number,
+      profileImage: p.profileImage ?? p.profile_image,
+      membershipType: p.membershipType ?? p.membership_type,
+      subscriptionTier: p.subscriptionTier ?? p.subscription_tier,
+      currentTierName: p.currentTierName ?? p.current_tier_name ?? p.tier,
+    } as Record<string, unknown>;
+
     // Start with existing so API null/empty does not wipe local data; then overlay API profile
     const merged = {
       ...(sameEmail && existing ? existing : {}),
-      ...payload.profile,
+      ...normalized,
       email: (payload.profile.email as string) || e,
       role: isAdminEmail(e) ? 'admin' : (payload.profile.role as string),
     } as Record<string, unknown>;

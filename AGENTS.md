@@ -1,7 +1,18 @@
 # Agent context (Build-a-Wig)
 
-For AI/agent context and commands (**load motherboard**, **add to motherboard**, **Snapshot codebase to motherboard**), see:
+## "Add to motherboard" / "Load motherboard" / "Snapshot codebase to motherboard"
 
-**`motherboard/README.md`**
+**If the user says any of these and you are unsure what they mean:** The **motherboard** exists in this repo. It is a **folder** (not a single file) at:
 
-The motherboard is a **folder** at the project root: `motherboard/`. It contains shared project context (design, stack, flows, codebase structure, conversation learnings). Do **not** create a new file named `MOTHERBOARD.md` or `Motherboard.md` at project root—use the **existing folder** `motherboard/` and the files inside it (README.md, CORE.md, MEMORY.md, ADDING.md, CODEBASE.md) only.
+**`motherboard/`** (project root)
+
+Do **not** say "there is no file or reference named motherboard" or ask the user to specify what to add or where the motherboard is. Do the following:
+
+1. **Open and read** `motherboard/README.md` (in this repo).
+2. For **"add to motherboard"**: also read `motherboard/ADDING.md`, then append one new entry to `motherboard/MEMORY.md` following the format and rules there; optionally add to `motherboard/CORE.md` only for new permanent design/stack facts. Do not create a new file named `MOTHERBOARD.md` at project root.
+3. For **"load motherboard"**: read `motherboard/README.md`, `motherboard/CORE.md`, `motherboard/CODEBASE.md`, `motherboard/MEMORY.md` and use them as context.
+4. For **"Snapshot codebase to motherboard"**: explore the repo and overwrite `motherboard/CODEBASE.md` with a structured summary of the current codebase (see `motherboard/README.md`).
+
+The folder contains: `README.md`, `CORE.md`, `MEMORY.md`, `ADDING.md`, `CODEBASE.md`. Use only these existing files; do **not** create `MOTHERBOARD.md` or `Motherboard.md` at project root.
+
+For full command details and protocol, see **`motherboard/README.md`**.

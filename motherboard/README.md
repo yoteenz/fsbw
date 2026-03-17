@@ -80,6 +80,8 @@ A Cursor rule (`.cursor/rules/motherboard.mdc`) is set to **always apply**, so a
 | `MEMORY.md` | Append-only log of conversation summaries and one-off decisions. |
 | `ADDING.md` | Protocol for how to add entries (format, deduplication, no overwrite). |
 
+For **profiles table and sync** (name, photo, socials, birthday, rewards): see `docs/PROFILES_COLUMNS_AND_APP_MAPPING.md`.
+
 ---
 
 ## Quick reference for agents

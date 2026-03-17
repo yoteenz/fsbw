@@ -240,7 +240,7 @@ function ConciergePage() {
     } catch (_) {}
   }, [slayChallengeTier1Progress, slayChallengeTier2Progress]);
 
-  // Special Offer: random unit of 6, random premium options, $40 off, 60-day period; expires Jan 1, Apr 1, Jul 1, Oct 1 (2 months run, 1 month break)
+  // Special Offer: random unit of 6, random premium options, $40 off; expires on the 1st of every other month (Jan, Mar, May, Jul, Sep, Nov) — ~58–62 days per period
   const SPECIAL_OFFER_UNITS = [
     { id: 'noir', name: 'NOIR', route: '/straight/noir', basePrice: 740, image: '/assets/natural front.png' },
     { id: 'blanco', name: 'BLANCO', route: '/straight/blanco', basePrice: 820, image: '/assets/2D BLANCO FRONT.png' },
@@ -250,17 +250,31 @@ function ConciergePage() {
     { id: 'ocean-curl', name: 'OCEAN CURL', route: '/curly/ocean-curl', basePrice: 900, image: '/assets/natural front.png' }
   ] as const;
   const SPECIAL_OFFER_DISCOUNT = 40;
-  const SPECIAL_OFFER_DAYS = 60;
-  /** Next offer expiration: first of Jan, Apr, Jul, Oct (end of that day). */
+  const SPECIAL_OFFER_DAYS = 60; // approximate; actual run is 58–62 days so expiration lands on the 1st
+  /** Expiration months: 1st of every other month — Jan, Mar, May, Jul, Sep, Nov. */
+  const SPECIAL_OFFER_EXPIRATION_MONTHS = [0, 2, 4, 6, 8, 10]; // Jan, Mar, May, Jul, Sep, Nov
+  /** Next offer expiration: 1st of the next expiration month (end of that day). Never any other day. */
   const getNextSpecialOfferExpirationDate = (): Date => {
     const now = new Date();
     const year = now.getFullYear();
-    const quarterMonths = [0, 3, 6, 9]; // Jan, Apr, Jul, Oct
-    for (const qm of quarterMonths) {
-      const exp = new Date(year, qm, 1, 23, 59, 59, 999);
+    const month = now.getMonth();
+    for (const m of SPECIAL_OFFER_EXPIRATION_MONTHS) {
+      const exp = new Date(year, m, 1, 23, 59, 59, 999);
       if (exp.getTime() >= now.getTime()) return exp;
     }
     return new Date(year + 1, 0, 1, 23, 59, 59, 999); // next Jan 1
+  };
+  /** Given a timestamp, return the next expiration date (1st of Jan/Mar/May/Jul/Sep/Nov at end of day) strictly after that time. */
+  const getNextExpirationAfter = (afterMs: number): number => {
+    const after = new Date(afterMs);
+    const year = after.getFullYear();
+    const candidates: number[] = [];
+    for (const m of SPECIAL_OFFER_EXPIRATION_MONTHS) {
+      candidates.push(new Date(year, m, 1, 23, 59, 59, 999).getTime());
+    }
+    candidates.push(new Date(year + 1, 0, 1, 23, 59, 59, 999).getTime());
+    const next = candidates.find((t) => t > afterMs);
+    return next ?? new Date(year + 1, 0, 1, 23, 59, 59, 999).getTime();
   };
   const pickRandom = <T,>(arr: readonly T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
@@ -292,7 +306,7 @@ function ConciergePage() {
       if (adminConfig?.unitId && adminConfig?.startDate) {
         const unit = SPECIAL_OFFER_UNITS.find((u) => u.id === adminConfig.unitId) ?? SPECIAL_OFFER_UNITS[0];
         const startMs = new Date(adminConfig.startDate).getTime();
-        const expiresAt = startMs + SPECIAL_OFFER_DAYS * 24 * 60 * 60 * 1000;
+        const expiresAt = getNextExpirationAfter(startMs); // always 1st of Jan/Mar/May/Jul/Sep/Nov
         if (expiresAt <= Date.now()) return; // already expired, fall through to random
         const rawAddOns = Array.isArray(adminConfig.addOns) ? adminConfig.addOns : (Array.isArray((adminConfig as { addons?: string[] }).addons) ? (adminConfig as { addons: string[] }).addons : []);
         const options = {
@@ -2450,11 +2464,11 @@ function ConciergePage() {
                         />
                       </div>
                       <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0 0 25px 0', textTransform: 'uppercase', textAlign: 'center', lineHeight: 1.45 }}>
-                        OFFER CAN NOT BE COMBINED WITH DISCOUNT CODES.
+                        CAN NOT BE COMBINED WITH VOUCHER OR DISCOUNT CODE.
                         <br />
                         YOU MAY REDEEM A TOTAL OF <span style={{ color: '#EB1C24' }}>2</span> QTY AMOUNTS FOR EACH CAP SIZE.
                         <br />
-                        VALID ONLY WHILE SUPPLIES LAST, SO ACT FAST!
+                        LIMITED TIME OFFER VALID WHILE SUPPLIES LAST. TERMS APPLY.
                       </p>
                       <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '12px' }}>
                         <div style={{ width: '72px', height: '72px', flexShrink: 0, border: '1px solid #e5e7eb', overflow: 'hidden', backgroundColor: '#f9fafb' }}>
@@ -2500,7 +2514,7 @@ function ConciergePage() {
                           );
                         })}
                       </div>
-                      {/* 60-day period; expires Jan 1, Apr 1, Jul 1, Oct 1 */}
+                      {/* ~60-day period; expires on the 1st of Jan, Mar, May, Jul, Sep, Nov only */}
                       <div style={{ paddingTop: '12px', marginTop: '4px', borderTop: '1px solid #e5e7eb' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
                           <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>

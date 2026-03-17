@@ -1,9 +1,31 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireAdmin } from '../_lib/adminAuth';
-import { getSupabaseAdmin } from '../_lib/supabase';
+import { getSupabaseAdminServiceRole } from '../_lib/supabase';
 import { fromProfileRow } from '../_lib/profileMapping';
 
-/** GET /api/admin/clients – list all profiles (admin only). Returns array of profiles in app camelCase shape. */
+/** Build a minimal app-shape client from auth user (no profile row yet). */
+function authUserToMinimalClient(user: { id: string; email?: string; user_metadata?: Record<string, unknown>; created_at?: string }): Record<string, unknown> {
+  const meta = user.user_metadata || {};
+  return {
+    id: user.id,
+    email: (user.email || '').trim().toLowerCase() || (meta.email as string) || '',
+    firstName: meta.first_name ?? meta.firstName ?? '',
+    lastName: meta.last_name ?? meta.lastName ?? '',
+    phoneNumber: meta.phone_number ?? meta.phoneNumber ?? null,
+    birthday: meta.birthday ?? null,
+    profileImage: null,
+    membershipType: 'STANDARD',
+    giftCardBalance: 10,
+    hasMadeFirstPurchase: false,
+    loyaltyPoints: 0,
+    unlockedDiscounts: ['signup'],
+    referralCode: null,
+    createdAt: user.created_at ?? new Date().toISOString(),
+    updatedAt: null,
+  };
+}
+
+/** GET /api/admin/clients – list ALL clients: every profile row plus every auth user not yet in profiles (admin only). So clients from all browsers/sessions show. */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -20,13 +42,56 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const supabase = getSupabaseAdmin();
-    const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
-    if (error) return res.status(500).json({ error: error.message });
-    const rows = Array.isArray(data) ? data : [];
-    const clients = rows.map((row) => fromProfileRow(row as Record<string, unknown>));
-    return res.status(200).json(clients);
+    const supabase = getSupabaseAdminServiceRole();
+
+    const { data: profileRows, error: profileError } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+    if (profileError) return res.status(500).json({ error: profileError.message });
+    const rows = Array.isArray(profileRows) ? profileRows : [];
+    const profileById = new Map<string, Record<string, unknown>>();
+    const clientsFromProfiles: Record<string, unknown>[] = [];
+    for (const row of rows) {
+      const r = row as Record<string, unknown>;
+      const id = r.id as string;
+      if (id) profileById.set(id, r);
+      clientsFromProfiles.push(fromProfileRow(r));
+    }
+
+    let page = 1;
+    const perPage = 1000;
+    const authOnlyClients: Record<string, unknown>[] = [];
+    let hasMore = true;
+    while (hasMore) {
+      const { data: listData, error: listError } = await supabase.auth.admin.listUsers({ page, perPage });
+      if (listError) break;
+      const users = (listData as { users?: Array<{ id?: string; email?: string; user_metadata?: Record<string, unknown>; created_at?: string }> })?.users ?? [];
+      for (const u of users) {
+        const id = u?.id;
+        if (!id) continue;
+        if (!profileById.has(id)) {
+          authOnlyClients.push(authUserToMinimalClient({
+            id,
+            email: u.email ?? undefined,
+            user_metadata: u.user_metadata ?? undefined,
+            created_at: u.created_at ?? undefined,
+          }));
+        }
+      }
+      hasMore = users.length >= perPage && page < 100;
+      page += 1;
+    }
+
+    const combined = [...clientsFromProfiles, ...authOnlyClients];
+    combined.sort((a, b) => {
+      const aAt = (a.createdAt as string) || '';
+      const bAt = (b.createdAt as string) || '';
+      return bAt.localeCompare(aAt);
+    });
+    return res.status(200).json(combined);
   } catch (e) {
-    return res.status(500).json({ error: e instanceof Error ? e.message : 'Internal error' });
+    const msg = e instanceof Error ? e.message : 'Internal error';
+    if (/SUPABASE_SERVICE_ROLE_KEY|service role/i.test(msg)) {
+      return res.status(503).json({ error: 'Admin clients list requires SUPABASE_SERVICE_ROLE_KEY to show all clients from Supabase. Set it in your project env.' });
+    }
+    return res.status(500).json({ error: msg });
   }
 }

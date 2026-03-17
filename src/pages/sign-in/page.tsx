@@ -17,7 +17,7 @@ import {
   MOCK_TOOL_REVIEWS_COUNT
 } from '../../constants/reviews';
 
-/** Fetch canonical admin profile from public/admin-profile.json so Chrome (and any browser) gets same name, photo, birthday etc. as Safari. */
+/** Fetch motherboard (canonical admin profile) from public/admin-profile.json so Chrome (and any browser) gets same name, photo, birthday etc. as Safari. Update motherboard via Account → Add to motherboard, then save the downloaded file as public/admin-profile.json. */
 async function fetchCanonicalAdminProfile(): Promise<Record<string, unknown>> {
   try {
     const r = await fetch('/admin-profile.json');

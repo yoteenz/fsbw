@@ -87,5 +87,5 @@ If a user appears under **Supabase → Authentication → Users** but not in **A
 | `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` | Frontend env (e.g. Vercel) | Used by the browser; anon key only. |
 | `VITE_API_BASE` | Frontend env | Base URL of your API so the app can call `/api/profile`, `/api/admin/clients`, etc. |
 | Redeploy after changing env | Vercel (or your host) | So new builds/runs pick up the new variables. |
-| Admin clients list source | Backend `GET /api/admin/clients` | Must return rows from `public.profiles` (or auth users) so new sign-ups appear. |
+| Admin clients list source | Backend `GET /api/admin/clients` | **Requires `SUPABASE_SERVICE_ROLE_KEY`.** Returns all rows from `public.profiles` plus any auth users not yet in profiles (via `auth.admin.listUsers()`), so every sign-up from any browser appears. |
 | Dashboard stats | Backend `GET /api/admin/dashboard` | `stats.activeClients` and `clients` array should come from the same source as the client list. |

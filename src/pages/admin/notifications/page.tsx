@@ -33,8 +33,9 @@ export default function AdminNotifications() {
       return;
     }
     Promise.all([getAdminNotifications(), getAdminClients()])
-      .then(([notifs, clientList]) => {
+      .then(([notifs, res]) => {
         setList(Array.isArray(notifs) ? (notifs as NotifEntry[]) : []);
+        const clientList = res?.clients ?? [];
         setClients(Array.isArray(clientList) ? clientList : []);
         if (clientList?.length && !selectedUserId) setSelectedUserId((clientList[0] as { id?: string }).id || '');
       })

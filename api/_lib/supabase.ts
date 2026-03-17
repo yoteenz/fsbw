@@ -11,6 +11,19 @@ export function hasSupabaseServiceRole(): boolean {
   return Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 }
 
+let serviceRoleClient: SupabaseClient | null = null;
+
+/** Admin client that MUST use service role key (bypasses RLS). Use for listing all profiles, auth.admin.listUsers, etc. Throws if service role key is not set. */
+export function getSupabaseAdminServiceRole(): SupabaseClient {
+  if (!serviceRoleClient) {
+    const url = process.env.SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!url || !key) throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY (required for admin clients list)');
+    serviceRoleClient = createClient(url, key);
+  }
+  return serviceRoleClient;
+}
+
 export function getSupabaseAdmin(): SupabaseClient {
   if (!adminClient) {
     const url = process.env.SUPABASE_URL;
