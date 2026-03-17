@@ -3,9 +3,10 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App.tsx'
 import './index.css'
-import { ensureAuthRestoredFromBackup, persistAuthBackup, enableAuthDebugFromUrl, authDebugLogIfEnabled } from './utils/adminAuth'
+import { ensureAuthRestoredFromBackup, persistAuthBackup, enableAuthDebugFromUrl, authDebugLogIfEnabled, isSignedIn } from './utils/adminAuth'
 import { restoreSupabaseSessionFromCookie, getSupabase } from './utils/supabase'
 import { sendAuthDiagnostic } from './utils/authDiagnostic'
+import { tryServerSessionRestore } from './utils/sessionRestore'
 
 // Enable auth debug from URL (e.g. ?auth_debug=1) so logs persist and show in the on-page panel
 enableAuthDebugFromUrl()
@@ -20,6 +21,8 @@ ensureAuthRestoredFromBackup()
 
 // Restore Supabase session from cookies into localStorage so Safari (which may clear localStorage on close) keeps the user signed in
 restoreSupabaseSessionFromCookie()
+// When client storage is empty (e.g. Safari cleared everything), try server HttpOnly cookie restore — if 200 we reload signed in
+if (typeof window !== 'undefined' && !isSignedIn()) tryServerSessionRestore()
 // Initialize Supabase client so it picks up the rehydrated session and fires auth state
 getSupabase()
 

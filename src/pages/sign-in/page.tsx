@@ -9,6 +9,7 @@ import { saveCartAndWishlistToUserKeys, swapCartAndWishlistToUser } from '../../
 import { normalizeEmail, normalizePassword } from '../../utils/credentialNormalize';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
 import { syncAllFromApi, buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage, buildProfilePayloadForBackend } from '../../utils/syncFromApi';
+import { registerServerSessionCookie } from '../../utils/sessionRestore';
 import { trackActivity } from '../../utils/activity';
 import {
   getReviewsLastSeenShopCountKey,
@@ -316,8 +317,15 @@ function SignInPage() {
   };
 
   const handleSignInSubmit = async () => {
-    const email = (signInEmailRef.current?.value ?? signInEmail).trim();
-    const password = signInPasswordRef.current?.value ?? signInPassword;
+    let email = (signInEmailRef.current?.value ?? signInEmail).trim();
+    let password = signInPasswordRef.current?.value ?? signInPassword;
+    if (!password && signInPasswordRef.current) {
+      await new Promise((r) => requestAnimationFrame(r));
+      password = signInPasswordRef.current?.value ?? signInPassword;
+    }
+    if (!email && signInEmailRef.current) {
+      email = (signInEmailRef.current?.value ?? signInEmail).trim();
+    }
     if (!email) {
       setValidationMessage('EMAIL ADDRESS IS REQUIRED.');
       setShowValidationModal(true);
@@ -1025,7 +1033,9 @@ function SignInPage() {
                         type="email"
                         name="email"
                         autoComplete="email"
-                        defaultValue=""
+                        value={signInEmail}
+                        onChange={(e) => setSignInEmail(e.target.value)}
+                        onInput={() => { if (signInEmailRef.current) setSignInEmail(signInEmailRef.current.value); }}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -1063,7 +1073,9 @@ function SignInPage() {
                           type={showSignInPassword ? "text" : "password"}
                           name="password"
                           autoComplete="current-password"
-                          defaultValue=""
+                          value={signInPassword}
+                          onChange={(e) => setSignInPassword(e.target.value)}
+                          onInput={() => { if (signInPasswordRef.current) setSignInPassword(signInPasswordRef.current.value); }}
                           className="password-field"
                           style={{
                             width: '100%',
