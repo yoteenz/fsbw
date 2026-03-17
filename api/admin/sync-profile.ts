@@ -6,8 +6,8 @@
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
-import { getSupabaseAdmin } from '../_lib/supabase';
-import { fromProfileRow } from '../_lib/profileMapping';
+import { getSupabaseAdmin } from '../_lib/supabase.js';
+import { fromProfileRow } from '../_lib/profileMapping.js';
 const ADMIN_SYNC_EMAILS = [
   'admin@frontalslayer.com',
   'kateena.armstrong@frontalslayer.com',

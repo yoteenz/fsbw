@@ -12,6 +12,76 @@ export const AUTH_BACKUP_KEY = 'baw_auth_backup';
 
 const AUTH_BACKUP_COOKIE = 'baw_auth_b';
 
+/** Enable auth debug: set localStorage 'baw_auth_debug' = 'true' or open site with ?auth_debug=1. Logs persist so you can see what happened after reopening the browser. */
+export const AUTH_DEBUG_KEY = 'baw_auth_debug';
+export const AUTH_DEBUG_LOG_KEY = 'baw_auth_debug_log';
+const AUTH_DEBUG_LOG_MAX = 45;
+
+function isAuthDebugEnabled(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    if (window.localStorage.getItem(AUTH_DEBUG_KEY) === 'true') return true;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('auth_debug') === '1' || params.get('auth_debug') === 'true') return true;
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+function authDebugLog(message: string): void {
+  if (!isAuthDebugEnabled()) return;
+  try {
+    const t = Date.now();
+    const line = { t, m: message };
+    const raw = window.localStorage.getItem(AUTH_DEBUG_LOG_KEY);
+    const log: { t: number; m: string }[] = raw ? JSON.parse(raw) : [];
+    log.push(line);
+    if (log.length > AUTH_DEBUG_LOG_MAX) log.splice(0, log.length - AUTH_DEBUG_LOG_MAX);
+    window.localStorage.setItem(AUTH_DEBUG_LOG_KEY, JSON.stringify(log));
+    if (typeof console !== 'undefined' && console.log) console.log('[baw-auth]', message);
+  } catch (_) {}
+}
+
+/** Call with current search string (e.g. location.search) to enable debug when ?auth_debug=1 is present. */
+export function enableAuthDebugFromSearch(search: string): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    const params = new URLSearchParams(search);
+    if (params.get('auth_debug') === '1' || params.get('auth_debug') === 'true') {
+      window.localStorage.setItem(AUTH_DEBUG_KEY, 'true');
+      return true;
+    }
+    return window.localStorage.getItem(AUTH_DEBUG_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+/** Call once on load to enable debug from current window URL (e.g. ?auth_debug=1). */
+export function enableAuthDebugFromUrl(): boolean {
+  if (typeof window === 'undefined') return false;
+  return enableAuthDebugFromSearch(window.location.search);
+}
+
+/** Log a message only when auth debug is enabled (e.g. from main.tsx when visibility changes). */
+export function authDebugLogIfEnabled(message: string): void {
+  authDebugLog(message);
+}
+
+/** Get recent auth debug log lines for the on-page panel. Returns { enabled, lines }. */
+export function getAuthDebugLog(): { enabled: boolean; lines: { t: number; m: string }[] } {
+  if (typeof window === 'undefined') return { enabled: false, lines: [] };
+  try {
+    const enabled = window.localStorage.getItem(AUTH_DEBUG_KEY) === 'true';
+    const raw = window.localStorage.getItem(AUTH_DEBUG_LOG_KEY);
+    const lines: { t: number; m: string }[] = raw ? JSON.parse(raw) : [];
+    return { enabled, lines };
+  } catch {
+    return { enabled: false, lines: [] };
+  }
+}
+
 function readBackupFromCookie(): string | null {
   if (typeof document === 'undefined') return null;
   try {
@@ -26,14 +96,20 @@ function writeBackupToCookie(json: string): void {
   if (typeof document === 'undefined') return;
   try {
     const maxAge = 365 * 24 * 60 * 60;
-    document.cookie = AUTH_BACKUP_COOKIE + '=' + encodeURIComponent(json) + '; path=/; max-age=' + maxAge + '; SameSite=Lax';
+    const secure = typeof location !== 'undefined' && location.protocol === 'https:';
+    let cookie = AUTH_BACKUP_COOKIE + '=' + encodeURIComponent(json) + '; path=/; max-age=' + maxAge + '; SameSite=Lax';
+    if (secure) cookie += '; Secure';
+    document.cookie = cookie;
   } catch (_) {}
 }
 
 function clearBackupCookie(): void {
   if (typeof document === 'undefined') return;
   try {
-    document.cookie = AUTH_BACKUP_COOKIE + '=; path=/; max-age=0';
+    const secure = typeof location !== 'undefined' && location.protocol === 'https:';
+    let cookie = AUTH_BACKUP_COOKIE + '=; path=/; max-age=0';
+    if (secure) cookie += '; Secure';
+    document.cookie = cookie;
   } catch (_) {}
 }
 
@@ -46,9 +122,15 @@ export function persistAuthBackup(): void {
     if (signedIn && currentUser) {
       const payload = JSON.stringify({ isSignedIn: true, currentUser });
       localStorage.setItem(AUTH_BACKUP_KEY, payload);
-      if (payload.length <= 3800) writeBackupToCookie(payload);
+      const wroteCookie = payload.length <= 3800;
+      if (wroteCookie) writeBackupToCookie(payload);
+      authDebugLog(`persist: ls=ok cookie=${wroteCookie ? 'ok' : 'skip(>3800)'} len=${payload.length}`);
+    } else {
+      authDebugLog(`persist: skip (signedIn=${signedIn} hasUser=${!!currentUser})`);
     }
-  } catch (_) {}
+  } catch (e) {
+    authDebugLog(`persist: err ${e instanceof Error ? e.message : String(e)}`);
+  }
 }
 
 /** Call only on explicit Sign Out (and delete account). Removes the auth backup from localStorage and cookie. */
@@ -67,28 +149,42 @@ export function clearAppAuth(): void {
     localStorage.setItem(STORAGE_IS_SIGNED_IN, 'false');
     localStorage.removeItem(STORAGE_CURRENT_USER);
     localStorage.removeItem(AUTH_BACKUP_KEY);
+    clearBackupCookie();
   } catch (_) {}
 }
 
 function restoreAuthFromBackupIfNeeded(): void {
   try {
+    const hadLs = !!localStorage.getItem(AUTH_BACKUP_KEY);
     let raw = localStorage.getItem(AUTH_BACKUP_KEY);
+    let fromCookie = false;
     if (!raw && typeof document !== 'undefined') {
-      const fromCookie = readBackupFromCookie();
-      if (fromCookie) raw = fromCookie;
+      const cookieVal = readBackupFromCookie();
+      if (cookieVal) {
+        raw = cookieVal;
+        fromCookie = true;
+      }
     }
+    authDebugLog(`restore: hadLs=${hadLs} hadCookie=${fromCookie} rawLen=${raw ? raw.length : 0}`);
     if (!raw) return;
     const data = JSON.parse(raw) as { isSignedIn?: boolean; currentUser?: string | null };
     if (data.isSignedIn === true && data.currentUser) {
       localStorage.setItem(STORAGE_IS_SIGNED_IN, 'true');
       localStorage.setItem(STORAGE_CURRENT_USER, data.currentUser);
+      authDebugLog('restore: applied backup to ls');
     }
-  } catch (_) {}
+  } catch (e) {
+    authDebugLog(`restore: err ${e instanceof Error ? e.message : String(e)}`);
+  }
 }
 
 /** Call when Supabase or anything else may have cleared auth (e.g. SIGNED_OUT). Restores from backup so user stays signed in unless they explicitly signed out. */
 export function ensureAuthRestoredFromBackup(): void {
   if (typeof window === 'undefined') return;
+  const protocol = typeof location !== 'undefined' ? location.protocol : '?';
+  const lsBackup = typeof localStorage !== 'undefined' ? !!localStorage.getItem(AUTH_BACKUP_KEY) : false;
+  const cookieBackup = typeof document !== 'undefined' ? !!readBackupFromCookie() : false;
+  authDebugLog(`load: protocol=${protocol} lsBackup=${lsBackup} cookieBackup=${cookieBackup}`);
   restoreAuthFromBackupIfNeeded();
 }
 

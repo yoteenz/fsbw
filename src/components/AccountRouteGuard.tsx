@@ -70,7 +70,7 @@ export default function AccountRouteGuard({ children }: { children: React.ReactN
   }
 
   if (!isSignedIn()) {
-    return <Navigate to="/sign-in" state={{ from: location.pathname }} replace />;
+    return <Navigate to={{ pathname: '/sign-in', search: location.search || '' }} state={{ from: location.pathname }} replace />;
   }
 
   return <>{children}</>;

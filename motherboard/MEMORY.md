@@ -398,3 +398,35 @@ User asked if there is a way to capture the **entire current codebase** (and its
 **Changes:** `src/pages/checkout/page.tsx` (voucher modal label/counter/disabled logic; cartVoucherApplicability by addOnPrice > 0; BLANCO color fallback; open/apply inapplicable → 0). `src/pages/account/membership/page.tsx` (Unlock Premium Rewards headers/lines only; TOTAL DUE gray; EXPLORE ALL BENEFITS wrapper marginBottom 24px; tier name color in "EARN X TO UNLOCK / REMAIN [TIER] TIER" — BLACK/SILVER/RED; points history: parsePointsHistoryDateToTime, normalizePointsHistoryDate, formatPointsHistoryDateDisplay, getPointsHistoryRows sort and period filter). `src/pages/account/page.tsx` (remove profile blur; remove inner div so name/email direct children; digital cash + voucher history sort descending). This MEMORY entry.
 
 **Conventions:** When changing premium/membership copy, only change the Unlock Premium Rewards section (headers + lines as specified); do not change the upgrade chart row labels. For points/digital cash/voucher history, use newest-first sort; for points history, normalize order dates and use a single date parser so sort is correct across formats.
+
+---
+
+## 2025-03-17 — Create-account password icon alignment; motherboard auto-add and read-at-start confirmed
+
+**Context:** User asked to align the show/hide password icon on the create-account card’s password input with the confirm-password icon (move password icon left for symmetry). Later asked to confirm whether the chat is auto-saving to the motherboard and whether the agent read the motherboard before implementing.
+
+**Topics covered (this chat):**
+- **Password icon alignment:** On the create-an-account card (`src/pages/sign-in/page.tsx`), the password field’s show/hide icon used `right: '8px'` while the confirm-password icon used `right: '11px'`. The password icon was moved left by changing it to `right: '11px'` so both icons are symmetrical.
+- **Motherboard behavior:** User confirmed (1) auto-add is on by default—agent adds one MEMORY entry at the end of significant exchanges; (2) agent did read README → CORE → CODEBASE → MEMORY at chat start before making the icon fix.
+
+**Decisions / outcomes:** Create-account card password and confirm-password show/hide icons both use `right: '11px'` for consistent alignment. This MEMORY entry documents the fix and the confirmation that motherboard read-at-start and auto-add are working as intended.
+
+**Changes:** `src/pages/sign-in/page.tsx` (password field icon style `right: '8px'` → `right: '11px'`). This MEMORY entry.
+
+**Conventions:** None. Confirms agents should read motherboard first and that auto-add appends to MEMORY after significant exchanges.
+
+---
+
+## 2025-03-17 — Auto-add rule tightened: add after any completed task, never skip for "small" changes
+
+**Context:** User asked why the agent didn't append a MEMORY entry after the password-icon fix, then asked how to fix the rules so future agents don't skip adding for one-line tweaks or similar reasons.
+
+**Topics covered (this chat):**
+- **Why the skip happened:** The agent had treated the password-icon alignment as a "one-line tweak" and didn't run the add-to-motherboard step; the rule said "significant" which was interpreted loosely.
+- **Rule change:** Make auto-add trigger unambiguous: add whenever you **completed a user-requested task** that involved changing code, fixing a bug, adding a feature, or making a decision. **Do not skip** because the change was "small," "one-line," "just a tweak," or "only UI"—size and scope do not matter. Only skip when there is no outcome to record (thanks, ok, clarifying Q with no code change or decision).
+
+**Decisions / outcomes:** ADDING.md and `.cursor/rules/motherboard.mdc` now state explicitly that agents must add after any completed task that touches the codebase or delivers an outcome; they must not skip based on perceived size (one-line, single file, UI-only). Skip only when there is nothing to record.
+
+**Changes:** `motherboard/ADDING.md` (Auto-add section: "When to add" / "When to skip" bullets; "significant" replaced with task-based wording; Rule 3 updated). `.cursor/rules/motherboard.mdc` (auto-add paragraph: same task-based trigger + explicit "Do not skip because the change was small"). This MEMORY entry.
+
+**Conventions:** When auto-add is on, append to MEMORY after any exchange where you completed a user-requested task (code change, fix, feature, or decision). Do not skip for small scope; only skip for no-outcome exchanges (conversation only, no code or decision).

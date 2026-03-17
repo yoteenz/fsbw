@@ -31,9 +31,11 @@ function liveReloadPolling() {
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  // In dev, proxy /api to deployed backend when VITE_DEV_PROXY_TARGET or VITE_API_BASE is set
+  // In dev, proxy /api to deployed backend when VITE_DEV_PROXY_TARGET or VITE_API_BASE is set.
+  // loadEnv() only reads .env files; process.env is used so shell-set vars (e.g. start-dev.ps1) work.
   const env = loadEnv(mode, process.cwd(), '')
-  const apiTarget = env.VITE_DEV_PROXY_TARGET || env.VITE_API_BASE || ''
+  const apiTarget = (env.VITE_DEV_PROXY_TARGET || env.VITE_API_BASE
+    || process.env.VITE_DEV_PROXY_TARGET || process.env.VITE_API_BASE || '').trim()
   if (!apiTarget && mode === 'development') {
     console.log('[vite] No API proxy: set VITE_DEV_PROXY_TARGET or VITE_API_BASE in .env.local (project root) and restart.')
   }

@@ -16,7 +16,8 @@ import LoadingScreen from './components/base/LoadingScreen';
 import AdminGuard from './components/AdminGuard';
 import AccountRouteGuard from './components/AccountRouteGuard';
 import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
-import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth';
+import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn, enableAuthDebugFromSearch } from './utils/adminAuth';
+import AuthDebugPanel from './components/AuthDebugPanel';
 
 // Helper to wrap lazy imports with retry logic and logging
 const lazyWithLogging = (importFn: () => Promise<any>, componentName: string) => {
@@ -294,6 +295,11 @@ function App() {
     clearTestDataForNonAdminUserIfNeeded();
   }, []);
 
+  // Enable auth debug when URL has ?auth_debug=1 (so it works after client-side nav and preserved redirects)
+  useEffect(() => {
+    enableAuthDebugFromSearch(location.search);
+  }, [location.search]);
+
   // Auth persistence: restore from backup on every load (survives browser close), then re-persist backup and notify listeners.
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -325,6 +331,7 @@ function App() {
 
   return (
     <ErrorBoundary>
+      <AuthDebugPanel />
       <Routes>
         <Route index element={<LobbyPage />} />
         <Route path="/" element={<LobbyPage />} />

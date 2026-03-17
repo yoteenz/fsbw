@@ -3,7 +3,10 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App.tsx'
 import './index.css'
-import { ensureAuthRestoredFromBackup, persistAuthBackup } from './utils/adminAuth'
+import { ensureAuthRestoredFromBackup, persistAuthBackup, enableAuthDebugFromUrl, authDebugLogIfEnabled } from './utils/adminAuth'
+
+// Enable auth debug from URL (e.g. ?auth_debug=1) so logs persist and show in the on-page panel
+enableAuthDebugFromUrl()
 
 // Restore app auth from backup if something (e.g. Supabase token refresh) cleared isSignedIn/currentUser
 ensureAuthRestoredFromBackup()
@@ -18,7 +21,10 @@ if (typeof window !== 'undefined') {
     if (document.visibilityState === 'hidden') saveAuth();
   });
   // When page is shown again (reopen browser, switch back to tab, bfcache restore), restore from backup
-  window.addEventListener('pageshow', () => { ensureAuthRestoredFromBackup(); });
+  window.addEventListener('pageshow', () => {
+    authDebugLogIfEnabled('pageshow → restoring from backup');
+    ensureAuthRestoredFromBackup();
+  });
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

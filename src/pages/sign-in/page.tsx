@@ -1403,7 +1403,7 @@ function SignInPage() {
                           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowPassword(!showPassword); } }}
                           style={{
                             position: 'absolute',
-                            right: '8px',
+                            right: '11px',
                             top: '50%',
                             transform: 'translateY(-50%)',
                             width: '16px',
