@@ -198,6 +198,7 @@ function SignInPage() {
           localStorage.setItem('isSignedIn', 'true');
           setIsSignedIn(true);
           onSignInSuccess('session_restore'); // Face ID / Supabase cookie auto-login — track and persist (Safari retries)
+          registerServerSessionCookie(session.access_token, session.refresh_token);
           window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
           const returnTo = new URLSearchParams(location.search).get('returnTo');
           const from = (location.state as { from?: string } | null)?.from;
