@@ -2417,8 +2417,8 @@ function ConciergePage() {
                           </p>
                         </div>
                       </div>
-                      {/* Cap size selection (custom sizes only; single row) */}
-                      <div style={{ display: 'flex', gap: '6px', marginBottom: '12px', flexWrap: 'nowrap' }}>
+                      {/* Cap size selection (custom sizes only; single row) — 15px space above */}
+                      <div style={{ display: 'flex', gap: '6px', paddingTop: '15px', marginBottom: '12px', flexWrap: 'nowrap' }}>
                         {SPECIAL_OFFER_CAP_SIZES.map((size) => {
                           const isSelected = specialOfferCapSize === size;
                           return (

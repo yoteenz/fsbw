@@ -8,6 +8,7 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { trackActivity } from '../../../utils/activity';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
+import { clearAppAuth } from '../../../utils/adminAuth';
 
 function OceanCurlSelection() {
   const navigate = useNavigate();
@@ -475,8 +476,7 @@ function OceanCurlSelection() {
 
   const handleSignOut = () => {
     setIsSignedIn(false);
-    localStorage.setItem('isSignedIn', 'false');
-    localStorage.removeItem('currentUser');
+    clearAppAuth();
     // Dispatch custom event to update other pages in same tab
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
     setShowSignOutConfirm(false);

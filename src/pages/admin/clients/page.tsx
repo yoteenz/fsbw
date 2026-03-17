@@ -667,15 +667,50 @@ export default function AdminClients() {
                 return fresh ? { ...u, ...fresh } : u;
               });
               if (toAdd.length > 0) fromApi = [...fromApi, ...toAdd];
+              // Merge in local-only registeredUsers (e.g. new accounts not yet in API / Supabase profiles)
+              try {
+                const localReg = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                const apiEmailsNow = new Set(fromApi.map((u: any) => norm(u.email || '')));
+                const localOnly = (Array.isArray(localReg) ? localReg : []).filter(
+                  (u: any) => u && u.email && !apiEmailsNow.has(norm(u.email)) && !isClientBlocked(u)
+                );
+                if (localOnly.length > 0) fromApi = [...fromApi, ...localOnly];
+              } catch (_) {}
               fromApi = fromApi.filter((u: any) => !isClientBlocked(u));
               setRegisteredUsers(fromApi);
-            } else if (currentUser && isAyoteenzAdminAccount(currentUser)) {
-              setRegisteredUsers(getMockClientsForAyoteenz().filter((u: any) => !isClientBlocked(u)));
+            } else {
+              // API returned empty: still show local registeredUsers (e.g. new accounts) plus mock for ayoteenz
+              let fallback = list as any[];
+              try {
+                const localReg = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                fallback = Array.isArray(localReg) ? localReg : [];
+                if (currentUser && isAyoteenzAdminAccount(currentUser)) {
+                  const mockClients = getMockClientsForAyoteenz();
+                  const mockByEmail = new Map(mockClients.map((m: any) => [norm(m.email || ''), m]));
+                  const existingFallback = new Set(fallback.map((u: any) => norm(u.email || '')));
+                  const toAddMock = mockClients.filter((m: any) => !existingFallback.has(norm(m.email || '')));
+                  fallback = fallback.map((u: any) => {
+                    const fresh = mockByEmail.get(norm(u.email || ''));
+                    return fresh ? { ...u, ...fresh } : u;
+                  });
+                  if (toAddMock.length > 0) fallback = [...fallback, ...toAddMock];
+                }
+              } catch (_) {}
+              setRegisteredUsers(fallback.filter((u: any) => !isClientBlocked(u)));
             }
           })
           .catch(() => {
             if (currentUser && isAyoteenzAdminAccount(currentUser)) {
-              setRegisteredUsers(getMockClientsForAyoteenz().filter((u: any) => !isClientBlocked(u)));
+              try {
+                const localReg = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                const fallback = Array.isArray(localReg) ? localReg : [];
+                const mockClients = getMockClientsForAyoteenz();
+                const existingFallback = new Set(fallback.map((u: any) => norm(u.email || '')));
+                const toAddMock = mockClients.filter((m: any) => !existingFallback.has(norm(m.email || '')));
+                setRegisteredUsers([...fallback, ...toAddMock].filter((u: any) => !isClientBlocked(u)));
+              } catch (_) {
+                setRegisteredUsers(getMockClientsForAyoteenz().filter((u: any) => !isClientBlocked(u)));
+              }
             }
           });
       }

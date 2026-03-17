@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import http from 'node:http'
 
@@ -30,7 +30,23 @@ function liveReloadPolling() {
 }
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  // In dev, proxy /api to deployed backend when VITE_DEV_PROXY_TARGET or VITE_API_BASE is set
+  const env = loadEnv(mode, process.cwd(), '')
+  const apiTarget = env.VITE_DEV_PROXY_TARGET || env.VITE_API_BASE || ''
+  const proxy = apiTarget
+    ? {
+        '/api': {
+          target: apiTarget.replace(/\/$/, ''),
+          changeOrigin: true,
+        },
+      }
+    : undefined
+  if (proxy) {
+    console.log('[vite] API proxy: /api ->', apiTarget)
+  }
+
+  return {
   plugins: [liveReloadPolling(), react()],
   base: '/',
   build: {
@@ -65,8 +81,8 @@ export default defineConfig({
     host: '0.0.0.0', // Explicitly bind to all interfaces for mobile access
     open: false,
     strictPort: true, // Force port 3001, don't fall back to other ports
-    // HMR uses the same host as the page (localhost or your IP on mobile) so live reload works
     hmr: true,
+    proxy,
     watch: {
       // Polling: server reliably sees file changes (helps on Windows / paths with spaces)
       usePolling: true,
@@ -77,6 +93,7 @@ export default defineConfig({
   },
   logLevel: 'info',
   clearScreen: false,
+  }
 })
 
 

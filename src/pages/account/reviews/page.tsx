@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { clearNewReviewApproved, getUserSubmittedReviewsKey, getMockShopReviewCount, getMockToolReviewCount, setLastSeenShopCount, setLastSeenToolCount } from '../../../constants/reviews';
-import { isMockDataAccount } from '../../../utils/adminAuth';
+import { isMockDataAccount, clearAppAuth } from '../../../utils/adminAuth';
 
 interface Review {
   id: string;
@@ -321,8 +321,7 @@ function ReviewsPage() {
   const handleMobileMenuSignInToggle = () => {
     navigate(isSignedIn ? '/sign-in' : '/sign-in');
     if (isSignedIn) {
-      localStorage.setItem('isSignedIn', 'false');
-      localStorage.removeItem('currentUser');
+      clearAppAuth();
       window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
       setShowMobileMenu(false);
     }

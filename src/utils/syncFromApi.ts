@@ -5,7 +5,7 @@
  * We never remove adminSubscriptionOverride or adminTierOverride (rewards/membership page); only explicit Sign Out clears auth.
  */
 import { getProfile, getOrders, getCart, getWishlist } from './api';
-import { isAdminEmail, persistAuthBackup } from './adminAuth';
+import { isAdminEmail, persistAuthBackup, ADMIN_TIER_OVERRIDE_KEY, ADMIN_SUBSCRIPTION_OVERRIDE_KEY } from './adminAuth';
 
 export async function syncProfileFromApi(): Promise<Record<string, unknown> | null> {
   try {
@@ -106,15 +106,49 @@ export function applyAdminSyncPayload(
   if (!e) return;
 
   if (payload.profile && typeof payload.profile === 'object') {
+    const existingRaw = localStorage.getItem('currentUser');
+    const existing = (existingRaw ? JSON.parse(existingRaw) : null) as Record<string, unknown> | null;
+    const sameEmail = existing && (existing.email as string || '').trim().toLowerCase() === e;
+
     const merged = {
       ...payload.profile,
       email: (payload.profile.email as string) || e,
       role: isAdminEmail(e) ? 'admin' : (payload.profile.role as string),
     } as Record<string, unknown>;
     if (options?.preservePassword) merged.password = options.preservePassword;
+
+    const profileKeysToPreserve = [
+      'firstName', 'lastName', 'first_name', 'last_name', 'birthday',
+      'profileImage', 'profile_image', 'facebook', 'instagram', 'youtube', 'tiktok', 'twitter',
+    ] as const;
+    if (sameEmail && existing) {
+      for (const key of profileKeysToPreserve) {
+        const val = merged[key];
+        if (val === undefined || val === null || (typeof val === 'string' && val.trim() === '')) {
+          const existingVal = existing[key];
+          if (existingVal !== undefined && existingVal !== null && (typeof existingVal !== 'string' || existingVal.trim() !== '')) {
+            (merged as Record<string, unknown>)[key] = existingVal;
+          }
+        }
+      }
+    }
+
+    if (isAdminEmail(e)) {
+      const tierOverride = (localStorage.getItem(ADMIN_TIER_OVERRIDE_KEY) || '').trim().toUpperCase();
+      if (tierOverride === 'SILVER' || tierOverride === 'RED' || tierOverride === 'BLACK') {
+        merged.currentTierName = tierOverride;
+        merged.tier = tierOverride;
+      }
+      const subOverride = (localStorage.getItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY) || '').trim().toLowerCase();
+      if (subOverride === '3months' || subOverride === '6months' || subOverride === '12months') {
+        merged.subscriptionTier = subOverride;
+      }
+    }
+
     localStorage.setItem('currentUser', JSON.stringify(merged));
     const img = merged.profileImage && typeof merged.profileImage === 'string' && String(merged.profileImage).trim();
-    localStorage.setItem('profileImage', img ? String(merged.profileImage) : '/assets/profile-thumb.png');
+    const existingImg = sameEmail && existing && (existing.profileImage === '' || existing.profile_image === '');
+    localStorage.setItem('profileImage', img ? String(merged.profileImage) : (existingImg ? '' : '/assets/profile-thumb.png'));
     const registeredUsers: unknown[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
     const idx = registeredUsers.findIndex((u: unknown) => ((u as { email?: string }).email || '').toLowerCase() === e);
     if (idx !== -1) (registeredUsers as Record<string, unknown>[])[idx] = merged;
@@ -143,6 +177,7 @@ export function applyAdminSyncPayload(
     window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: cartItems.length }));
     window.dispatchEvent(new CustomEvent('cartUpdated'));
     window.dispatchEvent(new CustomEvent('wishlistUpdated'));
+    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
   }
 }
 

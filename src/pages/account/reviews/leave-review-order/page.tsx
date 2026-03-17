@@ -6,6 +6,7 @@ import SocialMenuIcons from '../../../../components/SocialMenuIcons';
 import ConfirmationModal from '../../../../components/ConfirmationModal';
 import { getUserSubmittedReviewsKey, getReviewsNewApprovedKey } from '../../../../constants/reviews';
 import { trackActivity } from '../../../../utils/activity';
+import { clearAppAuth } from '../../../../utils/adminAuth';
 
 interface OrderLineItem {
   productName: string;
@@ -170,8 +171,7 @@ function LeaveReviewOrderPage() {
 
   const handleSignOut = () => {
     setIsSignedIn(false);
-    localStorage.setItem('isSignedIn', 'false');
-    localStorage.removeItem('currentUser');
+    clearAppAuth();
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
     setShowSignOutConfirm(false);
     setShowMobileMenu(false);

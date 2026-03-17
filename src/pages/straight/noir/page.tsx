@@ -11,6 +11,7 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { trackActivity } from '../../../utils/activity';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
+import { clearAppAuth } from '../../../utils/adminAuth';
 
 interface DensityOption {
   id: string;
@@ -1043,8 +1044,7 @@ function NoirSelection() {
   const handleSignOut = () => {
     trackActivity('sign_out');
     setIsSignedIn(false);
-    localStorage.setItem('isSignedIn', 'false');
-    localStorage.removeItem('currentUser');
+    clearAppAuth();
     // Dispatch custom event to update other pages in same tab
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
     setShowSignOutConfirm(false);

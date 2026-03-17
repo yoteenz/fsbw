@@ -10,23 +10,53 @@ const STORAGE_CURRENT_USER = 'currentUser';
 /** Backup key for auth so we can restore if something else clears isSignedIn/currentUser. Only cleared on explicit Sign Out. */
 export const AUTH_BACKUP_KEY = 'baw_auth_backup';
 
-/** Call after setting isSignedIn and currentUser (sign-in). Persists a backup so we can restore if they get cleared. Only writes when signed in so we never overwrite a good backup with signed-out state (e.g. if something clears auth right before unload). */
+const AUTH_BACKUP_COOKIE = 'baw_auth_b';
+
+function readBackupFromCookie(): string | null {
+  if (typeof document === 'undefined') return null;
+  try {
+    const match = document.cookie.match(new RegExp('(?:^|; )' + AUTH_BACKUP_COOKIE.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeBackupToCookie(json: string): void {
+  if (typeof document === 'undefined') return;
+  try {
+    const maxAge = 365 * 24 * 60 * 60;
+    document.cookie = AUTH_BACKUP_COOKIE + '=' + encodeURIComponent(json) + '; path=/; max-age=' + maxAge + '; SameSite=Lax';
+  } catch (_) {}
+}
+
+function clearBackupCookie(): void {
+  if (typeof document === 'undefined') return;
+  try {
+    document.cookie = AUTH_BACKUP_COOKIE + '=; path=/; max-age=0';
+  } catch (_) {}
+}
+
+/** Call after setting isSignedIn and currentUser (sign-in). Persists a backup so we can restore if they get cleared. Only writes when signed in so we never overwrite a good backup with signed-out state (e.g. if something clears auth right before unload). Writes to both localStorage and a cookie so we survive localStorage clears on browser close. */
 export function persistAuthBackup(): void {
   if (typeof window === 'undefined' || !window.localStorage) return;
   try {
     const signedIn = localStorage.getItem(STORAGE_IS_SIGNED_IN) === 'true';
     const currentUser = localStorage.getItem(STORAGE_CURRENT_USER);
     if (signedIn && currentUser) {
-      localStorage.setItem(AUTH_BACKUP_KEY, JSON.stringify({ isSignedIn: true, currentUser }));
+      const payload = JSON.stringify({ isSignedIn: true, currentUser });
+      localStorage.setItem(AUTH_BACKUP_KEY, payload);
+      if (payload.length <= 3800) writeBackupToCookie(payload);
     }
   } catch (_) {}
 }
 
-/** Call only on explicit Sign Out (and delete account). Removes the auth backup. */
+/** Call only on explicit Sign Out (and delete account). Removes the auth backup from localStorage and cookie. */
 export function clearAuthBackup(): void {
   if (typeof window === 'undefined' || !window.localStorage) return;
   try {
     localStorage.removeItem(AUTH_BACKUP_KEY);
+    clearBackupCookie();
   } catch (_) {}
 }
 
@@ -42,7 +72,11 @@ export function clearAppAuth(): void {
 
 function restoreAuthFromBackupIfNeeded(): void {
   try {
-    const raw = localStorage.getItem(AUTH_BACKUP_KEY);
+    let raw = localStorage.getItem(AUTH_BACKUP_KEY);
+    if (!raw && typeof document !== 'undefined') {
+      const fromCookie = readBackupFromCookie();
+      if (fromCookie) raw = fromCookie;
+    }
     if (!raw) return;
     const data = JSON.parse(raw) as { isSignedIn?: boolean; currentUser?: string | null };
     if (data.isSignedIn === true && data.currentUser) {

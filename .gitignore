@@ -29,3 +29,7 @@ dist-ssr
 
 .vercel
 .env*.local
+
+# Wrong motherboard file (real motherboard is folder motherboard/, not a root file)
+MOTHERBOARD.md
+Motherboard.md

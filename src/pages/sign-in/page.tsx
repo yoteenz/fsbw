@@ -80,8 +80,6 @@ function SignInPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [signUpAttempted, setSignUpAttempted] = useState(false);
   const [showSignUpConfirmMessage, setShowSignUpConfirmMessage] = useState(false);
-  const [passwordFocused, setPasswordFocused] = useState(false);
-  const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
   const [facebook, setFacebook] = useState('');
   const [instagram, setInstagram] = useState('');
   const [youtube, setYoutube] = useState('');
@@ -1380,14 +1378,12 @@ function SignInPage() {
                           type={showPassword ? "text" : "password"}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          onFocus={() => setPasswordFocused(true)}
-                          onBlur={() => setPasswordFocused(false)}
                           className="password-field"
                           style={{
                             width: '100%',
                             height: '36px',
                             padding: '8px',
-                            paddingRight: passwordFocused ? '8px' : '40px',
+                            paddingRight: '40px',
                             border: '1.3px solid #000000',
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
@@ -1398,26 +1394,24 @@ function SignInPage() {
                             textTransform: 'none'
                           }}
                         />
-                        {!passwordFocused && password && (
-                          <img
-                            src={showPassword ? '/assets/hide-password.svg' : '/assets/show-password.svg'}
-                            alt={showPassword ? 'Hide password' : 'Show password'}
-                            role="button"
-                            tabIndex={0}
-                            onClick={() => setShowPassword(!showPassword)}
-                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowPassword(!showPassword); } }}
-                            style={{
-                              position: 'absolute',
-                              right: '8px',
-                              top: '50%',
-                              transform: 'translateY(-50%)',
-                              width: '16px',
-                              height: '16px',
-                              cursor: 'pointer',
-                              userSelect: 'none'
-                            }}
-                          />
-                        )}
+                        <img
+                          src={showPassword ? '/assets/hide-password.svg' : '/assets/show-password.svg'}
+                          alt={showPassword ? 'Hide password' : 'Show password'}
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => setShowPassword(!showPassword)}
+                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowPassword(!showPassword); } }}
+                          style={{
+                            position: 'absolute',
+                            right: '8px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            width: '16px',
+                            height: '16px',
+                            cursor: 'pointer',
+                            userSelect: 'none'
+                          }}
+                        />
                       </div>
                       {/* Password Requirements - Only show when sign up is attempted and password doesn't meet requirements */}
                       {signUpAttempted && (
@@ -1482,14 +1476,12 @@ function SignInPage() {
                           type={showConfirmPassword ? "text" : "password"}
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
-                          onFocus={() => setConfirmPasswordFocused(true)}
-                          onBlur={() => setConfirmPasswordFocused(false)}
                           className="password-field"
                           style={{
                             width: '100%',
                             height: '36px',
                             padding: '8px',
-                            paddingRight: confirmPasswordFocused ? '8px' : '40px',
+                            paddingRight: '40px',
                             border: '1.3px solid #000000',
                             fontFamily: '"Futura PT Book"',
                             fontSize: '11px',
@@ -1500,26 +1492,24 @@ function SignInPage() {
                             textTransform: 'none'
                           }}
                         />
-                        {!confirmPasswordFocused && confirmPassword && (
-                          <img
-                            src={showConfirmPassword ? '/assets/hide-password.svg' : '/assets/show-password.svg'}
-                            alt={showConfirmPassword ? 'Hide password' : 'Show password'}
-                            role="button"
-                            tabIndex={0}
-                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowConfirmPassword(!showConfirmPassword); } }}
-                            style={{
-                              position: 'absolute',
-                              right: '11px',
-                              top: '50%',
-                              transform: 'translateY(-50%)',
-                              width: '16px',
-                              height: '16px',
-                              cursor: 'pointer',
-                              userSelect: 'none'
-                            }}
-                          />
-                        )}
+                        <img
+                          src={showConfirmPassword ? '/assets/hide-password.svg' : '/assets/show-password.svg'}
+                          alt={showConfirmPassword ? 'Hide password' : 'Show password'}
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowConfirmPassword(!showConfirmPassword); } }}
+                          style={{
+                            position: 'absolute',
+                            right: '11px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            width: '16px',
+                            height: '16px',
+                            cursor: 'pointer',
+                            userSelect: 'none'
+                          }}
+                        />
                       </div>
                       {/* Confirm Password Requirements - Only show when sign up is attempted and password doesn't meet requirements */}
                       {signUpAttempted && (
@@ -1772,9 +1762,12 @@ function SignInPage() {
                         return;
                       }
                       
-                      // Check if email already exists (local or Supabase when backend is on)
+                      // Check if email already exists in registered users (deleted accounts are not considered existing so they can re-create)
                       const existingUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-                      const emailExists = existingUsers.some((user: any) => user.email.toLowerCase() === email.toLowerCase().trim());
+                      const deletedList = JSON.parse(localStorage.getItem('deletedUsers') || '[]');
+                      const deletedEmails = new Set((deletedList || []).map((d: any) => (d.email || '').toLowerCase().trim()));
+                      const emailTrim = email.toLowerCase().trim();
+                      const emailExists = existingUsers.some((user: any) => (user.email || '').toLowerCase() === emailTrim) && !deletedEmails.has(emailTrim);
                       if (emailExists) {
                         setEmailError('THIS EMAIL ALREADY EXISTS.');
                         return;
@@ -1799,7 +1792,7 @@ function SignInPage() {
                             });
                             if (signUpError) {
                               if (signUpError.message.includes('already registered')) {
-                                setEmailError('THIS EMAIL ALREADY EXISTS.');
+                                setEmailError('THIS EMAIL IS ALREADY REGISTERED. SIGN IN ABOVE, OR IF YOU DELETED THIS ACCOUNT AND NEED TO RE-CREATE IT, CONTACT SUPPORT.');
                               } else {
                                 setValidationMessage(signUpError.message.toUpperCase());
                                 setShowValidationModal(true);
