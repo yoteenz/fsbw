@@ -257,7 +257,6 @@ function ConciergePage() {
   const getNextSpecialOfferExpirationDate = (): Date => {
     const now = new Date();
     const year = now.getFullYear();
-    const month = now.getMonth();
     for (const m of SPECIAL_OFFER_EXPIRATION_MONTHS) {
       const exp = new Date(year, m, 1, 23, 59, 59, 999);
       if (exp.getTime() >= now.getTime()) return exp;
@@ -378,7 +377,7 @@ function ConciergePage() {
       })()
     : 0;
   const specialOfferDaysLeft = specialOffer
-    ? Math.max(0, Math.ceil((specialOffer.expiresAt - Date.now()) / (24 * 60 * 60 * 1000)))
+    ? Math.max(0, Math.floor((specialOffer.expiresAt - Date.now()) / (24 * 60 * 60 * 1000)))
     : 0;
 
   const [specialOfferCapSize, setSpecialOfferCapSize] = useState('M');
@@ -2426,154 +2425,6 @@ function ConciergePage() {
             ) : (
               /* CONCIERGE CONTENT */
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                {/* Special Offer Section - 6 & 12 month premium only; above Priority Messages */}
-                {showSlayAndSpecialOffer && specialOffer && specialOffer.expiresAt > Date.now() && (
-                  <>
-                    <div
-                      className="border border-black bg-white/60 backdrop-blur-sm w-full mb-0 transition-all duration-300 ease-out"
-                      style={{
-                        borderWidth: '1.3px',
-                        paddingTop: '20px',
-                        paddingLeft: '20px',
-                        paddingRight: '20px',
-                        paddingBottom: '16px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.6)'
-                      }}
-                    >
-                      <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '14px' }}>
-                        <h2
-                          style={{
-                            fontFamily: '"Futura PT Medium"',
-                            color: '#EB1C24',
-                            fontSize: '12px',
-                            fontWeight: '500',
-                            margin: '0',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          SPECIAL OFFER
-                        </h2>
-                        <img
-                          src={specialOfferIconUrl}
-                          alt="Special Offer"
-                          style={{
-                            width: '17.76px',
-                            height: '17.76px',
-                            objectFit: 'contain'
-                          }}
-                        />
-                      </div>
-                      <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0 0 25px 0', textTransform: 'uppercase', textAlign: 'center', lineHeight: 1.45 }}>
-                        CAN NOT BE COMBINED WITH VOUCHER OR DISCOUNT CODE.
-                        <br />
-                        YOU MAY REDEEM A TOTAL OF <span style={{ color: '#EB1C24' }}>2</span> QTY AMOUNTS FOR EACH CAP SIZE.
-                        <br />
-                        LIMITED TIME OFFER VALID WHILE SUPPLIES LAST. TERMS APPLY.
-                      </p>
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '12px' }}>
-                        <div style={{ width: '72px', height: '72px', flexShrink: 0, border: '1px solid #e5e7eb', overflow: 'hidden', backgroundColor: '#f9fafb' }}>
-                          <img src={specialOffer.thumbnailDataUrl || SPECIAL_OFFER_UNITS.find(u => u.id === specialOffer.unitId)?.image || '/assets/natural front.png'} alt={specialOffer.unitName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <p style={{ fontFamily: '"Covered By Your Grace"', color: '#000', fontSize: '17px', margin: '0 0 4px 0', textTransform: 'uppercase' }}>{specialOffer.unitName}</p>
-                          <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '9px', margin: '0 0 2px 0', textTransform: 'uppercase' }}>
-                            {specialOffer.options.length} · {specialOffer.options.density} · {specialOffer.options.texture} · {specialOffer.options.lace} · {specialOffer.options.color}
-                          </p>
-                          <p style={{ margin: '4px 0 0 0', fontSize: '11px' }}>
-                            <span style={{ fontFamily: '"Futura PT Book"', color: '#999', textDecoration: 'line-through' }}>{formatSpecialOfferPrice(Number(specialOffer.originalPrice))}</span>
-                            <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', marginLeft: '8px' }}>{formatSpecialOfferPrice(Number(specialOffer.discountedPrice))}</span>
-                            <span style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', marginLeft: '4px' }}>({formatSpecialOfferPrice(40)} OFF)</span>
-                          </p>
-                        </div>
-                      </div>
-                      {/* Cap size selection (custom sizes only; single row) — 15px space above */}
-                      <div style={{ display: 'flex', gap: '6px', paddingTop: '15px', marginBottom: '12px', flexWrap: 'nowrap' }}>
-                        {SPECIAL_OFFER_CAP_SIZES.map((size) => {
-                          const isSelected = specialOfferCapSize === size;
-                          return (
-                            <button
-                              key={size}
-                              type="button"
-                              onClick={() => setSpecialOfferCapSize(size)}
-                              style={{
-                                flex: 1,
-                                minWidth: 0,
-                                minHeight: '28px',
-                                padding: '6px 4px',
-                                border: isSelected ? '1.3px solid #EB1C24' : '1.3px solid #000',
-                                backgroundColor: '#fff',
-                                fontFamily: isSelected ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                fontSize: '10px',
-                                color: isSelected ? '#EB1C24' : '#000',
-                                textTransform: 'uppercase',
-                                cursor: 'pointer'
-                              }}
-                            >
-                              {size}
-                            </button>
-                          );
-                        })}
-                      </div>
-                      {/* ~60-day period; expires on the 1st of Jan, Mar, May, Jul, Sep, Nov only */}
-                      <div style={{ paddingTop: '12px', marginTop: '4px', borderTop: '1px solid #e5e7eb' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
-                          <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
-                            Offer expires on {specialOfferExpiresOnLabel}
-                          </p>
-                          <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
-                            <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{specialOfferDaysLeft}</span> days remaining
-                          </p>
-                        </div>
-                        <div style={{ height: '6px', backgroundColor: '#e5e7eb', borderRadius: '3px', overflow: 'hidden' }}>
-                          <div
-                            style={{
-                              height: '100%',
-                              width: `${Math.min(100, Math.max(0, specialOfferProgress * 100))}%`,
-                              backgroundColor: '#EB1C24',
-                              borderRadius: '3px',
-                              transition: 'width 0.3s ease'
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="px-0 md:px-0" style={{ marginTop: '10px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
-                      <button
-                        type="button"
-                        onClick={handleClaimSpecialOffer}
-                        className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                        style={{
-                          borderWidth: '1.3px',
-                          color: '#EB1C24',
-                          fontFamily: '"Futura PT Medium"',
-                          backgroundColor: '#FFFFFF'
-                        }}
-                      >
-                        CLAIM OFFER
-                      </button>
-                    </div>
-                  </>
-                )}
-                {showSlayAndSpecialOffer && (!specialOffer || specialOffer.expiresAt <= Date.now()) && (
-                  <div
-                    className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
-                    style={{
-                      borderWidth: '1.3px',
-                      paddingTop: '20px',
-                      paddingLeft: '20px',
-                      paddingRight: '20px',
-                      paddingBottom: '16px',
-                      backgroundColor: 'rgba(255, 255, 255, 0.6)'
-                    }}
-                  >
-                    <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: 0, textTransform: 'uppercase', lineHeight: 1.5 }}>
-                      THERE ARE NO OFFERS AVAILABLE AT THIS TIME.
-                      <br />
-                      CHECK BACK SOON!
-                    </p>
-                  </div>
-                )}
-
                 {/* Priority Messages Section */}
                 <div
                   className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
@@ -2785,6 +2636,154 @@ function ConciergePage() {
                     SUBMIT MESSAGE
                   </button>
                 </div>
+
+                {/* Special Offer Section - 6 & 12 month premium only; below Priority Messages, above Order Tracking */}
+                {showSlayAndSpecialOffer && specialOffer && specialOffer.expiresAt > Date.now() && (
+                  <>
+                    <div
+                      className="border border-black bg-white/60 backdrop-blur-sm w-full mb-0 transition-all duration-300 ease-out"
+                      style={{
+                        borderWidth: '1.3px',
+                        paddingTop: '20px',
+                        paddingLeft: '20px',
+                        paddingRight: '20px',
+                        paddingBottom: '16px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.6)'
+                      }}
+                    >
+                      <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '14px' }}>
+                        <h2
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            color: '#EB1C24',
+                            fontSize: '12px',
+                            fontWeight: '500',
+                            margin: '0',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          SPECIAL OFFER
+                        </h2>
+                        <img
+                          src={specialOfferIconUrl}
+                          alt="Special Offer"
+                          style={{
+                            width: '17.76px',
+                            height: '17.76px',
+                            objectFit: 'contain'
+                          }}
+                        />
+                      </div>
+                      <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0 0 25px 0', textTransform: 'uppercase', textAlign: 'center', lineHeight: 1.45 }}>
+                        CAN NOT BE COMBINED WITH VOUCHER OR DISCOUNT CODE.
+                        <br />
+                        YOU MAY REDEEM A TOTAL OF <span style={{ color: '#EB1C24' }}>2</span> QTY AMOUNTS FOR EACH CAP SIZE.
+                        <br />
+                        OFFER IS ONLY VALID WHILE SUPPLIES LAST. TERMS APPLY.
+                      </p>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '12px' }}>
+                        <div style={{ width: '72px', height: '72px', flexShrink: 0, border: '1px solid #e5e7eb', overflow: 'hidden', backgroundColor: '#f9fafb' }}>
+                          <img src={specialOffer.thumbnailDataUrl || SPECIAL_OFFER_UNITS.find(u => u.id === specialOffer.unitId)?.image || '/assets/natural front.png'} alt={specialOffer.unitName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontFamily: '"Covered By Your Grace"', color: '#000', fontSize: '17px', margin: '0 0 4px 0', textTransform: 'uppercase' }}>{specialOffer.unitName}</p>
+                          <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '9px', margin: '0 0 2px 0', textTransform: 'uppercase' }}>
+                            {specialOffer.options.length} · {specialOffer.options.density} · {specialOffer.options.texture} · {specialOffer.options.lace} · {specialOffer.options.color}
+                          </p>
+                          <p style={{ margin: '4px 0 0 0', fontSize: '11px' }}>
+                            <span style={{ fontFamily: '"Futura PT Book"', color: '#999', textDecoration: 'line-through' }}>{formatSpecialOfferPrice(Number(specialOffer.originalPrice))}</span>
+                            <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', marginLeft: '8px' }}>{formatSpecialOfferPrice(Number(specialOffer.discountedPrice))}</span>
+                            <span style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', marginLeft: '4px' }}>({formatSpecialOfferPrice(40)} OFF)</span>
+                          </p>
+                        </div>
+                      </div>
+                      {/* Cap size selection (custom sizes only; single row) — 15px space above */}
+                      <div style={{ display: 'flex', gap: '6px', paddingTop: '15px', marginBottom: '12px', flexWrap: 'nowrap' }}>
+                        {SPECIAL_OFFER_CAP_SIZES.map((size) => {
+                          const isSelected = specialOfferCapSize === size;
+                          return (
+                            <button
+                              key={size}
+                              type="button"
+                              onClick={() => setSpecialOfferCapSize(size)}
+                              style={{
+                                flex: 1,
+                                minWidth: 0,
+                                minHeight: '28px',
+                                padding: '6px 4px',
+                                border: isSelected ? '1.3px solid #EB1C24' : '1.3px solid #000',
+                                backgroundColor: '#fff',
+                                fontFamily: isSelected ? '"Futura PT Medium"' : '"Futura PT Book"',
+                                fontSize: '10px',
+                                color: isSelected ? '#EB1C24' : '#000',
+                                textTransform: 'uppercase',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              {size}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {/* ~60-day period; expires on the 1st of Jan, Mar, May, Jul, Sep, Nov only */}
+                      <div style={{ paddingTop: '12px', marginTop: '4px', borderTop: '1px solid #e5e7eb' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
+                          <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
+                            Offer expires on {specialOfferExpiresOnLabel}
+                          </p>
+                          <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
+                            <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{specialOfferDaysLeft}</span> days remaining
+                          </p>
+                        </div>
+                        <div style={{ height: '6px', backgroundColor: '#e5e7eb', borderRadius: '3px', overflow: 'hidden' }}>
+                          <div
+                            style={{
+                              height: '100%',
+                              width: `${Math.min(100, Math.max(0, specialOfferProgress * 100))}%`,
+                              backgroundColor: '#EB1C24',
+                              borderRadius: '3px',
+                              transition: 'width 0.3s ease'
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="px-0 md:px-0" style={{ marginTop: '10px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
+                      <button
+                        type="button"
+                        onClick={handleClaimSpecialOffer}
+                        className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                        style={{
+                          borderWidth: '1.3px',
+                          color: '#EB1C24',
+                          fontFamily: '"Futura PT Medium"',
+                          backgroundColor: '#FFFFFF'
+                        }}
+                      >
+                        CLAIM OFFER
+                      </button>
+                    </div>
+                  </>
+                )}
+                {showSlayAndSpecialOffer && (!specialOffer || specialOffer.expiresAt <= Date.now()) && (
+                  <div
+                    className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
+                    style={{
+                      borderWidth: '1.3px',
+                      paddingTop: '20px',
+                      paddingLeft: '20px',
+                      paddingRight: '20px',
+                      paddingBottom: '16px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.6)'
+                    }}
+                  >
+                    <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: 0, textTransform: 'uppercase', lineHeight: 1.5 }}>
+                      THERE ARE NO OFFERS AVAILABLE AT THIS TIME.
+                      <br />
+                      CHECK BACK SOON!
+                    </p>
+                  </div>
+                )}
 
                 {/* Order Tracking Section */}
                 <div

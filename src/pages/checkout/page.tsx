@@ -381,7 +381,7 @@ function CheckoutPage() {
       setAppliedDiscount(0);
       setDiscountCode('');
       setDiscountCodeDisplay('');
-      setDiscountCodeError('SPECIAL OFFERS CAN\'T BE COMBINED WITH DISCOUNT CODES, GIFT CARDS OR REFERRAL CODES.');
+      setDiscountCodeError('SPECIAL OFFERS CAN\'T BE COMBINED WITH VOUCHERS, DISCOUNT CODES, GIFT CARDS OR REFERRAL CODES.');
     } else {
       setDiscountCodeError((prev) => (prev === 'SPECIAL OFFERS CAN\'T BE COMBINED WITH DISCOUNT CODES, GIFT CARDS OR REFERRAL CODES.' ? '' : prev));
     }
@@ -1279,7 +1279,7 @@ function CheckoutPage() {
     
     // When cart contains only special offer items, codes cannot be applied
     if (hasOnlySpecialOfferInCart) {
-      setDiscountCodeError('SPECIAL OFFERS CAN\'T BE COMBINED WITH DISCOUNT CODES, GIFT CARDS OR REFERRAL CODES.');
+      setDiscountCodeError('SPECIAL OFFERS CAN\'T BE COMBINED WITH VOUCHERS, DISCOUNT CODES, GIFT CARDS OR REFERRAL CODES.');
       return;
     }
     

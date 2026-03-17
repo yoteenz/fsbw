@@ -1,5 +1,7 @@
 # Agent context (Build-a-Wig)
 
+**At the start of every new chat:** Read `motherboard/README.md`, `motherboard/CORE.md`, `motherboard/CODEBASE.md`, and `motherboard/MEMORY.md` in order before answering or implementing. Do not skip this; use them as project context.
+
 ## "Add to motherboard" / "Load motherboard" / "Snapshot codebase to motherboard"
 
 **If the user says any of these and you are unsure what they mean:** The **motherboard** exists in this repo. It is a **folder** (not a single file) at:

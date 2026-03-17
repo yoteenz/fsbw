@@ -95,8 +95,8 @@ export async function patchProfile(profile: Record<string, unknown>): Promise<Re
 }
 
 /** Delete the current user from Supabase Auth so they cannot sign back in. Call before sign-out when user confirms delete account. Throws if unauthenticated (401), not configured (503), or any API error so the UI does not sign out and pretend success. */
-export async function deleteAccount(): Promise<void> {
-  const res = await apiFetch('/api/delete-account', { method: 'DELETE' });
+export async function deleteAccount(options?: { deletedFrom?: string }): Promise<void> {
+  const res = await apiFetch('/api/delete-account', { method: 'DELETE', body: options ?? undefined });
   if (!res.ok) {
     const text = await res.text();
     if (res.status === 401) throw new Error('Not signed in. Sign in and try again.');

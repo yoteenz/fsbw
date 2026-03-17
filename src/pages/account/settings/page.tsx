@@ -9,7 +9,7 @@ import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '..
 import { patchProfile, deleteAccount } from '../../../utils/api';
 import { trackActivity } from '../../../utils/activity';
 import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
-import { isAdminUser, clearAppAuth } from '../../../utils/adminAuth';
+import { isAdminUser, clearAppAuth, isAyoteenzAdminAccount } from '../../../utils/adminAuth';
 import { syncAllFromApi, applyAdminSyncPayload } from '../../../utils/syncFromApi';
 import { saveCartAndWishlistToUserKeys } from '../../../utils/cartWishlistStorage';
 import { normalizeEmail } from '../../../utils/credentialNormalize';
@@ -262,11 +262,23 @@ function SettingsPage() {
   const handleDeleteAccount = async () => {
     setDeleteAccountError(null);
     setShowDeleteAccountConfirm(false);
+    const currentUserForDelete = userData ?? (() => {
+      try {
+        const raw = localStorage.getItem('currentUser');
+        return raw ? JSON.parse(raw) : null;
+      } catch {
+        return null;
+      }
+    })();
+    if (isAyoteenzAdminAccount(currentUserForDelete)) {
+      setDeleteAccountError('This admin account cannot be deleted.');
+      return;
+    }
     try {
       // Delete the user from Supabase Auth first (while still signed in) so they cannot sign back in
       if (isSupabaseConfigured()) {
         try {
-          await deleteAccount();
+          await deleteAccount({ deletedFrom: getDeletedPlatformFromUserAgent() });
         } catch (e) {
           console.error('Delete account API failed:', e);
           const msg = typeof (e as any)?.message === 'string' ? (e as any).message : String(e ?? '');

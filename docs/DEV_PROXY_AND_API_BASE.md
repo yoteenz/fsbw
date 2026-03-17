@@ -58,6 +58,24 @@ If you **don’t** see that line, then either:
 
 So: the **browser** only sees requests to your dev origin; it does **not** need to “read” the proxy variable. The dev server (Vite) reads it and forwards those requests to the target.
 
+### 3b. Mobile-friendly ways to check (site is mobile-only)
+
+If you're testing on a phone or only care about mobile layout, you don't have DevTools on the device. Use one of these:
+
+**Option A — Desktop browser in mobile mode (simplest)**  
+1. On your computer, open Chrome (or Edge/Firefox).  
+2. Go to `http://localhost:3001` (with the dev server running).  
+3. Open DevTools (F12 or right-click → Inspect).  
+4. Turn on **device toolbar** (Ctrl+Shift+M or the phone/tablet icon in DevTools) and pick a phone size.  
+5. Use the app (sign in, Sync, etc.) and watch the **Network** tab. You'll see the same `/api/...` requests and status codes as on a real device. The proxy and API behavior are identical; only the viewport is mobile-sized.
+
+**Option B — Remote debugging (real phone)**  
+- **Android:** Connect the phone by USB, enable USB debugging. On desktop Chrome go to `chrome://inspect`, find your device and the page, click **Inspect**. Use the Network tab in that DevTools window.  
+- **iPhone/iPad:** Connect by USB. On the device: Settings → Safari → Advanced → Web Inspector ON. On Mac Safari: Develop → [your device] → [your page]. Use the Network tab in the Web Inspector.
+
+**Option C — Trust the terminal + behavior**  
+If you already see **`[vite] API proxy: /api -> https://...`** when starting the dev server, the proxy is active. On the phone, open `http://<your-computer-ip>:3001` (same Wi-Fi), sign in or tap Sync. If profile loads or sync succeeds, the API is being reached; the proxy is working without needing DevTools on the device.
+
 ### 4. Optional: show API base in the app (debug)
 
 To confirm what the **frontend** is using as the base URL (for fetch):

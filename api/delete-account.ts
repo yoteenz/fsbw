@@ -1,12 +1,12 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getAuthUser } from './_lib/auth';
-import { getSupabaseAdmin, hasSupabaseServiceRole } from './_lib/supabase';
+import { getSupabaseAdmin, getSupabaseAdminServiceRole, hasSupabaseServiceRole } from './_lib/supabase';
 
 /**
  * DELETE /api/delete-account
- * Deletes the authenticated user from Supabase Auth so they cannot sign back in.
- * Requires Bearer token and SUPABASE_SERVICE_ROLE_KEY (admin.auth.admin.deleteUser).
- * Call from the frontend before signing out when the user confirms "Delete account".
+ * Records the user in deleted_accounts (so admin can see from any browser), then deletes from Supabase Auth.
+ * Requires Bearer token and SUPABASE_SERVICE_ROLE_KEY.
+ * Body (optional): { deletedFrom?: string } e.g. "chrome-desktop".
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
@@ -30,6 +30,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
+    const protectedEmail = (process.env.PROTECTED_ACCOUNT_EMAIL || 'ayoteenz@yahoo.com').trim().toLowerCase();
+    if ((user.email || '').trim().toLowerCase() === protectedEmail) {
+      return res.status(403).json({ error: 'This admin account cannot be deleted.' });
+    }
+
     if (!hasSupabaseServiceRole()) {
       console.error('Delete account: SUPABASE_SERVICE_ROLE_KEY is not set; deleteUser requires service role.');
       return res.status(503).json({ error: 'Account deletion not configured' });
@@ -41,6 +46,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     } catch (e) {
       console.error('Delete account getSupabaseAdmin error:', e);
       return res.status(503).json({ error: 'Account deletion not configured' });
+    }
+
+    const body = typeof req.body === 'object' && req.body !== null ? req.body : {};
+    const deletedFrom = (body as { deletedFrom?: string }).deletedFrom ?? undefined;
+
+    try {
+      const serviceRole = getSupabaseAdminServiceRole();
+      const { data: profileRow } = await serviceRole.from('profiles').select('first_name, last_name').eq('id', user.id).maybeSingle();
+      const row = profileRow as { first_name?: string; last_name?: string } | null;
+      await serviceRole.from('deleted_accounts').insert({
+        user_id: user.id,
+        email: (user.email || '').trim().toLowerCase(),
+        first_name: row?.first_name ?? null,
+        last_name: row?.last_name ?? null,
+        deleted_at: new Date().toISOString(),
+        deleted_from: deletedFrom ?? null,
+        payload: null,
+      });
+    } catch (e) {
+      console.error('Delete account: failed to insert deleted_accounts', e);
     }
 
     const { error } = await admin.auth.admin.deleteUser(user.id);

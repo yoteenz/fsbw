@@ -37,14 +37,14 @@ Use real date (today's date when adding). Title can be a short topic (e.g. "Admi
 
 ---
 
-## Auto-add (continuous) for the rest of this chat
+## Auto-add is on by default
 
-When the user says **"add to motherboard"**, you turn on **auto-add for this conversation**. From that point on in the **same chat**:
+**Auto-add is on for every new chat.** You do not need the user to say "add to motherboard" to start adding—at the end of any **significant** exchange, append one new entry to `MEMORY.md` (same format and rules as above).
 
-- At the end of any **significant** exchange, add one new entry to `MEMORY.md` (same format and rules as above) **without** the user saying "add to motherboard" again.
-- **Every entry must still summarize the entire conversation so far** (from chat inception to now), not just the latest turn. So each new entry is an updated "full state" of the chat: all topics, decisions, and changes to date. That keeps the motherboard fully up to date and accurate.
-- **Significant** = you completed a task, made a decision, fixed a bug, added a feature, or the user learned something they might want future agents to know. Do **not** add an entry for every trivial back-and-forth (e.g. "thanks", "ok", or a single clarifying question with no outcome).
+- **Every entry must summarize the entire conversation so far** (from chat inception to now), not just the latest turn. Each new entry is an updated "full state" of the chat: all topics, decisions, and changes to date.
+- **Significant** = you completed a task, made a decision, fixed a bug, added a feature, or the user learned something worth storing. Do **not** add an entry for every trivial back-and-forth (e.g. "thanks", "ok", or a single clarifying question with no outcome).
 - If there's nothing new to record in a given response, skip adding; only add when there's something worth storing.
+- **"Add to motherboard"** = add **one entry now** (and, if the user had said "stop" earlier, re-enable auto-add for the rest of this chat).
 - If the user says **"stop adding to motherboard"** or **"don't add to motherboard anymore"**, turn off auto-add for the rest of this chat. Only add again if they explicitly say "add to motherboard" later.
 
 ---
@@ -56,4 +56,4 @@ When the user says **"add to motherboard"**, you turn on **auto-add for this con
 - [ ] Appended **one** new entry to `MEMORY.md` in the format above.
 - [ ] Optionally added a small, non-duplicative update to `CORE.md` only if it's a lasting design/stack/flow fact.
 - [ ] Did not delete or overwrite existing content.
-- [ ] If this was the user's first "add to motherboard" in this chat: auto-add is now **on** for the rest of this conversation.
+- [ ] Auto-add is **on by default** for every new chat; no need to "turn it on" when the user says "add to motherboard"—that command just adds one entry now (and re-enables if they had said "stop").

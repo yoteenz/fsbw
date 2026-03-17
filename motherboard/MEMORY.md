@@ -343,3 +343,41 @@ User asked if there is a way to capture the **entire current codebase** (and its
 **Changes:** This MEMORY entry only.
 
 **Conventions:** Do not reply that there is no motherboard or ask the user to specify what to add. Read AGENTS.md or docs/MOTHERBOARD_COMMANDS.md when the user says "add to motherboard" and you need the protocol; then read motherboard/README.md and motherboard/ADDING.md and append one entry to motherboard/MEMORY.md summarizing the entire conversation so far.
+
+---
+
+## 2025-03-17 — Auto-add to motherboard on by default (same as mandatory read at chat start)
+
+**Context:** User asked whether the agent was auto-saving the chat to the motherboard (as the code suggests) and, when told no (because auto-add only turns on after saying "add to motherboard"), asked if auto-add could be enabled by default the same way the "read motherboard at chat start" fix was done.
+
+**Topics covered (this chat):**
+- Vercel build fix: removed unused `month` in `src/pages/account/concierge/page.tsx` (TS6133).
+- User asked if the agent had read/loaded the motherboard before implementing; agent had not; user asked what to change so new chats always read the motherboard. Rule was updated: removed "read (or assume you have read)" and made it mandatory to **read** the four files at chat start; AGENTS.md gained a line requiring read at chat start.
+- User asked if the agent was auto-saving this chat to the motherboard; agent said no—auto-add only turns on after "add to motherboard." User asked to enable auto-add by default the same way as the read-at-start fix.
+
+**Decisions / outcomes:** Auto-add is now **on by default** for every new chat. At the end of any significant exchange, the agent must append one new entry to `motherboard/MEMORY.md` per ADDING.md (full conversation summary). "Add to motherboard" = add one entry now (and re-enable auto-add if the user had said "stop"). "Stop adding to motherboard" turns off auto-add for that chat. No need for the user to say "add to motherboard" to start capturing the conversation.
+
+**Changes:** `.cursor/rules/motherboard.mdc` (new paragraph: auto-add on by default; "Add to motherboard" section simplified to "one entry now"; "stop" behavior kept). `motherboard/README.md` (Auto-load section: Add to motherboard now describes default auto-add; "Add to motherboard" command meaning and steps updated; removed step 5 about "remember auto-add is on"). `motherboard/ADDING.md` (section "Auto-add (continuous)..." renamed to "Auto-add is on by default"; text updated so auto-add is default; checklist item updated). This MEMORY entry.
+
+**Conventions:** New chats: (1) must read README, CORE, CODEBASE, MEMORY at start; (2) auto-add is on—append to MEMORY at end of significant exchanges. "Add to motherboard" = one entry now (and re-enable if user had said "stop"). "Stop adding to motherboard" = turn off auto-add for that chat.
+
+---
+
+## 2026-02-15 — Vouchers, membership copy, history order, points history sort, EXPLORE ALL BENEFITS spacing
+
+**Context:** Multiple UX and copy fixes: voucher modal and applicability, premium/membership section text, history sort order, points history date logic, and spacing below "EXPLORE ALL BENEFITS."
+
+**Topics covered (this chat):**
+- **Voucher modal (checkout):** Only the quantity counter (+/- and number) is disabled when a voucher type is not applicable; the label (e.g. "1X OF COLOR") is always visible and not dimmed. Label shows **available** count (e.g. "1X OF COLOR"); when type is not applicable the counter shows 0 and label stays as available; when applicable, counter is 0..available. On open/apply, inapplicable types are forced to 0.
+- **Voucher applicability:** A voucher type (COLOR, HAIRLINE, STYLING) is applicable only when at least one cart item has **add-on price > 0** for that type (so e.g. "Golden" is not applicable). BLANCO color fallback in checkout: GOLDEN = -20, ASH = 20, PLATINUM = 0.
+- **Premium / membership:** Unlock Premium Rewards section only (do not change upgrade chart): two **headers** = "Premium 3d wig selection options", "Entry to members only lobby + lounge"; four **lines** (gray subtitles) = "Prioritized support with significantly reduced response times", "Option to schedule in advance + prioritized custom orders", "Eligible for a chance to win raffles, discounts + vouchers", "Earn 2x loyalty points unlocking rewards faster." Restore original subtitles under the first two headers. TOTAL DUE TODAY price on premium upgrade chart = gray for all premium price selections.
+- **Admin account:** Unhide name and email (remove blur/condition); restore canonical profile layout so name and email are **direct children** of the Profile Details div (no inner wrapper) to fix email position.
+- **History order:** Digital cash history, voucher history, and points history: **newest at top**, oldest at bottom (sort by date descending).
+- **Points history sort fix:** Jan 26 was appearing above Feb 15. Cause: inconsistent date formats (e.g. M-D-YYYY vs D-M-YYYY) and parsing. Fix: single **parsePointsHistoryDateToTime** (handles M-D-YYYY and YYYY-M-D when first part > 31); **normalizePointsHistoryDate** stores normalized M-D-YYYY when building rows from order.date; period filter and **formatPointsHistoryDateDisplay** use the same parser. Sort remains newest first.
+- **EXPLORE ALL BENEFITS spacing:** 12px below was not significant; wrapper div around the button now has **marginBottom: '24px'** (wrapper ensures spacing is not overridden).
+
+**Decisions / outcomes:** Voucher modal = counter disabled only, label = available; applicability = add-on price > 0. Unlock Premium Rewards = only section to change (headers/lines as above); chart unchanged. Profile = name/email direct under Profile Details. All three histories = newest first. Points history = normalized dates + single parser for correct chronological sort. EXPLORE ALL BENEFITS = 24px gap below via wrapper.
+
+**Changes:** `src/pages/checkout/page.tsx` (voucher modal label/counter/disabled logic; cartVoucherApplicability by addOnPrice > 0; BLANCO color fallback; open/apply inapplicable → 0). `src/pages/account/membership/page.tsx` (Unlock Premium Rewards headers/lines only; TOTAL DUE gray; EXPLORE ALL BENEFITS wrapper marginBottom 24px; tier name color in "EARN X TO UNLOCK / REMAIN [TIER] TIER" — BLACK/SILVER/RED; points history: parsePointsHistoryDateToTime, normalizePointsHistoryDate, formatPointsHistoryDateDisplay, getPointsHistoryRows sort and period filter). `src/pages/account/page.tsx` (remove profile blur; remove inner div so name/email direct children; digital cash + voucher history sort descending). This MEMORY entry.
+
+**Conventions:** When changing premium/membership copy, only change the Unlock Premium Rewards section (headers + lines as specified); do not change the upgrade chart row labels. For points/digital cash/voucher history, use newest-first sort; for points history, normalize order dates and use a single date parser so sort is correct across formats.

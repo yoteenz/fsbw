@@ -177,12 +177,21 @@ export default function AdminDeletedAccounts() {
     if (isSupabaseConfigured() && currentUser?.email && isAdminEmail(currentUser.email)) {
       getAdminDeletedAccounts()
         .then((r) => {
-          if (r.deleted.length > 0) {
-            const list = [...(r.deleted as DeletedUser[])].sort((a, b) => new Date(b.deletedAt).getTime() - new Date(a.deletedAt).getTime());
-            setDeletedUsers(list);
-          } else {
-            loadDeleted();
+          const fromApi = (r.deleted || []) as DeletedUser[];
+          let combined = fromApi;
+          try {
+            const rawLocal = localStorage.getItem('deletedUsers');
+            const fromLocal = (rawLocal ? JSON.parse(rawLocal) : []) as DeletedUser[];
+            if (Array.isArray(fromLocal)) {
+              const apiEmails = new Set(fromApi.map((u) => (u.email || '').trim().toLowerCase()));
+              const localOnly = fromLocal.filter((u) => u?.email && !apiEmails.has((u.email || '').trim().toLowerCase()));
+              combined = [...fromApi, ...localOnly];
+            }
+          } catch {
+            /* ignore */
           }
+          const sorted = combined.sort((a, b) => new Date(b.deletedAt).getTime() - new Date(a.deletedAt).getTime());
+          setDeletedUsers(sorted);
         })
         .catch(() => loadDeleted());
     } else {

@@ -12,7 +12,7 @@ A Cursor rule (`.cursor/rules/motherboard.mdc`) is set to **always apply**, so a
 
 - **New chats:** The Cursor rule tells the agent to treat the motherboard as **auto-loaded** at the start of each new conversation. So you do **not** need to say "load motherboard" in every new chat—the agent is instructed to read and use README, CORE, CODEBASE, and MEMORY at conversation start.
 - **"Load motherboard":** Say it when you want the agent to **re-read** those files and refresh context (e.g. after you've updated the motherboard).
-- **"Add to motherboard":** The motherboard does **not** auto-capture every chat. To save a conversation (or turn on auto-add for that chat), you **must** say "add to motherboard" in that chat at least once. Current/open agents are **not** writing to the motherboard unless you've said "add to motherboard" in that specific chat.
+- **"Add to motherboard":** Auto-add is **on by default** for every new chat—the agent adds to MEMORY at the end of significant exchanges without you saying it. Saying "add to motherboard" adds **one entry now** (and re-enables auto-add if you had said "stop adding to motherboard" earlier).
 
 **Adding from old chats:** If you add to the motherboard from an old chat (e.g. 30 days old), that only **appends** a new entry—it does **not** overwrite or remove existing entries. The new entry is a historical record of that past conversation. For current context, agents should treat **CORE + CODEBASE + the latest MEMORY entries** as the source of truth; older MEMORY entries are timeline/history.
 
@@ -38,9 +38,9 @@ A Cursor rule (`.cursor/rules/motherboard.mdc`) is set to **always apply**, so a
 
 ### "Add to motherboard"
 
-**Meaning:** (1) Append a summary of this conversation (or new facts/decisions) to the motherboard now, and (2) **enable auto-add for the rest of this chat** — from this point on, you will automatically add to the motherboard at the end of **significant** exchanges without the user having to say it again.
+**Meaning:** Append **one entry** to the motherboard now. (Auto-add is already on by default for every new chat; if the user had said "stop adding to motherboard" earlier, this also re-enables auto-add for the rest of this chat.)
 
-**What to do (first time in this chat):**
+**What to do:**
 
 1. Read **all** of:
    - `motherboard/README.md`
@@ -50,7 +50,6 @@ A Cursor rule (`.cursor/rules/motherboard.mdc`) is set to **always apply**, so a
 2. Follow the rules in `ADDING.md` (append-only, no overwrite, no duplicate, use the required format).
 3. Add **one new entry** to `MEMORY.md` now. The entry must summarize the **entire conversation so far** in this chat (all prompts, topics, decisions, and changes from inception to now), not just the last message—so the motherboard stays fully up to date and accurate. Optionally add a small update to `CORE.md` only if you’re adding a new **permanent** fact about design/stack/flows that isn’t already there.
 4. Do **not** remove or rewrite existing sections; only append.
-5. **Remember for this chat:** Auto-add is now **on**. For the rest of this conversation, at the end of any **significant** exchange (see ADDING.md), add one new entry to `MEMORY.md` without the user saying "add to motherboard" again. Each of those entries must also summarize the **entire conversation so far**, not just the latest turn.
 
 **If the user says "stop adding to motherboard" or "don't add to motherboard anymore":** Turn off auto-add for the rest of this chat; only add again if they explicitly say "add to motherboard" later.
 
