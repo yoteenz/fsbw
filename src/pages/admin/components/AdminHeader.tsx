@@ -572,7 +572,7 @@ export default function AdminHeader({
           {/* Center title or search input - Fixed positioning */}
           <div className="flex-1 text-center flex items-center justify-center h-full">
             {isSearchActive && !hideSearchIcon ? (
-              <div className="w-full flex items-center absolute left-4 right-4">
+              <div className="w-full flex items-center gap-1 absolute left-4 right-4">
                 <input
                   type="text"
                   value={searchInputValue}
@@ -580,7 +580,7 @@ export default function AdminHeader({
                   onBlur={handleSearchBlur}
                   onKeyDown={handleSearchKeyPress}
                   placeholder={searchPlaceholder}
-                  className="w-full bg-transparent border-none outline-none text-xs uppercase placeholder-gray-400"
+                  className="flex-1 min-w-0 bg-transparent border-none outline-none text-xs uppercase placeholder-gray-400"
                   style={{
                     fontFamily: "'Futura PT Medium'",
                     fontWeight: 500,
@@ -591,6 +591,22 @@ export default function AdminHeader({
                   }}
                   autoFocus
                 />
+                {(searchInputValue ?? '').trim() !== '' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onExternalSearchChange) onExternalSearchChange('');
+                      else setSearchQuery('');
+                    }}
+                    className="flex-shrink-0 p-0.5 border-none bg-transparent cursor-pointer flex items-center justify-center"
+                    aria-label="Clear search"
+                    style={{ color: '#808080' }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                      <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                )}
               </div>
             ) : (
               <div className="overflow-hidden text-ellipsis">

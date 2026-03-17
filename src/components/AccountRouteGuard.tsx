@@ -19,18 +19,18 @@ export default function AccountRouteGuard({ children }: { children: React.ReactN
       setRecoveryDone(true);
       return;
     }
-    const supabase = getSupabase();
-    if (!supabase) {
+    const client = getSupabase();
+    if (!client) {
       setRecoveryDone(true);
       return;
     }
     let cancelled = false;
     async function run() {
-      let { data: { session } } = await supabase.auth.getSession();
+      let { data: { session } } = await client.auth.getSession();
       if (cancelled) return;
       if (!session) {
         try {
-          const { data } = await supabase.auth.refreshSession();
+          const { data } = await client.auth.refreshSession();
           if (data?.session) session = data.session;
         } catch (_) {}
         if (cancelled) return;

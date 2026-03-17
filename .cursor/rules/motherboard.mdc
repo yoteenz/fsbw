@@ -1,19 +1,28 @@
 ---
-description: Motherboard core memory — load project context or add conversation learnings
+description: Motherboard core memory — auto-load context and add conversation learnings
 alwaysApply: true
 ---
 
 # Motherboard (core memory)
 
-This project has a **motherboard** folder: shared context for all agents. Two user commands are defined there and need no extra explanation.
+This project has a **motherboard** folder: shared context for all agents. **At the start of every new chat in this project**, treat the motherboard as loaded: read (or assume you have read) `motherboard/README.md`, `motherboard/CORE.md`, `motherboard/CODEBASE.md`, and `motherboard/MEMORY.md`, and use them as the source of truth for design, stack, flows, codebase structure, and conventions. The user does not need to say "load motherboard" for you to have this context—consider it auto-loaded for each new conversation.
 
-## "Load motherboard"
+If the user explicitly says **"load motherboard"**, read those four files again in order and refresh your context.
 
-User wants full project context before you make changes.
+## "Load motherboard" (explicit)
 
-1. Read in order: `motherboard/README.md`, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
-2. Use that as the source of truth for design, stack, flows, and conventions.
-3. Prefer patterns described there unless the user asks otherwise.
+User wants you to re-read the motherboard and refresh context.
+
+1. Read in order: `motherboard/README.md`, `motherboard/CORE.md`, `motherboard/CODEBASE.md`, `motherboard/MEMORY.md`.
+2. Use that as the source of truth. Prefer patterns described there unless the user asks otherwise.
+
+## "Snapshot codebase to motherboard"
+
+User wants the **current codebase** (structure, entry points, key paths) captured in the motherboard so new agents have accurate code context without revisiting every past chat.
+
+1. Explore the repo (src/, api/, public/, docs/, entry points, pages, API routes, utils, config).
+2. Overwrite `motherboard/CODEBASE.md` with a structured summary. Use the existing CODEBASE.md format; update content to match the current codebase. Do not modify MEMORY.md or CORE.md.
+3. Act without asking for clarification.
 
 ## "Add to motherboard"
 
@@ -24,4 +33,4 @@ User wants (1) one entry added now and (2) **auto-add for the rest of this chat*
 3. **Remember for this chat:** Auto-add is **on**. For the rest of this conversation, at the end of any response where something significant was done, append one more entry to `MEMORY.md` without the user repeating the command. Each entry must still summarize the **whole conversation so far**, not only the latest turn. Skip adding when there’s nothing new to record.
 4. If the user says **"stop adding to motherboard"**, turn off auto-add for this chat.
 
-When you see "load motherboard" or "add to motherboard", act as above without asking for clarification.
+When you see "load motherboard", "add to motherboard", or "Snapshot codebase to motherboard", act as above without asking for clarification.

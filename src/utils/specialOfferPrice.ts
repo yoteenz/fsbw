@@ -131,5 +131,11 @@ export function calculateSpecialOfferPrice(unitId: string, options: SpecialOffer
     addOnsPrice += p;
   });
 
-  return base + capSizePrice + lengthPrice + densityPrice + lacePrice + texturePrice + colorPrice + hairlinePrice + stylingPrice + addOnsPrice;
+  let total = base + capSizePrice + lengthPrice + densityPrice + lacePrice + texturePrice + colorPrice + hairlinePrice + stylingPrice + addOnsPrice;
+
+  // Wavy units (soft-wave, beach-wave): build-a-wig shows $20 more for the same config; add so special-offer and build-a-wig match.
+  const isWavy = unitId === 'soft-wave' || unitId === 'beach-wave';
+  if (isWavy) total += 20;
+
+  return total;
 }

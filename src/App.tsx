@@ -16,6 +16,7 @@ import LoadingScreen from './components/base/LoadingScreen';
 import AdminGuard from './components/AdminGuard';
 import AccountRouteGuard from './components/AccountRouteGuard';
 import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
+import { ensureAuthRestoredFromBackup, persistAuthBackup } from './utils/adminAuth';
 
 // Helper to wrap lazy imports with retry logic and logging
 const lazyWithLogging = (importFn: () => Promise<any>, componentName: string) => {
@@ -293,11 +294,12 @@ function App() {
     clearTestDataForNonAdminUserIfNeeded();
   }, []);
 
-  // Auth persistence: never clear isSignedIn/currentUser here—only explicit Sign Out does.
-  // On load, if we already have auth in localStorage, notify listeners so header/guards stay in sync.
+  // Auth persistence: restore from backup on every load (survives browser close), then re-persist backup and notify listeners.
   useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
+      ensureAuthRestoredFromBackup();
+      persistAuthBackup();
       const signedIn = localStorage.getItem('isSignedIn') === 'true';
       const currentUser = localStorage.getItem('currentUser');
       if (signedIn && currentUser) {

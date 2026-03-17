@@ -240,8 +240,6 @@ function ConciergePage() {
   const getNextSpecialOfferExpirationDate = (): Date => {
     const now = new Date();
     const year = now.getFullYear();
-    const month = now.getMonth();
-    const day = now.getDate();
     const quarterMonths = [0, 3, 6, 9]; // Jan, Apr, Jul, Oct
     for (const qm of quarterMonths) {
       const exp = new Date(year, qm, 1, 23, 59, 59, 999);
@@ -281,15 +279,16 @@ function ConciergePage() {
         const startMs = new Date(adminConfig.startDate).getTime();
         const expiresAt = startMs + SPECIAL_OFFER_DAYS * 24 * 60 * 60 * 1000;
         if (expiresAt <= Date.now()) return; // already expired, fall through to random
+        const rawAddOns = Array.isArray(adminConfig.addOns) ? adminConfig.addOns : (Array.isArray((adminConfig as { addons?: string[] }).addons) ? (adminConfig as { addons: string[] }).addons : []);
         const options = {
           length: adminConfig.length ?? '24"',
           density: adminConfig.density ?? '200%',
           texture: adminConfig.texture ?? 'SILKY',
           lace: adminConfig.lace ?? '13X6',
           color: adminConfig.color ?? 'OFF BLACK',
-          hairline: adminConfig.hairline,
-          styling: adminConfig.styling,
-          addOns: Array.isArray(adminConfig.addOns) ? adminConfig.addOns : []
+          hairline: adminConfig.hairline ?? 'NATURAL',
+          styling: adminConfig.styling ?? 'NONE',
+          addOns: rawAddOns.map((a: unknown) => String(a).trim()).filter(Boolean)
         };
         const originalPrice = calculateSpecialOfferPrice(unit.id, options);
         const next = {
@@ -2426,11 +2425,12 @@ function ConciergePage() {
                               style={{
                                 flex: 1,
                                 minWidth: 0,
-                                padding: '3px 2px',
+                                minHeight: '28px',
+                                padding: '6px 4px',
                                 border: isSelected ? '1.3px solid #EB1C24' : '1.3px solid #000',
                                 backgroundColor: '#fff',
                                 fontFamily: isSelected ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                fontSize: '5px',
+                                fontSize: '8px',
                                 color: isSelected ? '#EB1C24' : '#000',
                                 textTransform: 'uppercase',
                                 cursor: 'pointer'

@@ -42,7 +42,9 @@ Canonical reference for stack, design, and main flows. Keep this updated when th
 
 ## Conventions
 
+- **Lobby (home) nav:** Neon logo (center) → `/home/shop`. Products (neon-products) → `/shop/units`. Tools (neon-tools) → `/home/tools`. Implemented in `src/pages/lobby/page.tsx`.
 - **Paths:** Pages under `src/pages/` (e.g. `account/`, `account/settings/`, `account/concierge/`, `admin/`). Shared components in `src/components/`, utils in `src/utils/`.
 - **State:** React `useState`/`useEffect`; persistent data in localStorage (`currentUser`, `registeredUsers`, cart, wishlist, per-user keys). Supabase session for server-backed data.
 - **API:** Base URL from `VITE_API_BASE`; routes in `api/` (e.g. `api/admin/sync-profile`, `api/delete-account`). CORS and JSON error responses on API routes.
 - **Docs:** Project docs in `docs/` (e.g. `ADMIN_SYNC_SUPABASE_EMAIL_WALKTHROUGH.md`, `DELETE_ACCOUNT_API_WALKTHROUGH.md`).
+- **Admin client details (Orders vs Appointments):** Orders and Appointments tabs share the same card layout (flex, gap 12px), typography (Covered By Your Grace 16px for date, Futura PT Medium 10px/12px for title and secondary text, #EB1C24 / #808080), left 85×85 area (orders: product image + "N ITEMS"; appointments: APT placeholder only, no label below), status pill (height 15px, padding 0 6px, borderRadius 2px, Futura PT Medium 8px). Appointment time is offset with `translateY(-2px)`. Empty state: "NO APPOINTMENTS YET" matches "NO ORDERS YET" styling.

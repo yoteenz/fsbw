@@ -9,7 +9,7 @@ import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '..
 import { patchProfile, deleteAccount } from '../../../utils/api';
 import { trackActivity } from '../../../utils/activity';
 import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
-import { getCurrentUser, isAdminUser, clearAppAuth } from '../../../utils/adminAuth';
+import { isAdminUser, clearAppAuth } from '../../../utils/adminAuth';
 import { syncAllFromApi, applyAdminSyncPayload } from '../../../utils/syncFromApi';
 import { saveCartAndWishlistToUserKeys } from '../../../utils/cartWishlistStorage';
 import { normalizeEmail } from '../../../utils/credentialNormalize';

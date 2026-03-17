@@ -2137,9 +2137,13 @@ fontFamily: '"Futura PT Book"',
                                       if (hasSecuredCurrentTier) {
                                         return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{displaySpendRemaining.toLocaleString()}</span> MORE POINTS TO UNLOCK <span style={{ color: showTierColorsForAdmin ? nextTierColor : '#000000', fontFamily: '"Futura PT Medium"' }}>{displayNextTier}</span> TIER!</>;
                                       }
-                                      const remainTierColor = remainTier === 'BLACK' ? '#000000' : remainTier === 'SILVER' ? BRAND_GRAY : '#EB1C24';
-                                      const remainPoints = Math.max(0, remainThreshold - displayCurrentSpend);
-                                      return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{remainPoints.toLocaleString()}</span> MORE POINTS TO REMAIN <span style={{ color: showTierColorsForAdmin ? remainTierColor : '#000000', fontFamily: '"Futura PT Medium"' }}>{remainTier}</span> TIER!</>;
+                                      const targetTierColor = remainTier === 'BLACK' ? '#000000' : remainTier === 'SILVER' ? BRAND_GRAY : '#EB1C24';
+                                      const pointsNeeded = Math.max(0, remainThreshold - displayCurrentSpend);
+                                      // PENDING = haven't unlocked Silver yet → "to reach Silver"; otherwise "to remain [current tier]"
+                                      if (displayTier === 'PENDING') {
+                                        return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{pointsNeeded.toLocaleString()}</span> MORE POINTS TO REACH <span style={{ color: showTierColorsForAdmin ? targetTierColor : '#000000', fontFamily: '"Futura PT Medium"' }}>{remainTier}</span> TIER!</>;
+                                      }
+                                      return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{pointsNeeded.toLocaleString()}</span> MORE POINTS TO REMAIN <span style={{ color: showTierColorsForAdmin ? targetTierColor : '#000000', fontFamily: '"Futura PT Medium"' }}>{remainTier}</span> TIER!</>;
                                     })();
                                     return (
                                   <>

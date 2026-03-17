@@ -11,9 +11,20 @@ export const TEXTURE_OPTIONS = ['SILKY', 'KINKY', 'YAKI'];
 
 export const LACE_OPTIONS = ['2X6', '4X4', '5X5', '6X6', '9X6', '7X7', '13X4', '13X6', '360', 'FULL'];
 
-export const HAIRLINE_OPTIONS = ['NATURAL', 'PEAK', 'LAGOS'];
+/** Hairline: NATURAL, PEAK, LAGOS, and combined LAGOS + PEAK (stored as "LAGOS, PEAK" for pricing). */
+export const HAIRLINE_OPTIONS = ['NATURAL', 'PEAK', 'LAGOS', 'LAGOS, PEAK'];
 
-export const STYLING_OPTIONS = ['NONE', 'BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
+/** Styling: single options plus Bangs combinations (matches build-a-wig styling page). */
+export const STYLING_OPTIONS = [
+  'NONE',
+  'BANGS',
+  'CRIMPS',
+  'FLAT IRON',
+  'LAYERS',
+  'BANGS, CRIMPS',
+  'BANGS, FLAT IRON',
+  'BANGS, LAYERS'
+];
 
 export const ADDON_OPTIONS = ['BLEACH', 'PLUCK', 'BLUNT CUT'];
 

@@ -6,17 +6,26 @@ A Cursor rule (`.cursor/rules/motherboard.mdc`) is set to **always apply**, so a
 
 ---
 
+## Auto-load and when you need to prompt
+
+- **New chats:** The Cursor rule tells the agent to treat the motherboard as **auto-loaded** at the start of each new conversation. So you do **not** need to say "load motherboard" in every new chat—the agent is instructed to read and use README, CORE, CODEBASE, and MEMORY at conversation start.
+- **"Load motherboard":** Say it when you want the agent to **re-read** those files and refresh context (e.g. after you've updated the motherboard).
+- **"Add to motherboard":** The motherboard does **not** auto-capture every chat. To save a conversation (or turn on auto-add for that chat), you **must** say "add to motherboard" in that chat at least once. Current/open agents are **not** writing to the motherboard unless you've said "add to motherboard" in that specific chat.
+
+---
+
 ## Commands (no extra explanation needed)
 
-### "Load motherboard"
+### "Load motherboard" (optional; new chats auto-load)
 
-**Meaning:** Read the motherboard to get full project context before making changes.
+**Meaning:** Re-read the motherboard and refresh context.
 
 **What to do:**
 
 1. Read **all** of these files in order:
    - `motherboard/README.md` (this file)
    - `motherboard/CORE.md` (design, stack, flows, conventions)
+   - `motherboard/CODEBASE.md` (current codebase structure and key paths)
    - `motherboard/MEMORY.md` (conversation learnings and decisions)
 2. Use this context as the source of truth for how the site works, how it’s styled, and how to add or change features.
 3. Prefer patterns and conventions described here; only deviate when the user explicitly asks.
@@ -43,12 +52,27 @@ A Cursor rule (`.cursor/rules/motherboard.mdc`) is set to **always apply**, so a
 
 ---
 
+### "Snapshot codebase to motherboard"
+
+**Meaning:** Capture the **current state of the entire codebase** (structure, entry points, key paths, conventions) into the motherboard so new agents have accurate codebase context without the user revisiting every past chat.
+
+**What to do:**
+
+1. Explore the repo: list key folders (`src/`, `api/`, `public/`, `docs/`), main entry points (`src/main.tsx`, `src/App.tsx`), page routes under `src/pages/`, API routes under `api/`, shared code in `src/utils/` and `api/_lib/`, and config/env files.
+2. Write or **overwrite** `motherboard/CODEBASE.md` with a structured summary: repo layout, frontend structure (pages, components, utils), backend structure (API routes, _lib), config and env, and when to refresh. Use the existing `CODEBASE.md` format as a template; update section content to match the current codebase.
+3. Do **not** modify MEMORY.md or CORE.md for this command. CODEBASE.md is the only file that gets updated; it is overwritten (not appended) so it always reflects the latest snapshot.
+
+**When the user might say this:** After major refactors, when onboarding a new agent, or when they want the motherboard to reflect "the project as it stands now" without re-running every old conversation.
+
+---
+
 ## File roles
 
 | File | Purpose |
 |------|--------|
-| `README.md` | This file. Explains "load motherboard" and "add to motherboard." |
+| `README.md` | This file. Explains all motherboard commands. |
 | `CORE.md` | Stable project context: stack, design system, key flows, conventions. |
+| `CODEBASE.md` | **Current codebase snapshot** (structure, paths). Refreshed by "Snapshot codebase to motherboard." |
 | `MEMORY.md` | Append-only log of conversation summaries and one-off decisions. |
 | `ADDING.md` | Protocol for how to add entries (format, deduplication, no overwrite). |
 
@@ -56,5 +80,6 @@ A Cursor rule (`.cursor/rules/motherboard.mdc`) is set to **always apply**, so a
 
 ## Quick reference for agents
 
-- **"Load motherboard"** → Read `README.md` → `CORE.md` → `MEMORY.md` and use that context.
+- **"Load motherboard"** → Read `README.md` → `CORE.md` → `CODEBASE.md` → `MEMORY.md` and use that context.
 - **"Add to motherboard"** → Add one entry now (per ADDING.md) and **enable auto-add for this chat**; thereafter add at the end of significant exchanges without being asked again. **"Stop adding to motherboard"** → disable auto-add for this chat.
+- **"Snapshot codebase to motherboard"** → Explore the repo and overwrite `motherboard/CODEBASE.md` with a structured summary of the current codebase so the motherboard has accurate, up-to-date code context.

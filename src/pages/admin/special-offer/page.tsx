@@ -66,12 +66,16 @@ export default function AdminSpecialOfferPage() {
         const opts = getOptionsForUnit(unitId);
         const color = opts.color.includes(parsed.color) ? parsed.color : getDefaultColorForUnit(unitId);
         const density = opts.density.includes(parsed.density) ? parsed.density : getDefaultDensityForUnit(unitId);
+        const hairline = opts.hairline.includes(parsed.hairline) ? parsed.hairline : defaultConfig.hairline;
+        const styling = opts.styling.includes(parsed.styling) ? parsed.styling : defaultConfig.styling;
         setConfig({
           ...defaultConfig,
           ...parsed,
           unitId,
           color,
-          density
+          density,
+          hairline,
+          styling
         });
       }
     } catch {
@@ -100,6 +104,9 @@ export default function AdminSpecialOfferPage() {
   const addOnDisplay = config.addOns.length === 0 ? 'NONE' : config.addOns.join(', ');
 
   const options = useMemo(() => getOptionsForUnit(config.unitId as UnitId), [config.unitId]);
+
+  /** Display "LAGOS + PEAK" for stored value "LAGOS, PEAK" in hairline dropdown. */
+  const hairlineDisplay = (val: string) => (val === 'LAGOS, PEAK' ? 'LAGOS + PEAK' : val);
 
   const handleProductChange = (unitId: string) => {
     const nextId = unitId as UnitId;
@@ -311,7 +318,7 @@ export default function AdminSpecialOfferPage() {
                     onClick={() => setOpenDropdown((v) => (v === 'hairline' ? null : 'hairline'))}
                     style={{ width: '100%', padding: '8px 10px', border: '1.3px solid #000', borderRadius: 0, fontFamily: '"Futura PT Book"', fontSize: '11px', background: '#fff', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', color: '#000' }}
                   >
-                    <span>{config.hairline}</span>
+                    <span>{hairlineDisplay(config.hairline)}</span>
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="flex-shrink-0" style={{ transform: openDropdown === 'hairline' ? 'rotate(180deg)' : 'none', color: '#EB1C24', marginLeft: '8px' }}>
                       <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -321,7 +328,7 @@ export default function AdminSpecialOfferPage() {
                       <div className="fixed inset-0 z-10" aria-hidden="true" onClick={() => setOpenDropdown(null)} />
                       <div className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20" style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}>
                         {options.hairline.filter((o) => o !== config.hairline).map((o) => (
-                          <button key={o} type="button" onClick={() => { setConfig((c) => ({ ...c, hairline: o })); setOpenDropdown(null); }} className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors" style={{ fontFamily: '"Futura PT Book"', color: '#000', fontWeight: 400 }}>{o}</button>
+                          <button key={o} type="button" onClick={() => { setConfig((c) => ({ ...c, hairline: o })); setOpenDropdown(null); }} className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors" style={{ fontFamily: '"Futura PT Book"', color: '#000', fontWeight: 400 }}>{hairlineDisplay(o)}</button>
                         ))}
                       </div>
                     </>

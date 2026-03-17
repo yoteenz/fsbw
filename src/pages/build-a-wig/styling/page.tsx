@@ -7,6 +7,7 @@ import LoadingScreen from '../../../components/base/LoadingScreen';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
+import { clearAppAuth } from '../../../utils/adminAuth';
 
 export default function StylingSelectionPage() {
   const navigate = useNavigate();
