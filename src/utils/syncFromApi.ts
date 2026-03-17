@@ -110,7 +110,9 @@ export function applyAdminSyncPayload(
     const existing = (existingRaw ? JSON.parse(existingRaw) : null) as Record<string, unknown> | null;
     const sameEmail = existing && (existing.email as string || '').trim().toLowerCase() === e;
 
+    // Start with existing so API null/empty does not wipe local data; then overlay API profile
     const merged = {
+      ...(sameEmail && existing ? existing : {}),
       ...payload.profile,
       email: (payload.profile.email as string) || e,
       role: isAdminEmail(e) ? 'admin' : (payload.profile.role as string),
@@ -120,6 +122,7 @@ export function applyAdminSyncPayload(
     const profileKeysToPreserve = [
       'firstName', 'lastName', 'first_name', 'last_name', 'birthday',
       'profileImage', 'profile_image', 'facebook', 'instagram', 'youtube', 'tiktok', 'twitter',
+      'membershipType', 'subscriptionTier', 'currentTierName', 'tier',
     ] as const;
     if (sameEmail && existing) {
       for (const key of profileKeysToPreserve) {

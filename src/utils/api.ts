@@ -54,10 +54,10 @@ export async function syncProfileWithPassword(
   wishlist: { items: unknown[] };
 }> {
   const base = API_BASE.replace(/\/$/, '');
-  if (!base) throw new Error('Sync not configured (missing API URL).');
+  const url = base ? `${base}/api/admin/sync-profile` : '/api/admin/sync-profile';
   let res: Response;
   try {
-    res = await fetch(`${base}/api/admin/sync-profile`, {
+    res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: (email || '').trim().toLowerCase(), password }),

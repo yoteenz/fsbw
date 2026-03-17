@@ -21,6 +21,7 @@ function toProfileRow(profile: Record<string, unknown>) {
     profile_image: profile.profileImage ?? null,
     membership_type: profile.membershipType ?? null,
     subscription_tier: profile.subscriptionTier ?? null,
+    current_tier_name: profile.currentTierName ?? profile.tier ?? null,
     default_address: profile.defaultAddress ?? null,
     shipping_address: profile.shippingAddress ?? null,
     saved_addresses: profile.savedAddresses ?? null,

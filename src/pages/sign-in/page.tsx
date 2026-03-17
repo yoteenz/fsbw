@@ -1827,6 +1827,32 @@ function SignInPage() {
                                 loyaltyPoints: 0,
                                 unlockedDiscounts: ['signup'],
                               });
+                              // Add new user to registeredUsers immediately so admin clients page shows them (same browser)
+                              const newUserEmail = normalizeEmail(email);
+                              try {
+                                const registeredUsers: unknown[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                                const exists = (Array.isArray(registeredUsers) && registeredUsers.some((u: unknown) => ((u as { email?: string }).email || '').toLowerCase() === newUserEmail));
+                                if (!exists && signUpData.session?.user) {
+                                  const u = signUpData.session.user as { id?: string; email?: string };
+                                  const newUser = {
+                                    id: u.id || `user-${Date.now()}`,
+                                    email: newUserEmail,
+                                    firstName: firstName.trim(),
+                                    lastName: lastName.trim(),
+                                    phoneNumber: phoneNumber.trim(),
+                                    birthday: birthday.trim(),
+                                    profileImage: '/assets/profile-thumb.png',
+                                    membershipType: 'STANDARD',
+                                    referralCode,
+                                    giftCardBalance: 10,
+                                    hasMadeFirstPurchase: false,
+                                    loyaltyPoints: 0,
+                                    unlockedDiscounts: ['signup'],
+                                  };
+                                  registeredUsers.push(newUser);
+                                  localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                                }
+                              } catch (_) {}
                               const profile = await syncAllFromApi();
                               if (profile) {
                                 localStorage.setItem('isSignedIn', 'true');

@@ -7,7 +7,22 @@ import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { getCurrentUser, getEffectiveSubscriptionTier, isMockDataAccount, isAyoteenzAdminAccount, clearAppAuth } from '../../../utils/adminAuth';
 import { calculateSpecialOfferPrice } from '../../../utils/specialOfferPrice';
 import { getOptionsForUnit, type UnitId } from '../../../utils/productOptions';
+import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import specialOfferIconUrl from '../../../assets/special-offer2.svg?url';
+
+/** Currency rates (USD base) and display symbols for special offer and elsewhere. */
+const CURRENCY_RATES: Record<string, { rate: number; symbol: string }> = {
+  USD: { rate: 1.0, symbol: '$' },
+  EUR: { rate: 0.85, symbol: '€' },
+  GBP: { rate: 0.73, symbol: '£' },
+  CAD: { rate: 1.25, symbol: 'C$' },
+  AUD: { rate: 1.35, symbol: 'A$' },
+  JPY: { rate: 110.0, symbol: '¥' },
+  CNY: { rate: 6.45, symbol: '¥' },
+  INR: { rate: 75.0, symbol: '₹' },
+  BRL: { rate: 5.2, symbol: 'R$' },
+  MXN: { rate: 20.0, symbol: '$' },
+};
 
 // Add pulsating animation style (recording indicator style)
 const pulsateStyle = `
@@ -355,7 +370,47 @@ function ConciergePage() {
   const [specialOfferCapSize, setSpecialOfferCapSize] = useState('M');
   const SPECIAL_OFFER_CAP_SIZES = ['XS', 'S', 'M', 'L'] as const;
 
+  const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
+    try {
+      const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+      const saved = typeof window !== 'undefined' ? localStorage.getItem(key) : null;
+      return (saved && CURRENCY_RATES[saved]) ? saved : 'USD';
+    } catch {
+      return 'USD';
+    }
+  });
+
+  useEffect(() => {
+    const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+    const saved = localStorage.getItem(key);
+    if (saved && CURRENCY_RATES[saved] && saved !== selectedCurrency) setSelectedCurrency(saved);
+    const onStorage = () => {
+      const k = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+      const s = localStorage.getItem(k);
+      if (s && CURRENCY_RATES[s]) setSelectedCurrency(s);
+    };
+    const onCurrencyChange = (e: Event) => {
+      const code = (e as CustomEvent).detail;
+      if (code && CURRENCY_RATES[code]) setSelectedCurrency(code);
+    };
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('currencyChanged', onCurrencyChange as EventListener);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('currencyChanged', onCurrencyChange as EventListener);
+    };
+  }, [selectedCurrency]);
+
   const SPECIAL_OFFER_MAX_QUANTITY = 2;
+
+  const formatSpecialOfferPrice = (usdAmount: number): string => {
+    const cur = CURRENCY_RATES[selectedCurrency] || CURRENCY_RATES.USD;
+    const amount = usdAmount * cur.rate;
+    const formatted = amount % 1 === 0
+      ? Math.round(amount).toLocaleString(undefined, { maximumFractionDigits: 0 })
+      : amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    return `${cur.symbol}${formatted}`;
+  };
 
   const handleClaimSpecialOffer = () => {
     if (!specialOffer) return;
@@ -2395,11 +2450,11 @@ function ConciergePage() {
                         />
                       </div>
                       <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0 0 25px 0', textTransform: 'uppercase', textAlign: 'center', lineHeight: 1.45 }}>
-                        LIMITED TIME OFFER CAN NOT BE COMBINED WITH DISCOUNT CODES.
+                        OFFER CAN NOT BE COMBINED WITH DISCOUNT CODES.
                         <br />
-                        YOU MAY REDEEM A TOTAL OF <span style={{ color: '#EB1C24' }}>2 QTY</span> AMOUNTS FOR EACH CAP SIZE.
+                        YOU MAY REDEEM A TOTAL OF <span style={{ color: '#EB1C24' }}>2</span> QTY AMOUNTS FOR EACH CAP SIZE.
                         <br />
-                        OFFER IS ONLY VALID WHILE SUPPLIES LAST.
+                        VALID ONLY WHILE SUPPLIES LAST, SO ACT FAST!
                       </p>
                       <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '12px' }}>
                         <div style={{ width: '72px', height: '72px', flexShrink: 0, border: '1px solid #e5e7eb', overflow: 'hidden', backgroundColor: '#f9fafb' }}>

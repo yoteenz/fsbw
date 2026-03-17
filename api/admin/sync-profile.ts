@@ -72,7 +72,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     ]);
 
     const profileRow = profileRes.data as Record<string, unknown> | null;
-    const profile = profileRow ? fromProfileRow(profileRow) : null;
+    const profile = profileRow
+      ? fromProfileRow(profileRow)
+      : { id: userId, email: signInData.user.email ?? '' };
 
     const ordersRow = ordersRes.data as { active_orders?: unknown; past_orders?: unknown } | null;
     const activeOrders = Array.isArray(ordersRow?.active_orders) ? ordersRow.active_orders : [];

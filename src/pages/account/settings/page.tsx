@@ -275,7 +275,10 @@ function SettingsPage() {
           const isServerError = /function_invocation_failed|server\s*error|a server error has occurred/i.test(raw);
           let displayMsg: string;
           if (isNetworkError) {
-            displayMsg = 'Network error. Check your connection and try again. If the problem continues, check that the app is using the correct API URL and that the delete-account API is deployed.';
+            const isLocal = typeof window !== 'undefined' && /localhost|127\.0\.0\.1|^10\.|^192\.168\.|^172\.(1[6-9]|2[0-9]|3[01])\./i.test(window.location?.hostname || '');
+            displayMsg = isLocal
+              ? 'Network error. When running locally, set VITE_API_BASE or VITE_DEV_PROXY_TARGET in .env.local to your deployed app URL (e.g. https://your-app.vercel.app), then restart the dev server so Delete Account can reach the API.'
+              : 'Network error. Check your connection and try again. If the problem continues, check that the app is using the correct API URL and that the delete-account API is deployed.';
           } else if (isServerError) {
             displayMsg = 'The server is temporarily unable to process account deletion. Please try again later or contact support.';
           } else {
@@ -328,7 +331,10 @@ function SettingsPage() {
       const isServerError = /function_invocation_failed|server\s*error|a server error has occurred/i.test(raw);
       let displayMsg: string;
       if (isNetworkError) {
-        displayMsg = 'Network error. Check your connection and try again. If the problem continues, check that the app is using the correct API URL and that the delete-account API is deployed.';
+        const isLocal = typeof window !== 'undefined' && /localhost|127\.0\.0\.1|^10\.|^192\.168\.|^172\.(1[6-9]|2[0-9]|3[01])\./i.test(window.location?.hostname || '');
+        displayMsg = isLocal
+          ? 'Network error. When running locally, set VITE_API_BASE or VITE_DEV_PROXY_TARGET in .env.local to your deployed app URL (e.g. https://your-app.vercel.app), then restart the dev server so Delete Account can reach the API.'
+          : 'Network error. Check your connection and try again. If the problem continues, check that the app is using the correct API URL and that the delete-account API is deployed.';
       } else if (isServerError) {
         displayMsg = 'The server is temporarily unable to process account deletion. Please try again later or contact support.';
       } else {
