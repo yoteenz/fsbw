@@ -16,7 +16,7 @@ import LoadingScreen from './components/base/LoadingScreen';
 import AdminGuard from './components/AdminGuard';
 import AccountRouteGuard from './components/AccountRouteGuard';
 import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
-import { ensureAuthRestoredFromBackup, persistAuthBackup } from './utils/adminAuth';
+import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth';
 
 // Helper to wrap lazy imports with retry logic and logging
 const lazyWithLogging = (importFn: () => Promise<any>, componentName: string) => {
@@ -308,6 +308,15 @@ function App() {
     } catch (_) {}
   }, []);
 
+  // Keep auth backup updated while signed in so it survives browser close even when beforeunload doesn't fire
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const interval = setInterval(() => {
+      if (isSignedIn()) persistAuthBackup();
+    }, 20000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <ErrorBoundary>
       <Routes>
@@ -363,7 +372,7 @@ function App() {
               <AdminReferrals />
             </Suspense>
           } />
-          <Route path="special-offer" element={
+          <Route path="marketing" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminSpecialOffer />
             </Suspense>

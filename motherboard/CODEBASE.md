@@ -29,7 +29,7 @@ This file is a **snapshot of the current codebase** (structure, entry points, ke
 
 **Page areas:**
 - **Account:** `account/page.tsx`, `account/settings/`, `account/concierge/`, `account/membership/`, `account/notifications/`, `account/payment/`, `account/referrals/`, `account/reviews/`, `account/shipping/`, `account/affiliate/`, `account/load-card/`.
-- **Admin:** `admin/dashboard/`, `admin/clients/`, `admin/analytics/`, `admin/audit/`, `admin/brand/`, `admin/meetings/`, `admin/notifications/`, `admin/pending/`, `admin/referrals/`, `admin/reviews/`, `admin/revenue/`, `admin/special-offer/`, `admin/users/`, plus `admin/components/` (ActivityFeed, AdminHeader, etc.).
+- **Admin:** `admin/dashboard/`, `admin/clients/`, `admin/analytics/`, `admin/audit/`, `admin/brand/`, `admin/meetings/`, `admin/notifications/`, `admin/pending/`, `admin/referrals/`, `admin/reviews/`, `admin/revenue/`, `admin/special-offer/` (route: `/admin/marketing`, nav: "ADMIN > MARKETING"), `admin/users/`, plus `admin/components/` (ActivityFeed, AdminHeader, etc.).
 - **Build-a-wig flow:** `build-a-wig/page.tsx`, `build-a-wig/length/`, `density/`, `texture/`, `lace/`, `hairline/`, `color/`, `styling/`, `cap-size/`, `addons/`.
 - **Shop / units:** `straight/noir/`, `straight/blanco/`, `wavy/soft-wave/`, `wavy/beach-wave/`, `curly/soft-curl/`, `curly/ocean-curl/`; `units/straight/`, `units/wavy/`, `units/curly/`; `products/`, `products/units/`.
 - **Other:** `lobby/`, `sign-in/`, `checkout/`, `checkout/confirm/`, `shopping-bag/`, `wishlist/`, `wishlist/lists/`, `orders/`, `tools/`, `tools/gift-card/`, `shop/order-form/`.

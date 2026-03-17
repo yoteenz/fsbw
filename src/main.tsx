@@ -8,11 +8,15 @@ import { ensureAuthRestoredFromBackup, persistAuthBackup } from './utils/adminAu
 // Restore app auth from backup if something (e.g. Supabase token refresh) cleared isSignedIn/currentUser
 ensureAuthRestoredFromBackup()
 
-// Persist auth to backup right before tab/browser closes so it survives close+reopen
+// Persist auth to backup so it survives close+reopen (beforeunload/pagehide are unreliable when closing browser)
 if (typeof window !== 'undefined') {
-  const saveAuthBeforeClose = () => { persistAuthBackup(); };
-  window.addEventListener('beforeunload', saveAuthBeforeClose);
-  window.addEventListener('pagehide', saveAuthBeforeClose);
+  const saveAuth = () => { persistAuthBackup(); };
+  window.addEventListener('beforeunload', saveAuth);
+  window.addEventListener('pagehide', saveAuth);
+  // When tab/window becomes hidden (switch tab, minimize, or start closing), persist immediately
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') saveAuth();
+  });
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

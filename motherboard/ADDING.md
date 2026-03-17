@@ -1,6 +1,6 @@
 # Protocol: Adding to the Motherboard
 
-When the user says **"add to motherboard"** (in this or any past chat), follow this protocol so new context is stored **without overwriting or duplicating** existing content.
+When the user says **"add to motherboard"** (in this or any past chat), follow this protocol so new context is stored **without overwriting or duplicating** existing content. Adding from an old chat only appends a historical entry; current context is CORE + CODEBASE + latest MEMORY.
 
 ---
 

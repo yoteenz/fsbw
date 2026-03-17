@@ -708,7 +708,7 @@ export default function AdminDashboard() {
         navigate('/admin/reviews');
         break;
       case 'MARKETING':
-        navigate('/admin/special-offer');
+        navigate('/admin/marketing');
         break;
       case 'BRAND':
         navigate('/admin/brand');

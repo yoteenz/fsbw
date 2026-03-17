@@ -7,6 +7,7 @@ import {
   getDefaultColorForUnit,
   getDefaultDensityForUnit,
   ADDON_OPTIONS,
+  ADDON_COMBO_OPTIONS,
   type UnitId
 } from '../../../utils/productOptions';
 
@@ -101,7 +102,12 @@ export default function AdminSpecialOfferPage() {
     reader.readAsDataURL(file);
   };
 
-  const addOnDisplay = config.addOns.length === 0 ? 'NONE' : config.addOns.join(', ');
+  const addOnDisplay = (() => {
+    const match = ADDON_COMBO_OPTIONS.find(
+      (opt) => opt.value.length === config.addOns.length && opt.value.every((a) => config.addOns.includes(a))
+    );
+    return match ? match.label : config.addOns.length === 0 ? 'NONE' : config.addOns.join(' + ');
+  })();
 
   const options = useMemo(() => getOptionsForUnit(config.unitId as UnitId), [config.unitId]);
 
@@ -119,6 +125,26 @@ export default function AdminSpecialOfferPage() {
     });
   };
 
+  const pick = <T,>(arr: readonly T[]): T => arr[Math.floor(Math.random() * arr.length)];
+  const handleRandomize = () => {
+    const unit = pick(UNITS);
+    const opts = getOptionsForUnit(unit.id as UnitId);
+    const addOns = pick(ADDON_COMBO_OPTIONS).value;
+    setConfig((c) => ({
+      ...c,
+      unitId: unit.id,
+      length: pick(opts.length),
+      density: pick(opts.density),
+      texture: pick(opts.texture),
+      lace: pick(opts.lace),
+      hairline: pick(opts.hairline),
+      color: pick(opts.color),
+      styling: pick(opts.styling),
+      addOns
+    }));
+    setOpenDropdown(null);
+  };
+
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
       <div
@@ -133,7 +159,7 @@ export default function AdminSpecialOfferPage() {
       />
       <div className="relative z-10" style={{ textTransform: 'uppercase' }}>
         <AdminHeader
-          title="SPECIAL OFFER"
+          title="MARKETING"
           showBack
           onBack={() => navigate('/admin/dashboard')}
           breadcrumbParentLabel="ADMIN"
@@ -193,7 +219,7 @@ export default function AdminSpecialOfferPage() {
                   {openDropdown === 'product' && (
                     <>
                       <div className="fixed inset-0 z-10" aria-hidden="true" onClick={() => setOpenDropdown(null)} />
-                      <div className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20" style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}>
+                      <div className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20 max-h-48 overflow-y-auto" style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}>
                         {UNITS.filter((u) => u.id !== config.unitId).map((u) => (
                           <button
                             key={u.id}
@@ -251,7 +277,7 @@ export default function AdminSpecialOfferPage() {
                   {openDropdown === 'density' && (
                     <>
                       <div className="fixed inset-0 z-10" aria-hidden="true" onClick={() => setOpenDropdown(null)} />
-                      <div className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20" style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}>
+                      <div className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20 max-h-48 overflow-y-auto" style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}>
                         {options.density.filter((o) => o !== config.density).map((o) => (
                           <button key={o} type="button" onClick={() => { setConfig((c) => ({ ...c, density: o })); setOpenDropdown(null); }} className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors" style={{ fontFamily: '"Futura PT Book"', color: '#000', fontWeight: 400 }}>{o}</button>
                         ))}
@@ -301,7 +327,7 @@ export default function AdminSpecialOfferPage() {
                   {openDropdown === 'lace' && (
                     <>
                       <div className="fixed inset-0 z-10" aria-hidden="true" onClick={() => setOpenDropdown(null)} />
-                      <div className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20" style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}>
+                      <div className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20 max-h-48 overflow-y-auto" style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}>
                         {options.lace.filter((o) => o !== config.lace).map((o) => (
                           <button key={o} type="button" onClick={() => { setConfig((c) => ({ ...c, lace: o })); setOpenDropdown(null); }} className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors" style={{ fontFamily: '"Futura PT Book"', color: '#000', fontWeight: 400 }}>{o}</button>
                         ))}
@@ -376,7 +402,7 @@ export default function AdminSpecialOfferPage() {
                   {openDropdown === 'styling' && (
                     <>
                       <div className="fixed inset-0 z-10" aria-hidden="true" onClick={() => setOpenDropdown(null)} />
-                      <div className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20" style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}>
+                      <div className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20 max-h-48 overflow-y-auto" style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}>
                         {options.styling.filter((o) => o !== config.styling).map((o) => (
                           <button key={o} type="button" onClick={() => { setConfig((c) => ({ ...c, styling: o })); setOpenDropdown(null); }} className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors" style={{ fontFamily: '"Futura PT Book"', color: '#000', fontWeight: 400 }}>{o}</button>
                         ))}
@@ -385,40 +411,48 @@ export default function AdminSpecialOfferPage() {
                   )}
                 </div>
 
-                {/* Add-ons (multi) */}
-                <div>
+                {/* Add-ons (multi) – dropdown same style as other dropdowns */}
+                <div className="relative">
                   <label style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#666', display: 'block', marginBottom: '4px' }}>ADD-ONS</label>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {ADDON_OPTIONS.map((o) => {
-                      const selected = config.addOns.includes(o);
-                      return (
-                        <button
-                          key={o}
-                          type="button"
-                          onClick={() => {
-                            setConfig((c) => ({
-                              ...c,
-                              addOns: selected ? c.addOns.filter((a) => a !== o) : [...c.addOns, o]
-                            }));
-                          }}
-                          style={{
-                            padding: '6px 10px',
-                            border: selected ? '1.3px solid #EB1C24' : '1.3px solid #000',
-                            borderRadius: 0,
-                            background: '#fff',
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '10px',
-                            color: selected ? '#EB1C24' : '#000',
-                            textTransform: 'uppercase',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          {o}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', marginTop: '4px' }}>Selected: {addOnDisplay}</p>
+                  <button
+                    type="button"
+                    onClick={() => setOpenDropdown((v) => (v === 'addOns' ? null : 'addOns'))}
+                    style={{ width: '100%', padding: '8px 10px', border: '1.3px solid #000', borderRadius: 0, fontFamily: '"Futura PT Book"', fontSize: '11px', background: '#fff', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', color: '#000' }}
+                  >
+                    <span>{addOnDisplay}</span>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="flex-shrink-0" style={{ transform: openDropdown === 'addOns' ? 'rotate(180deg)' : 'none', color: '#EB1C24', marginLeft: '8px' }}>
+                      <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  {openDropdown === 'addOns' && (
+                    <>
+                      <div className="fixed inset-0 z-10" aria-hidden="true" onClick={() => setOpenDropdown(null)} />
+                      <div className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20 max-h-48 overflow-y-auto" style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}>
+                        {ADDON_COMBO_OPTIONS.map((opt) => {
+                          const selected =
+                            opt.value.length === config.addOns.length && opt.value.every((a) => config.addOns.includes(a));
+                          return (
+                            <button
+                              key={opt.label}
+                              type="button"
+                              onClick={() => {
+                                setConfig((c) => ({ ...c, addOns: [...opt.value] }));
+                                setOpenDropdown(null);
+                              }}
+                              className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
+                              style={{
+                                fontFamily: selected ? '"Futura PT Medium"' : '"Futura PT Book"',
+                                color: selected ? '#EB1C24' : '#000',
+                                fontWeight: selected ? 600 : 400
+                              }}
+                            >
+                              {selected ? '✓ ' : ''}{opt.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Thumbnail upload */}
@@ -436,7 +470,7 @@ export default function AdminSpecialOfferPage() {
                     onClick={() => fileInputRef.current?.click()}
                     style={{
                       width: '100%',
-                      padding: '10px',
+                      padding: '8px 10px',
                       border: '1.3px solid #000',
                       borderRadius: 0,
                       background: '#fff',
@@ -477,14 +511,14 @@ export default function AdminSpecialOfferPage() {
               </div>
             </div>
 
-            {/* Save Config button below card – same style as concierge page buttons */}
+            {/* Save Config button below card – same height as concierge page buttons (py-2) */}
             <button
               type="button"
               onClick={handleSave}
               style={{
                 width: '100%',
                 marginTop: '10px',
-                padding: '12px',
+                padding: '8px 10px',
                 border: '1.3px solid #000',
                 borderRadius: 0,
                 background: saved ? '#e5e7eb' : '#fff',
@@ -496,6 +530,25 @@ export default function AdminSpecialOfferPage() {
               }}
             >
               {saved ? 'SAVED' : 'SAVE CONFIG'}
+            </button>
+            <button
+              type="button"
+              onClick={handleRandomize}
+              style={{
+                width: '100%',
+                marginTop: '8px',
+                padding: '8px 10px',
+                border: '1.3px solid #000',
+                borderRadius: 0,
+                background: '#fff',
+                fontFamily: '"Futura PT Book"',
+                fontSize: '11px',
+                color: '#EB1C24',
+                textTransform: 'uppercase',
+                cursor: 'pointer'
+              }}
+            >
+              RANDOMIZE
             </button>
           </div>
         </div>

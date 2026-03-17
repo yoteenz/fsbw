@@ -2394,15 +2394,19 @@ function ConciergePage() {
                           }}
                         />
                       </div>
-                      <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0 0 10px 0', textTransform: 'uppercase' }}>
-                        Limited-time: one random unit at $40 off with premium selections.
+                      <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0 0 10px 0', textTransform: 'uppercase', textAlign: 'center' }}>
+                        LIMITED TIME OFFER CAN NOT BE COMBINED WITH REFERRAL CODES OR DISCOUNT CODES.
+                        <br />
+                        CAN REDEEM 2 QTY OF EACH CAP SIZE.
+                        <br />
+                        VALID ONLY WHILE SUPPLIES LAST.
                       </p>
                       <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '12px' }}>
                         <div style={{ width: '72px', height: '72px', flexShrink: 0, border: '1px solid #e5e7eb', overflow: 'hidden', backgroundColor: '#f9fafb' }}>
                           <img src={specialOffer.thumbnailDataUrl || SPECIAL_OFFER_UNITS.find(u => u.id === specialOffer.unitId)?.image || '/assets/natural front.png'} alt={specialOffer.unitName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <p style={{ fontFamily: '"Futura PT Medium"', color: '#000', fontSize: '12px', margin: '0 0 4px 0', textTransform: 'uppercase' }}>{specialOffer.unitName}</p>
+                          <p style={{ fontFamily: '"Covered By Your Grace"', color: '#000', fontSize: '15px', margin: '0 0 4px 0', textTransform: 'uppercase' }}>{specialOffer.unitName}</p>
                           <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '9px', margin: '0 0 2px 0', textTransform: 'uppercase' }}>
                             {specialOffer.options.length} · {specialOffer.options.density} · {specialOffer.options.texture} · {specialOffer.options.lace} · {specialOffer.options.color}
                           </p>
@@ -2430,7 +2434,7 @@ function ConciergePage() {
                                 border: isSelected ? '1.3px solid #EB1C24' : '1.3px solid #000',
                                 backgroundColor: '#fff',
                                 fontFamily: isSelected ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                fontSize: '8px',
+                                fontSize: '10px',
                                 color: isSelected ? '#EB1C24' : '#000',
                                 textTransform: 'uppercase',
                                 cursor: 'pointer'
@@ -2480,6 +2484,25 @@ function ConciergePage() {
                       </button>
                     </div>
                   </>
+                )}
+                {showSlayAndSpecialOffer && (!specialOffer || specialOffer.expiresAt <= Date.now()) && (
+                  <div
+                    className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
+                    style={{
+                      borderWidth: '1.3px',
+                      paddingTop: '20px',
+                      paddingLeft: '20px',
+                      paddingRight: '20px',
+                      paddingBottom: '16px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.6)'
+                    }}
+                  >
+                    <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: 0, textTransform: 'uppercase', lineHeight: 1.5 }}>
+                      THERE ARE NO OFFERS AVAILABLE AT THIS TIME.
+                      <br />
+                      CHECK BACK SOON!
+                    </p>
+                  </div>
                 )}
 
                 {/* Priority Messages Section */}
@@ -4490,6 +4513,7 @@ function ConciergePage() {
                         width: '17.26px',
                         height: '17.26px',
                         objectFit: 'contain',
+                        transform: 'translateY(-1.5px)',
                         filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.1px #EB1C24) drop-shadow(0 0 0.2px #EB1C24)'
                       }}
                     />

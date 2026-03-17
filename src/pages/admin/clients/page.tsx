@@ -1243,7 +1243,7 @@ export default function AdminClients() {
       list = list.filter((u) => isClientHasSocials(u));
       list.sort((a, b) => created(b) - created(a));
     } else if (sortOption === 'Alerts') {
-      list = list.filter((u) => clientHasUnreadPriorityMessages(u));
+      list = list.filter((u) => clientHasUnreadPriorityMessages(u) || getClientRow(u, 0).newCount > 0);
       list.sort((a, b) => getLastUnreadPriorityMessageTime(b) - getLastUnreadPriorityMessageTime(a));
     } else {
       // Most recent: newest first

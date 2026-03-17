@@ -12,6 +12,8 @@ A Cursor rule (`.cursor/rules/motherboard.mdc`) is set to **always apply**, so a
 - **"Load motherboard":** Say it when you want the agent to **re-read** those files and refresh context (e.g. after you've updated the motherboard).
 - **"Add to motherboard":** The motherboard does **not** auto-capture every chat. To save a conversation (or turn on auto-add for that chat), you **must** say "add to motherboard" in that chat at least once. Current/open agents are **not** writing to the motherboard unless you've said "add to motherboard" in that specific chat.
 
+**Adding from old chats:** If you add to the motherboard from an old chat (e.g. 30 days old), that only **appends** a new entry—it does **not** overwrite or remove existing entries. The new entry is a historical record of that past conversation. For current context, agents should treat **CORE + CODEBASE + the latest MEMORY entries** as the source of truth; older MEMORY entries are timeline/history.
+
 ---
 
 ## Commands (no extra explanation needed)

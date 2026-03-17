@@ -28,6 +28,18 @@ export const STYLING_OPTIONS = [
 
 export const ADDON_OPTIONS = ['BLEACH', 'PLUCK', 'BLUNT CUT'];
 
+/** All add-on combinations for marketing dropdown: label and corresponding addOns array. */
+export const ADDON_COMBO_OPTIONS: { label: string; value: string[] }[] = [
+  { label: 'NONE', value: [] },
+  { label: 'BLEACH', value: ['BLEACH'] },
+  { label: 'PLUCK', value: ['PLUCK'] },
+  { label: 'BLUNT CUT', value: ['BLUNT CUT'] },
+  { label: 'BLEACH + PLUCK', value: ['BLEACH', 'PLUCK'] },
+  { label: 'BLEACH + BLUNT CUT', value: ['BLEACH', 'BLUNT CUT'] },
+  { label: 'PLUCK + BLUNT CUT', value: ['PLUCK', 'BLUNT CUT'] },
+  { label: 'BLEACH + PLUCK + BLUNT CUT', value: ['BLEACH', 'PLUCK', 'BLUNT CUT'] }
+];
+
 /** Blanco (straight blonde) has only these 3 colors on its color sub-page. */
 export const COLOR_OPTIONS_BLANCO = ['GOLDEN', 'PLATINUM', 'ASH'] as const;
 
