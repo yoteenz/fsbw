@@ -7,10 +7,17 @@
 const STORAGE_IS_SIGNED_IN = 'isSignedIn';
 const STORAGE_CURRENT_USER = 'currentUser';
 
-/** Allowed admin emails (case-insensitive). Add your admin email(s) here or via env. */
-const ADMIN_EMAILS_RAW = typeof process !== 'undefined' && process.env?.REACT_APP_ADMIN_EMAILS
-  ? process.env.REACT_APP_ADMIN_EMAILS
-  : '';
+/** Allowed admin emails (case-insensitive). From env REACT_APP_ADMIN_EMAILS or VITE_ADMIN_EMAILS (Vite). */
+function getAdminEmailsRaw(): string {
+  if (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_ADMIN_EMAILS) {
+    return String((import.meta as any).env.VITE_ADMIN_EMAILS).trim();
+  }
+  if (typeof process !== 'undefined' && process.env?.REACT_APP_ADMIN_EMAILS) {
+    return String(process.env.REACT_APP_ADMIN_EMAILS).trim();
+  }
+  return '';
+}
+const ADMIN_EMAILS_RAW = getAdminEmailsRaw();
 export const ADMIN_EMAILS: string[] = ADMIN_EMAILS_RAW
   ? ADMIN_EMAILS_RAW.split(',').map((e: string) => e.trim().toLowerCase()).filter(Boolean)
   : [];
@@ -28,11 +35,14 @@ export const ADMIN_KATEENA_EMAIL = 'kateena.armstrong@frontalslayer.com';
 /** Ayoteenz admin account – used for UI helpers (e.g. colored tier names on membership page). */
 export const AYOTEENZ_ADMIN_EMAIL = 'ayoteenz@yahoo.com';
 
+/** Effective list of admin emails (env list or defaults). Used for isAdminEmail and for who can access /admin/*. */
+const allowedEmails = ADMIN_EMAILS.length > 0 ? ADMIN_EMAILS : DEFAULT_ADMIN_EMAILS;
+
 /**
  * Emails that are allowed to access admin/sensitive pages (dashboard, clients, etc.).
- * ONLY these accounts may view any /admin/* route; all others are redirected (signed-in → /account, signed-out → /sign-in).
+ * When env sets admin emails, that list is used; otherwise defaults to ayoteenz only.
  */
-export const ALLOWED_ADMIN_PAGE_EMAILS: string[] = [AYOTEENZ_ADMIN_EMAIL];
+export const ALLOWED_ADMIN_PAGE_EMAILS: string[] = allowedEmails;
 
 /** True if user is the one admin Kateena account (by email only). Use for mock/premium exception only; other "Kateena Armstrong" accounts (e.g. OAuth with different email) are not included. */
 export function isAdminKateenaAccount(user: { email?: string } | null): boolean {
@@ -96,8 +106,6 @@ export function isMockDataAccount(user: { email?: string; role?: string } | null
   if (!isAyoteenzAdminAccount(user)) return false;
   return user.role === 'admin' || isAdminEmail(user.email || '');
 }
-
-const allowedEmails = ADMIN_EMAILS.length > 0 ? ADMIN_EMAILS : DEFAULT_ADMIN_EMAILS;
 
 /** Preview-only admin emails (env REACT_APP_PREVIEW_ADMIN_EMAILS). Only get admin on preview/local, never on Vercel production. */
 const PREVIEW_ADMIN_RAW = typeof process !== 'undefined' && process.env?.REACT_APP_PREVIEW_ADMIN_EMAILS

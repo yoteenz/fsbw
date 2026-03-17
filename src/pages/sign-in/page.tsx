@@ -50,7 +50,10 @@ function SignInPage() {
     return 'SHOP';
   });
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('isSignedIn') === 'true';
+  });
   const [emailError, setEmailError] = useState('');
 
   // Sign In form state
@@ -170,6 +173,17 @@ function SignInPage() {
     };
   }, []);
 
+  // If already signed in (localStorage), redirect so user is not shown the sign-in form after e.g. reopening browser
+  useEffect(() => {
+    if (localStorage.getItem('isSignedIn') !== 'true') return;
+    const returnTo = new URLSearchParams(location.search).get('returnTo');
+    const from = (location.state as { from?: string } | null)?.from;
+    if (returnTo === 'checkout') navigate('/checkout', { replace: true });
+    else if (returnTo?.startsWith('/admin')) navigate(returnTo, { replace: true });
+    else if (from?.startsWith('/account') || from?.startsWith('/wishlist')) navigate(from, { replace: true });
+    else navigate('/account', { replace: true });
+  }, [navigate, location.search, location.state]);
+
   // When Supabase is configured: restore session on load (e.g. after email confirm redirect) so user is signed in
   useEffect(() => {
     if (!isSupabaseConfigured()) return;
@@ -267,6 +281,7 @@ function SignInPage() {
     const from = (location.state as { from?: string } | null)?.from;
     if (returnTo === 'checkout') return '/checkout';
     if (returnTo?.startsWith('/admin')) return returnTo;
+    if (returnTo === 'account/settings') return '/account/settings';
     if (from?.startsWith('/account') || from?.startsWith('/wishlist')) return from;
     return '/account';
   };
@@ -276,8 +291,8 @@ function SignInPage() {
     setTimeout(() => { window.location.href = url; }, 350);
   };
 
-  /** After admin local sign-in: if a Supabase session exists for the same email, sync profile/orders/cart/wishlist from API so stored info loads. */
-  const trySyncAdminStoredInfoIfSession = async (emailNorm: string) => {
+  /** After admin local sign-in: if a Supabase session exists for the same email, sync profile/orders/cart/wishlist from API so stored info loads. Preserves local password in registeredUsers. */
+  const trySyncAdminStoredInfoIfSession = async (emailNorm: string, localPassword: string) => {
     if (!isAdminEmail(emailNorm) || !isSupabaseConfigured()) return;
     const supabase = getSupabase();
     if (!supabase) return;
@@ -285,7 +300,15 @@ function SignInPage() {
       const { data } = await supabase.auth.getSession();
       if (!data.session?.user || normalizeEmail((data.session.user as { email?: string }).email || '') !== emailNorm) return;
       const profile = await syncAllFromApi();
-      if (profile) saveCartAndWishlistToUserKeys(emailNorm);
+      if (profile) {
+        saveCartAndWishlistToUserKeys(emailNorm);
+        const registeredUsers: unknown[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+        const idx = registeredUsers.findIndex((u: unknown) => normalizeEmail((u as { email?: string }).email || '') === emailNorm);
+        if (idx !== -1 && localPassword) {
+          (registeredUsers[idx] as { password?: string }).password = localPassword;
+          localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+        }
+      }
     } catch (_) {
       // ignore
     }
@@ -417,6 +440,7 @@ function SignInPage() {
         if (signInPasswordRef.current) signInPasswordRef.current.value = '';
         setSignInEmail('');
         setSignInPassword('');
+        await trySyncAdminStoredInfoIfSession(emailNorm, passwordNorm);
         doRedirectAfterSignIn();
         return;
       }
@@ -489,6 +513,7 @@ function SignInPage() {
         if (signInPasswordRef.current) signInPasswordRef.current.value = '';
         setSignInEmail('');
         setSignInPassword('');
+        await trySyncAdminStoredInfoIfSession(emailNorm, passwordNorm);
         doRedirectAfterSignIn();
         return;
       }

@@ -2,6 +2,7 @@
  * Sync user data from the backend API into localStorage so the existing app
  * (currentUser, registeredUsers, userOrders_*, cartItems, wishlistItems) keeps working.
  * Call after Supabase sign-in or on app load when session exists.
+ * We never remove adminSubscriptionOverride or adminTierOverride (rewards/membership page); only explicit Sign Out clears auth.
  */
 import { getProfile, getOrders, getCart, getWishlist } from './api';
 import { isAdminEmail } from './adminAuth';
@@ -88,6 +89,61 @@ export async function syncAllFromApi(): Promise<Record<string, unknown> | null> 
   return profile;
 }
 
+/** Apply payload from POST /api/admin/sync-profile to localStorage (profile, orders, cart, wishlist). Preserves password in registeredUsers if provided. */
+export function applyAdminSyncPayload(
+  email: string,
+  payload: {
+    profile: Record<string, unknown> | null;
+    activeOrders: unknown[];
+    pastOrders: unknown[];
+    cart: { items: unknown[] };
+    wishlist: { items: unknown[] };
+  },
+  options?: { preservePassword?: string }
+): void {
+  const e = (email || '').trim().toLowerCase();
+  if (!e) return;
+
+  if (payload.profile && typeof payload.profile === 'object') {
+    const merged = {
+      ...payload.profile,
+      email: (payload.profile.email as string) || e,
+      role: isAdminEmail(e) ? 'admin' : (payload.profile.role as string),
+    } as Record<string, unknown>;
+    if (options?.preservePassword) merged.password = options.preservePassword;
+    localStorage.setItem('currentUser', JSON.stringify(merged));
+    const img = merged.profileImage && typeof merged.profileImage === 'string' && String(merged.profileImage).trim();
+    localStorage.setItem('profileImage', img ? String(merged.profileImage) : '/assets/profile-thumb.png');
+    const registeredUsers: unknown[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    const idx = registeredUsers.findIndex((u: unknown) => ((u as { email?: string }).email || '').toLowerCase() === e);
+    if (idx !== -1) (registeredUsers as Record<string, unknown>[])[idx] = merged;
+    else registeredUsers.push(merged);
+    localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+  }
+
+  localStorage.setItem(
+    `userOrders_${e}`,
+    JSON.stringify({
+      activeOrders: Array.isArray(payload.activeOrders) ? payload.activeOrders : [],
+      pastOrders: Array.isArray(payload.pastOrders) ? payload.pastOrders : [],
+    })
+  );
+
+  const cartItems = Array.isArray(payload.cart?.items) ? payload.cart.items : [];
+  localStorage.setItem('cartItems', JSON.stringify(cartItems));
+  localStorage.setItem('cartCount', String(cartItems.length));
+
+  const wishlistItems = Array.isArray(payload.wishlist?.items) ? payload.wishlist.items : [];
+  localStorage.setItem('wishlistItems', JSON.stringify(wishlistItems));
+
+  localStorage.setItem('isSignedIn', 'true');
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: cartItems.length }));
+    window.dispatchEvent(new CustomEvent('cartUpdated'));
+    window.dispatchEvent(new CustomEvent('wishlistUpdated'));
+  }
+}
+
 /**
  * Build minimal currentUser from Supabase session when getProfile() fails (e.g. no API or profile not ready).
  * Call after email confirm or sign-in so the user is signed in and not shown "create account on this device first".
@@ -119,6 +175,7 @@ export function buildMinimalUserFromSupabaseSession(sessionUser: { id: string; e
 /**
  * Apply minimal user to localStorage and registeredUsers so the app treats them as signed in.
  * Use when we have a Supabase session but syncProfileFromApi() failed.
+ * Does not touch adminSubscriptionOverride or adminTierOverride (rewards/membership selections).
  */
 export function applyMinimalUserToStorage(merged: Record<string, unknown>): void {
   const email = (merged.email as string) || '';

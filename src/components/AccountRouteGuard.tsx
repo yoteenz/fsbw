@@ -5,9 +5,10 @@ import { getSupabase, isSupabaseConfigured } from '../utils/supabase';
 import { syncAllFromApi, buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage, buildProfilePayloadForBackend } from '../utils/syncFromApi';
 
 /**
- * Wraps account routes. Redirects to /sign-in when not signed in.
- * If Supabase is configured, tries to recover session from URL (e.g. email confirm link) before redirecting,
- * so the user is signed in automatically when they land on /account from the confirm link.
+ * Wraps account routes. Redirects to /sign-in only when not signed in (localStorage isSignedIn/currentUser).
+ * Session persists across refresh and browser close; we never clear auth here—only explicit Sign Out does.
+ * If Supabase is configured, we try to restore session (getSession then refreshSession) so API calls work;
+ * if Supabase has no session but localStorage says signed in, we still allow access (trust localStorage).
  */
 export default function AccountRouteGuard({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -24,28 +25,35 @@ export default function AccountRouteGuard({ children }: { children: React.ReactN
       return;
     }
     let cancelled = false;
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    async function run() {
+      let { data: { session } } = await supabase.auth.getSession();
       if (cancelled) return;
+      if (!session) {
+        try {
+          const { data } = await supabase.auth.refreshSession();
+          if (data?.session) session = data.session;
+        } catch (_) {}
+        if (cancelled) return;
+      }
       if (!session) {
         setRecoveryDone(true);
         return;
       }
-      syncAllFromApi().then(async (profile) => {
-        if (cancelled) return;
-        if (profile) {
-          localStorage.setItem('isSignedIn', 'true');
-          window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
-        } else {
-          const minimal = buildMinimalUserFromSupabaseSession(session.user);
-          applyMinimalUserToStorage(minimal);
-          // Ensure backend has a profile row so user appears in admin clients list (await so it exists before navigation)
-          const { patchProfile } = await import('../utils/api');
-          await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
-          window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
-        }
-        setRecoveryDone(true);
-      });
-    });
+      const profile = await syncAllFromApi();
+      if (cancelled) return;
+      if (profile) {
+        localStorage.setItem('isSignedIn', 'true');
+        window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+      } else {
+        const minimal = buildMinimalUserFromSupabaseSession(session.user);
+        applyMinimalUserToStorage(minimal);
+        const { patchProfile } = await import('../utils/api');
+        await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
+        window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+      }
+      setRecoveryDone(true);
+    }
+    run();
     return () => { cancelled = true; };
   }, []);
 

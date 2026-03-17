@@ -4,7 +4,10 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
-import { getCurrentUser, isMockDataAccount, isAyoteenzAdminAccount } from '../../../utils/adminAuth';
+import { getCurrentUser, getEffectiveSubscriptionTier, isMockDataAccount, isAyoteenzAdminAccount } from '../../../utils/adminAuth';
+import { calculateSpecialOfferPrice } from '../../../utils/specialOfferPrice';
+import { getOptionsForUnit, type UnitId } from '../../../utils/productOptions';
+import specialOfferIconUrl from '../../../assets/special-offer2.svg?url';
 
 // Add pulsating animation style (recording indicator style)
 const pulsateStyle = `
@@ -222,7 +225,7 @@ function ConciergePage() {
     } catch (_) {}
   }, [slayChallengeTier1Progress, slayChallengeTier2Progress]);
 
-  // Special Offer: random unit of 6, random premium options, $40 off, 30-day expiration
+  // Special Offer: random unit of 6, random premium options, $40 off, 60-day period; expires Jan 1, Apr 1, Jul 1, Oct 1 (2 months run, 1 month break)
   const SPECIAL_OFFER_UNITS = [
     { id: 'noir', name: 'NOIR', route: '/straight/noir', basePrice: 740, image: '/assets/natural front.png' },
     { id: 'blanco', name: 'BLANCO', route: '/straight/blanco', basePrice: 820, image: '/assets/2D BLANCO FRONT.png' },
@@ -232,24 +235,32 @@ function ConciergePage() {
     { id: 'ocean-curl', name: 'OCEAN CURL', route: '/curly/ocean-curl', basePrice: 900, image: '/assets/natural front.png' }
   ] as const;
   const SPECIAL_OFFER_DISCOUNT = 40;
-  const SPECIAL_OFFER_DAYS = 30;
-  const PREMIUM_OPTION_SETS: Record<string, string[]> = {
-    length: ['18"', '20"', '22"', '24"'],
-    density: ['200%', '250%', '300%'],
-    texture: ['SILKY', 'BODY WAVE', 'CURLY'],
-    lace: ['13X6', '13X4', 'HD LACE'],
-    color: ['OFF BLACK', 'PLATINUM', 'HONEY BLONDE', 'BURGUNDY']
+  const SPECIAL_OFFER_DAYS = 60;
+  /** Next offer expiration: first of Jan, Apr, Jul, Oct (end of that day). */
+  const getNextSpecialOfferExpirationDate = (): Date => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const day = now.getDate();
+    const quarterMonths = [0, 3, 6, 9]; // Jan, Apr, Jul, Oct
+    for (const qm of quarterMonths) {
+      const exp = new Date(year, qm, 1, 23, 59, 59, 999);
+      if (exp.getTime() >= now.getTime()) return exp;
+    }
+    return new Date(year + 1, 0, 1, 23, 59, 59, 999); // next Jan 1
   };
   const pickRandom = <T,>(arr: readonly T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
+  const SPECIAL_OFFER_ADMIN_KEY = 'specialOfferAdminConfig';
   const [specialOffer, setSpecialOffer] = useState<{
     unitId: string;
     unitName: string;
     route: string;
     originalPrice: number;
     discountedPrice: number;
-    options: { length?: string; density?: string; texture?: string; lace?: string; color?: string };
+    options: { length?: string; density?: string; texture?: string; lace?: string; color?: string; hairline?: string; styling?: string; addOns?: string[] };
     expiresAt: number;
+    thumbnailDataUrl?: string;
   } | null>(() => {
     try {
       const raw = localStorage.getItem('specialOffer');
@@ -262,16 +273,52 @@ function ConciergePage() {
 
   useEffect(() => {
     if (specialOffer !== null && specialOffer.expiresAt > Date.now()) return;
+    try {
+      const rawAdmin = localStorage.getItem(SPECIAL_OFFER_ADMIN_KEY);
+      const adminConfig = rawAdmin ? JSON.parse(rawAdmin) : null;
+      if (adminConfig?.unitId && adminConfig?.startDate) {
+        const unit = SPECIAL_OFFER_UNITS.find((u) => u.id === adminConfig.unitId) ?? SPECIAL_OFFER_UNITS[0];
+        const startMs = new Date(adminConfig.startDate).getTime();
+        const expiresAt = startMs + SPECIAL_OFFER_DAYS * 24 * 60 * 60 * 1000;
+        if (expiresAt <= Date.now()) return; // already expired, fall through to random
+        const options = {
+          length: adminConfig.length ?? '24"',
+          density: adminConfig.density ?? '200%',
+          texture: adminConfig.texture ?? 'SILKY',
+          lace: adminConfig.lace ?? '13X6',
+          color: adminConfig.color ?? 'OFF BLACK',
+          hairline: adminConfig.hairline,
+          styling: adminConfig.styling,
+          addOns: Array.isArray(adminConfig.addOns) ? adminConfig.addOns : []
+        };
+        const originalPrice = calculateSpecialOfferPrice(unit.id, options);
+        const next = {
+          unitId: unit.id,
+          unitName: unit.name,
+          route: unit.route,
+          originalPrice,
+          discountedPrice: originalPrice - SPECIAL_OFFER_DISCOUNT,
+          options,
+          expiresAt,
+          thumbnailDataUrl: adminConfig.thumbnailDataUrl || undefined
+        };
+        setSpecialOffer(next);
+        localStorage.setItem('specialOffer', JSON.stringify(next));
+        return;
+      }
+    } catch (_) { /* fall through to random */ }
     const unit = pickRandom(SPECIAL_OFFER_UNITS);
-    const originalPrice = unit.basePrice + Math.floor(Math.random() * 80);
+    const unitOpts = getOptionsForUnit(unit.id as UnitId);
     const options = {
-      length: pickRandom(PREMIUM_OPTION_SETS.length),
-      density: pickRandom(PREMIUM_OPTION_SETS.density),
-      texture: pickRandom(PREMIUM_OPTION_SETS.texture),
-      lace: pickRandom(PREMIUM_OPTION_SETS.lace),
-      color: pickRandom(PREMIUM_OPTION_SETS.color)
+      length: pickRandom(unitOpts.length),
+      density: pickRandom(unitOpts.density),
+      texture: pickRandom(unitOpts.texture),
+      lace: pickRandom(unitOpts.lace),
+      color: pickRandom(unitOpts.color)
     };
-    const expiresAt = Date.now() + SPECIAL_OFFER_DAYS * 24 * 60 * 60 * 1000;
+    const originalPrice = calculateSpecialOfferPrice(unit.id, options);
+    const expirationDate = getNextSpecialOfferExpirationDate();
+    const expiresAt = expirationDate.getTime();
     const next = {
       unitId: unit.id,
       unitName: unit.name,
@@ -287,12 +334,100 @@ function ConciergePage() {
     } catch (_) {}
   }, []);
 
+  const specialOfferExpiresOnLabel = specialOffer
+    ? (() => {
+        const d = new Date(specialOffer.expiresAt);
+        const month = d.toLocaleDateString('en-US', { month: 'short' });
+        const day = d.getDate();
+        return `${month} ${day}`;
+      })()
+    : '';
+  const specialOfferProgress = specialOffer
+    ? (() => {
+        const periodMs = SPECIAL_OFFER_DAYS * 24 * 60 * 60 * 1000;
+        const startAt = specialOffer.expiresAt - periodMs;
+        return Math.min(1, Math.max(0, (Date.now() - startAt) / periodMs));
+      })()
+    : 0;
   const specialOfferDaysLeft = specialOffer
     ? Math.max(0, Math.ceil((specialOffer.expiresAt - Date.now()) / (24 * 60 * 60 * 1000)))
     : 0;
-  const specialOfferProgress = specialOffer
-    ? 1 - (specialOffer.expiresAt - Date.now()) / (SPECIAL_OFFER_DAYS * 24 * 60 * 60 * 1000)
-    : 0;
+
+  const [specialOfferCapSize, setSpecialOfferCapSize] = useState('M');
+  const SPECIAL_OFFER_CAP_SIZES = ['XS', 'S', 'M', 'L'] as const;
+
+  const SPECIAL_OFFER_MAX_QUANTITY = 2;
+
+  const handleClaimSpecialOffer = () => {
+    if (!specialOffer) return;
+    try {
+      const unit = SPECIAL_OFFER_UNITS.find((u) => u.id === specialOffer.unitId);
+      const image = unit?.image ?? '/assets/natural front.png';
+      const length = specialOffer.options?.length ?? '24"';
+      const density = specialOffer.options?.density ?? '200%';
+      const texture = specialOffer.options?.texture ?? 'SILKY';
+      const lace = specialOffer.options?.lace ?? '13X6';
+      const color = specialOffer.options?.color ?? 'OFF BLACK';
+      const hairline = specialOffer.options?.hairline ?? 'NATURAL';
+      const styling = specialOffer.options?.styling ?? 'NONE';
+      const addOns = Array.isArray(specialOffer.options?.addOns) ? specialOffer.options.addOns : [];
+
+      const stored = localStorage.getItem('cartItems');
+      const cartItems: any[] = stored ? JSON.parse(stored) : [];
+
+      const isSameSpecialOffer = (item: any) =>
+        item.isSpecialOffer &&
+        item.name === specialOffer.unitName &&
+        item.capSize === specialOfferCapSize &&
+        (item.length ?? '24"') === length &&
+        (item.density ?? '200%') === density &&
+        (item.texture ?? 'SILKY') === texture &&
+        (item.lace ?? '13X6') === lace &&
+        (item.color ?? 'OFF BLACK') === color &&
+        (item.hairline ?? 'NATURAL') === hairline &&
+        (item.styling ?? 'NONE') === styling &&
+        JSON.stringify(item.addOns || []) === JSON.stringify(addOns);
+
+      const existingIndex = cartItems.findIndex(isSameSpecialOffer);
+      let updated: any[];
+
+      if (existingIndex >= 0) {
+        const existing = cartItems[existingIndex];
+        const currentQty = existing.quantity ?? 1;
+        if (currentQty >= SPECIAL_OFFER_MAX_QUANTITY) return;
+        updated = cartItems.slice();
+        updated[existingIndex] = { ...existing, quantity: currentQty + 1 };
+      } else {
+        const cartItem = {
+          id: `special-offer-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+          name: specialOffer.unitName,
+          price: specialOffer.discountedPrice,
+          quantity: 1,
+          image,
+          capSize: specialOfferCapSize,
+          length,
+          density,
+          texture,
+          lace,
+          color,
+          hairline,
+          styling,
+          addOns,
+          isSpecialOffer: true
+        };
+        updated = [cartItem, ...cartItems];
+      }
+
+      localStorage.setItem('cartItems', JSON.stringify(updated));
+      const newCount = updated.length;
+      localStorage.setItem('cartCount', String(newCount));
+      setCartCount(newCount);
+      window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+      window.dispatchEvent(new Event('cartUpdated'));
+    } catch (e) {
+      console.error('Error adding special offer to cart:', e);
+    }
+  };
 
   // Check if user is eligible for birthday gift (within 12 months of premium membership start)
   const isEligibleForBirthdayGift = () => {
@@ -328,6 +463,9 @@ function ConciergePage() {
   
   // Admin (mock-data) account only – gets test orders; all others start with no orders
   const isMockOrdersAccount = () => isMockDataAccount(getCurrentUser());
+  // Special Offer & Slay Challenge: only for 6-month or 12-month premium (not 3-month)
+  const effectiveSubscriptionTier = getEffectiveSubscriptionTier(getCurrentUser());
+  const showSlayAndSpecialOffer = effectiveSubscriptionTier === '6months' || effectiveSubscriptionTier === '12months';
   
   // Order tracking state
   const [selectedOrderId, setSelectedOrderId] = useState<string>('');
@@ -2221,6 +2359,130 @@ function ConciergePage() {
             ) : (
               /* CONCIERGE CONTENT */
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                {/* Special Offer Section - 6 & 12 month premium only; above Priority Messages */}
+                {showSlayAndSpecialOffer && specialOffer && specialOffer.expiresAt > Date.now() && (
+                  <>
+                    <div
+                      className="border border-black bg-white/60 backdrop-blur-sm w-full mb-0 transition-all duration-300 ease-out"
+                      style={{
+                        borderWidth: '1.3px',
+                        paddingTop: '20px',
+                        paddingLeft: '20px',
+                        paddingRight: '20px',
+                        paddingBottom: '16px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.6)'
+                      }}
+                    >
+                      <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '14px' }}>
+                        <h2
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            color: '#EB1C24',
+                            fontSize: '12px',
+                            fontWeight: '500',
+                            margin: '0',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          SPECIAL OFFER
+                        </h2>
+                        <img
+                          src={specialOfferIconUrl}
+                          alt="Special Offer"
+                          style={{
+                            width: '17.76px',
+                            height: '17.76px',
+                            objectFit: 'contain'
+                          }}
+                        />
+                      </div>
+                      <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0 0 10px 0', textTransform: 'uppercase' }}>
+                        Limited-time: one random unit at $40 off with premium selections.
+                      </p>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '12px' }}>
+                        <div style={{ width: '72px', height: '72px', flexShrink: 0, border: '1px solid #e5e7eb', overflow: 'hidden', backgroundColor: '#f9fafb' }}>
+                          <img src={specialOffer.thumbnailDataUrl || SPECIAL_OFFER_UNITS.find(u => u.id === specialOffer.unitId)?.image || '/assets/natural front.png'} alt={specialOffer.unitName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontFamily: '"Futura PT Medium"', color: '#000', fontSize: '12px', margin: '0 0 4px 0', textTransform: 'uppercase' }}>{specialOffer.unitName}</p>
+                          <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '9px', margin: '0 0 2px 0', textTransform: 'uppercase' }}>
+                            {specialOffer.options.length} · {specialOffer.options.density} · {specialOffer.options.texture} · {specialOffer.options.lace} · {specialOffer.options.color}
+                          </p>
+                          <p style={{ margin: '4px 0 0 0', fontSize: '11px' }}>
+                            <span style={{ fontFamily: '"Futura PT Book"', color: '#999', textDecoration: 'line-through' }}>${specialOffer.originalPrice}</span>
+                            <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', marginLeft: '8px' }}>${specialOffer.discountedPrice}</span>
+                            <span style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', marginLeft: '4px' }}>($40 OFF)</span>
+                          </p>
+                        </div>
+                      </div>
+                      {/* Cap size selection (custom sizes only; single row) */}
+                      <div style={{ display: 'flex', gap: '6px', marginBottom: '12px', flexWrap: 'nowrap' }}>
+                        {SPECIAL_OFFER_CAP_SIZES.map((size) => {
+                          const isSelected = specialOfferCapSize === size;
+                          return (
+                            <button
+                              key={size}
+                              type="button"
+                              onClick={() => setSpecialOfferCapSize(size)}
+                              style={{
+                                flex: 1,
+                                minWidth: 0,
+                                padding: '3px 2px',
+                                border: isSelected ? '1.3px solid #EB1C24' : '1.3px solid #000',
+                                backgroundColor: '#fff',
+                                fontFamily: isSelected ? '"Futura PT Medium"' : '"Futura PT Book"',
+                                fontSize: '5px',
+                                color: isSelected ? '#EB1C24' : '#000',
+                                textTransform: 'uppercase',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              {size}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {/* 60-day period; expires Jan 1, Apr 1, Jul 1, Oct 1 */}
+                      <div style={{ paddingTop: '12px', marginTop: '4px', borderTop: '1px solid #e5e7eb' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
+                          <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
+                            Offer expires on {specialOfferExpiresOnLabel}
+                          </p>
+                          <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
+                            <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{specialOfferDaysLeft}</span> days remaining
+                          </p>
+                        </div>
+                        <div style={{ height: '6px', backgroundColor: '#e5e7eb', borderRadius: '3px', overflow: 'hidden' }}>
+                          <div
+                            style={{
+                              height: '100%',
+                              width: `${Math.min(100, Math.max(0, specialOfferProgress * 100))}%`,
+                              backgroundColor: '#EB1C24',
+                              borderRadius: '3px',
+                              transition: 'width 0.3s ease'
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="px-0 md:px-0" style={{ marginTop: '10px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
+                      <button
+                        type="button"
+                        onClick={handleClaimSpecialOffer}
+                        className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                        style={{
+                          borderWidth: '1.3px',
+                          color: '#EB1C24',
+                          fontFamily: '"Futura PT Medium"',
+                          backgroundColor: '#FFFFFF'
+                        }}
+                      >
+                        CLAIM OFFER
+                      </button>
+                    </div>
+                  </>
+                )}
+
                 {/* Priority Messages Section */}
                 <div
                   className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
@@ -4195,11 +4457,13 @@ function ConciergePage() {
                   </button>
                 </div>
 
-                {/* Slay Challenge Section - red header, gray border, icon */}
+                {/* Slay Challenge Section - 6 & 12 month premium only */}
+                {showSlayAndSpecialOffer && (
+                <>
                 <div
-                  className="bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
+                  className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
                   style={{
-                    border: '1.3px solid #9ca3af',
+                    borderWidth: '1.3px',
                     paddingTop: '20px',
                     paddingLeft: '20px',
                     paddingRight: '20px',
@@ -4220,11 +4484,16 @@ function ConciergePage() {
                     >
                       SLAY CHALLENGE
                     </h2>
-                    <span style={{ display: 'flex', alignItems: 'center' }} aria-hidden>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }}>
-                        <path d="M12 2L13.5 8.5L20 10L14 14L15.5 22L12 18L8.5 22L10 14L4 10L10.5 8.5L12 2Z" fill="currentColor"/>
-                      </svg>
-                    </span>
+                    <img
+                      src="/assets/challenge-icon.svg"
+                      alt="Slay Challenge"
+                      style={{
+                        width: '17.26px',
+                        height: '17.26px',
+                        objectFit: 'contain',
+                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.1px #EB1C24) drop-shadow(0 0 0.2px #EB1C24)'
+                      }}
+                    />
                   </div>
                   {isSlayChallengeAdmin && (
                     <div style={{ marginBottom: '12px' }}>
@@ -4336,24 +4605,6 @@ function ConciergePage() {
                           1K LOYALTY PTS
                         </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={handleSlayChallengeConfirmSelection}
-                        disabled={!slayChallengeTier1Reward || !slayChallengeTier2Reward}
-                        style={{
-                          width: '100%',
-                          padding: '10px',
-                          border: '1.3px solid #000',
-                          background: (!slayChallengeTier1Reward || !slayChallengeTier2Reward) ? '#e5e7eb' : '#FFF',
-                          fontFamily: '"Futura PT Medium"',
-                          fontSize: '11px',
-                          color: '#EB1C24',
-                          textTransform: 'uppercase',
-                          cursor: (!slayChallengeTier1Reward || !slayChallengeTier2Reward) ? 'not-allowed' : 'pointer'
-                        }}
-                      >
-                        START CHALLENGE
-                      </button>
                     </>
                   )}
                   {effectiveInSelectionWindow && effectiveHasSelectedForNext && (
@@ -4401,103 +4652,26 @@ function ConciergePage() {
                     </p>
                   )}
                 </div>
+                {effectiveInSelectionWindow && !effectiveHasSelectedForNext && (
+                  <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
+                    <button
+                      type="button"
+                      onClick={handleSlayChallengeConfirmSelection}
+                      disabled={!slayChallengeTier1Reward || !slayChallengeTier2Reward}
+                      className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                      style={{
+                        borderWidth: '1.3px',
+                        color: '#EB1C24',
+                        fontFamily: '"Futura PT Medium"',
+                        backgroundColor: (!slayChallengeTier1Reward || !slayChallengeTier2Reward) ? '#e5e7eb' : '#FFFFFF'
+                      }}
+                    >
+                      START CHALLENGE
+                    </button>
+                  </div>
+                )}
 
-                {/* Special Offer Section - red header, gray border, icon; 30-day countdown below */}
-                {specialOffer && specialOffer.expiresAt > Date.now() && (
-                  <>
-                    <div
-                      className="bg-white/60 backdrop-blur-sm w-full mb-0 transition-all duration-300 ease-out"
-                      style={{
-                        border: '1.3px solid #9ca3af',
-                        paddingTop: '20px',
-                        paddingLeft: '20px',
-                        paddingRight: '20px',
-                        paddingBottom: '16px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.6)'
-                      }}
-                    >
-                      <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '14px' }}>
-                        <h2
-                          style={{
-                            fontFamily: '"Futura PT Medium"',
-                            color: '#EB1C24',
-                            fontSize: '12px',
-                            fontWeight: '500',
-                            margin: '0',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          SPECIAL OFFER
-                        </h2>
-                        <span style={{ display: 'flex', alignItems: 'center' }} aria-hidden>
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }}>
-                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor"/>
-                          </svg>
-                        </span>
-                      </div>
-                      <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0 0 10px 0', textTransform: 'uppercase' }}>
-                        Limited-time: one random unit at $40 off with premium selections.
-                      </p>
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '12px' }}>
-                        <div style={{ width: '72px', height: '72px', flexShrink: 0, border: '1px solid #e5e7eb', overflow: 'hidden', backgroundColor: '#f9fafb' }}>
-                          <img src={SPECIAL_OFFER_UNITS.find(u => u.id === specialOffer.unitId)?.image || '/assets/natural front.png'} alt={specialOffer.unitName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <p style={{ fontFamily: '"Futura PT Medium"', color: '#000', fontSize: '12px', margin: '0 0 4px 0', textTransform: 'uppercase' }}>{specialOffer.unitName}</p>
-                          <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '9px', margin: '0 0 2px 0', textTransform: 'uppercase' }}>
-                            {specialOffer.options.length} · {specialOffer.options.density} · {specialOffer.options.texture} · {specialOffer.options.lace} · {specialOffer.options.color}
-                          </p>
-                          <p style={{ margin: '4px 0 0 0', fontSize: '11px' }}>
-                            <span style={{ fontFamily: '"Futura PT Book"', color: '#999', textDecoration: 'line-through' }}>${specialOffer.originalPrice}</span>
-                            <span style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', marginLeft: '8px' }}>${specialOffer.discountedPrice}</span>
-                            <span style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', marginLeft: '4px' }}>($40 OFF)</span>
-                          </p>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => navigate(specialOffer.route)}
-                        style={{
-                          width: '100%',
-                          padding: '10px',
-                          border: '1.3px solid #000',
-                          background: '#FFF',
-                          fontFamily: '"Futura PT Medium"',
-                          fontSize: '11px',
-                          color: '#EB1C24',
-                          textTransform: 'uppercase',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        CLAIM OFFER
-                      </button>
-                    </div>
-                    {/* 30-day expiration countdown tracker / loader */}
-                    <div
-                      className="bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
-                      style={{
-                        border: '1.3px solid #9ca3af',
-                        borderTop: 'none',
-                        padding: '10px 20px 14px',
-                        backgroundColor: 'rgba(249, 250, 251, 0.8)'
-                      }}
-                    >
-                      <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
-                        Offer expires in {specialOfferDaysLeft} days
-                      </p>
-                      <div style={{ height: '6px', backgroundColor: '#e5e7eb', borderRadius: '3px', overflow: 'hidden' }}>
-                        <div
-                          style={{
-                            height: '100%',
-                            width: `${Math.min(100, Math.max(0, specialOfferProgress * 100))}%`,
-                            backgroundColor: '#EB1C24',
-                            borderRadius: '3px',
-                            transition: 'width 0.3s ease'
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </>
+                </>
                 )}
 
                 {/* Free Gift Section */}

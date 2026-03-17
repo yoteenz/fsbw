@@ -9,6 +9,11 @@ import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '..
 import { patchProfile, deleteAccount } from '../../../utils/api';
 import { trackActivity } from '../../../utils/activity';
 import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
+import { getCurrentUser, isAdminUser } from '../../../utils/adminAuth';
+import { syncAllFromApi, applyAdminSyncPayload } from '../../../utils/syncFromApi';
+import { saveCartAndWishlistToUserKeys } from '../../../utils/cartWishlistStorage';
+import { normalizeEmail } from '../../../utils/credentialNormalize';
+import { syncProfileWithPassword } from '../../../utils/api';
 
 const inputBaseStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Demi"',
@@ -137,6 +142,8 @@ function SettingsPage() {
   const [resetPasswordError, setResetPasswordError] = useState('');
   const [showDeleteAccountConfirm, setShowDeleteAccountConfirm] = useState(false);
   const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
+  const [syncAccountMessage, setSyncAccountMessage] = useState<string | null>(null);
+  const [syncAccountLoading, setSyncAccountLoading] = useState(false);
 
   const socialPrefixes: Record<string, string> = {
     facebook: 'FACEBOOK.COM/',
@@ -331,6 +338,72 @@ function SettingsPage() {
         displayMsg = msg || 'Could not delete account. Try again.';
       }
       setDeleteAccountError(displayMsg);
+    }
+  };
+
+  const handleSyncAccount = async () => {
+    setSyncAccountMessage(null);
+    setSyncAccountLoading(true);
+    try {
+      const email = (userData?.email || '').trim().toLowerCase();
+      if (!email || !isSupabaseConfigured()) {
+        setSyncAccountMessage('Sync not available.');
+        return;
+      }
+      const supabase = getSupabase();
+      if (!supabase) {
+        setSyncAccountMessage('Sync not available.');
+        return;
+      }
+      const { data } = await supabase.auth.getSession();
+      const hasSession = data.session?.user && normalizeEmail((data.session.user as { email?: string }).email || '') === normalizeEmail(email);
+
+      if (hasSession) {
+        const profile = await syncAllFromApi();
+        if (profile) {
+          saveCartAndWishlistToUserKeys(email);
+          const localPassword = userData?.password;
+          if (localPassword) {
+            const registeredUsers: unknown[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const idx = registeredUsers.findIndex((u: unknown) => normalizeEmail((u as { email?: string }).email || '') === normalizeEmail(email));
+            if (idx !== -1) {
+              (registeredUsers[idx] as { password?: string }).password = localPassword;
+              localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+            }
+          }
+          const updated = localStorage.getItem('currentUser');
+          if (updated) setUserData(JSON.parse(updated));
+          setSyncAccountMessage('Account synced. Profile, orders, cart, and wishlist updated.');
+          window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+        } else {
+          setSyncAccountMessage('Could not load profile from server.');
+        }
+        return;
+      }
+
+      const localPassword = userData?.password;
+      if (localPassword) {
+        const payload = await syncProfileWithPassword(email, localPassword);
+        applyAdminSyncPayload(email, payload, { preservePassword: localPassword });
+        saveCartAndWishlistToUserKeys(email);
+        const updated = localStorage.getItem('currentUser');
+        if (updated) setUserData(JSON.parse(updated));
+        setSyncAccountMessage('Account synced. Profile, orders, cart, and wishlist updated.');
+        window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+        return;
+      }
+
+      setSyncAccountMessage('no_session');
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      const isNetwork = /load failed|failed to fetch|network|request failed|sync request failed/i.test(msg);
+      setSyncAccountMessage(
+        isNetwork
+          ? 'Sync request failed. Check your connection and that the app is deployed, then try again.'
+          : msg || 'Sync failed.'
+      );
+    } finally {
+      setSyncAccountLoading(false);
     }
   };
 
@@ -1099,6 +1172,48 @@ function SettingsPage() {
                   </button>
                 </div>
               </div>
+
+              {/* Admin: Sync my account - pull profile/orders/cart/wishlist from backend (any admin in admin list) */}
+              {isAdminUser() && (
+                <div className="px-0 md:px-0" style={{ marginTop: '-4px', marginBottom: '16px' }}>
+                  {syncAccountMessage && (
+                    <div className="mb-2">
+                      <p className="text-xs font-futura" style={{ textTransform: 'uppercase', color: syncAccountMessage === 'Account synced. Profile, orders, cart, and wishlist updated.' ? '#15803d' : '#666' }}>
+                        {syncAccountMessage === 'no_session'
+                          ? 'No Supabase session — sync needs one sign-in with your Supabase password. Use the link below, sign in with the same email + Supabase password, then come back here and click Sync again.'
+                          : syncAccountMessage}
+                      </p>
+                      {syncAccountMessage === 'no_session' && (
+                        <button
+                          type="button"
+                          onClick={() => navigate('/sign-in?returnTo=account/settings')}
+                          className="text-xs font-futura mt-1 underline cursor-pointer bg-transparent border-none p-0"
+                          style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', textTransform: 'uppercase' }}
+                        >
+                          Go to sign-in →
+                        </button>
+                      )}
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleSyncAccount}
+                    disabled={syncAccountLoading}
+                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{
+                      borderWidth: '1.3px',
+                      color: '#EB1C24',
+                      fontFamily: '"Futura PT Medium"',
+                      backgroundColor: '#FFFFFF'
+                    }}
+                  >
+                    {syncAccountLoading ? 'SYNCING…' : 'SYNC MY ACCOUNT'}
+                  </button>
+                  <p className="text-[10px] font-futura mt-1" style={{ color: '#888', textTransform: 'uppercase' }}>
+                    Sync uses your Supabase password (the one for sign-in with email/password). If sync fails, set your local password to match Supabase, or sign in with Supabase once.
+                  </p>
+                </div>
+              )}
 
               {/* Delete Account - below main card, matches account profile sign out button */}
               <div className="px-0 md:px-0" style={{ marginTop: '-4px', marginBottom: '20px' }}>

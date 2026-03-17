@@ -281,9 +281,9 @@ function CheckoutPage() {
     });
   }, [cartItems]);
 
-  // Voucher applicability: only when the selection is an upgrade (add-on price > 0). Excludes options like "Golden" that cost less than/default.
+  // Voucher applicability: only when the selection is an upgrade (add-on price > 0). Excludes special offer items (cannot combine with vouchers).
   const cartVoucherApplicability = useMemo(() => {
-    const isPhysical = (item: any) => item.name !== 'GIFT CARD' && item.type !== 'gift-card' && item.type !== 'digital';
+    const isPhysical = (item: any) => item.name !== 'GIFT CARD' && item.type !== 'gift-card' && item.type !== 'digital' && !item.isSpecialOffer;
     const out: Record<string, boolean> = {};
     Object.keys(VOUCHER_TYPE_CONFIG).forEach((type) => {
       out[type] = cartItems.some((item) => {
@@ -370,6 +370,22 @@ function CheckoutPage() {
   useEffect(() => {
     loadCartItems();
   }, [location.pathname]);
+
+  // Special offer: when cart has ONLY special offer items, clear codes and show message; when mixed, codes apply only to non–special-offer amount
+  const hasSpecialOfferInCart = cartItems.some((item: any) => item.isSpecialOffer);
+  const hasOnlySpecialOfferInCart = hasSpecialOfferInCart && cartItems.length > 0 && cartItems.every((item: any) => item.isSpecialOffer);
+  useEffect(() => {
+    if (hasOnlySpecialOfferInCart) {
+      setAppliedReferralCode('');
+      setReferralDiscount(0);
+      setAppliedDiscount(0);
+      setDiscountCode('');
+      setDiscountCodeDisplay('');
+      setDiscountCodeError('SPECIAL OFFERS CAN\'T BE COMBINED WITH DISCOUNT CODES, GIFT CARDS OR REFERRAL CODES.');
+    } else {
+      setDiscountCodeError((prev) => (prev === 'SPECIAL OFFERS CAN\'T BE COMBINED WITH DISCOUNT CODES, GIFT CARDS OR REFERRAL CODES.' ? '' : prev));
+    }
+  }, [hasOnlySpecialOfferInCart]);
 
   // Listen for cart count changes
   useEffect(() => {
@@ -1096,6 +1112,8 @@ function CheckoutPage() {
 
   // Calculate order totals
   const orderAmount = cartItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
+  const orderAmountExcludingSpecialOffer = cartItems.reduce((sum, item) =>
+    item.isSpecialOffer ? sum : sum + (item.price || 0) * (item.quantity || 1), 0);
   
   // Calculate taxable amount (exclude gift cards and digital items)
   const taxableAmount = cartItems.reduce((sum, item) => {
@@ -1161,14 +1179,15 @@ function CheckoutPage() {
       return;
     }
     const protectionFeeForDiscount = packageProtection ? calculateProtectionFee(orderAmount) : 0;
-    const maxDiscountable = orderAmount + taxesProcessing + shippingHandling + (selectedProcessing === 'rush' ? 100 : 0) + protectionFeeForDiscount;
+    const baseForGiftCard = (hasSpecialOfferInCart && !hasOnlySpecialOfferInCart) ? orderAmountExcludingSpecialOffer : orderAmount;
+    const maxDiscountable = baseForGiftCard + taxesProcessing + shippingHandling + (selectedProcessing === 'rush' ? 100 : 0) + protectionFeeForDiscount;
     const cappedBalance = Math.min(giftCardBalance, maxDiscountable);
     if (userSelectedDigitalCashRef.current !== null) {
       setAppliedGiftCardBalance(Math.min(userSelectedDigitalCashRef.current, cappedBalance));
     } else {
       setAppliedGiftCardBalance(cappedBalance);
     }
-  }, [giftCardBalance, orderAmount, taxesProcessing, shippingHandling, selectedProcessing, packageProtection, isSubscriptionUpgrade, appliedReferralCode, appliedDiscount]);
+  }, [giftCardBalance, orderAmount, orderAmountExcludingSpecialOffer, hasSpecialOfferInCart, hasOnlySpecialOfferInCart, taxesProcessing, shippingHandling, selectedProcessing, packageProtection, isSubscriptionUpgrade, appliedReferralCode, appliedDiscount]);
   
   // Check if code is a referral code (matches referralCode or referralNumber so admin-created codes work)
   const isReferralCode = (code: string): boolean => {
@@ -1258,6 +1277,12 @@ function CheckoutPage() {
       setAppliedDiscount(0);
       setAppliedReferralCode('');
       setReferralDiscount(0);
+      return;
+    }
+    
+    // When cart contains only special offer items, codes cannot be applied
+    if (hasOnlySpecialOfferInCart) {
+      setDiscountCodeError('SPECIAL OFFERS CAN\'T BE COMBINED WITH DISCOUNT CODES, GIFT CARDS OR REFERRAL CODES.');
       return;
     }
     
@@ -1401,7 +1426,7 @@ function CheckoutPage() {
     const normalized: Record<string, number> = {};
     const firstWithQty = Object.keys(VOUCHER_TYPE_CONFIG).find((type) => (appliedVoucherQuantities[type] || 0) > 0);
     Object.keys(VOUCHER_TYPE_CONFIG).forEach((type) => { normalized[type] = type === firstWithQty ? Math.min(1, appliedVoucherQuantities[type] || 0) : 0; });
-    const isPhysical = (item: any) => item.name !== 'GIFT CARD' && item.type !== 'gift-card' && item.type !== 'digital';
+    const isPhysical = (item: any) => item.name !== 'GIFT CARD' && item.type !== 'gift-card' && item.type !== 'digital' && !item.isSpecialOffer;
     let total = 0;
     Object.keys(VOUCHER_TYPE_CONFIG).forEach((type) => {
       const vouchersToUse = normalized[type] || 0;
@@ -1423,7 +1448,18 @@ function CheckoutPage() {
     });
     return total;
   }, [voucherLineApplicable, appliedVoucherQuantities, cartItems]);
-  const totalDiscount = discount + referralDiscount + giftCardDiscount + voucherDiscount;
+  // When cart has special offer + other items, discount/referral/gift card apply only to the non–special-offer amount
+  const { effectiveDiscount, effectiveReferralDiscount, effectiveGiftCardDiscount } = useMemo(() => {
+    if (!hasSpecialOfferInCart || hasOnlySpecialOfferInCart) {
+      return { effectiveDiscount: discount, effectiveReferralDiscount: referralDiscount, effectiveGiftCardDiscount: giftCardDiscount };
+    }
+    const eligible = orderAmountExcludingSpecialOffer;
+    const d = Math.min(discount, eligible);
+    const r = Math.min(referralDiscount, Math.max(0, eligible - d));
+    const g = Math.min(giftCardDiscount, Math.max(0, eligible - d - r));
+    return { effectiveDiscount: d, effectiveReferralDiscount: r, effectiveGiftCardDiscount: g };
+  }, [hasSpecialOfferInCart, hasOnlySpecialOfferInCart, orderAmountExcludingSpecialOffer, discount, referralDiscount, giftCardDiscount]);
+  const totalDiscount = effectiveDiscount + effectiveReferralDiscount + effectiveGiftCardDiscount + voucherDiscount;
   const rushProcessing = selectedProcessing === 'rush' ? 120 : 0;
   // Always calculate the protection fee amount (for display), but only add to total if selected
   const protectionFeeAmount = calculateProtectionFee(orderAmount);
@@ -4487,10 +4523,11 @@ function CheckoutPage() {
                         {(() => {
                           const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
                           const symbol = currency.symbol.replace(/&#36;/g, '$').replace(/&euro;/g, '€').replace(/&pound;/g, '£').replace(/&yen;/g, '¥').replace(/&#8377;/g, '₹');
-                          if (appliedGiftCardBalance <= 0) {
+                          const amountToShow = hasSpecialOfferInCart ? effectiveGiftCardDiscount : appliedGiftCardBalance;
+                          if (amountToShow <= 0) {
                             return `(${symbol}0)`;
                           }
-                          const convertedAmount = appliedGiftCardBalance * currency.rate;
+                          const convertedAmount = amountToShow * currency.rate;
                           const wholeAmount = Math.round(convertedAmount);
                           return `(-${symbol}${wholeAmount.toLocaleString('en-US')})`;
                         })()}
@@ -4556,7 +4593,7 @@ function CheckoutPage() {
                       <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '11px', color: '#808080' }}>
                         DISCOUNT: REFERRAL CODE {appliedReferralCode}
                       </span>
-                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(referralDiscount)}></span>
+                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(effectiveReferralDiscount)}></span>
                     </div>
                     )}
                     {discount > 0 && (
@@ -4564,7 +4601,7 @@ function CheckoutPage() {
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
                         DISCOUNT: <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080' }}>{discountCode.toUpperCase()}</span>
                       </span>
-                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(discount)}></span>
+                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(effectiveDiscount)}></span>
                     </div>
                     )}
                     <div style={{ borderTop: '1.3px solid #000000', marginTop: '8px', paddingTop: '8px', display: 'flex', justifyContent: 'space-between' }}>

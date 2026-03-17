@@ -1108,7 +1108,7 @@ function AccountPage() {
   const getDefaultCardOrder = (): Array<{ title: string; subtitle: string; route: string | null }> => {
     const userMembershipType = userData?.membershipType || membershipType;
     const isPremium = userMembershipType === 'PREMIUM' || userMembershipType === 'Premium';
-    const showConcierge = isPremium; // Concierge is only for premium members, not standard
+    const showConcierge = isPremium || isAyoteenzAdminAccount(userData); // Premium members + ayoteenz admin (for testing)
     const defaultCards: Array<{ title: string; subtitle: string; route: string | null }> = [];
 
     let referralInvitesUsed = 0;

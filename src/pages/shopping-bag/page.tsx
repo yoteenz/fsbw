@@ -116,7 +116,17 @@ function ShoppingBagPage() {
       if (stored) {
         const items = JSON.parse(stored);
         if (Array.isArray(items)) {
-          setCartItems(items);
+          const clamped = items.map((i: any) =>
+            i.isSpecialOffer && (i.quantity ?? 1) > 2 ? { ...i, quantity: 2 } : i
+          );
+          const cartChanged = items.some((i: any, idx: number) => (i.quantity ?? 1) !== (clamped[idx].quantity ?? 1));
+          if (cartChanged) {
+            localStorage.setItem('cartItems', JSON.stringify(clamped));
+            const newCount = clamped.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
+            localStorage.setItem('cartCount', String(newCount));
+            window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+          }
+          setCartItems(clamped);
         }
       }
     } catch (e) {
@@ -131,7 +141,14 @@ function ShoppingBagPage() {
       if (stored) {
         const items = JSON.parse(stored);
         if (Array.isArray(items)) {
-          setSavedForLater(items);
+          const clamped = items.map((i: any) =>
+            i.isSpecialOffer && (i.quantity ?? 1) > 2 ? { ...i, quantity: 2 } : i
+          );
+          const savedChanged = items.some((i: any, idx: number) => (i.quantity ?? 1) !== (clamped[idx].quantity ?? 1));
+          if (savedChanged) {
+            localStorage.setItem('savedForLater', JSON.stringify(clamped));
+          }
+          setSavedForLater(clamped);
         }
       }
     } catch (e) {
@@ -271,7 +288,7 @@ function ShoppingBagPage() {
     try {
       const currentItem = cartItems.find(i => i.id === itemId);
       if (!currentItem) return;
-      
+      const maxQty = currentItem.isSpecialOffer ? 2 : 10;
       const currentQty = currentItem.quantity ?? 0;
       const newQty = currentQty + delta;
       
@@ -288,7 +305,7 @@ function ShoppingBagPage() {
       
       const newItems = cartItems.map(i => {
         if (i.id === itemId) {
-          return { ...i, quantity: Math.max(0, Math.min(10, newQty)) };
+          return { ...i, quantity: Math.max(0, Math.min(maxQty, newQty)) };
         }
         return i;
       });
@@ -426,7 +443,7 @@ function ShoppingBagPage() {
     try {
       const currentItem = savedForLater.find(i => i.id === itemId);
       if (!currentItem) return;
-      
+      const maxQty = currentItem.isSpecialOffer ? 2 : 10;
       const currentQty = currentItem.quantity ?? 0;
       const newQty = currentQty + delta;
       
@@ -443,7 +460,7 @@ function ShoppingBagPage() {
       
       const newSavedForLater = savedForLater.map(i => {
         if (i.id === itemId) {
-          return { ...i, quantity: Math.max(0, Math.min(10, newQty)) };
+          return { ...i, quantity: Math.max(0, Math.min(maxQty, newQty)) };
         }
         return i;
       });
@@ -1393,8 +1410,8 @@ function ShoppingBagPage() {
                                 </div>
                                 <button 
                                   onClick={() => handleQuantityChange(itemId, 1)}
-                                  disabled={itemQuantity >= 10}
-                                  className={`px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-plus-btn flex items-center justify-center ${itemQuantity >= 10 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                  disabled={itemQuantity >= (item.isSpecialOffer ? 2 : 10)}
+                                  className={`px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-plus-btn flex items-center justify-center ${itemQuantity >= (item.isSpecialOffer ? 2 : 10) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                                   style={{ 
                                     borderTop: '1.3px solid black !important',
                                     borderRight: '1.3px solid black !important',
@@ -1862,8 +1879,8 @@ function ShoppingBagPage() {
                              </div>
                              <button 
                                onClick={() => handleSavedQuantityChange(itemId, 1)}
-                               disabled={itemQuantity >= 10}
-                               className={`px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-plus-btn flex items-center justify-center ${itemQuantity >= 10 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                               disabled={itemQuantity >= (item.isSpecialOffer ? 2 : 10)}
+                               className={`px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-plus-btn flex items-center justify-center ${itemQuantity >= (item.isSpecialOffer ? 2 : 10) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                                style={{ 
                                  borderTop: '1.3px solid black !important',
                                  borderRight: '1.3px solid black !important',

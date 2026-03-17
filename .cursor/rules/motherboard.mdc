@@ -1,0 +1,26 @@
+---
+description: Motherboard core memory — load project context or add conversation learnings
+alwaysApply: true
+---
+
+# Motherboard (core memory)
+
+This project has a **motherboard** folder: shared context for all agents. Two user commands are defined there and need no extra explanation.
+
+## "Load motherboard"
+
+User wants full project context before you make changes.
+
+1. Read in order: `motherboard/README.md`, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
+2. Use that as the source of truth for design, stack, flows, and conventions.
+3. Prefer patterns described there unless the user asks otherwise.
+
+## "Add to motherboard"
+
+User wants this conversation (or its outcomes) saved for future agents without overwriting or duplicating.
+
+1. Read: `motherboard/README.md`, `motherboard/ADDING.md`, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
+2. Follow the protocol in `ADDING.md`: append **one** new entry to `MEMORY.md` in the required format; optionally add a small, non-duplicative update to `CORE.md` only for new permanent design/stack/flow facts.
+3. Do not remove or rewrite existing content; append only.
+
+When you see "load motherboard" or "add to motherboard", act as above without asking for clarification.

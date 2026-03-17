@@ -88,6 +88,7 @@ const AdminAnalytics = lazyWithLogging(() => import('./pages/admin/analytics/pag
 const AdminUsers = lazyWithLogging(() => import('./pages/admin/users/page'), 'AdminUsers');
 const AdminNotifications = lazyWithLogging(() => import('./pages/admin/notifications/page'), 'AdminNotifications');
 const AdminAudit = lazyWithLogging(() => import('./pages/admin/audit/page'), 'AdminAudit');
+const AdminSpecialOffer = lazyWithLogging(() => import('./pages/admin/special-offer/page'), 'AdminSpecialOffer');
 const NoirUnitPage = lazyWithLogging(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
 const BlancoUnitPage = lazyWithLogging(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
 const SoftCurlUnitPage = lazyWithLogging(() => import('./pages/curly/soft-curl/page'), 'SoftCurlUnitPage');
@@ -291,7 +292,20 @@ function App() {
   useEffect(() => {
     clearTestDataForNonAdminUserIfNeeded();
   }, []);
-  
+
+  // Auth persistence: never clear isSignedIn/currentUser here—only explicit Sign Out does.
+  // On load, if we already have auth in localStorage, notify listeners so header/guards stay in sync.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const signedIn = localStorage.getItem('isSignedIn') === 'true';
+      const currentUser = localStorage.getItem('currentUser');
+      if (signedIn && currentUser) {
+        window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+      }
+    } catch (_) {}
+  }, []);
+
   return (
     <ErrorBoundary>
       <Routes>
@@ -345,6 +359,11 @@ function App() {
           <Route path="referrals" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminReferrals />
+            </Suspense>
+          } />
+          <Route path="special-offer" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminSpecialOffer />
             </Suspense>
           } />
           <Route path="analytics" element={

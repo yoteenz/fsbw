@@ -604,6 +604,70 @@ export default function AdminDashboard() {
       activity: 'MANAGE AUTH USERS - DISABLE OR TRIGGER PASSWORD RESET'
     },
 
+    (() => {
+      const SPECIAL_OFFER_CONFIG_KEY = 'specialOfferAdminConfig';
+      const defaultSpecialOfferConfig = () => ({
+        unitId: 'noir',
+        length: '24"',
+        density: '200%',
+        texture: 'SILKY',
+        lace: '13X6',
+        hairline: 'NATURAL',
+        color: 'OFF BLACK',
+        styling: 'NONE',
+        addOns: [] as string[],
+        thumbnailDataUrl: '',
+        startDate: new Date().toISOString().slice(0, 10)
+      });
+
+      const getMarketingActivity = (): string => {
+        try {
+          if (typeof window === 'undefined') return 'CONFIGURE SPECIAL OFFER – PRODUCT, OPTIONS, THUMBNAIL & START DATE';
+          let raw = localStorage.getItem(SPECIAL_OFFER_CONFIG_KEY);
+          let c: { unitId?: string; startDate?: string; length?: string; density?: string; lace?: string; color?: string; texture?: string; hairline?: string; styling?: string; addOns?: string[] } | null = null;
+          if (raw) {
+            try {
+              c = JSON.parse(raw);
+            } catch {
+              raw = null;
+            }
+          }
+          if (!raw || !c?.unitId || !c?.startDate) {
+            const seed = defaultSpecialOfferConfig();
+            localStorage.setItem(SPECIAL_OFFER_CONFIG_KEY, JSON.stringify(seed));
+            c = seed;
+          }
+          const unitNames: Record<string, string> = { noir: 'NOIR', blanco: 'BLANCO', 'soft-wave': 'SOFT WAVE', 'beach-wave': 'BEACH WAVE', 'soft-curl': 'SOFT CURL', 'ocean-curl': 'OCEAN CURL' };
+          const unitName = unitNames[c.unitId!] || (c.unitId || '').toUpperCase().replace(/-/g, ' ');
+          const start = new Date((c.startDate || '') + 'T12:00:00');
+          const end = new Date(start);
+          end.setDate(end.getDate() + 60);
+          const untilStr = `${end.getMonth() + 1}/${end.getDate()}`;
+          const length = c.length || '24"';
+          const density = c.density || '200%';
+          const lace = c.lace || '13X6';
+          const color = c.color || 'OFF BLACK';
+          const parts = [`${length} ${density} DENSITY`, `${lace} LACE`, `${color} COLOR`];
+          if (c.texture && c.texture !== 'SILKY') parts.push(`${c.texture} TEXTURE`);
+          if (c.hairline && c.hairline !== 'NATURAL') parts.push(`${c.hairline} HAIRLINE`);
+          if (c.styling && c.styling !== 'NONE') parts.push(`${c.styling} STYLING`);
+          if (Array.isArray(c.addOns) && c.addOns.length > 0) parts.push(c.addOns.join(' + ') + ' ADD-ONS');
+          return `SPECIAL UNTIL ${untilStr}: ${unitName} - ${parts.join(', ')}`;
+        } catch {
+          return 'CONFIGURE SPECIAL OFFER – PRODUCT, OPTIONS, THUMBNAIL & START DATE';
+        }
+      };
+      return {
+        title: 'MARKETING',
+        count: '',
+        items: [
+          { label: 'CONFIGURE', value: 'Unit, options, thumbnail', color: 'text-red-500' },
+          { label: 'START DATE', value: 'Set offer period', color: 'text-gray-500' }
+        ],
+        activity: getMarketingActivity()
+      };
+    })(),
+
     {
       title: 'NOTIFICATIONS',
       count: '',
@@ -642,6 +706,9 @@ export default function AdminDashboard() {
         break;
       case 'REVIEWS':
         navigate('/admin/reviews');
+        break;
+      case 'MARKETING':
+        navigate('/admin/special-offer');
         break;
       case 'BRAND':
         navigate('/admin/brand');

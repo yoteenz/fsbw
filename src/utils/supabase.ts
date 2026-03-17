@@ -1,6 +1,8 @@
 /**
  * Supabase client for the frontend (auth + optional API token).
  * Only used when VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set.
+ * Auth is stored in localStorage so the session persists across refresh and browser close;
+ * sign-out happens ONLY when the user explicitly clicks Sign Out.
  */
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
@@ -12,7 +14,14 @@ export function getSupabase(): SupabaseClient | null {
   const url = (import.meta as unknown as { env?: { VITE_SUPABASE_URL?: string } }).env?.VITE_SUPABASE_URL;
   const key = (import.meta as unknown as { env?: { VITE_SUPABASE_ANON_KEY?: string } }).env?.VITE_SUPABASE_ANON_KEY;
   if (!url || !key) return null;
-  client = createClient(url, key);
+  client = createClient(url, key, {
+    auth: {
+      storage: window.localStorage,
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  });
   return client;
 }
 
