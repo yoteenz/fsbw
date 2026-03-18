@@ -61,7 +61,7 @@ export default function AdminAccountingReport() {
         <AdminHeader
           title="ACCOUNTING"
           showBack
-          onBack={() => navigate('/admin/revenue')}
+          onBack={() => navigate('/admin/revenue?tab=OVERVIEW')}
           breadcrumbParentLabel="REVENUE"
           breadcrumbParentPath="/admin/revenue"
         />
@@ -225,11 +225,11 @@ export default function AdminAccountingReport() {
 
           <button
             type="button"
-            onClick={() => navigate('/admin/revenue')}
+            onClick={() => navigate('/admin/revenue?tab=OVERVIEW')}
             className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50 bg-white"
             style={pageActionButtonStyle}
           >
-            BACK TO REVENUE
+            BACK TO OVERVIEW
           </button>
         </div>
       </div>

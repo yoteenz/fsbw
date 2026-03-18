@@ -456,23 +456,24 @@ function NotificationsPage() {
           const supabase = getSupabase();
           const { data: sessionData } = await supabase?.auth.getSession() ?? {};
           const userId = sessionData?.session?.user?.id;
-          if (userId) {
+          if (userId && supabase) {
             const { data: row } = await supabase
               .from('notifications')
               .select('items')
               .eq('user_id', userId)
               .maybeSingle();
-            const items = Array.isArray((row as { items?: unknown[] } | null)?.items) ? (row as { items: unknown[] }).items : [];
-            const adminNotifs: Notification[] = items.map((it: { id?: string; text?: string; read?: boolean; createdAt?: string }) => {
-              const { title, message } = parseAdminSentNotificationText((it.text || '').trim());
-              const created = it.createdAt || '';
+            const items: unknown[] = Array.isArray((row as { items?: unknown[] } | null)?.items) ? (row as { items: unknown[] }).items : [];
+            const adminNotifs: Notification[] = items.map((it: unknown) => {
+              const item = it as { id?: string; text?: string; read?: boolean; createdAt?: string };
+              const { title, message } = parseAdminSentNotificationText((item.text || '').trim());
+              const created = item.createdAt || '';
               const date = created ? `${new Date(created).getMonth() + 1}-${new Date(created).getDate()}-${new Date(created).getFullYear()}` : today;
               return {
-                id: ADMIN_SENT_PREFIX + (it.id || crypto.randomUUID()),
+                id: ADMIN_SENT_PREFIX + (item.id || crypto.randomUUID()),
                 title,
                 message,
                 date,
-                isRead: !!it.read,
+                isRead: !!item.read,
                 icon: 'f',
               };
             });
@@ -514,23 +515,24 @@ function NotificationsPage() {
           const supabase = getSupabase();
           const { data: sessionData } = await supabase?.auth.getSession() ?? {};
           const userId = sessionData?.session?.user?.id;
-          if (userId) {
+          if (userId && supabase) {
             const { data: row } = await supabase
               .from('notifications')
               .select('items')
               .eq('user_id', userId)
               .maybeSingle();
-            const items = Array.isArray((row as { items?: unknown[] } | null)?.items) ? (row as { items: unknown[] }).items : [];
-            const adminNotifs: Notification[] = items.map((it: { id?: string; text?: string; read?: boolean; createdAt?: string }) => {
-              const { title, message } = parseAdminSentNotificationText((it.text || '').trim());
-              const created = it.createdAt || '';
+            const items: unknown[] = Array.isArray((row as { items?: unknown[] } | null)?.items) ? (row as { items: unknown[] }).items : [];
+            const adminNotifs: Notification[] = items.map((it: unknown) => {
+              const item = it as { id?: string; text?: string; read?: boolean; createdAt?: string };
+              const { title, message } = parseAdminSentNotificationText((item.text || '').trim());
+              const created = item.createdAt || '';
               const date = created ? `${new Date(created).getMonth() + 1}-${new Date(created).getDate()}-${new Date(created).getFullYear()}` : today;
               return {
-                id: ADMIN_SENT_PREFIX + (it.id || crypto.randomUUID()),
+                id: ADMIN_SENT_PREFIX + (item.id || crypto.randomUUID()),
                 title,
                 message,
                 date,
-                isRead: !!it.read,
+                isRead: !!item.read,
                 icon: 'f',
               };
             });

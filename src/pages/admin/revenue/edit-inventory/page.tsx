@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../../components/AdminHeader';
 import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
 import { buildRevenueOrdersList, getDepletedInventory, getInventoryOverride, setInventoryOverride, STARTING_INVENTORY } from '../../../../utils/adminRevenueStats';
+import { pageActionButtonStyle } from '../../../../layouts/PageActionsBelowCard';
 
 const PRODUCT_NAMES = ['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL', 'OCEAN CURL'];
 
 export default function AdminEditInventory() {
-  useRequireAdminPageAccess();
   const navigate = useNavigate();
   const orders = buildRevenueOrdersList();
   const computed = getDepletedInventory(orders);
@@ -24,8 +24,22 @@ export default function AdminEditInventory() {
     setTimeout(() => setSaved(false), 2000);
   };
 
-  const updateProduct = (name: string, value: number) => setProducts((prev) => ({ ...prev, [name]: Math.max(0, Math.round(Number(value) || 0)) }));
-  const updatePackaging = (name: string, value: number) => setPackaging((prev) => ({ ...prev, [name]: Math.max(0, Math.round(Number(value) || 0)) }));
+  const updateProduct = (name: string, raw: string) => {
+    if (raw === '') {
+      setProducts((prev) => ({ ...prev, [name]: 0 }));
+      return;
+    }
+    const n = parseInt(raw, 10);
+    if (!isNaN(n) && n >= 0) setProducts((prev) => ({ ...prev, [name]: Math.round(n) }));
+  };
+  const updatePackaging = (name: string, raw: string) => {
+    if (raw === '') {
+      setPackaging((prev) => ({ ...prev, [name]: 0 }));
+      return;
+    }
+    const n = parseInt(raw, 10);
+    if (!isNaN(n) && n >= 0) setPackaging((prev) => ({ ...prev, [name]: Math.round(n) }));
+  };
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -45,10 +59,10 @@ export default function AdminEditInventory() {
                 <input
                   type="number"
                   min={0}
-                  value={products[name] ?? 0}
-                  onChange={(e) => updateProduct(name, e.target.valueAsNumber)}
+                  value={String(Number(products[name] ?? 0))}
+                  onChange={(e) => updateProduct(name, e.target.value)}
                   className="w-20 py-1 px-2 border border-black text-right"
-                  style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000' }}
+                  style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', borderRadius: 0 }}
                 />
               </div>
             ))}
@@ -71,10 +85,10 @@ export default function AdminEditInventory() {
             ))}
           </div>
 
-          <button type="button" onClick={handleSave} className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50" style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', textTransform: 'uppercase', borderWidth: '1.3px' }}>
+          <button type="button" onClick={handleSave} className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50 mt-4" style={{ ...pageActionButtonStyle, borderWidth: '1.3px' }}>
             {saved ? 'SAVED' : 'SAVE INVENTORY'}
           </button>
-          <button type="button" onClick={() => navigate('/admin/revenue')} className="w-full py-2 border border-gray-400 font-medium cursor-pointer hover:bg-gray-50 mt-2" style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>BACK TO REVENUE</button>
+          <button type="button" onClick={() => navigate('/admin/revenue?tab=PRODUCTS')} className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50 mt-2" style={{ ...pageActionButtonStyle, borderWidth: '1.3px' }}>BACK TO PRODUCTS</button>
         </div>
       </div>
     </div>

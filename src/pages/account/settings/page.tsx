@@ -468,7 +468,11 @@ function SettingsPage() {
       trackActivity('profile_update');
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      setSaveProfileToCloudMessage(msg.includes('401') || msg.includes('Unauthorized') ? 'Sign in with Supabase first, then save profile.' : msg);
+      const isNetwork = /load failed|failed to fetch|network error|request failed|connection refused|ERR_/i.test(msg);
+      const isAuth = msg.includes('401') || msg.includes('Unauthorized');
+      if (isAuth) setSaveProfileToCloudMessage('Sign in with Supabase first, then save profile.');
+      else if (isNetwork) setSaveProfileToCloudMessage('Network error. Try from the deployed site (e.g. your Vercel URL) or check your connection.');
+      else setSaveProfileToCloudMessage(msg);
     } finally {
       setSaveProfileToCloudLoading(false);
     }

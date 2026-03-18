@@ -149,7 +149,7 @@ export function getDepletedInventory(orders: RevenueOrderForStats[]): DepletedIn
 
   for (const order of orders) {
     const lineItems = order.lineItems ?? (order.items ? [{ productName: order.productName || 'NOIR' }] : [{ productName: 'NOIR' }]);
-    const itemCount = Math.max(1, lineItems.length);
+    const _itemCount = Math.max(1, lineItems.length);
 
     for (const line of lineItems) {
       const name = (line.productName || 'NOIR').toString().toUpperCase().replace(/\s+/g, ' ');

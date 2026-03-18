@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../../components/AdminHeader';
-import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
 import { buildRevenueOrdersList } from '../../../../utils/adminRevenueStats';
 import { pageActionButtonStyle } from '../../../../layouts/PageActionsBelowCard';
 
@@ -39,7 +38,7 @@ export default function AdminFulfilledOrders() {
     <div className="min-h-screen" style={{ position: 'relative' }}>
       <div className="fixed inset-0 -z-10" style={{ backgroundImage: `url('/assets/marble-half.png')`, backgroundSize: 'contain', backgroundPosition: 'center', backgroundRepeat: 'repeat', backgroundAttachment: 'fixed' }} />
       <div className="relative z-10" style={{ textTransform: 'uppercase' }}>
-        <AdminHeader title="FULFILLED ORDERS" showBack onBack={() => navigate('/admin/revenue')} breadcrumbParentLabel="REVENUE" breadcrumbParentPath="/admin/revenue" />
+        <AdminHeader title="FULFILLED ORDERS" showBack onBack={() => navigate('/admin/revenue?tab=ORDERS')} breadcrumbParentLabel="REVENUE" breadcrumbParentPath="/admin/revenue" />
         <div className="pb-8 px-4 max-w-md mx-auto">
           <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', marginBottom: '16px', textTransform: 'none' }}>
             Archived orders (shipped, delivered, or fulfilled) organized by client.
@@ -74,7 +73,7 @@ export default function AdminFulfilledOrders() {
               ))}
             </div>
           )}
-          <button type="button" onClick={() => navigate('/admin/revenue')} className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50 bg-white mt-4" style={pageActionButtonStyle}>BACK TO REVENUE</button>
+          <button type="button" onClick={() => navigate('/admin/revenue?tab=ORDERS')} className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50 bg-white mt-4" style={pageActionButtonStyle}>BACK TO ORDERS</button>
         </div>
       </div>
     </div>

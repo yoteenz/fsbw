@@ -6,7 +6,7 @@
  * - Payments: same order set; fraud analysis runs on the same order list.
  */
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { getAdminRevenue } from '../../../utils/api';
@@ -104,8 +104,8 @@ type RevenueOrder = {
 
 function AdminRevenueOrdersTab({
   orders,
-  setOrders,
-  refreshOrders,
+  setOrders: _setOrders,
+  refreshOrders: _refreshOrders,
   expandedOrderId,
   setExpandedOrderId,
   onCloseExpanded,
@@ -275,7 +275,18 @@ function AdminRevenueOrdersTab({
 export default function AdminRevenue() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<typeof REVENUE_TABS[number]>('OVERVIEW');
+  const [searchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState<typeof REVENUE_TABS[number]>(() => {
+    if (tabParam === 'PRODUCTS') return 'PRODUCTS';
+    if (tabParam === 'ORDERS') return 'ORDERS';
+    return 'OVERVIEW';
+  });
+  useEffect(() => {
+    if (tabParam === 'PRODUCTS') setActiveTab('PRODUCTS');
+    else if (tabParam === 'ORDERS') setActiveTab('ORDERS');
+    else if (tabParam === 'OVERVIEW' || tabParam === null) setActiveTab('OVERVIEW');
+  }, [tabParam]);
   const [totalRevenue, setTotalRevenue] = useState(45700);
   const [totalOrders, setTotalOrders] = useState(53);
   const [breakdown, setBreakdown] = useState<{ month: string; value: number }[]>([]);
@@ -351,7 +362,7 @@ export default function AdminRevenue() {
   const depletedInventory = useMemo(() => getDepletedInventory(orders), [orders]);
   const ordersStats = useMemo(() => getOrdersStats(orders, totalRevenue), [orders, totalRevenue]);
   const inventoryTotal = depletedInventory.totalUnits;
-  const totalStartingUnits = getTotalStartingInventoryUnits();
+  const _totalStartingUnits = getTotalStartingInventoryUnits();
 
   const PRODUCT_NAMES_OVERVIEW = ['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL', 'OCEAN CURL'] as const;
   const topProductsBySales = useMemo(() => {
@@ -389,7 +400,11 @@ export default function AdminRevenue() {
 
   const formatWithCommas = (n: number) => Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 });
   const revenueFormatted = totalRevenue.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).replace('$', '$');
-  const totalRevenueBannerValue = totalRevenue >= 1000 ? `+${(totalRevenue / 1000).toFixed(1)}k` : `+${Math.round(totalRevenue)}`;
+  const absRevenue = Math.abs(totalRevenue);
+  const totalRevenueBannerValue =
+    totalRevenue < 0
+      ? (absRevenue >= 1000 ? `-${(absRevenue / 1000).toFixed(1)}k` : `-${Math.round(absRevenue)}`)
+      : (absRevenue >= 1000 ? `+${(absRevenue / 1000).toFixed(1)}k` : `+${Math.round(absRevenue)}`);
 
   const avgOrderDisplay = orders.length && ordersStats.avgOrder > 0 ? `$${formatWithCommas(Math.round(ordersStats.avgOrder))}` : '—';
   const panelLabelsAndValues: Record<typeof REVENUE_TABS[number], { left: { label: string; value: string }; right: { label: string; value: string } }> = {
@@ -454,7 +469,7 @@ export default function AdminRevenue() {
               {/* Tab-specific panels – above tabs */}
               <div className="grid grid-cols-2 gap-4 px-5 mb-4" style={{ marginTop: '12px' }}>
                 <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{panel.left.value}</p>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: activeTab === 'OVERVIEW' ? (totalRevenue < 0 ? '#EB1C24' : '#16a34a') : '#EB1C24' }}>{panel.left.value}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>{panel.left.label}</p>
                 </div>
                 <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>

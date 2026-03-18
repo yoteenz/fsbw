@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../../components/AdminHeader';
-import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
 import { buildRevenueOrdersList } from '../../../../utils/adminRevenueStats';
 import { pageActionButtonStyle } from '../../../../layouts/PageActionsBelowCard';
 
@@ -92,7 +91,7 @@ export default function AdminFraudAnalysis() {
     <div className="min-h-screen" style={{ position: 'relative' }}>
       <div className="fixed inset-0 -z-10" style={{ backgroundImage: `url('/assets/marble-half.png')`, backgroundSize: 'contain', backgroundPosition: 'center', backgroundRepeat: 'repeat', backgroundAttachment: 'fixed' }} />
       <div className="relative z-10" style={{ textTransform: 'uppercase' }}>
-        <AdminHeader title="FRAUD ANALYSIS" showBack onBack={() => navigate('/admin/revenue')} breadcrumbParentLabel="REVENUE" breadcrumbParentPath="/admin/revenue" />
+        <AdminHeader title="FRAUD" showBack onBack={() => navigate('/admin/revenue')} breadcrumbParentLabel="REVENUE" breadcrumbParentPath="/admin/revenue" />
         <div className="pb-8 px-4 max-w-md mx-auto">
           <div className="bg-white/60 backdrop-blur-sm border border-black p-4 mb-4" style={{ borderWidth: '1.3px' }}>
             <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>SUMMARY</h3>
