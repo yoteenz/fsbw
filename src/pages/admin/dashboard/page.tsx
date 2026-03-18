@@ -10,6 +10,7 @@ import { isAdminEmail, getEffectiveTierName, isAyoteenzAdminAccount } from '../.
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { getMockClientsForAyoteenz, getMockOrdersForClient, isClientNewsletterSubscribed } from '../clients/page';
 import { isClientBlocked } from '../../../utils/blockedClients';
+import { buildRevenueOrdersList, getDepletedInventory, getOrdersStats, getTotalStartingInventoryUnits } from '../../../utils/adminRevenueStats';
 
 // Mock data types and functions to replace Supabase imports
 type DashboardStats = {
@@ -441,6 +442,12 @@ export default function AdminDashboard() {
   const netIncome = currentYearRevenue - businessExpenses;
   const quarterlyNetIncome = Math.max(0, netIncome); // Ensure non-negative
 
+  // Revenue card: inventory & orders received from same source as admin revenue page (localStorage orders + depletion)
+  const revenueOrdersList = buildRevenueOrdersList();
+  const depletedInv = getDepletedInventory(revenueOrdersList);
+  const revenueOrderStats = getOrdersStats(revenueOrdersList, stats.totalRevenue ?? currentYearRevenue ?? 0);
+  const totalStartingUnits = getTotalStartingInventoryUnits();
+
   // Helper function to format date without year (M/D format)
   const formatDateWithoutYear = (dateString: string) => {
     const date = new Date(dateString);
@@ -515,8 +522,8 @@ export default function AdminDashboard() {
       title: 'REVENUE',
       count: formatCurrencyK(stats.totalRevenue ?? currentYearRevenue),
       items: [
-        { label: 'INVENTORY', value: '145/250', color: 'text-gray-500' },
-        { label: 'ORDERS RECEIVED', value: String(stats.totalOrders ?? clientsWithDeliveredCount), color: 'text-red-500' },
+        { label: 'INVENTORY', value: `${depletedInv.totalUnits}/${totalStartingUnits}`, color: 'text-gray-500' },
+        { label: 'ORDERS RECEIVED', value: String(revenueOrderStats.unfulfilledCount), color: 'text-red-500' },
         { label: 'QUARTERLY SALES', value: formatCurrencyK(quarterlyNetIncome), color: 'text-gray-500' },
         { label: 'TAX DEDUCTIONS', value: formatCurrency(Math.round(taxesPaid)), color: 'text-gray-500' }
       ],
@@ -556,42 +563,6 @@ export default function AdminDashboard() {
         { label: 'POSITIVE SENTIMENT', value: '94%', color: 'text-gray-500' }
       ],
       activity: totalReviewsCount > 0 ? 'EXCELLENT CLIENT FEEDBACK - HIGH SATISFACTION RATINGS' : 'EXCELLENT CLIENT FEEDBACK - HIGH SATISFACTION RATINGS'
-    },
-
-    {
-      title: 'BRAND',
-      count: '94%',
-      items: [
-        { label: 'CLIENT RETENTION', value: '94%', color: 'text-gray-500' },
-        { label: 'REFERRAL RATE', value: '23%', color: 'text-gray-500' },
-        { label: 'REPEAT BOOKINGS', value: '78%', color: 'text-gray-500' },
-        { label: 'GROWTH RATE', value: '+15%', color: 'text-gray-500' },
-        { label: 'ANALYTICS', value: 'Clicks by source', color: 'text-red-500' }
-      ],
-      highlight: 'BRAND GROWTH STRONG - EXCELLENT CLIENT RETENTION'
-    },
-
-    {
-      title: 'REFERRALS',
-      count: referralCountDisplay,
-      items: [
-        { label: 'INVITEES', value: String(referralCountDisplay), color: 'text-gray-500' },
-        { label: 'CODE STATUS', value: 'Active/Inactive', color: 'text-red-500' },
-        { label: 'EARNINGS TRACKING', value: 'Digital cash', color: 'text-gray-500' },
-        { label: 'VIEW DETAILS', value: 'Referrals', color: 'text-red-500' }
-      ],
-      activity: 'REFERRAL PROGRAM - TRACK INVITEES & EARNINGS'
-    },
-
-    {
-      title: 'BACKEND',
-      count: '',
-      items: [
-        { label: 'AUDIT LOG', value: 'Profile & order trail', color: 'text-red-500' },
-        { label: 'AUTH USERS', value: 'List & manage', color: 'text-red-500' },
-        { label: 'DISABLE / RESET', value: 'Account actions', color: 'text-gray-500' }
-      ],
-      activity: 'AUDIT TRAIL & MANAGE AUTH USERS'
     },
 
     (() => {
@@ -658,7 +629,43 @@ export default function AdminDashboard() {
         ],
         activity: getMarketingActivity()
       };
-    })()
+    })(),
+
+    {
+      title: 'BRAND',
+      count: '94%',
+      items: [
+        { label: 'CLIENT RETENTION', value: '94%', color: 'text-gray-500' },
+        { label: 'REFERRAL RATE', value: '23%', color: 'text-gray-500' },
+        { label: 'REPEAT BOOKINGS', value: '78%', color: 'text-gray-500' },
+        { label: 'GROWTH RATE', value: '+15%', color: 'text-gray-500' },
+        { label: 'ANALYTICS', value: 'Clicks by source', color: 'text-red-500' }
+      ],
+      highlight: 'BRAND GROWTH STRONG - EXCELLENT CLIENT RETENTION'
+    },
+
+    {
+      title: 'REFERRALS',
+      count: referralCountDisplay,
+      items: [
+        { label: 'INVITEES', value: String(referralCountDisplay), color: 'text-gray-500' },
+        { label: 'CODE STATUS', value: 'Active/Inactive', color: 'text-red-500' },
+        { label: 'EARNINGS TRACKING', value: 'Digital cash', color: 'text-gray-500' },
+        { label: 'VIEW DETAILS', value: 'Referrals', color: 'text-red-500' }
+      ],
+      activity: 'REFERRAL PROGRAM - TRACK INVITEES & EARNINGS'
+    },
+
+    {
+      title: 'BACKEND',
+      count: '',
+      items: [
+        { label: 'AUDIT LOG', value: 'Profile & order trail', color: 'text-red-500' },
+        { label: 'AUTH USERS', value: 'List & manage', color: 'text-red-500' },
+        { label: 'DISABLE / RESET', value: 'Account actions', color: 'text-gray-500' }
+      ],
+      activity: 'AUDIT TRAIL & MANAGE AUTH USERS'
+    }
   ];
 
   // Handle card click navigation

@@ -1671,9 +1671,9 @@ function OrdersPage() {
             ) : (
               /* ORDERS CONTENT */
           <div className="flex flex-col gap-4 mb-5">
-            {/* Active Orders Card - Hide when archived order is expanded */}
+            {/* Active Orders Card - Hide when archived order is expanded; same height as account alerts card when no archived orders */}
             {!(expandedOrderId && pastOrders.find(o => o.id === expandedOrderId)) && (
-            <div className="bg-white/60 backdrop-blur-sm border border-black p-4 min-h-[360px] flex flex-col overflow-hidden transition-all duration-300 ease-out" style={{ borderWidth: '1.3px' }}>
+            <div className="bg-white/60 backdrop-blur-sm border border-black p-4 flex flex-col overflow-hidden transition-all duration-300 ease-out" style={{ borderWidth: '1.3px', minHeight: pastOrders.length === 0 ? '560px' : '360px' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200">
                   {expandedOrderId ? (

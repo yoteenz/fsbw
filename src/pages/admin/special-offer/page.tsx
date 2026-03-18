@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
@@ -51,9 +51,13 @@ const defaultConfig: SpecialOfferConfig = {
 
 type AdminSpecialOfferPageProps = { embedded?: boolean };
 
-export default function AdminSpecialOfferPage({ embedded = false }: AdminSpecialOfferPageProps) {
+export type SpecialOfferActionsRef = { save: () => void; randomize: () => void };
+
+function AdminSpecialOfferPageInner({ embedded = false }: AdminSpecialOfferPageProps, ref: React.Ref<SpecialOfferActionsRef>) {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isUnderMarketing = location.pathname === '/admin/marketing/offers';
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [config, setConfig] = useState<SpecialOfferConfig>(defaultConfig);
   const [saved, setSaved] = useState(false);
@@ -146,29 +150,10 @@ export default function AdminSpecialOfferPage({ embedded = false }: AdminSpecial
     setOpenDropdown(null);
   };
 
-  const formCard = (
-    <>
-      <div
-        className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
-        style={{ borderWidth: '1.3px', borderRadius: 0 }}
-      >
-              <div className="px-4 pt-4 pb-2">
-                <h2
-                  style={{
-                    fontFamily: '"Futura PT Medium"',
-                    color: '#EB1C24',
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    margin: 0,
-                    textTransform: 'uppercase'
-                  }}
-                >
-                  CONFIGURE SPECIAL OFFER
-                </h2>
-              </div>
-              <div style={{ borderBottom: '1px solid #e5e7eb', margin: '0 20px 12px' }} />
+  useImperativeHandle(ref, () => ({ save: handleSave, randomize: handleRandomize }), [config]);
 
-              <div className="px-4 pb-4 space-y-4">
+  const formFieldsContent = (
+    <div className="px-4 pb-4 space-y-4">
                 {/* Product – square dropdown like client overview "Most recent" sort */}
                 <div className="relative">
                   <label style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#666', display: 'block', marginBottom: '4px' }}>PRODUCT</label>
@@ -482,9 +467,23 @@ export default function AdminSpecialOfferPage({ embedded = false }: AdminSpecial
                     }}
                   />
                 </div>
-              </div>
-            </div>
+    </div>
+  );
 
+  const formCard = (
+    <>
+      <div
+        className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
+        style={{ borderWidth: '1.3px', borderRadius: 0 }}
+      >
+        <div className="px-4 pt-4 pb-2">
+          <h2 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: 500, margin: 0, textTransform: 'uppercase' }}>
+            CONFIGURE SPECIAL OFFER
+          </h2>
+        </div>
+        <div style={{ borderBottom: '1px solid #e5e7eb', margin: '0 20px 12px' }} />
+        {formFieldsContent}
+      </div>
       {/* Save Config button below card – same height as concierge page buttons (py-2) */}
       <button
         type="button"
@@ -528,7 +527,7 @@ export default function AdminSpecialOfferPage({ embedded = false }: AdminSpecial
   );
 
   if (embedded) {
-    return <div className="w-full">{formCard}</div>;
+    return <div className="w-full">{formFieldsContent}</div>;
   }
 
   return (
@@ -560,3 +559,6 @@ export default function AdminSpecialOfferPage({ embedded = false }: AdminSpecial
     </div>
   );
 }
+
+const AdminSpecialOfferPage = forwardRef<SpecialOfferActionsRef, AdminSpecialOfferPageProps>(AdminSpecialOfferPageInner);
+export default AdminSpecialOfferPage;

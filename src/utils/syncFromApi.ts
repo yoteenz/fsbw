@@ -163,8 +163,9 @@ export function applyAdminSyncPayload(
 
     localStorage.setItem('currentUser', JSON.stringify(merged));
     const img = merged.profileImage && typeof merged.profileImage === 'string' && String(merged.profileImage).trim();
-    const existingImg = sameEmail && existing && (existing.profileImage === '' || existing.profile_image === '');
-    localStorage.setItem('profileImage', img ? String(merged.profileImage) : (existingImg ? '' : '/assets/profile-thumb.png'));
+    const existingImgVal = sameEmail && existing && ((existing.profileImage && String(existing.profileImage).trim()) || (existing.profile_image && String(existing.profile_image).trim()));
+    const profileImageToStore = img ? String(merged.profileImage) : (existingImgVal || '/assets/profile-thumb.png');
+    localStorage.setItem('profileImage', profileImageToStore);
     const registeredUsers: unknown[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
     const idx = registeredUsers.findIndex((u: unknown) => ((u as { email?: string }).email || '').toLowerCase() === e);
     if (idx !== -1) (registeredUsers as Record<string, unknown>[])[idx] = merged;

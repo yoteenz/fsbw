@@ -153,28 +153,29 @@ export default function AdminBackend() {
                     fontSize: '12px',
                     fontWeight: 500,
                     margin: 0,
+                    marginLeft: '6px',
                     textTransform: 'uppercase',
                     textAlign: 'left',
                   }}
                 >
                   BACKEND
                 </h2>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '8px' }}>
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#EB1C24" />
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '-5px', transform: 'translateY(-1.5px) translateX(-6px)' }}>
+                  <path d="M22.5 7.5H0.5V14.5M22.5 7.5V14.5H0.5M22.5 7.5L15.5 14.5M0.5 14.5L7.5 7.5M4.5 14.5V23.5M2.5 23.5H6.5M18.5 14.5V23.5M20.5 23.5H16.5M5.5 14.5L12.5 7.5M10.5 14.5L17.5 7.5M6.5 5L4.5 6.5L2.5 5V3L4.5 1.5L6.5 3V5ZM20.5 5L18.5 6.5L16.5 5V3L18.5 1.5L20.5 3V5Z" stroke="#EB1C24" strokeWidth="1" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
               <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
 
-              <div className="flex px-5">
+              <div className="flex flex-wrap justify-center gap-[14px] px-5">
                 {BACKEND_TABS.map((tab) => (
                   <button
                     key={tab}
                     type="button"
                     onClick={() => setActiveTab(tab)}
-                    className="flex-1 py-3 font-medium transition-colors"
+                    className="py-3 px-2 font-medium transition-colors"
                     style={{
                       fontFamily: '"Futura PT Medium"',
-                      fontSize: '11px',
+                      fontSize: '10px',
                       color: activeTab === tab ? '#EB1C24' : '#808080',
                       border: 'none',
                       paddingBottom: '4px',

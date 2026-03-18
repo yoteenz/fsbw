@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
-import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
+import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { getAdminPending } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
@@ -89,20 +89,22 @@ export default function AdminPending() {
                     fontSize: '12px',
                     fontWeight: 500,
                     margin: 0,
+                    marginLeft: '6px',
                     textTransform: 'uppercase',
                     textAlign: 'left',
                   }}
                 >
                   PENDING
                 </h2>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '8px' }}>
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#EB1C24" />
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '-5px', transform: 'translateX(-6px)' }}>
+                  <path d="M2.25 5.75C2.25 5.35218 2.40804 4.97064 2.68934 4.68934C2.97064 4.40804 3.35218 4.25 3.75 4.25H8.109C8.52585 4.24999 8.93229 4.38022 9.2715 4.6225L11.7285 6.3775C12.0677 6.61978 12.4741 6.75001 12.891 6.75H20.25C20.6478 6.75 21.0294 6.90804 21.3107 7.18934C21.592 7.47064 21.75 7.85218 21.75 8.25V18.25C21.75 18.6478 21.592 19.0294 21.3107 19.3107C21.0294 19.592 20.6478 19.75 20.25 19.75H3.75C3.35218 19.75 2.97064 19.592 2.68934 19.3107C2.40804 19.0294 2.25 18.6478 2.25 18.25V5.75Z" stroke="#EB1C24" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M8 12.9936L10.835 15.8291L16 10.6641" stroke="#EB1C24" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
               <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
 
               {/* Cards above tabs */}
-              <div className="grid grid-cols-2 gap-4 px-5 mb-4">
+              <div className="grid grid-cols-2 gap-4 px-5 mb-4" style={{ marginTop: '12px' }}>
                 <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
                   <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{pendingReviews}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>PENDING REVIEWS</p>
@@ -113,16 +115,16 @@ export default function AdminPending() {
                 </div>
               </div>
 
-              <div className="flex px-5">
+              <div className="flex flex-wrap justify-center gap-[14px] px-5">
                 {PENDING_TABS.map((tab) => (
                   <button
                     key={tab}
                     type="button"
                     onClick={() => setActiveTab(tab)}
-                    className="flex-1 py-3 font-medium transition-colors"
+                    className="py-3 px-2 font-medium transition-colors"
                     style={{
                       fontFamily: '"Futura PT Medium"',
-                      fontSize: '11px',
+                      fontSize: '10px',
                       color: activeTab === tab ? '#EB1C24' : '#808080',
                       border: 'none',
                       paddingBottom: '4px',
@@ -278,14 +280,16 @@ export default function AdminPending() {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => navigate('/admin/reviews')}
-              className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-              style={{ ...pageActionButtonStyle, marginTop: '14px' }}
-            >
-              REVIEW PENDING ITEMS
-            </button>
+            <PageActionsBelowCard>
+              <button
+                type="button"
+                onClick={() => navigate('/admin/reviews')}
+                className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                style={pageActionButtonStyle}
+              >
+                REVIEW PENDING ITEMS
+              </button>
+            </PageActionsBelowCard>
           </div>
         </div>
       </div>

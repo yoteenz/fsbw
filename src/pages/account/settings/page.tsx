@@ -144,6 +144,8 @@ function SettingsPage() {
   const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
   const [syncAccountMessage, setSyncAccountMessage] = useState<string | null>(null);
   const [syncAccountLoading, setSyncAccountLoading] = useState(false);
+  const [saveProfileToCloudMessage, setSaveProfileToCloudMessage] = useState<string | null>(null);
+  const [saveProfileToCloudLoading, setSaveProfileToCloudLoading] = useState(false);
   /** Optional: re-enter Supabase password for sync when stored password fails or is missing */
   const [syncPasswordInput, setSyncPasswordInput] = useState('');
 
@@ -435,6 +437,40 @@ function SettingsPage() {
       );
     } finally {
       setSyncAccountLoading(false);
+    }
+  };
+
+  /** Push current profile (name, photo, birthday, etc.) to Supabase so Sync on other devices loads it. Use on the device that has the correct data (e.g. Chrome). */
+  const handleSaveProfileToCloud = async () => {
+    setSaveProfileToCloudMessage(null);
+    setSaveProfileToCloudLoading(true);
+    try {
+      const raw = localStorage.getItem('currentUser');
+      const current = raw ? JSON.parse(raw) : null;
+      if (!current || !current.email) {
+        setSaveProfileToCloudMessage('No profile to save. Sign in first.');
+        return;
+      }
+      const payload: Record<string, unknown> = {
+        firstName: current.firstName ?? current.first_name ?? '',
+        lastName: current.lastName ?? current.last_name ?? '',
+        birthday: current.birthday ?? '',
+        profileImage: current.profileImage ?? current.profile_image ?? null,
+        phoneNumber: current.phoneNumber ?? current.phone_number ?? null,
+        facebook: current.facebook ?? null,
+        instagram: current.instagram ?? null,
+        youtube: current.youtube ?? null,
+        tiktok: current.tiktok ?? null,
+        twitter: current.twitter ?? null,
+      };
+      await patchProfile(payload);
+      setSaveProfileToCloudMessage('Profile saved to cloud. Use Sync on other devices to load it.');
+      trackActivity('profile_update');
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setSaveProfileToCloudMessage(msg.includes('401') || msg.includes('Unauthorized') ? 'Sign in with Supabase first, then save profile.' : msg);
+    } finally {
+      setSaveProfileToCloudLoading(false);
     }
   };
 
@@ -1206,6 +1242,29 @@ function SettingsPage() {
                   </button>
                 </div>
               </div>
+
+              {/* Admin: Save profile to Supabase so Sync on other devices loads name, photo, birthday, etc. */}
+              {isAdminUser() && isSupabaseConfigured() && (
+                <div className="px-0 md:px-0" style={{ marginTop: '-4px', marginBottom: '16px' }}>
+                  {saveProfileToCloudMessage && (
+                    <p className="text-xs font-futura mb-2" style={{ textTransform: 'uppercase', color: saveProfileToCloudMessage.startsWith('Profile saved') ? '#15803d' : '#666' }}>
+                      {saveProfileToCloudMessage}
+                    </p>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleSaveProfileToCloud}
+                    disabled={saveProfileToCloudLoading}
+                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ borderWidth: '1.3px', color: '#EB1C24', fontFamily: '"Futura PT Medium"', backgroundColor: '#FFFFFF' }}
+                  >
+                    {saveProfileToCloudLoading ? 'SAVING…' : 'SAVE MY PROFILE TO CLOUD'}
+                  </button>
+                  <p className="text-[10px] font-futura mt-1" style={{ color: '#888', textTransform: 'uppercase' }}>
+                    Do this on the device that has your correct profile (e.g. Chrome). Then use Sync below on other devices to load it.
+                  </p>
+                </div>
+              )}
 
               {/* Admin: Sync my account - pull profile/orders/cart/wishlist from backend (any admin in admin list) */}
               {isAdminUser() && (

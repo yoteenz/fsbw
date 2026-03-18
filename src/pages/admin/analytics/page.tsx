@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import AdminHeader from '../components/AdminHeader';
-import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
+import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { getSocialAnalyticsSummary } from '../../../utils/socialAnalytics';
 import type { SocialPlatform, SocialSource } from '../../../utils/socialAnalytics';
 import { getAdminAnalytics } from '../../../utils/api';
@@ -147,13 +147,14 @@ export default function AdminAnalytics() {
                     fontSize: '12px',
                     fontWeight: 500,
                     margin: 0,
+                    marginLeft: '6px',
                     textTransform: 'uppercase',
                     textAlign: 'left',
                   }}
                 >
                   ANALYTICS
                 </h2>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '8px' }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '-5px', transform: 'translateX(-6px)' }}>
                   <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" fill="#EB1C24" />
                 </svg>
               </div>
@@ -165,16 +166,16 @@ export default function AdminAnalytics() {
                 <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>TOTAL CLICKS</p>
               </div>
 
-              <div className="flex px-5">
+              <div className="flex flex-wrap justify-center gap-[14px] px-5">
                 {ANALYTICS_TABS.map((tab) => (
                   <button
                     key={tab}
                     type="button"
                     onClick={() => setActiveTab(tab)}
-                    className="flex-1 py-3 font-medium transition-colors"
+                    className="py-3 px-2 font-medium transition-colors"
                     style={{
                       fontFamily: '"Futura PT Medium"',
-                      fontSize: '11px',
+                      fontSize: '10px',
                       color: activeTab === tab ? '#EB1C24' : '#808080',
                       border: 'none',
                       paddingBottom: '4px',
@@ -264,14 +265,16 @@ export default function AdminAnalytics() {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => {}}
-              className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-              style={{ ...pageActionButtonStyle, marginTop: '14px' }}
-            >
-              EXPORT ANALYTICS
-            </button>
+            <PageActionsBelowCard>
+              <button
+                type="button"
+                onClick={() => {}}
+                className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                style={pageActionButtonStyle}
+              >
+                EXPORT ANALYTICS
+              </button>
+            </PageActionsBelowCard>
           </div>
         </div>
       </div>

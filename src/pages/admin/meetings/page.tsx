@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import AdminHeader from '../components/AdminHeader';
-import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
+import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { getAdminMeetings } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
@@ -79,14 +79,15 @@ export default function AdminMeetings() {
                     fontSize: '12px',
                     fontWeight: 500,
                     margin: 0,
+                    marginLeft: '6px',
                     textTransform: 'uppercase',
                     textAlign: 'left',
                   }}
                 >
                   MEETINGS
                 </h2>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '8px' }}>
-                  <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z" fill="#EB1C24" />
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '-5px', transform: 'translateX(-6px)' }}>
+                  <path d="M7.5 6V1M17.5 6V1M21.5 17V21.5H3.5V18.5M21.363 8.5H3.352M0.5 18.25V18.5H18.4L18.55 18.25L18.784 17.759C20.5722 14.0007 21.5 9.89102 21.5 5.729V3.5H3.5V5.628C3.50004 9.82218 2.55784 13.9628 0.743 17.744L0.5 18.25Z" stroke="#EB1C24"/>
                 </svg>
               </div>
               <div className="flex-shrink-0" style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
@@ -109,16 +110,16 @@ export default function AdminMeetings() {
                 </div>
               </div>
 
-              <div className="flex px-5">
+              <div className="flex flex-wrap justify-center gap-[14px] px-5">
                 {MEETING_TABS.map((tab) => (
                   <button
                     key={tab}
                     type="button"
                     onClick={() => setViewMode(tab.toLowerCase() as 'day' | 'week')}
-                    className="flex-1 py-3 font-medium transition-colors"
+                    className="py-3 px-2 font-medium transition-colors"
                     style={{
                       fontFamily: '"Futura PT Medium"',
-                      fontSize: '11px',
+                      fontSize: '10px',
                       color: viewMode === tab.toLowerCase() ? '#EB1C24' : '#808080',
                       border: 'none',
                       paddingBottom: '4px',
@@ -211,14 +212,16 @@ export default function AdminMeetings() {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => alert('Quick schedule')}
-              className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-              style={{ ...pageActionButtonStyle, marginTop: '14px' }}
-            >
-              QUICK SCHEDULE
-            </button>
+            <PageActionsBelowCard>
+              <button
+                type="button"
+                onClick={() => alert('Quick schedule')}
+                className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                style={pageActionButtonStyle}
+              >
+                QUICK SCHEDULE
+              </button>
+            </PageActionsBelowCard>
           </div>
         </div>
       </div>

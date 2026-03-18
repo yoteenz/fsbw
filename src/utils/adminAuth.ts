@@ -155,7 +155,26 @@ function clearBackupCookie(): void {
   } catch (_) {}
 }
 
-/** Call after setting isSignedIn and currentUser (sign-in). Persists a backup so we can restore if they get cleared. Only writes when signed in so we never overwrite a good backup with signed-out state (e.g. if something clears auth right before unload). Writes to both localStorage and a cookie so we survive localStorage clears on browser close. */
+const COOKIE_BACKUP_MAX = 3800;
+
+/** Build a slim currentUser (no large base64 image) so cookie backup fits and Safari can restore sign-in after close. */
+function slimCurrentUserForCookie(currentUserJson: string, maxBytes: number): string {
+  try {
+    const u = JSON.parse(currentUserJson) as Record<string, unknown>;
+    const slim = { ...u };
+    if (slim.profileImage && typeof slim.profileImage === 'string' && slim.profileImage.length > 200) slim.profileImage = '';
+    if (slim.profile_image && typeof slim.profile_image === 'string' && (slim.profile_image as string).length > 200) slim.profile_image = '';
+    let out = JSON.stringify(slim);
+    if (out.length <= maxBytes) return out;
+    const minimal: Record<string, unknown> = { id: u.id, email: u.email, role: u.role };
+    if (u.password && typeof u.password === 'string') minimal.password = u.password;
+    return JSON.stringify(minimal);
+  } catch {
+    return currentUserJson;
+  }
+}
+
+/** Call after setting isSignedIn and currentUser (sign-in). Persists a backup so we can restore if they get cleared. Only writes when signed in so we never overwrite a good backup with signed-out state (e.g. if something clears auth right before unload). Writes to both localStorage and a cookie so we survive localStorage clears on browser close. Cookie uses a slim user (no large profile image) so it always fits and Safari restore works. */
 export function persistAuthBackup(): void {
   if (typeof window === 'undefined' || !window.localStorage) return;
   try {
@@ -164,9 +183,14 @@ export function persistAuthBackup(): void {
     if (signedIn && currentUser) {
       const payload = JSON.stringify({ isSignedIn: true, currentUser });
       localStorage.setItem(AUTH_BACKUP_KEY, payload);
-      const wroteCookie = payload.length <= 3800;
-      if (wroteCookie) writeBackupToCookie(payload);
-      authDebugLog(`persist: ls=ok cookie=${wroteCookie ? 'ok' : 'skip(>3800)'} len=${payload.length} — backup written; close Safari and reopen with ?auth_debug=1 to test`);
+      let cookiePayload = payload;
+      if (payload.length > COOKIE_BACKUP_MAX) {
+        const wrapperOverhead = 35;
+        const slimUser = slimCurrentUserForCookie(currentUser, COOKIE_BACKUP_MAX - wrapperOverhead);
+        cookiePayload = JSON.stringify({ isSignedIn: true, currentUser: slimUser });
+      }
+      if (cookiePayload.length <= COOKIE_BACKUP_MAX) writeBackupToCookie(cookiePayload);
+      authDebugLog(`persist: ls=ok cookie=${cookiePayload.length <= COOKIE_BACKUP_MAX ? 'ok' : 'skip'} len=${payload.length} — backup written; close Safari and reopen with ?auth_debug=1 to test`);
     } else {
       authDebugLog(`persist: skip (signedIn=${signedIn} hasUser=${!!currentUser})`);
     }

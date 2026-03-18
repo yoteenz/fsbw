@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import AdminHeader from '../components/AdminHeader';
-import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
+import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { getAdminReviews } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
@@ -106,20 +106,21 @@ export default function AdminReviews() {
                     fontSize: '12px',
                     fontWeight: 500,
                     margin: 0,
+                    marginLeft: '6px',
                     textTransform: 'uppercase',
                     textAlign: 'left',
                   }}
                 >
                   REVIEWS
                 </h2>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '8px' }}>
-                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#EB1C24" />
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '-5px', transform: 'translateX(-6px)' }}>
+                  <path d="M9.517 13.673L12 12.167L14.483 13.673L13.823 10.848L16.019 8.964L13.133 8.708L12 6.058L10.867 8.708L7.981 8.964L10.177 10.848L9.517 13.673ZM3 20.077V3H21V17H6.077L3 20.077ZM5.65 16H20V4H4V17.644L5.65 16Z" fill="#EB1C24"/>
                 </svg>
               </div>
               <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
 
               {/* Cards above tabs */}
-              <div className="grid grid-cols-2 gap-4 px-5 mb-4">
+              <div className="grid grid-cols-2 gap-4 px-5 mb-4" style={{ marginTop: '12px' }}>
                 <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
                   <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{averageRating}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>AVERAGE RATING</p>
@@ -130,16 +131,16 @@ export default function AdminReviews() {
                 </div>
               </div>
 
-              <div className="flex px-5">
+              <div className="flex flex-wrap justify-center gap-[14px] px-5">
                 {REVIEW_TABS.map((tab) => (
                   <button
                     key={tab}
                     type="button"
                     onClick={() => setActiveTab(tab)}
-                    className="flex-1 py-3 font-medium transition-colors"
+                    className="py-3 px-2 font-medium transition-colors"
                     style={{
                       fontFamily: '"Futura PT Medium"',
-                      fontSize: '11px',
+                      fontSize: '10px',
                       color: activeTab === tab ? '#EB1C24' : '#808080',
                       border: 'none',
                       paddingBottom: '4px',
@@ -232,14 +233,16 @@ export default function AdminReviews() {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => {}}
-              className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-              style={{ ...pageActionButtonStyle, marginTop: '14px' }}
-            >
-              APPROVE PENDING REVIEWS
-            </button>
+            <PageActionsBelowCard>
+              <button
+                type="button"
+                onClick={() => {}}
+                className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                style={pageActionButtonStyle}
+              >
+                APPROVE PENDING REVIEWS
+              </button>
+            </PageActionsBelowCard>
           </div>
         </div>
       </div>

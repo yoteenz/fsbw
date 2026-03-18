@@ -5,6 +5,7 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { isAyoteenzAdminAccount, clearAppAuth } from '../../../utils/adminAuth';
+import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
 
 interface Notification {
   id: string;
@@ -18,6 +19,19 @@ interface Notification {
 }
 
 const ACCOUNT_NOTIFICATION_PREFIX = 'acc_';
+const ADMIN_SENT_PREFIX = 'admin_';
+
+/** Parse admin-sent notification text "[HEADER · TOPIC] body" into title (short, like other alerts) and message (one line). */
+export function parseAdminSentNotificationText(text: string): { title: string; message: string } {
+  const t = (text || '').trim();
+  const match = t.match(/^\[([^\]]+)\]\s*(.*)$/s);
+  if (match) {
+    const title = (match[1] || '').trim().toUpperCase();
+    const message = (match[2] || '').trim().toUpperCase();
+    return { title, message: message || 'VIEW DETAILS.' };
+  }
+  return { title: 'ALERT', message: t.toUpperCase() || 'VIEW DETAILS.' };
+}
 
 /** Vouchers are valid for 6 months once added. */
 const VOUCHER_VALIDITY_MONTHS = 6;
@@ -420,28 +434,15 @@ function NotificationsPage() {
     } catch (_) {}
   };
 
-  // Merge account notifications on visit; do NOT mark as read — alerts stay in NEW until user archives via eye icon.
+  // Merge account notifications on visit; fetch admin-sent from Supabase and merge with same theme (title/message).
   // Set viewed flag so the account card badge clears (grace) without moving alerts to SEEN.
   useEffect(() => {
-    try {
-      const rawUser = localStorage.getItem('currentUser');
-      const user = rawUser ? JSON.parse(rawUser) : null;
-      const key = user?.email ? `notifications_${user.email}` : 'notifications';
-      const raw = localStorage.getItem(key);
-      const stored: Notification[] = raw && Array.isArray(JSON.parse(raw)) ? JSON.parse(raw) : [];
-      const account = getAccountNotifications(user);
-      const merged = mergeAccountNotifications(stored, account);
-      localStorage.setItem(key, JSON.stringify(merged));
-      setNotifications(merged);
-      const email = (user?.email || '').trim().toLowerCase();
-      if (email) localStorage.setItem(`alertsPageViewed_${email}`, 'true');
-      window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
-    } catch (_) {}
-  }, []);
+    const today = (() => {
+      const d = new Date();
+      return `${d.getMonth() + 1}-${d.getDate()}-${d.getFullYear()}`;
+    })();
 
-  // Reload notifications when storage or user changes (e.g. after login or data update)
-  useEffect(() => {
-    const sync = () => {
+    (async () => {
       try {
         const rawUser = localStorage.getItem('currentUser');
         const user = rawUser ? JSON.parse(rawUser) : null;
@@ -449,9 +450,102 @@ function NotificationsPage() {
         const raw = localStorage.getItem(key);
         const stored: Notification[] = raw && Array.isArray(JSON.parse(raw)) ? JSON.parse(raw) : [];
         const account = getAccountNotifications(user);
-        setNotifications(mergeAccountNotifications(stored, account));
+        let merged = mergeAccountNotifications(stored, account);
+
+        if (isSupabaseConfigured()) {
+          const supabase = getSupabase();
+          const { data: sessionData } = await supabase?.auth.getSession() ?? {};
+          const userId = sessionData?.session?.user?.id;
+          if (userId) {
+            const { data: row } = await supabase
+              .from('notifications')
+              .select('items')
+              .eq('user_id', userId)
+              .maybeSingle();
+            const items = Array.isArray((row as { items?: unknown[] } | null)?.items) ? (row as { items: unknown[] }).items : [];
+            const adminNotifs: Notification[] = items.map((it: { id?: string; text?: string; read?: boolean; createdAt?: string }) => {
+              const { title, message } = parseAdminSentNotificationText((it.text || '').trim());
+              const created = it.createdAt || '';
+              const date = created ? `${new Date(created).getMonth() + 1}-${new Date(created).getDate()}-${new Date(created).getFullYear()}` : today;
+              return {
+                id: ADMIN_SENT_PREFIX + (it.id || crypto.randomUUID()),
+                title,
+                message,
+                date,
+                isRead: !!it.read,
+                icon: 'f',
+              };
+            });
+            const byId = new Map(merged.map((n) => [n.id, n]));
+            adminNotifs.forEach((n) => {
+              byId.set(n.id, { ...n, isRead: byId.get(n.id)?.isRead ?? n.isRead });
+            });
+            merged = Array.from(byId.values());
+          }
+        }
+
+        localStorage.setItem(key, JSON.stringify(merged));
+        setNotifications(merged);
+        const email = (user?.email || '').trim().toLowerCase();
+        if (email) localStorage.setItem(`alertsPageViewed_${email}`, 'true');
+        window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+      } catch (_) {}
+    })();
+  }, []);
+
+  // Reload notifications when storage or user changes (e.g. after login or data update); re-fetch admin-sent and merge.
+  useEffect(() => {
+    const today = (() => {
+      const d = new Date();
+      return `${d.getMonth() + 1}-${d.getDate()}-${d.getFullYear()}`;
+    })();
+
+    const sync = async () => {
+      try {
+        const rawUser = localStorage.getItem('currentUser');
+        const user = rawUser ? JSON.parse(rawUser) : null;
+        const key = user?.email ? `notifications_${user.email}` : 'notifications';
+        const raw = localStorage.getItem(key);
+        const stored: Notification[] = raw && Array.isArray(JSON.parse(raw)) ? JSON.parse(raw) : [];
+        const account = getAccountNotifications(user);
+        let merged = mergeAccountNotifications(stored, account);
+
+        if (isSupabaseConfigured()) {
+          const supabase = getSupabase();
+          const { data: sessionData } = await supabase?.auth.getSession() ?? {};
+          const userId = sessionData?.session?.user?.id;
+          if (userId) {
+            const { data: row } = await supabase
+              .from('notifications')
+              .select('items')
+              .eq('user_id', userId)
+              .maybeSingle();
+            const items = Array.isArray((row as { items?: unknown[] } | null)?.items) ? (row as { items: unknown[] }).items : [];
+            const adminNotifs: Notification[] = items.map((it: { id?: string; text?: string; read?: boolean; createdAt?: string }) => {
+              const { title, message } = parseAdminSentNotificationText((it.text || '').trim());
+              const created = it.createdAt || '';
+              const date = created ? `${new Date(created).getMonth() + 1}-${new Date(created).getDate()}-${new Date(created).getFullYear()}` : today;
+              return {
+                id: ADMIN_SENT_PREFIX + (it.id || crypto.randomUUID()),
+                title,
+                message,
+                date,
+                isRead: !!it.read,
+                icon: 'f',
+              };
+            });
+            const byId = new Map(merged.map((n) => [n.id, n]));
+            adminNotifs.forEach((n) => {
+              byId.set(n.id, { ...n, isRead: byId.get(n.id)?.isRead ?? n.isRead });
+            });
+            merged = Array.from(byId.values());
+          }
+        }
+
+        setNotifications(merged);
       } catch (_) {}
     };
+
     sync();
     window.addEventListener('storage', sync);
     window.addEventListener('signInStateChanged', sync);
@@ -819,7 +913,7 @@ function NotificationsPage() {
                                 style={{ 
                                   width: '16px', 
                                   height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-11px) translateY(-4px) rotate(90deg)' : 'translateX(-11px) translateY(-4px) rotate(0deg)'}`,
+                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-5px) translateY(-4px) rotate(90deg)' : 'translateX(-5px) translateY(-4px) rotate(0deg)'}`,
                                   display: 'flex',
                                   alignItems: 'center',
                                   cursor: 'pointer'

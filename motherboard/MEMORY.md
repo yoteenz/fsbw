@@ -449,3 +449,68 @@ User asked if there is a way to capture the **entire current codebase** (and its
 **Changes:** `src/pages/products/page.tsx`, `src/pages/account/shipping/page.tsx`, `src/pages/account/reviews/leave-review-order/page.tsx` (7px → 13px for menu labels). `src/pages/wavy/beach-wave/page.tsx`, `src/pages/units/curly/page.tsx`, `src/pages/straight/blanco/page.tsx`, `src/pages/curly/soft-curl/page.tsx` (-5px → -11px for menu arrows). This MEMORY entry.
 
 **Conventions:** Mobile menu toggle: label subtext = `translateX(13px)`, SHOP arrows = `translateX(-11px) translateY(-4px)`, 20px below social icons via wrapper. Use account profile page as reference for any new or updated menu implementations.
+
+---
+
+## 2025-03-17 — Admin Marketing Alerts tab: concierge styling, client list from overview, button below card
+
+**Context:** User wanted the Alerts tab (Marketing admin card) to match the concierge priority-messages UI: same styling for the user dropdown and message input; the "Select a client" dropdown should show all clients from the overview (it was empty); and the Send notification button should sit below the main card with uppercase red Futura Medium styling.
+
+**Topics covered (this chat):**
+- **Dropdown and textarea styling:** Alerts tab user dropdown and message input now use the same styles as the concierge "PRIORITY MESSAGES" card: dropdown with height 36px, border 1.3px solid #000, Futura PT Book 11px, uppercase, custom arrow via `/assets/dropdown.svg`, borderRadius 0, appearance none; textarea with padding 12px, same border/font, uppercase, 6 rows, input forced to uppercase on change.
+- **Client list source:** Added `buildClientListFromOverview()` so the Alerts client list matches the overview: `getAdminClients()` result is merged with `getMockClientsForAyoteenz()`, deduped by email, and filtered with `isClientBlocked`. When the API returns empty or fails, fallback uses `registeredUsers` from localStorage and, for ayoteenz admin, merges mock clients—same logic as the clients overview page.
+- **Send notification button:** Moved out of the card; when Alerts is active it is rendered in `PageActionsBelowCard` below the main card, with `pageActionButtonStyle` (red #EB1C24, Futura PT Medium, uppercase, "SEND NOTIFICATION" / "SENDING...").
+
+**Decisions / outcomes:** Alerts tab uses concierge-style form controls; client dropdown is populated from the same source as the admin clients overview (API + mock + fallback); primary action button is below the card with shared admin button styling.
+
+**Changes:** `src/pages/admin/marketing/page.tsx` (imports for `isAyoteenzAdminAccount`, `isClientBlocked`, `getMockClientsForAyoteenz`; `buildClientListFromOverview()`; Alerts client loading uses it; dropdown/textarea/labels styled like concierge; Send button in `PageActionsBelowCard` with `pageActionButtonStyle`). This MEMORY entry.
+
+**Conventions:** Admin Marketing Alerts tab: client list = same as overview (API + mock merge, dedupe, filter blocked); form styling matches concierge priority messages; action button below card with red Futura Medium uppercase.
+
+---
+
+## 2025-03-17 — Marketing Alerts "Select a client" dropdown matches client overview sort styling
+
+**Context:** User wanted the "Select a client" dropdown on the Marketing Alerts tab to use the same box/text styling as the most recent sorting control on the client overview page.
+
+**Topics covered (this chat):**
+- **Client overview sort reference:** The sort dropdown on the client overview (`admin/clients`) uses a trigger + dropdown panel with border 1.3px black, white bg; dropdown options use `text-xs` (12px), Futura PT Book, color #000, fontWeight 400, uppercase.
+- **Marketing select update:** The Alerts "Select a client" native `<select>` was updated to match: same border and background; text styling set to fontSize 12px, fontWeight 400, color #000; padding set to `8px 28px 8px 12px` to align with sort option spacing.
+
+**Decisions / outcomes:** Marketing Alerts "Select a client" dropdown now matches client overview sort dropdown box and text styling (12px, 400, #000, same border/bg).
+
+**Changes:** `src/pages/admin/marketing/page.tsx` (select style: fontSize 12px, fontWeight 400, color #000, padding shorthand).
+
+**Conventions:** When aligning admin form controls across pages, use client overview sort dropdown (and its option styling) as the reference for dropdown/select box and text styling.
+
+---
+
+## 2025-03-17 — Admin pending header icon updated to pending-icon2
+
+**Context:** User asked to update the admin Pending page header icon to use the `pending-icon2.svg` asset (folder/file with checkmark).
+
+**Changes:** `src/pages/admin/pending/page.tsx` — replaced the previous inline SVG (three-dots style) with the pending-icon2 paths (folder shape + checkmark), keeping 15×15 display size and existing wrapper style; SVG attributes use React camelCase (strokeWidth, strokeLinecap, strokeLinejoin).
+
+---
+
+## 2025-03-17 — Marketing Alerts: "SEARCH" hint below Select a client
+
+**Context:** User wanted a "search" text line below the "SELECT A CLIENT" label on the Marketing Alerts dropdown to make it easier to find the client, with similar styling to the search icon/input in the admin nav bar.
+
+**Changes:** `src/pages/admin/marketing/page.tsx` — added a "SEARCH" line below "SELECT A CLIENT" with nav-bar search styling (Futura PT Medium, 500, #EB1C24, 12px, uppercase); reduced SELECT A CLIENT bottom margin to 4px so the two lines sit together, SEARCH has 8px margin above the dropdown. Native select supports type-to-search in browsers, so the hint reinforces that behavior.
+
+---
+
+## 2025-03-17 — Admin header icons moved 6px left
+
+**Context:** User asked to move all admin header icons 6px to the left.
+
+**Changes:** Updated header icon `marginLeft` on all admin card pages so icons shift 6px left: revenue, marketing, pending, analytics, meetings, brand, referrals, reviews, backend — from `1px` to `-5px`; clients page (icon had `4px`) to `-2px`. Backend icon retains `transform: translateY(-1.5px)`.
+
+---
+
+## 2025-03-17 — Marketing Alerts: dropdown scroll, custom inputs, arrow position, border thickness
+
+**Context:** User asked for: (1) header & topic dropdowns to have scroll; (2) when selecting CUSTOM, show an input field to enter custom header/topic; (3) move the red dropdown arrow 16px to the right for all three input boxes (header, topic, client); (4) decrease dropdowns’ line thickness by 0.5px.
+
+**Changes:** `src/pages/admin/marketing/page.tsx` — Header and topic dropdown panels use `overflowY: 'auto'` with `maxHeight: '220px'` so lists scroll. When header is CUSTOM or topic is CUSTOM, the control becomes a text input (placeholder "ENTER CUSTOM HEADER..." / "ENTER CUSTOM TOPIC...") with a red ▼ button to reopen the list; send logic uses `customHeaderText`/`customTopicText` (state added). Red arrow position: header and topic `marginLeft` 8px→24px, client 18px→34px. All three dropdown triggers and panels: border 1.3px→0.8px.

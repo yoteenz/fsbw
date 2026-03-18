@@ -1,0 +1,213 @@
+/**
+ * Shared admin revenue & inventory stats. Used by admin revenue page and dashboard.
+ * Orders are read from localStorage userOrders_* (same keys as client overview).
+ */
+
+export type RevenueOrderForStats = {
+  id: string;
+  date?: string;
+  total?: number;
+  amount?: number;
+  status?: string;
+  lineItems?: Array<{ productName?: string }>;
+  items?: number;
+  productName?: string;
+  addOns?: string[];
+  options?: Record<string, unknown>;
+  [k: string]: unknown;
+};
+
+const PRODUCT_NAMES = ['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL', 'OCEAN CURL'] as const;
+
+/** Starting inventory: products (10 each), packaging counts. */
+export const STARTING_INVENTORY = {
+  products: Object.fromEntries(PRODUCT_NAMES.map((p) => [p, 10])) as Record<string, number>,
+  packaging: {
+    'MAILER BOXES': 250,
+    'DUST BAGS': 500,
+    'BUSINESS CARDS': 1000,
+    'HANG TAGS': 497,
+    'LABELS': 500,
+    'ENVELOPES': 500,
+    'THANK YOU NOTES': 500,
+    'CAMPAIGN FLYERS': 510,
+    'MESH POUCH': 1000,
+    'WHITE HAIR TIES': 498,
+    'WHITE DUCK CLIPS': 998,
+    'LASHES': 250,
+    'BRUSH': 250,
+    'GLUE SPREADER': 249,
+    'MELT BANDS': 250,
+  } as Record<string, number>,
+};
+
+/** Per-order packaging usage (1 product order). */
+const PER_ORDER_PACKAGING: Record<string, number> = {
+  'MAILER BOXES': 1,
+  'DUST BAGS': 1,
+  'BUSINESS CARDS': 2,
+  'HANG TAGS': 1,
+  'LABELS': 1,
+  'ENVELOPES': 1,
+  'THANK YOU NOTES': 1,
+  'CAMPAIGN FLYERS': 1,
+  'MESH POUCH': 1,
+  'WHITE HAIR TIES': 2,
+  'WHITE DUCK CLIPS': 2,
+  'LASHES': 1,
+  'BRUSH': 0, // 1 if free gift selected
+  'GLUE SPREADER': 0,
+  'MELT BANDS': 0, // 1 if free gift selected
+};
+
+function hasFreeGift(order: RevenueOrderForStats, key: 'brush' | 'melt'): boolean {
+  const addOns = order.addOns ?? [];
+  const opts = order.options ?? {};
+  const str = JSON.stringify({ addOns, opts }).toLowerCase();
+  if (key === 'brush') return /brush|free\s*gift/.test(str) || (opts as Record<string, string>)?.freeGift === 'brush';
+  if (key === 'melt') return /melt|band/.test(str) || (opts as Record<string, string>)?.freeGift === 'melt';
+  return false;
+}
+
+export function buildRevenueOrdersList(): RevenueOrderForStats[] {
+  const out: RevenueOrderForStats[] = [];
+  try {
+    // Same source as client overview: localStorage userOrders_* (client overview uses this too; mock clients use getMockOrdersForClient only when viewing that client)
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key || !key.startsWith('userOrders_')) continue;
+      const email = key.replace('userOrders_', '');
+      const raw = localStorage.getItem(key);
+      if (!raw) continue;
+      const data = JSON.parse(raw);
+      const active = Array.isArray(data?.activeOrders) ? data.activeOrders : [];
+      const past = Array.isArray(data?.pastOrders) ? data.pastOrders : [];
+      [...active, ...past].forEach((o: RevenueOrderForStats) => out.push({ ...o, userEmail: email } as RevenueOrderForStats & { userEmail?: string }));
+    }
+    out.sort((a, b) => {
+      const ta = new Date((a.date || '').toString()).getTime();
+      const tb = new Date((b.date || '').toString()).getTime();
+      return tb - ta;
+    });
+  } catch {
+    // Fallback mock data aligned with client overview mock shape (same products/statuses)
+    const now = new Date();
+    const d = (n: number) => {
+      const x = new Date(now);
+      x.setDate(x.getDate() - n);
+      return x.toISOString().slice(0, 10);
+    };
+    return [
+      { id: 'rev-1', date: d(2), total: 899, status: 'UNFULFILLED', orderNumber: '1001', lineItems: [{ productName: 'NOIR' }] },
+      { id: 'rev-2', date: d(5), total: 749, status: 'AWAITING FORM', orderNumber: '1002', lineItems: [{ productName: 'BLANCO' }] },
+      { id: 'rev-3', date: d(14), total: 649, status: 'SHIPPED', orderNumber: '1003', lineItems: [{ productName: 'SOFT CURL' }] },
+      { id: 'rev-4', date: d(45), total: 899, status: 'DELIVERED', orderNumber: '1004', lineItems: [{ productName: 'BEACH WAVE' }] },
+    ];
+  }
+  return out;
+}
+
+export type DepletedInventory = {
+  products: Record<string, number>;
+  packaging: Record<string, number>;
+  totalUnits: number;
+};
+
+const INVENTORY_OVERRIDE_KEY = 'adminInventoryOverride';
+
+export function getInventoryOverride(): DepletedInventory | null {
+  try {
+    const raw = localStorage.getItem(INVENTORY_OVERRIDE_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw) as { products?: Record<string, number>; packaging?: Record<string, number> };
+    if (!data || typeof data !== 'object') return null;
+    const products = { ...STARTING_INVENTORY.products, ...(data.products || {}) };
+    const packaging = { ...STARTING_INVENTORY.packaging, ...(data.packaging || {}) };
+    const totalUnits =
+      Object.values(products).reduce((s, n) => s + Number(n), 0) +
+      Object.values(packaging).reduce((s, n) => s + Number(n), 0);
+    return { products, packaging, totalUnits };
+  } catch {
+    return null;
+  }
+}
+
+export function setInventoryOverride(data: { products: Record<string, number>; packaging: Record<string, number> }): void {
+  try {
+    localStorage.setItem(INVENTORY_OVERRIDE_KEY, JSON.stringify(data));
+  } catch {
+    /* ignore */
+  }
+}
+
+export function getDepletedInventory(orders: RevenueOrderForStats[]): DepletedInventory {
+  const override = getInventoryOverride();
+  if (override) return override;
+
+  const products = { ...STARTING_INVENTORY.products };
+  const packaging = { ...STARTING_INVENTORY.packaging };
+
+  for (const order of orders) {
+    const lineItems = order.lineItems ?? (order.items ? [{ productName: order.productName || 'NOIR' }] : [{ productName: 'NOIR' }]);
+    const itemCount = Math.max(1, lineItems.length);
+
+    for (const line of lineItems) {
+      const name = (line.productName || 'NOIR').toString().toUpperCase().replace(/\s+/g, ' ');
+      const key = PRODUCT_NAMES.find((p) => p.replace(/\s+/g, ' ') === name) || 'NOIR';
+      if (products[key] != null) products[key] = Math.max(0, (products[key] ?? 0) - 1);
+    }
+
+    const useBrush = hasFreeGift(order, 'brush') ? 1 : 0;
+    const useMelt = hasFreeGift(order, 'melt') ? 1 : 0;
+
+    packaging['MAILER BOXES'] = Math.max(0, (packaging['MAILER BOXES'] ?? 0) - 1);
+    packaging['DUST BAGS'] = Math.max(0, (packaging['DUST BAGS'] ?? 0) - 1);
+    packaging['BUSINESS CARDS'] = Math.max(0, (packaging['BUSINESS CARDS'] ?? 0) - 2);
+    packaging['HANG TAGS'] = Math.max(0, (packaging['HANG TAGS'] ?? 0) - 1);
+    packaging['LABELS'] = Math.max(0, (packaging['LABELS'] ?? 0) - 1);
+    packaging['ENVELOPES'] = Math.max(0, (packaging['ENVELOPES'] ?? 0) - 1);
+    packaging['THANK YOU NOTES'] = Math.max(0, (packaging['THANK YOU NOTES'] ?? 0) - 1);
+    packaging['CAMPAIGN FLYERS'] = Math.max(0, (packaging['CAMPAIGN FLYERS'] ?? 0) - 1);
+    packaging['MESH POUCH'] = Math.max(0, (packaging['MESH POUCH'] ?? 0) - 1);
+    packaging['WHITE HAIR TIES'] = Math.max(0, (packaging['WHITE HAIR TIES'] ?? 0) - 2);
+    packaging['WHITE DUCK CLIPS'] = Math.max(0, (packaging['WHITE DUCK CLIPS'] ?? 0) - 2);
+    packaging['LASHES'] = Math.max(0, (packaging['LASHES'] ?? 0) - 1);
+    if (useBrush) packaging['BRUSH'] = Math.max(0, (packaging['BRUSH'] ?? 0) - 1);
+    if (useMelt) packaging['MELT BANDS'] = Math.max(0, (packaging['MELT BANDS'] ?? 0) - 1);
+  }
+
+  const totalUnits =
+    Object.values(products).reduce((s, n) => s + n, 0) +
+    Object.values(packaging).reduce((s, n) => s + n, 0);
+
+  return { products, packaging, totalUnits };
+}
+
+export function getOrdersStats(
+  orders: RevenueOrderForStats[],
+  totalRevenue: number
+): { thisMonth: number; avgOrder: number; unfulfilledCount: number } {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth();
+  const thisMonth = orders.filter((o) => {
+    const d = new Date((o.date || '').toString());
+    return d.getFullYear() === y && d.getMonth() === m;
+  }).length;
+
+  const fulfilled = ['DELIVERED', 'SHIPPED', 'CANCELED', 'CANCELLED'];
+  const unfulfilledCount = orders.filter(
+    (o) => !fulfilled.includes((o.status || '').toUpperCase().trim())
+  ).length;
+
+  const count = orders.length || 1;
+  const avgOrder = totalRevenue / count;
+
+  return { thisMonth, avgOrder, unfulfilledCount };
+}
+
+export function getTotalStartingInventoryUnits(): number {
+  const p = Object.values(STARTING_INVENTORY.products).reduce((s, n) => s + n, 0);
+  const k = Object.values(STARTING_INVENTORY.packaging).reduce((s, n) => s + n, 0);
+  return p + k;
+}

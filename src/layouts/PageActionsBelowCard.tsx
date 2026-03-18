@@ -14,7 +14,7 @@ import React from 'react';
  *     </PageActionsBelowCard>
  *   )}
  */
-const PAGE_ACTION_FIRST_SPACING = { marginTop: '2px' } as const;
+const PAGE_ACTION_FIRST_SPACING = { marginTop: '14px' } as const;
 const PAGE_ACTION_NEXT_SPACING = { marginTop: '10px' } as const;
 
 export function PageActionsBelowCard({
@@ -45,7 +45,7 @@ PageActionsBelowCard.Spacer = Spacer;
 
 /** Shared button style for page actions (red, bordered, Futura, uppercase). */
 export const pageActionButtonStyle: React.CSSProperties = {
-  borderWidth: '1.3px',
+  border: '1.3px solid #000',
   color: '#EB1C24',
   fontFamily: '"Futura PT Medium"',
   backgroundColor: '#FFFFFF',

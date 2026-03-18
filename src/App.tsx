@@ -84,6 +84,10 @@ const AdminDeletedAccounts = lazyWithLogging(() => import('./pages/admin/clients
 const AdminMeetings = lazyWithLogging(() => import('./pages/admin/meetings/page'), 'AdminMeetings');
 const AdminPending = lazyWithLogging(() => import('./pages/admin/pending/page'), 'AdminPending');
 const AdminRevenue = lazyWithLogging(() => import('./pages/admin/revenue/page'), 'AdminRevenue');
+const AdminAccountingReport = lazyWithLogging(() => import('./pages/admin/revenue/accounting-report/page'), 'AdminAccountingReport');
+const AdminFulfilledOrders = lazyWithLogging(() => import('./pages/admin/revenue/fulfilled-orders/page'), 'AdminFulfilledOrders');
+const AdminFraudAnalysis = lazyWithLogging(() => import('./pages/admin/revenue/fraud-analysis/page'), 'AdminFraudAnalysis');
+const AdminEditInventory = lazyWithLogging(() => import('./pages/admin/revenue/edit-inventory/page'), 'AdminEditInventory');
 const AdminReviews = lazyWithLogging(() => import('./pages/admin/reviews/page'), 'AdminReviews');
 const AdminReferrals = lazyWithLogging(() => import('./pages/admin/referrals/page'), 'AdminReferrals');
 const AdminAnalytics = lazyWithLogging(() => import('./pages/admin/analytics/page'), 'AdminAnalytics');
@@ -370,6 +374,26 @@ function App() {
           <Route path="pending" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminPending />
+            </Suspense>
+          } />
+          <Route path="revenue/accounting-report" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminAccountingReport />
+            </Suspense>
+          } />
+          <Route path="revenue/fulfilled-orders" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminFulfilledOrders />
+            </Suspense>
+          } />
+          <Route path="revenue/fraud-analysis" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminFraudAnalysis />
+            </Suspense>
+          } />
+          <Route path="revenue/edit-inventory" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminEditInventory />
             </Suspense>
           } />
           <Route path="revenue" element={

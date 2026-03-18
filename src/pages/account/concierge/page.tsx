@@ -2668,8 +2668,8 @@ function ConciergePage() {
                           src={specialOfferIconUrl}
                           alt="Special Offer"
                           style={{
-                            width: '17.76px',
-                            height: '17.76px',
+                            width: '18.76px',
+                            height: '18.76px',
                             objectFit: 'contain'
                           }}
                         />
