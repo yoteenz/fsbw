@@ -362,7 +362,6 @@ export default function AdminRevenue() {
   const depletedInventory = useMemo(() => getDepletedInventory(orders), [orders]);
   const ordersStats = useMemo(() => getOrdersStats(orders, totalRevenue), [orders, totalRevenue]);
   const inventoryTotal = depletedInventory.totalUnits;
-  const _totalStartingUnits = getTotalStartingInventoryUnits();
 
   const PRODUCT_NAMES_OVERVIEW = ['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL', 'OCEAN CURL'] as const;
   const topProductsBySales = useMemo(() => {

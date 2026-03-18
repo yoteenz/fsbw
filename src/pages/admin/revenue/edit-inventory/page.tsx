@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../../components/AdminHeader';
-import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
 import { buildRevenueOrdersList, getDepletedInventory, getInventoryOverride, setInventoryOverride, STARTING_INVENTORY } from '../../../../utils/adminRevenueStats';
 import { pageActionButtonStyle } from '../../../../layouts/PageActionsBelowCard';
 
@@ -47,10 +46,6 @@ export default function AdminEditInventory() {
       <div className="relative z-10" style={{ textTransform: 'uppercase' }}>
         <AdminHeader title="EDIT INVENTORY" showBack onBack={() => navigate('/admin/revenue')} breadcrumbParentLabel="REVENUE" breadcrumbParentPath="/admin/revenue" />
         <div className="pb-8 px-4 max-w-md mx-auto">
-          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', marginBottom: '16px', textTransform: 'none' }}>
-            Edit quantities for each product and packaging item. Save to update inventory across the revenue and dashboard views.
-          </p>
-
           <div className="bg-white/60 backdrop-blur-sm border border-black p-4 mb-4" style={{ borderWidth: '1.3px' }}>
             <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '10px' }}>PRODUCTS</h3>
             {PRODUCT_NAMES.map((name) => (
@@ -77,7 +72,7 @@ export default function AdminEditInventory() {
                   type="number"
                   min={0}
                   value={packaging[name] ?? 0}
-                  onChange={(e) => updatePackaging(name, e.target.valueAsNumber)}
+                  onChange={(e) => updatePackaging(name, e.target.value)}
                   className="w-20 py-1 px-2 border border-black text-right"
                   style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000' }}
                 />
@@ -85,7 +80,7 @@ export default function AdminEditInventory() {
             ))}
           </div>
 
-          <button type="button" onClick={handleSave} className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50 mt-4" style={{ ...pageActionButtonStyle, borderWidth: '1.3px' }}>
+          <button type="button" onClick={handleSave} className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50 mt-2" style={{ ...pageActionButtonStyle, borderWidth: '1.3px' }}>
             {saved ? 'SAVED' : 'SAVE INVENTORY'}
           </button>
           <button type="button" onClick={() => navigate('/admin/revenue?tab=PRODUCTS')} className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50 mt-2" style={{ ...pageActionButtonStyle, borderWidth: '1.3px' }}>BACK TO PRODUCTS</button>

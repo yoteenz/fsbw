@@ -41,8 +41,8 @@ export const STARTING_INVENTORY = {
   } as Record<string, number>,
 };
 
-/** Per-order packaging usage (1 product order). */
-const PER_ORDER_PACKAGING: Record<string, number> = {
+/** Per-order packaging usage (1 product order). Reserved for future use. */
+const _PER_ORDER_PACKAGING: Record<string, number> = {
   'MAILER BOXES': 1,
   'DUST BAGS': 1,
   'BUSINESS CARDS': 2,
@@ -149,7 +149,6 @@ export function getDepletedInventory(orders: RevenueOrderForStats[]): DepletedIn
 
   for (const order of orders) {
     const lineItems = order.lineItems ?? (order.items ? [{ productName: order.productName || 'NOIR' }] : [{ productName: 'NOIR' }]);
-    const _itemCount = Math.max(1, lineItems.length);
 
     for (const line of lineItems) {
       const name = (line.productName || 'NOIR').toString().toUpperCase().replace(/\s+/g, ' ');
