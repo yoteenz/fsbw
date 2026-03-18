@@ -41,25 +41,6 @@ export const STARTING_INVENTORY = {
   } as Record<string, number>,
 };
 
-/** Per-order packaging usage (1 product order). Reserved for future use. */
-const _PER_ORDER_PACKAGING: Record<string, number> = {
-  'MAILER BOXES': 1,
-  'DUST BAGS': 1,
-  'BUSINESS CARDS': 2,
-  'HANG TAGS': 1,
-  'LABELS': 1,
-  'ENVELOPES': 1,
-  'THANK YOU NOTES': 1,
-  'CAMPAIGN FLYERS': 1,
-  'MESH POUCH': 1,
-  'WHITE HAIR TIES': 2,
-  'WHITE DUCK CLIPS': 2,
-  'LASHES': 1,
-  'BRUSH': 0, // 1 if free gift selected
-  'GLUE SPREADER': 0,
-  'MELT BANDS': 0, // 1 if free gift selected
-};
-
 function hasFreeGift(order: RevenueOrderForStats, key: 'brush' | 'melt'): boolean {
   const addOns = order.addOns ?? [];
   const opts = order.options ?? {};

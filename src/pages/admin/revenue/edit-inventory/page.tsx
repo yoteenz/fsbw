@@ -56,7 +56,7 @@ export default function AdminEditInventory() {
                   min={0}
                   value={String(Number(products[name] ?? 0))}
                   onChange={(e) => updateProduct(name, e.target.value)}
-                  className="w-20 py-1 px-2 border border-black text-right"
+                  className="w-20 py-1 px-2 border border-black text-right rounded-none"
                   style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', borderRadius: 0 }}
                 />
               </div>
@@ -71,10 +71,10 @@ export default function AdminEditInventory() {
                 <input
                   type="number"
                   min={0}
-                  value={packaging[name] ?? 0}
+                  value={String(Number(packaging[name] ?? 0))}
                   onChange={(e) => updatePackaging(name, e.target.value)}
-                  className="w-20 py-1 px-2 border border-black text-right"
-                  style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000' }}
+                  className="w-20 py-1 px-2 border border-black text-right rounded-none"
+                  style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', borderRadius: 0 }}
                 />
               </div>
             ))}
