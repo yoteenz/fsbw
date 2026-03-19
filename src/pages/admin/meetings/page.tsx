@@ -141,7 +141,7 @@ export default function AdminMeetings() {
               </div>
 
               {/* Scrollable area: date, meetings list, quick schedule */}
-              <div className="flex-1 min-h-0 overflow-y-auto">
+              <div className="flex-1 min-h-0 overflow-y-auto" style={{ padding: '8px', boxSizing: 'border-box' }}>
                 <div className="px-5 pb-4">
                 <input
                   type="date"
@@ -153,7 +153,7 @@ export default function AdminMeetings() {
               </div>
 
               <h3 className="px-5" style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>TODAY&apos;S MEETINGS</h3>
-              <div className="overflow-y-auto px-5 pb-4" style={{ maxHeight: '220px' }}>
+              <div className="overflow-y-auto px-5 pb-4" style={{ maxHeight: '220px', paddingTop: '2px' }}>
                 {meetings.map((meeting) => (
                   <div
                     key={meeting.id}

@@ -257,7 +257,7 @@ export default function AdminMarketing() {
             }}
           />
         </div>
-        <div style={{ flex: '1 1 0', minHeight: 0, overflowY: 'auto' }}>
+        <div style={{ flex: '1 1 0', minHeight: 0, overflowY: 'auto', padding: '8px', boxSizing: 'border-box' }}>
           {filteredClients.map((c) => {
             const id = (c as { id?: string }).id || '';
             const isSelected = selectedUserIds.includes(id);
@@ -376,7 +376,7 @@ export default function AdminMarketing() {
                 ))}
               </div>
 
-              <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '380px', marginTop: '16px' }}>
+              <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '380px', marginTop: '16px', paddingTop: '2px' }}>
                 {activeTab === 'AFFILIATE' && (
                   <div className="py-4">
                     <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>

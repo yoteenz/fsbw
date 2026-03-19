@@ -183,7 +183,7 @@ export default function AdminBrand() {
               </div>
 
               {/* Tab content */}
-              <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '380px' }}>
+              <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '380px', padding: '8px', paddingTop: '2px', boxSizing: 'border-box' }}>
                 {activeTab === 'OVERVIEW' && (
                   <>
                     <div className="grid grid-cols-2 gap-4 mt-4">
@@ -281,7 +281,7 @@ export default function AdminBrand() {
                         {analyticsSummary.recentEvents.length === 0 ? (
                           <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080', margin: 0, textTransform: 'uppercase' }}>NO CLICKS RECORDED YET.</p>
                         ) : (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '140px', overflowY: 'auto' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '140px', overflowY: 'auto', padding: '8px', boxSizing: 'border-box' }}>
                             {analyticsSummary.recentEvents.slice(0, 10).map((evt, i) => (
                               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '10px', fontFamily: '"Futura PT Book"', color: '#000', padding: '6px 8px', backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
                                 <span style={{ fontWeight: '500' }}>{PLATFORM_LABEL[evt.platform]}</span>

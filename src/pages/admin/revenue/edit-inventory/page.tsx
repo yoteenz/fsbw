@@ -80,7 +80,7 @@ export default function AdminEditInventory() {
             ))}
           </div>
 
-          <button type="button" onClick={handleSave} className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50" style={{ ...pageActionButtonStyle, borderWidth: '1.3px', marginTop: '10px' }}>
+          <button type="button" onClick={handleSave} className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50" style={{ ...pageActionButtonStyle, borderWidth: '1.3px', marginTop: 0 }}>
             {saved ? 'SAVED' : 'SAVE INVENTORY'}
           </button>
           <button type="button" onClick={() => navigate('/admin/revenue?tab=PRODUCTS')} className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50 mt-2" style={{ ...pageActionButtonStyle, borderWidth: '1.3px' }}>BACK TO PRODUCTS</button>

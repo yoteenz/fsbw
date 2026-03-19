@@ -162,7 +162,7 @@ export default function AdminReviews() {
               </div>
 
               {/* Tab content */}
-              <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '380px' }}>
+              <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '380px', padding: '8px', boxSizing: 'border-box' }}>
                 {activeTab === 'ALL' && (
                   <>
                     <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>RECENT REVIEWS</h3>

@@ -196,7 +196,7 @@ export default function AdminBackend() {
                 ))}
               </div>
 
-              <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '420px' }}>
+              <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '420px', padding: '8px', boxSizing: 'border-box' }}>
                 {activeTab === 'AUDIT LOG' && (
                   <>
                     {auditLoading ? (

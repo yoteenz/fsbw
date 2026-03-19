@@ -1766,7 +1766,7 @@ export default function AdminClients() {
                               {reviewList.length > 0 && (
                                 <div className="mt-4 pt-4" style={{ borderTop: '1px solid #e5e7eb' }}>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', marginBottom: '8px', textTransform: 'uppercase' }}>ALL REVIEWS (NEWEST FIRST)</p>
-                                  <div className="space-y-3 max-h-64 overflow-y-auto">
+                                  <div className="space-y-3 max-h-64 overflow-y-auto" style={{ paddingTop: '2px' }}>
                                     {reviewList.map((r: any, i: number) => {
                                       const dateStr = (r.updatedAt ?? r.updated_at ?? r.date ?? r.createdAt ?? r.submittedAt) || '—';
                                       const displayDate = typeof dateStr === 'string' ? (() => { try { return new Date(dateStr).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }); } catch { return dateStr; } })() : '—';
@@ -1981,7 +1981,7 @@ export default function AdminClients() {
                               {list.length === 0 ? (
                                 <div className="bg-white border border-gray-200 p-4 text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>NO ACTIVITY YET. EVENTS WILL APPEAR HERE AS THE CLIENT USES THE SITE.</div>
                               ) : (
-                                <div className="space-y-2 max-h-96 overflow-y-auto">
+                                <div className="space-y-2 max-h-96 overflow-y-auto" style={{ paddingTop: '2px' }}>
                                   {list.map((evt) => {
                                     const createdAt = evt.createdAt ? new Date(evt.createdAt).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'medium' }) : '—';
                                     const payload = evt.payload && typeof evt.payload === 'object' ? evt.payload as Record<string, unknown> : undefined;
@@ -2615,7 +2615,7 @@ export default function AdminClients() {
                                   </p>
                                 </div>
                               ) : (
-                                <div className="space-y-3 max-h-64 overflow-y-auto">
+                                <div className="space-y-3 max-h-64 overflow-y-auto" style={{ paddingTop: '2px' }}>
                                   {messages.map((m) => (
                                     <div key={String(m.id)} className="py-3 border-b border-gray-100 last:border-0">
                                       {m.subject && (
@@ -2765,7 +2765,7 @@ export default function AdminClients() {
                 </div>
 
                 {/* Client rows – same line width as tabs (20px inset to match gray underline under header) */}
-                <div className="overflow-y-auto overflow-x-hidden min-w-0" style={{ maxHeight: '380px', paddingTop: '2px', marginLeft: '20px', marginRight: '20px' }}>
+                <div className="overflow-y-auto overflow-x-hidden min-w-0" style={{ maxHeight: '380px', padding: '8px', boxSizing: 'border-box', marginLeft: '20px', marginRight: '20px' }}>
                   {registeredUsers.length === 0 ? (
                     <div className="px-5 py-8 text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>
                       NO REGISTERED CLIENTS YET. LIST IS PER BROWSER.
@@ -3066,7 +3066,7 @@ export default function AdminClients() {
                 <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
               </button>
             </div>
-            <div className="overflow-y-auto flex-1 min-h-0" style={{ fontSize: '10px' }}>
+            <div className="overflow-y-auto flex-1 min-h-0" style={{ fontSize: '10px', padding: '8px', boxSizing: 'border-box' }}>
               {invitesDetailRows.length === 0 ? (
                 <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', margin: 0, textAlign: 'center', padding: '16px 0', textTransform: 'uppercase' }}>THERE ARE NO INVITES YET.</p>
               ) : (

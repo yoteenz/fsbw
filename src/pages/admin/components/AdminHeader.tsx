@@ -724,7 +724,7 @@ export default function AdminHeader({
                 </span>
               </div>
 
-              <div className="flex-1 overflow-y-auto min-h-0">
+              <div className="flex-1 overflow-y-auto min-h-0" style={{ padding: '8px', boxSizing: 'border-box' }}>
                 {displayedMessages.slice(0, 8).map(message => {
                   const isRead = readMessages.includes(message.id);
                   const isUnread = message.unread && !isRead;
@@ -836,7 +836,7 @@ export default function AdminHeader({
                 </span>
               </div>
 
-              <div className="flex-1 overflow-y-auto min-h-0">
+              <div className="flex-1 overflow-y-auto min-h-0" style={{ padding: '8px', boxSizing: 'border-box' }}>
                 {displayedNotifications.slice(0, 10).map(notification => {
                   const isRead = readNotifications.includes(notification.id);
                   const isUnread = notification.unread && !isRead;

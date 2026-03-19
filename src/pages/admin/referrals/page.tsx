@@ -183,7 +183,7 @@ export default function AdminReferralsPage() {
                   <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>LOADING REFERRAL DATA...</p>
                 </div>
               ) : (
-                <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '380px' }}>
+                <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '380px', padding: '8px', boxSizing: 'border-box' }}>
                   {activeTab === 'OVERVIEW' && (
                     <>
                     </>

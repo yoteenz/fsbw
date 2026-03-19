@@ -13,7 +13,7 @@ import { getAdminRevenue } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
-import { buildRevenueOrdersList, getDepletedInventory, getOrdersStats } from '../../../utils/adminRevenueStats';
+import { buildRevenueOrdersList, getDepletedInventory, getOrdersStats, getTotalStartingInventoryUnits } from '../../../utils/adminRevenueStats';
 
 const REVENUE_TABS = ['OVERVIEW', 'ORDERS', 'PRODUCTS', 'PAYMENTS'] as const;
 
@@ -363,6 +363,32 @@ export default function AdminRevenue() {
   const ordersStats = useMemo(() => getOrdersStats(orders, totalRevenue), [orders, totalRevenue]);
   const inventoryTotal = depletedInventory.totalUnits;
 
+  // Orders tab: only show awaiting form / unfulfilled (new) in main list; shipped + pending-with-tracking go to Pending card; delivered/fulfilled are on fulfilled orders page
+  const unfulfilledOrders = useMemo(() => {
+    return orders.filter((o) => {
+      const norm = normalizeOrderStatusForDisplay(o.status || 'UNFULFILLED');
+      return norm === 'AWAITING FORM' || norm === 'UNFULFILLED';
+    });
+  }, [orders]);
+  const pendingOrders = useMemo(() => {
+    return orders.filter((o) => {
+      const s = (o.status || '').toUpperCase().trim();
+      const norm = normalizeOrderStatusForDisplay(o.status || 'UNFULFILLED');
+      const hasTracking = !!(o as RevenueOrder & { trackingNumber?: string }).trackingNumber;
+      return norm === 'SHIPPED' || (s === 'PENDING' && hasTracking);
+    });
+  }, [orders]);
+  const awaitingTrackingCount = useMemo(() => {
+    return orders.filter((o) => {
+      const s = (o.status || '').toUpperCase().trim();
+      const hasTracking = !!(o as RevenueOrder & { trackingNumber?: string }).trackingNumber;
+      return s === 'PENDING' && !hasTracking;
+    }).length;
+  }, [orders]);
+  const totalStartingUnits = useMemo(() => getTotalStartingInventoryUnits(), []);
+  const inventoryPercent = totalStartingUnits > 0 ? Math.min(100, Math.max(0, Math.round((inventoryTotal / totalStartingUnits) * 100))) : 0;
+  const inventoryBannerColor = inventoryPercent >= 25 ? '#16a34a' : '#EB1C24';
+
   const PRODUCT_NAMES_OVERVIEW = ['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL', 'OCEAN CURL'] as const;
   const topProductsBySales = useMemo(() => {
     const counts: Record<string, number> = Object.fromEntries(PRODUCT_NAMES_OVERVIEW.map((p) => [p, 0]));
@@ -409,7 +435,7 @@ export default function AdminRevenue() {
   const panelLabelsAndValues: Record<typeof REVENUE_TABS[number], { left: { label: string; value: string }; right: { label: string; value: string } }> = {
     OVERVIEW: { left: { label: 'TOTAL REVENUE', value: totalRevenueBannerValue }, right: { label: 'ORDERS', value: formatWithCommas(totalOrders) } },
     ORDERS: { left: { label: 'THIS MONTH', value: formatWithCommas(ordersStats.thisMonth) }, right: { label: 'AVG ORDER', value: avgOrderDisplay } },
-    PRODUCTS: { left: { label: 'PROFIT MARGIN', value: '—' }, right: { label: 'TOTAL', value: formatWithCommas(inventoryTotal) } },
+    PRODUCTS: { left: { label: 'PROFIT MARGIN', value: '—' }, right: { label: 'INVENTORY', value: `${inventoryPercent}%` } },
     PAYMENTS: { left: { label: 'DISCOUNTS', value: '—' }, right: { label: 'FEES', value: '—' } },
   };
   const panel = panelLabelsAndValues[activeTab];
@@ -472,7 +498,7 @@ export default function AdminRevenue() {
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>{panel.left.label}</p>
                 </div>
                 <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{panel.right.value}</p>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: activeTab === 'PRODUCTS' ? inventoryBannerColor : '#EB1C24' }}>{panel.right.value}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>{panel.right.label}</p>
                 </div>
               </div>
@@ -508,8 +534,12 @@ export default function AdminRevenue() {
                 ))}
               </div>
 
-              {/* Tab content */}
-              <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '380px' }}>
+              {/* Tab content – outer scroll; inner padded wrapper so content never touches card border */}
+              <div className="overflow-y-auto" style={{ maxHeight: '380px' }}>
+                <div
+                  className="admin-revenue-tab-content"
+                  style={{ paddingTop: '12px', paddingRight: '20px', paddingBottom: '0', paddingLeft: '20px', boxSizing: 'border-box' }}
+                >
                 {activeTab === 'OVERVIEW' && (
                   <>
                     <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>REVENUE BREAKDOWN</h3>
@@ -587,7 +617,7 @@ export default function AdminRevenue() {
                 )}
                 {activeTab === 'ORDERS' && (
                   <AdminRevenueOrdersTab
-                    orders={orders}
+                    orders={unfulfilledOrders}
                     setOrders={setOrders}
                     refreshOrders={refreshOrders}
                     expandedOrderId={expandedOrderId}
@@ -640,8 +670,83 @@ export default function AdminRevenue() {
                     </div>
                   </>
                 )}
+                <div style={{ height: '24px', minHeight: '24px', flexShrink: 0 }} aria-hidden />
+                </div>
               </div>
             </div>
+
+            {activeTab === 'ORDERS' && (
+            <>
+              {/* Pending orders – own card below orders, square corners; only on ORDERS tab */}
+              <div
+                className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden mt-4"
+                style={{ borderWidth: '1.3px', borderRadius: 0 }}
+              >
+                <div className="flex items-center justify-between -mt-1 pb-1 px-4 pt-4" style={{ marginBottom: 0 }}>
+                  <h2
+                    className="flex-1"
+                    style={{
+                      fontFamily: '"Futura PT Medium"',
+                      color: '#EB1C24',
+                      fontSize: '12px',
+                      fontWeight: 500,
+                      margin: 0,
+                      marginLeft: '6px',
+                      textTransform: 'uppercase',
+                      textAlign: 'left',
+                    }}
+                  >
+PENDING
+                </h2>
+                  <img src="/assets/pending-icon.svg" alt="" style={{ width: 14, height: 14, flexShrink: 0, marginLeft: '-5px', transform: 'translateX(-6px)' }} />
+                </div>
+                <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
+                <div className="grid grid-cols-2 gap-4 px-5 mb-4" style={{ marginTop: '12px' }}>
+                  <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{pendingOrders.length}</p>
+                    <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>TOTAL</p>
+                  </div>
+                  <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{awaitingTrackingCount}</p>
+                    <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>AWAITING TRACKING</p>
+                  </div>
+                </div>
+                <div className="overflow-y-auto" style={{ maxHeight: '280px' }}>
+                  <div style={{ paddingTop: '12px', paddingRight: '20px', paddingBottom: '24px', paddingLeft: '20px', boxSizing: 'border-box' }}>
+                  {pendingOrders.length === 0 ? (
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080', margin: 0, textTransform: 'uppercase' }}>NO PENDING ORDERS.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {pendingOrders.map((order) => {
+                        const displayStatus = normalizeOrderStatusForDisplay(order.status || '');
+                        const firstImage = order.lineItems?.[0]?.productName
+                          ? getProductImage(order.lineItems[0].productName)
+                          : order.productImage || getProductImage((order.productName || 'NOIR').toString());
+                        const orderAmount = order.total ?? order.amount ?? 0;
+                        return (
+                          <div
+                            key={order.id}
+                            className="bg-white border border-gray-200 p-3 flex items-center gap-3"
+                            style={{ borderRadius: '4px' }}
+                          >
+                            <img src={firstImage} alt="" style={{ width: 48, height: 48, objectFit: 'contain', flexShrink: 0 }} />
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: 0 }}>{order.date}</p>
+                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: '2px 0 0 0' }}>ORDER #{(order.orderNumber || order.id || '').toString().replace(/^ORDER\s*#?\s*/i, '').trim() || '—'}</p>
+                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080', margin: '2px 0 0 0' }}>${orderAmount.toLocaleString()}</p>
+                            </div>
+                            <span className="flex-shrink-0 admin-order-status-pill" style={getStatusPillStyle(displayStatus)}><span style={{ lineHeight: 1 }}>{displayStatus}</span></span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                  <div style={{ height: '24px', minHeight: '24px', flexShrink: 0 }} aria-hidden />
+                  </div>
+                </div>
+              </div>
+            </>
+            )}
 
             <PageActionsBelowCard>
               {activeTab === 'ORDERS' && expandedOrderId && expandedOrder ? (
