@@ -21,6 +21,12 @@ Canonical reference for stack, design, and main flows. Keep this updated when th
 - **Icons:** SVGs in `public/assets/` (e.g. `special-offer.svg`, `slay-challenge.svg`, `Free Gift.svg`). Use `<img src="/assets/...">` with red filter when they should match brand red.
 - **Layout:** Mobile-first; shared nav with back/menu, breadcrumb-style text (e.g. `ACCOUNT > CONCIERGE`), cart icon, dynamic cart count from localStorage / events.
 
+## ACTIVE BUILD TARGET (IMPORTANT)
+
+- **MOBILE-ONLY RIGHT NOW.** Treat this project as mobile-only for implementation, QA, and debugging guidance.
+- Do **not** default to desktop-browser-centric debugging instructions when the user asks for testing/trace steps; provide **mobile device** steps first.
+- Desktop version will be created later as a separate phase.
+
 ---
 
 ## Auth & identity

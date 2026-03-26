@@ -1150,3 +1150,19 @@ User asked if there is a way to capture the **entire current codebase** (and its
 **Context:** User requested removal of all text/buttons between the main settings card and **DELETE ACCOUNT** because **SAVE MY PROFILE TO CLOUD** / **SYNC MY ACCOUNT** were not functioning reliably and cluttered UI.
 
 **Changes:** **`src/pages/account/settings/page.tsx`** — Removed the two admin-only blocks (save profile to cloud + sync account, helper text, password input). Deleted related state, imports, and handlers (`handleSaveProfileToCloud`, `handleSyncAccount`, sync messages/loading/password input) so build remains clean.
+
+---
+
+## 2026-03-26 — Photo status popup: auto-close successes only
+
+**Context:** User requested photo status popup UX tweak: successful statuses should auto-close (~1.5s), failures should remain manual-close.
+
+**Changes:** **`src/pages/account/page.tsx`** — Added `useEffect` timer for profile photo popup that auto-closes when message includes `SAVED` after 1500ms; queued/failed states remain manual-close via OK or backdrop.
+
+---
+
+## 2026-03-26 — Mobile-only debugging preference (explicit)
+
+**Context:** User requested tracing guidance tailored for **mobile device only** and asked to stop receiving desktop-browser-first debugging prompts for this project phase.
+
+**Changes:** Added explicit motherboard core note that the active build/debug target is **mobile-only** until desktop phase later. Future troubleshooting instructions should prioritize mobile device flows first.

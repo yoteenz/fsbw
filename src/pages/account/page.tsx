@@ -115,6 +115,17 @@ function AccountPage() {
     setProfileImageSaveMessage(message);
     setShowProfileImageStatusPopup(true);
   };
+
+  // Auto-close only successful photo statuses; keep queued/failed manual-close.
+  useEffect(() => {
+    if (!showProfileImageStatusPopup || !profileImageSaveMessage) return;
+    const isSuccess = profileImageSaveMessage.includes('SAVED');
+    if (!isSuccess) return;
+    const t = window.setTimeout(() => {
+      setShowProfileImageStatusPopup(false);
+    }, 1500);
+    return () => window.clearTimeout(t);
+  }, [showProfileImageStatusPopup, profileImageSaveMessage]);
   
   
   // Mock digital cash history for testing labels UI – one row per transaction type
