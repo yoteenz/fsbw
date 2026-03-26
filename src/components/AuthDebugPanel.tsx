@@ -31,6 +31,7 @@ export default function AuthDebugPanel() {
   const [lastSent, setLastSent] = useState<{ event: string; at: number } | null>(null);
   const [sending, setSending] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [copyMessage, setCopyMessage] = useState<string | null>(null);
 
   const params = new URLSearchParams(location.search || '');
   const urlHasDebug = params.get('auth_debug') === '1' || params.get('auth_debug') === 'true';
@@ -71,6 +72,57 @@ export default function AuthDebugPanel() {
       setLastSent({ event, at: Date.now() });
     } finally {
       setSending(false);
+    }
+  };
+
+  const buildDebugExport = (): string => {
+    const lines = getAuthDebugLog().lines.slice(-80);
+    const snap = captureAuthSnapshot();
+    const keys = [
+      'cookie_baw_sb_session',
+      'cookie_baw_sb_user',
+      'cookie_baw_auth_b',
+      'ls_isSignedIn',
+      'ls_currentUser',
+      'ls_baw_auth_backup',
+    ];
+    const out: string[] = [];
+    out.push('AUTH DEBUG EXPORT');
+    out.push(`TS: ${new Date().toISOString()}`);
+    out.push(`URL: ${typeof window !== 'undefined' ? window.location.href : ''}`);
+    out.push('');
+    out.push('LIVE SNAPSHOT');
+    for (const k of keys) {
+      out.push(`${k}: ${String((snap as Record<string, unknown>)[k] ?? 0)}`);
+    }
+    out.push('');
+    out.push('LOG (NEWEST LAST)');
+    if (lines.length === 0) {
+      out.push('(no auth debug lines)');
+    } else {
+      for (const entry of lines) {
+        out.push(`[${new Date(entry.t).toISOString()}] ${entry.m}`);
+      }
+    }
+    return out.join('\n');
+  };
+
+  const copyDebug = async () => {
+    const text = buildDebugExport();
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+        setCopyMessage('DEBUG LOG COPIED.');
+        return;
+      }
+      throw new Error('Clipboard API unavailable');
+    } catch {
+      try {
+        window.prompt('COPY AUTH DEBUG LOG BELOW:', text);
+        setCopyMessage('COPY PROMPT OPENED.');
+      } catch {
+        setCopyMessage('COPY FAILED.');
+      }
     }
   };
 
@@ -153,8 +205,12 @@ export default function AuthDebugPanel() {
             <button type="button" onClick={() => sendReport('manual')} disabled={sending} style={{ padding: '4px 8px', fontSize: '11px', cursor: sending ? 'not-allowed' : 'pointer', background: '#333', color: '#fff', border: 'none' }}>
               {sending ? 'Sending…' : 'Send report now'}
             </button>
+            <button type="button" onClick={copyDebug} style={{ padding: '4px 8px', fontSize: '11px', cursor: 'pointer', background: '#333', color: '#fff', border: 'none' }}>Copy debug</button>
             <button type="button" onClick={clearLog} style={{ padding: '4px 8px', fontSize: '11px', cursor: 'pointer', background: '#333', color: '#fff', border: 'none' }}>Clear log</button>
             <button type="button" onClick={turnOff} style={{ padding: '4px 8px', fontSize: '11px', cursor: 'pointer', background: '#333', color: '#fff', border: 'none' }}>Turn debug off</button>
+            {copyMessage && (
+              <span style={{ fontSize: '11px', color: '#fff', alignSelf: 'center' }}>{copyMessage}</span>
+            )}
           </div>
         </>
       )}

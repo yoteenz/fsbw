@@ -3,7 +3,7 @@
  * the server may still have an HttpOnly cookie. We call GET /api/session-restore with
  * credentials: 'include' to get a new session and rehydrate the client.
  */
-import { persistAuthBackup, onSignInSuccess } from './adminAuth';
+import { persistAuthBackup, onSignInSuccess, authDebugLogIfEnabled } from './adminAuth';
 import { buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage } from './syncFromApi';
 
 const SUPABASE_URL = (import.meta as unknown as { env?: { VITE_SUPABASE_URL?: string } }).env?.VITE_SUPABASE_URL ?? '';
@@ -27,27 +27,39 @@ export async function tryServerSessionRestore(): Promise<boolean> {
   if (typeof window === 'undefined' || !window.localStorage) return false;
   // Use same-origin API route so Safari treats cookie as first-party (local + production).
   const url = `/api/session-restore`;
+  authDebugLogIfEnabled('session-restore: attempt');
   let res: Response;
   try {
     res = await fetch(url, { method: 'GET', credentials: 'include' });
-  } catch {
+  } catch (e) {
+    authDebugLogIfEnabled(`session-restore: fetch error ${e instanceof Error ? e.message : String(e)}`);
     return false;
   }
-  if (!res.ok) return false;
+  if (!res.ok) {
+    authDebugLogIfEnabled(`session-restore: non-200 status=${res.status}`);
+    return false;
+  }
   let data: { access_token?: string; refresh_token?: string; expires_at?: number; expires_in?: number; user?: { id: string; email?: string; user_metadata?: Record<string, unknown> } };
   try {
     data = await res.json();
-  } catch {
+  } catch (e) {
+    authDebugLogIfEnabled(`session-restore: json parse error ${e instanceof Error ? e.message : String(e)}`);
     return false;
   }
   const access_token = data.access_token;
   const refresh_token = data.refresh_token;
   const expires_at = data.expires_at ?? 0;
   const expires_in = data.expires_in ?? 3600;
-  if (!access_token || !refresh_token) return false;
+  if (!access_token || !refresh_token) {
+    authDebugLogIfEnabled('session-restore: missing access_token/refresh_token');
+    return false;
+  }
 
   const storageKey = getSupabaseStorageKey();
-  if (!storageKey) return false;
+  if (!storageKey) {
+    authDebugLogIfEnabled('session-restore: missing Supabase storage key');
+    return false;
+  }
 
   const session = {
     access_token,
@@ -100,14 +112,15 @@ export async function registerServerSessionCookie(accessToken: string, refreshTo
   if (!accessToken || !refreshToken || typeof window === 'undefined') return;
   const url = `/api/session-cookie`;
   try {
-    await fetch(url, {
+    const res = await fetch(url, {
       method: 'POST',
       credentials: 'include',
       keepalive: true,
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
       body: JSON.stringify({ refresh_token: refreshToken }),
     });
+    authDebugLogIfEnabled(`session-cookie: register status=${res.status}`);
   } catch {
-    // ignore
+    authDebugLogIfEnabled('session-cookie: register fetch error');
   }
 }

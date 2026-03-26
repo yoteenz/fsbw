@@ -1413,3 +1413,160 @@ User asked if there is a way to capture the **entire current codebase** (and its
 - **Changes:** `src/utils/syncFromApi.ts`
   - Added auth debug marker when hard-lock skip triggers in `applyMinimalUserToStorage(...)`, improving triangulation visibility for fallback-overwrite prevention.
 - **Conventions:** For admin client details, treat server-backed API data as primary and localStorage values as resilience fallback; for birthday/identity display, always fallback to same-email current session data when row snapshot is incomplete.
+
+---
+
+## 2026-03-26 — Manual-only sign-out gate (FashionNova-style persistence intent)
+
+- **Context:** User asked whether sign-in/out flow was investigated for stricter persistence so users stay signed in across browser close/reopen and only sign out when manually pressing sign-out controls.
+- **Topics covered:** Audited auth event flow around Supabase `SIGNED_OUT`, explicit sign-out button path, backup restore, and server cookie restore.
+- **Decisions / outcomes:** Added an explicit **manual sign-out gate** so automatic/unexpected Supabase signed-out events do not immediately force signed-out app state.
+- **Changes:**
+  - `src/utils/adminAuth.ts`
+    - Added `markManualSignOutInProgress()` and `consumeManualSignOutFlag()` (session-scoped flag).
+  - `src/pages/account/page.tsx`
+    - Explicit sign-out path now sets manual sign-out flag before calling `supabase.auth.signOut()`.
+  - `src/utils/supabase.ts`
+    - `onAuthStateChange('SIGNED_OUT')` now checks manual flag:
+      - manual sign-out => allow sign-out flow
+      - non-manual sign-out => restore from backup and trigger server session-restore attempt (`tryServerSessionRestore`) instead of dropping session.
+- **Conventions:** Enforce manual-only sign-out semantics: unexpected `SIGNED_OUT` events should auto-recover session/auth when possible; only explicit user intent should fully sign out.
+
+---
+
+## 2026-03-26 — Settings phone input added and wired to admin client details
+
+- **Context:** User requested adding a phone-number input under Birthday in Account Settings and ensuring it reflects correctly in Admin Clients details.
+- **Decision/outcome:** Added a dedicated phone field in settings personal info and wired persistence through local + backend profile sync paths.
+- **Changes:** `src/pages/account/settings/page.tsx`
+  - Added `phoneNumber` state.
+  - Hydrates phone from `userData.phoneNumber` / `phone_number` / `phone`.
+  - Added `PHONE NUMBER` input directly below `BIRTHDAY`.
+  - Extended `persistPersonalInfo(...)` to include `phoneNumber` and `phone_number`.
+  - Sends `phoneNumber` in queued backend patch payload (`patchProfileWithRetryQueue`).
+  - Updates `currentUser` and `registeredUsers` with both camelCase/snake_case phone keys.
+- **Linkage:** Admin Clients details phone row already reads `phoneNumber`/`phone_number` (with legacy `phone` fallback), so the new settings input now feeds the correct client-details display path.
+
+---
+
+## 2026-03-26 — Visible SIGNED_OUT gate lines + hidden-state profile flush
+
+- **Context:** User asked to proceed with explicit visible auth gate lines and reported ongoing sign-out/reset behavior, suspecting local storage is not reaching Supabase/session restore reliably.
+- **Decision/outcome:** Added exact debug lines in auth log and an extra hidden-state profile queue flush to improve Safari close-path persistence.
+- **Changes:**
+  - `src/utils/supabase.ts`
+    - On auth `SIGNED_OUT`, now logs:
+      - `SIGNED_OUT accepted (manual)` when explicit sign-out flag is consumed.
+      - `SIGNED_OUT blocked (auto-recover)` when non-manual sign-out is intercepted.
+  - `src/main.tsx`
+    - On `visibility_hidden`, now also attempts `flushQueuedProfilePatch()` and logs `visibility_hidden → flushQueuedProfilePatch attempted`.
+- **Conventions:** Keep auth state transitions observable in the in-app debug panel; on browser-hide/close path, attempt both auth backup persistence and queued profile flush before suspension.
+
+---
+
+## 2026-03-26 — Phone format standardization (XXX-XXX-XXXX) in settings + client details
+
+- **Context:** User requested hyphen phone formatting (`901-237-8945`) during typing and storage/display across settings and admin client details.
+- **Decision/outcome:** Standardized phone formatting to `XXX-XXX-XXXX` at input and display layers.
+- **Changes:**
+  - `src/pages/account/settings/page.tsx`
+    - Added `formatPhoneWithHyphens(...)`.
+    - Phone field now formats live as user types and stores formatted value via `persistPersonalInfo`.
+    - Initial hydrate for phone now normalizes existing values to hyphen format.
+  - `src/pages/admin/clients/page.tsx`
+    - Added `formatPhoneWithHyphens(...)`.
+    - Client details `PHONE` row now displays normalized hyphen format from `phoneNumber` / `phone_number` / `phone`.
+- **Conventions:** Keep phone presentation/storage consistent in `XXX-XXX-XXXX` across account settings and admin client details, regardless of legacy raw formats.
+
+---
+
+## 2026-03-26 — Auth debug panel copy button for easy sharing
+
+- **Context:** User requested a one-tap copy action in `?auth_debug=1` panel similar to profile debug export, to share logs quickly.
+- **Decision/outcome:** Added `Copy debug` action to Auth Debug Panel with clipboard-first behavior and prompt fallback.
+- **Changes:** `src/components/AuthDebugPanel.tsx`
+  - Added export builder for full auth debug payload (timestamp, URL, live snapshot keys, recent log lines).
+  - Added `Copy debug` button in panel actions.
+  - Added copy status feedback text: `DEBUG LOG COPIED.`, `COPY PROMPT OPENED.`, `COPY FAILED.`.
+- **Conventions:** Keep mobile/debug forensics one-tap where possible; include both snapshot state and chronological event log in exported debug payloads.
+
+---
+
+## 2026-03-26 — Debug export analysis led to auth self-heal + robust cookie parsing
+
+- **Context:** User shared auth debug exports. Snapshot showed backup/session artifacts present (`cookie_baw_auth_b`, `ls_baw_auth_backup`, `ls_currentUser`, `ls_isSignedIn`) while logs still repeatedly reported `lsBackup=false cookieBackup=false`, indicating restore path inconsistency.
+- **Decision/outcome:** Hardened backup cookie parsing and added self-healing restore behavior so auth remains signed-in even when one storage signal is temporarily missing/inconsistent.
+- **Changes:** `src/utils/adminAuth.ts`
+  - Replaced backup cookie regex read with deterministic split/parse in `readBackupFromCookie()` for improved robustness.
+  - In `ensureAuthRestoredFromBackup()` added self-heal steps:
+    - if `currentUser` exists but `isSignedIn` dropped → force `isSignedIn=true`.
+    - if signed/current exists but backup missing → immediately re-seed backup via `persistAuthBackup()`.
+  - Added auth debug log lines for self-heal actions/errors so `?auth_debug=1` explicitly shows recovery events.
+- **Conventions:** Treat auth continuity as multi-source: when `currentUser` and sign-in intent exist, heal missing backup flags/cookies proactively instead of waiting for a full restore branch.
+
+---
+
+## 2026-03-26 — Reopen bootstrap: promote existing Supabase session into app auth
+
+- **Context:** User shared fresh debug exports showing improved backup behavior before close, but still needing manual sign-in after browser reopen. Logs indicated early restore path could still start with backup absent (`hadLs=false/hadCookie=false`) before app auth flags are restored.
+- **Decision/outcome:** Added startup rehydration gate that converts an already-available Supabase session into app auth state immediately on boot.
+- **Changes:** `src/main.tsx`
+  - Added boot-time `supabase.auth.getSession()` check after client init.
+  - If session user exists and app `isSignedIn()` is false, now:
+    - builds minimal app user from session,
+    - applies to storage via `applyMinimalUserToStorage(...)`,
+    - dispatches `signInStateChanged=true`,
+    - writes debug marker: `boot: promoted existing Supabase session into app auth`.
+  - Added error debug markers for failed session read/promotion.
+- **Conventions:** On reopen, treat existing Supabase session as authoritative and proactively hydrate app auth flags before route guards can redirect to sign-in.
+
+---
+
+## 2026-03-26 — Pre-render auth bootstrap gate (wait before routing)
+
+- **Context:** User shared new debug exports showing repeated early `restore ... rawLen=0` checks and still needing manual sign-in on reopen, with no clear boot-promotion marker in the captured log.
+- **Decision/outcome:** Moved auth bootstrap to a pre-render async gate so session promotion/restore runs before app routes and guards render.
+- **Changes:** `src/main.tsx`
+  - Added `bootstrapAuthBeforeRender()`:
+    - if already signed in: log and continue.
+    - else read Supabase `getSession()`, promote session user into app auth (`applyMinimalUserToStorage`) + dispatch signed-in event.
+    - if no session, attempts `tryServerSessionRestore()` and logs result.
+  - App render (`ReactDOM.createRoot(...).render`) now runs in `bootstrapAuthBeforeRender().finally(...)`, ensuring boot auth attempt happens first.
+  - Added explicit boot debug markers:
+    - `boot: app already signed in`
+    - `boot: promoted existing Supabase session into app auth`
+    - `boot: no session from getSession, trying server restore`
+    - `boot: tryServerSessionRestore=ok|miss` (+ error variants)
+- **Conventions:** For reopen/session continuity, run auth bootstrap before routing/guards so restore has first chance and users are not prematurely pushed into sign-in flow.
+
+---
+
+## 2026-03-26 — Dual-track hardening: startup proof logs + account cloud rehydrate
+
+- **Context:** User explicitly asked whether both issues are being fixed together (forced sign-out and profile data reset on sign-back-in) and shared another debug export still missing clear boot marker evidence.
+- **Decision/outcome:** Added explicit boot-start debug marker and account-page cloud rehydrate sync to address both auth continuity and profile restoration.
+- **Changes:**
+  - `src/main.tsx`
+    - Added `boot:start` debug log at the beginning of pre-render bootstrap so startup path execution is unambiguous in `?auth_debug=1`.
+  - `src/pages/account/page.tsx`
+    - Added mount-time Supabase session check + `syncAllFromApi()` rehydrate when session exists.
+    - On successful sync, refreshes `userData` + profile image from updated `currentUser`.
+    - Adds debug marker: `account: syncAllFromApi rehydrated profile on mount`.
+- **Conventions:** Treat auth continuity and profile persistence as coupled: preserve session at boot and always rehydrate account identity from cloud when account opens under a valid session.
+
+---
+
+## 2026-03-26 — Added explicit server-cookie/restore status logging
+
+- **Context:** User shared repeated auth debug exports still showing restore misses before sign-in, with no clear evidence of session-cookie register/restore HTTP outcomes.
+- **Decision/outcome:** Added explicit status/error logs for session-cookie registration and session-restore fetch so failures can be pinpointed (network/status/token-shape).
+- **Changes:** `src/utils/sessionRestore.ts`
+  - `tryServerSessionRestore()` now logs:
+    - attempt start
+    - fetch error
+    - non-200 response status
+    - JSON parse error
+    - missing token payload
+    - missing Supabase storage key
+  - `registerServerSessionCookie(...)` now logs register response status (or fetch error).
+- **Conventions:** For auth continuity debugging, always include concrete HTTP status and payload-shape markers on session-cookie and session-restore paths.

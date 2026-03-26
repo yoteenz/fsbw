@@ -45,6 +45,13 @@ const sectionHeaderTextStyle: React.CSSProperties = {
   textTransform: 'uppercase'
 };
 
+const formatPhoneWithHyphens = (value: string): string => {
+  const digits = (value || '').replace(/\D/g, '').slice(0, 10);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+};
+
 function SettingsPage() {
   const navigate = useNavigate();
   const [cartCount, setCartCount] = useState(() => {
@@ -86,6 +93,7 @@ function SettingsPage() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [birthday, setBirthday] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [facebook, setFacebook] = useState('');
   const [instagram, setInstagram] = useState('');
@@ -197,7 +205,7 @@ function SettingsPage() {
     } catch (_) {}
   };
 
-  const persistPersonalInfo = (updates: { birthday?: string; firstName?: string; lastName?: string }) => {
+  const persistPersonalInfo = (updates: { birthday?: string; firstName?: string; lastName?: string; phoneNumber?: string }) => {
     try {
       const email = (userData?.email || '').trim().toLowerCase();
       if (!email) return;
@@ -205,11 +213,13 @@ function SettingsPage() {
       if (updates.birthday !== undefined) payload.birthday = updates.birthday.trim();
       if (updates.firstName !== undefined) payload.firstName = updates.firstName.trim();
       if (updates.lastName !== undefined) payload.lastName = updates.lastName.trim();
+      if (updates.phoneNumber !== undefined) payload.phoneNumber = updates.phoneNumber.trim();
       if (Object.keys(payload).length === 0) return;
       // Keep localStorage in sync with both camelCase and snake_case so form and API stay consistent
       const payloadWithSnake = { ...payload } as Record<string, string>;
       if (payload.firstName !== undefined) payloadWithSnake.first_name = payload.firstName;
       if (payload.lastName !== undefined) payloadWithSnake.last_name = payload.lastName;
+      if (payload.phoneNumber !== undefined) payloadWithSnake.phone_number = payload.phoneNumber;
       const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
       const idx = registered.findIndex((u: any) => (u.email || '').trim().toLowerCase() === email);
       if (idx !== -1) {
@@ -229,6 +239,7 @@ function SettingsPage() {
       if (updates.firstName !== undefined) apiPayload.firstName = updates.firstName.trim();
       if (updates.lastName !== undefined) apiPayload.lastName = updates.lastName.trim();
       if (updates.birthday !== undefined) apiPayload.birthday = updates.birthday.trim();
+      if (updates.phoneNumber !== undefined) apiPayload.phoneNumber = updates.phoneNumber.trim();
       if (Object.keys(apiPayload).length > 0) {
         patchProfileWithRetryQueue(apiPayload)
           .then((ok) => {
@@ -459,6 +470,7 @@ function SettingsPage() {
       setEmail((userData.email || '').toUpperCase());
       const normalizedBirthday = normalizeBirthdayDisplay(userData.birthday || '');
       setBirthday(normalizedBirthday);
+      setPhoneNumber(formatPhoneWithHyphens((userData.phoneNumber || userData.phone_number || userData.phone || '').toString()));
       setFacebook(parseSocialHandle('facebook', userData.facebook || ''));
       setInstagram(parseSocialHandle('instagram', userData.instagram || ''));
       setYoutube(parseSocialHandle('youtube', userData.youtube || ''));
@@ -472,11 +484,13 @@ function SettingsPage() {
       setFirstName('KRISTIN');
       setLastName('WATSON');
       setBirthday('08/30/1989');
+      setPhoneNumber('');
     } else {
       setFirstName('');
       setLastName('');
       setEmail('');
       setBirthday('');
+      setPhoneNumber('');
       setFacebook('');
       setInstagram('');
       setYoutube('');
@@ -832,6 +846,22 @@ function SettingsPage() {
                     onChange={(e) => canEditAdminBirthday && setBirthday(formatBirthday(e.target.value))}
                     onBlur={() => canEditAdminBirthday && persistPersonalInfo({ birthday })}
                     style={{ ...inputBaseStyle, marginBottom: 0, ...(!canEditAdminBirthday && { cursor: 'default', color: '#808080' }) }}
+                  />
+                </div>
+                <div style={{ marginBottom: '20px', width: 'calc((100% - 12px) / 2)' }}>
+                  <label style={{ ...labelStyle, marginBottom: '4px' }}>PHONE NUMBER</label>
+                  <input
+                    type="text"
+                    value={phoneNumber}
+                    placeholder="(555) 555-5555"
+                    className="settings-personal-input"
+                    onChange={(e) => {
+                      const nextPhone = formatPhoneWithHyphens(e.target.value);
+                      setPhoneNumber(nextPhone);
+                      persistPersonalInfo({ phoneNumber: nextPhone.trim() });
+                    }}
+                    onBlur={() => persistPersonalInfo({ phoneNumber: phoneNumber.trim() })}
+                    style={{ ...inputBaseStyle, marginBottom: 0 }}
                   />
                 </div>
                 <div style={{ marginBottom: '20px' }}>

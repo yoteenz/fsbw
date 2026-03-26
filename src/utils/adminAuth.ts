@@ -16,6 +16,29 @@ const AUTH_PROFILE_COOKIE = 'baw_auth_p';
 /** Track how user signed in (session_restore = Face ID / Supabase cookie auto-login; password = tapped Sign in). Used so we persist backup reliably on Safari. */
 export const LAST_SIGN_IN_METHOD_KEY = 'baw_last_sign_in_method';
 export const LAST_SIGN_IN_AT_KEY = 'baw_last_sign_in_at';
+const MANUAL_SIGN_OUT_KEY = 'baw_manual_signout_in_progress';
+
+/** Mark that the user explicitly clicked Sign Out so auth clear is allowed. */
+export function markManualSignOutInProgress(): void {
+  if (typeof window === 'undefined' || !window.sessionStorage) return;
+  try {
+    window.sessionStorage.setItem(MANUAL_SIGN_OUT_KEY, '1');
+  } catch {
+    // ignore
+  }
+}
+
+/** True only during explicit sign-out flow; cleared after read. */
+export function consumeManualSignOutFlag(): boolean {
+  if (typeof window === 'undefined' || !window.sessionStorage) return false;
+  try {
+    const isManual = window.sessionStorage.getItem(MANUAL_SIGN_OUT_KEY) === '1';
+    if (isManual) window.sessionStorage.removeItem(MANUAL_SIGN_OUT_KEY);
+    return isManual;
+  } catch {
+    return false;
+  }
+}
 
 function isSafariIos(): boolean {
   if (typeof navigator === 'undefined') return false;
@@ -128,8 +151,18 @@ export function getAuthDebugLog(): { enabled: boolean; lines: { t: number; m: st
 function readBackupFromCookie(): string | null {
   if (typeof document === 'undefined') return null;
   try {
-    const match = document.cookie.match(new RegExp('(?:^|; )' + AUTH_BACKUP_COOKIE.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'));
-    return match ? decodeURIComponent(match[1]) : null;
+    const parts = document.cookie ? document.cookie.split(';') : [];
+    for (const part of parts) {
+      const trimmed = part.trim();
+      if (!trimmed) continue;
+      const eq = trimmed.indexOf('=');
+      if (eq <= 0) continue;
+      const key = trimmed.slice(0, eq).trim();
+      if (key !== AUTH_BACKUP_COOKIE) continue;
+      const raw = trimmed.slice(eq + 1);
+      return decodeURIComponent(raw);
+    }
+    return null;
   } catch {
     return null;
   }
@@ -339,6 +372,24 @@ function restoreAuthFromBackupIfNeeded(): void {
 /** Call when Supabase or anything else may have cleared auth (e.g. SIGNED_OUT). Restores from backup so user stays signed in unless they explicitly signed out. */
 export function ensureAuthRestoredFromBackup(): void {
   if (typeof window === 'undefined') return;
+  try {
+    // Self-heal: if currentUser exists but isSignedIn flag was dropped, keep user signed in.
+    const cur = localStorage.getItem(STORAGE_CURRENT_USER);
+    const signed = localStorage.getItem(STORAGE_IS_SIGNED_IN) === 'true';
+    if (cur && !signed) {
+      localStorage.setItem(STORAGE_IS_SIGNED_IN, 'true');
+      authDebugLog('self-heal: restored isSignedIn=true from existing currentUser');
+    }
+    // Self-heal: if signed/current exists but backup is missing, re-seed backup immediately.
+    const hasBackupLs = !!localStorage.getItem(AUTH_BACKUP_KEY);
+    const hasBackupCookie = !!readBackupFromCookie();
+    if (cur && (localStorage.getItem(STORAGE_IS_SIGNED_IN) === 'true') && !hasBackupLs && !hasBackupCookie) {
+      persistAuthBackup();
+      authDebugLog('self-heal: re-seeded auth backup from currentUser/isSignedIn');
+    }
+  } catch (e) {
+    authDebugLog(`self-heal: err ${e instanceof Error ? e.message : String(e)}`);
+  }
   const protocol = typeof location !== 'undefined' ? location.protocol : '?';
   const lsBackup = typeof localStorage !== 'undefined' ? !!localStorage.getItem(AUTH_BACKUP_KEY) : false;
   const cookieBackup = typeof document !== 'undefined' ? !!readBackupFromCookie() : false;

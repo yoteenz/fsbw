@@ -63,6 +63,14 @@ function sortOptionToLabel(opt: SortOption): string {
   return opt.toUpperCase().replace(/\s+/g, ' ');
 }
 
+function formatPhoneWithHyphens(value: unknown): string {
+  const digits = String(value ?? '').replace(/\D/g, '').slice(0, 10);
+  if (!digits) return '—';
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
 /** e.g. "STANDARD SILVER", "PREMIUM RED" from membershipType + tier */
 function getMembershipTierLabel(u: any): string {
   const membership = (u.membershipType || 'STANDARD').toString().toUpperCase();
@@ -2145,12 +2153,11 @@ export default function AdminClients() {
                               <div className="flex justify-between">
                                 <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>PHONE:</span>
                                 <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px' }}>
-                                  {(
+                                  {formatPhoneWithHyphens(
                                     (selectedClient as any)?.phoneNumber ||
                                     (selectedClient as any)?.phone_number ||
-                                    (selectedClient as any)?.phone ||
-                                    '—'
-                                  ).toString().toUpperCase()}
+                                    (selectedClient as any)?.phone
+                                  ).toUpperCase()}
                                 </span>
                               </div>
                               {(['facebook', 'instagram', 'twitter', 'tiktok', 'youtube', 'linkedin'] as const).map((key) => {

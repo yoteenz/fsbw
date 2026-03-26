@@ -7,6 +7,8 @@ import { ensureAuthRestoredFromBackup, persistAuthBackup, enableAuthDebugFromUrl
 import { restoreSupabaseSessionFromCookie, getSupabase } from './utils/supabase'
 import { sendAuthDiagnostic } from './utils/authDiagnostic'
 import { tryServerSessionRestore } from './utils/sessionRestore'
+import { flushQueuedProfilePatch } from './utils/profileSyncQueue'
+import { buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage } from './utils/syncFromApi'
 
 // Enable auth debug from URL (e.g. ?auth_debug=1) so logs persist and show in the on-page panel
 enableAuthDebugFromUrl()
@@ -21,10 +23,42 @@ ensureAuthRestoredFromBackup()
 
 // Restore Supabase session from cookies into localStorage so Safari (which may clear localStorage on close) keeps the user signed in
 restoreSupabaseSessionFromCookie()
-// When client storage is empty (e.g. Safari cleared everything), try server HttpOnly cookie restore — if 200 we reload signed in
-if (typeof window !== 'undefined' && !isSignedIn()) tryServerSessionRestore()
-// Initialize Supabase client so it picks up the rehydrated session and fires auth state
+// Initialize Supabase client so it picks up rehydrated session/auth storage.
 getSupabase()
+
+async function bootstrapAuthBeforeRender(): Promise<void> {
+  if (typeof window === 'undefined') return;
+  authDebugLogIfEnabled('boot:start');
+  if (isSignedIn()) {
+    authDebugLogIfEnabled('boot: app already signed in');
+    return;
+  }
+  const supabase = getSupabase();
+  if (!supabase) {
+    authDebugLogIfEnabled('boot: no supabase client');
+    return;
+  }
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      const minimal = buildMinimalUserFromSupabaseSession(session.user);
+      applyMinimalUserToStorage(minimal);
+      authDebugLogIfEnabled('boot: promoted existing Supabase session into app auth');
+      window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+      return;
+    }
+    authDebugLogIfEnabled('boot: no session from getSession, trying server restore');
+  } catch (e) {
+    authDebugLogIfEnabled(`boot: getSession failed ${e instanceof Error ? e.message : String(e)}`);
+  }
+
+  try {
+    const restored = await tryServerSessionRestore();
+    authDebugLogIfEnabled(`boot: tryServerSessionRestore=${restored ? 'ok' : 'miss'}`);
+  } catch (e) {
+    authDebugLogIfEnabled(`boot: tryServerSessionRestore error ${e instanceof Error ? e.message : String(e)}`);
+  }
+}
 
 // Persist auth to backup so it survives close+reopen (beforeunload/pagehide are unreliable when closing browser)
 if (typeof window !== 'undefined') {
@@ -35,6 +69,8 @@ if (typeof window !== 'undefined') {
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
       saveAuth();
+      void flushQueuedProfilePatch().catch(() => {});
+      authDebugLogIfEnabled('visibility_hidden → flushQueuedProfilePatch attempted');
       if (new URLSearchParams(window.location.search).get('auth_debug') === '1' || (typeof localStorage !== 'undefined' && localStorage.getItem('baw_auth_debug') === 'true')) {
         sendAuthDiagnostic('visibility_hidden');
       }
@@ -49,12 +85,14 @@ if (typeof window !== 'undefined') {
   });
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>
-)
+bootstrapAuthBeforeRender().finally(() => {
+  ReactDOM.createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </React.StrictMode>
+  )
+})
 
 

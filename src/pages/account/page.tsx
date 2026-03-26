@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../constants/tiers';
 import { getTotalReviewCount, getUserSubmittedReviewCount, hasNewReviewApproved } from '../../constants/reviews';
-import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier, clearAppAuth } from '../../utils/adminAuth';
+import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier, clearAppAuth, markManualSignOutInProgress } from '../../utils/adminAuth';
 import { swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
 import { patchProfileWithRetryQueue } from '../../utils/profileSyncQueue';
@@ -16,6 +16,7 @@ import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { flushQueuedProfilePatch } from '../../utils/profileSyncQueue';
 import { authDebugLogIfEnabled } from '../../utils/adminAuth';
+import { syncAllFromApi } from '../../utils/syncFromApi';
 
 type ProfileDebugEvent = {
   at: string;
@@ -267,6 +268,31 @@ function AccountPage() {
       // ignore
     }
     captureProfileSnapshot('ACCOUNT_MOUNT');
+  }, []);
+
+  // Rehydrate profile from cloud on account open to avoid stale local identity after reopen/sign-in.
+  useEffect(() => {
+    let cancelled = false;
+    if (!isSupabaseConfigured()) return;
+    const supabase = getSupabase();
+    if (!supabase) return;
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (cancelled || !session) return;
+      const profile = await syncAllFromApi().catch(() => null);
+      if (cancelled || !profile) return;
+      try {
+        const curRaw = localStorage.getItem('currentUser');
+        if (!curRaw) return;
+        const cur = JSON.parse(curRaw);
+        setUserData(cur);
+        const img = (cur?.profileImage || cur?.profile_image || '').toString().trim();
+        if (img) setProfileImage(img);
+        authDebugLogIfEnabled('account: syncAllFromApi rehydrated profile on mount');
+      } catch {
+        // ignore
+      }
+    }).catch(() => {});
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
@@ -826,6 +852,7 @@ function AccountPage() {
     if (isSupabaseConfigured()) {
       const supabase = getSupabase();
       if (supabase) {
+        markManualSignOutInProgress();
         await supabase.auth.signOut().catch((e) => {
           authDebugLogIfEnabled(`signOut:supabaseSignOut error=${e instanceof Error ? e.message : String(e)}`);
         });
