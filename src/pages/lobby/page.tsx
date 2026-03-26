@@ -4,7 +4,13 @@ import LoadingScreen from '../../components/base/LoadingScreen';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { isMockDataAccount } from '../../utils/adminAuth';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
-import { syncAllFromApi, buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage, buildProfilePayloadForBackend } from '../../utils/syncFromApi';
+import {
+  syncAllFromApi,
+  buildMinimalUserFromSupabaseSession,
+  applyMinimalUserToStorage,
+  buildProfilePayloadForBackend,
+  didLastProfileSyncError,
+} from '../../utils/syncFromApi';
 import { onSignInSuccess } from '../../utils/adminAuth';
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
 
@@ -43,8 +49,10 @@ const LobbyPage: React.FC = () => {
         applyMinimalUserToStorage(minimal);
         onSignInSuccess('session_restore');
         registerServerSessionCookie(session.access_token, session.refresh_token);
-        const { patchProfile } = await import('../../utils/api');
-        await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
+        if (!didLastProfileSyncError()) {
+          const { patchProfile } = await import('../../utils/api');
+          await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
+        }
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
         navigate('/account', { replace: true });
       });

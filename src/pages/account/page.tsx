@@ -85,6 +85,7 @@ function AccountPage() {
     return '/assets/profile-thumb.png';
   });
   const [profileImageSaveMessage, setProfileImageSaveMessage] = useState<string | null>(null);
+  const [showProfileImageStatusPopup, setShowProfileImageStatusPopup] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [cardAnimationsEnabled, setCardAnimationsEnabled] = useState(() => {
     try {
@@ -109,6 +110,11 @@ function AccountPage() {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [pinchStart, setPinchStart] = useState<{ distance: number; scale: number } | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);
+
+  const openProfileImageStatusPopup = (message: string) => {
+    setProfileImageSaveMessage(message);
+    setShowProfileImageStatusPopup(true);
+  };
   
   
   // Mock digital cash history for testing labels UI – one row per transaction type
@@ -1486,7 +1492,6 @@ function AccountPage() {
 
     const croppedImage = canvas.toDataURL('image/png');
     setProfileImage(croppedImage);
-    setProfileImageSaveMessage('SAVING PHOTO...');
     try {
       localStorage.setItem('profileImage', croppedImage);
       const currentUserRaw = localStorage.getItem('currentUser');
@@ -1525,19 +1530,19 @@ function AccountPage() {
               }
             }
           }
-          setProfileImageSaveMessage('PHOTO SAVED.');
+          openProfileImageStatusPopup('PHOTO SAVED.');
           void trackActivity('profile_update');
         } catch {
           const ok = await patchProfileWithRetryQueue({ profileImage: croppedImage });
-          setProfileImageSaveMessage(ok ? 'PHOTO SAVED.' : 'PHOTO QUEUED. IT WILL AUTO-SYNC WHEN ONLINE.');
+          openProfileImageStatusPopup(ok ? 'PHOTO SAVED.' : 'PHOTO QUEUED. IT WILL AUTO-SYNC WHEN ONLINE.');
           if (ok) void trackActivity('profile_update');
         }
       } else {
-        setProfileImageSaveMessage('PHOTO SAVED LOCALLY.');
+        openProfileImageStatusPopup('PHOTO SAVED LOCALLY.');
       }
     } catch (e) {
       console.warn('Failed to save profile image:', e);
-      setProfileImageSaveMessage('PHOTO SAVE FAILED.');
+      openProfileImageStatusPopup('PHOTO SAVE FAILED.');
     }
     setShowCropModal(false);
     setImageToCrop(null);
@@ -2007,21 +2012,6 @@ function AccountPage() {
                         CHANGE PHOTO
                       </p>
                     )}
-                    {profileImageSaveMessage ? (
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Medium"',
-                          fontSize: '8px',
-                          color: profileImageSaveMessage.includes('FAILED') ? '#EB1C24' : '#808080',
-                          margin: '0',
-                          textTransform: 'uppercase',
-                          fontWeight: '500',
-                          textAlign: 'center',
-                        }}
-                      >
-                        {profileImageSaveMessage}
-                      </p>
-                    ) : null}
                   </div>
 
                   {/* Profile Details */}
@@ -2263,6 +2253,84 @@ function AccountPage() {
         cancelText="CANCEL"
         dataAttribute="sign-out-confirm"
       />
+
+      {/* Profile photo save status popup (same marble popup styling family as account confirmations) */}
+      {showProfileImageStatusPopup && profileImageSaveMessage ? (
+        <div
+          style={{
+            position: 'fixed',
+            inset: '0',
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            backdropFilter: 'blur(3px)',
+            WebkitBackdropFilter: 'blur(3px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10000,
+            margin: '0',
+            padding: '0',
+          }}
+          onClick={() => setShowProfileImageStatusPopup(false)}
+        >
+          <div
+            className="p-6"
+            style={{
+              maxWidth: '400px',
+              width: '90%',
+              border: '1.3px solid black',
+              borderRadius: '0',
+              transform: 'translateY(-6px)',
+              backgroundImage: 'url(/assets/popup-marble.png)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              backgroundColor: 'white',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3
+              style={{
+                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                fontSize: '14px',
+                fontWeight: '500',
+                marginBottom: '16px',
+                textTransform: 'uppercase',
+                textAlign: 'center',
+                color: '#EB1C24',
+              }}
+            >
+              PROFILE PHOTO
+            </h3>
+            <p
+              style={{
+                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                fontSize: '10px',
+                marginBottom: '20px',
+                color: '#000000',
+                textTransform: 'uppercase',
+                textAlign: 'center',
+              }}
+            >
+              {profileImageSaveMessage}
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowProfileImageStatusPopup(false)}
+              className="w-full py-2 px-4 border border-black font-medium hover:bg-gray-50 transition-colors"
+              style={{
+                borderWidth: '1.3px',
+                fontSize: '11px',
+                fontFamily: '"Futura PT Medium"',
+                backgroundColor: '#FFFFFF',
+                color: '#EB1C24',
+                textTransform: 'uppercase',
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       {/* Reset Photo Confirmation Modal */}
       {showResetConfirm && (

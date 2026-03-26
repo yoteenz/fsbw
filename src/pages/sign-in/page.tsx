@@ -8,7 +8,13 @@ import { isAdminEmail, ensureAuthRestoredFromBackup, onSignInSuccess } from '../
 import { saveCartAndWishlistToUserKeys, swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
 import { normalizeEmail, normalizePassword } from '../../utils/credentialNormalize';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
-import { syncAllFromApi, buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage, buildProfilePayloadForBackend } from '../../utils/syncFromApi';
+import {
+  syncAllFromApi,
+  buildMinimalUserFromSupabaseSession,
+  applyMinimalUserToStorage,
+  buildProfilePayloadForBackend,
+  didLastProfileSyncError,
+} from '../../utils/syncFromApi';
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
 import { trackActivity } from '../../utils/activity';
 import {
@@ -213,8 +219,10 @@ function SignInPage() {
         applyMinimalUserToStorage(minimal);
         onSignInSuccess('session_restore');
         registerServerSessionCookie(session.access_token, session.refresh_token);
-        const { patchProfile } = await import('../../utils/api');
-        await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
+        if (!didLastProfileSyncError()) {
+          const { patchProfile } = await import('../../utils/api');
+          await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
+        }
         setIsSignedIn(true);
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
         const returnTo = new URLSearchParams(location.search).get('returnTo');
@@ -411,8 +419,10 @@ function SignInPage() {
             } catch (_) {}
             onSignInSuccess('password');
             registerServerSessionCookie(data.session.access_token, data.session.refresh_token);
-            const { patchProfile } = await import('../../utils/api');
-            await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
+            if (!didLastProfileSyncError()) {
+              const { patchProfile } = await import('../../utils/api');
+              await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
+            }
             setIsSignedIn(true);
             trackActivity('sign_in');
             window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));

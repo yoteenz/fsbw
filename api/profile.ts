@@ -4,13 +4,22 @@ import { getSupabaseUser } from './_lib/supabase';
 import { fromProfileRow } from './_lib/profileMapping';
 import { writeAuditLog } from './_lib/auditLog';
 
+function normalizeProfileText(input: unknown): string | null {
+  if (typeof input !== 'string') return null;
+  const v = input.trim();
+  if (!v) return null;
+  const u = v.toUpperCase();
+  if (u === 'EMPTY' || u === 'NULL' || u === 'N/A' || u === 'NA') return null;
+  return v;
+}
+
 function toProfileRow(profile: Record<string, unknown>) {
   return {
     id: profile.id,
     email: profile.email,
     role: profile.role ?? null,
-    first_name: profile.firstName ?? null,
-    last_name: profile.lastName ?? null,
+    first_name: normalizeProfileText(profile.firstName),
+    last_name: normalizeProfileText(profile.lastName),
     phone_number: profile.phoneNumber ?? null,
     birthday: profile.birthday ?? null,
     facebook: profile.facebook ?? null,
@@ -18,7 +27,7 @@ function toProfileRow(profile: Record<string, unknown>) {
     youtube: profile.youtube ?? null,
     tiktok: profile.tiktok ?? null,
     twitter: profile.twitter ?? null,
-    profile_image: profile.profileImage ?? null,
+    profile_image: normalizeProfileText(profile.profileImage),
     membership_type: profile.membershipType ?? null,
     subscription_tier: profile.subscriptionTier ?? null,
     current_tier_name: profile.currentTierName ?? profile.tier ?? null,

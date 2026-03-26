@@ -10,11 +10,7 @@ import { deleteAccount } from '../../../utils/api';
 import { patchProfileWithRetryQueue } from '../../../utils/profileSyncQueue';
 import { trackActivity } from '../../../utils/activity';
 import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
-import { isAdminUser, clearAppAuth, isAyoteenzAdminAccount } from '../../../utils/adminAuth';
-import { syncAllFromApi, applyAdminSyncPayload } from '../../../utils/syncFromApi';
-import { saveCartAndWishlistToUserKeys } from '../../../utils/cartWishlistStorage';
-import { normalizeEmail } from '../../../utils/credentialNormalize';
-import { syncProfileWithPassword, syncProfileWithToken } from '../../../utils/api';
+import { clearAppAuth, isAyoteenzAdminAccount } from '../../../utils/adminAuth';
 
 const inputBaseStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Demi"',
@@ -144,13 +140,7 @@ function SettingsPage() {
   const [resetPasswordError, setResetPasswordError] = useState('');
   const [showDeleteAccountConfirm, setShowDeleteAccountConfirm] = useState(false);
   const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
-  const [syncAccountMessage, setSyncAccountMessage] = useState<string | null>(null);
-  const [syncAccountLoading, setSyncAccountLoading] = useState(false);
-  const [saveProfileToCloudMessage, setSaveProfileToCloudMessage] = useState<string | null>(null);
-  const [saveProfileToCloudLoading, setSaveProfileToCloudLoading] = useState(false);
   const [personalInfoSaveMessage, setPersonalInfoSaveMessage] = useState<string | null>(null);
-  /** Optional: re-enter Supabase password for sync when stored password fails or is missing */
-  const [syncPasswordInput, setSyncPasswordInput] = useState('');
 
   const socialPrefixes: Record<string, string> = {
     facebook: 'FACEBOOK.COM/',
@@ -402,128 +392,6 @@ function SettingsPage() {
         displayMsg = msg || 'Could not delete account. Try again.';
       }
       setDeleteAccountError(displayMsg);
-    }
-  };
-
-  const handleSyncAccount = async () => {
-    setSyncAccountMessage(null);
-    setSyncAccountLoading(true);
-    try {
-      const email = (userData?.email || '').trim().toLowerCase();
-      if (!email || !isSupabaseConfigured()) {
-        setSyncAccountMessage('Sync not available.');
-        return;
-      }
-      const supabase = getSupabase();
-      if (!supabase) {
-        setSyncAccountMessage('Sync not available.');
-        return;
-      }
-      const { data } = await supabase.auth.getSession();
-      // Prefer session when present (token identifies user); strict email match can fail due to casing/format
-      const hasSession = Boolean(data.session?.user);
-
-      if (hasSession) {
-        // Prefer token-based sync (same auth as sign-in; no password sent)
-        const tokenPayload = await syncProfileWithToken();
-        if (tokenPayload?.profile) {
-          applyAdminSyncPayload(email, tokenPayload, { preservePassword: userData?.password ?? undefined });
-          saveCartAndWishlistToUserKeys(email);
-          const updated = localStorage.getItem('currentUser');
-          if (updated) setUserData(JSON.parse(updated));
-          setSyncAccountMessage('Account synced. Profile, orders, cart, and wishlist updated.');
-          window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
-          return;
-        }
-        const profile = await syncAllFromApi();
-        if (profile) {
-          saveCartAndWishlistToUserKeys(email);
-          const localPassword = userData?.password;
-          if (localPassword) {
-            const registeredUsers: unknown[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-            const idx = registeredUsers.findIndex((u: unknown) => normalizeEmail((u as { email?: string }).email || '') === normalizeEmail(email));
-            if (idx !== -1) {
-              (registeredUsers[idx] as { password?: string }).password = localPassword;
-              localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
-            }
-          }
-          const updated = localStorage.getItem('currentUser');
-          if (updated) setUserData(JSON.parse(updated));
-          setSyncAccountMessage('Account synced. Profile, orders, cart, and wishlist updated.');
-          window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
-        } else {
-          setSyncAccountMessage('Could not load profile from server.');
-        }
-        return;
-      }
-
-      // Use re-entered password if provided (exact as typed), otherwise stored
-      const passwordToUse = (syncPasswordInput.length > 0 ? syncPasswordInput : '') || userData?.password;
-      if (passwordToUse) {
-        const payload = await syncProfileWithPassword(email, passwordToUse);
-        applyAdminSyncPayload(email, payload, { preservePassword: passwordToUse });
-        saveCartAndWishlistToUserKeys(email);
-        const updated = localStorage.getItem('currentUser');
-        if (updated) setUserData(JSON.parse(updated));
-        setSyncAccountMessage('Account synced. Profile, orders, cart, and wishlist updated.');
-        setSyncPasswordInput(''); // clear so it's not left in state
-        window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
-        return;
-      }
-
-      setSyncAccountMessage('no_session');
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      const isNetwork = /load failed|failed to fetch|network|request failed|sync request failed/i.test(msg);
-      setSyncAccountMessage(
-        isNetwork
-          ? 'Sync request failed. Check your connection and that the app is deployed, then try again.'
-          : msg || 'Sync failed.'
-      );
-    } finally {
-      setSyncAccountLoading(false);
-    }
-  };
-
-  /** Push current profile (name, photo, birthday, etc.) to Supabase so Sync on other devices loads it. Use on the device that has the correct data (e.g. Chrome). */
-  const handleSaveProfileToCloud = async () => {
-    setSaveProfileToCloudMessage(null);
-    setSaveProfileToCloudLoading(true);
-    try {
-      const raw = localStorage.getItem('currentUser');
-      const current = raw ? JSON.parse(raw) : null;
-      if (!current || !current.email) {
-        setSaveProfileToCloudMessage('No profile to save. Sign in first.');
-        return;
-      }
-      const payload: Record<string, unknown> = {
-        firstName: current.firstName ?? current.first_name ?? '',
-        lastName: current.lastName ?? current.last_name ?? '',
-        birthday: current.birthday ?? '',
-        profileImage: current.profileImage ?? current.profile_image ?? null,
-        phoneNumber: current.phoneNumber ?? current.phone_number ?? null,
-        facebook: current.facebook ?? null,
-        instagram: current.instagram ?? null,
-        youtube: current.youtube ?? null,
-        tiktok: current.tiktok ?? null,
-        twitter: current.twitter ?? null,
-      };
-      const ok = await patchProfileWithRetryQueue(payload);
-      if (ok) {
-        setSaveProfileToCloudMessage('Profile saved to cloud. Use Sync on other devices to load it.');
-        trackActivity('profile_update');
-      } else {
-        setSaveProfileToCloudMessage('Profile changes queued. They will sync when your Supabase session/network is available.');
-      }
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      const isNetwork = /load failed|failed to fetch|network error|request failed|connection refused|ERR_/i.test(msg);
-      const isAuth = msg.includes('401') || msg.includes('Unauthorized');
-      if (isAuth) setSaveProfileToCloudMessage('Sign in with Supabase first, then save profile.');
-      else if (isNetwork) setSaveProfileToCloudMessage('Network error. Try from the deployed site (e.g. your Vercel URL) or check your connection.');
-      else setSaveProfileToCloudMessage(msg);
-    } finally {
-      setSaveProfileToCloudLoading(false);
     }
   };
 
@@ -1318,83 +1186,6 @@ function SettingsPage() {
                   </button>
                 </div>
               </div>
-
-              {/* Admin: Save profile to Supabase so Sync on other devices loads name, photo, birthday, etc. */}
-              {isAdminUser() && isSupabaseConfigured() && (
-                <div className="px-0 md:px-0" style={{ marginTop: '-4px', marginBottom: '16px' }}>
-                  {saveProfileToCloudMessage && (
-                    <p className="text-xs font-futura mb-2" style={{ textTransform: 'uppercase', color: saveProfileToCloudMessage.startsWith('Profile saved') ? '#15803d' : '#666' }}>
-                      {saveProfileToCloudMessage}
-                    </p>
-                  )}
-                  <button
-                    type="button"
-                    onClick={handleSaveProfileToCloud}
-                    disabled={saveProfileToCloudLoading}
-                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ borderWidth: '1.3px', color: '#EB1C24', fontFamily: '"Futura PT Medium"', backgroundColor: '#FFFFFF' }}
-                  >
-                    {saveProfileToCloudLoading ? 'SAVING…' : 'SAVE MY PROFILE TO CLOUD'}
-                  </button>
-                  <p className="text-[10px] font-futura mt-1" style={{ color: '#888', textTransform: 'uppercase' }}>
-                    Do this on the device that has your correct profile (e.g. Chrome). Then use Sync below on other devices to load it.
-                  </p>
-                </div>
-              )}
-
-              {/* Admin: Sync my account - pull profile/orders/cart/wishlist from backend (any admin in admin list) */}
-              {isAdminUser() && (
-                <div className="px-0 md:px-0" style={{ marginTop: '-4px', marginBottom: '16px' }}>
-                  {syncAccountMessage && (
-                    <div className="mb-2">
-                      <p className="text-xs font-futura" style={{ textTransform: 'uppercase', color: syncAccountMessage === 'Account synced. Profile, orders, cart, and wishlist updated.' ? '#15803d' : '#666' }}>
-                        {syncAccountMessage === 'no_session'
-                          ? 'No Supabase session — sync needs one sign-in with your Supabase password. Use the link below, sign in with the same email + Supabase password, then come back here and click Sync again.'
-                          : syncAccountMessage}
-                      </p>
-                      {syncAccountMessage === 'no_session' && (
-                        <button
-                          type="button"
-                          onClick={() => navigate('/sign-in?returnTo=account/settings')}
-                          className="text-xs font-futura mt-1 underline cursor-pointer bg-transparent border-none p-0"
-                          style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', textTransform: 'uppercase' }}
-                        >
-                          Go to sign-in →
-                        </button>
-                      )}
-                    </div>
-                  )}
-                  <p className="text-[10px] font-futura mb-1.5" style={{ color: '#888', textTransform: 'uppercase' }}>
-                    Supabase password for sync (optional — if sync fails, enter it here and click Sync)
-                  </p>
-                  <input
-                    type="password"
-                    value={syncPasswordInput}
-                    onChange={(e) => setSyncPasswordInput(e.target.value)}
-                    placeholder="Supabase password"
-                    className="w-full max-w-m border border-gray-300 font-futura text-sm py-1.5 px-2 mb-2"
-                    style={{ borderWidth: '1.3px' }}
-                    autoComplete="current-password"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleSyncAccount}
-                    disabled={syncAccountLoading}
-                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{
-                      borderWidth: '1.3px',
-                      color: '#EB1C24',
-                      fontFamily: '"Futura PT Medium"',
-                      backgroundColor: '#FFFFFF'
-                    }}
-                  >
-                    {syncAccountLoading ? 'SYNCING…' : 'SYNC MY ACCOUNT'}
-                  </button>
-                  <p className="text-[10px] font-futura mt-1" style={{ color: '#888', textTransform: 'uppercase' }}>
-                    Sync uses your Supabase password (the one for sign-in with email/password). If sync fails, enter it above and click Sync.
-                  </p>
-                </div>
-              )}
 
               {/* Delete Account - below main card, matches account profile sign out button */}
               <div className="px-0 md:px-0" style={{ marginTop: '-4px', marginBottom: '20px' }}>

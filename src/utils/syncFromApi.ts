@@ -7,9 +7,16 @@
 import { getProfile, getOrders, getCart, getWishlist } from './api';
 import { isAdminEmail, persistAuthBackup, ADMIN_TIER_OVERRIDE_KEY, ADMIN_SUBSCRIPTION_OVERRIDE_KEY } from './adminAuth';
 
+let lastProfileSyncErrored = false;
+
+export function didLastProfileSyncError(): boolean {
+  return lastProfileSyncErrored;
+}
+
 export async function syncProfileFromApi(): Promise<Record<string, unknown> | null> {
   try {
     const profile = await getProfile();
+    lastProfileSyncErrored = false;
     if (!profile || typeof profile !== 'object') return null;
     const email = (profile.email as string) || '';
     if (!email) return null;
@@ -73,6 +80,7 @@ export async function syncProfileFromApi(): Promise<Record<string, unknown> | nu
     persistAuthBackup();
     return merged;
   } catch {
+    lastProfileSyncErrored = true;
     return null;
   }
 }
@@ -324,8 +332,9 @@ export function buildProfilePayloadForBackend(minimal: Record<string, unknown>):
     str('referralCode') || str('referral_code') || (minimal.referralCode as string) || (minimal.referral_code as string) || '';
   return {
     email,
-    firstName: (minimal.firstName as string) || str('first_name') || email.split('@')[0] || 'User',
-    lastName: (minimal.lastName as string) || str('last_name'),
+    // Do not invent placeholder names on fallback upsert; avoids overwriting real profile names.
+    firstName: (minimal.firstName as string) || str('first_name') || null,
+    lastName: (minimal.lastName as string) || str('last_name') || null,
     phoneNumber: (minimal.phoneNumber as string) || str('phone_number'),
     birthday: (minimal.birthday as string) || '',
     facebook: minimal.facebook ?? null,
@@ -335,7 +344,8 @@ export function buildProfilePayloadForBackend(minimal: Record<string, unknown>):
     twitter: minimal.twitter ?? null,
     referralCode: referral || null,
     membershipType: (minimal.membershipType as string) || 'STANDARD',
-    profileImage: (minimal.profileImage as string) || '/assets/profile-thumb.png',
+    // Avoid writing local default asset path to cloud profile_image on fallback.
+    profileImage: (minimal.profileImage as string) || null,
     giftCardBalance: typeof minimal.giftCardBalance === 'number' ? minimal.giftCardBalance : 10,
     hasMadeFirstPurchase: Boolean(minimal.hasMadeFirstPurchase),
     loyaltyPoints: Number(minimal.loyaltyPoints) || 0,

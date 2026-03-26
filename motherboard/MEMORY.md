@@ -1122,3 +1122,31 @@ User asked if there is a way to capture the **entire current codebase** (and its
 - **`src/utils/api.ts`** — Added **`uploadProfileImage(imageDataUrl)`** API helper.
 - **`src/pages/account/page.tsx`** — Crop approve now uploads to storage and stores URL in `currentUser`/`registeredUsers`/`profileImage`; falls back to queued profile patch when upload/session fails; shows explicit `profileImageSaveMessage` feedback (`SAVING`, `SAVED`, `QUEUED`, `FAILED`).
 - **`src/pages/account/settings/page.tsx`** — Added explicit `personalInfoSaveMessage` for name/profile saves (`SAVED`, `QUEUED`, `FAILED`) so save failures are no longer silent.
+
+---
+
+## 2026-03-26 — Profile overwrite fix: block fallback clobber + sanitize placeholders
+
+**Context:** User still saw `profiles` values reverting (e.g. `first_name = EMPTY`) even after env setup. Root cause suspected: fallback minimal-profile upsert ran after transient sync failures, clobbering good cloud values.
+
+**Changes:**
+- **`src/utils/syncFromApi.ts`** — Added `didLastProfileSyncError()` flag; fallback creation now distinguishes true sync errors vs missing profile. Also removed invented fallback payload defaults (`firstName/email-prefix`, default profile image path) from `buildProfilePayloadForBackend` to avoid cloud overwrite with placeholders.
+- **`src/components/AccountRouteGuard.tsx`**, **`src/pages/lobby/page.tsx`**, **`src/pages/sign-in/page.tsx`** — Only run fallback `patchProfile(buildProfilePayloadForBackend(minimal))` when last sync did **not** error.
+- **`api/profile.ts`** — Sanitize sentinel text (`EMPTY`, `NULL`, `N/A`, `NA`, blank) to `null` for `first_name`, `last_name`, `profile_image` on PATCH/upsert.
+- **`supabase/migrations/20260326120000_normalize_profile_placeholders.sql`** — One-time cleanup migration to null out existing placeholder values.
+
+---
+
+## 2026-03-26 — Account photo status: popup only (remove inline text)
+
+**Context:** User wanted photo save messages removed from below the profile image because they disrupt layout; status should use popup styling instead.
+
+**Changes:** **`src/pages/account/page.tsx`** — Removed inline `profileImageSaveMessage` text under CHANGE/RESET. Added `showProfileImageStatusPopup` modal (marble popup style consistent with account popups) with title **PROFILE PHOTO**, message text, and **OK** button. Photo save flow now calls `openProfileImageStatusPopup(...)` for saved/queued/failed states.
+
+---
+
+## 2026-03-26 — Settings page: remove Save-to-cloud / Sync-account blocks
+
+**Context:** User requested removal of all text/buttons between the main settings card and **DELETE ACCOUNT** because **SAVE MY PROFILE TO CLOUD** / **SYNC MY ACCOUNT** were not functioning reliably and cluttered UI.
+
+**Changes:** **`src/pages/account/settings/page.tsx`** — Removed the two admin-only blocks (save profile to cloud + sync account, helper text, password input). Deleted related state, imports, and handlers (`handleSaveProfileToCloud`, `handleSyncAccount`, sync messages/loading/password input) so build remains clean.
