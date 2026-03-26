@@ -1580,3 +1580,14 @@ User asked if there is a way to capture the **entire current codebase** (and its
 - **Changes:** `api/session-cookie.ts`
   - Updated import from `./_lib/auth` to `./_lib/auth.js` to satisfy Vercel Node ESM resolution at runtime.
 - **Conventions:** For Vercel serverless TypeScript routes running as ESM, use explicit `.js` extensions in local relative imports where runtime resolution can fail without extension.
+
+---
+
+## 2026-03-26 — Route-wall test: force HOME menu to `/shop/units`
+
+- **Context:** User proposed that premium-only landing behavior might be creating an auth recovery wall/reroute loop and requested testing with a neutral shop route.
+- **Decision/outcome:** Changed HOME menu routing in relevant account/sign-in menu headers to always navigate to `/shop/units` instead of premium-dependent `/` or `/home/shop`.
+- **Changes:**
+  - `src/pages/sign-in/page.tsx` — HOME menu click now always routes to `/shop/units` (including fallback/error branches).
+  - `src/pages/account/settings/page.tsx` — HOME menu click now routes to `/shop/units`.
+- **Conventions:** During auth persistence debugging, prefer a shared, non-gated landing route to isolate session issues from membership-based route logic.

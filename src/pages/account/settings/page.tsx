@@ -648,14 +648,13 @@ function SettingsPage() {
                       const currentUser = localStorage.getItem('currentUser');
                       if (currentUser) {
                         const user = JSON.parse(currentUser);
-                        const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
-                        navigate(isPremium ? '/' : '/home/shop');
+                        navigate('/shop/units');
                         return;
                       }
                     }
-                    navigate('/home/shop');
+                    navigate('/shop/units');
                   } catch {
-                    navigate('/home/shop');
+                    navigate('/shop/units');
                   }
                 }}>HOME &gt;</span>{' '}
                   <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>

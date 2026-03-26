@@ -730,19 +730,15 @@ function SignInPage() {
                           if (currentUser) {
                             const user = JSON.parse(currentUser);
                             const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
-                            if (isPremium) {
-                              navigate('/'); // Lobby for premium members
-                            } else {
-                              navigate('/home/shop'); // Shop for standard/non-members
-                            }
+                            navigate('/shop/units'); // Force a shared non-gated landing route for auth testing
                           } else {
-                            navigate('/home/shop'); // Default to shop if not signed in
+                            navigate('/shop/units'); // Default to shared shop route
                           }
                         } else {
-                          navigate('/home/shop'); // Default to shop if not signed in
+                          navigate('/shop/units'); // Default to shared shop route
                         }
                       } catch (e) {
-                        navigate('/home/shop'); // Default to shop on error
+                        navigate('/shop/units'); // Default to shared shop route on error
                       }
                     }}
                   >
