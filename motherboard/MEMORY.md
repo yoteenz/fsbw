@@ -1591,3 +1591,13 @@ User asked if there is a way to capture the **entire current codebase** (and its
   - `src/pages/sign-in/page.tsx` — HOME menu click now always routes to `/shop/units` (including fallback/error branches).
   - `src/pages/account/settings/page.tsx` — HOME menu click now routes to `/shop/units`.
 - **Conventions:** During auth persistence debugging, prefer a shared, non-gated landing route to isolate session issues from membership-based route logic.
+
+---
+
+## 2026-03-26 — Completed route-wall override on account page HOME menu
+
+- **Context:** User reported auth debug flow still landing on premium page despite prior route-wall test changes.
+- **Decision/outcome:** Extended the same neutral route override to account page HOME menu (the remaining premium-dependent path).
+- **Changes:** `src/pages/account/page.tsx`
+  - Updated HOME menu click handler to always navigate to `/shop/units` (removed premium/standard conditional path `/` vs `/home/shop`).
+- **Conventions:** For this auth persistence investigation, all HOME menu shortcuts should route to `/shop/units` to avoid premium/home route gating side effects.
