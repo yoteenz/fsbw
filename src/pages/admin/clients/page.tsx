@@ -1681,105 +1681,108 @@ export default function AdminClients() {
                               );
                             })()}
                           </div>
-                          {/* Real <table> + fixed layout: equal 25% cols; div {display:table} can ignore widths in some nested layouts */}
-                          <table
-                            role="presentation"
+                          {/* CSS Grid: equal 1fr tracks + single columnGap — avoids table/subpixel asymmetry from td padding + col widths */}
+                          <div
                             style={{
+                              display: 'grid',
+                              gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+                              columnGap: '10px',
+                              rowGap: 0,
                               width: '100%',
-                              tableLayout: 'fixed',
-                              borderCollapse: 'separate',
-                              borderSpacing: 0,
                               marginTop: '12px',
+                              marginLeft: '-4px',
                               boxSizing: 'border-box',
                             }}
                           >
-                            <colgroup>
-                              <col style={{ width: '25%' }} />
-                              <col style={{ width: '25%' }} />
-                              <col style={{ width: '25%' }} />
-                              <col style={{ width: '25%' }} />
-                            </colgroup>
-                            <tbody>
-                              <tr>
-                                {(
-                                  [
-                                    {
-                                      value: selectedTotalOrders,
-                                      label: 'ORDERS',
-                                      valueColor: '#EB1C24',
-                                    },
-                                    {
-                                      value: selectedTotalLoyaltyPointsEarned.toLocaleString(),
-                                      label: 'POINTS',
-                                      valueColor: '#EB1C24',
-                                    },
-                                    {
-                                      value: `$${selectedTotalSpent.toLocaleString()}`,
-                                      label: 'TOTAL SPENT',
-                                      valueColor: '#EB1C24',
-                                    },
-                                    {
-                                      value: selectedMembershipType,
-                                      label: 'MEMBERSHIP',
-                                      valueColor: (selectedMembershipType || '').toUpperCase() === 'PREMIUM' ? '#000000' : '#808080',
-                                    },
-                                  ] as const
-                                ).map((col) => (
-                                  <td
-                                    key={col.label}
+                            {(() => {
+                              const cols = [
+                                {
+                                  value: selectedTotalOrders,
+                                  label: 'ORDERS',
+                                  valueColor: '#EB1C24',
+                                },
+                                {
+                                  value: selectedTotalLoyaltyPointsEarned.toLocaleString(),
+                                  label: 'POINTS',
+                                  valueColor: '#EB1C24',
+                                },
+                                {
+                                  value: `$${selectedTotalSpent.toLocaleString()}`,
+                                  label: 'TOTAL SPENT',
+                                  valueColor: '#EB1C24',
+                                },
+                                {
+                                  value: selectedMembershipType,
+                                  label: 'MEMBERSHIP',
+                                  valueColor: (selectedMembershipType || '').toUpperCase() === 'PREMIUM' ? '#000000' : '#808080',
+                                },
+                              ] as const;
+                              const cell = (col: (typeof cols)[number]) => (
+                                <div
+                                  key={col.label}
+                                  style={{
+                                    minWidth: 0,
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    justifyContent: 'flex-start',
+                                    width: '100%',
+                                    textAlign: 'center',
+                                  }}
+                                >
+                                  <p
                                     style={{
-                                      verticalAlign: 'top',
-                                      width: '25%',
+                                      fontWeight: 700,
+                                      lineHeight: 1.2,
+                                      color: col.valueColor,
+                                      fontFamily: '"Futura PT Book"',
+                                      fontSize: '13px',
+                                      margin: 0,
+                                      width: '100%',
+                                      textAlign: 'center',
+                                    }}
+                                  >
+                                    {col.value}
+                                  </p>
+                                  <p
+                                    style={{
+                                      lineHeight: 1.2,
+                                      fontFamily: '"Futura PT Book"',
+                                      color: '#000000',
+                                      fontSize: '10px',
+                                      margin: '4px 0 0 0',
+                                      width: '100%',
+                                      textAlign: 'center',
+                                      wordBreak: 'break-word',
+                                      overflowWrap: 'break-word',
+                                    }}
+                                  >
+                                    {col.label}
+                                  </p>
+                                </div>
+                              );
+                              return (
+                                <>
+                                  {cell(cols[0])}
+                                  <div
+                                    style={{
+                                      gridColumn: 'span 2',
+                                      display: 'grid',
+                                      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                                      columnGap: '10px',
+                                      transform: 'translateX(-8px)',
                                       minWidth: 0,
-                                      padding: '0 6px',
                                       boxSizing: 'border-box',
                                     }}
                                   >
-                                    <div
-                                      style={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        justifyContent: 'flex-start',
-                                        width: '100%',
-                                        textAlign: 'center',
-                                      }}
-                                    >
-                                      <p
-                                        style={{
-                                          fontWeight: 700,
-                                          lineHeight: 1.2,
-                                          color: col.valueColor,
-                                          fontFamily: '"Futura PT Book"',
-                                          fontSize: '13px',
-                                          margin: 0,
-                                          width: '100%',
-                                          textAlign: 'center',
-                                        }}
-                                      >
-                                        {col.value}
-                                      </p>
-                                      <p
-                                        style={{
-                                          lineHeight: 1.2,
-                                          fontFamily: '"Futura PT Book"',
-                                          color: '#000000',
-                                          fontSize: '10px',
-                                          margin: '4px 0 0 0',
-                                          width: '100%',
-                                          textAlign: 'center',
-                                          wordBreak: 'break-word',
-                                          overflowWrap: 'break-word',
-                                        }}
-                                      >
-                                        {col.label}
-                                      </p>
-                                    </div>
-                                  </td>
-                                ))}
-                              </tr>
-                            </tbody>
-                          </table>
+                                    {cell(cols[1])}
+                                    {cell(cols[2])}
+                                  </div>
+                                  {cell(cols[3])}
+                                </>
+                              );
+                            })()}
+                          </div>
                         </div>
                         {/* Rewards section: photos, videos, tags – tap to expand/collapse */}
                         {selectedClient && (() => {

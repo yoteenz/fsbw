@@ -17,8 +17,6 @@ import { ADMIN_DASHBOARD_WORKERS } from '../../../utils/adminWorkersDashboard';
 /** Items list fixed height (px) for all dashboard stat cards (scroll when content overflows). */
 const DASHBOARD_CAPPED_STAT_ITEMS_MAX_PX = 103;
 
-const WORKERS_FUNCTIONS_LINE_MAX = 52;
-
 type WorkersDashboardStatItem = { label: string; value: string; color?: string };
 
 /** Key metrics for WORKERS card (roster lives in `adminWorkersDashboard.ts`). Defined here to avoid named-export resolution issues in some bundlers. */
@@ -40,25 +38,18 @@ function buildWorkersDashboardSummaryItems(): WorkersDashboardStatItem[] {
   if (otherCount > 0) payParts.push(`${otherCount} OTHER`);
   const paySummary = payParts.length > 0 ? payParts.join(' · ') : 'SET PAY IN UTIL';
 
-  const roleLabels = list.map((w) => {
-    const r = (w.role || '').trim();
-    const short = (r.split(/[&,]/)[0] || r).trim();
-    return short.toUpperCase();
-  });
-  const uniqueRoles = [...new Set(roleLabels)];
-  let functionsLine = uniqueRoles.join(' · ');
-  if (functionsLine.length > WORKERS_FUNCTIONS_LINE_MAX) {
-    functionsLine = `${functionsLine.slice(0, WORKERS_FUNCTIONS_LINE_MAX - 1)}…`;
-  }
-
   const withContact = list.filter((w) => (w.contact || '').trim()).length;
 
   return [
     { label: 'ROSTER', value: `${n} ON TEAM`, color: 'text-red-500' },
-    { label: 'FUNCTIONS', value: functionsLine || '—', color: 'text-gray-500' },
+    {
+      label: 'POSITIONS',
+      value: `${n} BRAND ROLES (CAREERS)`,
+      color: 'text-gray-500',
+    },
     { label: 'COMP', value: paySummary, color: 'text-gray-500' },
     { label: 'CONTACTS', value: `${withContact}/${n} ON FILE`, color: 'text-gray-500' },
-    { label: 'DETAIL', value: 'WORKERS PAGE — DUTIES · TASKS · HRS · PAY', color: 'text-red-500' },
+    { label: 'DETAIL', value: 'WORKERS ROSTER · BRAND/CAREERS APPLY · TAP ROLE FOR APPS', color: 'text-red-500' },
   ];
 }
 
@@ -740,7 +731,7 @@ export default function AdminDashboard() {
       title: 'WORKERS',
       count: ADMIN_DASHBOARD_WORKERS.length,
       items: buildWorkersDashboardSummaryItems(),
-      activity: 'OPEN WORKERS PAGE FOR DUTIES, DAILY TASKS, HOURS, PAY & CONTACTS'
+      activity: 'ROSTER + APPLICANTS (BRAND → CAREERS). TAP EACH ROLE CARD TO REVIEW APPLICATIONS.'
     },
 
     {

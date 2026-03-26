@@ -134,6 +134,7 @@ const ToolsPage = lazyWithLogging(() => import('./pages/tools/page'), 'ToolsPage
 const GiftCardPage = lazyWithLogging(() => import('./pages/tools/gift-card/page'), 'GiftCardPage');
 const OrderFormPage = lazyWithLogging(() => import('./pages/shop/order-form/page'), 'OrderFormPage');
 const BrandPage = lazyWithLogging(() => import('./pages/brand/page'), 'BrandPage');
+const BrandCareersPage = lazyWithLogging(() => import('./pages/brand/careers/page'), 'BrandCareersPage');
 
 // Error Boundary to catch component errors with auto-recovery
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null; retryCount: number }> {
@@ -718,7 +719,8 @@ function App() {
             <GiftCardPage />
           </Suspense>
         } />
-        {/* Brand pages: /brand/about, /brand/contact, /brand/care, /brand/member, /brand/faq, /brand/payment, /brand/reviews, /brand/terms */}
+        {/* Brand pages: /brand/about … /brand/reviews, /brand/careers, /brand/terms */}
+        <Route path="/brand/jobs" element={<Navigate to="/brand/careers" replace />} />
         <Route path="/brand/about" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
         <Route path="/brand/contact" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
         <Route path="/brand/care" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
@@ -726,6 +728,7 @@ function App() {
         <Route path="/brand/faq" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
         <Route path="/brand/payment" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
         <Route path="/brand/reviews" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
+        <Route path="/brand/careers" element={<Suspense fallback={<LoadingScreen />}><BrandCareersPage /></Suspense>} />
         <Route path="/brand/terms" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
         <Route path="/wishlist" element={
           <AccountRouteGuard>

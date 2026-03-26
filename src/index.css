@@ -3872,3 +3872,22 @@ img.object-contain {
   line-height: 1 !important;
   vertical-align: middle !important;
 }
+
+/* Brand careers apply — placeholders match checkout (#808080, Futura PT Book 11px) */
+input.careers-apply-checkout-field::placeholder,
+textarea.careers-apply-checkout-field::placeholder {
+  color: #808080;
+  font-family: 'Futura PT Book', sans-serif;
+  font-size: 11px;
+  opacity: 1;
+}
+input.careers-apply-checkout-field,
+textarea.careers-apply-checkout-field,
+select.careers-apply-checkout-field {
+  text-transform: uppercase;
+}
+select.careers-apply-checkout-field option {
+  text-transform: uppercase;
+  font-family: 'Futura PT Book', sans-serif;
+  font-size: 11px;
+}

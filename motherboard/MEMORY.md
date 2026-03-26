@@ -882,6 +882,40 @@ User asked if there is a way to capture the **entire current codebase** (and its
 
 ---
 
+## 2026-03-25 — Client stats row: no top rule + flex centering
+
+**Context:** User asked to **remove the gray line** above **ORDERS / POINTS / TOTAL SPENT / MEMBERSHIP** and said the **label/value text still looked horizontally off-center**.
+
+**Changes:** **`src/pages/admin/clients/page.tsx`** — removed **`borderTop`** and **extra `paddingTop`** on the stats **`<table>`** (kept **`marginTop: 12px`** only). Each **`td`** wraps content in a **`display: flex; flexDirection: column; alignItems: center; width: 100%`** div; value/label **`p`** use **`width: 100%`** + **`textAlign: center`**; **`td`** padding **`0 6px`**. **`src/pages/admin/clients/account/page.tsx`** — same flex wrapper + **`td`** padding for the four-metric table.
+
+---
+
+## 2026-03-25 — Client stats row: CSS Grid for symmetric gutters
+
+**Context:** User saw **asymmetric** space (more outside left of ORDERS than right of MEMBERSHIP; uneven gaps between columns) despite a fixed **`<table>`** with **25%** cols and **td** padding.
+
+**Changes:** **`src/pages/admin/clients/page.tsx`** and **`account/page.tsx`** — replaced the stats **table** with **`display: grid`**, **`gridTemplateColumns: repeat(4, minmax(0, 1fr))`**, **`columnGap: 10px`**, **`width: 100%`**; **no** horizontal **padding** on cells (gutters come only from **columnGap**). Each metric is a **grid cell** with **`minWidth: 0`** and the same flex column stack for centered text.
+
+**Rationale:** Table **%** widths plus **per-cell padding** can **round unevenly**; grid **1fr** splits leftover space equally after one uniform **gap**.
+
+---
+
+## 2026-03-25 — Client stats row: nudge 4px left
+
+**Context:** User asked to move the whole **ORDERS / POINTS / TOTAL SPENT / MEMBERSHIP** row **4px left**.
+
+**Changes:** **`marginLeft: '-4px'`** on the stats **grid** wrapper in **`src/pages/admin/clients/page.tsx`** and **`src/pages/admin/clients/account/page.tsx`**.
+
+---
+
+## 2026-03-25 — Stats row: POINTS + TOTAL SPENT nudge 8px
+
+**Context:** User increased the **translateX** nudge for the middle two columns (**2px → 4px → 8px**) until it reads clearly on screen.
+
+**Changes:** **`transform: 'translateX(-8px)'`** on the **span-2** wrapper (POINTS + TOTAL SPENT) in **`src/pages/admin/clients/page.tsx`** and **`src/pages/admin/clients/account/page.tsx`**.
+
+---
+
 ## 2026-03-26 — Worker roster: brand positions (10 roles)
 
 **Context:** User specified **Frontal Slayer / brand** job positions for the worker roster: personal assistant, creative director, accountant, lawyer, graphic designer, photographer, videographer/editor, social media content planner/manager, makeup artist, hair stylist — with duties, pay, etc. on **`/admin/workers`**; dashboard card stays summary-only.
@@ -911,3 +945,146 @@ User asked if there is a way to capture the **entire current codebase** (and its
 **Context:** User said workers page cards still didn’t reflect the **10 business roles**; root issue was UI using **`w.name`** (“PLACEHOLDER — …”) as the red **card title**, so **`role`** (the actual job) was buried.
 
 **Changes:** **`src/pages/admin/workers/page.tsx`** — card **h2** = **`w.role`**; **POSITION n / total**; hire line shows **OPEN** + placeholder hint or **HIRE:** real name; intro + **single-line summary** built from **`ADMIN_DASHBOARD_WORKERS.map(role).join(' · ')`**; removed duplicate **ROLE** row in **dl**. **`adminWorkersDashboard.ts`** — JSDoc on **`name`** / **`role`**. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Brand Jobs + applications ↔ Admin Workers
+
+**Context:** User wanted **JOBS** in the **menu** (above Terms), a **Brand → Jobs** page with postings tied to the **10 worker roles**, full **apply** flow (resume, portfolio, etc.), and **Admin → Workers** cards that **expand** with **close X** to show **applicants per role**.
+
+**Changes:**
+- **`src/constants/brandMenu.ts`** — **`JOBS`** → **`/brand/jobs`** immediately **above** **TERMS OF SERVICE**; **`BRAND_SLUGS`** includes **`jobs`** (for shared constants).
+- **`src/utils/jobApplicationsStorage.ts`** — **`brandJobApplications_v1`** localStorage: **`appendJobApplication`**, **`getJobApplicationsForJob`**, **`countApplicationsForJob`**, **`removeJobApplication`**; optional **`resumeDataUrl`** with quota fallback.
+- **`src/pages/brand/jobs/page.tsx`** — lists **`ADMIN_DASHBOARD_WORKERS`**; **APPLY** opens modal (name, email, phone, LinkedIn, portfolio, other links, experience, résumé file ≤~1.5MB, cover letter); **`jobApplicationsUpdated`** event on submit; menu/header pattern aligned with brand/checkout **BRAND** tab.
+- **`src/pages/admin/workers/page.tsx`** — cards are **buttons**; **application count** hint; **overlay** lists applicants with qualifications, links, cover letter, résumé open/download, **Remove**; **Escape** / backdrop / **×** close; link to **Brand → Jobs**.
+- **`src/App.tsx`** — lazy **`BrandJobsPage`**, route **`/brand/jobs`**.
+- **`src/pages/admin/dashboard/page.tsx`** — **WORKERS** card **activity** text mentions **Brand → Jobs** and **tap role** to review apps.
+- **`src/pages/admin/components/StatsCard.tsx`** — optional title case **`jobs`** → **`/brand/jobs`**. This MEMORY entry.
+
+---
+
+## 2026-03-25 — Brand “Jobs” rebrand to Careers (`/brand/careers`)
+
+**Context:** User asked to change **job** wording to **careers** in the brand area: **Brand > CAREERS**, not Jobs.
+
+**Changes:**
+- **`src/constants/brandMenu.ts`** — menu label **`CAREERS`**, route **`/brand/careers`**; **`BRAND_SLUGS`** uses **`careers`** instead of **`jobs`**.
+- **`src/pages/brand/careers/page.tsx`** — same apply flow as former jobs page; component **`BrandCareersPage`**; breadcrumb **BRAND > CAREERS**; dialog id **`careers-apply-title`**. Removed **`src/pages/brand/jobs/page.tsx`**.
+- **`src/App.tsx`** — lazy **`BrandCareersPage`**, route **`/brand/careers`**; **`Navigate`** redirect **`/brand/jobs` → `/brand/careers`** (replace).
+- **`src/pages/admin/workers/page.tsx`** — link **Brand → Careers**, **`navigate('/brand/careers')`**.
+- **`src/pages/admin/dashboard/page.tsx`** — WORKERS **DETAIL** / **activity** copy: **BRAND/CAREERS**, **BRAND → CAREERS**.
+- **`src/pages/admin/components/StatsCard.tsx`** — title cases **`careers`** and legacy **`jobs`** → **`/brand/careers`**.
+- **`jobApplicationsStorage`** / events unchanged (**`brandJobApplications_v1`**, **`jobApplicationsUpdated`**). This MEMORY entry.
+
+---
+
+## 2026-03-26 — Careers page chrome + 10 explicit wig-shop roles + APPLY styling
+
+**Context:** User wanted **Brand > Careers** to match other **brand** pages (header icon styling, gray rule under title), remove intro and roster/hours/pay clutter above cards, **10 explicit** Frontal Slayer / online wig shop positions (not generic “lead stylist / ops” summaries), same roster intent on admin workers, and **APPLY** **below** each role card with **red text / white background / black border** like site outline buttons.
+
+**Changes:**
+- **`src/pages/brand/careers/page.tsx`** — Header aligned with **`brand/page.tsx`** (!important left icon sizes, 24px menu hit area, HOME path logic, **`clearAppAuth`** sign-out); mobile menu shell matches brand (560px / inner 490px, scroll region); main body = bordered card with **CAREERS** (Futura 12px red) + **`#e5e7eb`** rule; ten inner role cards (duties only, no schedule/pay); **APPLY** sibling under each card (outline style).
+- **`src/utils/adminWorkersDashboard.ts`** — Roster copy rewritten for **e-commerce wig shop** (orders, listings, shoots, social, PA/CS, etc.); still **10** fixed roles with stable **`id`**s **1–10**.
+- **`src/pages/admin/dashboard/page.tsx`** — WORKERS card: dropped truncated **FUNCTIONS** role string; **POSITIONS** row = **`N BRAND ROLES (CAREERS)`**.
+- **`src/pages/admin/workers/page.tsx`** — Removed the **joined `role · role · …`** summary line under intro. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Careers: per-role cards only; workers cards uppercase; remove roster intro
+
+**Context:** User wanted **each job on its own card** on **`/brand/careers`** (no single large wrapping **CAREERS** card), **all text uppercase** on **admin workers** list cards, and removal of the intro block (**“Brand roster…”** / **“Replace placeholder…”**) above the first worker card.
+
+**Changes:**
+- **`src/pages/brand/careers/page.tsx`** — **CAREERS** title + gray rule sit **outside** any job card; each of the **10** roles is a **separate** bordered card + **APPLY** below it.
+- **`src/pages/admin/workers/page.tsx`** — Intro paragraphs removed; roster cards use **`uppercase`** / **`textTransform: 'uppercase'`** and no **`normal-case`** on card body; removed unused **`useNavigate`**. Applicant overlay unchanged (**`normal-case`**). This MEMORY entry.
+
+---
+
+## 2026-03-26 — Admin workers: applicants inline accordion (no modal)
+
+**Context:** User wanted worker cards to **toggle open in place** (like account rewards “explore benefits”), listing applicants **inside the card** with **×** close, instead of a **fullscreen/modal** popup.
+
+**Changes:** **`src/pages/admin/workers/page.tsx`** — Removed fixed **`role="dialog"`** overlay. Each card: **tap header row** toggles expand/collapse; **HOURS / duties / tasks** sit in a **`<dl>` outside** the toggle button so reading doesn’t collapse; **×** (top-right) and **Escape** collapse; applicants panel **`normal-case`** below a divider; **`Remove`** still per applicant. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Brand careers: inline apply (no modal); APPLY matches concierge submit
+
+**Context:** User wanted **`/brand/careers`** **APPLY** to use an **inline expand/collapse** (not a modal), and the **APPLY** control’s **height / typography** to match **SUBMIT MESSAGE** on **Account → Concierge** (priority messages).
+
+**Changes:** **`src/pages/brand/careers/page.tsx`** — Removed fullscreen apply dialog. **APPLY** toggles a bordered panel under the role card (same form as before); **×** + **Escape** close; **`toggleApplyForJob`** switches role or closes; submit success still auto-collapses after delay. **APPLY** uses the same classes/styles as Concierge **SUBMIT MESSAGE** (**`py-2`**, **`text-[11px]`**, **`font-semibold`**, **`Futura PT Medium`**, white bg, red text, black border, **`hover:bg-gray-50`**). Form **SUBMIT APPLICATION** remains the red filled primary. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Careers/workers role titles: concierge section header; openings count
+
+**Context:** User removed standalone **CAREERS** label/rule above the first job card on **`/brand/careers`**. Role titles (personal assistant, creative director, …) should use the **Concierge-style section header** (Futura 12px red, **gray bottom border**, **right icon**) — not **Covered By Your Grace**. Same for **admin workers** card titles. **POSITION 1 / 10** was wrong: it should reflect **openings for that role** (all **1** for now), not index in the roster.
+
+**Changes:**
+- **`src/components/RoleCardSectionHeader.tsx`** — Shared row: **`Futura PT Medium`** 12px **`#EB1C24`**, **`border-b border-gray-200`**, red-tinted **`/assets/NOIR/account-icon.svg`**; optional **`className`** (e.g. **`pr-10`**) when **×** overlaps.
+- **`src/utils/adminWorkersDashboard.ts`** — Required **`openings: number`** (**`1`** on all ten roles).
+- **`src/pages/brand/careers/page.tsx`** — Dropped top **CAREERS** block; role + apply form titles use **`RoleCardSectionHeader`**.
+- **`src/pages/admin/workers/page.tsx`** — **`{openings} OPENING(S)`** line; role row + applications subhead use **`RoleCardSectionHeader`**; removed roster index **`POSITION n / total`**. This MEMORY entry.
+
+---
+
+## 2026-03-25 — Careers: full posting sections + page-wide uppercase; roster about/education
+
+**Context:** User wanted **`/brand/careers`** role cards to show **hours, pay, required education, job duties, daily tasks, notes**, etc. **with** a real **“About the role”** narrative (not duties-only under that heading). **All text** on the careers page should be **uppercase**, including the inline apply panel (no **`normal-case`** there).
+
+**Changes:**
+- **`src/utils/adminWorkersDashboard.ts`** — Extended **`AdminDashboardWorker`** with **`aboutTheRole`** and **`requiredEducation`**; filled for all **10** roles.
+- **`src/pages/brand/careers/page.tsx`** — Per role: **openings** line; sections **ABOUT THE ROLE**, **HOURS**, **PAY**, **REQUIRED EDUCATION**, **JOB DUTIES**, **DAILY TASKS**, **NOTES** (if present). **`relative z-10`** wrapper: **`uppercase`** + **`textTransform: 'uppercase'`**; removed **`normal-case`** from apply panel / form / success copy.
+- **`src/pages/admin/workers/page.tsx`** — **`<dl>`** adds **ABOUT THE ROLE** and **REQUIRED EDUCATION** (after **PAY**, before **CONTACT**).
+
+**Note:** Automated **`npm run build`** in-agent did not complete reliably in one session; verify locally.
+
+---
+
+## 2026-03-26 — Careers apply: full-screen card, new fields, checkout-style inputs
+
+**Context:** User wanted **`/brand/careers`** apply flow to **replace** the job list (single visible card, like the **menu toggle**), not expand under one job. Form: add **SKILLS & EXPERIENCE** above résumé, **CURRENT LOCATION** above LinkedIn; all fields **square** with **checkout**-matching label/input/placeholder styling.
+
+**Changes:**
+- **`src/pages/brand/careers/page.tsx`** — **`APPLY`** calls **`openApply`** only; when **`applyJobId`** set, only the apply **`menu-toggle-card`** shows; header **BRAND > APPLY**, left **back** + in-card **×** close; **`handleBack`** closes apply when open. Checkout-like **`checkoutLabelStyle` / `checkoutInputStyle` / `checkoutTextareaStyle`** (36px inputs, **1.3px** black border, **Futura PT Book** 10px labels / 11px values, **#808080**). Email uppercased like checkout. Intro uses gray helper copy.
+- **`src/index.css`** — **`.careers-apply-checkout-field`** placeholder + uppercase text for inputs/textareas.
+- **`src/utils/jobApplicationsStorage.ts`** — Optional **`currentLocation`**, **`skillsAndExperience`** on **`JobApplication`** (backward compatible with old **`localStorage`** rows).
+- **`src/pages/admin/workers/page.tsx`** — Applicant cards show **Location** and **SKILLS & EXPERIENCE** when present. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Careers apply: SUBMIT APPLICATION matches APPLY button
+
+**Context:** User wanted **SUBMIT APPLICATION** to use the **same button/text styling** and **below-main-card** placement as the **APPLY** control (outline red text, white fill, black border), not the previous red filled primary inside the card.
+
+**Changes:** **`src/pages/brand/careers/page.tsx`** — Wrapped apply **menu-toggle-card** + submit row in **`flex flex-col gap-2`**. Form has **`id="careers-apply-form"`**; submit is **`type="submit" form="careers-apply-form"`** in the same **`px-0` / `marginTop` / `translateY`** wrapper as **APPLY**. Hidden when **`submitDone`**. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Careers apply close: red close-icon (membership benefits)
+
+**Context:** User wanted the apply toggle **×** to match the **red close** used on the **tier benefits / explore benefits** toggle (**`/account/membership`** **`showBenefitsModal`** header), not the black bordered text **×**.
+
+**Changes:** **`src/pages/brand/careers/page.tsx`** — Replaced close control with **`/assets/close-icon.svg`** + same CSS **`filter`** as **`membership/page.tsx`** tier benefits modal; transparent **`button`** wrapper for **`aria-label`** and tap padding (**`p-2`**). This MEMORY entry.
+
+---
+
+## 2026-03-26 — Careers apply: REQUIRED EDUCATION dropdown above years
+
+**Context:** User wanted **required education** as a **dropdown** on the careers apply form, **above** **years of relevant experience**.
+
+**Changes:**
+- **`src/pages/brand/careers/page.tsx`** — **`requiredEducation`** in form state; **`REQUIRED_EDUCATION_OPTIONS`** (HS/GED through JD, doctorate, certification-only, other); **`<select>`** with **`checkoutSelectStyle`** (36px, square, Futura, custom chevron); label **REQUIRED EDUCATION\***; validation + **`required`**; saved as **`educationLevel`** on submit.
+- **`src/utils/jobApplicationsStorage.ts`** — Optional **`educationLevel`** on **`JobApplication`**.
+- **`src/index.css`** — **`select.careers-apply-checkout-field`** uppercase + option font.
+- **`src/pages/admin/workers/page.tsx`** — Applicant detail shows **Education:** when **`educationLevel`** set (above **Experience**). This MEMORY entry.
+
+---
+
+## 2026-03-26 — Workers: openings under role title; “opening available” copy
+
+**Context:** User wanted the openings line on **`/admin/workers`** moved **above** the **OPEN — SET HIRE NAME…** / hire line **instead** of sitting above the role header — i.e. **role title first**, then openings, then hire status. Copy should read **“1 opening available”** on worker cards and careers (plural: **N openings available**); page uppercase styling applies on workers/careers.
+
+**Changes:**
+- **`src/pages/admin/workers/page.tsx`** — **`RoleCardSectionHeader`** first; then **`openingsLabel`**; then hire / applications lines. **`openingsLabel`**: **`1 OPENING AVAILABLE`** or **`${n} OPENINGS AVAILABLE`**.
+- **`src/pages/brand/careers/page.tsx`** — Same **`openingsLabel`** strings (still below role header, above posting body). This MEMORY entry.

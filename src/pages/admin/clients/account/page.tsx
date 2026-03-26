@@ -143,83 +143,86 @@ export default function AdminClientsAccount() {
                       </span>
                     </div>
                 
-                    <table
-                      role="presentation"
+                    <div
                       className="mt-3"
                       style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+                        columnGap: '10px',
+                        rowGap: 0,
                         width: '100%',
-                        tableLayout: 'fixed',
-                        borderCollapse: 'separate',
-                        borderSpacing: 0,
+                        marginLeft: '-4px',
                         boxSizing: 'border-box',
                       }}
                     >
-                      <colgroup>
-                        <col style={{ width: '25%' }} />
-                        <col style={{ width: '25%' }} />
-                        <col style={{ width: '25%' }} />
-                        <col style={{ width: '25%' }} />
-                      </colgroup>
-                      <tbody>
-                        <tr>
-                          {(
-                            [
-                              { value: totalOrders, label: 'ORDERS', valueColor: '#EB1C24', labelColor: '#4b5563' },
-                              { value: totalLoyaltyPoints.toLocaleString(), label: 'POINTS', valueColor: '#EB1C24', labelColor: '#4b5563' },
-                              { value: `$${totalSpent.toLocaleString()}`, label: 'TOTAL SPENT', valueColor: '#EB1C24', labelColor: '#4b5563' },
-                              {
-                                value: membershipType,
-                                label: 'MEMBERSHIP',
-                                valueColor: membershipType === 'PREMIUM' ? '#000000' : '#808080',
-                                labelColor: '#000000',
-                              },
-                            ] as const
-                          ).map((col) => (
-                            <td
-                              key={col.label}
+                      {(() => {
+                        const cols = [
+                          { value: totalOrders, label: 'ORDERS', valueColor: '#EB1C24', labelColor: '#4b5563' },
+                          { value: totalLoyaltyPoints.toLocaleString(), label: 'POINTS', valueColor: '#EB1C24', labelColor: '#4b5563' },
+                          { value: `$${totalSpent.toLocaleString()}`, label: 'TOTAL SPENT', valueColor: '#EB1C24', labelColor: '#4b5563' },
+                          {
+                            value: membershipType,
+                            label: 'MEMBERSHIP',
+                            valueColor: membershipType === 'PREMIUM' ? '#000000' : '#808080',
+                            labelColor: '#000000',
+                          },
+                        ] as const;
+                        const cell = (col: (typeof cols)[number]) => (
+                          <div
+                            key={col.label}
+                            style={{
+                              minWidth: 0,
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              width: '100%',
+                              textAlign: 'center',
+                            }}
+                          >
+                            <p
+                              className="text-lg font-bold"
+                              style={{ color: col.valueColor, margin: 0, lineHeight: 1.2, width: '100%', textAlign: 'center' }}
+                            >
+                              {col.value}
+                            </p>
+                            <p
+                              className="text-xs"
                               style={{
-                                verticalAlign: 'top',
-                                width: '25%',
+                                color: col.labelColor,
+                                margin: '4px 0 0 0',
+                                lineHeight: 1.2,
+                                width: '100%',
+                                textAlign: 'center',
+                                wordBreak: 'break-word',
+                                overflowWrap: 'break-word',
+                              }}
+                            >
+                              {col.label}
+                            </p>
+                          </div>
+                        );
+                        return (
+                          <>
+                            {cell(cols[0])}
+                            <div
+                              style={{
+                                gridColumn: 'span 2',
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                                columnGap: '10px',
+                                transform: 'translateX(-8px)',
                                 minWidth: 0,
-                                padding: '0 6px',
                                 boxSizing: 'border-box',
                               }}
                             >
-                              <div
-                                style={{
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  alignItems: 'center',
-                                  width: '100%',
-                                  textAlign: 'center',
-                                }}
-                              >
-                                <p
-                                  className="text-lg font-bold"
-                                  style={{ color: col.valueColor, margin: 0, lineHeight: 1.2, width: '100%', textAlign: 'center' }}
-                                >
-                                  {col.value}
-                                </p>
-                                <p
-                                  className="text-xs"
-                                  style={{
-                                    color: col.labelColor,
-                                    margin: '4px 0 0 0',
-                                    lineHeight: 1.2,
-                                    width: '100%',
-                                    textAlign: 'center',
-                                    wordBreak: 'break-word',
-                                    overflowWrap: 'break-word',
-                                  }}
-                                >
-                                  {col.label}
-                                </p>
-                              </div>
-                            </td>
-                          ))}
-                        </tr>
-                      </tbody>
-                    </table>
+                              {cell(cols[1])}
+                              {cell(cols[2])}
+                            </div>
+                            {cell(cols[3])}
+                          </>
+                        );
+                      })()}
+                    </div>
                   </div>
 
                   <div className="flex mb-6 border-b border-gray-200">

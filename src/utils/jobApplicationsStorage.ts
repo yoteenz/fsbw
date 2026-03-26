@@ -13,9 +13,14 @@ export type JobApplication = {
   fullName: string;
   email: string;
   phone: string;
+  /** Added 2026; omitted on older stored applications */
+  currentLocation?: string;
+  skillsAndExperience?: string;
   linkedInUrl: string;
   portfolioUrl: string;
   otherLinks: string;
+  /** Apply form: highest completed / held education (dropdown); added 2026 */
+  educationLevel?: string;
   yearsExperience: string;
   coverLetter: string;
   resumeFileName: string;
