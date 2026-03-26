@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createHmac } from 'crypto';
-import { getAuthUser } from './_lib/auth';
+import { getAuthUser } from './_lib/auth.js';
 
 const COOKIE_NAME = 'baw_session_rt';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30 days

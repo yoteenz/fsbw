@@ -1570,3 +1570,13 @@ User asked if there is a way to capture the **entire current codebase** (and its
     - missing Supabase storage key
   - `registerServerSessionCookie(...)` now logs register response status (or fetch error).
 - **Conventions:** For auth continuity debugging, always include concrete HTTP status and payload-shape markers on session-cookie and session-restore paths.
+
+---
+
+## 2026-03-26 — Root-cause fix for session-cookie 500 (ESM module path)
+
+- **Context:** User provided Vercel runtime stack trace: `ERR_MODULE_NOT_FOUND` for `/var/task/api/_lib/auth` imported by `api/session-cookie.js`, and client debug logs showed `session-cookie: register status=404/500` behavior blocking Safari persistence.
+- **Decision/outcome:** Fixed serverless ESM import path to include explicit `.js` extension for internal helper import in the affected route.
+- **Changes:** `api/session-cookie.ts`
+  - Updated import from `./_lib/auth` to `./_lib/auth.js` to satisfy Vercel Node ESM resolution at runtime.
+- **Conventions:** For Vercel serverless TypeScript routes running as ESM, use explicit `.js` extensions in local relative imports where runtime resolution can fail without extension.
