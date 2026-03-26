@@ -722,23 +722,10 @@ function SignInPage() {
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
                     onClick={() => {
-                      // Check if user is premium member
                       try {
-                        const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
-                        if (isSignedIn) {
-                          const currentUser = localStorage.getItem('currentUser');
-                          if (currentUser) {
-                            const user = JSON.parse(currentUser);
-                            const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
-                            navigate('/shop/units'); // Force a shared non-gated landing route for auth testing
-                          } else {
-                            navigate('/shop/units'); // Default to shared shop route
-                          }
-                        } else {
-                          navigate('/shop/units'); // Default to shared shop route
-                        }
-                      } catch (e) {
-                        navigate('/shop/units'); // Default to shared shop route on error
+                        navigate('/shop/units');
+                      } catch {
+                        navigate('/shop/units');
                       }
                     }}
                   >

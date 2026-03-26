@@ -885,23 +885,7 @@ function ProductsUnitsPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => {
-                      try {
-                        const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
-                        if (isSignedIn) {
-                          const currentUser = localStorage.getItem('currentUser');
-                          if (currentUser) {
-                            const user = JSON.parse(currentUser);
-                            const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
-                            navigate(isPremium ? '/' : '/home/shop');
-                            return;
-                          }
-                        }
-                        navigate('/home/shop');
-                      } catch {
-                        navigate('/home/shop');
-                      }
-                    }}
+                    onClick={() => navigate('/lobby')}
                   >
                     HOME &gt;
                   </span>{' '}

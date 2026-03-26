@@ -381,8 +381,9 @@ function App() {
     <ErrorBoundary>
       <AuthDebugPanel />
       <Routes>
-        <Route index element={<LobbyPage />} />
-        <Route path="/" element={<LobbyPage />} />
+        <Route index element={<Navigate to="/shop/units" replace />} />
+        <Route path="/" element={<Navigate to="/shop/units" replace />} />
+        <Route path="/lobby" element={<LobbyPage />} />
         {/* Admin routes - protected by AdminGuard (sign-in required, admin role only) */}
         <Route path="/admin" element={<AdminGuard />}>
           <Route index element={<Navigate to="/admin/dashboard" replace />} />

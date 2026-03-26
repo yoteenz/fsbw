@@ -1601,3 +1601,26 @@ User asked if there is a way to capture the **entire current codebase** (and its
 - **Changes:** `src/pages/account/page.tsx`
   - Updated HOME menu click handler to always navigate to `/shop/units` (removed premium/standard conditional path `/` vs `/home/shop`).
 - **Conventions:** For this auth persistence investigation, all HOME menu shortcuts should route to `/shop/units` to avoid premium/home route gating side effects.
+
+---
+
+## 2026-03-26 — Vercel build: remove unused vars after HOME → `/shop/units` simplification
+
+- **Context:** Production build on Vercel failed with `tsc --noEmit` TS6133: unused `user` in `account/settings/page.tsx` and unused `isPremium` in `sign-in/page.tsx` after earlier route-wall edits left dead parse/branch code.
+- **Decision/outcome:** Collapse HOME click handlers to `navigate('/shop/units')` with try/catch only (same behavior, no unused bindings).
+- **Changes:**
+  - `src/pages/account/settings/page.tsx` — removed unused `JSON.parse` / `user` and redundant `isSignedIn` / `currentUser` branches.
+  - `src/pages/sign-in/page.tsx` — removed unused `user`, `isPremium`, and redundant branches; same destination for all paths.
+- **Conventions:** After routing simplifications, run `npm run build` locally or rely on CI; `noUnusedLocals` will fail Vercel if variables remain declared but unused.
+
+---
+
+## 2026-03-26 — Explicit `/lobby` route; HOME on shop pages goes to lobby
+
+- **Context:** User wanted `/` to remain the default redirect to `/shop/units`, but the **HOME** label in the nav on `/home/shop` should still open the premium **lobby** landing experience—not the shop index.
+- **Decision/outcome:** Added a dedicated route `/lobby` that renders `LobbyPage`, and pointed shop nav **HOME** clicks to `/lobby` instead of `/` or premium-conditional `/` vs `/home/shop`.
+- **Changes:**
+  - `src/App.tsx` — `import LobbyPage`; `<Route path="/lobby" element={<LobbyPage />} />` (root `/` still `<Navigate to="/shop/units" replace />`).
+  - `src/pages/products/page.tsx` (`/home/shop`) — mobile and desktop **HOME** nav use `navigate('/lobby')`.
+  - `src/pages/products/units/page.tsx` (`/shop/units`) — mobile menu **HOME** uses `navigate('/lobby')` (removed premium → `/` branch that no longer matched lobby intent).
+- **Conventions:** Use `/lobby` for the lobby UI; use `/` only for the app default entry (currently redirects to `/shop/units`).
