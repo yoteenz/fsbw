@@ -11,6 +11,7 @@ const STORAGE_CURRENT_USER = 'currentUser';
 export const AUTH_BACKUP_KEY = 'baw_auth_backup';
 
 const AUTH_BACKUP_COOKIE = 'baw_auth_b';
+const AUTH_PROFILE_COOKIE = 'baw_auth_p';
 
 /** Track how user signed in (session_restore = Face ID / Supabase cookie auto-login; password = tapped Sign in). Used so we persist backup reliably on Safari. */
 export const LAST_SIGN_IN_METHOD_KEY = 'baw_last_sign_in_method';
@@ -155,6 +156,37 @@ function clearBackupCookie(): void {
   } catch (_) {}
 }
 
+function writeProfileCookie(value: string): void {
+  if (typeof document === 'undefined') return;
+  try {
+    const maxAge = 365 * 24 * 60 * 60;
+    const secure = typeof location !== 'undefined' && location.protocol === 'https:';
+    let cookie = AUTH_PROFILE_COOKIE + '=' + encodeURIComponent(value) + '; path=/; max-age=' + maxAge + '; SameSite=Lax';
+    if (secure) cookie += '; Secure';
+    document.cookie = cookie;
+  } catch (_) {}
+}
+
+function readProfileCookie(): string | null {
+  if (typeof document === 'undefined') return null;
+  try {
+    const match = document.cookie.match(new RegExp('(?:^|; )' + AUTH_PROFILE_COOKIE.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : null;
+  } catch {
+    return null;
+  }
+}
+
+function clearProfileCookie(): void {
+  if (typeof document === 'undefined') return;
+  try {
+    const secure = typeof location !== 'undefined' && location.protocol === 'https:';
+    let cookie = AUTH_PROFILE_COOKIE + '=; path=/; max-age=0';
+    if (secure) cookie += '; Secure';
+    document.cookie = cookie;
+  } catch (_) {}
+}
+
 const COOKIE_BACKUP_MAX = 3800;
 
 /** Build a slim currentUser (no large base64 image) so cookie backup fits and Safari can restore sign-in after close. */
@@ -190,6 +222,27 @@ export function persistAuthBackup(): void {
         cookiePayload = JSON.stringify({ isSignedIn: true, currentUser: slimUser });
       }
       if (cookiePayload.length <= COOKIE_BACKUP_MAX) writeBackupToCookie(cookiePayload);
+      // Persist a tiny profile cookie so Safari restore keeps key account fields even
+      // when backup must be minimized.
+      try {
+        const u = JSON.parse(currentUser) as Record<string, unknown>;
+        const small = {
+          email: (u.email || '').toString().trim().toLowerCase(),
+          firstName: (u.firstName || u.first_name || '').toString(),
+          lastName: (u.lastName || u.last_name || '').toString(),
+          birthday: (u.birthday || '').toString(),
+          profileImage: (() => {
+            const v = (u.profileImage || u.profile_image || '').toString();
+            if (!v) return '';
+            if (v.toLowerCase().startsWith('data:image/')) return '';
+            return v;
+          })(),
+        };
+        const json = JSON.stringify(small);
+        if (json.length <= 1200) writeProfileCookie(json);
+      } catch {
+        // ignore profile-cookie write errors
+      }
       authDebugLog(`persist: ls=ok cookie=${cookiePayload.length <= COOKIE_BACKUP_MAX ? 'ok' : 'skip'} len=${payload.length} — backup written; close Safari and reopen with ?auth_debug=1 to test`);
     } else {
       authDebugLog(`persist: skip (signedIn=${signedIn} hasUser=${!!currentUser})`);
@@ -205,6 +258,7 @@ export function clearAuthBackup(): void {
   try {
     localStorage.removeItem(AUTH_BACKUP_KEY);
     clearBackupCookie();
+    clearProfileCookie();
   } catch (_) {}
 }
 
@@ -216,6 +270,7 @@ export function clearAppAuth(): void {
     localStorage.removeItem(STORAGE_CURRENT_USER);
     localStorage.removeItem(AUTH_BACKUP_KEY);
     clearBackupCookie();
+    clearProfileCookie();
     // Fire-and-forget: clear server HttpOnly session cookie (Safari restore) so next load is signed out
     import('./sessionRestore').then((m) => m.clearServerSessionCookie()).catch(() => {});
   } catch (_) {}
@@ -239,6 +294,41 @@ function restoreAuthFromBackupIfNeeded(): void {
     if (data.isSignedIn === true && data.currentUser) {
       localStorage.setItem(STORAGE_IS_SIGNED_IN, 'true');
       localStorage.setItem(STORAGE_CURRENT_USER, data.currentUser);
+      // Merge tiny profile cookie fields back in when backup payload had to be minimized.
+      try {
+        const profileRaw = readProfileCookie();
+        if (profileRaw) {
+          const p = JSON.parse(profileRaw) as Record<string, unknown>;
+          const curRaw = localStorage.getItem(STORAGE_CURRENT_USER);
+          const cur = curRaw ? JSON.parse(curRaw) as Record<string, unknown> : null;
+          const pEmail = (p.email || '').toString().trim().toLowerCase();
+          const cEmail = (cur?.email || '').toString().trim().toLowerCase();
+          if (cur && pEmail && cEmail && pEmail === cEmail) {
+            const merged = { ...cur } as Record<string, unknown>;
+            const first = (merged.firstName || merged.first_name || '').toString().trim();
+            const last = (merged.lastName || merged.last_name || '').toString().trim();
+            const img = (merged.profileImage || merged.profile_image || '').toString().trim();
+            const bday = (merged.birthday || '').toString().trim();
+            if (!first && p.firstName) {
+              merged.firstName = p.firstName;
+              merged.first_name = p.firstName;
+            }
+            if (!last && p.lastName) {
+              merged.lastName = p.lastName;
+              merged.last_name = p.lastName;
+            }
+            if (!bday && p.birthday) merged.birthday = p.birthday;
+            if ((!img || img === '/assets/profile-thumb.png') && p.profileImage) {
+              merged.profileImage = p.profileImage;
+              merged.profile_image = p.profileImage;
+              localStorage.setItem('profileImage', String(p.profileImage));
+            }
+            localStorage.setItem(STORAGE_CURRENT_USER, JSON.stringify(merged));
+          }
+        }
+      } catch {
+        // ignore merge errors
+      }
       authDebugLog('restore: applied backup to ls');
     }
   } catch (e) {

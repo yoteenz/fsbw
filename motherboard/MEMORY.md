@@ -1282,3 +1282,50 @@ User asked if there is a way to capture the **entire current codebase** (and its
   - Keeps birthday locked for non-`ayoteenz` users while allowing admin tracing test flow.
 
 **Conventions:** Avoid placeholder/name synthesis from email in fallback profile paths; preserve explicit saved profile identity fields.
+
+---
+
+## 2026-03-26 — Safari reopen persistence hardening (server-restore retries in guards)
+
+**Context:** User reported Safari still signs out on close/reopen and sometimes mounts account with `NO_NAME` + default profile image before later recovery, while Chrome flow stays stable.
+
+**Decision/outcome:** Added extra Safari/session-restore hardening so account/sign-in paths proactively trigger server cookie restore whenever Supabase session is missing at startup.
+
+**Changes:**
+- **`src/components/AccountRouteGuard.tsx`**
+  - On missing Supabase session, now attempts `tryServerSessionRestore()` first (which reloads on success), before falling back to local auth-backup restore.
+- **`src/pages/sign-in/page.tsx`**
+  - In sign-in boot session check, if no Supabase session found, now also triggers `tryServerSessionRestore()`.
+- **`src/utils/sessionRestore.ts`**
+  - Added `keepalive: true` for session cookie set/clear fetches to improve reliability when page is closing/backgrounded (Safari-sensitive timing).
+
+**Conventions:** For Safari auth continuity, treat missing client session as recoverable by server cookie path first, then local backup fallback.
+
+---
+
+## 2026-03-26 — Safari close/reopen persistence fix (first-party session routes + compact profile cookie merge)
+
+**Context:** User confirmed Safari still signs out / resets account fields after close+reopen on both local Vite and Vercel while Chrome remains stable. Debug log showed account mounts with `NO_NAME` + default photo before later recovery.
+
+**Decision/outcome:** Hardened Safari flow in two places: force first-party API path for session-cookie restore and preserve key profile identity fields in a tiny dedicated cookie that is merged on restore.
+
+**Changes:**
+- **`src/utils/sessionRestore.ts`**
+  - Switched restore/register/clear endpoints to same-origin routes (`/api/session-restore`, `/api/session-cookie`) instead of `VITE_API_BASE` absolute host for this auth-cookie path.
+  - Keeps Safari cookie traffic first-party (especially important on local dev where cross-site cookies are blocked).
+- **`src/utils/adminAuth.ts`**
+  - Added compact profile cookie `baw_auth_p` persisted alongside auth backup with: `email`, `firstName`, `lastName`, `birthday`, `profileImage` (non-data URL only).
+  - On backup restore, merges missing/placeholder profile fields from this compact cookie back into `currentUser` for same email.
+  - Clears profile cookie on explicit auth clear/sign-out (`clearAuthBackup`, `clearAppAuth`).
+
+**Conventions:** For Safari resilience, keep auth/session restore first-party and maintain a slim, non-base64 profile identity snapshot separate from large backup payloads.
+
+---
+
+## 2026-03-26 — Fix duplicate default export in session restore APIs
+
+- **Context:** User reported repeated Vite/esbuild internal server errors from `api/session-restore.ts` showing `Multiple exports with the same name "default"` and `handler has already been declared`.
+- **Topics covered:** Inspected `api/session-restore.ts` and confirmed the file had two full route implementations concatenated together. Also checked `api/session-cookie.ts` and found the same duplicate-handler pattern.
+- **Decisions / outcomes:** Kept the current signed-cookie implementation (`baw_session_rt`, HMAC-signed payload path) and removed the older duplicate appended implementations to restore a single valid default export per API file.
+- **Changes:** Updated `api/session-restore.ts` and `api/session-cookie.ts` by deleting the duplicate second import/handler blocks that caused duplicate symbol and default export errors.
+- **Conventions:** For these API routes, maintain exactly one `export default` handler per file and avoid mixing two alternate implementations in the same module.

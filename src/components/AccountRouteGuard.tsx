@@ -10,6 +10,7 @@ import {
   didLastProfileSyncError,
 } from '../utils/syncFromApi';
 import { registerServerSessionCookie } from '../utils/sessionRestore';
+import { tryServerSessionRestore } from '../utils/sessionRestore';
 
 /**
  * Wraps account routes. Redirects to /sign-in only when not signed in (localStorage isSignedIn/currentUser).
@@ -44,7 +45,10 @@ export default function AccountRouteGuard({ children }: { children: React.ReactN
         if (cancelled) return;
       }
       if (!session) {
-        // Restore from backup before we decide to redirect (guard may run after Supabase cleared session)
+        // Safari hardening: when local storage/session is missing, attempt server cookie restore first.
+        const restored = await tryServerSessionRestore().catch(() => false);
+        if (restored) return; // tryServerSessionRestore reloads on success
+        // Fallback to app backup restore before redirect decision.
         ensureAuthRestoredFromBackup();
         persistAuthBackup();
         setRecoveryDone(true);

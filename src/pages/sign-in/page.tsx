@@ -16,6 +16,7 @@ import {
   didLastProfileSyncError,
 } from '../../utils/syncFromApi';
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
+import { tryServerSessionRestore } from '../../utils/sessionRestore';
 import { trackActivity } from '../../utils/activity';
 import {
   getReviewsLastSeenShopCountKey,
@@ -197,7 +198,11 @@ function SignInPage() {
     if (!supabase) return;
     let cancelled = false;
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (cancelled || !session) return;
+      if (cancelled) return;
+      if (!session) {
+        void tryServerSessionRestore();
+        return;
+      }
       syncAllFromApi().then(async (profile) => {
         if (cancelled) return;
         if (profile) {

@@ -6,7 +6,6 @@
 import { persistAuthBackup, onSignInSuccess } from './adminAuth';
 import { buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage } from './syncFromApi';
 
-const API_BASE = (import.meta as unknown as { env?: { VITE_API_BASE?: string } }).env?.VITE_API_BASE ?? '';
 const SUPABASE_URL = (import.meta as unknown as { env?: { VITE_SUPABASE_URL?: string } }).env?.VITE_SUPABASE_URL ?? '';
 
 function getSupabaseStorageKey(): string | null {
@@ -26,7 +25,8 @@ function getSupabaseStorageKey(): string | null {
  */
 export async function tryServerSessionRestore(): Promise<boolean> {
   if (typeof window === 'undefined' || !window.localStorage) return false;
-  const url = `${API_BASE.replace(/\/$/, '')}/api/session-restore`;
+  // Use same-origin API route so Safari treats cookie as first-party (local + production).
+  const url = `/api/session-restore`;
   let res: Response;
   try {
     res = await fetch(url, { method: 'GET', credentials: 'include' });
@@ -78,11 +78,12 @@ export async function tryServerSessionRestore(): Promise<boolean> {
  */
 export async function clearServerSessionCookie(): Promise<void> {
   if (typeof window === 'undefined') return;
-  const url = `${API_BASE.replace(/\/$/, '')}/api/session-cookie`;
+  const url = `/api/session-cookie`;
   try {
     await fetch(url, {
       method: 'POST',
       credentials: 'include',
+      keepalive: true,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ clear: true }),
     });
@@ -97,11 +98,12 @@ export async function clearServerSessionCookie(): Promise<void> {
  */
 export async function registerServerSessionCookie(accessToken: string, refreshToken: string): Promise<void> {
   if (!accessToken || !refreshToken || typeof window === 'undefined') return;
-  const url = `${API_BASE.replace(/\/$/, '')}/api/session-cookie`;
+  const url = `/api/session-cookie`;
   try {
     await fetch(url, {
       method: 'POST',
       credentials: 'include',
+      keepalive: true,
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
       body: JSON.stringify({ refresh_token: refreshToken }),
     });
