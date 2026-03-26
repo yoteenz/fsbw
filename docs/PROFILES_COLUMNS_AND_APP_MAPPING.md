@@ -46,6 +46,8 @@ These are the **snake_case** column names the backend reads/writes. The API conv
 
 **One-shot schema + RLS:** Run the SQL migration in the repo at `supabase/migrations/20260325120000_full_app_sync.sql` in the Supabase SQL Editor (or via Supabase CLI) so `profiles`, `cart`, `wishlist`, and `orders` exist with the columns above and row-level security policies that allow each user to manage their own rows.
 
+If **`GET` / `PATCH` `/api/profile` returns HTTP 500** and the JSON body mentions **permission denied**, **row-level security**, or **RLS**, run `docs/SUPABASE_PROFILES_RLS.sql` in the SQL Editor (or align your `profiles` policies so `authenticated` users can `SELECT` / `INSERT` / `UPDATE` their own row where `auth.uid() = id`).
+
 If the table is missing any of these columns, GET/PATCH and sync may return partial data or fail. Add missing columns in Supabase (Table Editor or SQL) and backfill if needed.
 
 ---

@@ -8,9 +8,30 @@ import { fromProfileRow } from './_lib/profileMapping';
  * so Vercel bundling does not hit resolution/runtime edge cases that yield FUNCTION_INVOCATION_FAILED.
  */
 
+/**
+ * Postgres / Supabase can return `bigint` for some numeric columns; `JSON.stringify` throws on BigInt.
+ */
+function jsonSafeForResponse(value: unknown): unknown {
+  if (typeof value === 'bigint') return Number(value);
+  if (value instanceof Date) return value.toISOString();
+  if (Array.isArray(value)) return value.map((v) => jsonSafeForResponse(v));
+  if (value !== null && typeof value === 'object') {
+    const o: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      o[k] = jsonSafeForResponse(v);
+    }
+    return o;
+  }
+  return value;
+}
+
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
   try {
-    const json = JSON.stringify(body);
+    const safe =
+      status >= 200 && status < 300 && body !== null && typeof body === 'object'
+        ? jsonSafeForResponse(body)
+        : body;
+    const json = JSON.stringify(safe);
     res.statusCode = status;
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.end(json);
@@ -171,9 +192,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         .from('profiles')
         .select('*')
         .eq('id', user.id)
-        .single();
-      if (error && error.code !== 'PGRST116') {
-        sendJson(res, 500, { error: error.message, code: error.code });
+        .maybeSingle();
+      if (error) {
+        console.error('[api/profile] GET select failed', {
+          message: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint,
+          userId: user.id,
+        });
+        sendJson(res, 500, {
+          error: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint,
+        });
         return;
       }
       if (!data) {

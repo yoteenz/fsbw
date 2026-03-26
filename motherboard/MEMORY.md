@@ -1791,3 +1791,13 @@ Summary of the whole conversation so far in this chat: user reported **`PATCH /a
 - **Decisions / outcomes:** Refactor **`api/profile.ts`** to match **`api/special-offer-config.ts`**: **`createClient` from `@supabase/supabase-js` inline** (no `getSupabaseUser` from `./_lib/supabase`), **`sendJson`** using **`res.end(JSON.stringify(...))`**, **`parseJsonBody`** for string bodies, **top-level `try/catch`** with `console.error('[api/profile] Uncaught:', e)`, dynamic **`import('./_lib/auditLog')`** after successful upsert so audit chain is not on the critical path. **GET** `null` profile uses **`sendJson(res, 200, null)`**. Imports **`./_lib/auth`** and **`./_lib/profileMapping`** without `.js` to match **`api/delete-account.ts`**.
 - **Changes:** `api/profile.ts`. This MEMORY entry.
 - **Conventions:** Plain `FUNCTION_INVOCATION_FAILED` with no app JSON → treat as uncaught exception or bundler/runtime issue; prefer inline Supabase + manual JSON for Vercel routes that misbehave.
+
+---
+
+## 2026-03-26 — Profile 500 after redeploy: jsonSafe (BigInt), GET maybeSingle, RLS SQL doc
+
+Summary of the whole conversation so far in this chat: user redeployed but **`/api/profile`** still returns **HTTP 500** after sign-out/sign-in; only **`profile-thumb.png`** shows 200 (expected — static image, not the API).
+
+- **Decisions / outcomes:** (1) **`jsonSafeForResponse`** in `api/profile.ts` before **`JSON.stringify`** so Postgres **`bigint`** values do not crash serialization. (2) **GET** uses **`.maybeSingle()`** instead of `.single()` + PGRST116 handling; on any Supabase **select** error, return **500 JSON** with **`error`, `code`, `details`, `hint`** and log **`[api/profile] GET select failed`**. (3) Added **`docs/SUPABASE_PROFILES_RLS.sql`** — standard **`profiles`** policies for **`authenticated`** (`SELECT` / `INSERT` / `UPDATE` own row `auth.uid() = id`) when 500 is due to **RLS / permission denied**. (4) **`docs/PROFILES_COLUMNS_AND_APP_MAPPING.md`** — short pointer to that SQL when `/api/profile` returns 500 with RLS wording.
+- **Changes:** `api/profile.ts`, `docs/SUPABASE_PROFILES_RLS.sql`, `docs/PROFILES_COLUMNS_AND_APP_MAPPING.md`, this MEMORY entry.
+- **Conventions:** Distinguish static **200** (e.g. `profile-thumb.png`) from **`/api/profile`**; 500 on profile API is usually Supabase **RLS**, missing table/column, or serialization — read **Response** JSON and Supabase logs.
