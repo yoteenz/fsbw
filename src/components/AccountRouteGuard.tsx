@@ -12,6 +12,20 @@ import {
 import { registerServerSessionCookie } from '../utils/sessionRestore';
 import { tryServerSessionRestore } from '../utils/sessionRestore';
 
+const SERVER_RESTORE_ATTEMPT_KEY = 'baw_server_restore_attempted_v1';
+
+function shouldAttemptServerRestoreNow(): boolean {
+  if (typeof window === 'undefined' || !window.sessionStorage) return true;
+  try {
+    const seen = window.sessionStorage.getItem(SERVER_RESTORE_ATTEMPT_KEY) === '1';
+    if (seen) return false;
+    window.sessionStorage.setItem(SERVER_RESTORE_ATTEMPT_KEY, '1');
+    return true;
+  } catch {
+    return true;
+  }
+}
+
 /**
  * Wraps account routes. Redirects to /sign-in only when not signed in (localStorage isSignedIn/currentUser).
  * Session persists across refresh and browser close; we never clear auth here—only explicit Sign Out does.
@@ -35,6 +49,13 @@ export default function AccountRouteGuard({ children }: { children: React.ReactN
     const supabase = client as NonNullable<typeof client>;
     let cancelled = false;
     async function run() {
+      // Final guard: before any fallback render path, give server cookie restore one awaited attempt.
+      if (shouldAttemptServerRestoreNow()) {
+        const restored = await tryServerSessionRestore().catch(() => false);
+        if (cancelled) return;
+        if (restored) return; // tryServerSessionRestore reloads on success
+      }
+
       let { data: { session } } = await supabase.auth.getSession();
       if (cancelled) return;
       if (!session) {

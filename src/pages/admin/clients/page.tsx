@@ -4,7 +4,7 @@ import AdminHeader from '../components/AdminHeader';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { isAyoteenzAdminAccount, getEffectiveTierName, isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
-import { getAdminClients, getAdminOrders, getAdminCart, getAdminWishlist, getAdminActivity, exportClientsCsv } from '../../../utils/api';
+import { getAdminClients, getAdminOrders, getAdminCart, getAdminWishlist, getAdminActivity, getAdminReviews, exportClientsCsv } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import summaryIcon from '../../../assets/icons/summary-icon.svg?url';
@@ -616,6 +616,7 @@ export default function AdminClients() {
   const [adminCartByUserId, setAdminCartByUserId] = useState<Record<string, unknown[]>>({});
   const [adminWishlistByUserId, setAdminWishlistByUserId] = useState<Record<string, unknown[]>>({});
   const [adminActivityByUserId, setAdminActivityByUserId] = useState<Record<string, Array<{ id: string; eventType: string; payload?: unknown; createdAt: string }>>>({});
+  const [adminReviewCountsByEmail, setAdminReviewCountsByEmail] = useState<Record<string, { total: number; media: number; pending: number }>>({});
   const [cartWishlistLoading] = useState(false);
   const [personalSectionTab, setPersonalSectionTab] = useState<typeof PERSONAL_SECTION_TABS[number]>('details');
   const [exportingCsv, setExportingCsv] = useState(false);
@@ -796,6 +797,27 @@ export default function AdminClients() {
       .then((list) => setAdminActivityByUserId((prev) => ({ ...prev, [id]: list })))
       .catch(() => setAdminActivityByUserId((prev) => ({ ...prev, [id as string]: [] })));
   }, [selectedClientForOrders?.id]);
+
+  // Server-backed review metrics by email (cross-browser/device consistency).
+  useEffect(() => {
+    getAdminReviews()
+      .then((data) => {
+        const rows = Array.isArray(data?.reviews) ? data.reviews : [];
+        const next: Record<string, { total: number; media: number; pending: number }> = {};
+        for (const r of rows as Array<Record<string, unknown>>) {
+          const email = (r.email || '').toString().trim().toLowerCase();
+          if (!email) continue;
+          if (!next[email]) next[email] = { total: 0, media: 0, pending: 0 };
+          next[email].total += 1;
+          const photos = Array.isArray(r.photos) ? r.photos.length : 0;
+          if (photos > 0) next[email].media += 1;
+          const status = (r.status || '').toString().trim().toLowerCase();
+          if (status === 'pending') next[email].pending += 1;
+        }
+        setAdminReviewCountsByEmail(next);
+      })
+      .catch(() => {});
+  }, []);
 
   // Selected client, order history (simplified), and raw orders (full objects for expand view)
   const { selectedClient, selectedOrderHistory, selectedRawOrders } = (() => {
@@ -1136,7 +1158,33 @@ export default function AdminClients() {
         return null;
       })()
     : null;
-  const selectedBirthday = formatBirthday(selectedClient);
+  const selectedBirthday = (() => {
+    if (!selectedClient) return '—';
+    const email = ((selectedClient as any).email || '').toString().trim().toLowerCase();
+    const hasBirthday = (obj: any) =>
+      !!(
+        obj &&
+        (
+          (typeof obj.birthday === 'string' && obj.birthday.trim()) ||
+          (typeof obj.birthDate === 'string' && obj.birthDate.trim()) ||
+          (obj.birthMonth != null && obj.birthDay != null)
+        )
+      );
+    if (hasBirthday(selectedClient)) return formatBirthday(selectedClient);
+    try {
+      const currentRaw = localStorage.getItem('currentUser');
+      const current = currentRaw ? JSON.parse(currentRaw) : null;
+      const currentEmail = (current?.email || '').toString().trim().toLowerCase();
+      if (email && current && currentEmail === email && hasBirthday(current)) {
+        return formatBirthday(current);
+      }
+    } catch {
+      // ignore
+    }
+    const fallback = registeredUsers.find((u: any) => ((u?.email || '').toString().trim().toLowerCase() === email));
+    if (fallback && hasBirthday(fallback)) return formatBirthday(fallback);
+    return formatBirthday(selectedClient);
+  })();
   const selectedPrimaryAddress = selectedClient
     ? (() => {
         const c = selectedClient as any;
@@ -1269,9 +1317,15 @@ export default function AdminClients() {
     let totalReviews = u.totalReviews;
     let reviewsWithPhotosVideos = u.reviewsWithPhotosVideos;
     let pendingReviews = u.pendingReviews;
-    if (totalReviews == null || reviewsWithPhotosVideos == null || pendingReviews == null) {
+    const email = (u?.email || '').toString().trim().toLowerCase();
+    const serverCounts = email ? adminReviewCountsByEmail[email] : null;
+    if (serverCounts) {
+      totalReviews = serverCounts.total;
+      reviewsWithPhotosVideos = serverCounts.media;
+      pendingReviews = serverCounts.pending;
+    }
+    if ((totalReviews == null || reviewsWithPhotosVideos == null || pendingReviews == null) && !serverCounts) {
       try {
-        const email = (u.email || '').trim().toLowerCase();
         if (email) {
           const raw = localStorage.getItem(`userSubmittedReviews_${email}`);
           if (raw) {
@@ -1336,6 +1390,8 @@ export default function AdminClients() {
   const countAccountSubmittedReviews = (u: any): number => {
     const email = (u?.email || '').toString().trim().toLowerCase();
     if (!email) return 0;
+    const server = adminReviewCountsByEmail[email];
+    if (server) return server.total;
     try {
       const raw = localStorage.getItem(`userSubmittedReviews_${email}`);
       if (raw) {
@@ -2088,7 +2144,14 @@ export default function AdminClients() {
                               </div>
                               <div className="flex justify-between">
                                 <span style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '11px' }}>PHONE:</span>
-                                <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px' }}>{(selectedClient?.phone || '—').toUpperCase()}</span>
+                                <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080', fontSize: '10px' }}>
+                                  {(
+                                    (selectedClient as any)?.phoneNumber ||
+                                    (selectedClient as any)?.phone_number ||
+                                    (selectedClient as any)?.phone ||
+                                    '—'
+                                  ).toString().toUpperCase()}
+                                </span>
                               </div>
                               {(['facebook', 'instagram', 'twitter', 'tiktok', 'youtube', 'linkedin'] as const).map((key) => {
                                 const val = (selectedClient as any)?.[key];

@@ -1329,3 +1329,87 @@ User asked if there is a way to capture the **entire current codebase** (and its
 - **Decisions / outcomes:** Kept the current signed-cookie implementation (`baw_session_rt`, HMAC-signed payload path) and removed the older duplicate appended implementations to restore a single valid default export per API file.
 - **Changes:** Updated `api/session-restore.ts` and `api/session-cookie.ts` by deleting the duplicate second import/handler blocks that caused duplicate symbol and default export errors.
 - **Conventions:** For these API routes, maintain exactly one `export default` handler per file and avoid mixing two alternate implementations in the same module.
+
+---
+
+## 2026-03-26 — Final account-route restore guard after duplicate API fix
+
+- **Context:** In this chat, user first reported repeated Vite/esbuild failures from duplicate `default` export / duplicate `handler` declarations in `api/session-restore.ts` (and still failing after initial fix), then asked to check motherboard context and apply the promised final guard to prevent account fallback flash while debugging Chrome/Safari persistence and profile input retention issues.
+- **Topics covered:** Re-read motherboard context, confirmed prior session-restore hardening timeline, removed duplicate concatenated handlers in both session cookie API files, then strengthened account-route startup flow so server cookie restore attempt is awaited before fallback path runs.
+- **Decisions / outcomes:** Keep signed-cookie server restore implementation as canonical, and enforce a first-pass, awaited restore attempt in the account guard to reduce stale fallback rendering paths that can surface `NO_NAME`/default-profile flashes before restore completes.
+- **Changes:** 
+  - `api/session-restore.ts`: removed duplicate second import+`export default handler` block.
+  - `api/session-cookie.ts`: removed duplicate second import+`export default handler` block.
+  - `src/components/AccountRouteGuard.tsx`: added final guard with per-tab session key (`baw_server_restore_attempted_v1`) and awaited `tryServerSessionRestore()` before proceeding to local/session fallback logic.
+- **Conventions:** For auth restore routes and guards, keep one handler per API file and prioritize awaited server session-restore before local fallback on protected account pages.
+
+---
+
+## 2026-03-26 — Birthday flow reconnect for admin client details
+
+- **Context:** After prior fixes in this chat (duplicate session API handlers and final account-route restore guard), user reported another disconnected flow: birthday entered in Account Settings was not showing on Admin Clients details.
+- **Topics covered:** Traced settings save path and admin details render path. `account/settings` persists birthday using the `birthday` key, while admin client details displays `selectedBirthday = formatBirthday(selectedClient)`.
+- **Decisions / outcomes:** Kept storage/API key as `birthday` (already aligned with profile mapping) and fixed the display formatter so admin details reads modern birthday field values instead of only legacy birthDate parts.
+- **Changes:** Updated `src/utils/formatBirthday.ts` to:
+  - Read `birthday` first (then `birthDate` fallback).
+  - Parse common stored formats (`MM/DD/YYYY`, `MM-DD-YYYY`, `YYYY-MM-DD`, compact `MMDDYYYY`) and render as `MONTH DAY, YEAR`.
+  - Retain fallback support for legacy `birthMonth`/`birthDay`/`birthYear`.
+- **Conventions:** For profile fields, prefer canonical `birthday` in client/API/UI mappings; keep legacy keys only as compatibility fallback.
+
+---
+
+## 2026-03-26 — Hard lock against fallback profile overwrite on re-signin/reopen
+
+- **Context:** User reported persistence still breaks after sign-out/sign-in (Chrome + Safari) and Safari can still sign out on close; requested the promised hard lock so fallback minimal session user cannot overwrite richer stored account/profile fields.
+- **Topics covered:** Reviewed fallback path in `applyMinimalUserToStorage(...)` used when profile sync fails but session exists; this path could still write minimal data to `currentUser` and flatten identity fields during recovery races.
+- **Decisions / outcomes:** Added an explicit guard that skips fallback write entirely when same-email stored profile already contains richer identity data than incoming minimal payload.
+- **Changes:** `src/utils/syncFromApi.ts`
+  - In `applyMinimalUserToStorage(...)`, added richer-profile detection for same-email user across name, birthday, and non-default profile image.
+  - If stored data is richer and incoming fallback is weaker, function now **does not overwrite `currentUser`**; it only keeps `isSignedIn=true`, preserves existing profile image, and persists auth backup.
+- **Conventions:** Fallback/session-recovery writes must never down-level an existing same-email profile; preserve richer local identity fields over minimal session metadata.
+
+---
+
+## 2026-03-26 — Admin client details linkage audit + phone field mapping fix
+
+- **Context:** User asked to confirm end-to-end linkage for all Admin Clients details panels/tabs (phone, socials, reviews, affiliate, totals, orders, messages, etc.) and ensure fields fire/store correctly, following the birthday reconnect validation.
+- **Topics covered:** Audited `src/pages/admin/clients/page.tsx` data sources and corresponding API/util mappings (`src/utils/api.ts`, `api/admin/clients.ts`, `api/admin/orders.ts`, `api/admin/activity.ts`, `src/utils/formatBirthday.ts`).
+- **Decisions / outcomes:** Confirmed most panel sources are wired as intended (profile from `profiles` via `fromProfileRow`, orders/cart/wishlist/activity via admin APIs when UUID is present, birthday formatter now reading `birthday`). Identified a concrete mismatch in the details `PHONE` row.
+- **Changes:** `src/pages/admin/clients/page.tsx` — updated details phone render to use `phoneNumber` / `phone_number` fallback before legacy `phone`, preventing blank phone display when profile data is camel/snake-case mapped.
+- **Conventions:** In admin details UI, prefer canonical profile keys (`phoneNumber`, `birthday`, camelCase profile fields) with legacy aliases only as fallback.
+
+---
+
+## 2026-03-26 — New triangulation: sign-out/sign-in race hardening for persistence
+
+- **Context:** User reported no practical change after previous guard and requested a different debugging strategy to triangulate why settings data appears unsaved after sign-out/sign-in and why Safari can still sign out on close.
+- **Topics covered:** Identified two likely race points: (1) sign-out clearing auth before queued profile/settings patches flush, and (2) sign-in redirect racing ahead of server cookie registration needed for Safari reopen restore.
+- **Decisions / outcomes:** Added explicit await points + debug markers on these race edges instead of only merge-guard logic.
+- **Changes:**
+  - `src/pages/account/page.tsx`
+    - `handleSignOut` is now async.
+    - Attempts `flushQueuedProfilePatch()` before Supabase sign-out and auth clear.
+    - Added auth debug log markers (`signOut:start`, flush result, clear completion).
+    - Awaits `supabase.auth.signOut()` (instead of fire-and-forget).
+  - `src/pages/sign-in/page.tsx`
+    - Awaits `registerServerSessionCookie(...)` before redirect in both primary and fallback sign-in paths.
+    - Attempts `flushQueuedProfilePatch()` immediately after successful sign-in before redirect.
+    - Added auth debug log markers around cookie registration and queue flush attempts.
+- **Conventions:** Treat sign-out/sign-in persistence as a sequencing problem first: flush pending profile writes before auth clear, and complete session-cookie registration before post-login navigation (Safari-sensitive).
+
+---
+
+## 2026-03-26 — Birthday fallback hardening + begin server-backed clients tab migration
+
+- **Context:** User requested execution of the next step (reduce localStorage-only dependencies) and reported birthday still not showing for ayoteenz on Admin Clients details despite being present in Account Settings.
+- **Topics covered:** Hardened birthday source resolution in details view and started server-backed migration for Admin Clients review metrics.
+- **Decisions / outcomes:** 
+  - Birthday display now resolves from richer same-email sources (selected row → currentUser → registeredUsers) before rendering, preventing missing birthday when selected client row is stale/incomplete.
+  - Reviews metrics on Admin Clients now prefer `/api/admin/reviews` aggregation by email (cross-browser/device), with localStorage as fallback only when server data is unavailable.
+- **Changes:** `src/pages/admin/clients/page.tsx`
+  - `selectedBirthday` computation now includes same-email fallback lookup from `currentUser` and `registeredUsers`.
+  - Imported `getAdminReviews`, added `adminReviewCountsByEmail` state, fetched/aggregated server review counts in `useEffect`, and wired counts into `getReviewsTabRow` + `countAccountSubmittedReviews`.
+  - Earlier phone field mapping fix remains in place (`phoneNumber`/`phone_number` fallback).
+- **Changes:** `src/utils/syncFromApi.ts`
+  - Added auth debug marker when hard-lock skip triggers in `applyMinimalUserToStorage(...)`, improving triangulation visibility for fallback-overwrite prevention.
+- **Conventions:** For admin client details, treat server-backed API data as primary and localStorage values as resilience fallback; for birthday/identity display, always fallback to same-email current session data when row snapshot is incomplete.

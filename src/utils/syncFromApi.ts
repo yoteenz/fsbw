@@ -6,6 +6,7 @@
  */
 import { getProfile, getOrders, getCart, getWishlist, getAccessToken } from './api';
 import { isAdminEmail, persistAuthBackup, ADMIN_TIER_OVERRIDE_KEY, ADMIN_SUBSCRIPTION_OVERRIDE_KEY } from './adminAuth';
+import { authDebugLogIfEnabled } from './adminAuth';
 
 let lastProfileSyncErrored = false;
 
@@ -324,6 +325,55 @@ export function applyMinimalUserToStorage(merged: Record<string, unknown>): void
   const sameEmail =
     existing &&
     ((existing.email as string) || '').trim().toLowerCase() === email.trim().toLowerCase();
+
+  const readStr = (obj: Record<string, unknown> | null | undefined, ...keys: string[]): string => {
+    if (!obj) return '';
+    for (const key of keys) {
+      const v = obj[key];
+      if (typeof v === 'string' && v.trim()) return v.trim();
+    }
+    return '';
+  };
+
+  const hasRicherStoredIdentity = (stored: Record<string, unknown>, incoming: Record<string, unknown>): boolean => {
+    const incomingFirst = readStr(incoming, 'firstName', 'first_name');
+    const incomingLast = readStr(incoming, 'lastName', 'last_name');
+    const incomingBirthday = readStr(incoming, 'birthday', 'birthDate');
+    const incomingImage = readStr(incoming, 'profileImage', 'profile_image');
+
+    const storedFirst = readStr(stored, 'firstName', 'first_name');
+    const storedLast = readStr(stored, 'lastName', 'last_name');
+    const storedBirthday = readStr(stored, 'birthday', 'birthDate');
+    const storedImage = readStr(stored, 'profileImage', 'profile_image');
+
+    const incomingHasName = Boolean(incomingFirst || incomingLast);
+    const storedHasName = Boolean(storedFirst || storedLast);
+    const incomingHasBirthday = Boolean(incomingBirthday);
+    const storedHasBirthday = Boolean(storedBirthday);
+    const incomingHasImage = Boolean(incomingImage && incomingImage !== '/assets/profile-thumb.png');
+    const storedHasImage = Boolean(storedImage && storedImage !== '/assets/profile-thumb.png');
+
+    // Hard lock: if stored profile has richer identity fields than fallback incoming minimal data,
+    // do not allow fallback write to replace/flatten currentUser.
+    if (storedHasName && !incomingHasName) return true;
+    if (storedHasBirthday && !incomingHasBirthday) return true;
+    if (storedHasImage && !incomingHasImage) return true;
+    return false;
+  };
+
+  if (sameEmail && existing && hasRicherStoredIdentity(existing, merged)) {
+    authDebugLogIfEnabled('applyMinimalUserToStorage: hard-lock skip (stored profile richer than fallback)');
+    localStorage.setItem('isSignedIn', 'true');
+    const existingImg =
+      (typeof existing.profileImage === 'string' && existing.profileImage.trim())
+        ? existing.profileImage
+        : (typeof existing.profile_image === 'string' && existing.profile_image.trim())
+          ? existing.profile_image
+          : '';
+    if (existingImg) localStorage.setItem('profileImage', String(existingImg));
+    persistAuthBackup();
+    return;
+  }
 
   const preserved = { ...merged } as Record<string, unknown>;
   const keysToPreserve = [

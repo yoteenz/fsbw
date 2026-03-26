@@ -18,6 +18,8 @@ import {
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
 import { tryServerSessionRestore } from '../../utils/sessionRestore';
 import { trackActivity } from '../../utils/activity';
+import { flushQueuedProfilePatch } from '../../utils/profileSyncQueue';
+import { authDebugLogIfEnabled } from '../../utils/adminAuth';
 import {
   getReviewsLastSeenShopCountKey,
   getReviewsLastSeenToolCountKey,
@@ -400,9 +402,13 @@ function SignInPage() {
               localStorage.setItem('isSignedIn', 'true');
               setIsSignedIn(true);
               onSignInSuccess('password'); // user tapped Sign in — track and persist (Safari retries)
-              registerServerSessionCookie(data.session.access_token, data.session.refresh_token); // so Safari can restore session after close (HttpOnly cookie)
+              // Safari hardening: ensure cookie registration finishes before redirect.
+              await registerServerSessionCookie(data.session.access_token, data.session.refresh_token); // so Safari can restore session after close (HttpOnly cookie)
+              authDebugLogIfEnabled('signIn:registerServerSessionCookie done');
               trackActivity('sign_in');
               window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+              await flushQueuedProfilePatch().catch(() => {});
+              authDebugLogIfEnabled('signIn:flushQueuedProfilePatch attempted');
               if (signInEmailRef.current) signInEmailRef.current.value = '';
               if (signInPasswordRef.current) signInPasswordRef.current.value = '';
               setSignInEmail('');
@@ -423,7 +429,8 @@ function SignInPage() {
               }
             } catch (_) {}
             onSignInSuccess('password');
-            registerServerSessionCookie(data.session.access_token, data.session.refresh_token);
+            await registerServerSessionCookie(data.session.access_token, data.session.refresh_token);
+            authDebugLogIfEnabled('signIn:fallback registerServerSessionCookie done');
             if (!didLastProfileSyncError()) {
               const { patchProfile } = await import('../../utils/api');
               await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
@@ -431,6 +438,8 @@ function SignInPage() {
             setIsSignedIn(true);
             trackActivity('sign_in');
             window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+            await flushQueuedProfilePatch().catch(() => {});
+            authDebugLogIfEnabled('signIn:fallback flushQueuedProfilePatch attempted');
             if (signInEmailRef.current) signInEmailRef.current.value = '';
             if (signInPasswordRef.current) signInPasswordRef.current.value = '';
             setSignInEmail('');

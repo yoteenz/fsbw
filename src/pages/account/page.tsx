@@ -14,6 +14,8 @@ import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '..
 import { getAccountNotifications, mergeAccountNotifications, isNewAccount } from './notifications/page';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
+import { flushQueuedProfilePatch } from '../../utils/profileSyncQueue';
+import { authDebugLogIfEnabled } from '../../utils/adminAuth';
 
 type ProfileDebugEvent = {
   at: string;
@@ -803,8 +805,16 @@ function AccountPage() {
     }
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     trackActivity('sign_out');
+    authDebugLogIfEnabled('signOut:start');
+    // Flush pending settings/profile updates before auth/session is cleared.
+    try {
+      const flushed = await flushQueuedProfilePatch();
+      authDebugLogIfEnabled(`signOut:flushQueuedProfilePatch=${flushed ? 'ok' : 'pending'}`);
+    } catch (e) {
+      authDebugLogIfEnabled(`signOut:flushQueuedProfilePatch error=${e instanceof Error ? e.message : String(e)}`);
+    }
     try {
       const raw = localStorage.getItem('currentUser');
       if (raw) {
@@ -815,10 +825,15 @@ function AccountPage() {
     } catch (_) {}
     if (isSupabaseConfigured()) {
       const supabase = getSupabase();
-      if (supabase) supabase.auth.signOut().catch(() => {});
+      if (supabase) {
+        await supabase.auth.signOut().catch((e) => {
+          authDebugLogIfEnabled(`signOut:supabaseSignOut error=${e instanceof Error ? e.message : String(e)}`);
+        });
+      }
     }
     setIsSignedIn(false);
     clearAppAuth();
+    authDebugLogIfEnabled('signOut:clearAppAuth done');
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
     setShowSignOutConfirm(false);
     setShowMobileMenu(false);
