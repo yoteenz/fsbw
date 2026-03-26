@@ -1850,6 +1850,21 @@ function SignInPage() {
                         const supabase = getSupabase();
                         if (supabase) {
                           try {
+                            const referralCodeForSignup = (() => {
+                              const fi = (firstName.trim()[0] || 'K').toUpperCase();
+                              const li = (lastName.trim()[0] || 'A').toUpperCase();
+                              const day = birthday.split('/')[1]?.padStart(2, '0') || '30';
+                              const digits = phoneNumber.replace(/\D/g, '').slice(-2) || '47';
+                              return `${fi}${li}${day}${digits}`;
+                            })();
+                            const stripAt = (s: string) => s.trim().replace(/^@/, '');
+                            const socialSignup = {
+                              facebook: stripAt(facebook) ? `facebook.com/${stripAt(facebook)}` : '',
+                              instagram: stripAt(instagram) ? `instagram.com/${stripAt(instagram)}` : '',
+                              youtube: stripAt(youtube) ? `youtube.com/${stripAt(youtube)}` : '',
+                              tiktok: stripAt(tiktok) ? `tiktok.com/${stripAt(tiktok)}` : '',
+                              twitter: stripAt(twitter) ? `x.com/${stripAt(twitter)}` : '',
+                            };
                             const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
                               email: email.trim(),
                               password: password,
@@ -1860,6 +1875,12 @@ function SignInPage() {
                                   last_name: lastName.trim(),
                                   birthday: birthday.trim(),
                                   phone_number: phoneNumber.trim(),
+                                  referral_code: referralCodeForSignup,
+                                  facebook: socialSignup.facebook || undefined,
+                                  instagram: socialSignup.instagram || undefined,
+                                  youtube: socialSignup.youtube || undefined,
+                                  tiktok: socialSignup.tiktok || undefined,
+                                  twitter: socialSignup.twitter || undefined,
                                 },
                               },
                             });
@@ -1874,32 +1895,34 @@ function SignInPage() {
                             }
                             if (signUpData.session) {
                               const { patchProfile } = await import('../../utils/api');
-                              const referralCode = (() => {
-                                const fi = (firstName.trim()[0] || 'K').toUpperCase();
-                                const li = (lastName.trim()[0] || 'A').toUpperCase();
-                                const day = birthday.split('/')[1]?.padStart(2, '0') || '30';
-                                const digits = phoneNumber.replace(/\D/g, '').slice(-2) || '47';
-                                return `${fi}${li}${day}${digits}`;
-                              })();
-                              await patchProfile({
-                                firstName: firstName.trim(),
-                                lastName: lastName.trim(),
-                                email: normalizeEmail(email),
-                                phoneNumber: phoneNumber.trim(),
-                                birthday: birthday.trim(),
-                                facebook: facebook.trim() || undefined,
-                                instagram: instagram.trim() || undefined,
-                                youtube: youtube.trim() || undefined,
-                                tiktok: tiktok.trim() || undefined,
-                                twitter: twitter.trim() || undefined,
-                                profileImage: '/assets/profile-thumb.png',
-                                membershipType: 'STANDARD',
-                                referralCode,
-                                giftCardBalance: 10,
-                                hasMadeFirstPurchase: false,
-                                loyaltyPoints: 0,
-                                unlockedDiscounts: ['signup'],
-                              });
+                              try {
+                                await patchProfile({
+                                  firstName: firstName.trim(),
+                                  lastName: lastName.trim(),
+                                  email: normalizeEmail(email),
+                                  phoneNumber: phoneNumber.trim(),
+                                  birthday: birthday.trim(),
+                                  facebook: socialSignup.facebook || undefined,
+                                  instagram: socialSignup.instagram || undefined,
+                                  youtube: socialSignup.youtube || undefined,
+                                  tiktok: socialSignup.tiktok || undefined,
+                                  twitter: socialSignup.twitter || undefined,
+                                  profileImage: '/assets/profile-thumb.png',
+                                  membershipType: 'STANDARD',
+                                  referralCode: referralCodeForSignup,
+                                  giftCardBalance: 10,
+                                  hasMadeFirstPurchase: false,
+                                  loyaltyPoints: 0,
+                                  unlockedDiscounts: ['signup'],
+                                });
+                              } catch (pe) {
+                                const msg = pe instanceof Error ? pe.message : String(pe);
+                                setValidationMessage(
+                                  (msg || 'COULD NOT SAVE PROFILE TO SERVER. CHECK SUPABASE TABLE COLUMNS AND RLS.').toUpperCase()
+                                );
+                                setShowValidationModal(true);
+                                return;
+                              }
                               // Add new user to registeredUsers immediately so admin clients page shows them (same browser)
                               const newUserEmail = normalizeEmail(email);
                               try {
@@ -1914,9 +1937,14 @@ function SignInPage() {
                                     lastName: lastName.trim(),
                                     phoneNumber: phoneNumber.trim(),
                                     birthday: birthday.trim(),
+                                    facebook: socialSignup.facebook || undefined,
+                                    instagram: socialSignup.instagram || undefined,
+                                    youtube: socialSignup.youtube || undefined,
+                                    tiktok: socialSignup.tiktok || undefined,
+                                    twitter: socialSignup.twitter || undefined,
                                     profileImage: '/assets/profile-thumb.png',
                                     membershipType: 'STANDARD',
-                                    referralCode,
+                                    referralCode: referralCodeForSignup,
                                     giftCardBalance: 10,
                                     hasMadeFirstPurchase: false,
                                     loyaltyPoints: 0,

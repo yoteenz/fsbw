@@ -514,3 +514,322 @@ User asked if there is a way to capture the **entire current codebase** (and its
 **Context:** User asked for: (1) header & topic dropdowns to have scroll; (2) when selecting CUSTOM, show an input field to enter custom header/topic; (3) move the red dropdown arrow 16px to the right for all three input boxes (header, topic, client); (4) decrease dropdowns’ line thickness by 0.5px.
 
 **Changes:** `src/pages/admin/marketing/page.tsx` — Header and topic dropdown panels use `overflowY: 'auto'` with `maxHeight: '220px'` so lists scroll. When header is CUSTOM or topic is CUSTOM, the control becomes a text input (placeholder "ENTER CUSTOM HEADER..." / "ENTER CUSTOM TOPIC...") with a red ▼ button to reopen the list; send logic uses `customHeaderText`/`customTopicText` (state added). Red arrow position: header and topic `marginLeft` 8px→24px, client 18px→34px. All three dropdown triggers and panels: border 1.3px→0.8px.
+
+---
+
+## 2026-03-26 — Signup + session profile sync to Supabase (full metadata, schema doc, cart/wishlist push)
+
+**Context:** User reported Supabase was not storing/populating signup card fields (birthday, join date, phone, socials) so new clients had no personal info in admin client overview or account settings. They asked for tables/schema and syncing from all relevant flows.
+
+**Decisions / outcomes:** Root cause was partly **email-confirm signup** (no immediate `PATCH` until first session) with **incomplete `user_metadata`** (only name/phone/birthday, no socials/referral), and **`buildProfilePayloadForBackend` / `buildMinimalUserFromSupabaseSession`** not carrying socials and related fields into `profiles`. Cart/wishlist existed in API but local changes were not routinely pushed to cloud.
+
+**Changes:**
+- `src/utils/syncFromApi.ts` — `buildMinimalUserFromSupabaseSession` merges `raw_user_meta_data` + `user_metadata`, reads socials + `referral_code`, sets `createdAt` from auth `created_at`, default rewards fields; `buildProfilePayloadForBackend` sends full profile fields for `PATCH /api/profile`.
+- `src/pages/sign-in/page.tsx` — `signUp` `options.data` includes `referral_code` (precomputed), all social fields; session branch reuses same referral variable; `registeredUsers` seed includes socials.
+- `api/profile.ts` — On first profile upsert (`!existing`), sets `created_at`.
+- `api/admin/clients.ts` — `authUserToMinimalClient` surfaces socials + referral from metadata when no `profiles` row yet.
+- `src/utils/pushCartWishlistToCloud.ts` + `src/App.tsx` — Debounced (2s) `putCart` / `putWishlist` on `location.pathname` change when signed in with Supabase.
+- `supabase/migrations/20260326180000_ensure_profiles_columns.sql` — `ALTER TABLE profiles ADD COLUMN IF NOT EXISTS` for all columns used by `toProfileRow`.
+- `docs/SUPABASE_SCHEMA_SYNC.md` — Runbook: metadata, RLS, tables, app sync summary.
+
+**Conventions:** New persistent user fields should go through `PATCH /api/profile` (or dedicated API) and be reflected in `profileMapping`, migration, and signup `user_metadata` if collected before first session.
+
+---
+
+## 2026-03-25 — Supabase schema migration, profile/notifications API, orders PUT, settings + signup cloud sync
+
+**Context:** User said Supabase was not storing signup and account data (birthday, join date, phone, socials, etc.) so admin client overview and account settings showed empty personal info. They wanted tables and backend sync for account pages, admin, cart, checkout, wishlist, and related flows.
+
+**Topics covered (full chat):** Diagnosed gaps: missing or incomplete DB columns/RLS blocking `PATCH /api/profile`; signup `user_metadata` and `PATCH` should match settings-style social URLs; settings socials and notification toggles were local-only unless the user hit “save profile to cloud”; cart/wishlist had debounced push but orders did not; `GET`-only `api/orders` meant no server persistence for order blobs.
+
+**Decisions / outcomes:** Ship one SQL migration for `profiles` (all API fields + notification booleans), `cart`, `wishlist`, `orders`, RLS, and an `auth.users` trigger inserting a minimal `profiles` row. Extend API mapping and `PATCH` for notification columns. Add `PUT /api/orders` and push local `userOrders_*` from the existing debounced cloud sync. Persist non-mock order state from the orders page to localStorage and dispatch `ordersUpdated`. Harden signup: domain-prefixed socials in metadata + `PATCH`, try/catch with a clear modal on profile save failure. Settings: `patchProfile` after social blur and after notification toggles when a Supabase session exists.
+
+**Changes:** `supabase/migrations/20260325120000_full_app_sync.sql` (new); `api/_lib/profileMapping.ts`, `api/profile.ts`, `api/orders.ts` (PUT); `src/utils/api.ts` (`putOrders`); `src/utils/pushCartWishlistToCloud.ts` (also `putOrders`); `src/App.tsx` (listen for `ordersUpdated`); `src/pages/orders/page.tsx` (persist non-mock orders + event); `src/pages/sign-in/page.tsx` (social URL metadata + `PATCH` error handling); `src/pages/account/settings/page.tsx` (cloud patch for socials + notifications); `docs/PROFILES_COLUMNS_AND_APP_MAPPING.md`; `motherboard/CORE.md` (pointer to migration).
+
+**Conventions:** Run `supabase/migrations/20260325120000_full_app_sync.sql` in the Supabase SQL Editor when columns/RLS are missing. Join date for clients is `profiles.created_at` (exposed as `createdAt`). Keep social values aligned with settings (`facebook.com/...`, `x.com/...`, etc.).
+
+---
+
+## 2026-03-25 — Admin client details: cart/wishlist tied to Supabase user id
+
+**Context:** User asked whether cart and wishlist tabs on admin client details should show that client’s data and whether Supabase can support it.
+
+**Topics covered:** Confirmed `cart` / `wishlist` tables and `GET /api/admin/cart?user_id=` / `GET /api/admin/wishlist?user_id=` already back admin reads. Found a UI bug: cart/wishlist were fetched by `registeredUsers` row `id` but the merged `selectedClient` (when admin views their own email) overwrote Supabase UUID with `currentUser.id` from localStorage, so cache keys did not match and tabs looked empty.
+
+**Decisions / outcomes:** Preserve Supabase UUID when merging `currentUser` over the API client row for same email. Fetch cart and wishlist when the admin opens the Cart or Wishlist tab (fresh data). Use `selectedClientForOrders?.id` (with fallback) for display keys. Show short messages for mock/local-only ids (non-UUID). Guard orders and activity fetches with `isSupabaseUserId` so mock clients skip invalid API calls.
+
+**Changes:** `src/pages/admin/clients/page.tsx` (`isSupabaseUserId`, merge preserves id, replaced eager cart/wishlist effects with tab-scoped fetch + loading, cart/wishlist copy for non-UUID, orders/activity fetch guards).
+
+**Conventions:** Admin client details that hit Supabase by `user_id` must use the auth UUID from the client list row, not a local-only `id` after merging `currentUser`.
+
+---
+
+## 2026-03-25 — Admin client overview: sort options, scrollable sort menu, Alerts + new orders
+
+**Context:** User wanted more sorting options on the client overview “most recent” dropdown (photos, videos, tags, reviews, active/inactive), a scrollable panel so all options are reachable, and the Alerts sort to reliably surface clients with new orders.
+
+**Topics covered (full chat):**
+- **New sort options:** Added `Photos`, `Videos`, `Tags`, `Reviews`, `Active`, and `Inactive` to `SORT_OPTIONS` on `src/pages/admin/clients/page.tsx`. Each filters to clients with that signal (REWARDS counts via `getRewardsRow`, reviews via `getReviewsTabRow`, referral ACTIVE/INACTIVE via `getInvitesRow`) and sorts by count descending where relevant, then account recency (`createdAt`).
+- **Scrollable dropdown:** Sort options panel uses Tailwind `max-h-60 overflow-y-auto` so long lists scroll inside the panel.
+- **Alerts:** Kept filter `clientHasUnreadPriorityMessages(u) || getClientRow(u, 0).newCount > 0` (priority/order-issue/new-order logic plus ALL-tab NEW when counts differ). Sort uses `getLastUnreadPriorityMessageTime` with a secondary tie-break by `createdAt` descending so clients with similar alert timestamps order consistently.
+- **priorityMessages:** Exported `getClientNewOrdersCount` for reuse (Alerts still uses `clientHasUnreadPriorityMessages`, which internally uses that count).
+
+**Decisions / outcomes:** Client overview sort dropdown includes media/reviews/referral-status filters; dropdown scrolls; Alerts ordering is clearer for ties; new-order eligibility remains aligned with existing priority message helpers plus NEW column fallback.
+
+**Changes:** `src/pages/admin/clients/page.tsx` (`SORT_OPTIONS`, `sortedClients` branches, dropdown `className`). `src/utils/priorityMessages.ts` (export `getClientNewOrdersCount`). This MEMORY entry.
+
+**Conventions:** When adding many custom dropdown options on admin pages, use a max-height + `overflow-y-auto` on the panel (see also marketing dropdown scrolling in CORE/MEMORY).
+
+---
+
+## 2026-03-25 — Checkout voucher COLOR discount matches BAW color sub-page ($120)
+
+**Context:** User reported voucher discounts at checkout did not match the Build-a-Wig sub-page color price (e.g. UI showed $120 but checkout applied −$100).
+
+**Topics covered:** Root cause was a split between `build-a-wig/color/page.tsx` `getSelectedPrice()` for customize/edit (flat **$120** for non-default non-Blanco colors) vs `calculatePricesFromSelections` on `build-a-wig/page.tsx` and checkout `getVoucherAddOnPriceForItem` fallback (**$100** + **$40** for long lengths). Stale `cartItems[].colorPrice === 100` also kept vouchers at $100 because checkout preferred stored `colorPrice` first.
+
+**Decisions / outcomes:** Single rule for non-Blanco paid color: **$120** flat (aligned with the color sub-page). Checkout **COLOR** voucher amount is always derived from the current selection (not stored `colorPrice`) so legacy carts still get the correct discount. HAIRLINE/STYLING unchanged (still prefer stored price when present).
+
+**Changes:** `src/pages/checkout/page.tsx` (COLOR: skip stored `colorPrice`; fallback `120`). `src/pages/build-a-wig/page.tsx` (`calculatePricesFromSelections` color branch: `120` instead of 100/+40). `src/pages/build-a-wig/color/page.tsx` (non-customize `getSelectedPrice` non-Blanco: `120` flat, no length surcharge).
+
+**Conventions:** Voucher discount for COLOR must match BAW color selection pricing; if pricing rules change, update color sub-page, `calculatePricesFromSelections`, and `getVoucherAddOnPriceForItem` together.
+
+---
+
+## 2026-03-25 — Brand: overview metrics, ALERTS + CODES tabs; marketing alerts removed
+
+**Context:** User asked to move brand **metrics** and **achievements** under the **Overview** tab; remove **Alerts** from the marketing page; add **Alerts** after Overview on Brand and **Codes** after Alerts for gift/discount code creation and usage tracking.
+
+**Topics covered:**
+- **Brand `OVERVIEW`:** Retains the 2×2 quick stats plus former **METRICS** list (key metrics incl. market penetration) and **RECENT ACHIEVEMENTS** in one scrollable section. Tabs are now **OVERVIEW · ALERTS · CODES · ANALYTICS** (removed standalone METRICS and ACHIEVEMENTS tabs).
+- **Brand `ALERTS`:** Former marketing Alerts UI (header/topic, client multi-select from same overview client list, message, preview, send, recent for client) lives in `src/pages/admin/components/BrandAlertsPanel.tsx`, with shared client list builder in `src/utils/adminClientListFromOverview.ts`. Summary row above tabs shows clients with notifications and total sent count.
+- **Brand `CODES`:** Local persistence `adminBrandPromoCodes` via `src/utils/adminBrandCodes.ts` — create **gift card** or **discount** codes (value, max uses, expiry, note), list with **+1 USE** and activate/deactivate; header shows active code count and total redemptions.
+- **Marketing:** Tabs **AFFILIATE · CHALLENGES · OFFERS** only; all Alerts tab code, portal, and notification API wiring removed from `src/pages/admin/marketing/page.tsx`.
+
+**Changes:** `src/pages/admin/brand/page.tsx`, `src/pages/admin/components/BrandAlertsPanel.tsx` (new), `src/utils/adminClientListFromOverview.ts` (new), `src/utils/adminBrandCodes.ts` (new), `src/pages/admin/marketing/page.tsx` (simplified). This MEMORY entry.
+
+**Conventions:** Client-targeted admin notifications (“Alerts”) live under **Admin → Brand → ALERTS**; promo codes tracking under **Brand → CODES** (`localStorage` until a backend exists).
+
+---
+
+## 2026-03-25 — Checkout header: CHECKOUT > BAG / UPGRADE (red second segment)
+
+**Context:** User asked to change checkout header breadcrumb text: regular checkout should read **checkout > bag** with **bag** in brand red; subscription upgrade checkout (**/checkout/upgrade**) should read **checkout > upgrade** with **upgrade** in red.
+
+**Changes:** `src/pages/checkout/page.tsx` — when the mobile menu is closed, center nav shows `CHECKOUT >` (Futura PT Book, clickable: navigates to `/bag` on regular checkout, `/account/rewards` on upgrade) and a red Futura PT Medium label **`BAG`** or **`UPGRADE`** (replacing the previous `BAG >` / `UPGRADE >` + red `CHECKOUT` pattern).
+
+**Conventions:** None. Confirm/summary page still uses `CHECKOUT >` + red `SUMMARY` unless product asks to align it.
+
+---
+
+## 2026-03-25 — Admin meetings: DAY/WEEK/MONTH/YEAR, mock data, schedule page (consultation vs appointment)
+
+**Context:** User wanted **MONTH** and **YEAR** tabs after DAY/WEEK on the admin meetings page; mock data should differ by range (not one static list); quick schedule should open a full scheduling flow with **Consultation** (wig consult) vs **Appointment** (installs, re-installs, brow tint/clean up, mink lashes, travel fee, braids, makeup), including date, time, client-linked personal info, and notes.
+
+**Topics covered:**
+- **Tabs & ranges:** `MEETING_TABS` extended to DAY, WEEK, MONTH, YEAR. Week = Mon–Sun containing selected date; month/year from selected date. Summary cards show totals for the active range (IN DAY / IN WEEK / IN MONTH / IN YEAR) plus confirmed/pending.
+- **Mock data:** New `src/utils/adminMeetingsMock.ts` — seeded per-day meetings (consultation = `WIG CONSULT` vs appointment with multi-service labels), merged with `localStorage` (`adminMeetingsScheduled`) and optional API rows via `normalizeApiMeeting`. Year-long ranges use sparser mock (cap/skip) so lists stay usable; month/week/day fuller.
+- **Schedule page:** `src/pages/admin/meetings/schedule/page.tsx` + route `/admin/meetings/schedule?kind=consultation|appointment`. Client dropdown from `registeredUsers`; manual fields; appointment multi-select from `APPOINTMENT_SERVICE_OPTIONS`. Save appends or upserts local rows, dispatches `adminMeetingsUpdated`, optional `postAdminMeeting`. Edit on local `local-*` ids upserts; mock edit pre-fills then save adds a new local row.
+- **Meetings list:** Date chips when not in DAY view; category badges CONSULT/APPT; removed duplicate footer quick-schedule CTA; two quick buttons navigate to schedule.
+
+**Changes:** `src/utils/adminMeetingsMock.ts` (new), `src/pages/admin/meetings/page.tsx` (rewrite), `src/pages/admin/meetings/schedule/page.tsx` (new), `src/App.tsx` (lazy `AdminMeetingsSchedule`, route `meetings/schedule` before `meetings`). This MEMORY entry.
+
+**Conventions:** Admin meetings mock + local merge lives in `adminMeetingsMock`; after saving a meeting, dispatch `adminMeetingsUpdated` so the list refreshes without full remount.
+
+---
+
+## 2026-03-25 — Admin reviews: SHOP/TOOLS tabs; View pending reviews → Pending REVIEWS tab
+
+**Context:** User asked to rename admin reviews tabs from PENDING/PUBLISHED to SHOP/TOOLS; replace **Approve pending reviews** with **View pending reviews** navigating to the admin Pending page **REVIEWS** tab.
+
+**Changes:** `src/pages/admin/reviews/page.tsx` — tabs `ALL`, `SHOP`, `TOOLS`; reviews carry `scope: 'shop' | 'tools'` (API rows: optional `scope`, default shop); mock tools rows added; SHOP/TOOLS lists filter by scope; bottom CTA `navigate('/admin/pending?tab=reviews')` with label **VIEW PENDING REVIEWS**. `src/pages/admin/pending/page.tsx` — `useSearchParams`; on `?tab=reviews` sets `activeTab` to **REVIEWS**.
+
+**Conventions:** Deep-link to Pending reviews tab: `/admin/pending?tab=reviews`. API can return `scope: "tools"` for tools reviews; omit or other values → shop.
+
+---
+
+## 2026-03-25 — Admin reviews ALL tab: sort dropdown (client-overview styling)
+
+**Context:** User asked to replace the red **RECENT REVIEWS** heading on the admin reviews page with a sorting dropdown matching the client overview **Most recent** sort control, with options: 1–4 star, Photos, Videos.
+
+**Changes:** `src/pages/admin/reviews/page.tsx` — `REVIEW_SORT_OPTIONS`, `reviewSortOptionToLabel` (uppercase labels like clients), trigger + red chevron + overlay + panel (`1.3px` black border, `max-h-60 overflow-y-auto`, Futura PT Book option rows). Sort logic: **1 STAR** ascending rating; **2/3 STAR** matching rating first then date desc; **4 STAR** ratings ≥4 first then date; **PHOTOS** / **VIDEOS** descending counts. Default **4 STAR**. Review rows gain optional **`videos`** (API + mock). `useMemo` sorts the ALL-tab list only; SHOP/TOOLS headers unchanged.
+
+**Conventions:** Reuse client overview sort dropdown structure for admin list controls when product asks for parity.
+
+---
+
+## 2026-03-25 — Dashboard stat cards: only PENDING/MEETINGS items capped (no uniform row stretch)
+
+**Context:** User did not want all dashboard stat cards forced to one row height; they asked to restore natural card heights and **only** constrain **PENDING** and **MEETINGS** so those two stay symmetrical with typical peers.
+
+**Changes:** Removed `gridAutoRows` and per-card `fillHeight`. `StatsCard` now takes optional **`itemsMaxHeightPx`** (dashboard passes **148** for `PENDING` and `MEETINGS` only): items list gets `maxHeight` + `overflow-y-auto` + horizontal scroll. Other cards unchanged (`min-h-[140px]` only). Meetings page scroll behavior from prior work unchanged unless user revisits.
+
+**Conventions:** Use `itemsMaxHeightPx` on dashboard only for cards with long item lists; tune px if typography changes.
+
+---
+
+## 2026-03-25 — Special-offer / marketing admin JSON in Supabase (`app_config`)
+
+**Context:** User wanted admin marketing / special-offer configuration (previously localStorage-only) stored in the database like the rest of the app sync scope, not kept separate from Supabase.
+
+**Topics covered:** Prior work had wired profile, cart, wishlist, orders, and settings notifications through `/api/*`; admin-only marketing JSON was called out as needing its own tables/APIs if persisted. This change implements that persistence.
+
+**Decisions / outcomes:** Added **`public.app_config`** (`key` PK, `value` jsonb, `updated_at`) with RLS enabled and no anon/authenticated policies (access only via API + service role). Row key **`special_offer_admin`** holds the same object shape as `specialOfferAdminConfig` in localStorage.
+
+**Changes:**
+- `supabase/migrations/20260325140000_app_config_marketing.sql` — creates `app_config`.
+- `api/special-offer-config.ts` — **GET** returns `{ config }` for the concierge (public, no auth).
+- `api/admin/special-offer-config.ts` — **PUT** upserts config (admin via `requireAdmin`); audit action `app_config.upsert`.
+- `api/_lib/auditLog.ts` — extended `AuditAction` with `app_config.upsert`.
+- `src/utils/api.ts` — `getSpecialOfferAdminConfig()`, `putAdminSpecialOfferConfig()`.
+- `src/pages/admin/special-offer/page.tsx` — load: API first, then localStorage; save: localStorage + cloud PUT.
+- `src/pages/account/concierge/page.tsx` — hydrate special offer: API first (and cache admin key in localStorage when present), then localStorage admin key, then random offer logic.
+- `motherboard/CORE.md` — documented `app_config` migration and GET/PUT routes. This MEMORY entry.
+
+**Conventions:** Run the new migration in Supabase after deploy; `VITE_API_BASE` / proxy must reach the API for dev. Large `thumbnailDataUrl` base64 payloads may hit request size limits—consider storage URLs later if needed.
+
+---
+
+## 2026-03-25 — Admin pending: OVERVIEW / AFFILIATE tabs; remove review & affiliate banners
+
+**Context:** User asked to rename the **ALL** tab to **OVERVIEW**, **ALERTS** to **AFFILIATE**, and remove the stat banners under **REVIEWS** and the former alerts tab.
+
+**Changes:** `src/pages/admin/pending/page.tsx` — `PENDING_TABS` = `OVERVIEW`, `REVIEWS`, `FORMS`, `AFFILIATE`; default tab `OVERVIEW`; first section title **PENDING ITEMS**; dropped the gray “12 / PENDING REVIEWS” block above **BY TYPE** on Reviews; replaced Alerts tab with **AFFILIATE** content (**AFFILIATE PENDING** list: submissions, photo/video review, social tags, payout queue) and removed the “5 / ACTIVE ALERTS” banner.
+
+**Conventions:** Admin Pending tab order: **OVERVIEW · REVIEWS · FORMS · AFFILIATE**.
+
+---
+
+## 2026-03-25 — Admin clients sort: affiliate media vs account reviews vs referral Active/Inactive
+
+**Context:** User wanted the admin **Clients** overview sort options to mean: **Photos / Videos / Tags** = clients who submitted **affiliate** content (stored under `userAffiliatePhotos_*`, `userAffiliateVideos_*`, `userAffiliateTags_*`); **Reviews** = clients who left reviews via **Account → Reviews** (`userSubmittedReviews_*`); **Active / Inactive** = **referral code** status (not media/review activity).
+
+**Decisions / outcomes:** Photos/Videos/Tags sorts **filter** to clients with count > 0 from those affiliate keys and **sort** by that count (then recency). Reviews sort uses only account-submitted review storage (with `mock*N@test.com` fallbacks: `photosCount` / `videosCount` / `tagsCount` and `totalReviews` when localStorage is empty for demos). Active/Inactive continue to use **`getInvitesRow(...).status === 'ACTIVE' | 'INACTIVE'`**.
+
+**Changes:** `src/pages/admin/clients/page.tsx` — helpers `countAffiliateSubmitted`, `countAccountSubmittedReviews`; sort branches for **Photos**, **Videos**, **Tags**, **Reviews**, **Active**, **Inactive** aligned with the above. This MEMORY entry.
+
+**Conventions:** Do not use rewards-tab or generic profile counts for these four media/review sorts unless explicitly product-defined otherwise.
+
+---
+
+## 2026-03-26 — Checkout: rush + COLOR voucher vs default Blanco (Platinum) / Noir
+
+**Context:** User had **default** Blanco & Noir units in the cart but checkout **disabled 4–6 week rush** and treated **COLOR** as applicable; they suspected color voucher logic.
+
+**Root cause:** `hasColorStylingOrAddOns` used `item.name === 'BLANCO'` for the default color, so cart lines titled **"Blanco"** (title case) used **Off Black** as the default instead of **Platinum**—Platinum then looked like a custom color, which flipped rush off. **`VOUCHER_TYPE_CONFIG.COLOR.getDefault`** used the same strict name check, so **Platinum** looked like an upgrade vs Off Black while `getVoucherAddOnPriceForItem` still priced Platinum at $0—incoherent UI. Trimming: **`PLATINUM` with trailing whitespace** failed the early `=== 'PLATINUM'` check and could fall through to the flat **$120** branch.
+
+**Changes:** `src/pages/checkout/page.tsx` — added **`normalizeCartUnitName`** / **`defaultHairColorForUnit`**; wired **COLOR** `getDefault`, **`getVoucherAddOnPriceForItem`** (trim + normalized Blanco), **`hasColorStylingOrAddOns`** (uppercase/trim color + styling; Blanco → Platinum default), and **voucher discount `hasOption`** (trim/upper on cart value vs default). This MEMORY entry.
+
+**Conventions:** Treat cart **unit name** and **color** comparisons as **case- and whitespace-normalized** anywhere default Blanco = Platinum matters.
+
+---
+
+## 2026-03-26 — Admin Brand CODES tab: fix ReferenceError `codesSummary`
+
+**Context:** User saw a red error on **Admin → Brand → CODES**: **Can't find variable: codessummary** (browser `ReferenceError` for **`codesSummary`**).
+
+**Root cause:** `src/pages/admin/brand/page.tsx` rendered the CODES summary strip and the create-code form using **`codesSummary`**, **`alertsStats`**, **`onAlertsStats`**, and form state (**`codeKind`**, **`manualCode`**, etc.) without declaring them—likely incomplete merge or truncated component body.
+
+**Changes:** Same file — added **`promoCodes`** + **`refreshCodes`** from **`loadBrandPromoCodes`**, **`useMemo`** for **`codesSummary`** (active count + total uses as redemptions), **`alertsStats`** + stable **`onAlertsStats`** for **`BrandAlertsPanel`**, and all CODES form **`useState`** hooks. This MEMORY entry.
+
+**Conventions:** Brand **CODES** UI must keep hook definitions in sync with JSX that references them.
+
+---
+
+## 2026-03-25 — Dashboard stat cards: cap items list for CLIENTS, REVENUE, BRAND (all cards)
+
+**Context:** User asked to apply the same **fixed items-list height + vertical scroll** behavior used on other admin dashboard stat cards to **CLIENTS**, **REVENUE**, and **BRAND** as well.
+
+**Decisions / outcomes:** All dashboard `StatsCard` instances now receive **`itemsMaxHeightPx={DASHBOARD_CAPPED_STAT_ITEMS_MAX_PX}`** (103px). Removed **`DASHBOARD_ITEMS_CAP_TITLES`** since every stat card is capped; no per-title branching.
+
+**Changes:** `src/pages/admin/dashboard/page.tsx` — comment + always pass cap; `src/pages/admin/components/StatsCard.tsx` — JSDoc for **`itemsMaxHeightPx`** updated (no longer says CLIENTS/REVENUE/BRAND uncapped). This MEMORY entry.
+
+**Conventions:** Admin dashboard stat grid treats all cards uniformly for items area height unless a future requirement splits behavior again.
+
+---
+
+## 2026-03-26 — Admin dashboard CLIENTS card: EMAIL MARKETING row
+
+**Context:** User wanted **email marketing** tracking on the **Dashboard → CLIENTS** stat card, on a new line **below NEW ACCOUNTS**, aligned with how newsletter signup is tracked on the **admin Clients overview** page.
+
+**Decisions / outcomes:** No new counting logic: **`clientTiers.emailMarketing`** already increments for each **`visibleClients`** row where **`isClientNewsletterSubscribed(c)`** is true (same helper as clients overview: **`newsletterSubscribed`** on the client object and/or **`userNewsletter_${email}`** in localStorage). Blocked clients stay excluded via **`visibleClients`**.
+
+**Changes:** `src/pages/admin/dashboard/page.tsx` — added **`EMAIL MARKETING`** item with value **`String(clientTiers.emailMarketing ?? 0)`** immediately after **`NEW ACCOUNTS`**. This MEMORY entry.
+
+---
+
+## 2026-03-26 — StatsCard tiers: BLACK / RED / SILVER label + value use `tier.color`
+
+**Context:** User wanted **BLACK** and **RED** tier tracker text on the admin **CLIENTS** stat card to render in black and red like **SILVER** uses its tier color (full line consistent).
+
+**Root cause:** Tier row **label** colors were hardcoded only for legacy labels **`PREM` / `STD` / `STANDARD`**; dashboard **CLIENTS** tiers use **`BLACK` / `RED` / `SILVER`**, so labels fell through to gray **`#808080`** while values already used **`getColorValue(tier.color)`**.
+
+**Changes:** `src/pages/admin/components/StatsCard.tsx` — tier block now sets **`tierColor = getColorValue(tier.color)`** and applies it to both the **display label** (still mapping PREM→BLACK, STD→RED, STANDARD→SILVER) and the **value**. **REVENUE** **Q1/Q2/Q3** labels now match their red values. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Dashboard REVENUE card: TOP PRODUCT (sales by unit)
+
+**Context:** User wanted a **TOP PRODUCT** line on the admin **Dashboard → REVENUE** stat card **below TAX DEDUCTIONS**, showing the unit with the **most sales**, aligned with the admin **Revenue** page (they referenced the **Products** tab; that tab shows **remaining inventory** per unit, while **sales-by-unit** is the same order list and the same counting as **Overview → TOP PRODUCTS**).
+
+**Decisions / outcomes:** Centralized **`getProductSalesCounts`** / **`getTopProductBySales`** in **`adminRevenueStats.ts`** (same line-item → canonical product mapping as the former inline **`topProductsBySales`** on the revenue page). Dashboard uses **`getTopProductBySales(buildRevenueOrdersList())`** and shows **`UNIT (count)`** or **`—`** when there are no sales.
+
+**Changes:** `src/utils/adminRevenueStats.ts` — new exports; `src/pages/admin/revenue/page.tsx` — **`topProductsBySales`** from **`getProductSalesCounts(orders)`**; `src/pages/admin/dashboard/page.tsx` — **TOP PRODUCT** row. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Dashboard REVENUE card: Q4 tier + single-line StatsCard tiers
+
+**Context:** User wanted **Q4** after **Q3** on the dashboard **REVENUE** stat card bottom tiers, and **tighter layout** so **Q1–Q4** stay on **one line**.
+
+**Changes:** `src/pages/admin/dashboard/page.tsx` — fourth tier **`Q4`** using **`quarterlyRevenue.Q4`** (same **K** formatting as Q1–Q3; **`quarterlyRevenue`** already aggregates Oct–Dec). `src/pages/admin/components/StatsCard.tsx` — tier row uses **`flex w-full flex-nowrap gap-0.5 text-[7px] leading-tight`**, each tier **`flex-1 min-w-0 text-center truncate`** with **`title`** for full text on hover; applies to all stat cards with tiers (e.g. **CLIENTS** BLACK/RED/SILVER). This MEMORY entry.
+
+---
+
+## 2026-03-26 — StatsCard TOP PRODUCT: gray unit name, red count in parentheses
+
+**Context:** User wanted only the **parentheses count** (e.g. **`(7)`**) in **red** on the dashboard **TOP PRODUCT** line; **unit name** (e.g. **NOIR**) stays **gray**.
+
+**Changes:** `src/pages/admin/components/StatsCard.tsx` — for **`item.label === 'TOP PRODUCT'`**, value matching **`/^(.+)\s+(\(\d+\))$/`** renders name with **`getColorValue(item.color)`** (gray) and **`(\d+)`** span with **`#EB1C24`**; **`—`** or non-matching values use single gray span. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Dashboard PENDING card: MESSAGES (unread priority)
+
+**Context:** User wanted a **MESSAGES** line on the admin **Dashboard → PENDING** stat card **below AFFILIATE**, showing **unread priority message** volume.
+
+**Decisions / outcomes:** Total = sum of **`unreadCount`** from **`getClientUnreadPriorityMessage(client)`** over **`visibleClients`** (same helper as Alerts / clients overview: profile fields + **`adminPriorityMessagesByClient`** localStorage). Row inserted **after** the first item whose label contains **`AFFILIATE`**; skipped if API **`pendingItems`** already includes **MESSAGES**. Value **red** when count **> 0**, else gray.
+
+**Changes:** `src/pages/admin/dashboard/page.tsx` — import **`getClientUnreadPriorityMessage`**; **`basePendingCardItems`** + **`pendingCardItems`** merge. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Admin Marketing: OFFERS tab → SPECIAL OFFERS
+
+**Context:** User wanted the admin **Marketing** page tab label **OFFERS** renamed to **SPECIAL OFFERS**.
+
+**Changes:** `src/pages/admin/marketing/page.tsx` — **`MARKETING_TABS`**, **`TAB_PANEL_LABELS`**, and **`activeTab`** checks use **`SPECIAL OFFERS`** instead of **`OFFERS`**. `src/pages/admin/dashboard/page.tsx` — **MARKETING** stat card line label updated to **SPECIAL OFFERS** for consistency. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Admin client details: POINTS before affiliate media; expandable REVIEWS
+
+**Context:** User wanted **loyalty points (all earned)** shown **before** the **photos** count on the client **details** affiliate-style panel, and the **reviews** panel to **expand like** **photos / videos / socials** with **content** under each metric.
+
+**Changes:** `src/pages/admin/clients/page.tsx` — **`selectedTotalLoyaltyPointsEarned`**: sum **`pointsEarned`** on **`selectedRawOrders`**, else rounded **`subtotal`/`total`** per order, else **`loyaltyPoints`** on profile. Affiliate row grid **`grid-cols-4`**: first column **POINTS** (display only), then **PHOTOS / VIDEOS / SOCIALS** toggles unchanged. **`reviewsExpand`** state (**`total` | `media` | `pending`**); **TOTAL / MEDIA / PENDING** are buttons; expanded sections show filtered lists (**all** / **hasPhoto \|\| hasVideo** / **pending**) or empty copy. Reset **`reviewsExpand`** when **`selectedClientEmail`** changes. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Client details: POINTS in header grid (not affiliate row)
+
+**Context:** User wanted the **loyalty points** counter moved from the **affiliate** (photos/videos/socials) strip to the **top** stats row: **after ORDERS**, **before TOTAL SPENT**.
+
+**Changes:** `src/pages/admin/clients/page.tsx` — profile card stats **`grid-cols-4`**: **ORDERS → POINTS → TOTAL SPENT → MEMBERSHIP** (tighter **`gap-2 sm:gap-4`**). Affiliate panel back to **`grid-cols-3`** (**PHOTOS / VIDEOS / SOCIALS** only). This MEMORY entry.
+
+---
+
+## 2026-03-26 — Admin fulfilled orders: DELIVERED at bottom per client
+
+**Context:** User wanted **delivered** orders always **at the bottom** of the list on the admin **Revenue → Fulfilled orders** page.
+
+**Changes:** `src/pages/admin/revenue/fulfilled-orders/page.tsx` — **`isDeliveredOrder`** (**`status === 'DELIVERED'`** or **`deliveredAt`** set). Per-client arrays sort with **non-delivered first**, then **delivered**; within each group **newest first** by **`date`**. This MEMORY entry.

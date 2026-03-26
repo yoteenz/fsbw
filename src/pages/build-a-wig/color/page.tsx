@@ -904,23 +904,14 @@ function ColorSelection() {
     const selected = colorOptions.find(option => option.id === selectedColor);
     if (!selected) return 0;
     
-    let price = selected.price;
-    
-    // For blanco colors, don't add length surcharge
+    // Blanco: option prices from colorOptions (-20 / 0 / 20)
     if (isBlancoRoute) {
-      return price; // Golden is -20, Platinum and Ash are 0
+      return selected.price;
     }
     
-    // Add extra $40 for lengths over 30" (excluding OFF BLACK which stays $0)
-    if (selected.id !== 'OFF BLACK') {
-      const selectedLength = localStorage.getItem('selectedLength');
-      const longLengths = ['30"', '32"', '34"', '36"', '40"'];
-      if (selectedLength && longLengths.includes(selectedLength)) {
-        price += 40;
-      }
-    }
-    
-    return price;
+    // Non-Blanco: match customize/edit branch — flat $120 for any non-default color; OFF BLACK $0
+    if (selected.id === 'OFF BLACK') return 0;
+    return 120;
   };
 
   // Get dynamic color note text based on selected color option

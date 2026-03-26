@@ -6,6 +6,14 @@ import { pageActionButtonStyle } from '../../../../layouts/PageActionsBelowCard'
 
 const FULFILLED_STATUSES = ['SHIPPED', 'DELIVERED', 'FULFILLED'];
 
+function isDeliveredOrder(o: { status?: string; deliveredAt?: unknown }): boolean {
+  const s = (o.status || '').toUpperCase().trim();
+  if (s === 'DELIVERED') return true;
+  const at = (o as { deliveredAt?: string | number }).deliveredAt;
+  if (at != null && at !== '') return true;
+  return false;
+}
+
 function getProductImage(productName: string): string {
   switch ((productName || '').toUpperCase()) {
     case 'BLANCO': return '/assets/2D BLANCO FRONT.png';
@@ -30,7 +38,14 @@ export default function AdminFulfilledOrders() {
       if (!map.has(email)) map.set(email, []);
       map.get(email)!.push(o);
     }
-    for (const arr of map.values()) arr.sort((a, b) => new Date((b.date || '').toString()).getTime() - new Date((a.date || '').toString()).getTime());
+    for (const arr of map.values()) {
+      arr.sort((a, b) => {
+        const da = isDeliveredOrder(a as { status?: string; deliveredAt?: unknown });
+        const db = isDeliveredOrder(b as { status?: string; deliveredAt?: unknown });
+        if (da !== db) return da ? 1 : -1;
+        return new Date((b.date || '').toString()).getTime() - new Date((a.date || '').toString()).getTime();
+      });
+    }
     return Array.from(map.entries()).sort((a, b) => a[0].localeCompare(b[0]));
   }, [fulfilled]);
 

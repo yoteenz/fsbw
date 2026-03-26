@@ -1,6 +1,16 @@
 import { getSupabaseAdmin } from './supabase';
 
-export type AuditAction = 'profile.update' | 'order.update' | 'cart.update' | 'wishlist.update' | 'review.update' | 'meeting.create' | 'meeting.update' | 'meeting.delete' | 'notification.create';
+export type AuditAction =
+  | 'profile.update'
+  | 'order.update'
+  | 'cart.update'
+  | 'wishlist.update'
+  | 'review.update'
+  | 'meeting.create'
+  | 'meeting.update'
+  | 'meeting.delete'
+  | 'notification.create'
+  | 'app_config.upsert';
 
 export async function writeAuditLog(params: {
   actorId: string | null;

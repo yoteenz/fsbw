@@ -6,20 +6,31 @@ import { fromProfileRow } from '../_lib/profileMapping';
 /** Build a minimal app-shape client from auth user (no profile row yet). */
 function authUserToMinimalClient(user: { id: string; email?: string; user_metadata?: Record<string, unknown>; created_at?: string }): Record<string, unknown> {
   const meta = user.user_metadata || {};
+  const s = (k: string, k2?: string) => {
+    const a = meta[k];
+    const b = k2 ? meta[k2] : undefined;
+    const v = (typeof a === 'string' && a.trim() ? a : typeof b === 'string' && b.trim() ? b : '') as string;
+    return v || null;
+  };
   return {
     id: user.id,
     email: (user.email || '').trim().toLowerCase() || (meta.email as string) || '',
-    firstName: meta.first_name ?? meta.firstName ?? '',
-    lastName: meta.last_name ?? meta.lastName ?? '',
-    phoneNumber: meta.phone_number ?? meta.phoneNumber ?? null,
-    birthday: meta.birthday ?? null,
+    firstName: (meta.first_name as string) || (meta.firstName as string) || '',
+    lastName: (meta.last_name as string) || (meta.lastName as string) || '',
+    phoneNumber: s('phone_number', 'phoneNumber'),
+    birthday: s('birthday'),
+    facebook: s('facebook'),
+    instagram: s('instagram'),
+    youtube: s('youtube'),
+    tiktok: s('tiktok'),
+    twitter: s('twitter'),
     profileImage: null,
     membershipType: 'STANDARD',
     giftCardBalance: 10,
     hasMadeFirstPurchase: false,
     loyaltyPoints: 0,
     unlockedDiscounts: ['signup'],
-    referralCode: null,
+    referralCode: s('referral_code', 'referralCode'),
     createdAt: user.created_at ?? new Date().toISOString(),
     updatedAt: null,
   };

@@ -840,6 +840,17 @@ function OrdersPage() {
     }
   });
 
+  // Real accounts: keep userOrders_* in localStorage in sync with React state so cloud push (App + Supabase) sees updates
+  useEffect(() => {
+    if (typeof window === 'undefined' || !currentUser?.email) return;
+    if (isMockDataAccount(currentUser)) return;
+    try {
+      const key = `userOrders_${currentUser.email}`;
+      localStorage.setItem(key, JSON.stringify({ activeOrders, pastOrders }));
+      window.dispatchEvent(new CustomEvent('ordersUpdated'));
+    } catch (_) {}
+  }, [activeOrders, pastOrders, currentUser?.email]);
+
   // Update orders when user changes
   useEffect(() => {
     const updateUser = () => {

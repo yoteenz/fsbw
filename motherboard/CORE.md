@@ -7,7 +7,7 @@ Canonical reference for stack, design, and main flows. Keep this updated when th
 ## Stack & repo
 
 - **Frontend:** React 19, TypeScript, Vite 5, React Router 6, Tailwind CSS.
-- **Backend / Auth / DB:** Supabase (Auth, profiles, orders, cart, wishlist). Vercel serverless API routes under `api/`.
+- **Backend / Auth / DB:** Supabase (Auth, profiles, orders, cart, wishlist, key/value **app_config** for site-wide JSON such as the admin special-offer card). Vercel serverless API routes under `api/`. Full table definitions, RLS, and `auth.users` → `profiles` trigger: run `supabase/migrations/20260325120000_full_app_sync.sql` in the Supabase SQL Editor when setting up or repairing sync. Marketing/admin JSON: also run `supabase/migrations/20260325140000_app_config_marketing.sql` for the `app_config` table.
 - **Env:** Vite uses `VITE_*` (e.g. `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_BASE`, `VITE_ADMIN_EMAILS`). Backend uses `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_EMAILS`.
 - **Local:** `.env.local` for dev; copy from `.env.example`. Restart dev server after changing env.
 
@@ -34,7 +34,7 @@ Canonical reference for stack, design, and main flows. Keep this updated when th
 ## Key flows
 
 - **Account / Concierge:** Priority messages, order tracking, Slay Challenge (6‑month cycles, reward selection), Special Offer (configurable via Admin → Marketing; $40 off, 60‑day countdown), Free Gift, Birthday Gift. Admin (ayoteenz) can override Slay Challenge stage for testing.
-- **Admin / Marketing:** Special-offer config at **`/admin/marketing`** (nav: "ADMIN > MARKETING"). Page: product, length, density, texture, lace, hairline (incl. LAGOS + PEAK), color, styling (incl. Bangs combos), add-ons (dropdown with all combinations: NONE, single, BLEACH + PLUCK, etc., via `ADDON_COMBO_OPTIONS`), thumbnail, start date. All dropdown panels use `max-h-48 overflow-y-auto` for scrolling. Save Config and RANDOMIZE (red text) below card; RANDOMIZE fills all options with valid random values.
+- **Admin / Marketing:** Special-offer config at **`/admin/marketing`** (nav: "ADMIN > MARKETING"). Page: product, length, density, texture, lace, hairline (incl. LAGOS + PEAK), color, styling (incl. Bangs combos), add-ons (dropdown with all combinations: NONE, single, BLEACH + PLUCK, etc., via `ADDON_COMBO_OPTIONS`), thumbnail, start date. All dropdown panels use `max-h-48 overflow-y-auto` for scrolling. Save Config and RANDOMIZE (red text) below card; RANDOMIZE fills all options with valid random values. **Persistence:** Save writes `specialOfferAdminConfig` to localStorage and upserts the same JSON to Supabase `app_config` key `special_offer_admin` via **`PUT /api/admin/special-offer-config`** (admin session). Concierge and the admin editor load from **`GET /api/special-offer-config`** first, then fall back to localStorage.
 - **Cart / Wishlist:** Stored in localStorage (global and per-user keys). Synced to backend on sign-in/sync where applicable.
 - **Orders:** Active/past orders per user; tracking stages with progress. Mock/test orders for admin (e.g. Kateena) for demos.
 - **Sync:** “Sync my account” (Settings) for any admin: sends Supabase email + password to `/api/admin/sync-profile`; backend returns profile, orders, cart, wishlist; frontend applies to localStorage. Requires admin email in both `VITE_ADMIN_EMAILS` and `ADMIN_EMAILS`.

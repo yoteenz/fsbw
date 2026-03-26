@@ -25,6 +25,12 @@ const SORT_OPTIONS = [
   'Least spent',
   'International',
   'Socials',
+  'Photos',
+  'Videos',
+  'Tags',
+  'Reviews',
+  'Active',
+  'Inactive',
   'Standard',
   'Premium',
   'Silver',
@@ -539,6 +545,11 @@ export function getMockOrdersForClient(client: any): MockOrder[] {
 const DETAILS_TABS = ['activity', 'orders', 'appointments', 'messages'] as const;
 const PERSONAL_SECTION_TABS = ['details', 'cart', 'wishlist'] as const;
 
+/** Supabase Auth user ids are UUIDs; local-only mock rows use strings like mock-1. */
+function isSupabaseUserId(id: unknown): id is string {
+  return typeof id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+}
+
 const MAYA_OWEN_MOCK_EMAIL = 'mock13@test.com';
 
 /** Mock activity for Maya Owen (mock13@test.com) – all event types for demo. Newest first. */
@@ -595,6 +606,7 @@ export default function AdminClients() {
   const [showCancelOrderConfirm, setShowCancelOrderConfirm] = useState(false);
   const [profilePhotoError, setProfilePhotoError] = useState(false);
   const [rewardsExpand, setRewardsExpand] = useState<'photos' | 'videos' | 'tags' | null>(null);
+  const [reviewsExpand, setReviewsExpand] = useState<'total' | 'media' | 'pending' | null>(null);
   const [showMediaViewer, setShowMediaViewer] = useState(false);
   const [mediaViewerUrls, setMediaViewerUrls] = useState<string[]>([]);
   const [mediaViewerIndex, setMediaViewerIndex] = useState(0);
@@ -604,6 +616,7 @@ export default function AdminClients() {
   const [adminCartByUserId, setAdminCartByUserId] = useState<Record<string, unknown[]>>({});
   const [adminWishlistByUserId, setAdminWishlistByUserId] = useState<Record<string, unknown[]>>({});
   const [adminActivityByUserId, setAdminActivityByUserId] = useState<Record<string, Array<{ id: string; eventType: string; payload?: unknown; createdAt: string }>>>({});
+  const [cartWishlistLoading, setCartWishlistLoading] = useState(false);
   const [personalSectionTab, setPersonalSectionTab] = useState<typeof PERSONAL_SECTION_TABS[number]>('details');
   const [exportingCsv, setExportingCsv] = useState(false);
   const [adminClientsApiError, setAdminClientsApiError] = useState<'forbidden' | 'service_unavailable' | null>(null);
@@ -624,6 +637,7 @@ export default function AdminClients() {
   }, [selectedClientEmail]);
   useEffect(() => {
     setRewardsExpand(null);
+    setReviewsExpand(null);
   }, [selectedClientEmail]);
   useEffect(() => {
     setShowInvitesPopup(false);
@@ -756,7 +770,7 @@ export default function AdminClients() {
   );
   useEffect(() => {
     const id = selectedClientForOrders?.id as string | undefined;
-    if (!id || adminOrdersByUserId[id]) return;
+    if (!id || !isSupabaseUserId(id) || adminOrdersByUserId[id]) return;
     getAdminOrders(id)
       .then((data) => setAdminOrdersByUserId((prev) => ({ ...prev, [id]: data })))
       .catch(() => {});
@@ -777,7 +791,7 @@ export default function AdminClients() {
   }, [selectedClientForOrders?.id]);
   useEffect(() => {
     const id = selectedClientForOrders?.id as string | undefined;
-    if (!id || adminActivityByUserId[id] !== undefined) return;
+    if (!id || !isSupabaseUserId(id) || adminActivityByUserId[id] !== undefined) return;
     getAdminActivity(id)
       .then((list) => setAdminActivityByUserId((prev) => ({ ...prev, [id]: list })))
       .catch(() => setAdminActivityByUserId((prev) => ({ ...prev, [id as string]: [] })));
@@ -794,7 +808,11 @@ export default function AdminClients() {
         const currentUser = currentUserRaw ? JSON.parse(currentUserRaw) : null;
         const cuEmail = (currentUser?.email || '').toString().trim().toLowerCase();
         if (currentUser && email === cuEmail) {
+          const preservedId = found?.id;
           found = { ...found, ...currentUser };
+          if (isSupabaseUserId(preservedId)) {
+            (found as { id?: string }).id = preservedId;
+          }
         }
       } catch {
         /* ignore */
@@ -914,6 +932,26 @@ export default function AdminClients() {
     }
     }
     return { selectedClient: found || null, selectedOrderHistory: orderHistory, selectedRawOrders: rawOrders };
+  })();
+
+  /** Lifetime loyalty points from orders (pointsEarned or rounded subtotal/total per order); else profile loyaltyPoints. */
+  const selectedTotalLoyaltyPointsEarned = (() => {
+    if (!selectedClient) return 0;
+    let sum = 0;
+    for (const o of selectedRawOrders) {
+      const ord = o as Record<string, unknown>;
+      const pe = ord.pointsEarned;
+      if (typeof pe === 'number' && !Number.isNaN(pe)) {
+        sum += pe;
+        continue;
+      }
+      const sub = ord.subtotal != null ? Number(ord.subtotal) : Number(ord.total);
+      if (typeof sub === 'number' && !Number.isNaN(sub)) sum += Math.round(sub);
+    }
+    if (sum > 0) return sum;
+    const lp = Number((selectedClient as { loyaltyPoints?: number }).loyaltyPoints);
+    if (!Number.isNaN(lp) && lp > 0) return Math.round(lp);
+    return 0;
   })();
 
   const selectedName = selectedClient
@@ -1262,6 +1300,57 @@ export default function AdminClients() {
     };
   };
 
+  /** Affiliate tab submissions only: userAffiliatePhotos/Videos/Tags (not profile mock/API counts unless mock@test demo row). */
+  const countAffiliateSubmitted = (u: any, kind: 'photos' | 'videos' | 'tags'): number => {
+    const email = (u?.email || '').toString().trim().toLowerCase();
+    if (!email) return 0;
+    const storageKey =
+      kind === 'photos'
+        ? `userAffiliatePhotos_${email}`
+        : kind === 'videos'
+          ? `userAffiliateVideos_${email}`
+          : `userAffiliateTags_${email}`;
+    let n = 0;
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw != null && raw !== '') {
+        try {
+          const parsed = JSON.parse(raw);
+          n = Array.isArray(parsed) ? parsed.length : Number(raw) || 0;
+        } catch {
+          n = Number(raw) || 0;
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+    if (n > 0) return n;
+    if (/^mock\d+@test\.com$/i.test(email)) {
+      if (kind === 'photos') return Number(u?.photosCount) || 0;
+      if (kind === 'videos') return Number(u?.videosCount) || 0;
+      return Number(u?.tagsCount) || 0;
+    }
+    return 0;
+  };
+
+  /** Reviews left via Account → Reviews (`userSubmittedReviews_*`), not affiliate gallery. Mock@test uses totalReviews for demo. */
+  const countAccountSubmittedReviews = (u: any): number => {
+    const email = (u?.email || '').toString().trim().toLowerCase();
+    if (!email) return 0;
+    try {
+      const raw = localStorage.getItem(`userSubmittedReviews_${email}`);
+      if (raw) {
+        const data = JSON.parse(raw);
+        const list = Array.isArray(data) ? data : (data?.reviews || []);
+        if (Array.isArray(list) && list.length > 0) return list.length;
+      }
+    } catch {
+      /* ignore */
+    }
+    if (/^mock\d+@test\.com$/i.test(email) && u?.totalReviews != null) return Number(u.totalReviews) || 0;
+    return 0;
+  };
+
   // Sort/filter clients based on sortOption
   const sortedClients = (() => {
     let list = [...registeredUsers];
@@ -1294,9 +1383,44 @@ export default function AdminClients() {
     } else if (sortOption === 'Socials') {
       list = list.filter((u) => isClientHasSocials(u));
       list.sort((a, b) => created(b) - created(a));
+    } else if (sortOption === 'Photos') {
+      list = list.filter((u) => countAffiliateSubmitted(u, 'photos') > 0);
+      list.sort((a, b) => {
+        const diff = countAffiliateSubmitted(b, 'photos') - countAffiliateSubmitted(a, 'photos');
+        return diff !== 0 ? diff : created(b) - created(a);
+      });
+    } else if (sortOption === 'Videos') {
+      list = list.filter((u) => countAffiliateSubmitted(u, 'videos') > 0);
+      list.sort((a, b) => {
+        const diff = countAffiliateSubmitted(b, 'videos') - countAffiliateSubmitted(a, 'videos');
+        return diff !== 0 ? diff : created(b) - created(a);
+      });
+    } else if (sortOption === 'Tags') {
+      list = list.filter((u) => countAffiliateSubmitted(u, 'tags') > 0);
+      list.sort((a, b) => {
+        const diff = countAffiliateSubmitted(b, 'tags') - countAffiliateSubmitted(a, 'tags');
+        return diff !== 0 ? diff : created(b) - created(a);
+      });
+    } else if (sortOption === 'Reviews') {
+      list = list.filter((u) => countAccountSubmittedReviews(u) > 0);
+      list.sort((a, b) => {
+        const diff = countAccountSubmittedReviews(b) - countAccountSubmittedReviews(a);
+        return diff !== 0 ? diff : created(b) - created(a);
+      });
+    } else if (sortOption === 'Active') {
+      list = list.filter((u) => getInvitesRow(u, 0).status === 'ACTIVE');
+      list.sort((a, b) => created(b) - created(a));
+    } else if (sortOption === 'Inactive') {
+      list = list.filter((u) => getInvitesRow(u, 0).status === 'INACTIVE');
+      list.sort((a, b) => created(b) - created(a));
     } else if (sortOption === 'Alerts') {
+      // Unread priority / order issues / new-order counts (see priorityMessages) plus ALL-tab NEW when definitions differ
       list = list.filter((u) => clientHasUnreadPriorityMessages(u) || getClientRow(u, 0).newCount > 0);
-      list.sort((a, b) => getLastUnreadPriorityMessageTime(b) - getLastUnreadPriorityMessageTime(a));
+      const alertTime = (u: any) => getLastUnreadPriorityMessageTime(u);
+      list.sort((a, b) => {
+        const diff = alertTime(b) - alertTime(a);
+        return diff !== 0 ? diff : created(b) - created(a);
+      });
     } else {
       // Most recent: newest first
       list.sort((a, b) => created(b) - created(a));
@@ -1558,10 +1682,14 @@ export default function AdminClients() {
                               );
                             })()}
                           </div>
-                          <div className="grid grid-cols-3 gap-4 text-center" style={{ paddingTop: '10px' }}>
+                          <div className="grid grid-cols-4 gap-2 sm:gap-4 text-center" style={{ paddingTop: '10px' }}>
                               <div>
                                 <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '13px' }}>{selectedTotalOrders}</p>
                                 <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>ORDERS</p>
+                              </div>
+                              <div>
+                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '13px' }}>{selectedTotalLoyaltyPointsEarned.toLocaleString()}</p>
+                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>POINTS</p>
                               </div>
                               <div>
                                 <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '13px' }}>${selectedTotalSpent.toLocaleString()}</p>
@@ -1726,7 +1854,7 @@ export default function AdminClients() {
                             </div>
                           );
                         })()}
-                        {/* Reviews panel – below affiliate (Rewards) content */}
+                        {/* Reviews panel – below affiliate (Rewards) content; tap TOTAL / MEDIA / PENDING to expand like photos/videos/socials */}
                         {selectedClient && (() => {
                           const email = (selectedClient.email || '').trim().toLowerCase();
                           let reviewList: Array<{ id?: string; date?: string; createdAt?: string; submittedAt?: string; text?: string; rating?: number; hasPhoto?: boolean; hasVideo?: boolean; status?: string; pending?: boolean }> = [];
@@ -1746,44 +1874,85 @@ export default function AdminClients() {
                             // ignore
                           }
                           const row = getReviewsTabRow(selectedClient, 0);
+                          const reviewListMedia = reviewList.filter((r: any) => r?.hasPhoto || r?.hasVideo);
+                          const reviewListPending = reviewList.filter((r: any) => r?.status === 'pending' || r?.pending);
+                          const reviewEmptyStyle = {
+                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                            fontSize: '11px',
+                            color: '#808080',
+                            textTransform: 'uppercase' as const,
+                          };
+                          const renderReviewCards = (list: typeof reviewList, heading: string) => (
+                            <div className="mt-4 pt-4" style={{ borderTop: '1px solid #e5e7eb' }}>
+                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', marginBottom: '8px', textTransform: 'uppercase' }}>{heading}</p>
+                              <div className="space-y-3 max-h-64 overflow-y-auto" style={{ paddingTop: '2px' }}>
+                                {list.map((r: any, i: number) => {
+                                  const dateStr = (r.updatedAt ?? r.updated_at ?? r.date ?? r.createdAt ?? r.submittedAt) || '—';
+                                  const displayDate = typeof dateStr === 'string' ? (() => { try { return new Date(dateStr).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }); } catch { return dateStr; } })() : '—';
+                                  return (
+                                    <div key={r.id ?? i} className="py-3 border-b border-gray-100 last:border-0">
+                                      <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', margin: 0 }}>{displayDate}</p>
+                                      {(r.rating != null) && <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '2px 0 0 0' }}>Rating: {r.rating}</p>}
+                                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', margin: (r.rating != null ? '2px' : '4px') + ' 0 0 0' }}>{r.text ?? r.message ?? r.content ?? '—'}</p>
+                                      {(r.hasPhoto || r.hasVideo) && (
+                                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '4px 0 0 0' }}>
+                                          {(r.status === 'pending' || r.pending) ? 'PENDING' : 'APPROVED'}
+                                        </p>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          );
                           return (
                             <div className="bg-white border border-gray-200 p-4 mb-6">
                               <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', margin: '0 0 12px 0', textTransform: 'uppercase' }}>REVIEWS</h3>
                               <div className="grid grid-cols-3 gap-4 text-center">
-                                <div>
-                                  <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{row.totalReviews}</p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>TOTAL</p>
-                                </div>
-                                <div>
-                                  <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{row.reviewsWithPhotosVideos}</p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>MEDIA</p>
-                                </div>
-                                <div>
-                                  <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px' }}>{row.pendingReviews}</p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>PENDING</p>
-                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => setReviewsExpand((prev) => (prev === 'total' ? null : 'total'))}
+                                  className="text-center cursor-pointer border-0 bg-transparent p-0"
+                                  style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}
+                                >
+                                  <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px', margin: 0 }}>{row.totalReviews}</p>
+                                  <p style={{ margin: 0 }}>TOTAL</p>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setReviewsExpand((prev) => (prev === 'media' ? null : 'media'))}
+                                  className="text-center cursor-pointer border-0 bg-transparent p-0"
+                                  style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}
+                                >
+                                  <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px', margin: 0 }}>{row.reviewsWithPhotosVideos}</p>
+                                  <p style={{ margin: 0 }}>MEDIA</p>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setReviewsExpand((prev) => (prev === 'pending' ? null : 'pending'))}
+                                  className="text-center cursor-pointer border-0 bg-transparent p-0"
+                                  style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}
+                                >
+                                  <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '14px', margin: 0 }}>{row.pendingReviews}</p>
+                                  <p style={{ margin: 0 }}>PENDING</p>
+                                </button>
                               </div>
-                              {reviewList.length > 0 && (
-                                <div className="mt-4 pt-4" style={{ borderTop: '1px solid #e5e7eb' }}>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', marginBottom: '8px', textTransform: 'uppercase' }}>ALL REVIEWS (NEWEST FIRST)</p>
-                                  <div className="space-y-3 max-h-64 overflow-y-auto" style={{ paddingTop: '2px' }}>
-                                    {reviewList.map((r: any, i: number) => {
-                                      const dateStr = (r.updatedAt ?? r.updated_at ?? r.date ?? r.createdAt ?? r.submittedAt) || '—';
-                                      const displayDate = typeof dateStr === 'string' ? (() => { try { return new Date(dateStr).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }); } catch { return dateStr; } })() : '—';
-                                      return (
-                                        <div key={r.id ?? i} className="py-3 border-b border-gray-100 last:border-0">
-                                          <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', margin: 0 }}>{displayDate}</p>
-                                          {(r.rating != null) && <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '2px 0 0 0' }}>Rating: {r.rating}</p>}
-                                          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', margin: (r.rating != null ? '2px' : '4px') + ' 0 0 0' }}>{r.text ?? r.message ?? r.content ?? '—'}</p>
-                                          {(r.hasPhoto || r.hasVideo) && (
-                                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '4px 0 0 0' }}>
-                                              {(r.status === 'pending' || r.pending) ? 'PENDING' : 'APPROVED'}
-                                            </p>
-                                          )}
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
+                              {reviewsExpand === 'total' && reviewList.length > 0 && renderReviewCards(reviewList, 'ALL REVIEWS (NEWEST FIRST)')}
+                              {reviewsExpand === 'total' && reviewList.length === 0 && (
+                                <div className="mt-4 pt-4 flex justify-center" style={{ borderTop: '1px solid #e5e7eb' }}>
+                                  <p className="text-center" style={reviewEmptyStyle}>NO REVIEWS SUBMITTED YET.</p>
+                                </div>
+                              )}
+                              {reviewsExpand === 'media' && reviewListMedia.length > 0 && renderReviewCards(reviewListMedia, 'REVIEWS WITH PHOTO OR VIDEO')}
+                              {reviewsExpand === 'media' && reviewListMedia.length === 0 && (
+                                <div className="mt-4 pt-4 flex justify-center" style={{ borderTop: '1px solid #e5e7eb' }}>
+                                  <p className="text-center" style={reviewEmptyStyle}>NO REVIEWS WITH MEDIA.</p>
+                                </div>
+                              )}
+                              {reviewsExpand === 'pending' && reviewListPending.length > 0 && renderReviewCards(reviewListPending, 'PENDING APPROVAL')}
+                              {reviewsExpand === 'pending' && reviewListPending.length === 0 && (
+                                <div className="mt-4 pt-4 flex justify-center" style={{ borderTop: '1px solid #e5e7eb' }}>
+                                  <p className="text-center" style={reviewEmptyStyle}>NO PENDING REVIEWS.</p>
                                 </div>
                               )}
                             </div>
@@ -1885,9 +2054,19 @@ export default function AdminClients() {
                             </div>
                           )}
                           {personalSectionTab === 'cart' && selectedClient && (() => {
-                            const id = selectedClient.id as string | undefined;
+                            const id = (selectedClientForOrders?.id || selectedClient.id) as string | undefined;
                             const items = (id ? adminCartByUserId[id] : null) ?? [];
                             const list = Array.isArray(items) ? items : [];
+                            if (cartWishlistLoading && isSupabaseUserId(id)) {
+                              return (
+                                <p className="text-center py-4" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}>LOADING CART…</p>
+                              );
+                            }
+                            if (id && !isSupabaseUserId(id)) {
+                              return (
+                                <p className="text-center py-4" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}>CART SYNC USES SUPABASE ACCOUNTS (UUID). MOCK / LOCAL-ONLY CLIENTS HAVE NO CLOUD CART.</p>
+                              );
+                            }
                             return list.length === 0 ? (
                               <p className="text-center py-4" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}>THIS CART IS EMPTY.</p>
                             ) : (
@@ -1902,9 +2081,19 @@ export default function AdminClients() {
                             );
                           })()}
                           {personalSectionTab === 'wishlist' && selectedClient && (() => {
-                            const id = selectedClient.id as string | undefined;
+                            const id = (selectedClientForOrders?.id || selectedClient.id) as string | undefined;
                             const items = (id ? adminWishlistByUserId[id] : null) ?? [];
                             const list = Array.isArray(items) ? items : [];
+                            if (cartWishlistLoading && isSupabaseUserId(id)) {
+                              return (
+                                <p className="text-center py-4" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}>LOADING WISHLIST…</p>
+                              );
+                            }
+                            if (id && !isSupabaseUserId(id)) {
+                              return (
+                                <p className="text-center py-4" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}>WISHLIST SYNC USES SUPABASE ACCOUNTS (UUID). MOCK / LOCAL-ONLY CLIENTS HAVE NO CLOUD WISHLIST.</p>
+                              );
+                            }
                             return list.length === 0 ? (
                               <p className="text-center py-4" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}>THIS WISHLIST IS EMPTY.</p>
                             ) : (
@@ -2712,7 +2901,7 @@ export default function AdminClients() {
                         onClick={() => setShowSortDropdown(false)}
                       />
                       <div
-                          className="absolute left-0 py-1 bg-white border border-black shadow-lg z-20 min-w-[120px]"
+                          className="absolute left-0 py-1 bg-white border border-black shadow-lg z-20 min-w-[120px] max-h-60 overflow-y-auto"
                         style={{ borderWidth: '1.3px', marginTop: '7px' }}
                       >
                         {SORT_OPTIONS.filter((opt) => opt !== sortOption).map((opt) => (

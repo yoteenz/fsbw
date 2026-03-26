@@ -202,13 +202,35 @@ export function applyAdminSyncPayload(
  * Build minimal currentUser from Supabase session when getProfile() fails (e.g. no API or profile not ready).
  * Call after email confirm or sign-in so the user is signed in and not shown "create account on this device first".
  */
-export function buildMinimalUserFromSupabaseSession(sessionUser: { id: string; email?: string; user_metadata?: Record<string, unknown> }): Record<string, unknown> {
+function metaStr(meta: Record<string, unknown>, ...keys: string[]): string {
+  for (const k of keys) {
+    const v = meta[k];
+    if (typeof v === 'string' && v.trim()) return v.trim();
+  }
+  return '';
+}
+
+/** Build app user from Supabase session.user (including raw_metadata after email confirm). */
+export function buildMinimalUserFromSupabaseSession(sessionUser: {
+  id: string;
+  email?: string;
+  user_metadata?: Record<string, unknown>;
+  raw_user_meta_data?: Record<string, unknown>;
+  created_at?: string;
+}): Record<string, unknown> {
   const email = (sessionUser.email || '').trim().toLowerCase();
-  const meta = sessionUser.user_metadata || {};
-  const firstName = (meta.first_name as string) || (meta.firstName as string) || '';
-  const lastName = (meta.last_name as string) || (meta.lastName as string) || '';
-  const phoneNumber = (meta.phone_number as string) || (meta.phoneNumber as string) || '';
-  const birthday = (meta.birthday as string) || '';
+  const meta = { ...(sessionUser.raw_user_meta_data || {}), ...(sessionUser.user_metadata || {}) };
+  const firstName = metaStr(meta, 'first_name', 'firstName');
+  const lastName = metaStr(meta, 'last_name', 'lastName');
+  const phoneNumber = metaStr(meta, 'phone_number', 'phoneNumber');
+  const birthday = metaStr(meta, 'birthday');
+  const referralCode = metaStr(meta, 'referral_code', 'referralCode');
+  const facebook = metaStr(meta, 'facebook');
+  const instagram = metaStr(meta, 'instagram');
+  const youtube = metaStr(meta, 'youtube');
+  const tiktok = metaStr(meta, 'tiktok');
+  const twitter = metaStr(meta, 'twitter');
+  const createdAt = sessionUser.created_at || new Date().toISOString();
   const merged = {
     id: sessionUser.id,
     email: sessionUser.email || '',
@@ -219,9 +241,19 @@ export function buildMinimalUserFromSupabaseSession(sessionUser: { id: string; e
     phoneNumber,
     phone_number: phoneNumber,
     birthday,
+    facebook: facebook || undefined,
+    instagram: instagram || undefined,
+    youtube: youtube || undefined,
+    tiktok: tiktok || undefined,
+    twitter: twitter || undefined,
+    referralCode: referralCode || undefined,
+    createdAt,
     membershipType: 'STANDARD',
     role: isAdminEmail(email) ? 'admin' : undefined,
-    giftCardBalance: 10, // Welcome discount Standard: $10 digital cash per subscription chart
+    giftCardBalance: 10,
+    hasMadeFirstPurchase: false,
+    loyaltyPoints: 0,
+    unlockedDiscounts: ['signup'],
   } as Record<string, unknown>;
   return merged;
 }
@@ -252,14 +284,26 @@ export function applyMinimalUserToStorage(merged: Record<string, unknown>): void
  */
 export function buildProfilePayloadForBackend(minimal: Record<string, unknown>): Record<string, unknown> {
   const email = (minimal.email as string) || '';
+  const str = (k: string) => (typeof minimal[k] === 'string' ? (minimal[k] as string) : '') || '';
+  const referral =
+    str('referralCode') || str('referral_code') || (minimal.referralCode as string) || (minimal.referral_code as string) || '';
   return {
     email,
-    firstName: (minimal.firstName as string) || email.split('@')[0] || 'User',
-    lastName: (minimal.lastName as string) || '',
-    phoneNumber: (minimal.phoneNumber as string) || (minimal.phone_number as string) || '',
+    firstName: (minimal.firstName as string) || str('first_name') || email.split('@')[0] || 'User',
+    lastName: (minimal.lastName as string) || str('last_name'),
+    phoneNumber: (minimal.phoneNumber as string) || str('phone_number'),
     birthday: (minimal.birthday as string) || '',
-    membershipType: 'STANDARD',
-    profileImage: '/assets/profile-thumb.png',
-    giftCardBalance: 10, // Welcome discount Standard: $10 digital cash per subscription chart
+    facebook: minimal.facebook ?? null,
+    instagram: minimal.instagram ?? null,
+    youtube: minimal.youtube ?? null,
+    tiktok: minimal.tiktok ?? null,
+    twitter: minimal.twitter ?? null,
+    referralCode: referral || null,
+    membershipType: (minimal.membershipType as string) || 'STANDARD',
+    profileImage: (minimal.profileImage as string) || '/assets/profile-thumb.png',
+    giftCardBalance: typeof minimal.giftCardBalance === 'number' ? minimal.giftCardBalance : 10,
+    hasMadeFirstPurchase: Boolean(minimal.hasMadeFirstPurchase),
+    loyaltyPoints: Number(minimal.loyaltyPoints) || 0,
+    unlockedDiscounts: Array.isArray(minimal.unlockedDiscounts) ? minimal.unlockedDiscounts : ['signup'],
   };
 }

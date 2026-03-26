@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { getAdminPending } from '../../../utils/api';
@@ -7,12 +7,13 @@ import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 
-const PENDING_TABS = ['ALL', 'REVIEWS', 'FORMS', 'ALERTS'] as const;
+const PENDING_TABS = ['OVERVIEW', 'REVIEWS', 'FORMS', 'AFFILIATE'] as const;
 
 export default function AdminPending() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<typeof PENDING_TABS[number]>('ALL');
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState<typeof PENDING_TABS[number]>('OVERVIEW');
   const [pendingReviews, setPendingReviews] = useState(12);
   const [orderForms, setOrderForms] = useState(8);
   const [pendingItems, setPendingItems] = useState<{ label: string; value: string }[]>([]);
@@ -42,6 +43,13 @@ export default function AdminPending() {
         .catch(() => {});
     }
   }, []);
+
+  useEffect(() => {
+    const t = (searchParams.get('tab') || '').toLowerCase();
+    if (t === 'reviews') {
+      setActiveTab('REVIEWS');
+    }
+  }, [searchParams]);
 
   const displayItems = pendingItems.length > 0 ? pendingItems : [
     { label: 'PENDING REVIEWS', value: String(pendingReviews) },
@@ -147,9 +155,9 @@ export default function AdminPending() {
 
               {/* Tab content */}
               <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '380px', padding: '8px', boxSizing: 'border-box' }}>
-                {activeTab === 'ALL' && (
+                {activeTab === 'OVERVIEW' && (
                   <>
-                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>ALL PENDING ITEMS</h3>
+                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>PENDING ITEMS</h3>
                     <div className="space-y-2">
                       {displayItems.map((row) => (
                         <div key={row.label} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
@@ -162,10 +170,6 @@ export default function AdminPending() {
                 )}
                 {activeTab === 'REVIEWS' && (
                   <>
-                    <div className="text-center py-3 mb-4" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                      <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>12</p>
-                      <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>PENDING REVIEWS</p>
-                    </div>
                     <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>BY TYPE</h3>
                     <div className="space-y-2 mb-4">
                       {[
@@ -255,19 +259,16 @@ export default function AdminPending() {
                     </div>
                   </>
                 )}
-                {activeTab === 'ALERTS' && (
+                {activeTab === 'AFFILIATE' && (
                   <>
-                    <div className="text-center py-3 mb-4" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                      <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>5</p>
-                      <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>ACTIVE ALERTS</p>
-                    </div>
-                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>SYSTEM ALERTS</h3>
+                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>AFFILIATE PENDING</h3>
                     <div className="space-y-2">
                       {[
-                        { label: 'INVENTORY LOW', value: '2 items' },
-                        { label: 'PAYMENT FAILED', value: '1 order' },
-                        { label: 'SCHEDULE CONFLICT', value: '1 booking' },
-                        { label: 'BACKUP OVERDUE', value: '1 system' },
+                        { label: 'CONTENT SUBMISSIONS', value: '18' },
+                        { label: 'PHOTO REVIEW', value: '11' },
+                        { label: 'VIDEO REVIEW', value: '4' },
+                        { label: 'SOCIAL TAGS', value: '7' },
+                        { label: 'POINTS PAYOUT QUEUE', value: '3' },
                       ].map((row) => (
                         <div key={row.label} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
                           <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>{row.label}</span>

@@ -73,8 +73,8 @@ export function clientHasUnreadPriorityMessages(client: Record<string, unknown>)
   return hasMessages || hasOrderIssue || hasNewOrders;
 }
 
-/** Get count of new orders (in progress, not yet delivered) */
-function getClientNewOrdersCount(client: Record<string, unknown>): number {
+/** Get count of new orders (in progress, not yet delivered). Used by Alerts sort/filter on admin clients. */
+export function getClientNewOrdersCount(client: Record<string, unknown>): number {
   const count = (client.newCount ?? 0) as number;
   if (count > 0) return count;
   const emailVal = client.email;

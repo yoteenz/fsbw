@@ -10,7 +10,11 @@ import { isAdminEmail, getEffectiveTierName, isAyoteenzAdminAccount } from '../.
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { getMockClientsForAyoteenz, getMockOrdersForClient, isClientNewsletterSubscribed } from '../clients/page';
 import { isClientBlocked } from '../../../utils/blockedClients';
-import { buildRevenueOrdersList, getDepletedInventory, getOrdersStats, getTotalStartingInventoryUnits } from '../../../utils/adminRevenueStats';
+import { getClientUnreadPriorityMessage } from '../../../utils/priorityMessages';
+import { buildRevenueOrdersList, getDepletedInventory, getOrdersStats, getTopProductBySales, getTotalStartingInventoryUnits } from '../../../utils/adminRevenueStats';
+
+/** Items list fixed height (px) for all dashboard stat cards (scroll when content overflows). */
+const DASHBOARD_CAPPED_STAT_ITEMS_MAX_PX = 103;
 
 // Mock data types and functions to replace Supabase imports
 type DashboardStats = {
@@ -447,6 +451,9 @@ export default function AdminDashboard() {
   const depletedInv = getDepletedInventory(revenueOrdersList);
   const revenueOrderStats = getOrdersStats(revenueOrdersList, stats.totalRevenue ?? currentYearRevenue ?? 0);
   const totalStartingUnits = getTotalStartingInventoryUnits();
+  const topProductBySales = getTopProductBySales(revenueOrdersList);
+  const topProductDisplay =
+    topProductBySales != null ? `${topProductBySales.label} (${topProductBySales.count})` : '—';
 
   // Helper function to format date without year (M/D format)
   const formatDateWithoutYear = (dateString: string) => {
@@ -464,19 +471,43 @@ export default function AdminDashboard() {
   const totalReviewsCount = reviewsData?.totalReviews ?? 0;
   const averageRatingDisplay = reviewsData?.averageRating ?? 0;
 
+  const unreadPriorityMessagesTotal = visibleClients.reduce((sum: number, c: any) => {
+    const u = getClientUnreadPriorityMessage(c);
+    return sum + (u?.unreadCount ?? 0);
+  }, 0);
+
   // PENDING card: use API pendingItems when available so counts match admin Pending page
-  const pendingCardItems = (pendingData?.pendingItems?.length ?? 0) > 0
-    ? pendingData!.pendingItems.map((p) => ({
-        label: p.label,
-        value: p.value,
-        color: (p.label.includes('ORDER FORMS') || p.label.includes('REVIEWS')) ? 'text-red-500' as const : 'text-gray-500' as const,
-      }))
-    : [
-        { label: 'REVIEWS', value: String(pendingReviewsCount), color: 'text-gray-500' as const },
-        { label: 'ORDER FORMS', value: String(orderFormsCount), color: 'text-red-500' as const },
-        { label: 'TIER UPGRADES', value: '0', color: 'text-red-500' as const },
-        { label: 'AFFILIATE', value: '0', color: 'text-gray-500' as const },
-      ];
+  const basePendingCardItems =
+    (pendingData?.pendingItems?.length ?? 0) > 0
+      ? pendingData!.pendingItems.map((p) => ({
+          label: p.label,
+          value: p.value,
+          color: (p.label.includes('ORDER FORMS') || p.label.includes('REVIEWS')) ? ('text-red-500' as const) : ('text-gray-500' as const),
+        }))
+      : [
+          { label: 'REVIEWS', value: String(pendingReviewsCount), color: 'text-gray-500' as const },
+          { label: 'ORDER FORMS', value: String(orderFormsCount), color: 'text-red-500' as const },
+          { label: 'TIER UPGRADES', value: '0', color: 'text-red-500' as const },
+          { label: 'AFFILIATE', value: '0', color: 'text-gray-500' as const },
+        ];
+
+  const pendingCardItems = (() => {
+    if (basePendingCardItems.some((p) => p.label.toUpperCase().includes('MESSAGES'))) {
+      return basePendingCardItems;
+    }
+    const messagesRow = {
+      label: 'MESSAGES',
+      value: String(unreadPriorityMessagesTotal),
+      color: (unreadPriorityMessagesTotal > 0 ? 'text-red-500' : 'text-gray-500') as const,
+    };
+    const affiliateIdx = basePendingCardItems.findIndex((p) => p.label.toUpperCase().includes('AFFILIATE'));
+    if (affiliateIdx === -1) return [...basePendingCardItems, messagesRow];
+    return [
+      ...basePendingCardItems.slice(0, affiliateIdx + 1),
+      messagesRow,
+      ...basePendingCardItems.slice(affiliateIdx + 1),
+    ];
+  })();
 
   // MEETINGS: use getAdminMeetings() (same API as admin Meetings page); fallback to dashboard bookings or diverseBookings
   const meetingsFromMeetingsApi = (meetingsData?.meetings ?? [])
@@ -503,6 +534,7 @@ export default function AdminDashboard() {
       count: clientsWithDeliveredCount,
       items: [
         { label: 'NEW ACCOUNTS', value: String(newAccountsFromList), color: 'text-red-500' },
+        { label: 'EMAIL MARKETING', value: String(clientTiers.emailMarketing ?? 0), color: 'text-gray-500' },
         { label: 'STANDARD MEMBERS', value: String(clientTiers.Standard ?? 0), color: 'text-black' },
         { label: 'PREMIUM MEMBERS', value: String(clientTiers.Premium ?? 0), color: 'text-red-500' },
         { label: 'REFERRALS', value: String(referralCountDisplay), color: 'text-gray-500' }
@@ -525,13 +557,15 @@ export default function AdminDashboard() {
         { label: 'INVENTORY', value: `${depletedInv.totalUnits}/${totalStartingUnits}`, color: 'text-gray-500' },
         { label: 'ORDERS RECEIVED', value: String(revenueOrderStats.unfulfilledCount), color: 'text-red-500' },
         { label: 'QUARTERLY SALES', value: formatCurrencyK(quarterlyNetIncome), color: 'text-gray-500' },
-        { label: 'TAX DEDUCTIONS', value: formatCurrency(Math.round(taxesPaid)), color: 'text-gray-500' }
+        { label: 'TAX DEDUCTIONS', value: formatCurrency(Math.round(taxesPaid)), color: 'text-gray-500' },
+        { label: 'TOP PRODUCT', value: topProductDisplay, color: 'text-gray-500' }
       ],
       highlight: 'PERFORMANCE STRONG - ON TRACK TO EXCEED TARGETS',
       tiers: [
         { label: 'Q1', value: `${Math.round((quarterlyRevenue.Q1 || 0) / 1000).toLocaleString('en-US')}K`, color: 'text-red-500' },
         { label: 'Q2', value: `${Math.round((quarterlyRevenue.Q2 || 0) / 1000).toLocaleString('en-US')}K`, color: 'text-red-500' },
-        { label: 'Q3', value: `${Math.round((quarterlyRevenue.Q3 || 0) / 1000).toLocaleString('en-US')}K`, color: 'text-red-500' }
+        { label: 'Q3', value: `${Math.round((quarterlyRevenue.Q3 || 0) / 1000).toLocaleString('en-US')}K`, color: 'text-red-500' },
+        { label: 'Q4', value: `${Math.round((quarterlyRevenue.Q4 || 0) / 1000).toLocaleString('en-US')}K`, color: 'text-red-500' }
       ]
     },
 
@@ -624,7 +658,7 @@ export default function AdminDashboard() {
         items: [
           { label: 'AFFILIATE', value: 'Campaign stats', color: 'text-red-500' },
           { label: 'CHALLENGES', value: 'Slay & more', color: 'text-gray-500' },
-          { label: 'OFFERS', value: 'Special offer config', color: 'text-red-500' },
+          { label: 'SPECIAL OFFERS', value: 'Special offer config', color: 'text-red-500' },
           { label: 'ALERTS', value: 'Send notifications', color: 'text-red-500' }
         ],
         activity: getMarketingActivity()
@@ -726,9 +760,14 @@ export default function AdminDashboard() {
         
         <div className="pb-6 px-4">
           <div className="max-w-md mx-auto" style={{ minHeight: 'calc(100dvh - 160px)' }}>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 items-start">
               {statsData.map((stat, index) => (
-                <StatsCard key={index} data={stat} onCardClick={handleCardClick} />
+                <StatsCard
+                  key={index}
+                  data={stat}
+                  onCardClick={handleCardClick}
+                  itemsMaxHeightPx={DASHBOARD_CAPPED_STAT_ITEMS_MAX_PX}
+                />
               ))}
             </div>
             

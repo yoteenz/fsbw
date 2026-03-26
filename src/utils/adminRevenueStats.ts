@@ -163,6 +163,35 @@ export function getDepletedInventory(orders: RevenueOrderForStats[]): DepletedIn
   return { products, packaging, totalUnits };
 }
 
+/** Per-unit line-item sales counts (same normalization as admin Revenue overview TOP PRODUCTS). */
+export type ProductSalesRow = { label: string; count: number };
+
+/**
+ * Count how many order line items map to each canonical product (NOIR, BLANCO, …).
+ * Same rules as admin Revenue page `topProductsBySales`; sorted by count descending.
+ */
+export function getProductSalesCounts(orders: RevenueOrderForStats[]): ProductSalesRow[] {
+  const counts: Record<string, number> = Object.fromEntries(PRODUCT_NAMES.map((p) => [p, 0])) as Record<string, number>;
+  const normalize = (name: string) => (name || '').toUpperCase().replace(/\s+/g, ' ').trim();
+  for (const order of orders) {
+    const items = order.lineItems?.length ? order.lineItems : [{ productName: order.productName }];
+    for (const item of items) {
+      const n = normalize((item as { productName?: string }).productName || '');
+      const key = PRODUCT_NAMES.find((p) => n === p || n.includes(p) || p.replace(/\s+/g, ' ').includes(n));
+      if (key) counts[key]++;
+    }
+  }
+  return PRODUCT_NAMES.map((name) => ({ label: name, count: counts[name] ?? 0 })).sort((a, b) => b.count - a.count);
+}
+
+/** Best-selling unit by line-item count; null if no product sales recorded. */
+export function getTopProductBySales(orders: RevenueOrderForStats[]): ProductSalesRow | null {
+  const rows = getProductSalesCounts(orders);
+  const top = rows[0];
+  if (!top || top.count === 0) return null;
+  return top;
+}
+
 export function getOrdersStats(
   orders: RevenueOrderForStats[],
   totalRevenue: number

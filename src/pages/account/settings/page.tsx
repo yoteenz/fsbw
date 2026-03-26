@@ -121,6 +121,7 @@ function SettingsPage() {
         localStorage.setItem('registeredUsers', JSON.stringify(registered));
       }
       setUserData((prev: any) => (prev ? { ...prev, ...stored } : prev));
+      patchNotificationPrefsToCloud(stored as Record<string, boolean>);
     } catch (_) {}
   };
   const [ordersAnimations, setOrdersAnimations] = useState(() => {
@@ -183,6 +184,23 @@ function SettingsPage() {
         }
       }
       setUserData((prev: any) => (prev ? { ...prev, ...payload } : prev));
+      if (isSupabaseConfigured()) {
+        const supabase = getSupabase();
+        if (supabase) {
+          void supabase.auth.getSession().then(({ data: { session } }) => {
+            if (!session) return;
+            patchProfile({
+              facebook: payload.facebook || null,
+              instagram: payload.instagram || null,
+              youtube: payload.youtube || null,
+              tiktok: payload.tiktok || null,
+              twitter: payload.twitter || null,
+            })
+              .then(() => trackActivity('profile_update'))
+              .catch(() => {});
+          });
+        }
+      }
     } catch (_) {}
   };
 
@@ -222,6 +240,22 @@ function SettingsPage() {
         patchProfile(apiPayload).then(() => trackActivity('profile_update')).catch(() => {});
       }
     } catch (_) {}
+  };
+
+  const patchNotificationPrefsToCloud = (stored: Record<string, boolean>) => {
+    if (!isSupabaseConfigured()) return;
+    const supabase = getSupabase();
+    if (!supabase) return;
+    void supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) return;
+      const body: Record<string, boolean> = {};
+      if (stored.notificationNewsletter !== undefined) body.notificationNewsletter = stored.notificationNewsletter;
+      if (stored.notificationSales !== undefined) body.notificationSales = stored.notificationSales;
+      if (stored.notificationOrderTracking !== undefined)
+        body.notificationOrderTracking = stored.notificationOrderTracking;
+      if (Object.keys(body).length === 0) return;
+      patchProfile(body).then(() => trackActivity('profile_update')).catch(() => {});
+    });
   };
 
   const handleResetPasswordSubmit = () => {

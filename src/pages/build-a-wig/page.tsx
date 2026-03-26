@@ -385,14 +385,8 @@ export default function BuildAWigPage() {
           prices.colorPrice = 0; // PLATINUM is default (free)
         }
       } else {
-        // For noir and other products
-        prices.colorPrice = 100;
-        
-        // Add extra $40 for lengths over 30" (excluding default color)
-        // This is in addition to the length price calculated above
-        if (selections.length && ['30"', '32"', '34"', '36"', '40"'].includes(selections.length)) {
-          prices.colorPrice += 40;
-        }
+        // For noir and other products: match color sub-page customize/edit (`getSelectedPrice`) — flat $120 for any non-default color
+        prices.colorPrice = 120;
       }
     }
     

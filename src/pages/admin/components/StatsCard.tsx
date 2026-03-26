@@ -28,6 +28,8 @@ interface StatsCardProps {
   data: StatsCardData;
   /** Optional callback for card click */
   onCardClick?: (title: string) => void;
+  /** Cap the items list height (px) and scroll vertically — admin dashboard passes this for every stat card. */
+  itemsMaxHeightPx?: number;
 }
 
 /**
@@ -36,7 +38,7 @@ interface StatsCardProps {
  * The component defensively guards against missing / malformed data
  * and provides minimal, readable error handling.
  */
-export default function StatsCard({ data, onCardClick }: StatsCardProps) {
+export default function StatsCard({ data, onCardClick, itemsMaxHeightPx }: StatsCardProps) {
   const navigate = useNavigate();
 
   // ----- Defensive defaults -------------------------------------------------
@@ -191,8 +193,15 @@ export default function StatsCard({ data, onCardClick }: StatsCardProps) {
     }
   };
 
+  const capItems = itemsMaxHeightPx != null && itemsMaxHeightPx > 0;
+
   return (
-    <div className="bg-white/60 backdrop-blur-sm border border-black p-4 min-h-[140px] flex flex-col overflow-hidden shadow-lg transition-all duration-300 ease-out" style={{ borderWidth: '1.3px' }}>
+    <div
+      className={`bg-white/60 backdrop-blur-sm border border-black p-4 flex flex-col overflow-hidden shadow-lg transition-all duration-300 ease-out ${
+        capItems ? 'w-full min-h-0' : 'min-h-[140px]'
+      }`.trim()}
+      style={{ borderWidth: '1.3px' }}
+    >
       {/* Header with negative top margin to move even higher */}
       <div className="flex items-center justify-between -mt-1">
         <button
@@ -218,14 +227,23 @@ export default function StatsCard({ data, onCardClick }: StatsCardProps) {
       </div>
 
       {/* ---------- Body ------------------------------------------------------ */}
-      
-      <div className="flex-1 flex flex-col overflow-hidden mt-2">
-        {/* Items list – auto-scroll for Meetings and Brand cards only */}
-        <div className="flex-1 overflow-hidden">
-          <div 
+      {/* Capped cards: no flex-1 here — avoids grid row stretch + empty flex growth overriding maxHeight */}
+      <div className={`flex flex-col overflow-hidden mt-2 ${capItems ? '' : 'flex-1'}`}>
+        <div className={capItems ? 'overflow-hidden min-h-0' : 'flex-1 overflow-hidden min-h-0'}>
+          <div
             ref={itemsContainerRef}
-            className="space-y-2 overflow-x-auto scrollbar-hide"
-            style={{ scrollBehavior: "auto" }}
+            className={`space-y-2 ${capItems ? 'overflow-y-auto overflow-x-auto' : 'overflow-x-auto scrollbar-hide'}`}
+            style={{
+              scrollBehavior: 'auto',
+              ...(capItems
+                ? {
+                    height: itemsMaxHeightPx,
+                    minHeight: itemsMaxHeightPx,
+                    maxHeight: itemsMaxHeightPx,
+                    WebkitOverflowScrolling: 'touch',
+                  }
+                : {}),
+            }}
           >
             {items.map((item, idx) => (
               <div key={idx} className="text-[9px] text-left w-max pr-2">
@@ -240,6 +258,37 @@ export default function StatsCard({ data, onCardClick }: StatsCardProps) {
                         /{item.value.split('/')[1]}
                       </span>
                     </>
+                  ) : item.label === "TOP PRODUCT" ? (
+                    (() => {
+                      const m = item.value.match(/^(.+)\s+(\(\d+\))$/);
+                      if (!m) {
+                        return (
+                          <span
+                            className="font-medium font-futura uppercase"
+                            style={{ fontWeight: "515", color: getColorValue(item.color) }}
+                          >
+                            {item.value}
+                          </span>
+                        );
+                      }
+                      const [, namePart, parenPart] = m;
+                      return (
+                        <>
+                          <span
+                            className="font-medium font-futura uppercase"
+                            style={{ fontWeight: "515", color: getColorValue(item.color) }}
+                          >
+                            {namePart}
+                          </span>
+                          <span
+                            className="font-medium font-futura uppercase"
+                            style={{ fontWeight: "515", color: "#EB1C24" }}
+                          >
+                            {parenPart}
+                          </span>
+                        </>
+                      );
+                    })()
                   ) : (
                     <span
                       className="font-medium font-futura uppercase"
@@ -324,25 +373,34 @@ export default function StatsCard({ data, onCardClick }: StatsCardProps) {
           <div className="mt-1 overflow-hidden">
             <div
               ref={tiersRef}
-              className="pt-0.5 border-t border-gray-200 flex items-center justify-between text-[8px] overflow-x-auto scrollbar-hide whitespace-nowrap"
+              className="pt-0.5 border-t border-gray-200 flex w-full flex-nowrap items-center gap-0.5 text-[7px] leading-tight overflow-hidden"
               style={{ scrollBehavior: "auto" }}
             >
-              {tiers.map((tier, idx) => (
-                <span
-                  key={idx}
-                  className={`whitespace-nowrap font-futura flex-shrink-0 uppercase`}
-                  style={{
-                    fontWeight: '515'
-                  }}
-                >
-                  <span style={{ 
-                    color: tier.label === 'PREM' ? '#000000' : tier.label === 'STD' ? '#EB1C24' : tier.label === 'STANDARD' ? '#808080' : '#808080' 
-                  }}>
-                    {tier.label === 'PREM' ? 'BLACK' : tier.label === 'STD' ? 'RED' : tier.label === 'STANDARD' ? 'SILVER' : tier.label}:
+              {tiers.map((tier, idx) => {
+                const tierColor = getColorValue(tier.color);
+                const displayLabel =
+                  tier.label === 'PREM'
+                    ? 'BLACK'
+                    : tier.label === 'STD'
+                      ? 'RED'
+                      : tier.label === 'STANDARD'
+                        ? 'SILVER'
+                        : tier.label;
+                return (
+                  <span
+                    key={idx}
+                    className="min-w-0 flex-1 text-center font-futura uppercase whitespace-nowrap truncate"
+                    style={{
+                      fontWeight: '515',
+                    }}
+                    title={`${displayLabel}: ${tier.value}`}
+                  >
+                    <span style={{ color: tierColor }}>
+                      {displayLabel}: {tier.value}
+                    </span>
                   </span>
-                  <span style={{ color: getColorValue(tier.color) }}> {tier.value}</span>
-                </span>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

@@ -1,0 +1,53 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { requireAdmin } from '../_lib/adminAuth';
+import { getSupabaseAdmin } from '../_lib/supabase';
+import { writeAuditLog } from '../_lib/auditLog';
+
+const CONFIG_KEY = 'special_offer_admin';
+
+/**
+ * PUT /api/admin/special-offer-config — upsert marketing special-offer JSON (admin only).
+ * Body: full config object (same shape as localStorage specialOfferAdminConfig).
+ */
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'PUT, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') return res.status(204).end();
+
+  if (req.method !== 'PUT') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const admin = await requireAdmin(req);
+  if (!admin) return res.status(403).json({ error: 'Forbidden' });
+
+  const body = typeof req.body === 'object' && req.body !== null && !Array.isArray(req.body) ? req.body : null;
+  if (!body) return res.status(400).json({ error: 'JSON object body required' });
+
+  try {
+    const supabase = getSupabaseAdmin();
+    const row = {
+      key: CONFIG_KEY,
+      value: body as Record<string, unknown>,
+      updated_at: new Date().toISOString(),
+    };
+    const { data, error } = await supabase.from('app_config').upsert(row, { onConflict: 'key' }).select('value').single();
+    if (error) return res.status(500).json({ error: error.message });
+    try {
+      await writeAuditLog({
+        actorId: admin.id,
+        actorEmail: admin.email,
+        action: 'app_config.upsert',
+        resourceType: 'app_config',
+        resourceId: CONFIG_KEY,
+        details: { key: CONFIG_KEY },
+      });
+    } catch {
+      /* ignore */
+    }
+    return res.status(200).json({ ok: true, config: data?.value ?? body });
+  } catch (e) {
+    return res.status(500).json({ error: e instanceof Error ? e.message : 'Internal error' });
+  }
+}

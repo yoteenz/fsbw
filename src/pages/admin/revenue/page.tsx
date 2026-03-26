@@ -13,7 +13,7 @@ import { getAdminRevenue } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
-import { buildRevenueOrdersList, getDepletedInventory, getOrdersStats, getTotalStartingInventoryUnits } from '../../../utils/adminRevenueStats';
+import { buildRevenueOrdersList, getDepletedInventory, getOrdersStats, getProductSalesCounts, getTotalStartingInventoryUnits } from '../../../utils/adminRevenueStats';
 
 const REVENUE_TABS = ['OVERVIEW', 'ORDERS', 'PRODUCTS', 'PAYMENTS'] as const;
 
@@ -389,20 +389,7 @@ export default function AdminRevenue() {
   const inventoryPercent = totalStartingUnits > 0 ? Math.min(100, Math.max(0, Math.round((inventoryTotal / totalStartingUnits) * 100))) : 0;
   const inventoryBannerColor = inventoryPercent >= 25 ? '#16a34a' : '#EB1C24';
 
-  const PRODUCT_NAMES_OVERVIEW = ['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL', 'OCEAN CURL'] as const;
-  const topProductsBySales = useMemo(() => {
-    const counts: Record<string, number> = Object.fromEntries(PRODUCT_NAMES_OVERVIEW.map((p) => [p, 0]));
-    const normalize = (name: string) => (name || '').toUpperCase().replace(/\s+/g, ' ').trim();
-    for (const order of orders) {
-      const items = order.lineItems?.length ? order.lineItems : [{ productName: order.productName }];
-      for (const item of items) {
-        const n = normalize((item as { productName?: string }).productName || '');
-        const key = PRODUCT_NAMES_OVERVIEW.find((p) => n === p || n.includes(p) || p.replace(/\s+/g, ' ').includes(n));
-        if (key) counts[key]++;
-      }
-    }
-    return PRODUCT_NAMES_OVERVIEW.map((name) => ({ label: name, count: counts[name] ?? 0 })).sort((a, b) => b.count - a.count);
-  }, [orders]);
+  const topProductsBySales = useMemo(() => getProductSalesCounts(orders), [orders]);
 
   useEffect(() => {
     let currentUser: { email?: string } | null = null;

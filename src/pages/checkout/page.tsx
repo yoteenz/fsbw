@@ -23,9 +23,19 @@ function getCardBrandDisplay(fullNumber: string): string {
   return 'CARD';
 }
 
+/** Normalize unit display name so "Blanco" / "BLANCO" / " blanco " all match voucher + rush logic. */
+function normalizeCartUnitName(name: unknown): string {
+  return (name || '').toString().toUpperCase().trim();
+}
+
+/** Default included hair color: Blanco → Platinum; all other units → Off Black. */
+function defaultHairColorForUnit(itemName: unknown): string {
+  return normalizeCartUnitName(itemName) === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
+}
+
 /** Single source of truth for voucher types: cart option key, default value, and item price key. Add new voucher types here to match vouchers available vs cart. */
 const VOUCHER_TYPE_CONFIG: Record<string, { optionKey: string; getDefault: (item: any) => string; priceKey: string }> = {
-  COLOR: { optionKey: 'color', getDefault: (item) => (item?.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK'), priceKey: 'colorPrice' },
+  COLOR: { optionKey: 'color', getDefault: (item) => defaultHairColorForUnit(item?.name), priceKey: 'colorPrice' },
   HAIRLINE: { optionKey: 'hairline', getDefault: () => 'NATURAL', priceKey: 'hairlinePrice' },
   STYLING: { optionKey: 'styling', getDefault: () => 'NONE', priceKey: 'stylingPrice' }
 };
@@ -34,20 +44,22 @@ const VOUCHER_TYPE_CONFIG: Record<string, { optionKey: string; getDefault: (item
 function getVoucherAddOnPriceForItem(item: any, type: string): number {
   const config = VOUCHER_TYPE_CONFIG[type];
   if (!config) return 0;
-  const stored = item[config.priceKey];
-  if (stored != null && stored !== '' && !Number.isNaN(Number(stored))) return Number(stored);
-  const val = (item[config.optionKey] || '').toString().toUpperCase();
+  // COLOR: always derive from selection so voucher matches BAW color sub-page (ignore stale cart colorPrice e.g. old $100)
+  if (type !== 'COLOR') {
+    const stored = item[config.priceKey];
+    if (stored != null && stored !== '' && !Number.isNaN(Number(stored))) return Number(stored);
+  }
+  const val = (item[config.optionKey] || '').toString().trim().toUpperCase();
   if (type === 'COLOR') {
     if (!val || val === 'OFF BLACK' || val === 'PLATINUM') return 0;
-    const isBlanco = (item?.name || '').toString().toUpperCase() === 'BLANCO';
+    const isBlanco = normalizeCartUnitName(item?.name) === 'BLANCO';
     if (isBlanco && ['GOLDEN', 'PLATINUM', 'ASH'].includes(val)) {
       if (val === 'GOLDEN') return -20;
       if (val === 'ASH') return 20;
       return 0; // PLATINUM
     }
-    let p = 100;
-    if (item.length && ['30"', '32"', '34"', '36"', '40"'].includes(String(item.length))) p += 40;
-    return p;
+    // Match build-a-wig color sub-page `getSelectedPrice()` for customize/edit (non-Blanco): flat $120 for any non-default color
+    return 120;
   }
   if (type === 'HAIRLINE') {
     if (!val || val === 'NATURAL') return 0;
@@ -267,12 +279,14 @@ function CheckoutPage() {
         return false;
       }
 
-      // Check for non-default color
-      const defaultColor = item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
-      const hasNonDefaultColor = item.color && item.color !== defaultColor;
+      // Check for non-default color (case-insensitive; Blanco default is Platinum, not Off Black)
+      const defaultColor = defaultHairColorForUnit(item.name);
+      const colorNorm = (item.color || '').toString().trim().toUpperCase();
+      const hasNonDefaultColor = Boolean(colorNorm && colorNorm !== defaultColor);
 
       // Check for non-default styling
-      const hasNonDefaultStyling = item.styling && item.styling !== 'NONE';
+      const stylingNorm = (item.styling || '').toString().trim().toUpperCase();
+      const hasNonDefaultStyling = Boolean(stylingNorm && stylingNorm !== 'NONE');
 
       // Check for add-ons
       const hasAddOns = item.addOns && Array.isArray(item.addOns) && item.addOns.length > 0;
@@ -1434,7 +1448,9 @@ function CheckoutPage() {
         if (!isPhysical(item) || left <= 0) return;
         const val = item[optionKey];
         const def = getDefault(item);
-        const hasOption = val != null && val !== '' && String(val).toUpperCase() !== String(def).toUpperCase();
+        const valNorm = val != null && val !== '' ? String(val).trim().toUpperCase() : '';
+        const defNorm = String(def).trim().toUpperCase();
+        const hasOption = valNorm !== '' && valNorm !== defNorm;
         if (!hasOption) return;
         const pricePerUnit = getVoucherAddOnPriceForItem(item, type);
         const qty = item.quantity || 1;
@@ -1868,12 +1884,12 @@ function CheckoutPage() {
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
                     onClick={() => isSubscriptionUpgrade ? navigate('/account/rewards') : navigate('/bag')}
                   >
-                    {isSubscriptionUpgrade ? 'UPGRADE >' : 'BAG >'}
+                    CHECKOUT &gt;
                   </span>{' '}
                   <span
                     style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
                   >
-                    {isSubscriptionUpgrade ? 'CHECKOUT' : 'CHECKOUT'}
+                    {isSubscriptionUpgrade ? 'UPGRADE' : 'BAG'}
                   </span>
                 </>
               )}

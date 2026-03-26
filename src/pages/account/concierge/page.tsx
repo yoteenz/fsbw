@@ -8,6 +8,7 @@ import { getCurrentUser, getEffectiveSubscriptionTier, isMockDataAccount, isAyot
 import { calculateSpecialOfferPrice } from '../../../utils/specialOfferPrice';
 import { getOptionsForUnit, type UnitId } from '../../../utils/productOptions';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
+import { getSpecialOfferAdminConfig } from '../../../utils/api';
 import specialOfferIconUrl from '../../../assets/special-offer2.svg?url';
 
 /** Currency rates (USD base) and display symbols for special offer and elsewhere. */
@@ -299,66 +300,106 @@ function ConciergePage() {
 
   useEffect(() => {
     if (specialOffer !== null && specialOffer.expiresAt > Date.now()) return;
-    try {
-      const rawAdmin = localStorage.getItem(SPECIAL_OFFER_ADMIN_KEY);
-      const adminConfig = rawAdmin ? JSON.parse(rawAdmin) : null;
-      if (adminConfig?.unitId && adminConfig?.startDate) {
-        const unit = SPECIAL_OFFER_UNITS.find((u) => u.id === adminConfig.unitId) ?? SPECIAL_OFFER_UNITS[0];
-        const startMs = new Date(adminConfig.startDate).getTime();
-        const expiresAt = getNextExpirationAfter(startMs); // always 1st of Jan/Mar/May/Jul/Sep/Nov
-        if (expiresAt <= Date.now()) return; // already expired, fall through to random
-        const rawAddOns = Array.isArray(adminConfig.addOns) ? adminConfig.addOns : (Array.isArray((adminConfig as { addons?: string[] }).addons) ? (adminConfig as { addons: string[] }).addons : []);
-        const options = {
-          length: adminConfig.length ?? '24"',
-          density: adminConfig.density ?? '200%',
-          texture: adminConfig.texture ?? 'SILKY',
-          lace: adminConfig.lace ?? '13X6',
-          color: adminConfig.color ?? 'OFF BLACK',
-          hairline: adminConfig.hairline ?? 'NATURAL',
-          styling: adminConfig.styling ?? 'NONE',
-          addOns: rawAddOns.map((a: unknown) => String(a).trim()).filter(Boolean)
-        };
-        const originalPrice = calculateSpecialOfferPrice(unit.id, options);
-        const next = {
-          unitId: unit.id,
-          unitName: unit.name,
-          route: unit.route,
-          originalPrice,
-          discountedPrice: originalPrice - SPECIAL_OFFER_DISCOUNT,
-          options,
-          expiresAt,
-          thumbnailDataUrl: adminConfig.thumbnailDataUrl || undefined
-        };
-        setSpecialOffer(next);
+    let cancelled = false;
+
+    const applyAdminConfig = (adminConfig: Record<string, unknown>): boolean => {
+      const uid = adminConfig.unitId;
+      const start = adminConfig.startDate;
+      if (typeof uid !== 'string' || typeof start !== 'string') return false;
+      const unit = SPECIAL_OFFER_UNITS.find((u) => u.id === uid) ?? SPECIAL_OFFER_UNITS[0];
+      const startMs = new Date(start).getTime();
+      const expiresAt = getNextExpirationAfter(startMs);
+      if (expiresAt <= Date.now()) return false;
+      const rawAddOns = Array.isArray(adminConfig.addOns)
+        ? adminConfig.addOns
+        : Array.isArray(adminConfig.addons)
+          ? adminConfig.addons
+          : [];
+      const options = {
+        length: (typeof adminConfig.length === 'string' ? adminConfig.length : undefined) ?? '24"',
+        density: (typeof adminConfig.density === 'string' ? adminConfig.density : undefined) ?? '200%',
+        texture: (typeof adminConfig.texture === 'string' ? adminConfig.texture : undefined) ?? 'SILKY',
+        lace: (typeof adminConfig.lace === 'string' ? adminConfig.lace : undefined) ?? '13X6',
+        color: (typeof adminConfig.color === 'string' ? adminConfig.color : undefined) ?? 'OFF BLACK',
+        hairline: (typeof adminConfig.hairline === 'string' ? adminConfig.hairline : undefined) ?? 'NATURAL',
+        styling: (typeof adminConfig.styling === 'string' ? adminConfig.styling : undefined) ?? 'NONE',
+        addOns: rawAddOns.map((a: unknown) => String(a).trim()).filter(Boolean)
+      };
+      const originalPrice = calculateSpecialOfferPrice(unit.id, options);
+      const thumb = adminConfig.thumbnailDataUrl;
+      const next = {
+        unitId: unit.id,
+        unitName: unit.name,
+        route: unit.route,
+        originalPrice,
+        discountedPrice: originalPrice - SPECIAL_OFFER_DISCOUNT,
+        options,
+        expiresAt,
+        thumbnailDataUrl: typeof thumb === 'string' && thumb ? thumb : undefined
+      };
+      if (cancelled) return true;
+      setSpecialOffer(next);
+      try {
         localStorage.setItem('specialOffer', JSON.stringify(next));
-        return;
+      } catch (_) { /* ignore */ }
+      return true;
+    };
+
+    void (async () => {
+      let adminConfig: Record<string, unknown> | null = null;
+      try {
+        const fromApi = await getSpecialOfferAdminConfig();
+        if (fromApi && typeof fromApi.unitId === 'string' && fromApi.startDate) {
+          adminConfig = fromApi;
+          try {
+            localStorage.setItem(SPECIAL_OFFER_ADMIN_KEY, JSON.stringify(fromApi));
+          } catch (_) { /* ignore */ }
+        }
+      } catch (_) { /* ignore */ }
+      if (!adminConfig) {
+        try {
+          const rawAdmin = localStorage.getItem(SPECIAL_OFFER_ADMIN_KEY);
+          if (rawAdmin) adminConfig = JSON.parse(rawAdmin) as Record<string, unknown>;
+        } catch (_) {
+          adminConfig = null;
+        }
       }
-    } catch (_) { /* fall through to random */ }
-    const unit = pickRandom(SPECIAL_OFFER_UNITS);
-    const unitOpts = getOptionsForUnit(unit.id as UnitId);
-    const options = {
-      length: pickRandom(unitOpts.length),
-      density: pickRandom(unitOpts.density),
-      texture: pickRandom(unitOpts.texture),
-      lace: pickRandom(unitOpts.lace),
-      color: pickRandom(unitOpts.color)
+      if (cancelled) return;
+      try {
+        if (adminConfig && applyAdminConfig(adminConfig)) return;
+      } catch (_) { /* fall through to random */ }
+      if (cancelled) return;
+      const unit = pickRandom(SPECIAL_OFFER_UNITS);
+      const unitOpts = getOptionsForUnit(unit.id as UnitId);
+      const options = {
+        length: pickRandom(unitOpts.length),
+        density: pickRandom(unitOpts.density),
+        texture: pickRandom(unitOpts.texture),
+        lace: pickRandom(unitOpts.lace),
+        color: pickRandom(unitOpts.color)
+      };
+      const originalPrice = calculateSpecialOfferPrice(unit.id, options);
+      const expirationDate = getNextSpecialOfferExpirationDate();
+      const expiresAt = expirationDate.getTime();
+      const next = {
+        unitId: unit.id,
+        unitName: unit.name,
+        route: unit.route,
+        originalPrice,
+        discountedPrice: originalPrice - SPECIAL_OFFER_DISCOUNT,
+        options,
+        expiresAt
+      };
+      if (cancelled) return;
+      setSpecialOffer(next);
+      try {
+        localStorage.setItem('specialOffer', JSON.stringify(next));
+      } catch (_) { /* ignore */ }
+    })();
+
+    return () => {
+      cancelled = true;
     };
-    const originalPrice = calculateSpecialOfferPrice(unit.id, options);
-    const expirationDate = getNextSpecialOfferExpirationDate();
-    const expiresAt = expirationDate.getTime();
-    const next = {
-      unitId: unit.id,
-      unitName: unit.name,
-      route: unit.route,
-      originalPrice,
-      discountedPrice: originalPrice - SPECIAL_OFFER_DISCOUNT,
-      options,
-      expiresAt
-    };
-    setSpecialOffer(next);
-    try {
-      localStorage.setItem('specialOffer', JSON.stringify(next));
-    } catch (_) {}
   }, []);
 
   const specialOfferExpiresOnLabel = specialOffer

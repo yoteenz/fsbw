@@ -29,6 +29,18 @@ export function fromProfileRow(row: Record<string, unknown>): Record<string, unk
     voucherHistory: row.voucher_history,
     digitalCashHistory: row.digital_cash_history,
     welcomeDiscountTiersCreditedByPeriod: row.welcome_discount_tiers_credited_by_period,
+    notificationNewsletter:
+      (row.notification_newsletter as boolean | null | undefined) ??
+      (row.notificationNewsletter as boolean | null | undefined) ??
+      true,
+    notificationSales:
+      (row.notification_sales as boolean | null | undefined) ??
+      (row.notificationSales as boolean | null | undefined) ??
+      true,
+    notificationOrderTracking:
+      (row.notification_order_tracking as boolean | null | undefined) ??
+      (row.notificationOrderTracking as boolean | null | undefined) ??
+      true,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

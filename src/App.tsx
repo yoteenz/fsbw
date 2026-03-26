@@ -17,6 +17,7 @@ import AdminGuard from './components/AdminGuard';
 import AccountRouteGuard from './components/AccountRouteGuard';
 import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn, enableAuthDebugFromSearch } from './utils/adminAuth';
+import { schedulePushCartWishlistToCloud } from './utils/pushCartWishlistToCloud';
 import AuthDebugPanel from './components/AuthDebugPanel';
 
 // Helper to wrap lazy imports with retry logic and logging
@@ -82,6 +83,7 @@ const AdminBrand = lazyWithLogging(() => import('./pages/admin/brand/page'), 'Ad
 const AdminClients = lazyWithLogging(() => import('./pages/admin/clients/page'), 'AdminClients');
 const AdminDeletedAccounts = lazyWithLogging(() => import('./pages/admin/clients/deleted/page'), 'AdminDeletedAccounts');
 const AdminMeetings = lazyWithLogging(() => import('./pages/admin/meetings/page'), 'AdminMeetings');
+const AdminMeetingsSchedule = lazyWithLogging(() => import('./pages/admin/meetings/schedule/page'), 'AdminMeetingsSchedule');
 const AdminPending = lazyWithLogging(() => import('./pages/admin/pending/page'), 'AdminPending');
 const AdminRevenue = lazyWithLogging(() => import('./pages/admin/revenue/page'), 'AdminRevenue');
 const AdminAccountingReport = lazyWithLogging(() => import('./pages/admin/revenue/accounting-report/page'), 'AdminAccountingReport');
@@ -335,6 +337,25 @@ function App() {
     if (isSignedIn()) persistAuthBackup();
   }, [location.pathname]);
 
+  // When signed in with Supabase, periodically push local cart/wishlist to cloud (debounced per navigation)
+  useEffect(() => {
+    schedulePushCartWishlistToCloud();
+  }, [location.pathname]);
+
+  // Same push when cart/wishlist change without a route change
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const run = () => schedulePushCartWishlistToCloud();
+    window.addEventListener('cartUpdated', run);
+    window.addEventListener('wishlistUpdated', run);
+    window.addEventListener('ordersUpdated', run);
+    return () => {
+      window.removeEventListener('cartUpdated', run);
+      window.removeEventListener('wishlistUpdated', run);
+      window.removeEventListener('ordersUpdated', run);
+    };
+  }, []);
+
   return (
     <ErrorBoundary>
       <AuthDebugPanel />
@@ -366,6 +387,11 @@ function App() {
             </Suspense>
           } />
           <Route path="clients" element={<Navigate to="/admin/clients/overview" replace />} />
+          <Route path="meetings/schedule" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminMeetingsSchedule />
+            </Suspense>
+          } />
           <Route path="meetings" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminMeetings />

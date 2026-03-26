@@ -34,6 +34,11 @@ function toProfileRow(profile: Record<string, unknown>) {
     voucher_history: profile.voucherHistory ?? null,
     digital_cash_history: profile.digitalCashHistory ?? null,
     welcome_discount_tiers_credited_by_period: profile.welcomeDiscountTiersCreditedByPeriod ?? null,
+    notification_newsletter:
+      typeof profile.notificationNewsletter === 'boolean' ? profile.notificationNewsletter : true,
+    notification_sales: typeof profile.notificationSales === 'boolean' ? profile.notificationSales : true,
+    notification_order_tracking:
+      typeof profile.notificationOrderTracking === 'boolean' ? profile.notificationOrderTracking : true,
   };
 }
 
@@ -80,6 +85,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     row.id = user.id;
     row.email = user.email;
     row.updated_at = new Date().toISOString();
+    if (!existing) {
+      row.created_at = new Date().toISOString();
+    }
 
     // Upsert: create profile if none exists (e.g. after email confirm), otherwise update.
     const { data, error } = await supabase

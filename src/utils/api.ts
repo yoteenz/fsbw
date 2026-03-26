@@ -119,6 +119,28 @@ export async function patchProfile(profile: Record<string, unknown>): Promise<Re
   return (await res.json()) as Record<string, unknown>;
 }
 
+/** Public read of admin special-offer card JSON (no auth). Used by concierge; returns null if missing or API unreachable. */
+export async function getSpecialOfferAdminConfig(): Promise<Record<string, unknown> | null> {
+  const base = API_BASE.replace(/\/$/, '');
+  const url = base ? `${base}/api/special-offer-config` : '/api/special-offer-config';
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = (await res.json()) as { config?: unknown };
+    const c = data?.config;
+    if (c != null && typeof c === 'object' && !Array.isArray(c)) return c as Record<string, unknown>;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/** Admin: upsert special-offer marketing JSON to Supabase via API (requires admin session). */
+export async function putAdminSpecialOfferConfig(config: Record<string, unknown>): Promise<void> {
+  const res = await apiFetch('/api/admin/special-offer-config', { method: 'PUT', body: config });
+  if (!res.ok) throw new Error(await res.text());
+}
+
 /** Delete the current user from Supabase Auth so they cannot sign back in. Call before sign-out when user confirms delete account. Throws if unauthenticated (401), not configured (503), or any API error so the UI does not sign out and pretend success. */
 export async function deleteAccount(options?: { deletedFrom?: string }): Promise<void> {
   const res = await apiFetch('/api/delete-account', { method: 'DELETE', body: options ?? undefined });
@@ -141,6 +163,22 @@ export async function recordActivity(eventType: string, payload?: Record<string,
 export async function getOrders(): Promise<{ activeOrders: unknown[]; pastOrders: unknown[] }> {
   const res = await apiFetch('/api/orders');
   if (res.status === 401) return { activeOrders: [], pastOrders: [] };
+  if (!res.ok) throw new Error(await res.text());
+  const data = await res.json();
+  return {
+    activeOrders: Array.isArray(data.activeOrders) ? data.activeOrders : [],
+    pastOrders: Array.isArray(data.pastOrders) ? data.pastOrders : [],
+  };
+}
+
+export async function putOrders(
+  activeOrders: unknown[],
+  pastOrders: unknown[]
+): Promise<{ activeOrders: unknown[]; pastOrders: unknown[] }> {
+  const res = await apiFetch('/api/orders', {
+    method: 'PUT',
+    body: { activeOrders, pastOrders },
+  });
   if (!res.ok) throw new Error(await res.text());
   const data = await res.json();
   return {

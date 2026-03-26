@@ -9,6 +9,7 @@ import {
   ADDON_COMBO_OPTIONS,
   type UnitId
 } from '../../../utils/productOptions';
+import { getSpecialOfferAdminConfig, putAdminSpecialOfferConfig } from '../../../utils/api';
 
 const SPECIAL_OFFER_ADMIN_KEY = 'specialOfferAdminConfig';
 
@@ -64,29 +65,56 @@ function AdminSpecialOfferPageInner({ embedded = false }: AdminSpecialOfferPageP
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(SPECIAL_OFFER_ADMIN_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        const unitId = (parsed.unitId || defaultConfig.unitId) as UnitId;
-        const opts = getOptionsForUnit(unitId);
-        const color = opts.color.includes(parsed.color) ? parsed.color : getDefaultColorForUnit(unitId);
-        const density = opts.density.includes(parsed.density) ? parsed.density : getDefaultDensityForUnit(unitId);
-        const hairline = opts.hairline.includes(parsed.hairline) ? parsed.hairline : defaultConfig.hairline;
-        const styling = opts.styling.includes(parsed.styling) ? parsed.styling : defaultConfig.styling;
-        setConfig({
-          ...defaultConfig,
-          ...parsed,
-          unitId,
-          color,
-          density,
-          hairline,
-          styling
-        });
+    let cancelled = false;
+    const applyParsed = (parsed: Record<string, unknown>) => {
+      if (cancelled) return;
+      const unitId = ((parsed.unitId as string) || defaultConfig.unitId) as UnitId;
+      const opts = getOptionsForUnit(unitId);
+      const color = opts.color.includes(parsed.color as string) ? (parsed.color as string) : getDefaultColorForUnit(unitId);
+      const density = opts.density.includes(parsed.density as string) ? (parsed.density as string) : getDefaultDensityForUnit(unitId);
+      const hairline = opts.hairline.includes(parsed.hairline as string) ? (parsed.hairline as string) : defaultConfig.hairline;
+      const styling = opts.styling.includes(parsed.styling as string) ? (parsed.styling as string) : defaultConfig.styling;
+      setConfig({
+        ...defaultConfig,
+        ...(parsed as Partial<SpecialOfferConfig>),
+        unitId,
+        color,
+        density,
+        hairline,
+        styling
+      });
+    };
+
+    void (async () => {
+      try {
+        const remote = await getSpecialOfferAdminConfig();
+        if (remote && typeof remote.unitId === 'string') {
+          applyParsed(remote);
+          try {
+            localStorage.setItem(SPECIAL_OFFER_ADMIN_KEY, JSON.stringify(remote));
+          } catch {
+            /* ignore */
+          }
+          return;
+        }
+      } catch {
+        /* ignore */
       }
-    } catch {
-      /* ignore */
-    }
+      if (cancelled) return;
+      try {
+        const raw = localStorage.getItem(SPECIAL_OFFER_ADMIN_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw) as Record<string, unknown>;
+          applyParsed(parsed);
+        }
+      } catch {
+        /* ignore */
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleSave = () => {
@@ -97,6 +125,13 @@ function AdminSpecialOfferPageInner({ embedded = false }: AdminSpecialOfferPageP
     } catch (e) {
       console.error('Save special offer config:', e);
     }
+    void (async () => {
+      try {
+        await putAdminSpecialOfferConfig(config as unknown as Record<string, unknown>);
+      } catch (e) {
+        console.error('Save special offer config to database:', e);
+      }
+    })();
   };
 
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {

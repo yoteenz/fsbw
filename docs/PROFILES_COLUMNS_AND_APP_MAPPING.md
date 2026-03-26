@@ -38,8 +38,13 @@ These are the **snake_case** column names the backend reads/writes. The API conv
 | `voucher_history` | (varies) \| null |
 | `digital_cash_history` | (varies) \| null |
 | `welcome_discount_tiers_credited_by_period` | (varies) \| null |
+| `notification_newsletter` | boolean (default true) |
+| `notification_sales` | boolean (default true) |
+| `notification_order_tracking` | boolean (default true) |
 | `created_at` | timestamp (set by DB) |
 | `updated_at` | timestamp (set by API on PATCH) |
+
+**One-shot schema + RLS:** Run the SQL migration in the repo at `supabase/migrations/20260325120000_full_app_sync.sql` in the Supabase SQL Editor (or via Supabase CLI) so `profiles`, `cart`, `wishlist`, and `orders` exist with the columns above and row-level security policies that allow each user to manage their own rows.
 
 If the table is missing any of these columns, GET/PATCH and sync may return partial data or fail. Add missing columns in Supabase (Table Editor or SQL) and backfill if needed.
 
@@ -80,7 +85,10 @@ If the table is missing any of these columns, GET/PATCH and sync may return part
 | `voucherHistory` | `voucher_history` | |
 | `digitalCashHistory` | `digital_cash_history` | |
 | `welcomeDiscountTiersCreditedByPeriod` | `welcome_discount_tiers_credited_by_period` | |
-| `createdAt` | `created_at` | |
+| `notificationNewsletter` | `notification_newsletter` | Settings notification toggles |
+| `notificationSales` | `notification_sales` | |
+| `notificationOrderTracking` | `notification_order_tracking` | |
+| `createdAt` | `created_at` | Join date (account created) |
 | `updatedAt` | `updated_at` | |
 
 ---
