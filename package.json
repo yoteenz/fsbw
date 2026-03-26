@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 3001 --host",
+    "dev": "cross-env VITE_DEV_PROXY_TARGET=https://fsbw.vercel.app vite --port 3001 --host",
+    "dev:no-proxy": "vite --port 3001 --host",
     "dev:proxy": "cross-env VITE_DEV_PROXY_TARGET=https://fsbw.vercel.app vite --port 3001 --host",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview"

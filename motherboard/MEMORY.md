@@ -1624,3 +1624,46 @@ User asked if there is a way to capture the **entire current codebase** (and its
   - `src/pages/products/page.tsx` (`/home/shop`) — mobile and desktop **HOME** nav use `navigate('/lobby')`.
   - `src/pages/products/units/page.tsx` (`/shop/units`) — mobile menu **HOME** uses `navigate('/lobby')` (removed premium → `/` branch that no longer matched lobby intent).
 - **Conventions:** Use `/lobby` for the lobby UI; use `/` only for the app default entry (currently redirects to `/shop/units`).
+
+---
+
+## 2026-03-26 — Dev `/api` proxy default + session-restore JSON diagnostics
+
+- **Context:** Auth debug exports on LAN (`http://10.0.0.117:3001`) showed `session-cookie: register status=404` and `session-restore: json parse error The string did not match the expected pattern` (Safari), with empty storage after reload — classic **Vite dev without `/api` proxied to Vercel** (HTML/404 instead of JSON).
+- **Decision/outcome:** Default `vite.config.ts` dev API proxy to `https://fsbw.vercel.app` when `VITE_DEV_PROXY_TARGET` / `VITE_API_BASE` are unset (same behavior as `npm run dev:proxy`). Parse session-restore bodies as text first, reject non-JSON with a snippet log; log a 404 hint on session-cookie register. Added a dev-only middleware that returns 503 JSON if `/api` is hit with no proxy (should not trigger when default applies).
+- **Changes:** `vite.config.ts`, `src/utils/sessionRestore.ts`
+- **Conventions:** `npm run dev` should now proxy `/api` in development by default; override with `.env.local` if another deployment is used.
+
+---
+
+## 2026-03-26 — `npm run dev` sets proxy via cross-env + always-visible Vite log
+
+- **Context:** User’s terminal showed only live-reload lines after `npm run dev`, with no `[vite] API proxy` line — possible outdated config on disk or env not applied; session `/api` routes still need a guaranteed proxy on Windows.
+- **Decision/outcome:** `package.json` `dev` script now matches `dev:proxy` (`cross-env VITE_DEV_PROXY_TARGET=https://fsbw.vercel.app`). Added `dev:no-proxy` for local work without backend. `vite.config.ts` always `console.warn` once in development: `Session API proxy: /api -> …` or `OFF`.
+- **Changes:** `package.json`, `vite.config.ts`
+
+---
+
+## 2026-03-26 — Session API proxy line logged in `configureServer`
+
+- **Context:** User still did not see `[vite] Session API proxy` after `npm run dev` (only live-reload + Vite ready lines).
+- **Decision/outcome:** Moved the log into a tiny Vite plugin `configureServer` hook so it prints in the same phase as other dev plugins (avoids config-load / `mode` / screen-clear quirks). Only registered when `command === 'serve'`.
+- **Changes:** `vite.config.ts`
+
+---
+
+## 2026-03-26 — Root cause: stale `vite.config.js` shadowed `vite.config.ts`
+
+- **Context:** User still saw only live-reload lines; edits to `vite.config.ts` (proxy, Session API log) had no effect.
+- **Root cause:** Vite resolves `vite.config.js` **before** `vite.config.ts`. An outdated committed `vite.config.js` (live-reload + react only, no `/api` proxy) was loaded; `vite.config.ts` was ignored.
+- **Decision/outcome:** Deleted `vite.config.js`. Added a header comment in `vite.config.ts`: do not reintroduce `vite.config.js`.
+- **Changes:** removed `vite.config.js`; `vite.config.ts` (comment only)
+
+---
+
+## 2026-03-26 — HttpOnly session cookie: omit `Secure` for `http://` dev origins
+
+- **Context:** After fixing Vite proxy, session-restore returned **401** on LAN (`http://10.0.0.117:3001`) — API reachable but no cookie; user auth debug showed `session-restore: non-200 status=401`.
+- **Root cause:** `Set-Cookie` used `Secure` whenever `VERCEL_ENV === 'production'`. Browsers **do not persist or send `Secure` cookies** on **non-HTTPS** pages, so dev over HTTP never stored `baw_session_rt` after `registerServerSessionCookie`, and restore saw no cookie.
+- **Decision/outcome:** Added `api/_lib/sessionCookieSecure.ts` — `useSecureSessionCookieAttribute(req)` sets `Secure` only when `Origin`/`Referer` is `https://`, or when no hint (fallback: prior `VERCEL_ENV` behavior). Optional env: `SESSION_COOKIE_SECURE=true|false`. Updated `api/session-cookie.ts` and `api/session-restore.ts` set/clear cookie with that flag.
+- **Conventions:** Deploy API to Vercel for proxied dev to pick up changes; production `https://` origins still get `Secure`.

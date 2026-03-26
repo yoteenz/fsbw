@@ -26,6 +26,9 @@ dist-ssr
 # Build outputs
 *.tsbuildinfo
 
+# Vite resolves vite.config.js before vite.config.ts; a stray .js shadows the real TS config
+vite.config.js
+
 
 .vercel
 .env*.local

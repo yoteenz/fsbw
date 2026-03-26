@@ -1,3 +1,7 @@
+/**
+ * Single source of truth for Vite. Do not add `vite.config.js` in this repo: Vite resolves
+ * `vite.config.js` before `vite.config.ts`, so a stale .js would ignore this file (no /api proxy).
+ */
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import http from 'node:http'
@@ -29,15 +33,52 @@ function liveReloadPolling() {
   }
 }
 
+/** Default deployed API origin when env is missing — matches `npm run dev:proxy` so /api/session-* works locally. */
+const DEFAULT_DEV_API_TARGET = 'https://fsbw.vercel.app'
+
+/** Log after dev server hooks run (same phase as live-reload) so the line is not lost to screen clear / config-load quirks. */
+function logDevApiProxyPlugin(apiTarget: string) {
+  return {
+    name: 'log-dev-api-proxy',
+    configureServer() {
+      const line = apiTarget
+        ? `[vite] Session API proxy: /api -> ${apiTarget}`
+        : '[vite] Session API proxy: OFF — /api/session-cookie and /api/session-restore will fail until VITE_DEV_PROXY_TARGET or VITE_API_BASE is set'
+      console.log(line)
+    },
+  }
+}
+
+function apiDevNoProxyGuard(apiTarget: string) {
+  return {
+    name: 'api-dev-no-proxy-guard',
+    configureServer(server: { middlewares: { use: (fn: (req: any, res: any, next: () => void) => void) => void } }) {
+      if (apiTarget) return
+      server.middlewares.use((req: { url?: string }, res: { statusCode: number; setHeader: (k: string, v: string) => void; end: (s: string) => void }, next: () => void) => {
+        const path = req.url?.split('?')[0] ?? ''
+        if (!path.startsWith('/api')) return next()
+        res.statusCode = 503
+        res.setHeader('Content-Type', 'application/json; charset=utf-8')
+        res.end(
+          JSON.stringify({
+            error: 'API proxy not configured',
+            hint: 'Set VITE_DEV_PROXY_TARGET or VITE_API_BASE in .env.local, or run npm run dev:proxy. Session routes need /api proxied to your Vercel deployment.',
+          }),
+        )
+      })
+    },
+  }
+}
+
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
   // In dev, proxy /api to deployed backend when VITE_DEV_PROXY_TARGET or VITE_API_BASE is set.
   // loadEnv() only reads .env files; process.env is used so shell-set vars (e.g. start-dev.ps1) work.
   const env = loadEnv(mode, process.cwd(), '')
-  const apiTarget = (env.VITE_DEV_PROXY_TARGET || env.VITE_API_BASE
+  let apiTarget = (env.VITE_DEV_PROXY_TARGET || env.VITE_API_BASE
     || process.env.VITE_DEV_PROXY_TARGET || process.env.VITE_API_BASE || '').trim()
   if (!apiTarget && mode === 'development') {
-    console.log('[vite] No API proxy: set VITE_DEV_PROXY_TARGET or VITE_API_BASE in .env.local (project root) and restart.')
+    apiTarget = DEFAULT_DEV_API_TARGET
   }
   const proxy = apiTarget
     ? {
@@ -47,12 +88,14 @@ export default defineConfig(({ mode }) => {
         },
       }
     : undefined
-  if (proxy) {
-    console.log('[vite] API proxy: /api ->', apiTarget)
-  }
 
   return {
-  plugins: [liveReloadPolling(), react()],
+  plugins: [
+    ...(command === 'serve' ? [logDevApiProxyPlugin(apiTarget)] : []),
+    apiDevNoProxyGuard(apiTarget),
+    liveReloadPolling(),
+    react(),
+  ],
   base: '/',
   build: {
     outDir: 'dist',

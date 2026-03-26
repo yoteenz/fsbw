@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createHmac } from 'crypto';
 import { getAuthUser } from './_lib/auth.js';
+import { useSecureSessionCookieAttribute } from './_lib/sessionCookieSecure.js';
 
 const COOKIE_NAME = 'baw_session_rt';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
@@ -25,8 +26,7 @@ function buildSignedToken(payload: RefreshCookiePayload, secret: string): string
   return `${encodedPayload}.${sig}`;
 }
 
-function setRefreshCookie(res: VercelResponse, token: string): void {
-  const secure = process.env.VERCEL_ENV === 'production';
+function setRefreshCookie(res: VercelResponse, token: string, secure: boolean): void {
   const parts = [
     `${COOKIE_NAME}=${encodeURIComponent(token)}`,
     'Path=/',
@@ -38,8 +38,7 @@ function setRefreshCookie(res: VercelResponse, token: string): void {
   res.setHeader('Set-Cookie', parts.join('; '));
 }
 
-function clearRefreshCookie(res: VercelResponse): void {
-  const secure = process.env.VERCEL_ENV === 'production';
+function clearRefreshCookie(res: VercelResponse, secure: boolean): void {
   const parts = [
     `${COOKIE_NAME}=`,
     'Path=/',
@@ -61,9 +60,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+  const secureCookie = useSecureSessionCookieAttribute(req);
   const body = typeof req.body === 'object' && req.body !== null ? req.body as Record<string, unknown> : {};
   if (body.clear === true) {
-    clearRefreshCookie(res);
+    clearRefreshCookie(res, secureCookie);
     return res.status(200).json({ ok: true });
   }
 
@@ -80,6 +80,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     { rt: refreshToken, uid: user.id, iat: Date.now() },
     secret
   );
-  setRefreshCookie(res, token);
+  setRefreshCookie(res, token, secureCookie);
   return res.status(200).json({ ok: true });
 }

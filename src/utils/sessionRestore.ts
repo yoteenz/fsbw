@@ -18,6 +18,34 @@ function getSupabaseStorageKey(): string | null {
   }
 }
 
+/** Avoid Safari/WebKit "The string did not match the expected pattern" when dev server returns HTML instead of JSON. */
+async function parseSessionRestoreJson(
+  res: Response,
+): Promise<Record<string, unknown> | null> {
+  const ct = res.headers.get('content-type') || '';
+  const raw = await res.text();
+  const trimmed = raw.trim();
+  if (!trimmed) {
+    authDebugLogIfEnabled('session-restore: empty response body');
+    return null;
+  }
+  const looksJson = /application\/json/i.test(ct) || trimmed.startsWith('{');
+  if (!looksJson) {
+    authDebugLogIfEnabled(
+      `session-restore: expected JSON, got content-type=${ct} snippet=${trimmed.slice(0, 160).replace(/\s+/g, ' ')} — is Vite proxying /api to Vercel?`,
+    );
+    return null;
+  }
+  try {
+    return JSON.parse(trimmed) as Record<string, unknown>;
+  } catch (e) {
+    authDebugLogIfEnabled(
+      `session-restore: json parse error ${e instanceof Error ? e.message : String(e)} snippet=${trimmed.slice(0, 160).replace(/\s+/g, ' ')}`,
+    );
+    return null;
+  }
+}
+
 /**
  * Call GET /api/session-restore with credentials so the HttpOnly cookie is sent.
  * If the server returns a session, write it to localStorage and reload so the app starts signed in.
@@ -39,13 +67,15 @@ export async function tryServerSessionRestore(): Promise<boolean> {
     authDebugLogIfEnabled(`session-restore: non-200 status=${res.status}`);
     return false;
   }
-  let data: { access_token?: string; refresh_token?: string; expires_at?: number; expires_in?: number; user?: { id: string; email?: string; user_metadata?: Record<string, unknown> } };
-  try {
-    data = await res.json();
-  } catch (e) {
-    authDebugLogIfEnabled(`session-restore: json parse error ${e instanceof Error ? e.message : String(e)}`);
-    return false;
-  }
+  const parsed = await parseSessionRestoreJson(res);
+  if (!parsed) return false;
+  const data = parsed as {
+    access_token?: string;
+    refresh_token?: string;
+    expires_at?: number;
+    expires_in?: number;
+    user?: { id: string; email?: string; user_metadata?: Record<string, unknown> };
+  };
   const access_token = data.access_token;
   const refresh_token = data.refresh_token;
   const expires_at = data.expires_at ?? 0;
@@ -120,6 +150,11 @@ export async function registerServerSessionCookie(accessToken: string, refreshTo
       body: JSON.stringify({ refresh_token: refreshToken }),
     });
     authDebugLogIfEnabled(`session-cookie: register status=${res.status}`);
+    if (res.status === 404) {
+      authDebugLogIfEnabled(
+        'session-cookie: 404 — ensure Vercel has api/session-cookie and dev uses Vite /api proxy (restart npm run dev)',
+      );
+    }
   } catch {
     authDebugLogIfEnabled('session-cookie: register fetch error');
   }

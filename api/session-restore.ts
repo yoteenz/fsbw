@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createHmac, timingSafeEqual } from 'crypto';
 import { createClient } from '@supabase/supabase-js';
+import { useSecureSessionCookieAttribute } from './_lib/sessionCookieSecure.js';
 
 const COOKIE_NAME = 'baw_session_rt';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
@@ -57,8 +58,7 @@ function verifyAndReadToken(token: string, secret: string): RefreshCookiePayload
   }
 }
 
-function setRefreshCookie(res: VercelResponse, token: string): void {
-  const secure = process.env.VERCEL_ENV === 'production';
+function setRefreshCookie(res: VercelResponse, token: string, secure: boolean): void {
   const parts = [
     `${COOKIE_NAME}=${encodeURIComponent(token)}`,
     'Path=/',
@@ -70,8 +70,7 @@ function setRefreshCookie(res: VercelResponse, token: string): void {
   res.setHeader('Set-Cookie', parts.join('; '));
 }
 
-function clearRefreshCookie(res: VercelResponse): void {
-  const secure = process.env.VERCEL_ENV === 'production';
+function clearRefreshCookie(res: VercelResponse, secure: boolean): void {
   const parts = [
     `${COOKIE_NAME}=`,
     'Path=/',
@@ -99,6 +98,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
+  const secureCookie = useSecureSessionCookieAttribute(req);
+
   const secret = process.env.SESSION_COOKIE_SECRET;
   const supabaseUrl = process.env.SUPABASE_URL;
   const supabaseAnon = process.env.SUPABASE_ANON_KEY;
@@ -112,19 +113,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const payload = verifyAndReadToken(rawToken, secret);
   if (!payload?.rt) {
-    clearRefreshCookie(res);
+    clearRefreshCookie(res, secureCookie);
     return res.status(401).json({ error: 'Invalid session cookie' });
   }
 
   const supabase = createClient(supabaseUrl, supabaseAnon);
   const { data, error } = await supabase.auth.refreshSession({ refresh_token: payload.rt });
   if (error || !data.session || !data.user) {
-    clearRefreshCookie(res);
+    clearRefreshCookie(res, secureCookie);
     return res.status(401).json({ error: 'Session restore failed' });
   }
 
   if (data.user.id !== payload.uid) {
-    clearRefreshCookie(res);
+    clearRefreshCookie(res, secureCookie);
     return res.status(401).json({ error: 'Session user mismatch' });
   }
 
@@ -133,7 +134,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     { rt: data.session.refresh_token, uid: data.user.id, iat: Date.now() },
     secret
   );
-  setRefreshCookie(res, rotated);
+  setRefreshCookie(res, rotated, secureCookie);
 
   return res.status(200).json({
     access_token: data.session.access_token,
