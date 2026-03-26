@@ -26,7 +26,7 @@ function formatSubmittedAt(iso: string): string {
 export default function AdminWorkersPage() {
   useRequireAdminPageAccess();
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
-  const [appsVersion, setAppsVersion] = useState(0);
+  const [, setAppsVersion] = useState(0);
 
   const refreshApps = useCallback(() => setAppsVersion((v) => v + 1), []);
 
