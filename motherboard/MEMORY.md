@@ -1728,3 +1728,14 @@ Summary of the whole conversation so far in this chat: user asked that **tests a
 - **Decisions / outcomes:** Updated `motherboard/CORE.md` **ACTIVE BUILD TARGET** to explicitly require **mobile-first** QA/tests and to treat desktop DevTools as **secondary** (real device / Safari Web Inspector / on-device `auth_debug` first). Clarified that automated/manual tests apply where relevant on mobile-first terms.
 - **Changes:** `motherboard/CORE.md` (expanded ACTIVE BUILD TARGET bullets). This MEMORY entry.
 - **Conventions:** When giving test or trace steps, prefer mobile-appropriate methods first; do not present desktop Chrome DevTools Network as the default instruction path for this repo.
+
+---
+
+## 2026-03-26 — Vercel build: remove unused `isMockDataAccount` in lobby
+
+Summary of the whole conversation so far in this chat: user shared Vercel build logs showing `npm run build` failing with **TS6133**: `isMockDataAccount` declared but never read in `src/pages/lobby/page.tsx`. Prior context in this chat includes mobile auth debugging, profile sync, `VITE_API_BASE`, proxy to `fsbw.vercel.app`, and motherboard mobile-only QA notes.
+
+- **Context:** Deploy pipeline runs `tsc --noEmit && vite build`; unused imports fail the build under strict TS.
+- **Decisions / outcomes:** Remove the unused `isMockDataAccount` import from the lobby page so the build passes.
+- **Changes:** `src/pages/lobby/page.tsx` — `import { isMockDataAccount, ... }` → drop `isMockDataAccount` from the import list.
+- **Conventions:** Keep lobby imports aligned with `tsc --noEmit` (no unused locals/imports).

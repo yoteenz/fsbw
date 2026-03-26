@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from '../../components/base/LoadingScreen';
 import ConfirmationModal from '../../components/ConfirmationModal';
-import { isMockDataAccount, getEffectiveSubscriptionTier, getEffectiveTierName, onSignInSuccess } from '../../utils/adminAuth';
+import { getEffectiveSubscriptionTier, getEffectiveTierName, onSignInSuccess } from '../../utils/adminAuth';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
 import {
   syncAllFromApi,
