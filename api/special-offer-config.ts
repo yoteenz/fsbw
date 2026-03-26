@@ -20,7 +20,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase.from('app_config').select('value').eq('key', CONFIG_KEY).maybeSingle();
-    if (error) return res.status(500).json({ config: null, error: error.message });
+    if (error) {
+      console.error('[special-offer-config] Supabase error:', error.message);
+      return res.status(500).json({ config: null, error: error.message });
+    }
     const value = data?.value;
     if (value != null && typeof value === 'object' && !Array.isArray(value)) {
       return res.status(200).json({ config: value });
@@ -28,6 +31,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).json({ config: null });
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Internal error';
+    console.error('[special-offer-config] Uncaught:', e);
     if (/SUPABASE|Missing/i.test(msg)) {
       return res.status(503).json({ config: null, error: msg });
     }

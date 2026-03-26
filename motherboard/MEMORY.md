@@ -1739,3 +1739,14 @@ Summary of the whole conversation so far in this chat: user shared Vercel build 
 - **Decisions / outcomes:** Remove the unused `isMockDataAccount` import from the lobby page so the build passes.
 - **Changes:** `src/pages/lobby/page.tsx` — `import { isMockDataAccount, ... }` → drop `isMockDataAccount` from the import list.
 - **Conventions:** Keep lobby imports aligned with `tsc --noEmit` (no unused locals/imports).
+
+---
+
+## 2026-03-26 — Vercel: SPA rewrite excludes `/api`; special-offer-config logs
+
+Summary of the whole conversation so far in this chat: user hit `FUNCTION_INVOCATION_FAILED` when calling production `GET /api/special-offer-config` from PowerShell (`Invoke-WebRequest`); PowerShell aliases `curl` to `Invoke-WebRequest` so `curl -i` was wrong. Production API was failing without visible logs because the handler did not `console.error`.
+
+- **Context:** Diagnose Vercel serverless failure for `special-offer-config`; ensure `/api/*` is not caught by SPA rewrite; surface errors in Runtime logs.
+- **Decisions / outcomes:** (1) `vercel.json` rewrite pattern now excludes **`api/`** as well as **`assets/`** so SPA fallback is `((?!api/|assets/).*)`. (2) `api/special-offer-config.ts` logs Supabase errors and uncaught exceptions with `console.error` so Vercel Runtime logs show a line.
+- **Changes:** `vercel.json`, `api/special-offer-config.ts`. This MEMORY entry.
+- **Conventions:** On Windows PowerShell, use **`curl.exe`** for real curl; `curl` may invoke **`Invoke-WebRequest`**.
