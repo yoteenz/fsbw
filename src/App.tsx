@@ -97,6 +97,7 @@ const AdminUsers = lazyWithLogging(() => import('./pages/admin/users/page'), 'Ad
 const AdminNotifications = lazyWithLogging(() => import('./pages/admin/notifications/page'), 'AdminNotifications');
 const AdminAudit = lazyWithLogging(() => import('./pages/admin/audit/page'), 'AdminAudit');
 const AdminSpecialOffer = lazyWithLogging(() => import('./pages/admin/special-offer/page'), 'AdminSpecialOffer');
+const AdminWorkers = lazyWithLogging(() => import('./pages/admin/workers/page'), 'AdminWorkers');
 const AdminBackend = lazyWithLogging(() => import('./pages/admin/backend/page'), 'AdminBackend');
 const AdminMarketing = lazyWithLogging(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
 const NoirUnitPage = lazyWithLogging(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
@@ -445,6 +446,11 @@ function App() {
           <Route path="marketing" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminMarketing />
+            </Suspense>
+          } />
+          <Route path="workers" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminWorkers />
             </Suspense>
           } />
           <Route path="backend" element={

@@ -166,6 +166,9 @@ export default function StatsCard({ data, onCardClick, itemsMaxHeightPx }: Stats
       case 'reviews':
         navigate('/admin/reviews');
         break;
+      case 'workers':
+        navigate('/admin/workers');
+        break;
       case 'brand':
         navigate('/admin/product-editor');
         break;

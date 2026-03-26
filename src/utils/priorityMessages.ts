@@ -73,10 +73,24 @@ export function clientHasUnreadPriorityMessages(client: Record<string, unknown>)
   return hasMessages || hasOrderIssue || hasNewOrders;
 }
 
-/** Get count of new orders (in progress, not yet delivered). Used by Alerts sort/filter on admin clients. */
+/**
+ * Admin clients ALL tab "NEW" = unfulfilled: not canceled, not shipped/delivered/fulfilled, no deliveredAt.
+ * Matches orders still in progress before they leave as SHIPPED (or terminal DELIVERED / FULFILLED).
+ */
+export function isOrderUnfulfilled(o: Record<string, unknown>): boolean {
+  const s = String(o.status || '')
+    .toUpperCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (s === 'CANCELED' || s === 'CANCELLED') return false;
+  if (o.canceledAt) return false;
+  if (o.deliveredAt) return false;
+  if (s === 'DELIVERED' || s === 'SHIPPED' || s === 'FULFILLED') return false;
+  return true;
+}
+
+/** Count of unfulfilled orders (same rules as clients overview NEW column). Used by Alerts sort/filter. */
 export function getClientNewOrdersCount(client: Record<string, unknown>): number {
-  const count = (client.newCount ?? 0) as number;
-  if (count > 0) return count;
   const emailVal = client.email;
   const email = (emailVal == null ? '' : String(emailVal)).trim().toLowerCase();
   if (!email) return 0;
@@ -86,15 +100,13 @@ export function getClientNewOrdersCount(client: Record<string, unknown>): number
     const active = data?.activeOrders || [];
     const past = data?.pastOrders || [];
     const all = [...active, ...past];
-    const notDelivered = all.filter(
-      (o: Record<string, unknown>) =>
-        (String(o.status || '').toUpperCase() !== 'DELIVERED' && !o.deliveredAt) &&
-        (String(o.status || '').toUpperCase() !== 'CANCELED' && !o.canceledAt)
-    );
-    return notDelivered.length;
+    if (all.length > 0) {
+      return all.filter((o: Record<string, unknown>) => isOrderUnfulfilled(o)).length;
+    }
   } catch {
-    return 0;
+    /* ignore */
   }
+  return Number(client.newCount ?? 0) || 0;
 }
 
 /** Get timestamp of most recent new order (in progress) for sorting */
@@ -116,14 +128,10 @@ function getLastNewOrderTime(client: Record<string, unknown>): number {
     const active = data?.activeOrders || [];
     const past = data?.pastOrders || [];
     const all = [...active, ...past];
-    const notDelivered = all.filter(
-      (o: Record<string, unknown>) =>
-        (String(o.status || '').toUpperCase() !== 'DELIVERED' && !o.deliveredAt) &&
-        (String(o.status || '').toUpperCase() !== 'CANCELED' && !o.canceledAt)
-    );
-    if (notDelivered.length === 0) return 0;
+    const unfulfilled = all.filter((o: Record<string, unknown>) => isOrderUnfulfilled(o));
+    if (unfulfilled.length === 0) return 0;
     let maxTime = 0;
-    for (const o of notDelivered) {
+    for (const o of unfulfilled) {
       const d = (o.placedAt ?? o.date ?? o.createdAt) as string | undefined;
       if (d) {
         try {

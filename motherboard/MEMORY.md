@@ -833,3 +833,81 @@ User asked if there is a way to capture the **entire current codebase** (and its
 **Context:** User wanted **delivered** orders always **at the bottom** of the list on the admin **Revenue → Fulfilled orders** page.
 
 **Changes:** `src/pages/admin/revenue/fulfilled-orders/page.tsx` — **`isDeliveredOrder`** (**`status === 'DELIVERED'`** or **`deliveredAt`** set). Per-client arrays sort with **non-delivered first**, then **delivered**; within each group **newest first** by **`date`**. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Clients overview NEW column = unfulfilled orders
+
+**Context:** User clarified that on **Clients → ALL**, the **NEW** column should mean **unfulfilled** orders: **not shipped or delivered yet**.
+
+**Decisions / outcomes:** Shared **`isOrderUnfulfilled`**: excludes **CANCELED/CANCELLED**, **`canceledAt`**, **`deliveredAt`**, and statuses **DELIVERED**, **SHIPPED**, **FULFILLED**; everything else counts as unfulfilled. **`getClientRow`** (ALL tab) and **`getClientNewOrdersCount`** / **`getLastNewOrderTime`** (**`priorityMessages`**, Alerts) use the same rules; when **`userOrders_*`** has rows, counts come from that filter (else fall back to **`client.newCount`** from API). **NEW** header **`title`** tooltip documents meaning.
+
+**Changes:** `src/utils/priorityMessages.ts`, `src/pages/admin/clients/page.tsx`. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Client details stats row: even 4-column centering
+
+**Context:** User wanted **ORDERS / POINTS / TOTAL SPENT / MEMBERSHIP** on client details **horizontally centered** with **even spacing**; prior **grid-cols-4** alignment looked off.
+
+**Changes:** `src/pages/admin/clients/page.tsx` — **`display: grid`**, **`repeat(4, minmax(0, 1fr))`**, **`justifyItems: 'center'`**, **`columnGap: clamp(6px, 3vw, 14px)`**; each metric **`flex flex-col items-center text-center`** with **`min-w-0 w-full`**, tight **`leading-tight`**, **`wordBreak`** on **TOTAL SPENT** label. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Vercel build: TS6133 cartWishlistLoading setter, TS1355 dashboard `as const`
+
+**Context:** **`npm run build`** (**`tsc --noEmit && vite build`**) failed on Vercel: **`setCartWishlistLoading`** unused in **`admin/clients/page.tsx`**; invalid **`as const`** on a ternary in **`admin/dashboard/page.tsx`** (**TS1355**).
+
+**Changes:** **`clients/page.tsx`** — **`useState(false)`** destructuring only **`cartWishlistLoading`** (setter unused). **`dashboard/page.tsx`** — **`messagesRow.color`** typed as **`'text-red-500' | 'text-gray-500'`** instead of **`as const`** on the ternary expression. This MEMORY entry.
+
+---
+
+## 2026-03-26 — WORKERS dashboard card: 103px + summary metrics only
+
+**Context:** User wanted the WORKERS stat card to match other cards’ **103px** items height and show **key metrics only** on the dashboard; full duties, daily tasks, hours, pay, etc. belong on **`/admin/workers`** only.
+
+**Changes:** **`src/utils/adminWorkersDashboard.ts`** — replaced per-employee flattening with **`buildWorkersDashboardSummaryItems()`** (roster count line, truncated function/role line, comp mix hourly/salary/other, contacts on file, pointer to workers page). **`src/pages/admin/dashboard/page.tsx`** — removed taller WORKERS cap; all cards use **`DASHBOARD_CAPPED_STAT_ITEMS_MAX_PX` (103)**. This MEMORY entry.
+
+---
+
+## 2026-03-25 — Client stats row: real table + account route parity
+
+**Context:** User said the four-metric row (**ORDERS / POINTS / TOTAL SPENT / MEMBERSHIP**) still looked wrong and suspected another style was overwriting alignment, padding, or spacing after an earlier grid/table-div fix.
+
+**Topics / diagnosis:** (1) **Overview** (`src/pages/admin/clients/page.tsx`) already used **`display: table` on `div`s**; that can still interact badly with nested layout in some cases, so switching to a semantic **`<table>`** with **`table-layout: fixed`**, **`<colgroup>`** four **25%** columns, **`td`** with **`minWidth: 0`** keeps equal column widths and centered copy. (2) **Standalone CLIENT DETAILS** (`src/pages/admin/clients/account/page.tsx`) still had **`grid-cols-3`** and **no POINTS** — if the user opens that URL, prior overview-only changes would look “unchanged.”
+
+**Changes:** **`page.tsx` (clients)** — replaced the stats **div table** with **`<table role="presentation">`**, **colgroup**, **tbody/tr/td**, same typography and **6px** horizontal cell padding. **`account/page.tsx`** — **`totalLoyaltyPoints`** from **`userOrders_*`** (**`pointsEarned`** or rounded **subtotal/total**, else **`client.loyaltyPoints`**), same four columns in a matching fixed-layout table; membership label color **#000**, other labels **gray-600** equivalent (**#4b5563**).
+
+**Conventions:** Prefer real **`<table>`** for “four equal columns, centered” admin stat rows when div-as-table is unreliable; keep **overview** and **account** client headers aligned when both show the same metrics.
+
+---
+
+## 2026-03-26 — Worker roster: brand positions (10 roles)
+
+**Context:** User specified **Frontal Slayer / brand** job positions for the worker roster: personal assistant, creative director, accountant, lawyer, graphic designer, photographer, videographer/editor, social media content planner/manager, makeup artist, hair stylist — with duties, pay, etc. on **`/admin/workers`**; dashboard card stays summary-only.
+
+**Changes:** **`src/utils/adminWorkersDashboard.ts`** — **`ADMIN_DASHBOARD_WORKERS`** replaced with **10** entries matching those roles; each has **jobDuties**, **dailyTasks**, **scheduledHours**, **pay** placeholders, **contact** placeholders, optional **notes**; names remain **PLACEHOLDER — ROLE** until filled in. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Fix: `buildWorkersDashboardSummaryItems` import binding not found
+
+**Context:** Red error screen: named import **`buildWorkersDashboardSummaryItems`** from **`adminWorkersDashboard.ts`** not found (runtime / bundler).
+
+**Changes:** **`buildWorkersDashboardSummaryItems`** logic moved into **`src/pages/admin/dashboard/page.tsx`** as a local function; **`adminWorkersDashboard.ts`** now exports only roster data (**`ADMIN_DASHBOARD_WORKERS`** + **`AdminDashboardWorker`** type). Dashboard imports **`ADMIN_DASHBOARD_WORKERS`** only. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Worker roster: PA + customer service (Pending, email, priority messages)
+
+**Context:** User wanted the **personal assistant** role to also cover approving/triaging **admin PENDING** (affiliate, reviews, etc.), **priority messages**, **email / customer service**, and related front-line work.
+
+**Changes:** **`src/utils/adminWorkersDashboard.ts`** — first roster entry: **`role`** → **Personal assistant / customer service**; expanded **`jobDuties`** (PENDING tab, concierge/priority messages, client email/support); expanded **`dailyTasks`** (PENDING queues, email routing); **`notes`** on primary front line and owner sign-off on edge cases. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Admin `/admin/workers`: card titles = brand `role`, not placeholder name
+
+**Context:** User said workers page cards still didn’t reflect the **10 business roles**; root issue was UI using **`w.name`** (“PLACEHOLDER — …”) as the red **card title**, so **`role`** (the actual job) was buried.
+
+**Changes:** **`src/pages/admin/workers/page.tsx`** — card **h2** = **`w.role`**; **POSITION n / total**; hire line shows **OPEN** + placeholder hint or **HIRE:** real name; intro + **single-line summary** built from **`ADMIN_DASHBOARD_WORKERS.map(role).join(' · ')`**; removed duplicate **ROLE** row in **dl**. **`adminWorkersDashboard.ts`** — JSDoc on **`name`** / **`role`**. This MEMORY entry.

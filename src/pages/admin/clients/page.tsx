@@ -9,7 +9,7 @@ import { isSupabaseConfigured } from '../../../utils/supabase';
 import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import summaryIcon from '../../../assets/icons/summary-icon.svg?url';
 import { blockClient, isClientBlocked } from '../../../utils/blockedClients';
-import { clientHasUnreadPriorityMessages, getLastUnreadPriorityMessageTime } from '../../../utils/priorityMessages';
+import { clientHasUnreadPriorityMessages, getLastUnreadPriorityMessageTime, isOrderUnfulfilled } from '../../../utils/priorityMessages';
 import { formatBirthday } from '../../../utils/formatBirthday';
 import { formatCountryDisplay } from '../../../utils/formatCountry';
 import ImageViewerModal from '../../../components/ImageViewerModal';
@@ -616,7 +616,7 @@ export default function AdminClients() {
   const [adminCartByUserId, setAdminCartByUserId] = useState<Record<string, unknown[]>>({});
   const [adminWishlistByUserId, setAdminWishlistByUserId] = useState<Record<string, unknown[]>>({});
   const [adminActivityByUserId, setAdminActivityByUserId] = useState<Record<string, Array<{ id: string; eventType: string; payload?: unknown; createdAt: string }>>>({});
-  const [cartWishlistLoading, setCartWishlistLoading] = useState(false);
+  const [cartWishlistLoading] = useState(false);
   const [personalSectionTab, setPersonalSectionTab] = useState<typeof PERSONAL_SECTION_TABS[number]>('details');
   const [exportingCsv, setExportingCsv] = useState(false);
   const [adminClientsApiError, setAdminClientsApiError] = useState<'forbidden' | 'service_unavailable' | null>(null);
@@ -975,7 +975,7 @@ export default function AdminClients() {
     return [...list].sort((a, b) => sortTime(b) - sortTime(a));
   })();
 
-  // NEW / ORDERS / CHARGES: use same source as client details – localStorage userOrders or getMockOrdersForClient for mock users
+  // NEW / ORDERS / CHARGES: NEW = unfulfilled orders (not shipped, delivered, or fulfilled yet) — see isOrderUnfulfilled
   const getClientRow = (u: any, index: number) => {
     const name = ([(u.firstName || '').trim(), (u.lastName || '').trim()].filter(Boolean).join(' ') || u.email || '—').toUpperCase();
     let newCount: number | null = null;
@@ -991,14 +991,13 @@ export default function AdminClients() {
         const all = [...active, ...past];
         if (all.length > 0) {
           const nonCanceled = all.filter((o: any) => (o.status || '').toUpperCase() !== 'CANCELED' && !o.canceledAt);
-          const notDelivered = nonCanceled.filter((o: any) => (o.status || '').toUpperCase() !== 'DELIVERED' && !o.deliveredAt && (o.status || '').toUpperCase() !== 'SHIPPED');
           ordersCount = nonCanceled.length;
           charges = nonCanceled.reduce((sum: number, o: any) => sum + (Number(o.total) || 0), 0);
-          newCount = notDelivered.length;
+          newCount = all.filter((o: any) => isOrderUnfulfilled(o as Record<string, unknown>)).length;
         } else if (/^mock\d+@test\.com$/i.test(email)) {
           const mockOrders = getMockOrdersForClient(u);
           ordersCount = mockOrders.length;
-          newCount = mockOrders.filter((o: any) => (o.status || '').toUpperCase() !== 'DELIVERED' && (o.status || '').toUpperCase() !== 'SHIPPED').length;
+          newCount = mockOrders.filter((o: any) => isOrderUnfulfilled(o as Record<string, unknown>)).length;
           charges = mockOrders.reduce((sum: number, o: any) => sum + (Number(o.amount) || 0), 0);
         }
       }
@@ -1682,24 +1681,105 @@ export default function AdminClients() {
                               );
                             })()}
                           </div>
-                          <div className="grid grid-cols-4 gap-2 sm:gap-4 text-center" style={{ paddingTop: '10px' }}>
-                              <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '13px' }}>{selectedTotalOrders}</p>
-                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>ORDERS</p>
-                              </div>
-                              <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '13px' }}>{selectedTotalLoyaltyPointsEarned.toLocaleString()}</p>
-                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>POINTS</p>
-                              </div>
-                              <div>
-                                <p className="font-bold" style={{ color: '#EB1C24', fontFamily: '"Futura PT Book"', fontSize: '13px' }}>${selectedTotalSpent.toLocaleString()}</p>
-                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>TOTAL SPENT</p>
-                              </div>
-                              <div>
-                                <p className="font-bold" style={{ color: (selectedMembershipType || '').toUpperCase() === 'PREMIUM' ? '#000000' : '#808080', fontFamily: '"Futura PT Book"', fontSize: '13px' }}>{selectedMembershipType}</p>
-                                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px' }}>MEMBERSHIP</p>
-                              </div>
-                            </div>
+                          {/* Real <table> + fixed layout: equal 25% cols; div {display:table} can ignore widths in some nested layouts */}
+                          <table
+                            role="presentation"
+                            style={{
+                              width: '100%',
+                              tableLayout: 'fixed',
+                              borderCollapse: 'separate',
+                              borderSpacing: 0,
+                              marginTop: '12px',
+                              boxSizing: 'border-box',
+                            }}
+                          >
+                            <colgroup>
+                              <col style={{ width: '25%' }} />
+                              <col style={{ width: '25%' }} />
+                              <col style={{ width: '25%' }} />
+                              <col style={{ width: '25%' }} />
+                            </colgroup>
+                            <tbody>
+                              <tr>
+                                {(
+                                  [
+                                    {
+                                      value: selectedTotalOrders,
+                                      label: 'ORDERS',
+                                      valueColor: '#EB1C24',
+                                    },
+                                    {
+                                      value: selectedTotalLoyaltyPointsEarned.toLocaleString(),
+                                      label: 'POINTS',
+                                      valueColor: '#EB1C24',
+                                    },
+                                    {
+                                      value: `$${selectedTotalSpent.toLocaleString()}`,
+                                      label: 'TOTAL SPENT',
+                                      valueColor: '#EB1C24',
+                                    },
+                                    {
+                                      value: selectedMembershipType,
+                                      label: 'MEMBERSHIP',
+                                      valueColor: (selectedMembershipType || '').toUpperCase() === 'PREMIUM' ? '#000000' : '#808080',
+                                    },
+                                  ] as const
+                                ).map((col) => (
+                                  <td
+                                    key={col.label}
+                                    style={{
+                                      verticalAlign: 'top',
+                                      width: '25%',
+                                      minWidth: 0,
+                                      padding: '0 6px',
+                                      boxSizing: 'border-box',
+                                    }}
+                                  >
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'flex-start',
+                                        width: '100%',
+                                        textAlign: 'center',
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontWeight: 700,
+                                          lineHeight: 1.2,
+                                          color: col.valueColor,
+                                          fontFamily: '"Futura PT Book"',
+                                          fontSize: '13px',
+                                          margin: 0,
+                                          width: '100%',
+                                          textAlign: 'center',
+                                        }}
+                                      >
+                                        {col.value}
+                                      </p>
+                                      <p
+                                        style={{
+                                          lineHeight: 1.2,
+                                          fontFamily: '"Futura PT Book"',
+                                          color: '#000000',
+                                          fontSize: '10px',
+                                          margin: '4px 0 0 0',
+                                          width: '100%',
+                                          textAlign: 'center',
+                                          wordBreak: 'break-word',
+                                          overflowWrap: 'break-word',
+                                        }}
+                                      >
+                                        {col.label}
+                                      </p>
+                                    </div>
+                                  </td>
+                                ))}
+                              </tr>
+                            </tbody>
+                          </table>
                         </div>
                         {/* Rewards section: photos, videos, tags – tap to expand/collapse */}
                         {selectedClient && (() => {
@@ -2946,7 +3026,7 @@ export default function AdminClients() {
                     </>
                   ) : (
                     <>
-                  <div className="flex justify-center w-full" style={{ textAlign: 'center', marginLeft: '-6px' }}>NEW</div>
+                  <div className="flex justify-center w-full" style={{ textAlign: 'center', marginLeft: '-6px' }} title="Unfulfilled orders — not shipped or delivered yet">NEW</div>
                   <div className="flex justify-center w-full" style={{ textAlign: 'center', marginLeft: '-6px' }}>ORDERS</div>
                   <div className="flex justify-center w-full" style={{ textAlign: 'center', marginLeft: '-6px' }}>CHARGES</div>
                     </>

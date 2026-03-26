@@ -12,9 +12,55 @@ import { getMockClientsForAyoteenz, getMockOrdersForClient, isClientNewsletterSu
 import { isClientBlocked } from '../../../utils/blockedClients';
 import { getClientUnreadPriorityMessage } from '../../../utils/priorityMessages';
 import { buildRevenueOrdersList, getDepletedInventory, getOrdersStats, getTopProductBySales, getTotalStartingInventoryUnits } from '../../../utils/adminRevenueStats';
+import { ADMIN_DASHBOARD_WORKERS } from '../../../utils/adminWorkersDashboard';
 
 /** Items list fixed height (px) for all dashboard stat cards (scroll when content overflows). */
 const DASHBOARD_CAPPED_STAT_ITEMS_MAX_PX = 103;
+
+const WORKERS_FUNCTIONS_LINE_MAX = 52;
+
+type WorkersDashboardStatItem = { label: string; value: string; color?: string };
+
+/** Key metrics for WORKERS card (roster lives in `adminWorkersDashboard.ts`). Defined here to avoid named-export resolution issues in some bundlers. */
+function buildWorkersDashboardSummaryItems(): WorkersDashboardStatItem[] {
+  const list = ADMIN_DASHBOARD_WORKERS;
+  const n = list.length;
+  if (n === 0) {
+    return [{ label: 'ROSTER', value: 'ADD STAFF IN UTIL', color: 'text-red-500' }];
+  }
+
+  const salaryCount = list.filter((w) => /salary/i.test(w.pay)).length;
+  const hourlyCount = list.filter(
+    (w) => !/salary/i.test(w.pay) && (/\$/.test(w.pay) || /\/\s*hr/i.test(w.pay))
+  ).length;
+  const otherCount = Math.max(0, n - salaryCount - hourlyCount);
+  const payParts: string[] = [];
+  if (hourlyCount > 0) payParts.push(`${hourlyCount} HOURLY`);
+  if (salaryCount > 0) payParts.push(`${salaryCount} SALARY`);
+  if (otherCount > 0) payParts.push(`${otherCount} OTHER`);
+  const paySummary = payParts.length > 0 ? payParts.join(' · ') : 'SET PAY IN UTIL';
+
+  const roleLabels = list.map((w) => {
+    const r = (w.role || '').trim();
+    const short = (r.split(/[&,]/)[0] || r).trim();
+    return short.toUpperCase();
+  });
+  const uniqueRoles = [...new Set(roleLabels)];
+  let functionsLine = uniqueRoles.join(' · ');
+  if (functionsLine.length > WORKERS_FUNCTIONS_LINE_MAX) {
+    functionsLine = `${functionsLine.slice(0, WORKERS_FUNCTIONS_LINE_MAX - 1)}…`;
+  }
+
+  const withContact = list.filter((w) => (w.contact || '').trim()).length;
+
+  return [
+    { label: 'ROSTER', value: `${n} ON TEAM`, color: 'text-red-500' },
+    { label: 'FUNCTIONS', value: functionsLine || '—', color: 'text-gray-500' },
+    { label: 'COMP', value: paySummary, color: 'text-gray-500' },
+    { label: 'CONTACTS', value: `${withContact}/${n} ON FILE`, color: 'text-gray-500' },
+    { label: 'DETAIL', value: 'WORKERS PAGE — DUTIES · TASKS · HRS · PAY', color: 'text-red-500' },
+  ];
+}
 
 // Mock data types and functions to replace Supabase imports
 type DashboardStats = {
@@ -498,7 +544,7 @@ export default function AdminDashboard() {
     const messagesRow = {
       label: 'MESSAGES',
       value: String(unreadPriorityMessagesTotal),
-      color: (unreadPriorityMessagesTotal > 0 ? 'text-red-500' : 'text-gray-500') as const,
+      color: (unreadPriorityMessagesTotal > 0 ? 'text-red-500' : 'text-gray-500') as 'text-red-500' | 'text-gray-500',
     };
     const affiliateIdx = basePendingCardItems.findIndex((p) => p.label.toUpperCase().includes('AFFILIATE'));
     if (affiliateIdx === -1) return [...basePendingCardItems, messagesRow];
@@ -691,6 +737,13 @@ export default function AdminDashboard() {
     },
 
     {
+      title: 'WORKERS',
+      count: ADMIN_DASHBOARD_WORKERS.length,
+      items: buildWorkersDashboardSummaryItems(),
+      activity: 'OPEN WORKERS PAGE FOR DUTIES, DAILY TASKS, HOURS, PAY & CONTACTS'
+    },
+
+    {
       title: 'BACKEND',
       count: '',
       items: [
@@ -728,6 +781,9 @@ export default function AdminDashboard() {
         break;
       case 'REFERRALS':
         navigate('/admin/referrals');
+        break;
+      case 'WORKERS':
+        navigate('/admin/workers');
         break;
       case 'BACKEND':
         navigate('/admin/backend');

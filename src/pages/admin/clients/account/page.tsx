@@ -64,6 +64,32 @@ export default function AdminClientsAccount() {
   const membershipType = (client?.membershipType || 'STANDARD').toUpperCase();
   const totalOrders = client?.ordersCount ?? orderHistory.length;
   const totalSpent = client?.totalSpent ?? orderHistory.reduce((s: number, o: any) => s + (o.amount || 0), 0);
+  /** Same lifetime points logic as admin clients overview (orders pointsEarned / rounded total, else profile loyaltyPoints). */
+  const totalLoyaltyPoints = (() => {
+    const email = emailParam.trim().toLowerCase();
+    if (!email || !client) return 0;
+    try {
+      const raw = localStorage.getItem(`userOrders_${email}`);
+      const data = raw ? JSON.parse(raw) : null;
+      const all = [...(data?.activeOrders || []), ...(data?.pastOrders || [])];
+      let sum = 0;
+      for (const o of all) {
+        const pe = o.pointsEarned;
+        if (typeof pe === 'number' && !Number.isNaN(pe)) {
+          sum += pe;
+          continue;
+        }
+        const sub = o.subtotal != null ? Number(o.subtotal) : Number(o.total);
+        if (typeof sub === 'number' && !Number.isNaN(sub)) sum += Math.round(sub);
+      }
+      if (sum > 0) return sum;
+    } catch {
+      /* ignore */
+    }
+    const lp = Number(client?.loyaltyPoints);
+    if (!Number.isNaN(lp) && lp > 0) return Math.round(lp);
+    return 0;
+  })();
   const joinDate = client?.createdAt ? new Date(client.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' }) : '—';
   const appointments = [
     { date: '2024-01-20', time: '2:00 PM', type: 'CONSULTATION', status: 'SCHEDULED' },
@@ -117,20 +143,83 @@ export default function AdminClientsAccount() {
                       </span>
                     </div>
                 
-                    <div className="grid grid-cols-3 gap-4 text-center">
-                      <div>
-                        <p className="text-lg font-bold" style={{ color: '#EB1C24' }}>{totalOrders}</p>
-                        <p className="text-xs text-gray-600">ORDERS</p>
-                      </div>
-                      <div>
-                        <p className="text-lg font-bold" style={{ color: '#EB1C24' }}>${totalSpent.toLocaleString()}</p>
-                        <p className="text-xs text-gray-600">TOTAL SPENT</p>
-                      </div>
-                      <div>
-                        <p className="text-lg font-bold" style={{ color: membershipType === 'PREMIUM' ? '#000000' : '#808080' }}>{membershipType}</p>
-                        <p className="text-xs" style={{ color: '#000000' }}>MEMBERSHIP</p>
-                      </div>
-                    </div>
+                    <table
+                      role="presentation"
+                      className="mt-3"
+                      style={{
+                        width: '100%',
+                        tableLayout: 'fixed',
+                        borderCollapse: 'separate',
+                        borderSpacing: 0,
+                        boxSizing: 'border-box',
+                      }}
+                    >
+                      <colgroup>
+                        <col style={{ width: '25%' }} />
+                        <col style={{ width: '25%' }} />
+                        <col style={{ width: '25%' }} />
+                        <col style={{ width: '25%' }} />
+                      </colgroup>
+                      <tbody>
+                        <tr>
+                          {(
+                            [
+                              { value: totalOrders, label: 'ORDERS', valueColor: '#EB1C24', labelColor: '#4b5563' },
+                              { value: totalLoyaltyPoints.toLocaleString(), label: 'POINTS', valueColor: '#EB1C24', labelColor: '#4b5563' },
+                              { value: `$${totalSpent.toLocaleString()}`, label: 'TOTAL SPENT', valueColor: '#EB1C24', labelColor: '#4b5563' },
+                              {
+                                value: membershipType,
+                                label: 'MEMBERSHIP',
+                                valueColor: membershipType === 'PREMIUM' ? '#000000' : '#808080',
+                                labelColor: '#000000',
+                              },
+                            ] as const
+                          ).map((col) => (
+                            <td
+                              key={col.label}
+                              style={{
+                                verticalAlign: 'top',
+                                width: '25%',
+                                minWidth: 0,
+                                padding: '0 6px',
+                                boxSizing: 'border-box',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  alignItems: 'center',
+                                  width: '100%',
+                                  textAlign: 'center',
+                                }}
+                              >
+                                <p
+                                  className="text-lg font-bold"
+                                  style={{ color: col.valueColor, margin: 0, lineHeight: 1.2, width: '100%', textAlign: 'center' }}
+                                >
+                                  {col.value}
+                                </p>
+                                <p
+                                  className="text-xs"
+                                  style={{
+                                    color: col.labelColor,
+                                    margin: '4px 0 0 0',
+                                    lineHeight: 1.2,
+                                    width: '100%',
+                                    textAlign: 'center',
+                                    wordBreak: 'break-word',
+                                    overflowWrap: 'break-word',
+                                  }}
+                                >
+                                  {col.label}
+                                </p>
+                              </div>
+                            </td>
+                          ))}
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
 
                   <div className="flex mb-6 border-b border-gray-200">
