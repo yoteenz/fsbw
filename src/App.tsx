@@ -18,6 +18,7 @@ import AccountRouteGuard from './components/AccountRouteGuard';
 import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn, enableAuthDebugFromSearch } from './utils/adminAuth';
 import { schedulePushCartWishlistToCloud } from './utils/pushCartWishlistToCloud';
+import { flushQueuedProfilePatch } from './utils/profileSyncQueue';
 import AuthDebugPanel from './components/AuthDebugPanel';
 
 // Helper to wrap lazy imports with retry logic and logging
@@ -355,6 +356,24 @@ function App() {
       window.removeEventListener('cartUpdated', run);
       window.removeEventListener('wishlistUpdated', run);
       window.removeEventListener('ordersUpdated', run);
+    };
+  }, []);
+
+  // Keep queued profile edits (photo/name/settings fields) synced to backend.
+  useEffect(() => {
+    void flushQueuedProfilePatch();
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const run = () => {
+      void flushQueuedProfilePatch();
+    };
+    window.addEventListener('signInStateChanged', run);
+    window.addEventListener('focus', run);
+    return () => {
+      window.removeEventListener('signInStateChanged', run);
+      window.removeEventListener('focus', run);
     };
   }, []);
 

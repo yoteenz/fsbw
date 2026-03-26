@@ -7,7 +7,8 @@ import { getTotalReviewCount, getUserSubmittedReviewCount, hasNewReviewApproved 
 import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier, clearAppAuth } from '../../utils/adminAuth';
 import { swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
-import { patchProfile } from '../../utils/api';
+import { patchProfileWithRetryQueue } from '../../utils/profileSyncQueue';
+import { uploadProfileImage } from '../../utils/api';
 import { trackActivity } from '../../utils/activity';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { getAccountNotifications, mergeAccountNotifications, isNewAccount } from './notifications/page';
@@ -83,6 +84,7 @@ function AccountPage() {
     }
     return '/assets/profile-thumb.png';
   });
+  const [profileImageSaveMessage, setProfileImageSaveMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [cardAnimationsEnabled, setCardAnimationsEnabled] = useState(() => {
     try {
@@ -1435,7 +1437,7 @@ function AccountPage() {
     }
   }, [isDragging, dragStart, cropScale, cropPosition, pinchStart]);
 
-  const handleApproveCrop = () => {
+  const handleApproveCrop = async () => {
     const img = imageRef.current;
     if (!imageToCrop || !cropContainerRef.current || !img || !img.complete || img.naturalWidth === 0) return;
 
@@ -1484,6 +1486,7 @@ function AccountPage() {
 
     const croppedImage = canvas.toDataURL('image/png');
     setProfileImage(croppedImage);
+    setProfileImageSaveMessage('SAVING PHOTO...');
     try {
       localStorage.setItem('profileImage', croppedImage);
       const currentUserRaw = localStorage.getItem('currentUser');
@@ -1502,10 +1505,39 @@ function AccountPage() {
         }
       }
       if (isSupabaseConfigured()) {
-        patchProfile({ profileImage: croppedImage }).then(() => trackActivity('profile_update')).catch(() => {});
+        try {
+          const uploaded = await uploadProfileImage(croppedImage);
+          const uploadedUrl = uploaded.profileImage;
+          setProfileImage(uploadedUrl);
+          localStorage.setItem('profileImage', uploadedUrl);
+          const currentUserRaw2 = localStorage.getItem('currentUser');
+          if (currentUserRaw2) {
+            const currentUser2 = JSON.parse(currentUserRaw2);
+            const email2 = (currentUser2?.email || '').trim().toLowerCase();
+            currentUser2.profileImage = uploadedUrl;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser2));
+            if (email2) {
+              const registered2 = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+              const idx2 = registered2.findIndex((u: any) => (u.email || '').trim().toLowerCase() === email2);
+              if (idx2 !== -1) {
+                registered2[idx2] = { ...registered2[idx2], profileImage: uploadedUrl };
+                localStorage.setItem('registeredUsers', JSON.stringify(registered2));
+              }
+            }
+          }
+          setProfileImageSaveMessage('PHOTO SAVED.');
+          void trackActivity('profile_update');
+        } catch {
+          const ok = await patchProfileWithRetryQueue({ profileImage: croppedImage });
+          setProfileImageSaveMessage(ok ? 'PHOTO SAVED.' : 'PHOTO QUEUED. IT WILL AUTO-SYNC WHEN ONLINE.');
+          if (ok) void trackActivity('profile_update');
+        }
+      } else {
+        setProfileImageSaveMessage('PHOTO SAVED LOCALLY.');
       }
     } catch (e) {
       console.warn('Failed to save profile image:', e);
+      setProfileImageSaveMessage('PHOTO SAVE FAILED.');
     }
     setShowCropModal(false);
     setImageToCrop(null);
@@ -1975,6 +2007,21 @@ function AccountPage() {
                         CHANGE PHOTO
                       </p>
                     )}
+                    {profileImageSaveMessage ? (
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '8px',
+                          color: profileImageSaveMessage.includes('FAILED') ? '#EB1C24' : '#808080',
+                          margin: '0',
+                          textTransform: 'uppercase',
+                          fontWeight: '500',
+                          textAlign: 'center',
+                        }}
+                      >
+                        {profileImageSaveMessage}
+                      </p>
+                    ) : null}
                   </div>
 
                   {/* Profile Details */}

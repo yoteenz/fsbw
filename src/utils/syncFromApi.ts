@@ -14,15 +14,50 @@ export async function syncProfileFromApi(): Promise<Record<string, unknown> | nu
     const email = (profile.email as string) || '';
     if (!email) return null;
 
-    const merged = {
+    const normalized = {
       ...profile,
+      firstName: profile.firstName ?? profile.first_name,
+      lastName: profile.lastName ?? profile.last_name,
+      phoneNumber: profile.phoneNumber ?? profile.phone_number,
+      profileImage: profile.profileImage ?? profile.profile_image,
+      membershipType: profile.membershipType ?? profile.membership_type,
+      subscriptionTier: profile.subscriptionTier ?? profile.subscription_tier,
+      currentTierName: profile.currentTierName ?? profile.current_tier_name ?? profile.tier,
+    } as Record<string, unknown>;
+
+    const existingRaw = localStorage.getItem('currentUser');
+    const existing = (existingRaw ? JSON.parse(existingRaw) : null) as Record<string, unknown> | null;
+    const sameEmail = existing && ((existing.email as string) || '').toLowerCase() === email.toLowerCase();
+
+    const merged = {
+      ...(sameEmail && existing ? existing : {}),
+      ...normalized,
       email,
       role: isAdminEmail(email) ? 'admin' : (profile.role as string),
     } as Record<string, unknown>;
 
+    // Do not wipe useful local values when backend returns null/empty fields.
+    const profileKeysToPreserve = [
+      'firstName', 'lastName', 'first_name', 'last_name', 'birthday',
+      'profileImage', 'profile_image', 'facebook', 'instagram', 'youtube', 'tiktok', 'twitter',
+      'membershipType', 'subscriptionTier', 'currentTierName', 'tier',
+    ] as const;
+    if (sameEmail && existing) {
+      for (const key of profileKeysToPreserve) {
+        const val = merged[key];
+        if (val === undefined || val === null || (typeof val === 'string' && val.trim() === '')) {
+          const existingVal = existing[key];
+          if (existingVal !== undefined && existingVal !== null && (typeof existingVal !== 'string' || existingVal.trim() !== '')) {
+            (merged as Record<string, unknown>)[key] = existingVal;
+          }
+        }
+      }
+    }
+
     localStorage.setItem('currentUser', JSON.stringify(merged));
     const img = merged.profileImage && typeof merged.profileImage === 'string' && String(merged.profileImage).trim();
-    localStorage.setItem('profileImage', img ? String(merged.profileImage) : '/assets/profile-thumb.png');
+    const existingImg = sameEmail && existing && ((existing.profileImage && String(existing.profileImage).trim()) || (existing.profile_image && String(existing.profile_image).trim()));
+    localStorage.setItem('profileImage', img ? String(merged.profileImage) : (typeof existingImg === 'string' ? existingImg : '/assets/profile-thumb.png'));
 
     const registeredUsers: unknown[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
     const idx = registeredUsers.findIndex(

@@ -119,6 +119,18 @@ export async function patchProfile(profile: Record<string, unknown>): Promise<Re
   return (await res.json()) as Record<string, unknown>;
 }
 
+/** Upload a profile image data URL to Supabase Storage and store resulting URL in profile.profile_image. */
+export async function uploadProfileImage(imageDataUrl: string): Promise<{ profileImage: string }> {
+  const res = await apiFetch('/api/profile-image', {
+    method: 'POST',
+    body: { imageDataUrl },
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const data = (await res.json()) as { profileImage?: string };
+  if (!data.profileImage) throw new Error('Upload succeeded but no profile URL returned.');
+  return { profileImage: data.profileImage };
+}
+
 /** Public read of admin special-offer card JSON (no auth). Used by concierge; returns null if missing or API unreachable. */
 export async function getSpecialOfferAdminConfig(): Promise<Record<string, unknown> | null> {
   const base = API_BASE.replace(/\/$/, '');

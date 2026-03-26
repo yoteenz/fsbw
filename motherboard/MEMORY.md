@@ -1088,3 +1088,37 @@ User asked if there is a way to capture the **entire current codebase** (and its
 **Changes:**
 - **`src/pages/admin/workers/page.tsx`** — **`RoleCardSectionHeader`** first; then **`openingsLabel`**; then hire / applications lines. **`openingsLabel`**: **`1 OPENING AVAILABLE`** or **`${n} OPENINGS AVAILABLE`**.
 - **`src/pages/brand/careers/page.tsx`** — Same **`openingsLabel`** strings (still below role header, above posting body). This MEMORY entry.
+
+---
+
+## 2026-03-26 — Account profile cloud persistence hardening (queued patch sync)
+
+**Context:** User expected prior Supabase persistence work to cover **all account profile data** (photo + settings) plus cart/wishlist cloud sync/admin visibility, but still saw resets after navigation/browser close.
+
+**Changes:**
+- **`src/utils/profileSyncQueue.ts`** — New resilient profile patch queue: **`patchProfileWithRetryQueue`**, **`queueProfilePatch`**, **`flushQueuedProfilePatch`**. Failed profile PATCH writes are stored in **`pendingProfilePatch_v1`** and retried later.
+- **`src/App.tsx`** — Flush queued profile patches on route change, sign-in state changes, and window focus (so pending photo/name/settings edits eventually reach Supabase when session/network returns).
+- **`src/pages/account/page.tsx`** — Profile photo crop save now uses queued retry patching (instead of silent drop on API/session failure).
+- **`src/pages/account/settings/page.tsx`** — Social/personal/notification profile writes now use queued retry patching; “Save my profile to cloud” reports queued state when immediate PATCH fails. This MEMORY entry.
+
+---
+
+## 2026-03-26 — Account settings/profile: prevent backend overwrite + instant name persistence
+
+**Context:** User reported prior Supabase sync steps still did not persist profile updates; first/last name and profile photo could revert after navigation/refresh.
+
+**Changes:**
+- **`src/utils/syncFromApi.ts`** — `syncProfileFromApi` now normalizes snake_case fields and merges with existing `currentUser`, preserving non-empty local profile values when backend returns empty/null fields (including `profileImage`, names, socials, tier fields). Prevents cloud sync from wiping valid local profile data.
+- **`src/pages/account/settings/page.tsx`** — First/last name inputs now persist immediately on `onChange` (in addition to `onBlur`) so edits are saved before route changes and not lost if blur doesn’t occur.
+
+---
+
+## 2026-03-26 — End-to-end profile image upload route + explicit save status
+
+**Context:** User requested a stronger, working persistence fix: implement backend image upload and non-silent save states for account profile/settings.
+
+**Changes:**
+- **`api/profile-image.ts`** — New authenticated **POST** route that accepts image data URL, ensures/creates Supabase Storage bucket **`profile-images`**, uploads avatar at **`{user_id}/avatar.{ext}`** with upsert, writes returned public URL into **`profiles.profile_image`**, and returns `{ profileImage }`.
+- **`src/utils/api.ts`** — Added **`uploadProfileImage(imageDataUrl)`** API helper.
+- **`src/pages/account/page.tsx`** — Crop approve now uploads to storage and stores URL in `currentUser`/`registeredUsers`/`profileImage`; falls back to queued profile patch when upload/session fails; shows explicit `profileImageSaveMessage` feedback (`SAVING`, `SAVED`, `QUEUED`, `FAILED`).
+- **`src/pages/account/settings/page.tsx`** — Added explicit `personalInfoSaveMessage` for name/profile saves (`SAVED`, `QUEUED`, `FAILED`) so save failures are no longer silent.

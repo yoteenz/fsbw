@@ -6,7 +6,8 @@ import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { getDeletedPlatformFromUserAgent } from '../../../utils/platformDetection';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
-import { patchProfile, deleteAccount } from '../../../utils/api';
+import { deleteAccount } from '../../../utils/api';
+import { patchProfileWithRetryQueue } from '../../../utils/profileSyncQueue';
 import { trackActivity } from '../../../utils/activity';
 import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminUser, clearAppAuth, isAyoteenzAdminAccount } from '../../../utils/adminAuth';
@@ -147,6 +148,7 @@ function SettingsPage() {
   const [syncAccountLoading, setSyncAccountLoading] = useState(false);
   const [saveProfileToCloudMessage, setSaveProfileToCloudMessage] = useState<string | null>(null);
   const [saveProfileToCloudLoading, setSaveProfileToCloudLoading] = useState(false);
+  const [personalInfoSaveMessage, setPersonalInfoSaveMessage] = useState<string | null>(null);
   /** Optional: re-enter Supabase password for sync when stored password fails or is missing */
   const [syncPasswordInput, setSyncPasswordInput] = useState('');
 
@@ -189,14 +191,14 @@ function SettingsPage() {
         if (supabase) {
           void supabase.auth.getSession().then(({ data: { session } }) => {
             if (!session) return;
-            patchProfile({
+            patchProfileWithRetryQueue({
               facebook: payload.facebook || null,
               instagram: payload.instagram || null,
               youtube: payload.youtube || null,
               tiktok: payload.tiktok || null,
               twitter: payload.twitter || null,
             })
-              .then(() => trackActivity('profile_update'))
+              .then((ok) => { if (ok) trackActivity('profile_update'); })
               .catch(() => {});
           });
         }
@@ -237,7 +239,16 @@ function SettingsPage() {
       if (updates.lastName !== undefined) apiPayload.lastName = updates.lastName.trim();
       if (updates.birthday !== undefined) apiPayload.birthday = updates.birthday.trim();
       if (Object.keys(apiPayload).length > 0) {
-        patchProfile(apiPayload).then(() => trackActivity('profile_update')).catch(() => {});
+        patchProfileWithRetryQueue(apiPayload)
+          .then((ok) => {
+            if (ok) {
+              trackActivity('profile_update');
+              setPersonalInfoSaveMessage('PERSONAL INFO SAVED.');
+            } else {
+              setPersonalInfoSaveMessage('PERSONAL INFO QUEUED. WILL SYNC WHEN ONLINE.');
+            }
+          })
+          .catch(() => setPersonalInfoSaveMessage('PERSONAL INFO SAVE FAILED.'));
       }
     } catch (_) {}
   };
@@ -254,7 +265,7 @@ function SettingsPage() {
       if (stored.notificationOrderTracking !== undefined)
         body.notificationOrderTracking = stored.notificationOrderTracking;
       if (Object.keys(body).length === 0) return;
-      patchProfile(body).then(() => trackActivity('profile_update')).catch(() => {});
+      patchProfileWithRetryQueue(body).then((ok) => { if (ok) trackActivity('profile_update'); }).catch(() => {});
     });
   };
 
@@ -497,9 +508,13 @@ function SettingsPage() {
         tiktok: current.tiktok ?? null,
         twitter: current.twitter ?? null,
       };
-      await patchProfile(payload);
-      setSaveProfileToCloudMessage('Profile saved to cloud. Use Sync on other devices to load it.');
-      trackActivity('profile_update');
+      const ok = await patchProfileWithRetryQueue(payload);
+      if (ok) {
+        setSaveProfileToCloudMessage('Profile saved to cloud. Use Sync on other devices to load it.');
+        trackActivity('profile_update');
+      } else {
+        setSaveProfileToCloudMessage('Profile changes queued. They will sync when your Supabase session/network is available.');
+      }
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       const isNetwork = /load failed|failed to fetch|network error|request failed|connection refused|ERR_/i.test(msg);
@@ -909,7 +924,12 @@ function SettingsPage() {
                       value={firstName}
                       placeholder="FIRST NAME"
                       className="settings-personal-input"
-                      onChange={(e) => setFirstName(e.target.value.toUpperCase())}
+                      onChange={(e) => {
+                        const nextFirst = e.target.value.toUpperCase();
+                        setFirstName(nextFirst);
+                        // Persist immediately so route changes/back nav do not lose edits before blur.
+                        persistPersonalInfo({ firstName: nextFirst.trim(), lastName: lastName.trim() });
+                      }}
                       onBlur={() => persistPersonalInfo({ firstName: firstName.trim(), lastName: lastName.trim() })}
                       style={{ ...inputBaseStyle, marginBottom: 0 }}
                     />
@@ -921,7 +941,12 @@ function SettingsPage() {
                       value={lastName}
                       placeholder="LAST NAME"
                       className="settings-personal-input"
-                      onChange={(e) => setLastName(e.target.value.toUpperCase())}
+                      onChange={(e) => {
+                        const nextLast = e.target.value.toUpperCase();
+                        setLastName(nextLast);
+                        // Persist immediately so route changes/back nav do not lose edits before blur.
+                        persistPersonalInfo({ firstName: firstName.trim(), lastName: nextLast.trim() });
+                      }}
                       onBlur={() => persistPersonalInfo({ firstName: firstName.trim(), lastName: lastName.trim() })}
                       style={{ ...inputBaseStyle, marginBottom: 0 }}
                     />
@@ -951,6 +976,19 @@ function SettingsPage() {
                     style={{ ...inputBaseStyle, fontFamily: '"Futura PT Demi"', color: '#808080', textTransform: 'uppercase' }}
                   />
                 </div>
+                {personalInfoSaveMessage ? (
+                  <p
+                    style={{
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '9px',
+                      margin: '-8px 0 14px 0',
+                      textTransform: 'uppercase',
+                      color: personalInfoSaveMessage.includes('FAILED') ? '#EB1C24' : '#808080',
+                    }}
+                  >
+                    {personalInfoSaveMessage}
+                  </p>
+                ) : null}
                 <div style={{ marginBottom: '20px' }}>
                   {!showResetPasswordForm && <label style={labelStyle}>PASSWORD</label>}
                   {!showResetPasswordForm ? (
