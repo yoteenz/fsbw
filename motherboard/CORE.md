@@ -23,9 +23,11 @@ Canonical reference for stack, design, and main flows. Keep this updated when th
 
 ## ACTIVE BUILD TARGET (IMPORTANT)
 
-- **MOBILE-ONLY RIGHT NOW.** Treat this project as mobile-only for implementation, QA, and debugging guidance.
-- Do **not** default to desktop-browser-centric debugging instructions when the user asks for testing/trace steps; provide **mobile device** steps first.
-- Desktop version will be created later as a separate phase.
+- **MOBILE-ONLY RIGHT NOW.** Treat this project as mobile-only for **implementation, manual QA, automated tests (where applicable), and debugging guidance.**
+- **Tests and verification are mobile-first by default.** Run checks on a **real phone** (or phone-sized browser with the understanding it is a proxy—not a substitute for device behavior). Do **not** treat desktop Chrome/Firefox as the default “official” test environment unless the user explicitly asks for desktop-only or the work is server/API-only with no UI.
+- When explaining how to **test, reproduce, or trace** issues (network, auth, profile sync, etc.), give **mobile-appropriate steps first**—e.g. iPhone + Mac **Safari → Develop → [device] → Web Inspector → Network**, on-device **`?auth_debug=1`** / Auth Debug Panel, or documented in-app diagnostics. Desktop **DevTools → Network** is a **secondary** shortcut, not the primary instruction path for this project.
+- Do **not** default to desktop-browser-centric debugging instructions when the user asks for testing or trace steps without specifying desktop.
+- Desktop layout/version will be created later as a separate phase.
 
 ---
 

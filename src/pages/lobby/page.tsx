@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from '../../components/base/LoadingScreen';
 import ConfirmationModal from '../../components/ConfirmationModal';
-import { isMockDataAccount } from '../../utils/adminAuth';
+import { isMockDataAccount, getEffectiveSubscriptionTier, getEffectiveTierName, onSignInSuccess } from '../../utils/adminAuth';
 import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
 import {
   syncAllFromApi,
@@ -11,7 +11,6 @@ import {
   buildProfilePayloadForBackend,
   didLastProfileSyncError,
 } from '../../utils/syncFromApi';
-import { onSignInSuccess } from '../../utils/adminAuth';
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
 
 // Lobby Component
@@ -623,22 +622,17 @@ const LobbyApp: React.FC = () => {
       const currentUser = localStorage.getItem('currentUser');
       if (currentUser) {
         const user = JSON.parse(currentUser);
-        
-        // Check if this is the admin Kateena account (by email) with PREMIUM membership
-        if (isMockDataAccount(user) && (user.membershipType === 'PREMIUM' || user.membershipType === 'Premium')) {
-          return true; // Admin account with premium membership should have access
-        }
-        
-        // Check if user has PREMIUM membership type
-        if (user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium') {
-          return true;
-        }
-        
-        // Check if user has BLACK tier (only BLACK tier has access, not SILVER or RED)
-        if (user?.tier) {
-          const tier = user.tier.toUpperCase();
-          return tier === 'BLACK';
-        }
+
+        // Use the same "effective" subscription/tier evaluation as the Membership (rewards) page
+        // so lobby gating matches what the client UI and admin client details show.
+        const effectiveSubscriptionTier = getEffectiveSubscriptionTier(user);
+        const isPremium = effectiveSubscriptionTier != null;
+
+        const effectiveTierName = getEffectiveTierName(user);
+        const isBlackTier = (effectiveTierName || '').toUpperCase() === 'BLACK';
+
+        // Only BLACK tier members and PREMIUM members have access.
+        return Boolean(isPremium || isBlackTier);
       }
     } catch (e) {
       console.error('Error checking premium membership:', e);
@@ -646,21 +640,48 @@ const LobbyApp: React.FC = () => {
     return false;
   };
 
-  // Check membership on mount and show upgrade modal if not premium
+  // Confirm membership by syncing the authenticated client's profile from the backend
+  // (same underlying profile data the rewards page + admin client details display).
   useEffect(() => {
-    if (!isPremiumMember()) {
-      setShowUpgradeModal(true);
-    }
+    let cancelled = false;
+    const run = async () => {
+      // Always attempt a profile sync first when Supabase is available.
+      // This prevents stale localStorage membership fields from triggering the modal incorrectly.
+      if (isSupabaseConfigured() && localStorage.getItem('isSignedIn') === 'true') {
+        try {
+          await syncAllFromApi();
+        } catch (_) {}
+      }
+
+      if (cancelled) return;
+      setShowUpgradeModal(!isPremiumMember());
+    };
+
+    void run();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleUpgrade = () => {
     setShowUpgradeModal(false);
+    // Membership page shows the premium upgrade chart when this session flag is set.
+    // This also lets AccountRouteGuard redirect unauthenticated users to /sign-in,
+    // while preserving the flag so the chart opens after sign-in.
+    try {
+      sessionStorage.setItem('returningFromCheckout', 'true');
+      // Match membership page behavior when upgrading from Standard: no preselected tier.
+      localStorage.removeItem('membershipSelectedTier');
+    } catch (_) {}
     navigate('/account/rewards');
   };
 
   const handleCancel = () => {
     setShowUpgradeModal(false);
-    navigate('/home/shop');
+    // Go back to wherever the user came from before entering /lobby.
+    // Fallback for direct-link cases (no meaningful history).
+    if (typeof window !== 'undefined' && window.history.length > 1) navigate(-1);
+    else navigate('/home/shop');
   };
 
   const pages = [<LobbyPage key="lobby" />, <LoungePage key="lounge" />];
@@ -778,6 +799,7 @@ const LobbyApp: React.FC = () => {
         message="YOU MUST BE A PREMIUM MEMBER TO ACCESS THIS AREA."
         confirmText="UPGRADE"
         cancelText="CANCEL"
+        swapButtons={true}
         dataAttribute="upgrade-subscription-modal"
       />
     </>

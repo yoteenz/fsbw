@@ -643,9 +643,9 @@ function SettingsPage() {
                 <>
                   <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => {
                   try {
-                    navigate('/shop/units');
+                    navigate('/lobby');
                   } catch {
-                    navigate('/shop/units');
+                    navigate('/lobby');
                   }
                 }}>HOME &gt;</span>{' '}
                   <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>

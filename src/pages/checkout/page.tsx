@@ -385,6 +385,11 @@ function CheckoutPage() {
     loadCartItems();
   }, [location.pathname]);
 
+  // Subscription upgrades default to auto-renew; when auto-renew is enabled we hide Pay-in-4 style plans.
+  useEffect(() => {
+    setAutoRenewMembership(isSubscriptionUpgrade);
+  }, [isSubscriptionUpgrade]);
+
   // Special offer: when cart has ONLY special offer items, clear codes and show message; when mixed, codes apply only to non–special-offer amount
   const hasSpecialOfferInCart = cartItems.some((item: any) => item.isSpecialOffer);
   const hasOnlySpecialOfferInCart = hasSpecialOfferInCart && cartItems.length > 0 && cartItems.every((item: any) => item.isSpecialOffer);
@@ -2624,79 +2629,81 @@ function CheckoutPage() {
                     </div>
 
                 {/* PAYMENT PLANS SECTION */}
-                <div>
-                  <h2 
-                    style={{ 
-                      fontFamily: '"Futura PT Medium"',
-                      fontSize: '12px',
-                      color: '#EB1C24',
-                      margin: '0 0 12px 0',
-                      textTransform: 'uppercase',
-                      fontWeight: '500'
-                    }}
-                  >
-                    PAYMENT PLAN OPTIONS:
-                  </h2>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
-                    <button
-                      onClick={() => handlePaymentClick('AFFIRM')}
-                      disabled={processingPayment}
+                {(!isSubscriptionUpgrade || !autoRenewMembership) && (
+                  <div>
+                    <h2
                       style={{
-                        width: '100%',
-                        height: '36px',
-                        padding: '10px 20px',
-                        border: '1.3px solid #000000',
-                        backgroundColor: '#FFFFFF',
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '11px',
-                        cursor: processingPayment ? 'not-allowed' : 'pointer',
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '12px',
+                        color: '#EB1C24',
+                        margin: '0 0 12px 0',
                         textTransform: 'uppercase',
-                        boxSizing: 'border-box',
-                        opacity: processingPayment ? 0.6 : 1
+                        fontWeight: '500'
                       }}
                     >
-                      {processingPayment ? 'PROCESSING...' : 'AFFIRM'}
-                    </button>
-                    <button
-                      onClick={() => handlePaymentClick('AFTERPAY')}
-                      disabled={processingPayment}
-                      style={{
-                        width: '100%',
-                        height: '36px',
-                        padding: '10px 20px',
-                        border: '1.3px solid #000000',
-                        backgroundColor: '#FFFFFF',
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '11px',
-                        cursor: processingPayment ? 'not-allowed' : 'pointer',
-                        textTransform: 'uppercase',
-                        boxSizing: 'border-box',
-                        opacity: processingPayment ? 0.6 : 1
-                      }}
-                    >
-                      {processingPayment ? 'PROCESSING...' : 'AFTERPAY'}
-                    </button>
-                    <button
-                      onClick={() => handlePaymentClick('KLARNA')}
-                      disabled={processingPayment}
-                      style={{
-                        width: '100%',
-                        height: '36px',
-                        padding: '10px 20px',
-                        border: '1.3px solid #000000',
-                        backgroundColor: '#FFFFFF',
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '11px',
-                        cursor: processingPayment ? 'not-allowed' : 'pointer',
-                        textTransform: 'uppercase',
-                        boxSizing: 'border-box',
-                        opacity: processingPayment ? 0.6 : 1
-                      }}
-                    >
-                      {processingPayment ? 'PROCESSING...' : 'KLARNA'}
-                    </button>
-                  </div>
+                      PAYMENT PLAN OPTIONS:
+                    </h2>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+                      <button
+                        onClick={() => handlePaymentClick('AFFIRM')}
+                        disabled={processingPayment}
+                        style={{
+                          width: '100%',
+                          height: '36px',
+                          padding: '10px 20px',
+                          border: '1.3px solid #000000',
+                          backgroundColor: '#FFFFFF',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '11px',
+                          cursor: processingPayment ? 'not-allowed' : 'pointer',
+                          textTransform: 'uppercase',
+                          boxSizing: 'border-box',
+                          opacity: processingPayment ? 0.6 : 1
+                        }}
+                      >
+                        {processingPayment ? 'PROCESSING...' : 'AFFIRM'}
+                      </button>
+                      <button
+                        onClick={() => handlePaymentClick('AFTERPAY')}
+                        disabled={processingPayment}
+                        style={{
+                          width: '100%',
+                          height: '36px',
+                          padding: '10px 20px',
+                          border: '1.3px solid #000000',
+                          backgroundColor: '#FFFFFF',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '11px',
+                          cursor: processingPayment ? 'not-allowed' : 'pointer',
+                          textTransform: 'uppercase',
+                          boxSizing: 'border-box',
+                          opacity: processingPayment ? 0.6 : 1
+                        }}
+                      >
+                        {processingPayment ? 'PROCESSING...' : 'AFTERPAY'}
+                      </button>
+                      <button
+                        onClick={() => handlePaymentClick('KLARNA')}
+                        disabled={processingPayment}
+                        style={{
+                          width: '100%',
+                          height: '36px',
+                          padding: '10px 20px',
+                          border: '1.3px solid #000000',
+                          backgroundColor: '#FFFFFF',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '11px',
+                          cursor: processingPayment ? 'not-allowed' : 'pointer',
+                          textTransform: 'uppercase',
+                          boxSizing: 'border-box',
+                          opacity: processingPayment ? 0.6 : 1
+                        }}
+                      >
+                        {processingPayment ? 'PROCESSING...' : 'KLARNA'}
+                      </button>
                     </div>
+                  </div>
+                )}
 
                 {/* SHIPPING ADDRESS SECTION - hidden for digital-only (membership upgrade / gift card only) */}
                 {!isOnlyDigitalProducts && !isSubscriptionUpgrade && (

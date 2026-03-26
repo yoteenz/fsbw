@@ -1667,3 +1667,64 @@ User asked if there is a way to capture the **entire current codebase** (and its
 - **Root cause:** `Set-Cookie` used `Secure` whenever `VERCEL_ENV === 'production'`. Browsers **do not persist or send `Secure` cookies** on **non-HTTPS** pages, so dev over HTTP never stored `baw_session_rt` after `registerServerSessionCookie`, and restore saw no cookie.
 - **Decision/outcome:** Added `api/_lib/sessionCookieSecure.ts` — `useSecureSessionCookieAttribute(req)` sets `Secure` only when `Origin`/`Referer` is `https://`, or when no hint (fallback: prior `VERCEL_ENV` behavior). Optional env: `SESSION_COOKIE_SECURE=true|false`. Updated `api/session-cookie.ts` and `api/session-restore.ts` set/clear cookie with that flag.
 - **Conventions:** Deploy API to Vercel for proxied dev to pick up changes; production `https://` origins still get `Secure`.
+---
+
+## 2026-03-26 — Lobby modal: upgrade to premium chart view
+
+Summary of the whole conversation so far in this chat: user reported seeing the `/lobby` “UPGRADE YOUR SUBSCRIPTION?” popup even though their account is premium, then asked for a UX change to the modal buttons. We traced the modal to `src/pages/lobby/page.tsx` where `UPGRADE` and `CANCEL` were wired to fixed routes and the button order was cancel-left/confirm-right by default.
+
+- **Context:** Subscription-upgrade modal appears on `/lobby` and blocks access despite premium status.
+- **Topics covered:** Located the modal gating implementation in `src/pages/lobby/page.tsx` and reviewed how membership/subscription UI flow works.
+- **Decisions / outcomes:** Updated modal behavior so `UPGRADE` opens the premium upgrade chart (membership page premium chart view) and `CANCEL` returns to the previous page; also flipped button layout so `UPGRADE` is left and `CANCEL` is right.
+- **Changes:** `src/pages/lobby/page.tsx`
+  - `UPGRADE` now sets `sessionStorage.returningFromCheckout = 'true'` before routing to `/account/rewards`, and clears `membershipSelectedTier` so the premium chart starts without a stale preselection.
+  - `CANCEL` now uses `navigate(-1)` with fallback to `/home/shop`.
+  - Added `swapButtons={true}` on `ConfirmationModal` so UPGRADE is the left button and CANCEL the right.
+---
+
+## 2026-03-26 — Lobby modal: confirm premium via profile sync
+
+Summary of the whole conversation so far in this chat: the user first reported the `/lobby` upgrade modal appearing despite the account being premium, then requested a UX update to the modal buttons and routing, and finally asked that the lobby’s upgrade gating read subscription/tier data from the same sources the rewards and admin client details use.
+
+- **Context:** `/lobby` “UPGRADE YOUR SUBSCRIPTION?” modal should confirm membership using the authenticated client’s profile data (what rewards/admin views reflect), not just stale `localStorage` fields.
+- **Decisions / outcomes:** Update lobby gating to (1) call `syncAllFromApi()` on mount when signed in and Supabase is configured, and then (2) compute eligibility using `getEffectiveSubscriptionTier(...)` and `getEffectiveTierName(...)` (same effective logic as Membership/Rewards page and admin client details).
+- **Changes:** `src/pages/lobby/page.tsx`
+  - Replaced the modal’s `localStorage`-only membershipType/tier checks with effective subscription/tier helpers.
+  - After syncing `/api/profile` via `syncAllFromApi()`, the modal now re-evaluates and shows only when the client is not PREMIUM (or not BLACK tier).
+
+---
+
+## 2026-03-26 — Subscription upgrade: hide Pay-in-4 with auto-renew
+
+Summary of the whole conversation so far in this chat: user requested that the subscription upgrade checkout remove the payment plan options (pay-in-4 style providers) and then asked whether default-selecting the `AUTO RENEW MEMBERSHIP` checkbox would hide those payment plans safely (i.e., “no leak in flow” when the checkbox is toggled).
+
+- **Context:** Subscription upgrade checkout had `PAYMENT PLAN OPTIONS` (AFFIRM/AFTERPAY/KLARNA) alongside an `AUTO RENEW MEMBERSHIP` checkbox; user was concerned you can’t reliably autorenew with pay-in-4.
+- **Topics covered:** Removing/hiding Pay-in-4-style plan buttons only in the subscription upgrade flow; default auto-renew selection; whether toggling would cause mismatched subscription/autorenew state.
+- **Decisions / outcomes:** On the subscription upgrade route (`/checkout/upgrade`), `AUTO RENEW MEMBERSHIP` is now default-checked, and the `PAYMENT PLAN OPTIONS` section is hidden while auto-renew is checked; if the user unchecks auto-renew, the payment plan options reappear.
+- **Changes:** `src/pages/checkout/page.tsx`
+  - Added a `useEffect` to set `autoRenewMembership` to `isSubscriptionUpgrade`.
+  - Wrapped the Pay-in-4 style `PAYMENT PLAN OPTIONS` buttons in conditional rendering: show when NOT a subscription upgrade OR when auto-renew is unchecked.
+- **Conventions:** For subscription upgrades, treat auto-renew as mutually exclusive with Pay-in-4-style payment plan selection in the UI.
+---
+
+## 2026-03-26 — HOME nav routes to lobby
+
+Summary of the whole conversation so far in this chat: user reported that `/lobby` upgrade gating looked wrong for premium accounts, requested UX changes to the `/lobby` upgrade modal (routing + button order), then asked that the upgrade gating read from the same profile/subscription sources as the rewards + admin client details. Finally, user asked for consistent navigation: the “HOME” label in the account/profile-related menu should route to the lobby, while the app’s default/root route should still go to `shop/units`.
+
+- **Context:** “HOME” nav text on the account/profile routes incorrectly went to `shop/units`.
+- **Decisions / outcomes:** All “HOME” nav text in the account/profile/sign-in mobile menu now routes to `/lobby`; the root/index behavior stays as the default `shop/units` landing.
+- **Changes:** 
+  - `src/pages/account/page.tsx` — updated “HOME > MENU” click to `navigate('/lobby')`.
+  - `src/pages/account/settings/page.tsx` — updated “HOME >” click to `navigate('/lobby')`.
+  - `src/pages/sign-in/page.tsx` — updated “HOME >” click to `navigate('/lobby')`.
+
+---
+
+## 2026-03-26 — Motherboard: mobile-only testing & QA preference
+
+Summary of the whole conversation so far in this chat: user asked that **tests and verification be run strictly for mobile** and that this be recorded in project preferences so agents do not default to desktop-browser workflows (e.g. DevTools Network as the primary QA path). Earlier in the thread: Safari forced sign-out tied to Private Browsing; auth debug via `?auth_debug=1`; profile/settings “reset” debugging should trace `GET /api/profile` and sync; user noted desktop Network steps are not mobile-friendly.
+
+- **Context:** Build target is mobile-only; user wants motherboard docs to state that **QA, tests, and debugging guidance default to mobile**, not desktop.
+- **Decisions / outcomes:** Updated `motherboard/CORE.md` **ACTIVE BUILD TARGET** to explicitly require **mobile-first** QA/tests and to treat desktop DevTools as **secondary** (real device / Safari Web Inspector / on-device `auth_debug` first). Clarified that automated/manual tests apply where relevant on mobile-first terms.
+- **Changes:** `motherboard/CORE.md` (expanded ACTIVE BUILD TARGET bullets). This MEMORY entry.
+- **Conventions:** When giving test or trace steps, prefer mobile-appropriate methods first; do not present desktop Chrome DevTools Network as the default instruction path for this repo.
