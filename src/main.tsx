@@ -44,6 +44,14 @@ async function bootstrapAuthBeforeRender(): Promise<void> {
       const minimal = buildMinimalUserFromSupabaseSession(session.user);
       applyMinimalUserToStorage(minimal);
       authDebugLogIfEnabled('boot: promoted existing Supabase session into app auth');
+      // Pull profile/orders/cart/wishlist from API so users are not stuck on minimal local state after refresh.
+      try {
+        const { syncAllFromApi } = await import('./utils/syncFromApi');
+        await syncAllFromApi();
+        authDebugLogIfEnabled('boot: syncAllFromApi after session promote');
+      } catch (e) {
+        authDebugLogIfEnabled(`boot: syncAllFromApi failed ${e instanceof Error ? e.message : String(e)}`);
+      }
       window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
       return;
     }

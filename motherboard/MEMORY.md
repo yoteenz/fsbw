@@ -1760,3 +1760,34 @@ Summary of the whole conversation so far in this chat: production `GET /api/spec
 - **Decisions / outcomes:** Rewrite `api/special-offer-config.ts` to use **`createClient` from `@supabase/supabase-js` inline** (same pattern as `session-restore.ts`), env checks for `SUPABASE_URL` + anon/service key, **`sendJson` helper** using `res.end(JSON.stringify(...))` instead of `res.status().json()`, and `console.error` on missing env / Supabase errors.
 - **Changes:** `api/special-offer-config.ts` (full rewrite of handler implementation).
 - **Conventions:** If a Vercel API route returns `FUNCTION_INVOCATION_FAILED` with no app JSON body, try inline client + manual JSON end to rule out import/bundling issues.
+
+---
+
+## 2026-03-26 — Automatic server sync on load (no manual “Sync” each sign-out)
+
+Summary of the whole conversation so far in this chat: user objected that nobody should have to keep syncing data on every sign-out; the earlier “concrete checks” (PATCH/GET DevTools, Supabase `profiles`, env match) were **diagnostics** to find breakage, not the intended UX. Intended behavior: **save to Supabase via PATCH when settings change**, **reload from `GET /api/profile` on sign-in** (`syncAllFromApi`), with admin password sync only as an escape hatch.
+
+- **Problem:** `main.tsx` `bootstrapAuthBeforeRender` returned early when `isSignedIn()` was already true, so it **never ran** `syncAllFromApi` on cold load for returning users—only local/backup state showed until another flow pulled the API. Session-promote path (Supabase session but app not signed in) applied minimal user but did not pull full profile from API before render.
+- **Decisions / outcomes:** (1) After promoting Supabase session in `main.tsx`, **`await syncAllFromApi()`** so profile/orders/cart/wishlist load from the server automatically. (2) **`App.tsx`**: on mount, if `isSignedIn()` and Supabase has a session, **`syncAllFromApi()`** once and dispatch `signInStateChanged` when a profile is returned—covers the bootstrap gap for users already marked signed in.
+- **Changes:** `src/main.tsx`, `src/App.tsx`, this MEMORY entry.
+- **Conventions:** Users should not rely on Account → “Sync my account” for routine use; that remains for admin recovery. Routine persistence = successful PATCH + GET on sign-in/load.
+
+---
+
+## 2026-03-26 — PATCH /api/profile 500: sanitize JSONB/text + richer error JSON
+
+Summary of the whole conversation so far in this chat: user confirmed **`PATCH /api/profile` returned 500** in DevTools (not 200); Settings showed **“PERSONAL INFO QUEUED. WILL SYNC WHEN ONLINE.”** because `patchProfileWithRetryQueue` treats failed PATCH as queued. Explained that 500 = Supabase/Postgres rejected the upsert; Response body should include `error` (and now `code` / `hint` / `details`).
+
+- **Decisions / outcomes:** Harden `api/profile.ts` **before upsert**: coerce **`birthday`** and **`phone_number`** to strings (numbers from forms/localStorage can break text columns); run **`coerceJsonbValue`** on JSON/JSONB fields so stringified JSON from localStorage is parsed to objects/arrays; **`sanitizeRowForUpsert`** final pass. On upsert failure, **`console.error`** full PostgREST fields and return **`{ error, code, hint, details }`** in JSON for easier debugging in Network → Response.
+- **Changes:** `api/profile.ts`. This MEMORY entry.
+- **Conventions:** If PATCH still 500 after deploy, read Response JSON and Vercel logs; check Supabase **RLS** on `profiles` and **schema** vs `docs/PROFILES_COLUMNS_AND_APP_MAPPING.md`.
+
+---
+
+## 2026-03-26 — api/profile FUNCTION_INVOCATION_FAILED: inline Supabase + sendJson + try/catch
+
+Summary of the whole conversation so far in this chat: user reported **`PATCH /api/profile`** Preview/Response showed plain Vercel **`FUNCTION_INVOCATION_FAILED`** (not JSON with `error`), meaning the serverless function crashed before returning a normal body.
+
+- **Decisions / outcomes:** Refactor **`api/profile.ts`** to match **`api/special-offer-config.ts`**: **`createClient` from `@supabase/supabase-js` inline** (no `getSupabaseUser` from `./_lib/supabase`), **`sendJson`** using **`res.end(JSON.stringify(...))`**, **`parseJsonBody`** for string bodies, **top-level `try/catch`** with `console.error('[api/profile] Uncaught:', e)`, dynamic **`import('./_lib/auditLog')`** after successful upsert so audit chain is not on the critical path. **GET** `null` profile uses **`sendJson(res, 200, null)`**. Imports **`./_lib/auth`** and **`./_lib/profileMapping`** without `.js` to match **`api/delete-account.ts`**.
+- **Changes:** `api/profile.ts`. This MEMORY entry.
+- **Conventions:** Plain `FUNCTION_INVOCATION_FAILED` with no app JSON → treat as uncaught exception or bundler/runtime issue; prefer inline Supabase + manual JSON for Vercel routes that misbehave.

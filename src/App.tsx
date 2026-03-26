@@ -364,6 +364,34 @@ function App() {
     void flushQueuedProfilePatch();
   }, [location.pathname]);
 
+  // When the app loads while already signed in (localStorage + Supabase session), pull server state automatically.
+  // bootstrap in main.tsx skips API sync when isSignedIn was already true — this effect covers that gap so users
+  // do not need to sign out/in or use admin "Sync my account" to refresh profile from Supabase.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (typeof window === 'undefined') return;
+      if (!isSignedIn()) return;
+      const { isSupabaseConfigured, getSupabase } = await import('./utils/supabase');
+      if (!isSupabaseConfigured()) return;
+      const supabase = getSupabase();
+      if (!supabase) return;
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session?.access_token || cancelled) return;
+      const { syncAllFromApi } = await import('./utils/syncFromApi');
+      const profile = await syncAllFromApi();
+      if (cancelled) return;
+      if (profile) {
+        window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const run = () => {

@@ -1,18 +1,106 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { getAuthUser } from './_lib/auth';
-import { getSupabaseUser } from './_lib/supabase';
 import { fromProfileRow } from './_lib/profileMapping';
-import { writeAuditLog } from './_lib/auditLog';
+
+/**
+ * Profile API — uses createClient inline + manual JSON (same pattern as special-offer-config / session-restore)
+ * so Vercel bundling does not hit resolution/runtime edge cases that yield FUNCTION_INVOCATION_FAILED.
+ */
+
+function sendJson(res: VercelResponse, status: number, body: unknown): void {
+  try {
+    const json = JSON.stringify(body);
+    res.statusCode = status;
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.end(json);
+  } catch (e) {
+    console.error('[api/profile] sendJson failed:', e);
+    res.statusCode = 500;
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.end('JSON serialization failed');
+  }
+}
+
+function createUserSupabase(accessToken: string): SupabaseClient | null {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key, {
+    global: { headers: { Authorization: `Bearer ${accessToken}` } },
+  });
+}
+
+function parseJsonBody(req: VercelRequest): Record<string, unknown> {
+  const b = req.body;
+  if (typeof b === 'string') {
+    try {
+      const p = JSON.parse(b) as unknown;
+      return p && typeof p === 'object' && !Array.isArray(p) ? (p as Record<string, unknown>) : {};
+    } catch {
+      return {};
+    }
+  }
+  if (b && typeof b === 'object' && !Array.isArray(b)) return b as Record<string, unknown>;
+  return {};
+}
 
 function normalizeProfileText(input: unknown): string | null {
   if (typeof input !== 'string') return null;
   const v = input.trim();
   if (!v) return null;
-  // Profile image must be a URL (Storage), never raw data URL blob.
   if (v.toLowerCase().startsWith('data:image/')) return null;
   const u = v.toUpperCase();
   if (u === 'EMPTY' || u === 'NULL' || u === 'N/A' || u === 'NA') return null;
   return v;
+}
+
+function coerceTextColumn(input: unknown): string | null {
+  if (input == null) return null;
+  if (typeof input === 'number' && !Number.isNaN(input)) return String(input);
+  if (typeof input === 'string') {
+    const t = input.trim();
+    return t ? t : null;
+  }
+  return null;
+}
+
+function coerceJsonbValue(value: unknown): unknown {
+  if (value == null) return null;
+  if (typeof value === 'string') {
+    const t = value.trim();
+    if (!t) return null;
+    if (t.startsWith('{') || t.startsWith('[')) {
+      try {
+        return JSON.parse(t) as unknown;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
+  return value;
+}
+
+const JSONB_ROW_KEYS = [
+  'default_address',
+  'shipping_address',
+  'saved_addresses',
+  'unlocked_discounts',
+  'voucher_list',
+  'voucher_history',
+  'digital_cash_history',
+  'welcome_discount_tiers_credited_by_period',
+] as const;
+
+function sanitizeRowForUpsert(row: Record<string, unknown>): Record<string, unknown> {
+  const out = { ...row };
+  if ('birthday' in out) out.birthday = coerceTextColumn(out.birthday);
+  if ('phone_number' in out) out.phone_number = coerceTextColumn(out.phone_number);
+  for (const k of JSONB_ROW_KEYS) {
+    if (k in out) (out as Record<string, unknown>)[k] = coerceJsonbValue(out[k]);
+  }
+  return out;
 }
 
 function toProfileRow(profile: Record<string, unknown>) {
@@ -22,8 +110,8 @@ function toProfileRow(profile: Record<string, unknown>) {
     role: profile.role ?? null,
     first_name: normalizeProfileText(profile.firstName),
     last_name: normalizeProfileText(profile.lastName),
-    phone_number: profile.phoneNumber ?? null,
-    birthday: profile.birthday ?? null,
+    phone_number: coerceTextColumn(profile.phoneNumber),
+    birthday: coerceTextColumn(profile.birthday),
     facebook: profile.facebook ?? null,
     instagram: profile.instagram ?? null,
     youtube: profile.youtube ?? null,
@@ -33,18 +121,18 @@ function toProfileRow(profile: Record<string, unknown>) {
     membership_type: profile.membershipType ?? null,
     subscription_tier: profile.subscriptionTier ?? null,
     current_tier_name: profile.currentTierName ?? profile.tier ?? null,
-    default_address: profile.defaultAddress ?? null,
-    shipping_address: profile.shippingAddress ?? null,
-    saved_addresses: profile.savedAddresses ?? null,
+    default_address: coerceJsonbValue(profile.defaultAddress),
+    shipping_address: coerceJsonbValue(profile.shippingAddress),
+    saved_addresses: coerceJsonbValue(profile.savedAddresses),
     referral_code: profile.referralCode ?? null,
     gift_card_balance: Number(profile.giftCardBalance) || 0,
     has_made_first_purchase: Boolean(profile.hasMadeFirstPurchase),
     loyalty_points: Number(profile.loyaltyPoints) || 0,
-    unlocked_discounts: profile.unlockedDiscounts ?? null,
-    voucher_list: profile.voucherList ?? null,
-    voucher_history: profile.voucherHistory ?? null,
-    digital_cash_history: profile.digitalCashHistory ?? null,
-    welcome_discount_tiers_credited_by_period: profile.welcomeDiscountTiersCreditedByPeriod ?? null,
+    unlocked_discounts: coerceJsonbValue(profile.unlockedDiscounts),
+    voucher_list: coerceJsonbValue(profile.voucherList),
+    voucher_history: coerceJsonbValue(profile.voucherHistory),
+    digital_cash_history: coerceJsonbValue(profile.digitalCashHistory),
+    welcome_discount_tiers_credited_by_period: coerceJsonbValue(profile.welcomeDiscountTiersCreditedByPeriod),
     notification_newsletter:
       typeof profile.notificationNewsletter === 'boolean' ? profile.notificationNewsletter : true,
     notification_sales: typeof profile.notificationSales === 'boolean' ? profile.notificationSales : true,
@@ -53,74 +141,137 @@ function toProfileRow(profile: Record<string, unknown>) {
   };
 }
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, PATCH, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  if (req.method === 'OPTIONS') return res.status(204).end();
 
-  const user = await getAuthUser(req);
-  if (!user) {
-    return res.status(401).json({ error: 'Unauthorized' });
+  if (req.method === 'OPTIONS') {
+    res.statusCode = 204;
+    res.end();
+    return;
   }
 
-  const supabase = getSupabaseUser(user.accessToken);
+  try {
+    const user = await getAuthUser(req);
+    if (!user) {
+      sendJson(res, 401, { error: 'Unauthorized' });
+      return;
+    }
 
-  if (req.method === 'GET') {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
-    if (error && error.code !== 'PGRST116') {
-      return res.status(500).json({ error: error.message });
+    const supabase = createUserSupabase(user.accessToken);
+    if (!supabase) {
+      console.error('[api/profile] Missing SUPABASE_URL or SUPABASE_ANON_KEY');
+      sendJson(res, 503, { error: 'Server not configured (missing SUPABASE_URL or SUPABASE_ANON_KEY)' });
+      return;
     }
-    if (!data) {
-      return res.status(200).json(null);
+
+    if (req.method === 'GET') {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      if (error && error.code !== 'PGRST116') {
+        sendJson(res, 500, { error: error.message, code: error.code });
+        return;
+      }
+      if (!data) {
+        sendJson(res, 200, null);
+        return;
+      }
+      let mapped: Record<string, unknown>;
+      try {
+        mapped = fromProfileRow(data as Record<string, unknown>);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'Profile mapping failed';
+        console.error('[api/profile] GET fromProfileRow:', msg);
+        sendJson(res, 500, { error: msg });
+        return;
+      }
+      sendJson(res, 200, mapped);
+      return;
     }
-    return res.status(200).json(fromProfileRow(data as Record<string, unknown>));
+
+    if (req.method === 'PATCH') {
+      const body = parseJsonBody(req);
+      const { data: existing, error: selectErr } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle();
+      if (selectErr) {
+        console.error('[api/profile] PATCH select existing:', selectErr.message, selectErr);
+      }
+
+      let existingApp: Record<string, unknown> = {};
+      if (existing) {
+        try {
+          existingApp = fromProfileRow(existing as Record<string, unknown>);
+        } catch (e) {
+          console.error('[api/profile] PATCH fromProfileRow(existing):', e);
+          existingApp = {};
+        }
+      }
+
+      const merged = { ...existingApp, ...body, id: user.id, email: user.email };
+      const row = sanitizeRowForUpsert(toProfileRow(merged) as Record<string, unknown>);
+      row.id = user.id;
+      row.email = user.email;
+      row.updated_at = new Date().toISOString();
+      if (!existing) {
+        row.created_at = new Date().toISOString();
+      }
+
+      const { data, error } = await supabase.from('profiles').upsert(row, { onConflict: 'id' }).select().single();
+      if (error) {
+        console.error('[api/profile] PATCH upsert failed', {
+          message: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint,
+          userId: user.id,
+        });
+        sendJson(res, 500, {
+          error: error.message,
+          code: error.code,
+          hint: error.hint,
+          details: error.details,
+        });
+        return;
+      }
+
+      try {
+        const { writeAuditLog } = await import('./_lib/auditLog');
+        await writeAuditLog({
+          actorId: user.id,
+          actorEmail: user.email,
+          action: 'profile.update',
+          resourceType: 'profiles',
+          resourceId: user.id,
+          details: { updated: true },
+        });
+      } catch (auditErr) {
+        console.error('[api/profile] audit log skipped:', auditErr);
+      }
+
+      let out: Record<string, unknown>;
+      try {
+        out = fromProfileRow(data as Record<string, unknown>);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'Profile mapping failed';
+        console.error('[api/profile] PATCH response fromProfileRow:', msg);
+        sendJson(res, 500, { error: msg });
+        return;
+      }
+      sendJson(res, 200, out);
+      return;
+    }
+
+    sendJson(res, 405, { error: 'Method not allowed' });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : 'Internal error';
+    console.error('[api/profile] Uncaught:', e);
+    sendJson(res, 500, { error: msg });
   }
-
-  if (req.method === 'PATCH') {
-    const body = typeof req.body === 'object' && req.body !== null ? req.body : {};
-    // Partial update: fetch existing profile so we only overwrite fields that are in the request body.
-    // Otherwise e.g. PATCH { firstName } would set profile_image to null.
-    const { data: existing } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .maybeSingle();
-    const existingApp = existing ? fromProfileRow(existing as Record<string, unknown>) : {};
-    const merged = { ...existingApp, ...body, id: user.id, email: user.email };
-    const row = toProfileRow(merged) as Record<string, unknown>;
-    row.id = user.id;
-    row.email = user.email;
-    row.updated_at = new Date().toISOString();
-    if (!existing) {
-      row.created_at = new Date().toISOString();
-    }
-
-    // Upsert: create profile if none exists (e.g. after email confirm), otherwise update.
-    const { data, error } = await supabase
-      .from('profiles')
-      .upsert(row, { onConflict: 'id' })
-      .select()
-      .single();
-    if (error) return res.status(500).json({ error: error.message });
-    try {
-      await writeAuditLog({
-        actorId: user.id,
-        actorEmail: user.email,
-        action: 'profile.update',
-        resourceType: 'profiles',
-        resourceId: user.id,
-        details: { updated: true },
-      });
-    } catch {
-      /* ignore */
-    }
-    return res.status(200).json(fromProfileRow(data as Record<string, unknown>));
-  }
-
-  return res.status(405).json({ error: 'Method not allowed' });
 }
