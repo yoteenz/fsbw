@@ -1166,3 +1166,61 @@ User asked if there is a way to capture the **entire current codebase** (and its
 **Context:** User requested tracing guidance tailored for **mobile device only** and asked to stop receiving desktop-browser-first debugging prompts for this project phase.
 
 **Changes:** Added explicit motherboard core note that the active build/debug target is **mobile-only** until desktop phase later. Future troubleshooting instructions should prioritize mobile device flows first.
+
+---
+
+## 2026-03-26 — Mobile account overwrite tracing UI (in-page debug log)
+
+**Context:** Across this conversation, user priorities were: careers/workers UI updates, then persistent Supabase account sync hardening (profile names/photo/cart/wishlist/admin visibility), and repeated fixes for `first_name`/`profile_image` reverting to null/placeholder values. User explicitly requires **mobile-first debugging** and asked for direct overwrite tracing because values sometimes save correctly then revert.
+
+**Topics covered (conversation so far):**
+- Careers/workers updates: uppercase styling, richer role details, openings copy/location, apply form UX and fields, close icon, submit styling.
+- Supabase persistence hardening: queued profile patch retry, storage-based photo upload route, sync merge protections, fallback-clobber guards, placeholder normalization migration, settings cleanup, popup-only photo statuses, success auto-close behavior.
+- Mobile-only troubleshooting preference captured in motherboard/core and used for debugging direction.
+
+**Latest decision/outcome:** Add **mobile-visible debugging directly on the account profile page** so overwrite events can be observed in-app without relying on desktop-first browser workflows.
+
+**Changes:** **`src/pages/account/page.tsx`**
+- Added `ProfileDebugEvent` log model and persistent debug store (`profileDebugEvents_v1` in localStorage).
+- Added `captureProfileSnapshot(...)` diffing for key profile fields (`email`, `firstName`, `lastName`, `profileImage`) to detect when local account state changes.
+- Instrumented account flows: initial mount/load, user/profile image state changes, photo crop/upload success/fallback/failure, photo reset.
+- Added passive tracing on mobile via `storage` + `focus` listeners and a 1.5s polling watcher to catch silent/background overwrites.
+- Added `PROFILE DEBUG` button on account profile and a marble-style popup (`PROFILE DEBUG (MOBILE)`) listing recent events, with `CLEAR LOG` and `CLOSE`.
+
+**Conventions:** Continue prioritizing mobile-first, in-app traceability for profile persistence/overwrite issues before desktop-centric debugging steps.
+
+---
+
+## 2026-03-26 — Vercel-only profile reset guard (preserve existing on fallback)
+
+**Context:** User reported an important split: local Vite admin account behaves correctly, but Vercel/non-local keeps resetting **profile fields** (name/photo) while cart and other local data remain stable. This indicates the overwrite is in cloud profile/session recovery flow, not generic local storage for cart.
+
+**Decision/outcome:** Harden fallback profile recovery so transient Vercel auth/profile-sync misses cannot overwrite existing profile values with defaults/empties.
+
+**Changes:** **`src/utils/syncFromApi.ts`**
+- `syncProfileFromApi()` now checks token presence when `getProfile()` returns `null`:
+  - missing token => mark `lastProfileSyncErrored = true` (treat as sync error; avoid clobber fallback behavior)
+  - token exists with null profile => non-error (likely no row yet)
+- `applyMinimalUserToStorage()` now preserves existing same-email values for key profile fields (`first/last name`, `profile image`, socials, birthday) when fallback values are empty/default-like.
+- Fallback storage write for `profileImage` now prefers preserved/user value first and only uses `/assets/profile-thumb.png` as true last resort.
+
+**Conventions:** For mobile/Vercel troubleshooting, treat profile resets as a session-recovery/fallback-clobber class of issue first, especially when cart/wishlist are unaffected.
+
+---
+
+## 2026-03-26 — Mobile profile debug export (one-tap copy log)
+
+**Context:** User confirmed local Vite admin profile persists correctly while Vercel resets profile fields and requested the promised one-tap export so mobile debug traces can be pasted back quickly for overwrite forensics.
+
+**Decision/outcome:** Added an in-app mobile **copy debug log** action in account profile debug popup, including current snapshot + full event trace.
+
+**Changes:** **`src/pages/account/page.tsx`**
+- Added debug export helpers:
+  - `readCurrentProfileSnapshot()`
+  - `buildProfileDebugExportText()`
+  - `copyProfileDebugLog()` (clipboard-first with `window.prompt` fallback)
+- Added `COPY LOG` button in `PROFILE DEBUG (MOBILE)` popup.
+- Added copy feedback state/message (`DEBUG LOG COPIED.`, `COPY PROMPT OPENED.`, `COPY FAILED.`).
+- Export payload includes timestamp, current URL, current profile snapshot (`email`, `first/last`, `profileImage`), and full event log (newest first) so overwrite points can be identified from mobile production sessions.
+
+**Conventions:** Keep mobile-first forensic tooling inside the account page UI so users can capture production/Vercel behavior without desktop-only tooling.

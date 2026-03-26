@@ -4,7 +4,7 @@
  * Call after Supabase sign-in or on app load when session exists.
  * We never remove adminSubscriptionOverride or adminTierOverride (rewards/membership page); only explicit Sign Out clears auth.
  */
-import { getProfile, getOrders, getCart, getWishlist } from './api';
+import { getProfile, getOrders, getCart, getWishlist, getAccessToken } from './api';
 import { isAdminEmail, persistAuthBackup, ADMIN_TIER_OVERRIDE_KEY, ADMIN_SUBSCRIPTION_OVERRIDE_KEY } from './adminAuth';
 
 let lastProfileSyncErrored = false;
@@ -16,8 +16,15 @@ export function didLastProfileSyncError(): boolean {
 export async function syncProfileFromApi(): Promise<Record<string, unknown> | null> {
   try {
     const profile = await getProfile();
+    if (!profile) {
+      // Distinguish "no profile row yet" vs "not authenticated / token missing".
+      // If token is missing, treat as sync error so fallback upserts don't clobber data.
+      const token = await getAccessToken();
+      lastProfileSyncErrored = !token;
+      return null;
+    }
     lastProfileSyncErrored = false;
-    if (!profile || typeof profile !== 'object') return null;
+    if (typeof profile !== 'object') return null;
     const email = (profile.email as string) || '';
     if (!email) return null;
 
@@ -309,13 +316,54 @@ export function buildMinimalUserFromSupabaseSession(sessionUser: {
 export function applyMinimalUserToStorage(merged: Record<string, unknown>): void {
   const email = (merged.email as string) || '';
   if (!email) return;
-  localStorage.setItem('currentUser', JSON.stringify(merged));
-  localStorage.setItem('profileImage', '/assets/profile-thumb.png');
+
+  const existingRaw = localStorage.getItem('currentUser');
+  const existing = (existingRaw ? JSON.parse(existingRaw) : null) as Record<string, unknown> | null;
+  const sameEmail =
+    existing &&
+    ((existing.email as string) || '').trim().toLowerCase() === email.trim().toLowerCase();
+
+  const preserved = { ...merged } as Record<string, unknown>;
+  const keysToPreserve = [
+    'firstName', 'lastName', 'first_name', 'last_name', 'profileImage', 'profile_image',
+    'birthday', 'facebook', 'instagram', 'youtube', 'tiktok', 'twitter',
+  ] as const;
+
+  if (sameEmail && existing) {
+    for (const key of keysToPreserve) {
+      const nextVal = preserved[key];
+      const looksEmpty =
+        nextVal === undefined ||
+        nextVal === null ||
+        (typeof nextVal === 'string' && (!nextVal.trim() || nextVal === 'User'));
+      if (looksEmpty) {
+        const existingVal = existing[key];
+        if (
+          existingVal !== undefined &&
+          existingVal !== null &&
+          (typeof existingVal !== 'string' || existingVal.trim() !== '')
+        ) {
+          preserved[key] = existingVal;
+        }
+      }
+    }
+  }
+
+  localStorage.setItem('currentUser', JSON.stringify(preserved));
+  const img =
+    (typeof preserved.profileImage === 'string' && preserved.profileImage.trim())
+      ? preserved.profileImage
+      : (typeof preserved.profile_image === 'string' && preserved.profile_image.trim())
+        ? preserved.profile_image
+        : (typeof localStorage.getItem('profileImage') === 'string' && (localStorage.getItem('profileImage') || '').trim())
+          ? String(localStorage.getItem('profileImage'))
+          : '/assets/profile-thumb.png';
+  localStorage.setItem('profileImage', String(img));
   localStorage.setItem('isSignedIn', 'true');
   const registeredUsers: unknown[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
   const idx = registeredUsers.findIndex((u: unknown) => ((u as { email?: string }).email || '').toLowerCase() === email.toLowerCase());
-  if (idx !== -1) (registeredUsers as Record<string, unknown>[])[idx] = { ...(registeredUsers[idx] as object), ...merged } as Record<string, unknown>;
-  else registeredUsers.push(merged);
+  if (idx !== -1) (registeredUsers as Record<string, unknown>[])[idx] = { ...(registeredUsers[idx] as object), ...preserved } as Record<string, unknown>;
+  else registeredUsers.push(preserved);
   localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
   persistAuthBackup();
 }
