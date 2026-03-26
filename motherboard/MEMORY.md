@@ -1750,3 +1750,13 @@ Summary of the whole conversation so far in this chat: user hit `FUNCTION_INVOCA
 - **Decisions / outcomes:** (1) `vercel.json` rewrite pattern now excludes **`api/`** as well as **`assets/`** so SPA fallback is `((?!api/|assets/).*)`. (2) `api/special-offer-config.ts` logs Supabase errors and uncaught exceptions with `console.error` so Vercel Runtime logs show a line.
 - **Changes:** `vercel.json`, `api/special-offer-config.ts`. This MEMORY entry.
 - **Conventions:** On Windows PowerShell, use **`curl.exe`** for real curl; `curl` may invoke **`Invoke-WebRequest`**.
+
+---
+
+## 2026-03-26 — special-offer-config: inline Supabase + manual JSON (fix FUNCTION_INVOCATION_FAILED)
+
+Summary of the whole conversation so far in this chat: production `GET /api/special-offer-config` returned **`FUNCTION_INVOCATION_FAILED`** (plain text) from Vercel instead of JSON; `curl.exe` confirmed. Suspected bundling/runtime issue with `./_lib/supabase` import or `res.json()` helper on that route.
+
+- **Decisions / outcomes:** Rewrite `api/special-offer-config.ts` to use **`createClient` from `@supabase/supabase-js` inline** (same pattern as `session-restore.ts`), env checks for `SUPABASE_URL` + anon/service key, **`sendJson` helper** using `res.end(JSON.stringify(...))` instead of `res.status().json()`, and `console.error` on missing env / Supabase errors.
+- **Changes:** `api/special-offer-config.ts` (full rewrite of handler implementation).
+- **Conventions:** If a Vercel API route returns `FUNCTION_INVOCATION_FAILED` with no app JSON body, try inline client + manual JSON end to rule out import/bundling issues.
