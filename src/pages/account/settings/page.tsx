@@ -141,6 +141,7 @@ function SettingsPage() {
   const [showDeleteAccountConfirm, setShowDeleteAccountConfirm] = useState(false);
   const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
   const [personalInfoSaveMessage, setPersonalInfoSaveMessage] = useState<string | null>(null);
+  const canEditAdminBirthday = isAyoteenzAdminAccount(userData);
 
   const socialPrefixes: Record<string, string> = {
     facebook: 'FACEBOOK.COM/',
@@ -827,10 +828,10 @@ function SettingsPage() {
                     value={birthday}
                     placeholder="MM/DD/YYYY"
                     className="settings-personal-input"
-                    readOnly={isSignedIn}
-                    onChange={(e) => !isSignedIn && setBirthday(formatBirthday(e.target.value))}
-                    onBlur={() => !isSignedIn && persistPersonalInfo({ birthday })}
-                    style={{ ...inputBaseStyle, marginBottom: 0, ...(isSignedIn && { cursor: 'default', color: '#808080' }) }}
+                    readOnly={!canEditAdminBirthday}
+                    onChange={(e) => canEditAdminBirthday && setBirthday(formatBirthday(e.target.value))}
+                    onBlur={() => canEditAdminBirthday && persistPersonalInfo({ birthday })}
+                    style={{ ...inputBaseStyle, marginBottom: 0, ...(!canEditAdminBirthday && { cursor: 'default', color: '#808080' }) }}
                   />
                 </div>
                 <div style={{ marginBottom: '20px' }}>

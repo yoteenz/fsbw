@@ -3,6 +3,21 @@ import { patchProfile } from './api';
 const PROFILE_PATCH_QUEUE_KEY = 'pendingProfilePatch_v1';
 let flushInFlight = false;
 
+function isDataImageUrl(value: unknown): boolean {
+  return typeof value === 'string' && value.trim().toLowerCase().startsWith('data:image/');
+}
+
+/**
+ * Hardening: never persist base64 image blobs to profile PATCH queue/cloud path.
+ * Profile photo must be persisted as a Storage URL from /api/profile-image.
+ */
+function sanitizeProfilePatch(patch: Record<string, unknown>): Record<string, unknown> {
+  const clean = Object.fromEntries(Object.entries(patch).filter(([_, v]) => v !== undefined));
+  if (isDataImageUrl(clean.profileImage)) delete clean.profileImage;
+  if (isDataImageUrl(clean.profile_image)) delete clean.profile_image;
+  return clean;
+}
+
 function readPendingPatch(): Record<string, unknown> | null {
   try {
     const raw = localStorage.getItem(PROFILE_PATCH_QUEUE_KEY);
@@ -30,7 +45,7 @@ function writePendingPatch(patch: Record<string, unknown> | null): void {
 /** Queue profile fields for retry when network/session is unavailable. */
 export function queueProfilePatch(patch: Record<string, unknown>): void {
   if (typeof window === 'undefined') return;
-  const clean = Object.fromEntries(Object.entries(patch).filter(([_, v]) => v !== undefined));
+  const clean = sanitizeProfilePatch(patch);
   if (Object.keys(clean).length === 0) return;
   const existing = readPendingPatch() ?? {};
   writePendingPatch({ ...existing, ...clean });
@@ -42,11 +57,13 @@ export function queueProfilePatch(patch: Record<string, unknown>): void {
  */
 export async function patchProfileWithRetryQueue(patch: Record<string, unknown>): Promise<boolean> {
   if (typeof window === 'undefined') return false;
+  const clean = sanitizeProfilePatch(patch);
+  if (Object.keys(clean).length === 0) return false;
   try {
-    await patchProfile(patch);
+    await patchProfile(clean);
     return true;
   } catch {
-    queueProfilePatch(patch);
+    queueProfilePatch(clean);
     return false;
   }
 }

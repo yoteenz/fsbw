@@ -1224,3 +1224,61 @@ User asked if there is a way to capture the **entire current codebase** (and its
 - Export payload includes timestamp, current URL, current profile snapshot (`email`, `first/last`, `profileImage`), and full event log (newest first) so overwrite points can be identified from mobile production sessions.
 
 **Conventions:** Keep mobile-first forensic tooling inside the account page UI so users can capture production/Vercel behavior without desktop-only tooling.
+
+---
+
+## 2026-03-26 — Safari reopen sign-out fix (server session cookie routes)
+
+**Context:** User confirmed Chrome production flow is now stable, but Safari still signs out on close/reopen and can reset account flow behavior. Existing frontend already called `/api/session-cookie` and `/api/session-restore`, but those backend routes were missing in this repo.
+
+**Decision/outcome:** Implemented the missing Vercel API endpoints so Safari can restore Supabase session from an HttpOnly refresh-token cookie after browser reopen.
+
+**Changes:**
+- **`api/session-cookie.ts`** (new)
+  - `POST` endpoint to set/clear signed HttpOnly cookie `baw_session_rt`.
+  - Requires Bearer auth (`getAuthUser`) when setting cookie.
+  - Supports `{ clear: true }` for explicit sign-out cookie removal.
+  - Uses `SESSION_COOKIE_SECRET` HMAC signature for tamper protection.
+- **`api/session-restore.ts`** (new)
+  - `GET` endpoint reads/verifies signed cookie, calls `supabase.auth.refreshSession({ refresh_token })`, rotates cookie, and returns fresh session payload.
+  - Clears cookie on invalid signature/session mismatch/refresh failure.
+  - Enables frontend `tryServerSessionRestore()` fallback to actually work on Safari.
+
+**Conventions:** Keep Safari restore path server-backed and cookie-based (HttpOnly + signed token), with explicit clear on sign-out only.
+
+---
+
+## 2026-03-26 — Profile image hardening: Storage URL only (no data:image cloud persistence)
+
+**Context:** After overwrite/session fixes, user requested a final hardening patch so `data:image/...` blobs are never treated as final cloud profile image in production; persistence should be URL-based via Storage endpoint only.
+
+**Decision/outcome:** Enforced URL-only profile image persistence at both client queue and backend API layers.
+
+**Changes:**
+- **`src/utils/profileSyncQueue.ts`**
+  - Added `sanitizeProfilePatch(...)` to strip `profileImage` / `profile_image` values when they are `data:image/...`.
+  - `queueProfilePatch(...)` now sanitizes before writing queue.
+  - `patchProfileWithRetryQueue(...)` now sanitizes before PATCH/queue; returns `false` if nothing valid remains.
+- **`api/profile.ts`**
+  - `normalizeProfileText(...)` now rejects `data:image/...` (returns `null`) so backend never writes base64 image blobs into `profiles.profile_image`.
+
+**Conventions:** Profile photo cloud persistence path is now strictly `/api/profile-image` (Storage upload) returning URL; profile PATCH path is text/url-only and blocks raw image data.
+
+---
+
+## 2026-03-26 — First-name reset fix + ayoteenz-only birthday edit for admin tracing
+
+**Context:** User reported admin first name keeps resetting to `ayoteenz` while last name saves correctly, and requested ability to edit birthday for `ayoteenz` admin only to validate profile trace/display on admin client detail.
+
+**Decision/outcome:** Removed fallback email-prefix first-name injection and enabled birthday editing only for `ayoteenz` admin account in account settings.
+
+**Changes:**
+- **`src/utils/syncFromApi.ts`**
+  - In `buildMinimalUserFromSupabaseSession(...)`, changed fallback `firstName` from `email.split('@')[0] || 'User'` to empty string when metadata first name is absent.
+  - Prevents session-restore fallback path from overwriting saved profile first name with `ayoteenz`.
+- **`src/pages/account/settings/page.tsx`**
+  - Added `canEditAdminBirthday = isAyoteenzAdminAccount(userData)`.
+  - Birthday input now `readOnly={!canEditAdminBirthday}` and only persists on change/blur when `canEditAdminBirthday` is true.
+  - Keeps birthday locked for non-`ayoteenz` users while allowing admin tracing test flow.
+
+**Conventions:** Avoid placeholder/name synthesis from email in fallback profile paths; preserve explicit saved profile identity fields.

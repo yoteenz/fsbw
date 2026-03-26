@@ -8,6 +8,8 @@ function normalizeProfileText(input: unknown): string | null {
   if (typeof input !== 'string') return null;
   const v = input.trim();
   if (!v) return null;
+  // Profile image must be a URL (Storage), never raw data URL blob.
+  if (v.toLowerCase().startsWith('data:image/')) return null;
   const u = v.toUpperCase();
   if (u === 'EMPTY' || u === 'NULL' || u === 'N/A' || u === 'NA') return null;
   return v;
