@@ -170,7 +170,7 @@ export default function CreateNewListModal({
               cursor: 'pointer'
             }}
           >
-            Add
+            Create
           </button>
         </div>
       </div>

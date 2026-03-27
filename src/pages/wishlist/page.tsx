@@ -7,6 +7,7 @@ import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { isMockDataAccount, clearAppAuth } from '../../utils/adminAuth';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
+import { trackActivity } from '../../utils/activity';
 
 function WishlistSelection() {
   const navigate = useNavigate();
@@ -278,10 +279,13 @@ function WishlistSelection() {
 
   const handleConfirmRemoveItemFromWishlist = () => {
     if (!itemToRemoveId) return;
+    const removed = wishlistItems.find((i) => i.id === itemToRemoveId);
     const newItems = wishlistItems.filter(i => i.id !== itemToRemoveId);
     setWishlistItems(newItems);
     localStorage.setItem('wishlistItems', JSON.stringify(newItems));
     window.dispatchEvent(new CustomEvent('wishlistUpdated'));
+    const pname = (removed?.name || removed?.productName || '').toString();
+    trackActivity('remove_from_wishlist', { productName: pname || undefined });
     setItemToRemoveId(null);
     setShowRemoveItemConfirm(false);
   };
@@ -303,7 +307,10 @@ function WishlistSelection() {
       const newCount = updatedItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
       localStorage.setItem('cartCount', newCount.toString());
       setCartCount(newCount);
+      window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
+      const pname = (item?.name || item?.productName || '').toString();
+      trackActivity('add_to_cart', { source: 'wishlist', productName: pname || undefined });
     } catch (e) {
       console.error('Error adding to bag:', e);
     }

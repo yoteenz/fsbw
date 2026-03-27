@@ -141,6 +141,8 @@ function toProfileRow(profile: Record<string, unknown>) {
     profile_image: normalizeProfileText(profile.profileImage),
     membership_type: profile.membershipType ?? null,
     subscription_tier: profile.subscriptionTier ?? null,
+    auto_renew_membership:
+      typeof profile.autoRenewMembership === 'boolean' ? profile.autoRenewMembership : undefined,
     current_tier_name: profile.currentTierName ?? profile.tier ?? null,
     default_address: coerceJsonbValue(profile.defaultAddress),
     shipping_address: coerceJsonbValue(profile.shippingAddress),
@@ -228,6 +230,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
     if (req.method === 'PATCH') {
       const body = parseJsonBody(req);
+      // Never let clients set Stripe-managed billing ids (webhook / create-checkout only).
+      const strip = [
+        'stripeCustomerId',
+        'stripeSubscriptionId',
+        'stripe_customer_id',
+        'stripe_subscription_id',
+        'subscription_period_end',
+        'subscription_purchased_at',
+      ] as const;
+      for (const k of strip) {
+        delete body[k];
+      }
       const { data: existing, error: selectErr } = await supabase
         .from('profiles')
         .select('*')
@@ -252,6 +266,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       row.id = user.id;
       row.email = user.email;
       row.updated_at = new Date().toISOString();
+      // Preserve Stripe + period fields from DB so PATCH never wipes them.
+      const existingRow = existing as Record<string, unknown> | null;
+      const preserveKeys = [
+        'stripe_customer_id',
+        'stripe_subscription_id',
+        'subscription_period_end',
+        'subscription_purchased_at',
+      ] as const;
+      for (const k of preserveKeys) {
+        if (existingRow && existingRow[k] != null && existingRow[k] !== '') {
+          (row as Record<string, unknown>)[k] = existingRow[k];
+        }
+      }
+      if (merged.autoRenewMembership === undefined && existingRow?.auto_renew_membership != null) {
+        (row as Record<string, unknown>).auto_renew_membership = existingRow.auto_renew_membership;
+      }
       if (!existing) {
         row.created_at = new Date().toISOString();
       }

@@ -1,4 +1,0 @@
-﻿src/pages/account/affiliate/page.tsx(145,9): error TS6133: '_kristinMockDeliveredOrders' is declared but its value is never read.
-src/pages/orders/page.tsx(277,9): error TS6133: '_mockActiveOrders' is declared but its value is never read.
-src/pages/orders/page.tsx(442,9): error TS6133: '_mockPastOrders' is declared but its value is never read.
-src/utils/webauthn.ts(61,5): error TS2741: Property 'challenge' is missing in type 'CredentialRequestOptions' but required in type 'PublicKeyCredentialRequestOptions'.

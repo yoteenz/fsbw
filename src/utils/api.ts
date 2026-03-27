@@ -3,6 +3,8 @@
  * Sends the Supabase session access_token as Bearer so the API can identify the user.
  */
 
+import type { MembershipPaymentRecord } from './membershipPayments';
+
 const API_BASE =
   (import.meta as unknown as { env?: { VITE_API_BASE?: string } }).env?.VITE_API_BASE ?? '';
 
@@ -119,6 +121,62 @@ export async function patchProfile(profile: Record<string, unknown>): Promise<Re
   return (await res.json()) as Record<string, unknown>;
 }
 
+/** True when Vercel has Stripe secret + three recurring price ids configured. */
+export async function fetchStripeMembershipAvailable(): Promise<boolean> {
+  const base = API_BASE.replace(/\/$/, '');
+  const url = base ? `${base}/api/stripe/membership-available` : '/api/stripe/membership-available';
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return false;
+    const data = (await res.json()) as { available?: boolean };
+    return Boolean(data?.available);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Starts Stripe Checkout for a premium subscription (3 / 6 / 12 months).
+ * Requires Supabase session (Bearer). Redirect URL is returned.
+ */
+export async function createStripeMembershipCheckoutSession(
+  tier: '3months' | '6months' | '12months',
+  returnPath = '/account/membership'
+): Promise<string> {
+  const res = await apiFetch('/api/stripe/create-checkout-session', {
+    method: 'POST',
+    body: { tier, returnPath },
+  });
+  const text = await res.text();
+  if (!res.ok) {
+    let msg = text;
+    try {
+      const j = JSON.parse(text) as { error?: string };
+      if (typeof j?.error === 'string' && j.error.trim()) msg = j.error;
+    } catch {
+      /* use raw text */
+    }
+    throw new Error(msg || 'Checkout failed');
+  }
+  const data = JSON.parse(text) as { url?: string };
+  if (!data?.url) throw new Error('No checkout URL returned');
+  return data.url;
+}
+
+/** Admin: list membership charges from Supabase (Stripe webhooks). */
+export async function getAdminMembershipPayments(): Promise<MembershipPaymentRecord[]> {
+  const res = await apiFetch('/api/admin/membership-payments');
+  if (res.status === 403 || res.status === 401) return [];
+  const text = await res.text();
+  if (!res.ok) return [];
+  try {
+    const data = JSON.parse(text) as { payments?: MembershipPaymentRecord[] };
+    return Array.isArray(data.payments) ? data.payments : [];
+  } catch {
+    return [];
+  }
+}
+
 /** Upload a profile image data URL to Supabase Storage and store resulting URL in profile.profile_image. */
 export async function uploadProfileImage(imageDataUrl: string): Promise<{ profileImage: string }> {
   const res = await apiFetch('/api/profile-image', {
@@ -164,9 +222,8 @@ export async function deleteAccount(options?: { deletedFrom?: string }): Promise
   }
 }
 
-/** Record activity for admin Activity tab. No-op if no API or not authenticated. */
+/** Record activity for admin Activity tab. Uses same-origin `/api/activity` when VITE_API_BASE is empty. No-op if not authenticated (401). */
 export async function recordActivity(eventType: string, payload?: Record<string, unknown>): Promise<void> {
-  if (!API_BASE) return;
   const res = await apiFetch('/api/activity', { method: 'POST', body: payload ? { eventType, payload } : { eventType } });
   if (res.status === 401) return;
   if (!res.ok) throw new Error(await res.text());
@@ -236,6 +293,40 @@ export async function getAdminClients(): Promise<{ clients: Record<string, unkno
   const data = await res.json();
   const clients = Array.isArray(data) ? data : [];
   return { clients };
+}
+
+export type AdminNewsletterSendResult = {
+  ok?: boolean;
+  sent?: number;
+  failed?: { email: string; error: string }[];
+  attempted?: number;
+  error?: string;
+};
+
+/** Admin: send newsletter email via Resend (requires RESEND_API_KEY on server). Max 100 recipients per call. */
+export async function sendAdminNewsletter(payload: {
+  subject: string;
+  html: string;
+  to: string[];
+}): Promise<AdminNewsletterSendResult> {
+  const res = await apiFetch('/api/admin/newsletter-send', { method: 'POST', body: payload });
+  const text = await res.text();
+  let data: AdminNewsletterSendResult = {};
+  try {
+    data = text ? (JSON.parse(text) as AdminNewsletterSendResult) : {};
+  } catch {
+    data = { error: text || 'Invalid response' };
+  }
+  if (!res.ok) {
+    const err =
+      typeof data.error === 'string' && data.error.trim()
+        ? data.error
+        : text && text.length < 500
+          ? text
+          : `HTTP ${res.status}`;
+    return { error: err };
+  }
+  return data;
 }
 
 /** Admin: fetch orders for a user by Supabase user id. Requires admin session. */

@@ -6,7 +6,7 @@
  * explicitly clicks Sign Out. When Supabase fires SIGNED_OUT we restore app auth from backup.
  */
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { ensureAuthRestoredFromBackup, consumeManualSignOutFlag, authDebugLogIfEnabled } from './adminAuth';
+import { ensureAuthRestoredFromBackup, consumeManualSignOutFlag } from './adminAuth';
 
 const SUPABASE_SESSION_COOKIE = 'baw_sb_session';
 const SUPABASE_USER_COOKIE = 'baw_sb_user';
@@ -143,10 +143,8 @@ export function getSupabase(): SupabaseClient | null {
       // Hard gate: only allow true signed-out state on explicit manual sign-out.
       const manual = consumeManualSignOutFlag();
       if (manual) {
-        authDebugLogIfEnabled('SIGNED_OUT accepted (manual)');
         return;
       }
-      authDebugLogIfEnabled('SIGNED_OUT blocked (auto-recover)');
       ensureAuthRestoredFromBackup();
       // Try server cookie restore when browser/session cleared local Supabase state unexpectedly.
       import('./sessionRestore').then((m) => m.tryServerSessionRestore()).catch(() => {});

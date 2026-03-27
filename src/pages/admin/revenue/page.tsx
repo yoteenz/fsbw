@@ -3,17 +3,24 @@
  * - Orders: buildRevenueOrdersList() = localStorage userOrders_* (same keys as client overview).
  * - Overview totals/breakdown: getAdminRevenue() when Supabase is configured (else derived from orders).
  * - Products/Inventory: getDepletedInventory(orders) and Edit Inventory overrides.
- * - Payments: same order set; fraud analysis runs on the same order list.
+ * - Payments: local membership rows + Supabase `membership_payments` (Stripe webhooks) when admin + API; fraud analysis runs on the order list.
  */
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
-import { getAdminRevenue } from '../../../utils/api';
+import { getAdminRevenue, getAdminMembershipPayments } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { buildRevenueOrdersList, getDepletedInventory, getOrdersStats, getProductSalesCounts, getTotalStartingInventoryUnits } from '../../../utils/adminRevenueStats';
+import {
+  buildMembershipPaymentsList,
+  membershipPaymentsTotalUsd,
+  mergeMembershipPaymentLists,
+  type MembershipPaymentRecord,
+} from '../../../utils/membershipPayments';
+import { getSubscriptionDisplayName, isSubscriptionTierId } from '../../../constants/subscriptionPricing';
 
 const REVENUE_TABS = ['OVERVIEW', 'ORDERS', 'PRODUCTS', 'PAYMENTS'] as const;
 
@@ -291,11 +298,52 @@ export default function AdminRevenue() {
   const [totalOrders, setTotalOrders] = useState(53);
   const [breakdown, setBreakdown] = useState<{ month: string; value: number }[]>([]);
   const [orders, setOrders] = useState<RevenueOrder[]>(() => buildRevenueOrdersList() as RevenueOrder[]);
+  const [localMembershipPayments, setLocalMembershipPayments] = useState<MembershipPaymentRecord[]>(() =>
+    buildMembershipPaymentsList()
+  );
+  const [remoteMembershipPayments, setRemoteMembershipPayments] = useState<MembershipPaymentRecord[]>([]);
+  const membershipPayments = useMemo(
+    () => mergeMembershipPaymentLists(localMembershipPayments, remoteMembershipPayments),
+    [localMembershipPayments, remoteMembershipPayments]
+  );
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
   const [addTrackingOrderId, setAddTrackingOrderId] = useState<string | null>(null);
   const [trackingInput, setTrackingInput] = useState('');
 
-  const refreshOrders = () => setOrders(buildRevenueOrdersList() as RevenueOrder[]);
+  const refreshRemoteMembershipPayments = React.useCallback(async () => {
+    if (!isSupabaseConfigured()) return;
+    try {
+      const raw = localStorage.getItem('currentUser');
+      const u = raw ? (JSON.parse(raw) as { email?: string }) : null;
+      if (!u?.email || !isAdminEmail(u.email)) return;
+      const rows = await getAdminMembershipPayments();
+      setRemoteMembershipPayments(rows);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const refreshOrders = () => {
+    setOrders(buildRevenueOrdersList() as RevenueOrder[]);
+    setLocalMembershipPayments(buildMembershipPaymentsList());
+    void refreshRemoteMembershipPayments();
+  };
+
+  useEffect(() => {
+    void refreshRemoteMembershipPayments();
+  }, [refreshRemoteMembershipPayments]);
+
+  useEffect(() => {
+    const refreshLocal = () => setLocalMembershipPayments(buildMembershipPaymentsList());
+    window.addEventListener('membershipPaymentsUpdated', refreshLocal);
+    window.addEventListener('storage', refreshLocal);
+    window.addEventListener('focus', refreshLocal);
+    return () => {
+      window.removeEventListener('membershipPaymentsUpdated', refreshLocal);
+      window.removeEventListener('storage', refreshLocal);
+      window.removeEventListener('focus', refreshLocal);
+    };
+  }, []);
 
   const expandedOrder = useMemo(() => orders.find((o) => o.id === expandedOrderId) ?? null, [orders, expandedOrderId]);
 
@@ -425,7 +473,17 @@ export default function AdminRevenue() {
     PRODUCTS: { left: { label: 'PROFIT MARGIN', value: '—' }, right: { label: 'INVENTORY', value: `${inventoryPercent}%` } },
     PAYMENTS: { left: { label: 'DISCOUNTS', value: '—' }, right: { label: 'FEES', value: '—' } },
   };
-  const panel = panelLabelsAndValues[activeTab];
+  const membershipTotalUsd = membershipPaymentsTotalUsd(membershipPayments);
+  const panel =
+    activeTab === 'PAYMENTS'
+      ? {
+          left: { label: 'MEMBERSHIP', value: formatWithCommas(membershipPayments.length) },
+          right: {
+            label: 'MEMBERSHIP $',
+            value: membershipPayments.length ? `$${formatWithCommas(Math.round(membershipTotalUsd))}` : '—',
+          },
+        }
+      : panelLabelsAndValues[activeTab];
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -642,6 +700,71 @@ export default function AdminRevenue() {
                 )}
                 {activeTab === 'PAYMENTS' && (
                   <>
+                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>MEMBERSHIP</h3>
+                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', marginBottom: '10px', lineHeight: 1.4 }}>
+                      Initial charges are recorded when a member completes premium checkout (3 / 6 / 12 mo prices match the membership upgrade chart). Auto-renew renewals at the same tier price require a payment processor (e.g. Stripe Billing); this list will include renewal rows when those webhooks sync.
+                    </p>
+                    {membershipPayments.length === 0 ? (
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080', margin: 0, textTransform: 'uppercase' }}>
+                        NO MEMBERSHIP PAYMENTS YET
+                      </p>
+                    ) : (
+                      <div className="space-y-2 mb-4" style={{ maxHeight: '220px', overflowY: 'auto' }}>
+                        {membershipPayments.map((row) => {
+                          const tierLabel = isSubscriptionTierId(row.subscriptionTier)
+                            ? getSubscriptionDisplayName(row.subscriptionTier)
+                            : row.subscriptionTier;
+                          const d = row.createdAt ? new Date(row.createdAt) : null;
+                          const dateStr =
+                            d && !Number.isNaN(d.getTime())
+                              ? `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`
+                              : '—';
+                          return (
+                            <div
+                              key={row.id}
+                              className="flex flex-col gap-1 py-2"
+                              style={{ borderBottom: '1px solid #e5e7eb' }}
+                            >
+                              <div className="flex justify-between items-start gap-2">
+                                <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>
+                                  {tierLabel}
+                                </span>
+                                <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>
+                                  ${Math.round(row.amountUsd).toLocaleString()}
+                                </span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#000' }}>{dateStr}</span>
+                                <span style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080' }}>
+                                  {(row.userEmail || '').length > 28
+                                    ? `${(row.userEmail || '').slice(0, 25)}…`
+                                    : row.userEmail || '—'}
+                                </span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', textTransform: 'uppercase' }}>
+                                  {row.kind === 'renewal' ? 'RENEWAL' : 'INITIAL'}
+                                  {row.autoRenew ? ' · AUTO-RENEW' : ''}
+                                  {row.source === 'supabase' ? ' · STRIPE' : ''}
+                                </span>
+                                {row.nextBillingAt && row.autoRenew && (
+                                  <span style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080' }}>
+                                    NEXT:{' '}
+                                    {(() => {
+                                      const nd = new Date(row.nextBillingAt);
+                                      return Number.isNaN(nd.getTime())
+                                        ? '—'
+                                        : `${nd.getMonth() + 1}/${nd.getDate()}/${nd.getFullYear()}`;
+                                    })()}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginTop: '16px', marginBottom: '8px' }}>METHOD MIX (PLACEHOLDER)</h3>
                     <div className="space-y-2">
                       {[
                         { label: 'CREDIT CARD', value: '68%' },

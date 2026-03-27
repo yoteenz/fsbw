@@ -170,6 +170,7 @@ function LeaveReviewOrderPage() {
   };
 
   const handleSignOut = () => {
+    trackActivity('sign_out');
     setIsSignedIn(false);
     clearAppAuth();
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));

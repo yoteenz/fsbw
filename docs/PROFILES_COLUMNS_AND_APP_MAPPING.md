@@ -25,6 +25,11 @@ These are the **snake_case** column names the backend reads/writes. The API conv
 | `profile_image` | string \| null (URL; e.g. Supabase storage or `/assets/profile-thumb.png`) |
 | `membership_type` | string \| null (e.g. `STANDARD`, `PREMIUM`) |
 | `subscription_tier` | string \| null (e.g. `3months`, `6months`, `12months`) |
+| `stripe_customer_id` | string \| null — Stripe Customer id (`cus_...`) |
+| `stripe_subscription_id` | string \| null — Stripe Subscription id (`sub_...`) |
+| `auto_renew_membership` | boolean — synced from Stripe `cancel_at_period_end` |
+| `subscription_period_end` | timestamptz \| null — current period end from Stripe |
+| `subscription_purchased_at` | timestamptz \| null — first subscription activation |
 | `current_tier_name` | string \| null (rewards tier: `SILVER`, `RED`, `BLACK`) |
 | `default_address` | object \| null |
 | `shipping_address` | object \| null |
@@ -74,6 +79,11 @@ If the table is missing any of these columns, GET/PATCH and sync may return part
 | `profileImage` | `profile_image` | Fallback: `/assets/profile-thumb.png` |
 | `membershipType` | `membership_type` | STANDARD \| PREMIUM |
 | `subscriptionTier` | `subscription_tier` | 3months \| 6months \| 12months |
+| `stripeCustomerId` | `stripe_customer_id` | Set by Stripe checkout / webhook only (not client PATCH) |
+| `stripeSubscriptionId` | `stripe_subscription_id` | Set by Stripe webhook only (not client PATCH) |
+| `autoRenewMembership` | `auto_renew_membership` | |
+| `subscriptionEndDate` | `subscription_period_end` | ISO string in API JSON |
+| `subscriptionPurchasedAt` | `subscription_purchased_at` | |
 | `currentTierName` | `current_tier_name` or `tier` | SILVER \| RED \| BLACK (rewards) |
 | `defaultAddress` | `default_address` | |
 | `shippingAddress` | `shipping_address` | |

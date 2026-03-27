@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
@@ -10,7 +10,7 @@ import { deleteAccount } from '../../../utils/api';
 import { patchProfileWithRetryQueue } from '../../../utils/profileSyncQueue';
 import { trackActivity } from '../../../utils/activity';
 import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
-import { clearAppAuth, isAyoteenzAdminAccount } from '../../../utils/adminAuth';
+import { clearAppAuth, isAyoteenzAdminAccount, isAdminEmail } from '../../../utils/adminAuth';
 
 const inputBaseStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Demi"',
@@ -126,7 +126,13 @@ function SettingsPage() {
         localStorage.setItem('registeredUsers', JSON.stringify(registered));
       }
       setUserData((prev: any) => (prev ? { ...prev, ...stored } : prev));
-      patchNotificationPrefsToCloud(stored as Record<string, boolean>);
+      void pushFullSettingsProfileToCloud({
+        notif: stored as Partial<{
+          notificationNewsletter: boolean;
+          notificationSales: boolean;
+          notificationOrderTracking: boolean;
+        }>,
+      });
     } catch (_) {}
   };
   const [ordersAnimations, setOrdersAnimations] = useState(() => {
@@ -139,7 +145,6 @@ function SettingsPage() {
       return true;
     }
   });
-  const [showPassword, setShowPassword] = useState(false);
   const [showResetPasswordForm, setShowResetPasswordForm] = useState(false);
   const [socialViewMode, setSocialViewMode] = useState<Record<string, boolean>>({ facebook: false, instagram: false, youtube: false, tiktok: false, twitter: false });
   const [resetOldPassword, setResetOldPassword] = useState('');
@@ -150,6 +155,92 @@ function SettingsPage() {
   const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
   const [personalInfoSaveMessage, setPersonalInfoSaveMessage] = useState<string | null>(null);
   const canEditAdminBirthday = isAyoteenzAdminAccount(userData);
+
+  /** Optional snapshots so we PATCH the value just saved (avoids stale React state on the same tick). */
+  type PushFullOpts = {
+    personal?: Partial<{ firstName: string; lastName: string; birthday: string; phoneNumber: string }>;
+    notif?: Partial<{
+      notificationNewsletter: boolean;
+      notificationSales: boolean;
+      notificationOrderTracking: boolean;
+    }>;
+  };
+
+  /**
+   * Push the full Settings form (personal + socials + notifications + admin role) to Supabase in one PATCH
+   * so `profiles` matches what the Settings page shows for each client.
+   */
+  const pushFullSettingsProfileToCloud = useCallback(
+    async (opts?: PushFullOpts): Promise<boolean> => {
+      const email = (userData?.email || '').trim().toLowerCase();
+      if (!email || !isSupabaseConfigured()) return false;
+      const supabase = getSupabase();
+      if (!supabase) return false;
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) return false;
+      const stripAt = (s: string) => s.trim().replace(/^@/, '');
+      const social = {
+        facebook: stripAt(facebook) ? `facebook.com/${stripAt(facebook)}` : '',
+        instagram: stripAt(instagram) ? `instagram.com/${stripAt(instagram)}` : '',
+        youtube: stripAt(youtube) ? `youtube.com/${stripAt(youtube)}` : '',
+        tiktok: stripAt(tiktok) ? `tiktok.com/${stripAt(tiktok)}` : '',
+        twitter: stripAt(twitter) ? `x.com/${stripAt(twitter)}` : '',
+      };
+      const fn = (opts?.personal?.firstName ?? firstName).trim();
+      const ln = (opts?.personal?.lastName ?? lastName).trim();
+      const bd = (opts?.personal?.birthday ?? birthday).trim();
+      const ph = (opts?.personal?.phoneNumber ?? phoneNumber).replace(/\D/g, '');
+      const payload: Record<string, unknown> = {
+        firstName: fn,
+        lastName: ln,
+        birthday: bd,
+        phoneNumber: ph,
+        ...social,
+        notificationNewsletter: opts?.notif?.notificationNewsletter ?? newsletter,
+        notificationSales: opts?.notif?.notificationSales ?? sales,
+        notificationOrderTracking: opts?.notif?.notificationOrderTracking ?? orderTracking,
+      };
+      if (isAdminEmail(email)) {
+        payload.role = 'admin';
+      }
+      try {
+        const ok = await patchProfileWithRetryQueue(payload);
+        if (ok) trackActivity('profile_update');
+        return ok;
+      } catch {
+        return false;
+      }
+    },
+    [
+      userData?.email,
+      firstName,
+      lastName,
+      birthday,
+      phoneNumber,
+      facebook,
+      instagram,
+      youtube,
+      tiktok,
+      twitter,
+      newsletter,
+      sales,
+      orderTracking,
+    ]
+  );
+
+  const settingsFullSyncOnceRef = useRef(false);
+  useEffect(() => {
+    if (!userData?.email || !isSignedIn) return;
+    if (!isSupabaseConfigured()) return;
+    if (settingsFullSyncOnceRef.current) return;
+    const t = window.setTimeout(() => {
+      settingsFullSyncOnceRef.current = true;
+      void pushFullSettingsProfileToCloud();
+    }, 1200);
+    return () => window.clearTimeout(t);
+  }, [userData?.email, isSignedIn, pushFullSettingsProfileToCloud]);
 
   const socialPrefixes: Record<string, string> = {
     facebook: 'FACEBOOK.COM/',
@@ -185,23 +276,7 @@ function SettingsPage() {
         }
       }
       setUserData((prev: any) => (prev ? { ...prev, ...payload } : prev));
-      if (isSupabaseConfigured()) {
-        const supabase = getSupabase();
-        if (supabase) {
-          void supabase.auth.getSession().then(({ data: { session } }) => {
-            if (!session) return;
-            patchProfileWithRetryQueue({
-              facebook: payload.facebook || null,
-              instagram: payload.instagram || null,
-              youtube: payload.youtube || null,
-              tiktok: payload.tiktok || null,
-              twitter: payload.twitter || null,
-            })
-              .then((ok) => { if (ok) trackActivity('profile_update'); })
-              .catch(() => {});
-          });
-        }
-      }
+      pushFullSettingsProfileToCloud();
     } catch (_) {}
   };
 
@@ -234,41 +309,23 @@ function SettingsPage() {
         }
       }
       setUserData((prev: any) => (prev ? { ...prev, ...payloadWithSnake } : prev));
-      // Persist to backend so name survives sync/reload when using Supabase/API (camelCase to match sign-up)
-      const apiPayload: Record<string, string> = {};
-      if (updates.firstName !== undefined) apiPayload.firstName = updates.firstName.trim();
-      if (updates.lastName !== undefined) apiPayload.lastName = updates.lastName.trim();
-      if (updates.birthday !== undefined) apiPayload.birthday = updates.birthday.trim();
-      if (updates.phoneNumber !== undefined) apiPayload.phoneNumber = updates.phoneNumber.trim();
-      if (Object.keys(apiPayload).length > 0) {
-        patchProfileWithRetryQueue(apiPayload)
+      // One full PATCH so Supabase matches the whole Settings form (use payload so names are not stale vs state).
+      if (Object.keys(payload).length > 0) {
+        void pushFullSettingsProfileToCloud({
+          personal: {
+            firstName: payload.firstName ?? firstName,
+            lastName: payload.lastName ?? lastName,
+            birthday: payload.birthday ?? birthday,
+            phoneNumber: (payload.phoneNumber ?? phoneNumber).replace(/\D/g, ''),
+          },
+        })
           .then((ok) => {
-            if (ok) {
-              trackActivity('profile_update');
-              setPersonalInfoSaveMessage('PERSONAL INFO SAVED.');
-            } else {
-              setPersonalInfoSaveMessage('PERSONAL INFO QUEUED. WILL SYNC WHEN ONLINE.');
-            }
+            if (ok) setPersonalInfoSaveMessage('PERSONAL INFO SAVED.');
+            else setPersonalInfoSaveMessage('PERSONAL INFO QUEUED. WILL SYNC WHEN ONLINE.');
           })
           .catch(() => setPersonalInfoSaveMessage('PERSONAL INFO SAVE FAILED.'));
       }
     } catch (_) {}
-  };
-
-  const patchNotificationPrefsToCloud = (stored: Record<string, boolean>) => {
-    if (!isSupabaseConfigured()) return;
-    const supabase = getSupabase();
-    if (!supabase) return;
-    void supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) return;
-      const body: Record<string, boolean> = {};
-      if (stored.notificationNewsletter !== undefined) body.notificationNewsletter = stored.notificationNewsletter;
-      if (stored.notificationSales !== undefined) body.notificationSales = stored.notificationSales;
-      if (stored.notificationOrderTracking !== undefined)
-        body.notificationOrderTracking = stored.notificationOrderTracking;
-      if (Object.keys(body).length === 0) return;
-      patchProfileWithRetryQueue(body).then((ok) => { if (ok) trackActivity('profile_update'); }).catch(() => {});
-    });
   };
 
   const handleResetPasswordSubmit = () => {
@@ -407,7 +464,7 @@ function SettingsPage() {
     }
   };
 
-  // Actual account password (from current user or registeredUsers) for "Show password"
+  // Actual account password (from current user or registeredUsers) for reset-password validation
   const accountPassword = (() => {
     if (userData?.password) return String(userData.password);
     try {
@@ -882,37 +939,22 @@ function SettingsPage() {
                   {!showResetPasswordForm && <label style={labelStyle}>PASSWORD</label>}
                   {!showResetPasswordForm ? (
                     <>
-                      <div style={{ position: 'relative' }}>
-                        <input
-                          type={showPassword ? 'text' : 'password'}
-                          readOnly
-                          value={showPassword ? accountPassword : '••••••••••'}
-                          style={{
-                            ...inputBaseStyle,
-                            paddingRight: '40px',
-                            ...(showPassword && { fontFamily: '"Futura PT Medium"', color: '#808080' })
-                          }}
-                        />
-                        <img
-                          src={showPassword ? '/assets/hide-password.svg' : '/assets/show-password.svg'}
-                          alt={showPassword ? 'Hide password' : 'Show password'}
-                          role="button"
-                          tabIndex={0}
-                          onClick={() => setShowPassword((p) => !p)}
-                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowPassword((p) => !p); } }}
-                          style={{
-                            position: 'absolute',
-                            right: '11px',
-                            top: '50%',
-                            transform: 'translateY(-50%)',
-                            width: '16px',
-                            height: '16px',
-                            cursor: 'pointer',
-                            userSelect: 'none'
-                          }}
-                        />
-                      </div>
-                      <div style={{ marginTop: '0px' }}>
+                      <input
+                        type="password"
+                        readOnly
+                        value="••••••••••"
+                        autoComplete="current-password"
+                        aria-label="Password"
+                        style={{ ...inputBaseStyle, marginBottom: 0 }}
+                      />
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'flex-end',
+                          width: '100%',
+                          marginTop: '6px'
+                        }}
+                      >
                         <button
                           type="button"
                           onClick={() => setShowResetPasswordForm(true)}
@@ -925,8 +967,7 @@ function SettingsPage() {
                             background: 'none',
                             border: 'none',
                             cursor: 'pointer',
-                            padding: 0,
-                            transform: 'translateX(2px)'
+                            padding: 0
                           }}
                         >
                           RESET PASSWORD
@@ -1084,7 +1125,7 @@ function SettingsPage() {
                     />
                   </div>
                   <div className="flex items-center justify-between" style={{ width: '100%' }}>
-                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: 'black', textTransform: 'uppercase', fontWeight: '500', lineHeight: '1.2' }}>Sales</span>
+                    <span style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: 'black', textTransform: 'uppercase', fontWeight: '500', lineHeight: '1.2' }}>Alerts</span>
                     <ToggleSwitch
                       on={sales}
                       onClick={() => {

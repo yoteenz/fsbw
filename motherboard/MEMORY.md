@@ -1801,3 +1801,225 @@ Summary of the whole conversation so far in this chat: user redeployed but **`/a
 - **Decisions / outcomes:** (1) **`jsonSafeForResponse`** in `api/profile.ts` before **`JSON.stringify`** so Postgres **`bigint`** values do not crash serialization. (2) **GET** uses **`.maybeSingle()`** instead of `.single()` + PGRST116 handling; on any Supabase **select** error, return **500 JSON** with **`error`, `code`, `details`, `hint`** and log **`[api/profile] GET select failed`**. (3) Added **`docs/SUPABASE_PROFILES_RLS.sql`** — standard **`profiles`** policies for **`authenticated`** (`SELECT` / `INSERT` / `UPDATE` own row `auth.uid() = id`) when 500 is due to **RLS / permission denied**. (4) **`docs/PROFILES_COLUMNS_AND_APP_MAPPING.md`** — short pointer to that SQL when `/api/profile` returns 500 with RLS wording.
 - **Changes:** `api/profile.ts`, `docs/SUPABASE_PROFILES_RLS.sql`, `docs/PROFILES_COLUMNS_AND_APP_MAPPING.md`, this MEMORY entry.
 - **Conventions:** Distinguish static **200** (e.g. `profile-thumb.png`) from **`/api/profile`**; 500 on profile API is usually Supabase **RLS**, missing table/column, or serialization — read **Response** JSON and Supabase logs.
+
+---
+
+## 2026-03-26 — Settings: full profile PATCH to Supabase (match Table Editor to UI)
+
+Summary of the whole conversation so far in this chat: user wanted **Supabase `profiles` to match** what **Account → Settings** shows for each client (not only localStorage).
+
+- **Decisions / outcomes:** (1) **`pushFullSettingsProfileToCloud`** on Settings — **async**, **`Promise<boolean>`**, one **`PATCH`** with **first/last/birthday/phone**, **social URLs**, **notification booleans**, and **`role: 'admin'`** when **`isAdminEmail(email)`**. (2) **Optional `personal` / `notif` snapshots** so saves use values just written (avoids stale React state). (3) **On visit:** debounced **once** (~1.2s) full sync after `userData` + session. (4) **persistPersonalInfo**, **persistSocials**, **persistNotificationPrefs** call full sync (personal save passes **`personal`** snapshot). (5) **`buildProfilePayloadForBackend`** in **`syncFromApi.ts`** sets **`role: 'admin'`** for admin emails on fallback PATCH (already present in file).
+- **Changes:** `src/pages/account/settings/page.tsx`, `src/utils/syncFromApi.ts` (verified `role` in `buildProfilePayloadForBackend`), this MEMORY entry.
+- **Conventions:** Supabase still must allow **`PATCH`** (RLS); if **`/api/profile`** returns 500, fix env/RLS/schema before expecting Table Editor to update.
+
+---
+
+## 2026-03-26 — Membership payments: chart pricing source, admin Payments tab, renewals note
+
+Summary of the **whole conversation so far** in this chat: user chose **Option 1** for auto-renew (recurring charges on **3 / 6 / 12 month** cadence at **upgrade chart** prices) and asked whether **memberships appear on Admin → Revenue → Payments** — they did not before.
+
+- **Context:** Prior work only adjusted subscription-upgrade checkout UI (auto-renew default, hide Pay-in-4 when auto-renew on) and stored membership fields in **localStorage**; **no** server-side recurring billing or admin membership payment list existed.
+- **Decisions / outcomes:** (1) **Single source of truth** for USD tier prices: **`src/constants/subscriptionPricing.ts`** — **$280 / $520 / $960** for **3 / 6 / 12 months** (same as membership upgrade chart). **`src/pages/account/membership/page.tsx`** derives its tier table from this. (2) On successful **premium checkout**, **`recordMembershipPayment`** in **`src/utils/membershipPayments.ts`** appends to **`localStorage` key `adminMembershipPayments`** (initial charge, tier, amount, auto-renew, optional **next billing** date from period end). (3) **Admin Revenue → Payments** tab now shows a **MEMBERSHIP** section (list + copy that **true recurring renewals** need a processor such as **Stripe Billing** + webhooks; placeholder method-mix block labeled **PLACEHOLDER**). (4) **True recurring card charges** are **not** implemented in-app — **`paymentHandlers`** remain placeholders; production renewals should use provider subscriptions and sync rows into the same list or Supabase.
+- **Changes:** `src/constants/subscriptionPricing.ts`, `src/utils/membershipPayments.ts`, `src/pages/checkout/page.tsx`, `src/pages/account/membership/page.tsx`, `src/pages/admin/revenue/page.tsx`, this MEMORY entry.
+- **Conventions:** Membership payment rows use **chart USD**; renewals should match the same tier price when a Stripe price/product is wired per tier.
+
+---
+
+## 2026-03-27 — Sign-in: post-sign-up message matches empty bag styling + vertical center
+
+Summary of the whole conversation so far in this chat: user wanted the **“SIGN UP IS ALMOST COMPLETE…”** gray copy on **Sign-in** to use the **same typography as the empty shopping bag** message and to be **centered vertically** inside the **Create an account** card.
+
+- **Context:** Visual consistency with **Shopping bag** empty state (`src/pages/shopping-bag/page.tsx`).
+- **Decisions / outcomes:** Replaced **Futura PT Book 12px** / `textTransform: none` with the empty-bag pattern: **11px**, **`"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif`**, **`#808080`**, **`uppercase`**, **`margin: 0`**. Wrapped the message in a **flex** container with **`flex: 1`**, **`padding: 40px 20px`**, **`justifyContent: center`**, **`alignItems: center`**, **`minHeight: 0`** so it centers in the card below the header (card already **`flex flex-col`** and keeps **`minHeight: 220px`** when the confirm state is shown).
+- **Changes:** `src/pages/sign-in/page.tsx`, this MEMORY entry.
+- **Conventions:** Reuse shopping-bag empty-state text block styles when matching “gray empty” marketing copy in cards.
+
+---
+
+## 2026-03-27 — Stripe subscriptions: Checkout, webhooks, Supabase profile + membership_payments, admin merge
+
+Summary of the **whole conversation so far** in this chat: user asked to implement the **production next step** for Option 1 — **Stripe** (or similar) with **3 products/prices**, saving **`subscription_id` / `customer_id` on profile**, and **renewal rows from webhooks** synced for admin.
+
+- **Decisions / outcomes:** (1) **Supabase migration** `supabase/migrations/20260327120000_stripe_membership.sql` — `profiles` columns: `stripe_customer_id`, `stripe_subscription_id`, `auto_renew_membership`, `subscription_period_end`, `subscription_purchased_at`; table **`membership_payments`** with RLS **SELECT** for own rows; writes via **service role**. (2) **API:** `POST /api/stripe/create-checkout-session` (auth, creates/uses Stripe customer, Checkout **subscription**); **`GET /api/stripe/membership-available`** (public); **`POST /api/stripe/webhook`** (**Edge** runtime + raw body + `Stripe.createFetchHttpClient`) — `checkout.session.completed`, `invoice.paid`, `customer.subscription.updated` / `deleted`; **`GET /api/admin/membership-payments`** (admin + service role). (3) **`api/profile` PATCH** strips Stripe-managed fields from client body and **preserves** existing DB Stripe columns on upsert. **`api/_lib/profileMapping.ts`** maps new fields to camelCase (`stripeCustomerId`, `subscriptionEndDate`, etc.). (4) **Frontend:** `fetchStripeMembershipAvailable`, `createStripeMembershipCheckoutSession`, `getAdminMembershipPayments` in **`src/utils/api.ts`**; **Membership** page — **Subscribe with card (Stripe)** when Stripe configured + Supabase session; **`?stripe=success`** → **`syncProfileFromApi`**. **`mergeMembershipPaymentLists`** merges localStorage + Supabase; Payments tab shows **· STRIPE** for remote rows. (5) **Docs:** `docs/STRIPE_MEMBERSHIP_SETUP.md`, **`.env.example`**, **`motherboard/CORE.md`** env note. **`package.json`** dependency **`stripe`**. (6) **In-app** `/checkout/upgrade` flow unchanged for non-Stripe use.
+- **Changes:** Migration SQL, `api/_lib/stripeMembership.ts`, `api/stripe/*.ts`, `api/admin/membership-payments.ts`, `api/profile.ts`, `api/_lib/profileMapping.ts`, `src/utils/api.ts`, `src/utils/membershipPayments.ts`, `src/pages/account/membership/page.tsx`, `src/pages/admin/revenue/page.tsx`, `docs/*`, `motherboard/CORE.md`, `package.json`, this MEMORY entry.
+- **Conventions:** **`SITE_URL`**, **`STRIPE_*`**, **`SUPABASE_SERVICE_ROLE_KEY`** required on Vercel for full flow; Stripe **Price** intervals must match **3 / 6 / 12** months and chart USD amounts.
+
+---
+
+## 2026-03-27 — Profile photo persists after sign-in: profile-image writes DB with service role
+
+Summary of the **whole conversation so far** in this chat: user asked to **fix** profile photos **resetting after sign out / sign in**. Prior analysis (handoff): Supabase stores **`profile_image` as a URL** only; **`syncProfileFromApi`** overwrites the avatar when the server has no URL; **`patchProfileWithRetryQueue`** strips base64 so the upload failure fallback never reaches the DB.
+
+- **Context:** Account crop/save calls **`uploadProfileImage`** → **`POST /api/profile-image`**; on failure the UI fell back to PATCH with a data URL, which **`profileSyncQueue`** removes and **`api/profile`** rejects anyway—so users saw “saved” locally but **`GET /api/profile`** after login returned empty **`profile_image`**.
+- **Decisions / outcomes:** (1) **`api/profile-image.ts`**: after Storage upload, **update or insert `profiles` with the service-role client** (same as Storage), not the user JWT client—identity is still gated by **`getAuthUser`**, and this avoids RLS/JWT edge cases blocking the write. (2) **`allowedMimeTypes`** for bucket create: include **`image/jpg`** alongside jpeg/webp/png. (3) **`src/pages/account/page.tsx`**: when cloud upload fails and the PATCH queue cannot enqueue base64, show **“PHOTO SAVED ON THIS DEVICE ONLY. CLOUD UPLOAD FAILED…”** instead of misleading **“PHOTO QUEUED…”**; log upload error text in profile debug.
+- **Changes:** `api/profile-image.ts`, `src/pages/account/page.tsx`, `motherboard/CORE.md` (profile image API note), this MEMORY entry.
+- **Conventions:** Production persistence for avatars = **Storage URL in `profiles.profile_image`**; verify **`POST /api/profile-image`** 200 and Table Editor **`profile_image`** populated, then sign out/in.
+
+---
+
+## 2026-03-27 — Admin Marketing: Newsletter tab + Resend send API (+ sign-in confirm styling)
+
+Summary of the **whole conversation so far** in this chat: (A) User wanted **“SIGN UP IS ALMOST COMPLETE…”** on **Sign-in** to match **empty shopping bag** gray typography and be **vertically centered** in the **Create an account** card — done in **`src/pages/sign-in/page.tsx`** (11px Futura PT Medium, uppercase, flex centering like **`shopping-bag/page.tsx`**). (B) User asked for a **NEWSLETTER** tab on **Admin → Marketing** (after **SPECIAL OFFERS**) to **compose and send** emails (alerts, milestones, sales, etc.) to **all or hand-picked** clients with **newsletter** on **Account → Settings**.
+
+- **Decisions / outcomes (newsletter):** (1) **`src/utils/newsletterOptIn.ts`** — **`isNewsletterOptIn`** uses **`notificationNewsletter`** (false = out; unset = in), plus legacy keys. (2) **`isClientNewsletterSubscribed`** in **`admin/clients/page.tsx`** uses **`isNewsletterOptIn`**. (3) **`api/admin/newsletter-send.ts`** — admin **`POST`**, Resend, max **100**/request, **`RESEND_API_KEY`** + **`NEWSLETTER_FROM_EMAIL`**; audit **`newsletter.send`**. (4) **`NewsletterPanel`**, **`sendAdminNewsletter`**, marketing tab + **SEND NEWSLETTER** action, **`.env.example`**, **CORE** marketing bullet.
+- **Changes:** `src/pages/sign-in/page.tsx`; `src/utils/newsletterOptIn.ts`; `src/pages/admin/clients/page.tsx`; `api/admin/newsletter-send.ts`; `api/_lib/auditLog.ts`; `src/utils/api.ts`; `src/pages/admin/marketing/NewsletterPanel.tsx`; `src/pages/admin/marketing/page.tsx`; `.env.example`; `motherboard/CORE.md`; `motherboard/MEMORY.md` (this entry).
+- **Conventions:** Verified Resend **from** domain in production; UI **chunks** >100 recipients into multiple API calls.
+
+---
+
+## 2026-03-27 — Admin client details: remove REVIEWS panel title
+
+Summary of the **whole conversation so far** in this chat: user asked to **remove the “REVIEWS” heading** from the **reviews panel** on the **Admin → Clients** client details view (the card with TOTAL / MEDIA / PENDING).
+
+- **Changes:** **`src/pages/admin/clients/page.tsx`** — removed the red **`<h3>REVIEWS</h3>`** above the three-column grid; panel content unchanged. **`motherboard/MEMORY.md`** (this entry).
+- **Conventions:** None.
+
+---
+
+## 2026-03-27 — Remove auth/profile debug UI and dev beacons; auth-diagnostic API removed
+
+Summary of the **whole conversation so far** in this chat: Safari auth/profile behavior is **working**; user asked to **remove debugging** from **Account profile** and **elsewhere on the site**, and for **how to rotate API keys** that were previously exposed.
+
+- **Decisions / outcomes:** (1) **Account** (`src/pages/account/page.tsx`): removed **PROFILE DEBUG** button, debug popup, **`profileDebugEvents_v1`** / snapshot polling / **`logProfileDebug`** / **`captureProfileSnapshot`**, and **`authDebugLogIfEnabled`** on sign-out and rehydrate. (2) **Global auth debug:** removed **`AuthDebugPanel`**, **`?auth_debug=1`** / **`baw_auth_debug`** localStorage logging from **`adminAuth.ts`** (`enableAuthDebugFromUrl`, `getAuthDebugLog`, `authDebugLogIfEnabled`, etc.), **`sendAuthDiagnostic`** client + **`api/auth-diagnostic.ts`**, and related hooks in **`main.tsx`** / **`App.tsx`**. (3) **App lazy loader:** removed **localhost ingest** `fetch` beacons to **`127.0.0.1:7242`**; kept **retry + cache clear** as **`lazyWithRetry`**. (4) **ErrorBoundary:** removed ingest beacons; kept **`console.error`** on catch. (5) **Sign-in** / **`syncFromApi`**: dropped **`authDebugLogIfEnabled`** calls only.
+
+- **Changes:** Deleted **`src/components/AuthDebugPanel.tsx`**, **`src/utils/authDiagnostic.ts`**, **`api/auth-diagnostic.ts`**. Edited **`src/pages/account/page.tsx`**, **`src/utils/adminAuth.ts`**, **`src/main.tsx`**, **`src/App.tsx`**, **`src/pages/sign-in/page.tsx`**, **`src/utils/syncFromApi.ts`**, this **MEMORY** entry.
+
+- **Key rotation (user action, not code):** Rotate each exposed secret **at its provider**, then update **Vercel → Project → Settings → Environment Variables** (and local **`.env.local`**) and **redeploy**. **Supabase:** Dashboard → **Project Settings → API** — copy new **`anon`** / **`service_role`** if you rotate the **JWT Secret** (Supabase documents this as invalidating old keys; users may need to sign in again). **Stripe:** Dashboard → **Developers → API keys** — roll or create new secret key; update **`STRIPE_SECRET_KEY`**; for webhooks, **reveal or roll** **`STRIPE_WEBHOOK_SECRET`** and update the webhook endpoint’s signing secret in Vercel. **Resend / others:** regenerate API key in provider dashboard and replace env. If keys ever sat in **git**, treat as compromised: rotate, then use **GitHub secret scanning** / history cleanup if required.
+
+---
+
+## 2026-03-27 — Admin client details: fake appointments + activity/cart/wishlist accuracy
+
+Summary of the **whole conversation so far** in this chat: user asked **why** new sign-ups showed **mock appointment** data and why **cart**, **wishlist**, and **activity** on **Admin → Clients → client details** were **not accurate** / not tracking.
+
+- **Root causes explained:** (1) **Appointments** — the UI used a **hardcoded** two-item list for **every** client (not tied to profile or DB). (2) **Activity** — **`recordActivity`** in **`src/utils/api.ts`** had **`if (!API_BASE) return`**, so with **empty `VITE_API_BASE`** (normal for same-origin Vercel/Vite) **no events were POSTed** to **`/api/activity`** → **`user_activity`** stayed empty; **`trackActivity`** exists but is only wired in a few flows (e.g. settings profile save). (3) **Cart / wishlist** — admin reads **Supabase** via **`GET /api/admin/cart`** and **`wishlist`**; **localStorage** on the **client’s phone** is **not visible** to the admin browser. If cloud sync hasn’t written rows, the tabs look empty even when the shopper has items locally.
+
+- **Code changes:** (1) **`src/pages/admin/clients/page.tsx`** — **`appointments`** is now an **empty array** until a real source exists. (2) **`src/utils/api.ts`** — removed the **`!API_BASE`** early return from **`recordActivity`** so same-origin **`apiFetch('/api/activity', …)`** runs. (3) **Cart/wishlist `useEffect`** — require **`isSupabaseUserId(id)`** before fetching (aligns with orders/activity; avoids pointless API calls for mock ids).
+
+- **Changes:** `src/pages/admin/clients/page.tsx`, `src/utils/api.ts`, `motherboard/MEMORY.md` (this entry).
+
+- **Follow-ups (not done here):** Wire **`trackActivity`** across key product/checkout paths; confirm **`user_activity`** (and **`cart` / `wishlist`**) tables + RLS in Supabase; ensure **`pushCartWishlistToCloud`** / signed-in **`putCart`/`putWishlist`** run so admin sees server state.
+
+---
+
+## 2026-03-27 — Build / Vite preview: remove stale authDebugLogIfEnabled + density unused vars
+
+Summary: **`npm run build`** and **`vite preview`** failed because **`tsc --noEmit`** errored after **`authDebugLogIfEnabled`** was removed from **`adminAuth`** but still imported/used in **`sessionRestore.ts`** and **`supabase.ts`**. Also **`src/pages/build-a-wig/density/page.tsx`** had **TS6133** unused **`isOnSoftWaveCustomizeRoute`** / **`isOnSoftCurlCustomizeRoute`**.
+
+- **Changes:** Dropped **`authDebugLogIfEnabled`** import and calls from **`src/utils/sessionRestore.ts`** and **`src/utils/supabase.ts`**. Removed the unused route booleans from **`density/page.tsx`**. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Build-a-wig customize sub-pages + mobile menu aligned with edit flow
+
+Summary of the **whole conversation so far** in this chat: user reported **customize mode** Build-a-Wig **sub-pages** not working and the **hamburger menu** on customize being **outdated** vs **edit mode**.
+
+- **Root causes:** (1) Several sub-pages used **`isOnCustomizeRoute`** lists that **omitted** **`/ocean-curl/customize`** and **`/beach-wave/customize`** (or only four products), so **`customizeSelected*`** keys were not read/written correctly on those routes. (2) **`cap-size`** had a **`useEffect`** customize check **missing** ocean/beach. (3) Breadcrumb **“BUILD-A-WIG >”** used **`pathname.includes('/noir/')`** (etc.) so **`/noir/customize/length`** navigated to **`/build-a-wig/noir`** instead of **`/noir/customize`**. (4) **SHOP** tab in mobile menus on many sub-pages **did not navigate** for **BUILD-A-WIG** (no handler), unlike the main **`build-a-wig/page.tsx`**.
+
+- **Changes:** Added **`src/utils/buildAWigRoutes.ts`** with **`isBuildAWigCustomizePath`**, **`getBuildAWigFlowBasePath`** (breadcrumb target), and **`getBuildAWigShopMenuTargetPath`** (**`/build-a-wig`** for menu). Updated **length, color, density, lace, texture, hairline, cap-size, styling, addons** under **`src/pages/build-a-wig/`** to use these helpers where applicable, fix breadcrumb navigation, and add **BUILD-A-WIG** + row **`onClick`** parity with the main page (inline menus and overlay/popup menus). **Texture** header red label **`onClick`** was missing **beach/ocean** branches; **cap-size** hero label got the same. **`motherboard/MEMORY.md`** (this entry).
+
+- **Conventions:** Prefer **`isBuildAWigCustomizePath(pathname)`** for any customize-mode localStorage prefix logic so new product slugs stay consistent.
+
+---
+
+## 2026-03-27 — Account Settings: remove password reveal eye
+
+Summary of the **whole conversation so far** in this chat: (1) **Build-a-wig customize** sub-pages and mobile **SHOP** menu were fixed (see prior entry). (2) User asked to **remove the reveal-password eye** from the **password** field on **Account → Settings**.
+
+- **Changes:** **`src/pages/account/settings/page.tsx`** — removed **`showPassword`** state and the **show/hide-password** `<img>` toggle; the main password row is now a **read-only** **`type="password"`** input with a fixed masked placeholder value (no reveal). **`accountPassword`** is unchanged and still used only for **reset password** validation. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Wishlist: create-list UX (hide redundant empty copy, Create footer, no inline Add)
+
+Summary of the **whole conversation so far** in this chat (including handoff): earlier topics included **build-a-wig customize** routes/menus, **Account → Settings** password field (no reveal eye), and **wishlist list-creation** UX. This exchange **finished** the wishlist work.
+
+- **Context:** While creating a new list, **“you don’t have any lists yet”** was redundant; an **Add** control sat next to the name input; the footer showed **Save** when the user wanted **Create** for the create flow, then return to **Save** for adding the item to lists.
+- **Decisions / outcomes:** (1) **`src/components/AddToListModal.tsx`** — empty-state line **YOU DON'T HAVE ANY LISTS YET** only when **`lists.length === 0 && !isCreatingNewList`**; create mode uses a **full-width** text input only (no inline **Add**); footer primary is **Create** + **`handleCreateNewListSubmit`** while **`isCreatingNewList`**, otherwise **Save** + **`handleSave`**; **Cancel** still clears create mode or closes. (2) **`src/pages/wishlist/lists/page.tsx`** — same empty message hidden when **`showCreateListModal`** is true. (3) **`src/components/CreateNewListModal.tsx`** — bottom action label **Add** → **Create** (displays as **CREATE** with existing uppercase styling).
+- **Changes:** `AddToListModal.tsx`, `wishlist/lists/page.tsx`, `CreateNewListModal.tsx`, `motherboard/MEMORY.md` (this entry).
+
+---
+
+## 2026-03-27 — Checkout thumbnails + Noir product shots (large screens only)
+
+Summary of the **whole conversation so far** in this chat: user asked for **layout fixes at large breakpoints only** (do not change normal/smaller widths): (1) **Checkout** — cart line **thumbnails** should be **centered horizontally** inside the main card on large screens. (2) **NOIR unit page** — **“product shots”** overlay and **DETAILS / SHIPPING / …** tabs should match **Beach Wave** vertical rhythm on large screens (Noir had looked **too high**, pulling tabs up).
+
+- **Decisions / outcomes:** (1) **`src/pages/checkout/page.tsx`** — added **`@media (min-width: 1024px)`** rule for **`.checkout-cart-thumbnails-center-lg`** (flex, full size, **justify-content: center**, **align-items: center**) wrapping the draggable thumbnail row so the strip is centered in the card when wider than the items; below **1024px** the wrapper is unstyled (block) so behavior matches before. (2) **`src/pages/straight/noir/page.tsx`** — scoped **`<style>`** with the same breakpoint: product-shots **viewport** matches Beach (**310px** height, **70px** **padding-top**), **row** **align-items/height**, images **290px** height + **`translateY(-55px)`**, label **`bottom: -1px`**, tabs **`translateY(-20px)`** — mirroring **`beach-wave/page.tsx`** for **lg+** only; inline defaults unchanged for smaller viewports.
+
+- **Changes:** `checkout/page.tsx`, `straight/noir/page.tsx`, `motherboard/MEMORY.md` (this entry).
+
+---
+
+## 2026-03-27 — Cart dropdown: show two items then scroll; single item fits
+
+Summary: User asked to fix the **cart dropdown** so the **first two products** show **fully** and **additional** lines **scroll**, instead of the **second row being clipped**. **Single-item** carts should **size to that row** with **no** unnecessary inner scroll.
+
+- **Cause:** **`CartDropdown`** used **`maxHeight: 245px`** whenever **`cartItems.length > 1`**, but each row is **`minHeight: 120px`** plus **padding, borders, and `space-y-3`**, so **two rows need ~300px+**.
+
+- **Changes:** **`src/components/CartDropdown.tsx`** — derive **`multiItemCompactList`** (**2+ items**, not in **VIEW DETAILS**). **Multi-item list:** **`maxHeight: min(340px, calc(100vh - 230px))`**, **`overflow-y: auto`**. **Details view:** **`min(380px, calc(100vh - 230px))`** + **auto** scroll. **0 or 1 compact row:** **`maxHeight: none`**, **`overflow-y: visible`**. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Client activity wiring (view_page, cart/wishlist, auth, checkout, membership)
+
+Summary of the **whole conversation so far** in this chat (including handoff): user asked to **wire everything** so admins can **trace client journeys**—sign-up/in, browsing, cart/wishlist, checkout, rewards, reviews, etc.—and to align with **`trackActivity`** + **`pushCartWishlistToCloud`**.
+
+- **Context:** **`POST /api/activity`** → Supabase **`user_activity`**; admin **Clients → Activity** reads via **`GET /api/admin/activity`**. Prior work fixed **`recordActivity`** when **`VITE_API_BASE`** is empty and gated admin cart/wishlist on Supabase user ids.
+
+- **Decisions / outcomes:** (1) **Global SPA tracking** — signed-in users (non-**`/admin`**) get **`view_page`** with **`path` / `search` / `fullPath`** on route changes (deduped). (2) **Cart/wishlist** — debounced **`cart_snapshot`** / **`wishlist_snapshot`** on **`cartUpdated`** / **`wishlistUpdated`** (item counts + product names). (3) **Cloud sync** — after successful **`putCart`/`putWishlist`** in **`schedulePushCartWishlistToCloud`**, log **`cloud_sync`** with counts. (4) **Auth** — **`sign_in`** payloads include **`method`** (`password`, `session_restore`); **`sign_up`** (`supabase` | `local`) plus sign-in with **`afterSignUp`** where applicable. (5) **Cart UI** — **`open_cart_dropdown`**, **`cart_navigate`** (checkout vs bag). (6) **Wishlist** — **`add_to_cart`** from wishlist, **`remove_from_wishlist`**. (7) **Checkout** — **`checkout_start`** includes path + upgrade flag. (8) **Membership** — Stripe start (**`membership_checkout_start`**), upgrade nav (**`membership_upgrade_checkout`**), Stripe return (**`membership_stripe_return`**), **`redeem_points`** on both reward lists, **`sign_out`** before menu sign-out **`clearAppAuth`**. (9) **Reviews** — **`sign_out`** before **`clearAppAuth`** on leave-review flow. (10) **`bawTrackActivity`** **`CustomEvent`** + **`emitClientActivityEvent`** for optional decoupled hooks. (11) **Admin labels** — **`formatEventLabel`** extended for new event types and payload hints. (12) **Build** — **`sessionRestore.ts`** removed unused **`res`** from **`fetch`** (**TS6133**).
+
+- **Changes:** **`src/utils/clientActivityBootstrap.ts`** (new), **`src/utils/activity.ts`**, **`src/App.tsx`**, **`src/utils/pushCartWishlistToCloud.ts`**, **`src/pages/sign-in/page.tsx`**, **`src/pages/admin/clients/page.tsx`**, **`src/pages/wishlist/page.tsx`**, **`src/components/DynamicCartIcon.tsx`**, **`src/components/CartDropdown.tsx`**, **`src/pages/checkout/page.tsx`**, **`src/pages/account/membership/page.tsx`**, **`src/pages/account/reviews/leave-review-order/page.tsx`**, **`src/utils/sessionRestore.ts`**, **`motherboard/MEMORY.md`** (this entry).
+
+- **Conventions:** Prefer **`trackActivity`** (or **`emitClientActivityEvent`**) at real user-action boundaries; heavy browsing is covered by **`view_page`** + debounced snapshots so the feed stays readable.
+
+---
+
+## 2026-03-27 — Admin Marketing: newsletter tab on same row as other tabs
+
+Summary: User wanted the **NEWSLETTER** tab on **Admin → Marketing** to sit on the **same line** as **AFFILIATE**, **CHALLENGES**, and **SPECIAL OFFERS**, not wrapped below.
+
+- **Cause:** Tab row used **`flex flex-wrap`**, so the fourth label wrapped on narrow **`max-w-md`** widths.
+
+- **Changes:** **`src/pages/admin/marketing/page.tsx`** — tab row is **`flex-nowrap`** with **`flex-shrink-0`** + **`whiteSpace: nowrap`** on each button; outer wrapper uses **`overflow-x: auto`** (hidden scrollbar where supported) so all four stay one line, with horizontal swipe/scroll only if the viewport is too tight.
+
+- **Changes:** `src/pages/admin/marketing/page.tsx`, `motherboard/MEMORY.md` (this entry).
+
+---
+
+## 2026-03-27 — Account Settings: “Sales” → “Alerts”; profile ALERTS card icon respects toggle
+
+Summary: User asked to rename **Sales** to **Alerts** on **Account → Settings** notifications, and to **hide the rose notification icon** on the **ALERTS** card on **Account → Profile** when that preference is **off**.
+
+- **Changes:** (1) **`src/pages/account/settings/page.tsx`** — notification row label **Sales** → **Alerts** (still persists **`notificationSales`** / same toggle + **`persistNotificationPrefs`**). (2) **`src/pages/account/page.tsx`** — **`cardHasNotifications('ALERTS')`** returns **`false`** when **`notificationSales === false`**, or **`notification_sales === false`** if camel is unset (default remains on). **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Account Settings: RESET PASSWORD below field, right-aligned
+
+Summary: User wanted **RESET PASSWORD** **below** the masked password field (not beside it), **right-aligned** under the input on **Account → Settings**. (An earlier pass had placed it in one row with the input; user corrected that.)
+
+- **Changes:** **`src/pages/account/settings/page.tsx`** — collapsed state: full-width password **`input`**, then a row **`display: flex`**, **`justifyContent: flex-end`**, **`marginTop: 6px`** with the **RESET PASSWORD** button. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Activity tracking inventory + admin client stats label spacing
+
+Summary of the **whole conversation so far** in this chat: (1) User asked what **“enumerate and wire call sites one by one”** meant and for a **full flow list** of **`trackActivity`** / what’s missing — answered with definitions, a **step-by-step table** of wired flows, and a **gaps** list (**`cancel_order`**, build-a-wig **`add_to_cart`**, shopping bag, **`sign_out`** coverage, etc.). (2) User asked for **20px more space above** the **ORDERS / POINTS / TOTAL SPENT / MEMBERSHIP** label row on **Admin → Clients → client details**.
+
+- **Changes:** **`src/pages/admin/clients/page.tsx`** — in the 4-column stats grid, label **`<p>`** **`marginTop`** under the red values increased from **`4px`** to **`24px`** (+20px above ORDERS, POINTS, TOTAL SPENT, MEMBERSHIP). **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Checkout: extra space above loyalty points line
+
+Summary: User asked for **10px more spacing above** the checkout subtotal loyalty copy (**“SIGN IN TO EARN…”** / **“YOU’RE EARNING … LOYALTY POINTS…”**).
+
+- **Changes:** **`src/pages/checkout/page.tsx`** — wrapper **`div`** around the loyalty **`<p>`** (comment **`{/* Loyalty Points Text */}`**) **`marginTop`** increased from **`10px`** to **`20px`**. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Unit product pages: 10px above DETAILS / SHIPPING / POLICY tabs
+
+Summary: User asked for **10px spacing above** the **DETAILS**, **SHIPPING**, **POLICY**, etc. tab row on the **six** ready-made unit product pages (**Noir**, **Blanco**, **Soft Wave**, **Beach Wave**, **Soft Curl**, **Ocean Curl**).
+
+- **Changes:** On each page’s **`{/* Tabs Section */}`** outer **`div`** (the one with **`mt-6`** and **`translateY`**), added **`paddingTop: '10px'`** in the inline **`style`** next to the existing **`transform`**. Files: **`src/pages/straight/noir/page.tsx`** (also has **`noir-product-shots-tabs`** and **`-66px`** translate), **`src/pages/straight/blanco/page.tsx`**, **`src/pages/wavy/soft-wave/page.tsx`**, **`src/pages/wavy/beach-wave/page.tsx`**, **`src/pages/curly/soft-curl/page.tsx`**, **`src/pages/curly/ocean-curl/page.tsx`**. **`motherboard/MEMORY.md`** (this entry).

@@ -5,6 +5,7 @@
 import { getSupabase, isSupabaseConfigured } from './supabase';
 import { isSignedIn } from './adminAuth';
 import { putCart, putWishlist, putOrders } from './api';
+import { trackActivity } from './activity';
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -22,8 +23,30 @@ export function schedulePushCartWishlistToCloud(): void {
       const wishRaw = localStorage.getItem('wishlistItems');
       const cart = cartRaw ? JSON.parse(cartRaw) : [];
       const wish = wishRaw ? JSON.parse(wishRaw) : [];
-      if (Array.isArray(cart)) await putCart(cart).catch(() => {});
-      if (Array.isArray(wish)) await putWishlist(wish).catch(() => {});
+      let cartSynced = false;
+      let wishSynced = false;
+      if (Array.isArray(cart)) {
+        try {
+          await putCart(cart);
+          cartSynced = true;
+        } catch {
+          /* ignore */
+        }
+      }
+      if (Array.isArray(wish)) {
+        try {
+          await putWishlist(wish);
+          wishSynced = true;
+        } catch {
+          /* ignore */
+        }
+      }
+      if (cartSynced || wishSynced) {
+        trackActivity('cloud_sync', {
+          cartCount: Array.isArray(cart) ? cart.length : 0,
+          wishlistCount: Array.isArray(wish) ? wish.length : 0,
+        });
+      }
       let email = '';
       try {
         const u = JSON.parse(localStorage.getItem('currentUser') || '{}');

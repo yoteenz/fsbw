@@ -15,21 +15,7 @@ import { getAccountNotifications, mergeAccountNotifications, isNewAccount } from
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { flushQueuedProfilePatch } from '../../utils/profileSyncQueue';
-import { authDebugLogIfEnabled } from '../../utils/adminAuth';
 import { syncAllFromApi } from '../../utils/syncFromApi';
-
-type ProfileDebugEvent = {
-  at: string;
-  source: string;
-  message: string;
-};
-
-type ProfileSnapshot = {
-  email: string;
-  firstName: string;
-  lastName: string;
-  profileImage: string;
-};
 
 function AccountPage() {
   const navigate = useNavigate();
@@ -102,9 +88,6 @@ function AccountPage() {
   });
   const [profileImageSaveMessage, setProfileImageSaveMessage] = useState<string | null>(null);
   const [showProfileImageStatusPopup, setShowProfileImageStatusPopup] = useState(false);
-  const [showProfileDebugPopup, setShowProfileDebugPopup] = useState(false);
-  const [profileDebugEvents, setProfileDebugEvents] = useState<ProfileDebugEvent[]>([]);
-  const [profileDebugCopyMessage, setProfileDebugCopyMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [cardAnimationsEnabled, setCardAnimationsEnabled] = useState(() => {
     try {
@@ -129,110 +112,10 @@ function AccountPage() {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [pinchStart, setPinchStart] = useState<{ distance: number; scale: number } | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  const lastProfileSnapshotRef = useRef<string>('');
 
   const openProfileImageStatusPopup = (message: string) => {
     setProfileImageSaveMessage(message);
     setShowProfileImageStatusPopup(true);
-  };
-
-  const logProfileDebug = (source: string, message: string) => {
-    const row: ProfileDebugEvent = {
-      at: new Date().toISOString(),
-      source,
-      message,
-    };
-    setProfileDebugEvents((prev) => {
-      const next = [row, ...prev].slice(0, 80);
-      try {
-        localStorage.setItem('profileDebugEvents_v1', JSON.stringify(next));
-      } catch {
-        // ignore
-      }
-      return next;
-    });
-  };
-
-  const captureProfileSnapshot = (source: string) => {
-    try {
-      const currentRaw = localStorage.getItem('currentUser');
-      const img = localStorage.getItem('profileImage') || '';
-      const current = currentRaw ? JSON.parse(currentRaw) : {};
-      const snapshot = JSON.stringify({
-        email: (current?.email || '').toString().trim().toLowerCase(),
-        firstName: (current?.firstName || current?.first_name || '').toString(),
-        lastName: (current?.lastName || current?.last_name || '').toString(),
-        profileImage: (current?.profileImage || current?.profile_image || img || '').toString(),
-      });
-      if (!lastProfileSnapshotRef.current) {
-        lastProfileSnapshotRef.current = snapshot;
-        logProfileDebug(source, 'Initial snapshot captured');
-        return;
-      }
-      if (snapshot !== lastProfileSnapshotRef.current) {
-        logProfileDebug(source, `Snapshot changed: ${snapshot}`);
-        lastProfileSnapshotRef.current = snapshot;
-      }
-    } catch (e) {
-      logProfileDebug(source, `Snapshot read failed: ${e instanceof Error ? e.message : String(e)}`);
-    }
-  };
-
-  const readCurrentProfileSnapshot = (): ProfileSnapshot => {
-    try {
-      const currentRaw = localStorage.getItem('currentUser');
-      const img = localStorage.getItem('profileImage') || '';
-      const current = currentRaw ? JSON.parse(currentRaw) : {};
-      return {
-        email: (current?.email || '').toString().trim().toLowerCase(),
-        firstName: (current?.firstName || current?.first_name || '').toString(),
-        lastName: (current?.lastName || current?.last_name || '').toString(),
-        profileImage: (current?.profileImage || current?.profile_image || img || '').toString(),
-      };
-    } catch {
-      return { email: '', firstName: '', lastName: '', profileImage: '' };
-    }
-  };
-
-  const buildProfileDebugExportText = () => {
-    const snap = readCurrentProfileSnapshot();
-    const lines = [
-      'PROFILE DEBUG EXPORT (MOBILE)',
-      `TS: ${new Date().toISOString()}`,
-      `URL: ${window.location.href}`,
-      '',
-      'CURRENT SNAPSHOT',
-      `EMAIL: ${snap.email || '(EMPTY)'}`,
-      `FIRST NAME: ${snap.firstName || '(EMPTY)'}`,
-      `LAST NAME: ${snap.lastName || '(EMPTY)'}`,
-      `PROFILE IMAGE: ${snap.profileImage || '(EMPTY)'}`,
-      '',
-      'EVENT LOG (NEWEST FIRST)',
-      ...profileDebugEvents.map((e, idx) => {
-        const t = e.at ? new Date(e.at).toISOString() : '';
-        return `${idx + 1}. [${t}] ${e.source}: ${e.message}`;
-      }),
-    ];
-    return lines.join('\n');
-  };
-
-  const copyProfileDebugLog = async () => {
-    const text = buildProfileDebugExportText();
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(text);
-        setProfileDebugCopyMessage('DEBUG LOG COPIED.');
-        return;
-      }
-      throw new Error('Clipboard API unavailable');
-    } catch {
-      try {
-        window.prompt('COPY DEBUG LOG BELOW:', text);
-        setProfileDebugCopyMessage('COPY PROMPT OPENED.');
-      } catch {
-        setProfileDebugCopyMessage('COPY FAILED.');
-      }
-    }
   };
 
   // Auto-close only successful photo statuses; keep queued/failed manual-close.
@@ -245,30 +128,6 @@ function AccountPage() {
     }, 1500);
     return () => window.clearTimeout(t);
   }, [showProfileImageStatusPopup, profileImageSaveMessage]);
-
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem('profileDebugEvents_v1');
-      if (raw) {
-        const parsed = JSON.parse(raw) as unknown;
-        if (Array.isArray(parsed)) {
-          setProfileDebugEvents(
-            parsed
-              .filter((r) => r && typeof r === 'object')
-              .map((r) => ({
-                at: String((r as { at?: unknown }).at || ''),
-                source: String((r as { source?: unknown }).source || 'UNKNOWN'),
-                message: String((r as { message?: unknown }).message || ''),
-              }))
-              .slice(0, 80)
-          );
-        }
-      }
-    } catch {
-      // ignore
-    }
-    captureProfileSnapshot('ACCOUNT_MOUNT');
-  }, []);
 
   // Rehydrate profile from cloud on account open to avoid stale local identity after reopen/sign-in.
   useEffect(() => {
@@ -287,7 +146,6 @@ function AccountPage() {
         setUserData(cur);
         const img = (cur?.profileImage || cur?.profile_image || '').toString().trim();
         if (img) setProfileImage(img);
-        authDebugLogIfEnabled('account: syncAllFromApi rehydrated profile on mount');
       } catch {
         // ignore
       }
@@ -295,31 +153,6 @@ function AccountPage() {
     return () => { cancelled = true; };
   }, []);
 
-  useEffect(() => {
-    if (!userData) return;
-    const name = `${(userData.firstName || userData.first_name || '').toString()} ${(userData.lastName || userData.last_name || '').toString()}`.trim();
-    logProfileDebug('USER_STATE', `userData changed: ${name || 'NO_NAME'}`);
-    captureProfileSnapshot('USER_STATE_CHANGE');
-  }, [userData]);
-
-  useEffect(() => {
-    logProfileDebug('PHOTO_STATE', `profileImage state changed: ${profileImage ? 'SET' : 'EMPTY'}`);
-    captureProfileSnapshot('PHOTO_STATE_CHANGE');
-  }, [profileImage]);
-
-  useEffect(() => {
-    const onStorageOrFocus = () => captureProfileSnapshot('WINDOW_EVENT');
-    window.addEventListener('storage', onStorageOrFocus);
-    window.addEventListener('focus', onStorageOrFocus);
-    const timer = window.setInterval(() => captureProfileSnapshot('PROFILE_POLL'), 1500);
-    return () => {
-      window.removeEventListener('storage', onStorageOrFocus);
-      window.removeEventListener('focus', onStorageOrFocus);
-      window.clearInterval(timer);
-    };
-  }, []);
-  
-  
   // Mock digital cash history for testing labels UI – one row per transaction type
   const MOCK_DIGITAL_CASH_HISTORY: Array<{ date: string; transaction: string; amount: number }> = [
     { date: '2-14-2025', transaction: 'DEPOSIT', amount: 110 },
@@ -560,7 +393,6 @@ function AccountPage() {
         try {
           localStorage.setItem('profileImage', img);
         } catch (_) {}
-        captureProfileSnapshot('INIT_CURRENT_USER');
         
         // Update membership type from user data
         if (user.membershipType) {
@@ -594,7 +426,6 @@ function AccountPage() {
             localStorage.setItem('profileImage', img);
           } catch (_) {}
           if (user.membershipType) _setMembershipType(user.membershipType.toUpperCase() === 'PREMIUM' ? 'PREMIUM' : 'STANDARD');
-          captureProfileSnapshot('STORAGE_CHANGE');
         }
       } catch (e) {
         setCartCount(0);
@@ -833,13 +664,11 @@ function AccountPage() {
 
   const handleSignOut = async () => {
     trackActivity('sign_out');
-    authDebugLogIfEnabled('signOut:start');
     // Flush pending settings/profile updates before auth/session is cleared.
     try {
-      const flushed = await flushQueuedProfilePatch();
-      authDebugLogIfEnabled(`signOut:flushQueuedProfilePatch=${flushed ? 'ok' : 'pending'}`);
-    } catch (e) {
-      authDebugLogIfEnabled(`signOut:flushQueuedProfilePatch error=${e instanceof Error ? e.message : String(e)}`);
+      await flushQueuedProfilePatch();
+    } catch {
+      // ignore
     }
     try {
       const raw = localStorage.getItem('currentUser');
@@ -853,14 +682,11 @@ function AccountPage() {
       const supabase = getSupabase();
       if (supabase) {
         markManualSignOutInProgress();
-        await supabase.auth.signOut().catch((e) => {
-          authDebugLogIfEnabled(`signOut:supabaseSignOut error=${e instanceof Error ? e.message : String(e)}`);
-        });
+        await supabase.auth.signOut().catch(() => {});
       }
     }
     setIsSignedIn(false);
     clearAppAuth();
-    authDebugLogIfEnabled('signOut:clearAppAuth done');
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
     setShowSignOutConfirm(false);
     setShowMobileMenu(false);
@@ -877,7 +703,6 @@ function AccountPage() {
 
   const handleConfirmReset = () => {
     const defaultImage = '/assets/profile-thumb.png';
-    logProfileDebug('PHOTO_RESET', 'User reset profile photo to default');
     setProfileImage(defaultImage);
     try {
       localStorage.removeItem('profileImage');
@@ -903,7 +728,6 @@ function AccountPage() {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-    captureProfileSnapshot('PHOTO_RESET');
     setShowResetConfirm(false);
   };
 
@@ -1404,8 +1228,16 @@ function AccountPage() {
         return hasConciergeNotifications();
       case 'ORDERS':
         return hasOrdersNotifications();
-      case 'ALERTS':
+      case 'ALERTS': {
+        // Same preference as Settings "Alerts" toggle (stored as notificationSales); off = no rose icon on profile card
+        if (userData) {
+          const camel = (userData as { notificationSales?: boolean }).notificationSales;
+          const snake = (userData as { notification_sales?: boolean }).notification_sales;
+          const alertsOff = camel === false || (camel === undefined && snake === false);
+          if (alertsOff) return false;
+        }
         return hasAlertsNotifications();
+      }
       case 'REWARDS':
         return hasMembershipNotifications();
       case 'REFERRALS':
@@ -1712,7 +1544,6 @@ function AccountPage() {
     outCtx.drawImage(buffer, srcX, srcY, outputSize, outputSize, 0, 0, outputSize, outputSize);
 
     const croppedImage = canvas.toDataURL('image/png');
-    logProfileDebug('PHOTO_CROP', 'Generated cropped image data URL');
     setProfileImage(croppedImage);
     try {
       localStorage.setItem('profileImage', croppedImage);
@@ -1735,7 +1566,6 @@ function AccountPage() {
         try {
           const uploaded = await uploadProfileImage(croppedImage);
           const uploadedUrl = uploaded.profileImage;
-          logProfileDebug('PHOTO_UPLOAD', `Upload succeeded: ${uploadedUrl}`);
           setProfileImage(uploadedUrl);
           localStorage.setItem('profileImage', uploadedUrl);
           const currentUserRaw2 = localStorage.getItem('currentUser');
@@ -1753,23 +1583,25 @@ function AccountPage() {
               }
             }
           }
-          captureProfileSnapshot('PHOTO_UPLOAD_SUCCESS');
           openProfileImageStatusPopup('PHOTO SAVED.');
           void trackActivity('profile_update');
-        } catch {
+        } catch (err) {
+          // Base64 is intentionally not sent via PATCH queue (api/profile rejects data URLs).
           const ok = await patchProfileWithRetryQueue({ profileImage: croppedImage });
-          logProfileDebug('PHOTO_UPLOAD', ok ? 'Upload fallback patch succeeded' : 'Upload fallback patch queued/failed');
-          captureProfileSnapshot('PHOTO_UPLOAD_FALLBACK');
-          openProfileImageStatusPopup(ok ? 'PHOTO SAVED.' : 'PHOTO QUEUED. IT WILL AUTO-SYNC WHEN ONLINE.');
-          if (ok) void trackActivity('profile_update');
+          if (ok) {
+            openProfileImageStatusPopup('PHOTO SAVED.');
+            void trackActivity('profile_update');
+          } else {
+            openProfileImageStatusPopup(
+              'PHOTO SAVED ON THIS DEVICE ONLY. CLOUD UPLOAD FAILED — TRY AGAIN OR CHECK YOUR CONNECTION.'
+            );
+          }
         }
       } else {
-        captureProfileSnapshot('PHOTO_LOCAL_ONLY');
         openProfileImageStatusPopup('PHOTO SAVED LOCALLY.');
       }
     } catch (e) {
       console.warn('Failed to save profile image:', e);
-      logProfileDebug('PHOTO_CROP', `Save failed: ${e instanceof Error ? e.message : String(e)}`);
       openProfileImageStatusPopup('PHOTO SAVE FAILED.');
     }
     setShowCropModal(false);
@@ -2230,28 +2062,6 @@ function AccountPage() {
                         CHANGE PHOTO
                       </p>
                     )}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        captureProfileSnapshot('DEBUG_BUTTON_OPEN');
-                        setProfileDebugCopyMessage(null);
-                        setShowProfileDebugPopup(true);
-                      }}
-                      style={{
-                        fontFamily: '"Futura PT Medium"',
-                        fontSize: '8px',
-                        color: '#808080',
-                        margin: '0',
-                        textTransform: 'uppercase',
-                        fontWeight: '500',
-                        border: 'none',
-                        background: 'none',
-                        cursor: 'pointer',
-                        padding: 0,
-                      }}
-                    >
-                      PROFILE DEBUG
-                    </button>
                   </div>
 
                   {/* Profile Details */}
@@ -2568,156 +2378,6 @@ function AccountPage() {
             >
               OK
             </button>
-          </div>
-        </div>
-      ) : null}
-
-      {showProfileDebugPopup ? (
-        <div
-          style={{
-            position: 'fixed',
-            inset: '0',
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-            backdropFilter: 'blur(3px)',
-            WebkitBackdropFilter: 'blur(3px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 10001,
-            margin: '0',
-            padding: '0',
-          }}
-          onClick={() => setShowProfileDebugPopup(false)}
-        >
-          <div
-            className="p-6"
-            style={{
-              maxWidth: '420px',
-              width: '92%',
-              border: '1.3px solid black',
-              borderRadius: '0',
-              transform: 'translateY(-6px)',
-              backgroundImage: 'url(/assets/popup-marble.png)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-              backgroundColor: 'white',
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3
-              style={{
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                fontSize: '14px',
-                fontWeight: '500',
-                marginBottom: '12px',
-                textTransform: 'uppercase',
-                textAlign: 'center',
-                color: '#EB1C24',
-              }}
-            >
-              PROFILE DEBUG (MOBILE)
-            </h3>
-            <div
-              style={{
-                maxHeight: '240px',
-                overflowY: 'auto',
-                border: '1px solid #e5e7eb',
-                background: 'rgba(255,255,255,0.85)',
-                padding: '8px',
-                marginBottom: '12px',
-              }}
-            >
-              {profileDebugEvents.length === 0 ? (
-                <p style={{ margin: 0, fontFamily: '"Futura PT Book"', fontSize: '10px', textTransform: 'uppercase' }}>
-                  NO DEBUG EVENTS YET.
-                </p>
-              ) : (
-                profileDebugEvents.map((row, idx) => (
-                  <p
-                    key={`${row.at}_${idx}`}
-                    style={{
-                      margin: '0 0 6px 0',
-                      fontFamily: '"Futura PT Book"',
-                      fontSize: '9px',
-                      color: '#111827',
-                      textTransform: 'uppercase',
-                      lineHeight: 1.35,
-                    }}
-                  >
-                    [{new Date(row.at).toLocaleTimeString()}] {row.source}: {row.message}
-                  </p>
-                ))
-              )}
-            </div>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => void copyProfileDebugLog()}
-                className="w-1/3 py-2 px-2 border border-black font-medium hover:bg-gray-50 transition-colors"
-                style={{
-                  borderWidth: '1.3px',
-                  fontSize: '10px',
-                  fontFamily: '"Futura PT Medium"',
-                  backgroundColor: '#FFFFFF',
-                  color: '#EB1C24',
-                  textTransform: 'uppercase',
-                }}
-              >
-                COPY LOG
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  try {
-                    localStorage.removeItem('profileDebugEvents_v1');
-                  } catch {
-                    // ignore
-                  }
-                  setProfileDebugEvents([]);
-                }}
-                className="w-1/3 py-2 px-2 border border-black font-medium hover:bg-gray-50 transition-colors"
-                style={{
-                  borderWidth: '1.3px',
-                  fontSize: '10px',
-                  fontFamily: '"Futura PT Medium"',
-                  backgroundColor: '#FFFFFF',
-                  color: '#808080',
-                  textTransform: 'uppercase',
-                }}
-              >
-                CLEAR LOG
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowProfileDebugPopup(false)}
-                className="w-1/3 py-2 px-2 border border-black font-medium hover:bg-gray-50 transition-colors"
-                style={{
-                  borderWidth: '1.3px',
-                  fontSize: '10px',
-                  fontFamily: '"Futura PT Medium"',
-                  backgroundColor: '#FFFFFF',
-                  color: '#EB1C24',
-                  textTransform: 'uppercase',
-                }}
-              >
-                CLOSE
-              </button>
-            </div>
-            {profileDebugCopyMessage ? (
-              <p
-                style={{
-                  margin: '8px 0 0',
-                  fontFamily: '"Futura PT Medium"',
-                  fontSize: '9px',
-                  color: '#808080',
-                  textTransform: 'uppercase',
-                  textAlign: 'center',
-                }}
-              >
-                {profileDebugCopyMessage}
-              </p>
-            ) : null}
           </div>
         </div>
       ) : null}

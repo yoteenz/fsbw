@@ -1,26 +1,40 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import AdminSpecialOffer, { type SpecialOfferActionsRef } from '../special-offer/page';
+import NewsletterPanel, { type NewsletterPanelHandle } from './NewsletterPanel';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 
-const MARKETING_TABS = ['AFFILIATE', 'CHALLENGES', 'SPECIAL OFFERS'] as const;
+const MARKETING_TABS = ['AFFILIATE', 'CHALLENGES', 'SPECIAL OFFERS', 'NEWSLETTER'] as const;
 
 const TAB_PANEL_LABELS: Record<(typeof MARKETING_TABS)[number], { left: string; right: string }> = {
   AFFILIATE: { left: 'CONTENT', right: 'POINTS' },
   CHALLENGES: { left: 'REWARDS', right: 'ORDERS' },
   'SPECIAL OFFERS': { left: 'SALES', right: 'ORDERS' },
+  NEWSLETTER: { left: 'SUBSCRIBERS', right: 'SELECTED' },
 };
 
 export default function AdminMarketing() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
   const specialOfferRef = useRef<SpecialOfferActionsRef>(null);
+  const newsletterRef = useRef<NewsletterPanelHandle>(null);
   const [activeTab, setActiveTab] = useState<(typeof MARKETING_TABS)[number]>('AFFILIATE');
+  const [newsletterSubscribers, setNewsletterSubscribers] = useState(0);
+  const [newsletterSelected, setNewsletterSelected] = useState(0);
+  const [newsletterCanSend, setNewsletterCanSend] = useState(false);
+
+  const handleNewsletterCounts = useCallback((subscribers: number, selected: number) => {
+    setNewsletterSubscribers(subscribers);
+    setNewsletterSelected(selected);
+  }, []);
 
   const panelLabels = TAB_PANEL_LABELS[activeTab];
-  const panelValues = { left: 0, right: 0 };
+  const panelValues =
+    activeTab === 'NEWSLETTER'
+      ? { left: newsletterSubscribers, right: newsletterSelected }
+      : { left: 0, right: 0 };
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -84,34 +98,55 @@ export default function AdminMarketing() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap justify-center gap-[14px] px-5">
-                {MARKETING_TABS.map((tab) => (
-                  <button
-                    key={tab}
-                    type="button"
-                    onClick={() => setActiveTab(tab)}
-                    className="py-3 px-2 font-medium transition-colors"
-                    style={{
-                      fontFamily: '"Futura PT Medium"',
-                      fontSize: '10px',
-                      color: activeTab === tab ? '#EB1C24' : '#808080',
-                      border: 'none',
-                      paddingBottom: '4px',
-                      background: 'none',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <span
+              {/* Single row like other admin tabs: nowrap + horizontal scroll only if needed. */}
+              <div
+                className="px-5"
+                style={{
+                  overflowX: 'auto',
+                  WebkitOverflowScrolling: 'touch',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                }}
+              >
+                <div
+                  className="flex flex-nowrap items-center gap-[10px] py-1"
+                  style={{
+                    width: 'max-content',
+                    minWidth: '100%',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {MARKETING_TABS.map((tab) => (
+                    <button
+                      key={tab}
+                      type="button"
+                      onClick={() => setActiveTab(tab)}
+                      className="py-3 font-medium transition-colors flex-shrink-0"
                       style={{
-                        display: 'inline-block',
-                        borderBottom: activeTab === tab ? '1px solid #EB1C24' : '1px solid transparent',
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '10px',
+                        color: activeTab === tab ? '#EB1C24' : '#808080',
+                        border: 'none',
                         paddingBottom: '4px',
+                        paddingLeft: '4px',
+                        paddingRight: '4px',
+                        background: 'none',
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap',
                       }}
                     >
-                      {tab}
-                    </span>
-                  </button>
-                ))}
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          borderBottom: activeTab === tab ? '1px solid #EB1C24' : '1px solid transparent',
+                          paddingBottom: '4px',
+                        }}
+                      >
+                        {tab}
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '380px', marginTop: '16px', paddingTop: '2px' }}>
@@ -136,8 +171,30 @@ export default function AdminMarketing() {
                     <AdminSpecialOffer ref={specialOfferRef} embedded />
                   </div>
                 )}
+
+                {activeTab === 'NEWSLETTER' && (
+                  <NewsletterPanel
+                    ref={newsletterRef}
+                    onCountsChange={handleNewsletterCounts}
+                    onCanSendChange={setNewsletterCanSend}
+                  />
+                )}
               </div>
             </div>
+
+            {activeTab === 'NEWSLETTER' && (
+              <PageActionsBelowCard>
+                <button
+                  type="button"
+                  onClick={() => newsletterRef.current?.openSendConfirm()}
+                  disabled={!newsletterCanSend}
+                  className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={pageActionButtonStyle}
+                >
+                  SEND NEWSLETTER
+                </button>
+              </PageActionsBelowCard>
+            )}
 
             {activeTab === 'SPECIAL OFFERS' && (
               <PageActionsBelowCard>

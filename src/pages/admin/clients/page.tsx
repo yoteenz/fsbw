@@ -13,6 +13,7 @@ import { clientHasUnreadPriorityMessages, getLastUnreadPriorityMessageTime, isOr
 import { formatBirthday } from '../../../utils/formatBirthday';
 import { formatCountryDisplay } from '../../../utils/formatCountry';
 import ImageViewerModal from '../../../components/ImageViewerModal';
+import { isNewsletterOptIn } from '../../../utils/newsletterOptIn';
 
 const TABS = ['ALL', 'REVIEWS', 'REWARDS', 'INVITES'] as const;
 
@@ -128,23 +129,9 @@ function getTierDisplayLabelAndColor(u: any): { label: string; color: string } {
   return { label: membership === 'PREMIUM' ? 'Premium rewards' : 'Standard rewards', color: '#808080' };
 }
 
-/** Check if client is subscribed to the email newsletter (client.newsletterSubscribed or localStorage userNewsletter_${email}). Exported for admin dashboard. */
+/** Check if client is subscribed to the email newsletter (profile `notificationNewsletter` + legacy keys). Exported for admin dashboard. */
 export function isClientNewsletterSubscribed(u: any): boolean {
-  if (u?.newsletterSubscribed === true) return true;
-  try {
-    const email = (u?.email || '').toString().trim().toLowerCase();
-    if (!email) return false;
-    const raw = localStorage.getItem(`userNewsletter_${email}`);
-    if (raw === 'true' || raw === '1') return true;
-    try {
-      const parsed = JSON.parse(raw || 'false');
-      return parsed === true || parsed === 'true';
-    } catch {
-      return false;
-    }
-  } catch {
-    return false;
-  }
+  return isNewsletterOptIn(u as Record<string, unknown>);
 }
 
 /** Check if client is international (non-USA). Uses defaultAddress/shippingAddress country or parses address string (5 parts = last is country). */
@@ -786,14 +773,14 @@ export default function AdminClients() {
   }, [selectedClientForOrders?.id]);
   useEffect(() => {
     const id = selectedClientForOrders?.id as string | undefined;
-    if (!id || adminCartByUserId[id] !== undefined) return;
+    if (!id || !isSupabaseUserId(id) || adminCartByUserId[id] !== undefined) return;
     getAdminCart(id)
       .then((data) => setAdminCartByUserId((prev) => ({ ...prev, [id]: data.items || [] })))
       .catch(() => setAdminCartByUserId((prev) => ({ ...prev, [id as string]: [] })));
   }, [selectedClientForOrders?.id]);
   useEffect(() => {
     const id = selectedClientForOrders?.id as string | undefined;
-    if (!id || adminWishlistByUserId[id] !== undefined) return;
+    if (!id || !isSupabaseUserId(id) || adminWishlistByUserId[id] !== undefined) return;
     getAdminWishlist(id)
       .then((data) => setAdminWishlistByUserId((prev) => ({ ...prev, [id]: data.items || [] })))
       .catch(() => setAdminWishlistByUserId((prev) => ({ ...prev, [id as string]: [] })));
@@ -992,18 +979,8 @@ export default function AdminClients() {
   const selectedTotalSpent = selectedOrderHistory.reduce((s: number, o: any) => s + (o.amount || 0), 0);
   const selectedJoinDate = selectedClient?.createdAt ? new Date(selectedClient.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' }) : '—';
 
-  const appointments = (() => {
-    const list = [
-      { date: '2024-01-20', time: '2:00 PM', type: 'CONSULTATION', status: 'SCHEDULED' },
-      { date: '2024-01-05', time: '10:30 AM', type: 'FITTING', status: 'COMPLETED' },
-    ];
-    const sortTime = (a: { date: string; time?: string }) => {
-      const d = a.date || '';
-      const t = (a.time || '').replace(/\s*(AM|PM)\s*/i, ' $1');
-      try { return new Date(`${d} ${t}`).getTime(); } catch { return new Date(d).getTime() || 0; }
-    };
-    return [...list].sort((a, b) => sortTime(b) - sortTime(a));
-  })();
+  /** Real appointments per client are not loaded yet — avoid placeholder rows so new sign-ups are not shown fake data. */
+  const appointments: Array<{ date: string; time?: string; type: string; status: string }> = [];
 
   // NEW / ORDERS / CHARGES: NEW = unfulfilled orders (not shipped, delivered, or fulfilled yet) — see isOrderUnfulfilled
   const getClientRow = (u: any, index: number) => {
@@ -1814,7 +1791,7 @@ export default function AdminClients() {
                                       fontFamily: '"Futura PT Book"',
                                       color: '#000000',
                                       fontSize: '10px',
-                                      margin: '4px 0 0 0',
+                                      margin: '24px 0 0 0',
                                       width: '100%',
                                       textAlign: 'center',
                                       wordBreak: 'break-word',
@@ -2054,7 +2031,6 @@ export default function AdminClients() {
                           );
                           return (
                             <div className="bg-white border border-gray-200 p-4 mb-6">
-                              <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', margin: '0 0 12px 0', textTransform: 'uppercase' }}>REVIEWS</h3>
                               <div className="grid grid-cols-3 gap-4 text-center">
                                 <button
                                   type="button"
@@ -2298,6 +2274,7 @@ export default function AdminClients() {
                             const labels: Record<string, string> = {
                               sign_in: 'Signed in',
                               sign_out: 'Signed out',
+                              sign_up: 'Signed up',
                               view_product: 'Viewed product',
                               add_to_cart: 'Added to cart',
                               add_to_wishlist: 'Added to wishlist',
@@ -2311,11 +2288,29 @@ export default function AdminClients() {
                               profile_update: 'Updated profile',
                               checkout_start: 'Started checkout',
                               checkout_complete: 'Completed checkout',
+                              cart_snapshot: 'Cart updated',
+                              wishlist_snapshot: 'Wishlist updated',
+                              cloud_sync: 'Synced cart/wishlist to cloud',
+                              membership_checkout_start: 'Membership Stripe checkout',
+                              membership_upgrade_checkout: 'Membership upgrade checkout',
+                              membership_stripe_return: 'Returned from Stripe (membership)',
+                              open_cart_dropdown: 'Opened cart',
+                              cart_navigate: 'Cart menu',
                             };
                             let label = labels[eventType] || eventType.replace(/_/g, ' ');
                             if (payload?.productName) label += `: ${String(payload.productName).toUpperCase()}`;
+                            else if (payload?.fullPath) label += `: ${String(payload.fullPath)}`;
+                            else if (payload?.path) label += `: ${String(payload.path)}${payload.search ? String(payload.search) : ''}`;
                             else if (payload?.page) label += `: ${String(payload.page)}`;
-                            else if (payload?.orderId) label += ` #${String(payload.orderId).replace(/^#/, '')}`;
+                            else if (
+                              (eventType === 'cart_snapshot' || eventType === 'wishlist_snapshot') &&
+                              payload?.itemCount != null
+                            ) {
+                              label += `: ${String(payload.itemCount)} items`;
+                            } else if (payload?.orderId) label += ` #${String(payload.orderId).replace(/^#/, '')}`;
+                            else if (payload?.method && eventType === 'sign_in') label += ` (${String(payload.method)})`;
+                            else if (payload?.source && eventType === 'sign_up') label += ` (${String(payload.source)})`;
+                            else if (payload?.destination && eventType === 'cart_navigate') label += `: ${String(payload.destination)}`;
                             return label;
                           };
                           return (

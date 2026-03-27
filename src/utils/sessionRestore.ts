@@ -3,7 +3,7 @@
  * the server may still have an HttpOnly cookie. We call GET /api/session-restore with
  * credentials: 'include' to get a new session and rehydrate the client.
  */
-import { persistAuthBackup, onSignInSuccess, authDebugLogIfEnabled } from './adminAuth';
+import { persistAuthBackup, onSignInSuccess } from './adminAuth';
 import { buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage } from './syncFromApi';
 
 const SUPABASE_URL = (import.meta as unknown as { env?: { VITE_SUPABASE_URL?: string } }).env?.VITE_SUPABASE_URL ?? '';
@@ -26,22 +26,15 @@ async function parseSessionRestoreJson(
   const raw = await res.text();
   const trimmed = raw.trim();
   if (!trimmed) {
-    authDebugLogIfEnabled('session-restore: empty response body');
     return null;
   }
   const looksJson = /application\/json/i.test(ct) || trimmed.startsWith('{');
   if (!looksJson) {
-    authDebugLogIfEnabled(
-      `session-restore: expected JSON, got content-type=${ct} snippet=${trimmed.slice(0, 160).replace(/\s+/g, ' ')} — is Vite proxying /api to Vercel?`,
-    );
     return null;
   }
   try {
     return JSON.parse(trimmed) as Record<string, unknown>;
-  } catch (e) {
-    authDebugLogIfEnabled(
-      `session-restore: json parse error ${e instanceof Error ? e.message : String(e)} snippet=${trimmed.slice(0, 160).replace(/\s+/g, ' ')}`,
-    );
+  } catch {
     return null;
   }
 }
@@ -55,16 +48,13 @@ export async function tryServerSessionRestore(): Promise<boolean> {
   if (typeof window === 'undefined' || !window.localStorage) return false;
   // Use same-origin API route so Safari treats cookie as first-party (local + production).
   const url = `/api/session-restore`;
-  authDebugLogIfEnabled('session-restore: attempt');
   let res: Response;
   try {
     res = await fetch(url, { method: 'GET', credentials: 'include' });
-  } catch (e) {
-    authDebugLogIfEnabled(`session-restore: fetch error ${e instanceof Error ? e.message : String(e)}`);
+  } catch {
     return false;
   }
   if (!res.ok) {
-    authDebugLogIfEnabled(`session-restore: non-200 status=${res.status}`);
     return false;
   }
   const parsed = await parseSessionRestoreJson(res);
@@ -81,13 +71,11 @@ export async function tryServerSessionRestore(): Promise<boolean> {
   const expires_at = data.expires_at ?? 0;
   const expires_in = data.expires_in ?? 3600;
   if (!access_token || !refresh_token) {
-    authDebugLogIfEnabled('session-restore: missing access_token/refresh_token');
     return false;
   }
 
   const storageKey = getSupabaseStorageKey();
   if (!storageKey) {
-    authDebugLogIfEnabled('session-restore: missing Supabase storage key');
     return false;
   }
 
@@ -142,20 +130,14 @@ export async function registerServerSessionCookie(accessToken: string, refreshTo
   if (!accessToken || !refreshToken || typeof window === 'undefined') return;
   const url = `/api/session-cookie`;
   try {
-    const res = await fetch(url, {
+    await fetch(url, {
       method: 'POST',
       credentials: 'include',
       keepalive: true,
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
       body: JSON.stringify({ refresh_token: refreshToken }),
     });
-    authDebugLogIfEnabled(`session-cookie: register status=${res.status}`);
-    if (res.status === 404) {
-      authDebugLogIfEnabled(
-        'session-cookie: 404 — ensure Vercel has api/session-cookie and dev uses Vite /api proxy (restart npm run dev)',
-      );
-    }
   } catch {
-    authDebugLogIfEnabled('session-cookie: register fetch error');
+    /* ignore */
   }
 }

@@ -709,11 +709,13 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
 
 
   const handleCheckout = () => {
+    trackActivity('cart_navigate', { destination: 'checkout' });
     onClose();
     navigate('/checkout');
   };
 
   const handleViewCart = () => {
+    trackActivity('cart_navigate', { destination: 'bag' });
     onClose();
     navigate('/bag');
   };
@@ -739,6 +741,16 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
+
+  /** Scroll the list only when it would show 2+ compact rows; one item uses natural height. Two rows need ~300px+ (120px row ×2 + gaps/padding/borders). */
+  const multiItemCompactList = !viewingDetailsFor && cartItems.length > 1;
+  const cartItemsScrollMaxHeight = multiItemCompactList
+    ? 'min(340px, calc(100vh - 230px))'
+    : viewingDetailsFor
+      ? 'min(380px, calc(100vh - 230px))'
+      : 'none';
+  const cartItemsScrollOverflowY: 'auto' | 'visible' =
+    multiItemCompactList || viewingDetailsFor ? 'auto' : 'visible';
 
   // Dropdown 2px higher (86px) on pages with shared header layout for symmetry
   const path = location.pathname;
@@ -830,13 +842,13 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
 
         {/* Cart Items */}
           <div 
-            className={`px-3 overflow-y-auto flex-1 ${cartItems.length > 1 ? '' : ''}`}
+            className="px-3 overflow-y-auto flex-1"
             style={{
-              maxHeight: cartItems.length > 1 ? '245px' : 'auto',
+              maxHeight: cartItemsScrollMaxHeight,
               minHeight: '0',
-              overflowY: cartItems.length > 1 ? 'auto' : 'visible',
+              overflowY: cartItemsScrollOverflowY,
               marginTop: '4.8px',
-              marginBottom: cartItems.length > 1 ? '4.8px' : '0'
+              marginBottom: cartItems.length > 0 ? '4.8px' : '0'
             }}
           >
           {cartItems.length === 0 ? (

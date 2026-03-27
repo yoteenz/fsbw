@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
+import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
 
 interface HairlineOption {
   id: string;
@@ -22,12 +23,7 @@ function HairlineSelection() {
   const [selectedHairline, setSelectedHairline] = useState<string[]>(() => {
     const pathname = window.location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
-    const isOnCustomizeRoute = pathname.includes('/noir/customize') ||
-                               pathname.includes('/blanco/customize') ||
-                               pathname.includes('/soft-wave/customize') ||
-                               pathname.includes('/soft-curl/customize') ||
-                               pathname.includes('/ocean-curl/customize') ||
-                               pathname.includes('/beach-wave/customize');
+    const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
     
     // CRITICAL: Check editSelected* keys first when in edit mode
     if (isOnEditRoute) {
@@ -591,16 +587,7 @@ function HairlineSelection() {
           <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
             <span 
               style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-              onClick={() => {
-                const pathname = window.location.pathname;
-                if (pathname.includes('/noir/')) navigate('/build-a-wig/noir');
-                else if (pathname.includes('/blanco/')) navigate('/build-a-wig/blanco');
-                else if (pathname.includes('/soft-wave/')) navigate('/build-a-wig/soft-wave');
-                else if (pathname.includes('/soft-curl/')) navigate('/build-a-wig/soft-curl');
-                else if (pathname.includes('/ocean-curl/')) navigate('/build-a-wig/ocean-curl');
-                else if (pathname.includes('/beach-wave/')) navigate('/build-a-wig/beach-wave');
-                else navigate('/build-a-wig');
-              }}
+              onClick={() => navigate(getBuildAWigFlowBasePath(window.location.pathname))}
             >
               BUILD-A-WIG &gt;
             </span>{' '}

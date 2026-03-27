@@ -195,51 +195,32 @@ export default function AddToListModal({
         {/* List dropdown or create-new-list text field (same box styling) */}
         <div style={{ marginBottom: '16px' }}>
           {isCreatingNewList ? (
-            <div style={{ display: 'flex', alignItems: 'stretch', gap: '8px' }}>
-              <input
-                ref={newListInputRef}
-                type="text"
-                value={newListName}
-                onChange={(e) => setNewListName(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleCreateNewListSubmit();
-                  if (e.key === 'Escape') {
-                    setIsCreatingNewList(false);
-                    setNewListName('');
-                  }
-                }}
-                style={{
-                  flex: 1,
-                  height: '36px',
-                  padding: '8px 10px',
-                  border: '1.3px solid #000000',
-                  fontFamily: '"Futura PT Demi"',
-                  fontSize: '11px',
-                  color: '#808080',
-                  backgroundColor: '#FFFFFF',
-                  boxSizing: 'border-box',
-                  borderRadius: '0',
-                  textTransform: 'uppercase'
-                }}
-              />
-              <button
-                type="button"
-                onClick={handleCreateNewListSubmit}
-                style={{
-                  height: '36px',
-                  padding: '0 14px',
-                  border: '1.3px solid #000000',
-                  fontFamily: '"Futura PT Medium"',
-                  fontSize: '11px',
-                  textTransform: 'uppercase',
-                  backgroundColor: '#FFFFFF',
-                  color: '#EB1C24',
-                  cursor: 'pointer'
-                }}
-              >
-                Add
-              </button>
-            </div>
+            <input
+              ref={newListInputRef}
+              type="text"
+              value={newListName}
+              onChange={(e) => setNewListName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleCreateNewListSubmit();
+                if (e.key === 'Escape') {
+                  setIsCreatingNewList(false);
+                  setNewListName('');
+                }
+              }}
+              style={{
+                width: '100%',
+                height: '36px',
+                padding: '8px 10px',
+                border: '1.3px solid #000000',
+                fontFamily: '"Futura PT Demi"',
+                fontSize: '11px',
+                color: '#808080',
+                backgroundColor: '#FFFFFF',
+                boxSizing: 'border-box',
+                borderRadius: '0',
+                textTransform: 'uppercase'
+              }}
+            />
           ) : (
             <select
               value={listDropdownValue}
@@ -287,7 +268,7 @@ export default function AddToListModal({
 
         {/* Lists (below add-to-list input) */}
         <div style={{ marginBottom: '20px' }}>
-          {lists.length === 0 ? (
+          {lists.length === 0 && !isCreatingNewList ? (
             <p
               style={{
                 fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
@@ -399,7 +380,7 @@ export default function AddToListModal({
             Cancel
           </button>
           <button
-            onClick={handleSave}
+            onClick={isCreatingNewList ? handleCreateNewListSubmit : handleSave}
             className="flex-1 py-2 px-4 border border-black font-medium hover:bg-gray-50"
             style={{
               borderWidth: '1.3px',
@@ -411,7 +392,7 @@ export default function AddToListModal({
               cursor: 'pointer'
             }}
           >
-            Save
+            {isCreatingNewList ? 'Create' : 'Save'}
           </button>
         </div>
       </div>

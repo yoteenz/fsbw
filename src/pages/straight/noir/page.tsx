@@ -1927,6 +1927,31 @@ function NoirSelection() {
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
+      <style>{`
+        @media (min-width: 1024px) {
+          .noir-product-shots-viewport {
+            height: 310px !important;
+            min-height: 310px !important;
+            padding-top: 70px !important;
+          }
+          .noir-product-shots-row {
+            align-items: center !important;
+            height: 100% !important;
+          }
+          .noir-product-shots-img {
+            height: 290px !important;
+            max-height: 290px !important;
+            flex-shrink: 0 !important;
+            transform: translateY(-55px) !important;
+          }
+          .noir-product-shots-label {
+            bottom: -1px !important;
+          }
+          .noir-product-shots-tabs {
+            transform: translateY(-20px) !important;
+          }
+        }
+      `}</style>
       {showLoading && <LoadingScreen />}
       
       {/* Marble Floor Background */}
@@ -2835,9 +2860,9 @@ width: 'clamp(230px, 57.5vw, 368px)',
           {/* PRODUCT SHOTS SECTION */}
           <div className="mt-8 mb-6" style={{ transform: 'translateY(-34px)' }}>
             {/* Product Images with Drag/Swipe Scroll */}
-            <div className="relative overflow-hidden" style={{ height: '300px' }}>
+            <div className="relative overflow-hidden noir-product-shots-viewport" style={{ height: '300px' }}>
               <div 
-                className="flex transition-transform duration-300 ease-out"
+                className="flex transition-transform duration-300 ease-out noir-product-shots-row"
                 style={{ 
                   width: '300%',
                   transform: `translateX(${scrollPosition}px)`,
@@ -2854,7 +2879,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 <img
                   src="/assets/NOIR/noir left.png"
                   alt="NOIR Left View"
-                  className="h-full object-cover"
+                  className="h-full object-cover noir-product-shots-img"
                   style={{ width: '18%', cursor: 'pointer' }}
                   draggable={false}
                   onClick={() => {
@@ -2871,7 +2896,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 <img
                   src="/assets/NOIR/noir front.png"
                   alt="NOIR Front View"
-                  className="h-full object-cover"
+                  className="h-full object-cover noir-product-shots-img"
                   style={{ width: '18%', cursor: 'pointer' }}
                   draggable={false}
                   onClick={() => {
@@ -2888,7 +2913,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 <img
                   src="/assets/NOIR/noir right.png"
                   alt="NOIR Right View"
-                  className="h-full object-cover"
+                  className="h-full object-cover noir-product-shots-img"
                   style={{ width: '18%', cursor: 'pointer' }}
                   draggable={false}
                   onClick={() => {
@@ -2906,7 +2931,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
               
               {/* Product Shots Text Overlay */}
               <div 
-                className="absolute left-1/2 transform -translate-x-1/2"
+                className="absolute left-1/2 transform -translate-x-1/2 noir-product-shots-label"
                 style={{
                   bottom: '14px',
                   fontFamily: '"Bohemy", cursive',
@@ -2926,7 +2951,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
           </div>
 
               {/* Tabs Section */}
-              <div className="mt-6" style={{ transform: 'translateY(-66px)' }}>
+              <div className="mt-6 noir-product-shots-tabs" style={{ transform: 'translateY(-66px)', paddingTop: '10px' }}>
                 {/* Tab Navigation */}
                 <div className="flex justify-center" style={{ gap: '16px' }}>
                 <button

@@ -6,7 +6,6 @@
  */
 import { getProfile, getOrders, getCart, getWishlist, getAccessToken } from './api';
 import { isAdminEmail, persistAuthBackup, ADMIN_TIER_OVERRIDE_KEY, ADMIN_SUBSCRIPTION_OVERRIDE_KEY } from './adminAuth';
-import { authDebugLogIfEnabled } from './adminAuth';
 
 let lastProfileSyncErrored = false;
 
@@ -362,7 +361,6 @@ export function applyMinimalUserToStorage(merged: Record<string, unknown>): void
   };
 
   if (sameEmail && existing && hasRicherStoredIdentity(existing, merged)) {
-    authDebugLogIfEnabled('applyMinimalUserToStorage: hard-lock skip (stored profile richer than fallback)');
     localStorage.setItem('isSignedIn', 'true');
     const existingImg =
       (typeof existing.profileImage === 'string' && existing.profileImage.trim())
@@ -430,7 +428,7 @@ export function buildProfilePayloadForBackend(minimal: Record<string, unknown>):
   const str = (k: string) => (typeof minimal[k] === 'string' ? (minimal[k] as string) : '') || '';
   const referral =
     str('referralCode') || str('referral_code') || (minimal.referralCode as string) || (minimal.referral_code as string) || '';
-  return {
+  const payload: Record<string, unknown> = {
     email,
     // Do not invent placeholder names on fallback upsert; avoids overwriting real profile names.
     firstName: (minimal.firstName as string) || str('first_name') || null,
@@ -451,4 +449,8 @@ export function buildProfilePayloadForBackend(minimal: Record<string, unknown>):
     loyaltyPoints: Number(minimal.loyaltyPoints) || 0,
     unlockedDiscounts: Array.isArray(minimal.unlockedDiscounts) ? minimal.unlockedDiscounts : ['signup'],
   };
+  if (email && isAdminEmail(email)) {
+    payload.role = 'admin';
+  }
+  return payload;
 }

@@ -8,6 +8,7 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { clearAppAuth } from '../../../utils/adminAuth';
+import { getBuildAWigFlowBasePath, getBuildAWigShopMenuTargetPath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
 
 interface DensityOption {
   id: string;
@@ -403,12 +404,7 @@ function DensitySelection() {
                        pathname.includes('/beach-wave/edit');
     
     // Check if we're in customize mode for ALL products
-    const isCustomizeMode = pathname.includes('/noir/customize') ||
-                            pathname.includes('/blanco/customize') ||
-                            pathname.includes('/soft-wave/customize') ||
-                            pathname.includes('/soft-curl/customize') ||
-                            pathname.includes('/ocean-curl/customize') ||
-                            pathname.includes('/beach-wave/customize');
+    const isCustomizeMode = isBuildAWigCustomizePath(pathname);
     
     // Get the source route from sessionStorage (set by main page when navigating to sub-page)
     // Also check if we're in edit or customize mode as fallback
@@ -762,10 +758,7 @@ function DensitySelection() {
     const editingCartItem = localStorage.getItem('editingCartItem');
     
     const isOnBlancoCustomizeRoute = window.location.pathname.includes('/blanco/customize');
-    const isOnSoftWaveCustomizeRoute = window.location.pathname.includes('/soft-wave/customize');
-    const isOnSoftCurlCustomizeRoute = window.location.pathname.includes('/soft-curl/customize');
-    const isOnNoirCustomizeRoute = window.location.pathname.includes('/noir/customize');
-    const isOnCustomizeRoute = isOnNoirCustomizeRoute || isOnBlancoCustomizeRoute || isOnSoftWaveCustomizeRoute || isOnSoftCurlCustomizeRoute;
+    const isOnCustomizeRoute = isBuildAWigCustomizePath(window.location.pathname);
     
     // CRITICAL: Check editSelected* keys first when in edit mode
     if (isOnEditRoute) {
@@ -838,10 +831,7 @@ function DensitySelection() {
       const pathname = window.location.pathname;
       const isOnEditRoute = pathname.includes('/edit');
       const isOnBlancoCustomizeRoute = pathname.includes('/blanco/customize');
-      const isOnSoftWaveCustomizeRoute = pathname.includes('/soft-wave/customize');
-      const isOnSoftCurlCustomizeRoute = pathname.includes('/soft-curl/customize');
-      const isOnNoirCustomizeRoute = pathname.includes('/noir/customize');
-      const isOnCustomizeRoute = isOnNoirCustomizeRoute || isOnBlancoCustomizeRoute || isOnSoftWaveCustomizeRoute || isOnSoftCurlCustomizeRoute;
+      const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
       
       // CRITICAL: For blanco customize mode, don't read from noir's localStorage
       if (isOnBlancoCustomizeRoute) {
@@ -885,10 +875,7 @@ function DensitySelection() {
       // CRITICAL: Check editSelected* keys first when in edit mode, then customizeSelected* for customize mode
       const pathname = window.location.pathname;
       const isOnEditRoute = pathname.includes('/edit');
-      const isOnCustomizeRoute = pathname.includes('/noir/customize') ||
-                                 pathname.includes('/blanco/customize') ||
-                                 pathname.includes('/soft-wave/customize') ||
-                                 pathname.includes('/soft-curl/customize');
+      const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
       
       let currentDensity: string | null = null;
       if (isOnEditRoute) {
@@ -1027,16 +1014,7 @@ function DensitySelection() {
                 <>
               <span 
                 style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                onClick={() => {
-                  const pathname = location.pathname;
-                  if (pathname.includes('/noir/')) navigate('/build-a-wig/noir');
-                  else if (pathname.includes('/blanco/')) navigate('/build-a-wig/blanco');
-                  else if (pathname.includes('/soft-wave/')) navigate('/build-a-wig/soft-wave');
-                  else if (pathname.includes('/soft-curl/')) navigate('/build-a-wig/soft-curl');
-                  else if (pathname.includes('/ocean-curl/')) navigate('/build-a-wig/ocean-curl');
-                  else if (pathname.includes('/beach-wave/')) navigate('/build-a-wig/beach-wave');
-                  else navigate('/build-a-wig');
-                }}
+                onClick={() => navigate(getBuildAWigFlowBasePath(location.pathname))}
               >
                 BUILD-A-WIG &gt;
               </span>{' '}
@@ -1207,7 +1185,14 @@ function DensitySelection() {
                       <div key={index}>
                         <div 
                           className="flex items-center justify-between"
-                          style={{ alignItems: 'center' }}
+                          style={{ alignItems: 'center', cursor: item.label === 'ORDER AUTHORIZATION FORM' || item.label === 'BUILD-A-WIG' ? 'pointer' : 'default' }}
+                          onClick={() => {
+                            if (!item.isExpandable && item.label === 'ORDER AUTHORIZATION FORM') {
+                              navigate('/shop/order-form');
+                            } else if (!item.isExpandable && item.label === 'BUILD-A-WIG') {
+                              navigate(getBuildAWigShopMenuTargetPath());
+                            }
+                          }}
                         >
                           <span 
                             style={{ 
@@ -1230,6 +1215,8 @@ function DensitySelection() {
                                 }
                               } else if (item.label === 'ORDER AUTHORIZATION FORM') {
                                 navigate('/shop/order-form');
+                              } else if (item.label === 'BUILD-A-WIG') {
+                                navigate(getBuildAWigShopMenuTargetPath());
                               }
                             }}
                           >

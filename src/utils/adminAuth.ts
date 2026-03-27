@@ -58,94 +58,8 @@ export function onSignInSuccess(method: 'session_restore' | 'password' | 'passke
       delays.forEach((ms) => {
         setTimeout(() => persistAuthBackup(), ms);
       });
-      authDebugLog(`signInSuccess: method=${method} (Safari iOS — scheduled ${delays.length} backup retries)`);
-    } else {
-      authDebugLog(`signInSuccess: method=${method}`);
     }
   } catch (_) {}
-}
-
-/** Enable auth debug: set localStorage 'baw_auth_debug' = 'true' or open site with ?auth_debug=1. Logs persist so you can see what happened after reopening the browser. */
-export const AUTH_DEBUG_KEY = 'baw_auth_debug';
-export const AUTH_DEBUG_LOG_KEY = 'baw_auth_debug_log';
-const AUTH_DEBUG_LOG_MAX = 45;
-
-function isAuthDebugEnabled(): boolean {
-  if (typeof window === 'undefined') return false;
-  try {
-    if (window.localStorage.getItem(AUTH_DEBUG_KEY) === 'true') return true;
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('auth_debug') === '1' || params.get('auth_debug') === 'true') return true;
-    return false;
-  } catch {
-    return false;
-  }
-}
-
-function authDebugLog(message: string): void {
-  if (!isAuthDebugEnabled()) return;
-  try {
-    const t = Date.now();
-    const line = { t, m: message };
-    const raw = window.localStorage.getItem(AUTH_DEBUG_LOG_KEY);
-    const log: { t: number; m: string }[] = raw ? JSON.parse(raw) : [];
-    log.push(line);
-    if (log.length > AUTH_DEBUG_LOG_MAX) log.splice(0, log.length - AUTH_DEBUG_LOG_MAX);
-    window.localStorage.setItem(AUTH_DEBUG_LOG_KEY, JSON.stringify(log));
-    if (typeof console !== 'undefined' && console.log) console.log('[baw-auth]', message);
-  } catch (_) {}
-}
-
-/** Call with current search string (e.g. location.search) to enable debug when ?auth_debug=1 is present. */
-export function enableAuthDebugFromSearch(search: string): boolean {
-  if (typeof window === 'undefined') return false;
-  try {
-    const params = new URLSearchParams(search);
-    if (params.get('auth_debug') === '1' || params.get('auth_debug') === 'true') {
-      window.localStorage.setItem(AUTH_DEBUG_KEY, 'true');
-      return true;
-    }
-    return window.localStorage.getItem(AUTH_DEBUG_KEY) === 'true';
-  } catch {
-    return false;
-  }
-}
-
-/** Call once on load to enable debug from current window URL (e.g. ?auth_debug=1). */
-export function enableAuthDebugFromUrl(): boolean {
-  if (typeof window === 'undefined') return false;
-  return enableAuthDebugFromSearch(window.location.search);
-}
-
-/** Log a message only when auth debug is enabled (e.g. from main.tsx when visibility changes). */
-export function authDebugLogIfEnabled(message: string): void {
-  authDebugLog(message);
-}
-
-/** For debug panel: last sign-in method and timestamp (session_restore = Face ID/auto-login, password = tapped Sign in). */
-export function getLastSignInInfo(): { method: string; at: number } | null {
-  if (typeof window === 'undefined') return null;
-  try {
-    const method = window.localStorage.getItem(LAST_SIGN_IN_METHOD_KEY);
-    const at = window.localStorage.getItem(LAST_SIGN_IN_AT_KEY);
-    if (method && at) return { method, at: parseInt(at, 10) };
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-/** Get recent auth debug log lines for the on-page panel. Returns { enabled, lines }. */
-export function getAuthDebugLog(): { enabled: boolean; lines: { t: number; m: string }[] } {
-  if (typeof window === 'undefined') return { enabled: false, lines: [] };
-  try {
-    const enabled = window.localStorage.getItem(AUTH_DEBUG_KEY) === 'true';
-    const raw = window.localStorage.getItem(AUTH_DEBUG_LOG_KEY);
-    const lines: { t: number; m: string }[] = raw ? JSON.parse(raw) : [];
-    return { enabled, lines };
-  } catch {
-    return { enabled: false, lines: [] };
-  }
 }
 
 function readBackupFromCookie(): string | null {
@@ -276,12 +190,9 @@ export function persistAuthBackup(): void {
       } catch {
         // ignore profile-cookie write errors
       }
-      authDebugLog(`persist: ls=ok cookie=${cookiePayload.length <= COOKIE_BACKUP_MAX ? 'ok' : 'skip'} len=${payload.length} — backup written; close Safari and reopen with ?auth_debug=1 to test`);
-    } else {
-      authDebugLog(`persist: skip (signedIn=${signedIn} hasUser=${!!currentUser})`);
     }
-  } catch (e) {
-    authDebugLog(`persist: err ${e instanceof Error ? e.message : String(e)}`);
+  } catch {
+    // ignore
   }
 }
 
@@ -311,17 +222,11 @@ export function clearAppAuth(): void {
 
 function restoreAuthFromBackupIfNeeded(): void {
   try {
-    const hadLs = !!localStorage.getItem(AUTH_BACKUP_KEY);
     let raw = localStorage.getItem(AUTH_BACKUP_KEY);
-    let fromCookie = false;
     if (!raw && typeof document !== 'undefined') {
       const cookieVal = readBackupFromCookie();
-      if (cookieVal) {
-        raw = cookieVal;
-        fromCookie = true;
-      }
+      if (cookieVal) raw = cookieVal;
     }
-    authDebugLog(`restore: hadLs=${hadLs} hadCookie=${fromCookie} rawLen=${raw ? raw.length : 0}`);
     if (!raw) return;
     const data = JSON.parse(raw) as { isSignedIn?: boolean; currentUser?: string | null };
     if (data.isSignedIn === true && data.currentUser) {
@@ -362,10 +267,9 @@ function restoreAuthFromBackupIfNeeded(): void {
       } catch {
         // ignore merge errors
       }
-      authDebugLog('restore: applied backup to ls');
     }
-  } catch (e) {
-    authDebugLog(`restore: err ${e instanceof Error ? e.message : String(e)}`);
+  } catch {
+    // ignore
   }
 }
 
@@ -378,22 +282,16 @@ export function ensureAuthRestoredFromBackup(): void {
     const signed = localStorage.getItem(STORAGE_IS_SIGNED_IN) === 'true';
     if (cur && !signed) {
       localStorage.setItem(STORAGE_IS_SIGNED_IN, 'true');
-      authDebugLog('self-heal: restored isSignedIn=true from existing currentUser');
     }
     // Self-heal: if signed/current exists but backup is missing, re-seed backup immediately.
     const hasBackupLs = !!localStorage.getItem(AUTH_BACKUP_KEY);
     const hasBackupCookie = !!readBackupFromCookie();
     if (cur && (localStorage.getItem(STORAGE_IS_SIGNED_IN) === 'true') && !hasBackupLs && !hasBackupCookie) {
       persistAuthBackup();
-      authDebugLog('self-heal: re-seeded auth backup from currentUser/isSignedIn');
     }
-  } catch (e) {
-    authDebugLog(`self-heal: err ${e instanceof Error ? e.message : String(e)}`);
+  } catch {
+    // ignore
   }
-  const protocol = typeof location !== 'undefined' ? location.protocol : '?';
-  const lsBackup = typeof localStorage !== 'undefined' ? !!localStorage.getItem(AUTH_BACKUP_KEY) : false;
-  const cookieBackup = typeof document !== 'undefined' ? !!readBackupFromCookie() : false;
-  authDebugLog(`load: protocol=${protocol} lsBackup=${lsBackup} cookieBackup=${cookieBackup}`);
   restoreAuthFromBackupIfNeeded();
 }
 

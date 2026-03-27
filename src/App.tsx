@@ -16,126 +16,107 @@ import LoadingScreen from './components/base/LoadingScreen';
 import AdminGuard from './components/AdminGuard';
 import AccountRouteGuard from './components/AccountRouteGuard';
 import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
-import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn, enableAuthDebugFromSearch } from './utils/adminAuth';
+import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth';
 import { schedulePushCartWishlistToCloud } from './utils/pushCartWishlistToCloud';
 import { flushQueuedProfilePatch } from './utils/profileSyncQueue';
-import AuthDebugPanel from './components/AuthDebugPanel';
+import { registerGlobalClientActivityListeners, trackClientViewPage } from './utils/clientActivityBootstrap';
 
-// Helper to wrap lazy imports with retry logic and logging
-const lazyWithLogging = (importFn: () => Promise<any>, componentName: string) => {
+/** Lazy route imports with retries for chunk/network failures (common after deploys). */
+const lazyWithRetry = (importFn: () => Promise<any>, componentName: string) => {
   return lazy(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:18',message:'Lazy import attempt',data:{componentName,pathname:window.location.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
-    
-    // Retry logic for chunk loading failures (common on Vercel)
     const retryImport = async (retries = 3, delay = 1000): Promise<any> => {
       for (let i = 0; i < retries; i++) {
         try {
-          const module = await importFn();
-          // #region agent log
-          fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:21',message:'Lazy import success',data:{componentName,attempt:i+1},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-          // #endregion
-          return module;
+          return await importFn();
         } catch (error: any) {
-          const isChunkError = error.message?.includes('Failed to fetch') || 
-                               error.message?.includes('Loading chunk') ||
-                               error.message?.includes('MIME type') ||
-                               error.message?.includes('text/html') ||
-                               error.name === 'ChunkLoadError';
-          
+          const isChunkError =
+            error.message?.includes('Failed to fetch') ||
+            error.message?.includes('Loading chunk') ||
+            error.message?.includes('MIME type') ||
+            error.message?.includes('text/html') ||
+            error.name === 'ChunkLoadError';
+
           if (isChunkError && i < retries - 1) {
-            // #region agent log
-            fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:26',message:'Lazy import retry',data:{componentName,attempt:i+1,errorMessage:error.message},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-            // #endregion
-            // Wait before retrying, with exponential backoff
-            await new Promise(resolve => setTimeout(resolve, delay * (i + 1)));
-            // Force reload chunk by adding cache busting query param
+            await new Promise((resolve) => setTimeout(resolve, delay * (i + 1)));
             if (error.message?.includes('Failed to fetch') || error.message?.includes('Loading chunk')) {
-              // Clear module cache and retry
               if (typeof window !== 'undefined' && 'caches' in window) {
                 try {
                   const cacheNames = await caches.keys();
-                  await Promise.all(cacheNames.map(name => caches.delete(name)));
-                } catch (e) {
-                  // Ignore cache clearing errors
+                  await Promise.all(cacheNames.map((name) => caches.delete(name)));
+                } catch {
+                  // ignore
                 }
               }
             }
             continue;
           }
-          
-          // #region agent log
-          fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:26',message:'Lazy import failed',data:{componentName,errorMessage:error.message,errorStack:error.stack?.substring(0,200),isMimeTypeError:error.message.includes('MIME type')||error.message.includes('text/html'),attempts:i+1},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-          // #endregion
           throw error;
         }
       }
       throw new Error(`Failed to load ${componentName} after ${retries} attempts`);
     };
-    
     return retryImport();
   });
 };
 
 // Use lazy loading for admin pages and noir page (like canonical backup)
-const AdminDashboard = lazyWithLogging(() => import('./pages/admin/dashboard/page'), 'AdminDashboard');
-const AdminBrand = lazyWithLogging(() => import('./pages/admin/brand/page'), 'AdminBrand');
-const AdminClients = lazyWithLogging(() => import('./pages/admin/clients/page'), 'AdminClients');
-const AdminDeletedAccounts = lazyWithLogging(() => import('./pages/admin/clients/deleted/page'), 'AdminDeletedAccounts');
-const AdminMeetings = lazyWithLogging(() => import('./pages/admin/meetings/page'), 'AdminMeetings');
-const AdminMeetingsSchedule = lazyWithLogging(() => import('./pages/admin/meetings/schedule/page'), 'AdminMeetingsSchedule');
-const AdminPending = lazyWithLogging(() => import('./pages/admin/pending/page'), 'AdminPending');
-const AdminRevenue = lazyWithLogging(() => import('./pages/admin/revenue/page'), 'AdminRevenue');
-const AdminAccountingReport = lazyWithLogging(() => import('./pages/admin/revenue/accounting-report/page'), 'AdminAccountingReport');
-const AdminFulfilledOrders = lazyWithLogging(() => import('./pages/admin/revenue/fulfilled-orders/page'), 'AdminFulfilledOrders');
-const AdminFraudAnalysis = lazyWithLogging(() => import('./pages/admin/revenue/fraud-analysis/page'), 'AdminFraudAnalysis');
-const AdminEditInventory = lazyWithLogging(() => import('./pages/admin/revenue/edit-inventory/page'), 'AdminEditInventory');
-const AdminReviews = lazyWithLogging(() => import('./pages/admin/reviews/page'), 'AdminReviews');
-const AdminReferrals = lazyWithLogging(() => import('./pages/admin/referrals/page'), 'AdminReferrals');
-const AdminAnalytics = lazyWithLogging(() => import('./pages/admin/analytics/page'), 'AdminAnalytics');
-const AdminUsers = lazyWithLogging(() => import('./pages/admin/users/page'), 'AdminUsers');
-const AdminNotifications = lazyWithLogging(() => import('./pages/admin/notifications/page'), 'AdminNotifications');
-const AdminAudit = lazyWithLogging(() => import('./pages/admin/audit/page'), 'AdminAudit');
-const AdminSpecialOffer = lazyWithLogging(() => import('./pages/admin/special-offer/page'), 'AdminSpecialOffer');
-const AdminWorkers = lazyWithLogging(() => import('./pages/admin/workers/page'), 'AdminWorkers');
-const AdminBackend = lazyWithLogging(() => import('./pages/admin/backend/page'), 'AdminBackend');
-const AdminMarketing = lazyWithLogging(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
-const NoirUnitPage = lazyWithLogging(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
-const BlancoUnitPage = lazyWithLogging(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
-const SoftCurlUnitPage = lazyWithLogging(() => import('./pages/curly/soft-curl/page'), 'SoftCurlUnitPage');
-const SoftWaveUnitPage = lazyWithLogging(() => import('./pages/wavy/soft-wave/page'), 'SoftWaveUnitPage');
-const OceanCurlUnitPage = lazyWithLogging(() => import('./pages/curly/ocean-curl/page'), 'OceanCurlUnitPage');
-const BeachWaveUnitPage = lazyWithLogging(() => import('./pages/wavy/beach-wave/page'), 'BeachWaveUnitPage');
-const WishlistPage = lazyWithLogging(() => import('./pages/wishlist/page'), 'WishlistPage');
-const ViewListsPage = lazyWithLogging(() => import('./pages/wishlist/lists/page'), 'ViewListsPage');
-const AccountPage = lazyWithLogging(() => import('./pages/account/page'), 'AccountPage');
-const ConciergePage = lazyWithLogging(() => import('./pages/account/concierge/page'), 'ConciergePage');
-const MembershipPage = lazyWithLogging(() => import('./pages/account/membership/page'), 'MembershipPage');
-const ReferralsPage = lazyWithLogging(() => import('./pages/account/referrals/page'), 'ReferralsPage');
-const AffiliatePage = lazyWithLogging(() => import('./pages/account/affiliate/page'), 'AffiliatePage');
-const NotificationsPage = lazyWithLogging(() => import('./pages/account/notifications/page'), 'NotificationsPage');
-const LoadCardPage = lazyWithLogging(() => import('./pages/account/load-card/page'), 'LoadCardPage');
-const ReviewsPage = lazyWithLogging(() => import('./pages/account/reviews/page'), 'ReviewsPage');
-const LeaveReviewOrderPage = lazyWithLogging(() => import('./pages/account/reviews/leave-review-order/page'), 'LeaveReviewOrderPage');
+const AdminDashboard = lazyWithRetry(() => import('./pages/admin/dashboard/page'), 'AdminDashboard');
+const AdminBrand = lazyWithRetry(() => import('./pages/admin/brand/page'), 'AdminBrand');
+const AdminClients = lazyWithRetry(() => import('./pages/admin/clients/page'), 'AdminClients');
+const AdminDeletedAccounts = lazyWithRetry(() => import('./pages/admin/clients/deleted/page'), 'AdminDeletedAccounts');
+const AdminMeetings = lazyWithRetry(() => import('./pages/admin/meetings/page'), 'AdminMeetings');
+const AdminMeetingsSchedule = lazyWithRetry(() => import('./pages/admin/meetings/schedule/page'), 'AdminMeetingsSchedule');
+const AdminPending = lazyWithRetry(() => import('./pages/admin/pending/page'), 'AdminPending');
+const AdminRevenue = lazyWithRetry(() => import('./pages/admin/revenue/page'), 'AdminRevenue');
+const AdminAccountingReport = lazyWithRetry(() => import('./pages/admin/revenue/accounting-report/page'), 'AdminAccountingReport');
+const AdminFulfilledOrders = lazyWithRetry(() => import('./pages/admin/revenue/fulfilled-orders/page'), 'AdminFulfilledOrders');
+const AdminFraudAnalysis = lazyWithRetry(() => import('./pages/admin/revenue/fraud-analysis/page'), 'AdminFraudAnalysis');
+const AdminEditInventory = lazyWithRetry(() => import('./pages/admin/revenue/edit-inventory/page'), 'AdminEditInventory');
+const AdminReviews = lazyWithRetry(() => import('./pages/admin/reviews/page'), 'AdminReviews');
+const AdminReferrals = lazyWithRetry(() => import('./pages/admin/referrals/page'), 'AdminReferrals');
+const AdminAnalytics = lazyWithRetry(() => import('./pages/admin/analytics/page'), 'AdminAnalytics');
+const AdminUsers = lazyWithRetry(() => import('./pages/admin/users/page'), 'AdminUsers');
+const AdminNotifications = lazyWithRetry(() => import('./pages/admin/notifications/page'), 'AdminNotifications');
+const AdminAudit = lazyWithRetry(() => import('./pages/admin/audit/page'), 'AdminAudit');
+const AdminSpecialOffer = lazyWithRetry(() => import('./pages/admin/special-offer/page'), 'AdminSpecialOffer');
+const AdminWorkers = lazyWithRetry(() => import('./pages/admin/workers/page'), 'AdminWorkers');
+const AdminBackend = lazyWithRetry(() => import('./pages/admin/backend/page'), 'AdminBackend');
+const AdminMarketing = lazyWithRetry(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
+const NoirUnitPage = lazyWithRetry(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
+const BlancoUnitPage = lazyWithRetry(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
+const SoftCurlUnitPage = lazyWithRetry(() => import('./pages/curly/soft-curl/page'), 'SoftCurlUnitPage');
+const SoftWaveUnitPage = lazyWithRetry(() => import('./pages/wavy/soft-wave/page'), 'SoftWaveUnitPage');
+const OceanCurlUnitPage = lazyWithRetry(() => import('./pages/curly/ocean-curl/page'), 'OceanCurlUnitPage');
+const BeachWaveUnitPage = lazyWithRetry(() => import('./pages/wavy/beach-wave/page'), 'BeachWaveUnitPage');
+const WishlistPage = lazyWithRetry(() => import('./pages/wishlist/page'), 'WishlistPage');
+const ViewListsPage = lazyWithRetry(() => import('./pages/wishlist/lists/page'), 'ViewListsPage');
+const AccountPage = lazyWithRetry(() => import('./pages/account/page'), 'AccountPage');
+const ConciergePage = lazyWithRetry(() => import('./pages/account/concierge/page'), 'ConciergePage');
+const MembershipPage = lazyWithRetry(() => import('./pages/account/membership/page'), 'MembershipPage');
+const ReferralsPage = lazyWithRetry(() => import('./pages/account/referrals/page'), 'ReferralsPage');
+const AffiliatePage = lazyWithRetry(() => import('./pages/account/affiliate/page'), 'AffiliatePage');
+const NotificationsPage = lazyWithRetry(() => import('./pages/account/notifications/page'), 'NotificationsPage');
+const LoadCardPage = lazyWithRetry(() => import('./pages/account/load-card/page'), 'LoadCardPage');
+const ReviewsPage = lazyWithRetry(() => import('./pages/account/reviews/page'), 'ReviewsPage');
+const LeaveReviewOrderPage = lazyWithRetry(() => import('./pages/account/reviews/leave-review-order/page'), 'LeaveReviewOrderPage');
 import ShippingPage from './pages/account/shipping/page';
-const PaymentPage = lazyWithLogging(() => import('./pages/account/payment/page'), 'PaymentPage');
-const SettingsPage = lazyWithLogging(() => import('./pages/account/settings/page'), 'SettingsPage');
-const OrdersPage = lazyWithLogging(() => import('./pages/orders/page'), 'OrdersPage');
-const SignInPage = lazyWithLogging(() => import('./pages/sign-in/page'), 'SignInPage');
-const ShoppingBagPage = lazyWithLogging(() => import('./pages/shopping-bag/page'), 'ShoppingBagPage');
-const CheckoutPage = lazyWithLogging(() => import('./pages/checkout/page'), 'CheckoutPage');
-const CheckoutConfirmPage = lazyWithLogging(() => import('./pages/checkout/confirm/page'), 'CheckoutConfirmPage');
-const StraightUnitsPage = lazyWithLogging(() => import('./pages/units/straight/page'), 'StraightUnitsPage');
-const WavyUnitsPage = lazyWithLogging(() => import('./pages/units/wavy/page'), 'WavyUnitsPage');
-const CurlyUnitsPage = lazyWithLogging(() => import('./pages/units/curly/page'), 'CurlyUnitsPage');
-const ProductsPage = lazyWithLogging(() => import('./pages/products/page'), 'ProductsPage');
-const ProductsUnitsPage = lazyWithLogging(() => import('./pages/products/units/page'), 'ProductsUnitsPage');
-const ToolsPage = lazyWithLogging(() => import('./pages/tools/page'), 'ToolsPage');
-const GiftCardPage = lazyWithLogging(() => import('./pages/tools/gift-card/page'), 'GiftCardPage');
-const OrderFormPage = lazyWithLogging(() => import('./pages/shop/order-form/page'), 'OrderFormPage');
-const BrandPage = lazyWithLogging(() => import('./pages/brand/page'), 'BrandPage');
-const BrandCareersPage = lazyWithLogging(() => import('./pages/brand/careers/page'), 'BrandCareersPage');
+const PaymentPage = lazyWithRetry(() => import('./pages/account/payment/page'), 'PaymentPage');
+const SettingsPage = lazyWithRetry(() => import('./pages/account/settings/page'), 'SettingsPage');
+const OrdersPage = lazyWithRetry(() => import('./pages/orders/page'), 'OrdersPage');
+const SignInPage = lazyWithRetry(() => import('./pages/sign-in/page'), 'SignInPage');
+const ShoppingBagPage = lazyWithRetry(() => import('./pages/shopping-bag/page'), 'ShoppingBagPage');
+const CheckoutPage = lazyWithRetry(() => import('./pages/checkout/page'), 'CheckoutPage');
+const CheckoutConfirmPage = lazyWithRetry(() => import('./pages/checkout/confirm/page'), 'CheckoutConfirmPage');
+const StraightUnitsPage = lazyWithRetry(() => import('./pages/units/straight/page'), 'StraightUnitsPage');
+const WavyUnitsPage = lazyWithRetry(() => import('./pages/units/wavy/page'), 'WavyUnitsPage');
+const CurlyUnitsPage = lazyWithRetry(() => import('./pages/units/curly/page'), 'CurlyUnitsPage');
+const ProductsPage = lazyWithRetry(() => import('./pages/products/page'), 'ProductsPage');
+const ProductsUnitsPage = lazyWithRetry(() => import('./pages/products/units/page'), 'ProductsUnitsPage');
+const ToolsPage = lazyWithRetry(() => import('./pages/tools/page'), 'ToolsPage');
+const GiftCardPage = lazyWithRetry(() => import('./pages/tools/gift-card/page'), 'GiftCardPage');
+const OrderFormPage = lazyWithRetry(() => import('./pages/shop/order-form/page'), 'OrderFormPage');
+const BrandPage = lazyWithRetry(() => import('./pages/brand/page'), 'BrandPage');
+const BrandCareersPage = lazyWithRetry(() => import('./pages/brand/careers/page'), 'BrandCareersPage');
 
 // Error Boundary to catch component errors with auto-recovery
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null; retryCount: number }> {
@@ -147,18 +128,12 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
   }
 
   static getDerivedStateFromError(error: Error) {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:59',message:'ErrorBoundary caught error',data:{errorMessage:error.message,errorStack:error.stack?.substring(0,200),isMimeTypeError:error.message.includes('MIME type')||error.message.includes('text/html')},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-    // #endregion
     return { hasError: true, error, retryCount: 0 };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Error caught by boundary:', error, errorInfo);
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/31ad2c1c-bc12-4215-a008-3d30eef31493',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:64',message:'ErrorBoundary componentDidCatch',data:{errorMessage:error.message,componentStack:errorInfo.componentStack?.substring(0,200),errorName:error.name},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-    // #endregion
-    
+
     // Auto-retry for chunk loading errors (common on Vercel)
     const isChunkError = error.message?.includes('Failed to fetch') || 
                          error.message?.includes('Loading chunk') ||
@@ -292,24 +267,20 @@ const BuildAWigPageWrapper = () => {
 
 function App() {
   const location = useLocation();
-  console.log('🔍 App.tsx rendering - Current pathname:', location.pathname);
-  
-  // Additional safeguard: if we're on root and somehow BuildAWigPage is rendering, log it
-  useEffect(() => {
-    if (location.pathname === '/' && window.location.pathname !== '/') {
-      console.error('⚠️ Route mismatch detected!');
-    }
-  }, [location.pathname]);
 
   // Clear test data for signed-in accounts that aren't ayoteenz@yahoo.com with admin tag (once per email)
   useEffect(() => {
     clearTestDataForNonAdminUserIfNeeded();
   }, []);
 
-  // Enable auth debug when URL has ?auth_debug=1 (so it works after client-side nav and preserved redirects)
+  // Client activity: cart/wishlist debounced snapshots + bawTrackActivity bridge (admin Activity tab)
   useEffect(() => {
-    enableAuthDebugFromSearch(location.search);
-  }, [location.search]);
+    registerGlobalClientActivityListeners();
+  }, []);
+
+  useEffect(() => {
+    trackClientViewPage(location.pathname, location.search);
+  }, [location.pathname, location.search]);
 
   // Auth persistence: restore from backup on every load (survives browser close), then re-persist backup and notify listeners.
   useEffect(() => {
@@ -407,7 +378,6 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <AuthDebugPanel />
       <Routes>
         <Route index element={<Navigate to="/shop/units" replace />} />
         <Route path="/" element={<Navigate to="/shop/units" replace />} />

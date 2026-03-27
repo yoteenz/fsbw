@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getAuthUser } from './_lib/auth';
-import { getSupabaseAdminServiceRole, getSupabaseUser } from './_lib/supabase';
+import { getSupabaseAdminServiceRole } from './_lib/supabase';
 
 const BUCKET = 'profile-images';
 
@@ -79,23 +79,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { data: publicData } = admin.storage.from(BUCKET).getPublicUrl(objectPath);
     const profileImage = publicData.publicUrl;
 
-    const userClient = getSupabaseUser(user.accessToken);
+    // Persist URL with service role so RLS/JWT quirks cannot block the write after a successful upload.
+    // User identity is already verified via getAuthUser (Bearer); we only touch row id = that user.
     const now = new Date().toISOString();
-    const { data: existing } = await userClient
-      .from('profiles')
-      .select('id')
-      .eq('id', user.id)
-      .maybeSingle();
+    const { data: existing } = await admin.from('profiles').select('id').eq('id', user.id).maybeSingle();
     if (existing) {
-      const { error: updateError } = await userClient
+      const { error: updateError } = await admin
         .from('profiles')
         .update({ profile_image: profileImage, updated_at: now })
         .eq('id', user.id);
       if (updateError) return res.status(500).json({ error: updateError.message });
     } else {
-      const { error: insertError } = await userClient.from('profiles').insert({
+      const { error: insertError } = await admin.from('profiles').insert({
         id: user.id,
-        email: user.email,
+        email: user.email || null,
         profile_image: profileImage,
         created_at: now,
         updated_at: now,

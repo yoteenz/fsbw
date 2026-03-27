@@ -1783,7 +1783,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
               </div>
 
               {/* Tabs Section */}
-              <div className="mt-6" style={{ transform: 'translateY(-20px)' }}>
+              <div className="mt-6" style={{ transform: 'translateY(-20px)', paddingTop: '10px' }}>
                 {/* Tab Navigation */}
                 <div className="flex justify-center" style={{ gap: '16px' }}>
                   <button

@@ -19,7 +19,6 @@ import { registerServerSessionCookie } from '../../utils/sessionRestore';
 import { tryServerSessionRestore } from '../../utils/sessionRestore';
 import { trackActivity } from '../../utils/activity';
 import { flushQueuedProfilePatch } from '../../utils/profileSyncQueue';
-import { authDebugLogIfEnabled } from '../../utils/adminAuth';
 import {
   getReviewsLastSeenShopCountKey,
   getReviewsLastSeenToolCountKey,
@@ -212,6 +211,7 @@ function SignInPage() {
           setIsSignedIn(true);
           onSignInSuccess('session_restore'); // Face ID / Supabase cookie auto-login — track and persist (Safari retries)
           registerServerSessionCookie(session.access_token, session.refresh_token);
+          trackActivity('sign_in', { method: 'session_restore' });
           window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
           const returnTo = new URLSearchParams(location.search).get('returnTo');
           const from = (location.state as { from?: string } | null)?.from;
@@ -231,6 +231,7 @@ function SignInPage() {
           await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
         }
         setIsSignedIn(true);
+        trackActivity('sign_in', { method: 'session_restore' });
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
         const returnTo = new URLSearchParams(location.search).get('returnTo');
         const from = (location.state as { from?: string } | null)?.from;
@@ -404,11 +405,9 @@ function SignInPage() {
               onSignInSuccess('password'); // user tapped Sign in — track and persist (Safari retries)
               // Safari hardening: ensure cookie registration finishes before redirect.
               await registerServerSessionCookie(data.session.access_token, data.session.refresh_token); // so Safari can restore session after close (HttpOnly cookie)
-              authDebugLogIfEnabled('signIn:registerServerSessionCookie done');
-              trackActivity('sign_in');
+              trackActivity('sign_in', { method: 'password' });
               window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
               await flushQueuedProfilePatch().catch(() => {});
-              authDebugLogIfEnabled('signIn:flushQueuedProfilePatch attempted');
               if (signInEmailRef.current) signInEmailRef.current.value = '';
               if (signInPasswordRef.current) signInPasswordRef.current.value = '';
               setSignInEmail('');
@@ -430,16 +429,14 @@ function SignInPage() {
             } catch (_) {}
             onSignInSuccess('password');
             await registerServerSessionCookie(data.session.access_token, data.session.refresh_token);
-            authDebugLogIfEnabled('signIn:fallback registerServerSessionCookie done');
             if (!didLastProfileSyncError()) {
               const { patchProfile } = await import('../../utils/api');
               await patchProfile(buildProfilePayloadForBackend(minimal)).catch(() => {});
             }
             setIsSignedIn(true);
-            trackActivity('sign_in');
+            trackActivity('sign_in', { method: 'password' });
             window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
             await flushQueuedProfilePatch().catch(() => {});
-            authDebugLogIfEnabled('signIn:fallback flushQueuedProfilePatch attempted');
             if (signInEmailRef.current) signInEmailRef.current.value = '';
             if (signInPasswordRef.current) signInPasswordRef.current.value = '';
             setSignInEmail('');
@@ -512,7 +509,7 @@ function SignInPage() {
         localStorage.setItem('isSignedIn', 'true');
         onSignInSuccess('password');
         setIsSignedIn(true);
-        trackActivity('sign_in');
+        trackActivity('sign_in', { method: 'password' });
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
         if (signInEmailRef.current) signInEmailRef.current.value = '';
         if (signInPasswordRef.current) signInPasswordRef.current.value = '';
@@ -594,7 +591,7 @@ function SignInPage() {
         localStorage.setItem('isSignedIn', 'true');
         onSignInSuccess('password');
         setIsSignedIn(true);
-        trackActivity('sign_in');
+        trackActivity('sign_in', { method: 'password' });
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
         if (signInEmailRef.current) signInEmailRef.current.value = '';
         if (signInPasswordRef.current) signInPasswordRef.current.value = '';
@@ -1227,15 +1224,26 @@ function SignInPage() {
                   </div>
 
                   {showSignUpConfirmMessage ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px', alignItems: 'center', textAlign: 'center' }}>
+                    <div
+                      style={{
+                        flex: 1,
+                        textAlign: 'center',
+                        padding: '40px 20px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '100%',
+                        minHeight: 0
+                      }}
+                    >
                       <p
                         style={{
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '12px',
+                          fontSize: '11px',
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                           color: '#808080',
-                          margin: 0,
-                          lineHeight: 1.4,
-                          textTransform: 'none'
+                          textTransform: 'uppercase',
+                          margin: '0'
                         }}
                       >
                         SIGN UP IS ALMOST COMPLETE!
@@ -1965,7 +1973,8 @@ function SignInPage() {
                               if (profile) {
                                 localStorage.setItem('isSignedIn', 'true');
                                 setIsSignedIn(true);
-                                trackActivity('sign_in');
+                                trackActivity('sign_up', { source: 'supabase' });
+                                trackActivity('sign_in', { method: 'password', afterSignUp: true });
                                 window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
                                 setFirstName(''); setLastName(''); setBirthday(''); setPhoneNumber(''); setEmail(''); setPassword(''); setConfirmPassword('');
                                 setFacebook(''); setInstagram(''); setYoutube(''); setTiktok(''); setTwitter('');
@@ -2096,7 +2105,8 @@ function SignInPage() {
                       onSignInSuccess('password'); // new account = same persist + Safari retries
                       // Sign user in
                       setIsSignedIn(true);
-                      trackActivity('sign_in');
+                      trackActivity('sign_up', { source: 'local' });
+                      trackActivity('sign_in', { method: 'password', afterSignUp: true });
                       
                       // Clear form
                       setFirstName('');

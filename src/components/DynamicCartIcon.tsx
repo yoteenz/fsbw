@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import CartDropdown from './CartDropdown';
+import { trackActivity } from '../utils/activity';
 
 interface DynamicCartIconProps {
   count: number;
@@ -25,9 +26,10 @@ export default function DynamicCartIcon({ count, size = 23, width, height, class
   const iconHeight = count > 0 ? size : (height || size);
   
   const handleCartClick = () => {
-    console.log('Cart icon clicked, current state:', showCartDropdown);
+    if (!showCartDropdown) {
+      trackActivity('open_cart_dropdown', { count });
+    }
     setShowCartDropdown(!showCartDropdown);
-    console.log('Cart dropdown state toggled to:', !showCartDropdown);
   };
 
   const handleCloseCart = () => {

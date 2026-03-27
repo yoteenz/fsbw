@@ -5,6 +5,8 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import { handlePaymentOption, PaymentProvider, PaymentData } from '../../utils/paymentHandlers';
 import { createRouteProtection, prepareRouteProtectionData } from '../../utils/routeProtection';
 import { getPointsMultiplier } from '../../constants/tiers';
+import { getSubscriptionPriceUsd, isSubscriptionTierId } from '../../constants/subscriptionPricing';
+import { recordMembershipPayment } from '../../utils/membershipPayments';
 import { getEffectiveSubscriptionTier, getEffectiveTierName, clearAppAuth } from '../../utils/adminAuth';
 import { hasIdentityAlreadyUsedReferralCode, recordReferralCodeUsedByClient } from '../../utils/blockedClients';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
@@ -254,8 +256,11 @@ function CheckoutPage() {
 
   // Track when user enters checkout (for admin Activity tab)
   useEffect(() => {
-    trackActivity('checkout_start');
-  }, []);
+    trackActivity('checkout_start', {
+      path: location.pathname,
+      upgrade: location.pathname === '/checkout/upgrade',
+    });
+  }, [location.pathname]);
 
   // Currency state - per user so it doesn't bleed between accounts
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -1774,6 +1779,15 @@ function CheckoutPage() {
           font-weight: 500 !important;
           color: #808080 !important;
         }
+        @media (min-width: 1024px) {
+          .checkout-cart-thumbnails-center-lg {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+          }
+        }
       `}</style>
       <div className="min-h-screen" style={{ position: 'relative' }}>
         {/* Marble Background */}
@@ -2193,6 +2207,7 @@ function CheckoutPage() {
                         onTouchMove={handleTouchMove}
                         onTouchEnd={handleTouchEnd}
                       >
+                        <div className="checkout-cart-thumbnails-center-lg">
                         <div
                           className="flex"
                           style={{
@@ -2388,6 +2403,7 @@ function CheckoutPage() {
                           );
                         })}
                         </div>
+                        </div>
                       </div>
                     </div>
 
@@ -2395,7 +2411,7 @@ function CheckoutPage() {
                     <div className="overflow-hidden mt-auto pt-2">
                       {/* Loyalty Points Text */}
                       <div style={{ 
-                        marginTop: '10px', 
+                        marginTop: '20px', 
                         marginBottom: '0',
                         textAlign: 'center'
                       }}>
@@ -5190,6 +5206,26 @@ function CheckoutPage() {
                             if (userIndex !== -1) {
                               registeredUsers[userIndex] = updatedUser;
                               localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                            }
+
+                            // Admin Revenue → Payments: record membership charge (chart USD; renewals in production come from Stripe/webhooks)
+                            const payEmail = (user.email || email || '').trim();
+                            const rawPrice = typeof item.price === 'number' ? item.price : Number(item.price);
+                            const amountUsd =
+                              Number.isFinite(rawPrice) && rawPrice > 0
+                                ? rawPrice
+                                : isSubscriptionTierId(subscriptionTier)
+                                  ? getSubscriptionPriceUsd(subscriptionTier)
+                                  : 0;
+                            if (payEmail && amountUsd > 0) {
+                              recordMembershipPayment({
+                                userEmail: payEmail,
+                                subscriptionTier,
+                                amountUsd,
+                                autoRenew: autoRenewMembership,
+                                kind: 'initial',
+                                nextBillingAt: autoRenewMembership ? subscriptionEndDate.toISOString() : undefined,
+                              });
                             }
                             
                             // Clear subscription upgrade flags

@@ -10,7 +10,8 @@ export type AuditAction =
   | 'meeting.update'
   | 'meeting.delete'
   | 'notification.create'
-  | 'app_config.upsert';
+  | 'app_config.upsert'
+  | 'newsletter.send';
 
 export async function writeAuditLog(params: {
   actorId: string | null;

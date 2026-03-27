@@ -7,6 +7,7 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { clearAppAuth } from '../../../utils/adminAuth';
+import { getBuildAWigFlowBasePath, getBuildAWigShopMenuTargetPath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
 
 // Only these count as "styling confirmed" (BLEACH+PLUCK required). NONE or empty = user can select BLEACH+PLUCK alone.
 const VALID_STYLING_OPTIONS = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
@@ -27,12 +28,7 @@ export default function AddOnsSelectionPage() {
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>(() => {
     const pathname = window.location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
-    const isOnCustomizeRoute = pathname.includes('/noir/customize') ||
-                               pathname.includes('/blanco/customize') ||
-                               pathname.includes('/soft-wave/customize') ||
-                               pathname.includes('/soft-curl/customize') ||
-                               pathname.includes('/ocean-curl/customize') ||
-                               pathname.includes('/beach-wave/customize');
+    const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
     
     let initial: string[] = [];
     
@@ -154,12 +150,7 @@ export default function AddOnsSelectionPage() {
   useEffect(() => {
     const pathname = location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
-    const isOnCustomizeRoute = pathname.includes('/noir/customize') ||
-                             pathname.includes('/blanco/customize') ||
-                             pathname.includes('/soft-wave/customize') ||
-                             pathname.includes('/soft-curl/customize') ||
-                             pathname.includes('/ocean-curl/customize') ||
-                             pathname.includes('/beach-wave/customize');
+    const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
     if (!isOnEditRoute && !isOnCustomizeRoute) return;
 
     const styleConfirmed = isOnEditRoute
@@ -191,13 +182,7 @@ export default function AddOnsSelectionPage() {
 
   // Lock BLEACH+PLUCK when we're on edit/customize AND styling is confirmed (derive every render — no effect timing).
   const isOnEditOrCustomize =
-    location.pathname.includes('/edit') ||
-    location.pathname.includes('/noir/customize') ||
-    location.pathname.includes('/blanco/customize') ||
-    location.pathname.includes('/soft-wave/customize') ||
-    location.pathname.includes('/soft-curl/customize') ||
-    location.pathname.includes('/ocean-curl/customize') ||
-    location.pathname.includes('/beach-wave/customize');
+    location.pathname.includes('/edit') || isBuildAWigCustomizePath(location.pathname);
   // Lock BLEACH+PLUCK only when a real styling option is selected (uses same isStylingValueConfirmed as effect).
   const stylingConfirmedForLock =
     location.pathname.includes('/edit')
@@ -225,12 +210,7 @@ export default function AddOnsSelectionPage() {
   useEffect(() => {
     const pathname = location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
-    const isOnCustomizeRoute = pathname.includes('/noir/customize') ||
-                             pathname.includes('/blanco/customize') ||
-                             pathname.includes('/soft-wave/customize') ||
-                             pathname.includes('/soft-curl/customize') ||
-                             pathname.includes('/ocean-curl/customize') ||
-                             pathname.includes('/beach-wave/customize');
+    const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
     if (!isOnEditRoute && !isOnCustomizeRoute) return;
     if (!selectedAddOns.includes('BLEACH') || !selectedAddOns.includes('PLUCK')) return;
     if (hasAutoAppliedBleachPluck.current) return;
@@ -830,16 +810,7 @@ export default function AddOnsSelectionPage() {
             <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               <span 
                 style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                onClick={() => {
-                  const pathname = window.location.pathname;
-                  if (pathname.includes('/noir/')) navigate('/build-a-wig/noir');
-                  else if (pathname.includes('/blanco/')) navigate('/build-a-wig/blanco');
-                  else if (pathname.includes('/soft-wave/')) navigate('/build-a-wig/soft-wave');
-                  else if (pathname.includes('/soft-curl/')) navigate('/build-a-wig/soft-curl');
-                  else if (pathname.includes('/ocean-curl/')) navigate('/build-a-wig/ocean-curl');
-                  else if (pathname.includes('/beach-wave/')) navigate('/build-a-wig/beach-wave');
-                  else navigate('/build-a-wig');
-                }}
+                onClick={() => navigate(getBuildAWigFlowBasePath(window.location.pathname))}
               >
                 BUILD-A-WIG &gt;
               </span>{' '}
@@ -1296,7 +1267,14 @@ export default function AddOnsSelectionPage() {
                         <div key={index}>
                           <div 
                             className="flex items-center justify-between"
-                            style={{ alignItems: 'center' }}
+                            style={{ alignItems: 'center', cursor: item.label === 'ORDER AUTHORIZATION FORM' || item.label === 'BUILD-A-WIG' ? 'pointer' : 'default' }}
+                            onClick={() => {
+                              if (!item.isExpandable && item.label === 'ORDER AUTHORIZATION FORM') {
+                                navigate('/shop/order-form');
+                              } else if (!item.isExpandable && item.label === 'BUILD-A-WIG') {
+                                navigate(getBuildAWigShopMenuTargetPath());
+                              }
+                            }}
                           >
                             <span 
                               style={{ 
@@ -1317,6 +1295,8 @@ export default function AddOnsSelectionPage() {
                                   }
                                 } else if (item.label === 'ORDER AUTHORIZATION FORM') {
                                   navigate('/shop/order-form');
+                                } else if (item.label === 'BUILD-A-WIG') {
+                                  navigate(getBuildAWigShopMenuTargetPath());
                                 }
                               }}
                             >
