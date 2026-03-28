@@ -74,19 +74,26 @@ export default function AdminAudit() {
               className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
               style={{ borderWidth: '1.3px', minHeight: '200px' }}
             >
-              <div className="flex justify-between items-center px-4 pt-4 pb-2">
+              <div className="flex justify-between items-center px-5 pt-4 pb-2">
                 <h2 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', margin: 0 }}>AUDIT TRAIL</h2>
               </div>
               <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
 
               {loading ? (
-                <p className="px-4 py-6 text-gray-500 text-sm">Loading audit log...</p>
+                <p className="px-5 py-6 text-gray-500 text-sm">Loading audit log...</p>
               ) : error ? (
-                <p className="px-4 py-6 text-red-600 text-sm">{error}</p>
+                <p className="px-5 py-6 text-red-600 text-sm">{error}</p>
               ) : entries.length === 0 ? (
-                <p className="px-4 py-6 text-gray-500 text-sm">No audit entries yet. Profile and order updates will appear here.</p>
+                <p className="px-5 py-6 text-gray-500 text-sm">No audit entries yet. Profile and order updates will appear here.</p>
               ) : (
-                <div className="px-4 pb-4 space-y-2 max-h-[60vh] overflow-y-auto" style={{ padding: '8px', boxSizing: 'border-box' }}>
+                <div style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}>
+                  <div
+                    className="space-y-2 max-h-[60vh] overflow-y-auto"
+                    style={{
+                      paddingTop: '8px',
+                      boxSizing: 'border-box',
+                    }}
+                  >
                   {entries.map((e) => (
                     <div
                       key={e.id}
@@ -108,6 +115,7 @@ export default function AdminAudit() {
                         : null}
                     </div>
                   ))}
+                  </div>
                 </div>
               )}
             </div>

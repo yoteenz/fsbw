@@ -1764,23 +1764,7 @@ function AffiliatePage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => {
-                    try {
-                      const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
-                      if (isSignedIn) {
-                        const currentUser = localStorage.getItem('currentUser');
-                        if (currentUser) {
-                          const user = JSON.parse(currentUser);
-                          const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
-                          navigate(isPremium ? '/' : '/home/shop');
-                          return;
-                        }
-                      }
-                      navigate('/home/shop');
-                    } catch {
-                      navigate('/home/shop');
-                    }
-                  }}
+                    onClick={() => navigate('/lobby')}
                   >
                     HOME &gt;
                   </span>{' '}
@@ -1810,7 +1794,7 @@ function AffiliatePage() {
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
 <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-              <DynamicCartIcon count={cartCount} width={22} height={19} />
+              <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg
@@ -1850,7 +1834,8 @@ function AffiliatePage() {
                   maxWidth: 'none', 
                   overflow: 'visible',
                   backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                  minHeight: 'calc(100dvh - 160px)'
+                  minHeight: 'calc(100dvh - 160px)',
+                  height: 'calc(100dvh - 160px)'
                 }}
               >
                 <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
@@ -2298,7 +2283,7 @@ function AffiliatePage() {
                                       <span style={{ 
                                         padding: '4px 8px',
                                         border: '1px solid #808080',
-                                        borderRadius: '4px',
+                                        borderRadius: 0,
                                         backgroundColor: '#F5F5F5',
                                         color: '#000000',
                                         textTransform: 'uppercase',
@@ -2354,7 +2339,7 @@ function AffiliatePage() {
                                       <span style={{ 
                                         padding: '4px 8px',
                                         border: '1px solid #808080',
-                                        borderRadius: '4px',
+                                        borderRadius: 0,
                                         backgroundColor: '#F5F5F5',
                                         color: '#000000',
                                         textTransform: 'uppercase',
@@ -2431,7 +2416,7 @@ function AffiliatePage() {
                                       <span style={{ 
                                         padding: '4px 8px',
                                         border: '1px solid #808080',
-                                        borderRadius: '4px',
+                                        borderRadius: 0,
                                         backgroundColor: '#F5F5F5',
                                         color: '#000000',
                                         textTransform: 'uppercase',
@@ -2487,7 +2472,7 @@ function AffiliatePage() {
                                        <span style={{ 
                                          padding: '4px 8px',
                                          border: '1px solid #808080',
-                                         borderRadius: '4px',
+                                         borderRadius: 0,
                                          backgroundColor: '#F5F5F5',
                                          color: '#000000',
                                          textTransform: 'uppercase',
@@ -2598,7 +2583,7 @@ function AffiliatePage() {
                                        <span style={{ 
                                          padding: '4px 8px',
                                          border: '1px solid #808080',
-                                         borderRadius: '4px',
+                                         borderRadius: 0,
                                          backgroundColor: '#F5F5F5',
                                          color: '#000000',
                                          textTransform: 'uppercase',
@@ -2654,7 +2639,7 @@ function AffiliatePage() {
                                        <span style={{ 
                                          padding: '4px 8px',
                                          border: '1px solid #808080',
-                                         borderRadius: '4px',
+                                         borderRadius: 0,
                                          backgroundColor: '#F5F5F5',
                                          color: '#000000',
                                          textTransform: 'uppercase',
@@ -2731,7 +2716,7 @@ function AffiliatePage() {
                                        <span style={{ 
                                          padding: '4px 8px',
                                          border: '1px solid #808080',
-                                         borderRadius: '4px',
+                                         borderRadius: 0,
                                          backgroundColor: '#F5F5F5',
                                          color: '#000000',
                                          textTransform: 'uppercase',
@@ -2787,7 +2772,7 @@ function AffiliatePage() {
                                        <span style={{ 
                                          padding: '4px 8px',
                                          border: '1px solid #808080',
-                                         borderRadius: '4px',
+                                         borderRadius: 0,
                                          backgroundColor: '#F5F5F5',
                                          color: '#000000',
                                          textTransform: 'uppercase',
@@ -2862,7 +2847,6 @@ function AffiliatePage() {
                               <div style={{ position: 'relative', width: '100%' }}>
                                 <input
                                   type="text"
-                                  placeholder={hasSocialContent(expandedOrder.id, 'Twitter') ? '' : 'LINK TO TWEET'}
                                   value={hasSocialContent(expandedOrder.id, 'Twitter') ? 'CONTENT SUBMITTED' : twitterLink}
                                   onChange={(e) => {
                                     if (!hasSocialContent(expandedOrder.id, 'Twitter')) {
@@ -2967,7 +2951,6 @@ function AffiliatePage() {
                               <div style={{ position: 'relative', width: '100%' }}>
                                 <input
                                   type="text"
-                                  placeholder={hasSocialContent(expandedOrder.id, 'Instagram') ? '' : 'LINK TO REEL'}
                                   value={hasSocialContent(expandedOrder.id, 'Instagram') ? 'CONTENT SUBMITTED' : instagramLink}
                                   onChange={(e) => {
                                     if (!hasSocialContent(expandedOrder.id, 'Instagram')) {
@@ -3072,7 +3055,6 @@ function AffiliatePage() {
                               <div style={{ position: 'relative', width: '100%' }}>
                                 <input
                                   type="text"
-                                  placeholder={hasSocialContent(expandedOrder.id, 'TikTok') ? '' : 'LINK TO TIK TOK'}
                                   value={hasSocialContent(expandedOrder.id, 'TikTok') ? 'CONTENT SUBMITTED' : tiktokLink}
                                   onChange={(e) => {
                                     if (!hasSocialContent(expandedOrder.id, 'TikTok')) {
@@ -3177,7 +3159,6 @@ function AffiliatePage() {
                               <div style={{ position: 'relative', width: '100%' }}>
                                 <input
                                   type="text"
-                                  placeholder={hasSocialContent(expandedOrder.id, 'YouTube') ? '' : 'LINK TO VIDEO'}
                                   value={hasSocialContent(expandedOrder.id, 'YouTube') ? 'CONTENT SUBMITTED' : youtubeLink}
                                   onChange={(e) => {
                                     if (!hasSocialContent(expandedOrder.id, 'YouTube')) {
@@ -3281,7 +3262,6 @@ function AffiliatePage() {
                                </div>
                               <input
                                 type="text"
-                                placeholder={hasSocialContent(expandedOrder.id, 'Facebook') ? '' : 'LINK TO POST'}
                                 value={hasSocialContent(expandedOrder.id, 'Facebook') ? 'CONTENT SUBMITTED' : facebookLink}
                                 onChange={(e) => {
                                   if (!hasSocialContent(expandedOrder.id, 'Facebook')) {

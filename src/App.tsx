@@ -115,6 +115,11 @@ const ProductsUnitsPage = lazyWithRetry(() => import('./pages/products/units/pag
 const ToolsPage = lazyWithRetry(() => import('./pages/tools/page'), 'ToolsPage');
 const GiftCardPage = lazyWithRetry(() => import('./pages/tools/gift-card/page'), 'GiftCardPage');
 const OrderFormPage = lazyWithRetry(() => import('./pages/shop/order-form/page'), 'OrderFormPage');
+const ShopCategoryPage = lazyWithRetry(() => import('./pages/shop/category/page'), 'ShopCategoryPage');
+const ShopTextureCategoryProductPage = lazyWithRetry(
+  () => import('./pages/shop/texture-category-product/page'),
+  'ShopTextureCategoryProductPage'
+);
 const BrandPage = lazyWithRetry(() => import('./pages/brand/page'), 'BrandPage');
 const BrandCareersPage = lazyWithRetry(() => import('./pages/brand/careers/page'), 'BrandCareersPage');
 
@@ -376,8 +381,8 @@ function App() {
   return (
     <ErrorBoundary>
       <Routes>
-        <Route index element={<Navigate to="/shop/units" replace />} />
-        <Route path="/" element={<Navigate to="/shop/units" replace />} />
+        <Route index element={<Navigate to="/home/shop" replace />} />
+        <Route path="/" element={<Navigate to="/home/shop" replace />} />
         <Route path="/lobby" element={<LobbyPage />} />
         {/* Admin routes - protected by AdminGuard (sign-in required, admin role only) */}
         <Route path="/admin" element={<AdminGuard />}>
@@ -524,6 +529,51 @@ function App() {
         <Route path="/straight/blanco" element={
           <Suspense fallback={<LoadingScreen />}>
             <BlancoUnitPage />
+          </Suspense>
+        } />
+        <Route path="/straight/bundles" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ShopTextureCategoryProductPage />
+          </Suspense>
+        } />
+        <Route path="/straight/closures" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ShopTextureCategoryProductPage />
+          </Suspense>
+        } />
+        <Route path="/straight/frontals" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ShopTextureCategoryProductPage />
+          </Suspense>
+        } />
+        <Route path="/wavy/bundles" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ShopTextureCategoryProductPage />
+          </Suspense>
+        } />
+        <Route path="/wavy/closures" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ShopTextureCategoryProductPage />
+          </Suspense>
+        } />
+        <Route path="/wavy/frontals" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ShopTextureCategoryProductPage />
+          </Suspense>
+        } />
+        <Route path="/curly/bundles" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ShopTextureCategoryProductPage />
+          </Suspense>
+        } />
+        <Route path="/curly/closures" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ShopTextureCategoryProductPage />
+          </Suspense>
+        } />
+        <Route path="/curly/frontals" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ShopTextureCategoryProductPage />
           </Suspense>
         } />
         {/* Build-a-wig routes - specific routes must come before general /build-a-wig route */}
@@ -712,6 +762,21 @@ function App() {
         <Route path="/shop/order-form" element={
           <Suspense fallback={<LoadingScreen />}>
             <OrderFormPage />
+          </Suspense>
+        } />
+        <Route path="/shop/bundles" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ShopCategoryPage />
+          </Suspense>
+        } />
+        <Route path="/shop/closures" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ShopCategoryPage />
+          </Suspense>
+        } />
+        <Route path="/shop/frontals" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <ShopCategoryPage />
           </Suspense>
         } />
         <Route path="/home/shop" element={

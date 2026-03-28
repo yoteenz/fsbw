@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { MouseEvent } from 'react';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
@@ -7,10 +7,20 @@ import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { clearAppAuth } from '../../utils/adminAuth';
+import { formatPriceRangeUsd, formatPriceUsd, type CurrencyRatesRecord } from '../../utils/currencyFormat';
 
 function ProductsPage() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  /** TEMP: green outlines on home/shop product flex cells — set `false` to hide. */
+  const DEBUG_PRODUCT_FLEX_BOUNDS = false;
+  const dbgProductCol: React.CSSProperties = DEBUG_PRODUCT_FLEX_BOUNDS
+    ? { outline: '2px solid #00ff00', outlineOffset: '0px' }
+    : {};
+  const dbgProductBand: React.CSSProperties = DEBUG_PRODUCT_FLEX_BOUNDS
+    ? { outline: '2px dashed #00cc00', outlineOffset: '-2px' }
+    : {};
 
   // Cart count state
   const [cartCount, setCartCount] = useState(() => {
@@ -199,9 +209,55 @@ function ProductsPage() {
     }
   ]);
 
-  // Scroll state for units container
-  const [unitsScroll, setUnitsScroll] = useState(0);
-  const [isUnitsDragging, setIsUnitsDragging] = useState(false);
+  // UNITS strip: 2 products per “page”; row width = pairCount×100% of viewport; snap step after windowWidth (below)
+  const [unitsHomePage, setUnitsHomePage] = useState(0);
+  const unitsPairCount = Math.ceil(unitsProducts.length / 2);
+  const unitsHomeMaxPage = Math.max(0, unitsPairCount - 1);
+
+  const shopTextureStripItems = React.useMemo(
+    () =>
+      [
+        { label: 'STRAIGHT', slug: 'straight' as const, image: '/assets/NOIR/noir-thumb.png' },
+        { label: 'WAVY', slug: 'wavy' as const, image: '/assets/NOIR/wave-thumb.png' },
+        { label: 'CURLY', slug: 'curly' as const, image: '/assets/NOIR/curl-thumb.png' }
+      ] as const,
+    []
+  );
+
+  type HomeShopCategorySlug = 'bundles' | 'closures' | 'frontals';
+  type HomeShopTextureSlug = (typeof shopTextureStripItems)[number]['slug'];
+
+  /** Home/shop BUNDLES / CLOSURES / FRONTALS — UNITS-style red line + range; USD → `formatPriceRangeUsd` */
+  const shopCategoryTextureLines: Record<
+    HomeShopCategorySlug,
+    Record<HomeShopTextureSlug, { redLine: string; priceMinUsd: number; priceMaxUsd: number }>
+  > = {
+    bundles: {
+      straight: { redLine: 'RAW SINGLE DONOR', priceMinUsd: 100, priceMaxUsd: 300 },
+      wavy: { redLine: 'RAW SINGLE DONOR', priceMinUsd: 120, priceMaxUsd: 400 },
+      curly: { redLine: 'RAW SINGLE DONOR', priceMinUsd: 160, priceMaxUsd: 500 }
+    },
+    closures: {
+      straight: { redLine: 'RAW SINGLE DONOR', priceMinUsd: 100, priceMaxUsd: 300 },
+      wavy: { redLine: 'RAW SINGLE DONOR', priceMinUsd: 120, priceMaxUsd: 400 },
+      curly: { redLine: 'RAW SINGLE DONOR', priceMinUsd: 140, priceMaxUsd: 500 }
+    },
+    frontals: {
+      straight: { redLine: 'RAW SINGLE DONOR', priceMinUsd: 200, priceMaxUsd: 600 },
+      wavy: { redLine: 'RAW SINGLE DONOR', priceMinUsd: 220, priceMaxUsd: 700 },
+      curly: { redLine: 'RAW SINGLE DONOR', priceMinUsd: 240, priceMaxUsd: 800 }
+    }
+  };
+
+  const shopCategoryMarbleCards = React.useMemo(
+    () =>
+      [
+        { title: 'BUNDLES', route: '/shop/bundles', categorySlug: 'bundles' as const },
+        { title: 'CLOSURES', route: '/shop/closures', categorySlug: 'closures' as const },
+        { title: 'FRONTALS', route: '/shop/frontals', categorySlug: 'frontals' as const }
+      ] as const,
+    []
+  );
 
   // Scroll state for gift card container
   const [giftCardScroll, setGiftCardScroll] = useState(0);
@@ -230,6 +286,43 @@ function ProductsPage() {
     return false;
   });
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+
+  const [windowWidth, setWindowWidth] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth;
+    }
+    return 1024;
+  });
+
+  /** Measured width of the UNITS overflow strip — must match scroll step or pages drift vs center line / icons. */
+  const unitsHomeStripViewportRef = useRef<HTMLDivElement>(null);
+  const [unitsStripViewportW, setUnitsStripViewportW] = useState(() =>
+    typeof window !== 'undefined' ? Math.max(200, window.innerWidth - 32) : 320
+  );
+
+  useLayoutEffect(() => {
+    if (showMobileMenu) return;
+    const el = unitsHomeStripViewportRef.current;
+    if (!el) return;
+    const measure = () => {
+      const w = el.clientWidth;
+      if (w > 0) setUnitsStripViewportW(w);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [showMobileMenu, windowWidth]);
+
+  /** One “page” = exactly one measured viewport of the strip (not windowWidth heuristic). */
+  const unitsSnapStepPx = Math.max(200, unitsStripViewportW);
+  const unitsScrollPx = -unitsHomePage * unitsSnapStepPx;
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Load selected currency from localStorage on mount (per-user key)
   useEffect(() => {
@@ -281,51 +374,82 @@ function ProductsPage() {
     };
   }, [currencyRates]);
 
-  // Format price with currency
-  const formatPrice = React.useCallback((price: number): { __html: string } => {
-    if (!price || isNaN(price)) {
-      const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
-      return { __html: currency.symbol + '0 ' + selectedCurrency };
-    }
-    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
-    const convertedPrice = price * currency.rate;
-    return {
-      __html: currency.symbol + convertedPrice.toLocaleString('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      }) + ' ' + selectedCurrency
-    };
-  }, [currencyRates, selectedCurrency]);
+  const formatPrice = React.useCallback(
+    (price: number) => formatPriceUsd(price, selectedCurrency, currencyRates as CurrencyRatesRecord),
+    [currencyRates, selectedCurrency]
+  );
+  const formatShopTextureRange = React.useCallback(
+    (minUsd: number, maxUsd: number) =>
+      formatPriceRangeUsd(minUsd, maxUsd, selectedCurrency, currencyRates as CurrencyRatesRecord),
+    [currencyRates, selectedCurrency]
+  );
 
-  // Units scroll handlers
-  const handleUnitsMouseMove = () => {
-    if (!isUnitsDragging) return;
-    // Drag scrolling removed - this handler is kept for compatibility but never executes
-  };
+  const handleUnitsHomeLeftArrow = () => setUnitsHomePage((p) => Math.max(0, p - 1));
+  const handleUnitsHomeRightArrow = () =>
+    setUnitsHomePage((p) => Math.min(unitsHomeMaxPage, p + 1));
 
-  const handleUnitsMouseUp = () => {
-    setIsUnitsDragging(false);
-    if (unitsScroll > -window.innerWidth * 0.3565) {
-      setUnitsScroll(0);
-    } else {
-      setUnitsScroll(-window.innerWidth * 0.713);
-    }
-  };
+  useEffect(() => {
+    setUnitsHomePage(0);
+  }, [windowWidth]);
 
-  const handleUnitsLeftArrow = () => {
-    const currentView = Math.abs(Math.round(unitsScroll / window.innerWidth));
-    const newScroll = currentView > 0 ? -(currentView - 1) * window.innerWidth : 0;
-    setUnitsScroll(newScroll);
-  };
+  useEffect(() => {
+    setUnitsHomePage((p) => Math.min(p, unitsHomeMaxPage));
+  }, [unitsHomeMaxPage]);
 
-  const handleUnitsRightArrow = () => {
-    const totalViews = Math.ceil(unitsProducts.length / 2);
-    const currentView = Math.abs(Math.round(unitsScroll / window.innerWidth));
-    const maxView = totalViews - 1;
-    if (currentView < maxView) {
-      setUnitsScroll(-(currentView + 1) * window.innerWidth);
-    }
-  };
+  // BUNDLES / CLOSURES / FRONTALS strips: 2 textures visible, overlapping window (page 0: 0+1, page 1: 1+2)
+  const textureStripCount = shopTextureStripItems.length;
+  const textureCategoryMaxPage = Math.max(0, textureStripCount - 2);
+  const textureCategoryRowPct = textureStripCount * 50; // e.g. 3 → 150% row, each cell 50% viewport
+  const [textureCategoryPage, setTextureCategoryPage] = useState<{
+    bundles: number;
+    closures: number;
+    frontals: number;
+  }>({ bundles: 0, closures: 0, frontals: 0 });
+  /** Width of one texture cell: row is calc(150% − 20px) of viewport, 3 cells → advance one page by exactly one cell (WAVY+CURLY on step 2). */
+  const textureCategoryViewportRef = useRef<HTMLDivElement>(null);
+  const estimateCategoryViewportW =
+    typeof window !== 'undefined' ? Math.max(200, window.innerWidth - 120) : 320;
+  const [textureCategoryCellStepPx, setTextureCategoryCellStepPx] = useState(
+    () => (estimateCategoryViewportW * 1.5) / 3
+  );
+  const measureTextureCategoryStep = useCallback(() => {
+    const el = textureCategoryViewportRef.current;
+    if (!el) return;
+    const w = el.clientWidth;
+    setTextureCategoryCellStepPx((w * 1.5) / 3);
+  }, []);
+
+  useLayoutEffect(() => {
+    measureTextureCategoryStep();
+    const el = textureCategoryViewportRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => measureTextureCategoryStep());
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [measureTextureCategoryStep, windowWidth]);
+
+  const handleTextureCategoryLeft = (slug: 'bundles' | 'closures' | 'frontals') =>
+    setTextureCategoryPage((prev) => ({
+      ...prev,
+      [slug]: Math.max(0, prev[slug] - 1)
+    }));
+  const handleTextureCategoryRight = (slug: 'bundles' | 'closures' | 'frontals') =>
+    setTextureCategoryPage((prev) => ({
+      ...prev,
+      [slug]: Math.min(textureCategoryMaxPage, prev[slug] + 1)
+    }));
+
+  useEffect(() => {
+    setTextureCategoryPage({ bundles: 0, closures: 0, frontals: 0 });
+  }, [windowWidth]);
+
+  useEffect(() => {
+    setTextureCategoryPage((prev) => ({
+      bundles: Math.min(prev.bundles, textureCategoryMaxPage),
+      closures: Math.min(prev.closures, textureCategoryMaxPage),
+      frontals: Math.min(prev.frontals, textureCategoryMaxPage)
+    }));
+  }, [textureCategoryMaxPage]);
 
   // Gift card scroll handlers
   const handleGiftCardMouseMove = () => {
@@ -533,17 +657,6 @@ function ProductsPage() {
   }, [showMobileMenu, location.pathname]);
 
   useEffect(() => {
-    if (isUnitsDragging) {
-      window.addEventListener('mousemove', handleUnitsMouseMove as any);
-      window.addEventListener('mouseup', handleUnitsMouseUp);
-      return () => {
-        window.removeEventListener('mousemove', handleUnitsMouseMove as any);
-        window.removeEventListener('mouseup', handleUnitsMouseUp);
-      };
-    }
-  }, [isUnitsDragging]);
-
-  useEffect(() => {
     if (isGiftCardDragging) {
       window.addEventListener('mousemove', handleGiftCardMouseMove as any);
       window.addEventListener('mouseup', handleGiftCardMouseUp);
@@ -672,7 +785,7 @@ function ProductsPage() {
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
 <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-              <DynamicCartIcon count={cartCount} width={22} height={19} />
+              <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg
@@ -698,7 +811,7 @@ function ProductsPage() {
               minWidth: '100%', 
               maxWidth: 'none', 
               overflow: 'visible',
-              minHeight: showMobileMenu ? '560px' : 'auto'
+              minHeight: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto'
             }}
           >
             {showMobileMenu ? (
@@ -711,10 +824,11 @@ function ProductsPage() {
                   maxWidth: 'none', 
                   overflow: 'visible',
                   backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                  minHeight: '560px'
+                  minHeight: 'calc(100dvh - 80px)',
+                  height: 'calc(100dvh - 80px)'
                 }}
               >
-                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                 {/* Navigation Links */}
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                   <button
@@ -926,8 +1040,9 @@ function ProductsPage() {
                 </div>
               </div>
             ) : (
-              /* SHOP CONTENT */
-          <div className="px-0 md:px-0 transition-all duration-300 ease-out" style={{ marginTop: '20px', marginBottom: '20px', overflow: 'visible' }}>
+              /* SHOP CONTENT — UNITS + BUNDLES / CLOSURES / FRONTALS (spacing matches /shop/units stacked marbles) */
+          <div className="transition-all duration-300 ease-out">
+          <div className="px-0 md:px-0 transition-all duration-300 ease-out" style={{ marginTop: '0', marginBottom: '20px', overflow: 'visible' }}>
             <div className="transition-all duration-300 ease-out" style={{ 
               border: '1.3px solid black', 
               backgroundColor: '#f5f5f5',
@@ -941,9 +1056,9 @@ function ProductsPage() {
               overflow: 'visible',
               position: 'relative'
             }}>
-              {/* Header */}
-              <div style={{ textAlign: 'center', marginBottom: '5px' }}>
-                <div style={{ width: '1px', height: '15px', backgroundColor: 'black', margin: '0 auto 8px auto' }}></div>
+              {/* Header — match /shop/units marble header spacing */}
+              <div style={{ textAlign: 'center', marginBottom: '2px' }}>
+                <div style={{ width: '1px', height: '15px', backgroundColor: 'black', margin: '0 auto 2px auto' }}></div>
                 <h3 
                   onClick={() => navigate('/shop/units')}
                   style={{ 
@@ -956,255 +1071,632 @@ function ProductsPage() {
                     cursor: 'pointer',
                     display: 'inline-block',
                     width: 'auto',
-                    height: 'auto'
+                    height: 'auto',
+                    transform: 'translateY(-1px)'
                   }}
                 >
                   UNITS
                 </h3>
               </div>
               
-              {/* Content Area */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: unitsProducts.length >= 4 ? 'space-between' : 'center', gap: '10px', overflow: 'visible' }}>
-                {/* Left Arrow (Conditional) */}
-                {unitsProducts.length >= 4 && (
-                <button 
-                  onClick={handleUnitsLeftArrow}
-                  style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    padding: '5px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '50px',
-                    transform: 'translateX(10px) translateY(-10px)'
-                  }}>
-                  <img
-                    src="/assets/NOIR/left-facing-arrow.svg"
-                    alt="Left Arrow"
-                    style={{ width: '14px', height: '14px' }}
-                  />
-                </button>
-                )}
-                
-                {/* Product Thumbnails Container with Static Vertical Line */}
-                <div style={{ flex: '1', position: 'relative', overflow: 'visible' }}>
-                  {/* Single Center Line with Masking */}
+              {/* Full-width track; arrows are siblings, positioned to marble card for vertical center */}
+              <div style={{ position: 'relative', width: '100%', overflow: 'visible', boxSizing: 'border-box' }}>
+                <div style={{ width: '100%', position: 'relative', overflow: 'visible', minWidth: 0, boxSizing: 'border-box' }}>
                   <div style={{
                     position: 'absolute',
                     left: '50%',
                     top: '0',
-                    bottom: '0',
+                    bottom: '6px',
                     width: '1px',
                     backgroundColor: 'black',
                     zIndex: 20,
                     transform: 'translateX(-50%)'
                   }}></div>
-                  
-                  {/* Masking Overlay for Tunnel Effect */}
+
                   <div style={{
                     position: 'absolute',
                     left: '50%',
                     top: '0',
-                    bottom: '0',
+                    bottom: '6px',
                     width: '10px',
                     backgroundColor: 'transparent',
                     zIndex: 15,
                     transform: 'translateX(-50%)',
                     pointerEvents: 'none'
                   }}></div>
-                  
-                  {/* Shopping Bag Icons Container */}
-                  <div style={{ 
-                    position: 'absolute',
-                    top: '0',
-                    left: '0',
-                    right: '0',
-                    bottom: '0',
-                    zIndex: 1000,
-                    pointerEvents: 'none',
-                    overflow: 'visible'
-                  }}>
-                    {unitsProducts.map((product, index) => {
-                      const isLeft = index % 2 === 0;
-                      
-                      return (
-                        <div
-                          key={`icon-${product.id}`}
-                            style={{ 
-                              position: 'absolute', 
-                            top: '-38px',
-                            ...(isLeft 
-                              ? { left: `calc(${index * 50}% + ${unitsScroll}px + 16px)` }
-                              : { left: `calc(${index * 50}% + 50% + ${unitsScroll}px - 34px)` }
-                            ),
-                            pointerEvents: 'auto',
-                              cursor: 'pointer',
-                              width: '20px',
-                              height: '23px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center'
-                            }}
-                          onClick={(e) => { e.stopPropagation(); handleAddToCart(product, e); }}
-                          >
-                            {product.inCart ? (
-                              <img
-                                src="/assets/card-added.svg"
-                                alt="In cart"
-                                width={20}
-                                height={23}
-                                style={{ width: '20px !important', height: '23px !important' }}
-                              />
-                            ) : (
-                              <img
-                                src="/assets/card-add.svg"
-                                alt="Add to cart"
-                                width={20}
-                                height={23}
-                                style={{ width: '20px !important', height: '23px !important' }}
-                              />
-                            )}
-                          </div>
-                      );
-                    })}
-                </div>
-                  
-                  {/* Scrolling Product Thumbnails Container */}
-                  <div style={{ 
-                    overflowX: 'hidden',
-                    overflowY: 'visible',
-                    width: '100%',
-                    position: 'relative',
-                    maxWidth: '100%'
-                  }}>
-                    <div 
-                      style={{ 
-                        display: 'flex', 
-                        flexWrap: 'nowrap',
-                        gap: '0',
-                        transform: `translateX(${unitsScroll}px) translateY(-5px)`,
-                        transition: 'none',
-                        width: `calc(${Math.ceil(unitsProducts.length / 2) * 100}% - 20px)`
+
+                  <div
+                    ref={unitsHomeStripViewportRef}
+                    style={{
+                      width: '100%',
+                      position: 'relative',
+                      maxWidth: '100%',
+                      marginTop: 0,
+                      paddingTop: '10px',
+                      overflow: 'visible',
+                      boxSizing: 'border-box'
+                    }}
+                  >
+                    {/* One horizontal clip for products + bag row — avoids wide bag flex painting past the marble edge */}
+                    <div
+                      style={{
+                        position: 'relative',
+                        width: '100%',
+                        overflowX: 'clip',
+                        overflowY: 'visible',
+                        boxSizing: 'border-box'
                       }}
                     >
-                      {unitsProducts.map((product, index) => (
-                        <div 
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexWrap: 'nowrap',
+                          alignItems: 'stretch',
+                          gap: '0',
+                          transform: `translateX(${unitsScrollPx}px)`,
+                          transition: 'none',
+                          width: unitsProducts.length >= 4 ? `${unitsPairCount * 100}%` : '100%',
+                          boxSizing: 'border-box'
+                        }}
+                      >
+                      {unitsProducts.map((product, index) => {
+                        const flexBasis =
+                          unitsProducts.length >= 4
+                            ? `calc(100% / ${unitsProducts.length})`
+                            : '50%';
+                        return (
+                        <div
                           key={product.id}
-                          style={{ 
-                            padding: '5px 10px 4px 10px',
-                            textAlign: 'center',
-                            transform: index % 2 === 0 ? 'translateX(0px)' : 'translateX(10px)',
-                            flex: `0 0 calc(50% / ${Math.ceil(unitsProducts.length / 2)})`,
+                          style={{
+                            padding: 0,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'stretch',
+                            flex: `0 0 ${flexBasis}`,
                             boxSizing: 'border-box',
                             position: 'relative',
-                            overflow: 'visible'
-                            }}
-                        >
-                          {/* Product Image */}
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            onClick={() => handleProductClick(product)}
-                            style={{ 
-                              width: '90%', 
-                              height: 'auto',
-                              marginBottom: '5px',
-                              marginLeft: '10px',
-                              maxWidth: '100%',
-                              cursor: 'pointer'
-                            }}
-                          />
-                          
-                          {/* Product Name */}
-                          <p style={{ 
-                            fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                            fontSize: product.name === 'NOIR' ? '19px' : '18px',
-                            color: 'black',
-                            textTransform: 'uppercase',
-                            margin: '-10px 0 -3px 0',
-                            fontWeight: '500'
-                          }}>
-                            {product.name}
-                          </p>
-                          
-                          {/* Hair Details */}
-                          <p style={{ 
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '10px',
-                            color: '#EB1C24',
-                            textTransform: 'uppercase',
-                            margin: '0 0 5px 0',
-                            fontWeight: '500',
-                            lineHeight: '0.84'
-                          }}>
-                            {product.length} RAW {product.hairOrigin}
-                          </p>
-                          
-                          {/* Price */}
-                          <p style={{ 
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '12px',
-                            color: 'black',
-                            textTransform: 'uppercase',
-                            margin: '0 0 5px 0',
-                            fontWeight: '500',
-                            lineHeight: '0.84',
-                            transform: 'translateY(2px)'
+                            overflow: 'visible',
+                            minWidth: 0,
+                            ...dbgProductCol
                           }}
-                          dangerouslySetInnerHTML={formatPrice(product.price)}
-                          />
-                          
-                          {/* Cap Size Options */}
-                          <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', marginTop: '2px', transform: 'translateY(1px)' }}>
-                            {['XS', 'S', 'M', 'L'].map(size => (
-                              <span
-                                key={size}
-                                onClick={(e) => { e.stopPropagation(); handleSizeSelect(product.id, size); }}
-                                style={{ 
-                                  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                                  fontSize: '12px',
-                                  color: product.selectedSize === size ? '#EB1C24' : 'black',
+                        >
+                          <div
+                            style={{
+                              width: '100%',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              boxSizing: 'border-box',
+                              padding: '5px 12px 4px 12px',
+                              transform: 'translateY(-8px)',
+                              ...dbgProductBand
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: '100%',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginBottom: '5px'
+                              }}
+                            >
+                              <img
+                                src={product.image}
+                                alt={product.name}
+                                onClick={() => handleProductClick(product)}
+                                style={{
+                                  width: '79.2%',
+                                  height: 'auto',
+                                  maxWidth: '100%',
+                                  display: 'block',
+                                  margin: 0,
                                   cursor: 'pointer'
                                 }}
-                              >
-                                {size}
-                              </span>
-                            ))}
+                              />
+                            </div>
+
+                            <div style={{ width: '100%', textAlign: 'center', boxSizing: 'border-box' }}>
+                              <p style={{
+                                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                fontSize: '18px',
+                                color: 'black',
+                                textTransform: 'uppercase',
+                                margin: 0,
+                                fontWeight: '500',
+                                lineHeight: 1.05,
+                                minHeight: '22px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}>
+                                {product.name}
+                              </p>
+
+                              <p style={{
+                                fontFamily: '"Futura PT Medium"',
+                                fontSize: '10px',
+                                color: '#EB1C24',
+                                textTransform: 'uppercase',
+                                margin: '2px 0 5px 0',
+                                fontWeight: '500',
+                                lineHeight: '0.84',
+                                minHeight: '12px',
+                                transform: 'translateY(1px)'
+                              }}>
+                                {product.length} RAW {product.hairOrigin}
+                              </p>
+
+                              <p style={{
+                                fontFamily: '"Futura PT Medium"',
+                                fontSize: '12px',
+                                color: 'black',
+                                textTransform: 'uppercase',
+                                margin: '0 0 5px 0',
+                                fontWeight: '500',
+                                lineHeight: '0.84',
+                                transform: 'translateY(2px)'
+                              }}
+                              dangerouslySetInnerHTML={formatPrice(product.price)}
+                              />
+
+                              <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', marginTop: '2px', transform: 'translateY(1px)' }}>
+                                {['XS', 'S', 'M', 'L'].map(size => (
+                                  <span
+                                    key={size}
+                                    onClick={(e) => { e.stopPropagation(); handleSizeSelect(product.id, size); }}
+                                    style={{
+                                      fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                      fontSize: '12px',
+                                      color: product.selectedSize === size ? '#EB1C24' : 'black',
+                                      cursor: 'pointer'
+                                    }}
+                                  >
+                                    {size}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      ))}
+                        );
+                      })}
+                    </div>
+                    <div
+                      style={{
+                        position: 'absolute',
+                        left: 0,
+                        right: 0,
+                        top: '10px',
+                        pointerEvents: 'none',
+                        overflow: 'visible',
+                        zIndex: 24
+                      }}
+                    >
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'nowrap',
+                        alignItems: 'flex-start',
+                        gap: '0',
+                        transform: `translateX(${unitsScrollPx}px)`,
+                        transition: 'none',
+                        width: unitsProducts.length >= 4 ? `${unitsPairCount * 100}%` : '100%',
+                        boxSizing: 'border-box'
+                      }}
+                    >
+                      {unitsProducts.map((product, index) => {
+                        const flexBasis =
+                          unitsProducts.length >= 4
+                            ? `calc(100% / ${unitsProducts.length})`
+                            : '50%';
+                        const isLeftColumn = index % 2 === 0;
+                        return (
+                          <div
+                            key={`bag-${product.id}`}
+                            style={{
+                              flex: `0 0 ${flexBasis}`,
+                              minWidth: 0,
+                              height: 0,
+                              position: 'relative',
+                              overflow: 'visible',
+                              pointerEvents: 'auto'
+                            }}
+                          >
+                            <div
+                              style={{
+                                position: 'absolute',
+                                top: '-36px',
+                                ...(isLeftColumn ? { left: 16 } : { right: 16 }),
+                                zIndex: 1000,
+                                pointerEvents: 'auto',
+                                cursor: 'pointer',
+                                width: '20px',
+                                height: '23px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleAddToCart(product, e);
+                              }}
+                            >
+                              {product.inCart ? (
+                                <img
+                                  src="/assets/card-added.svg"
+                                  alt="In cart"
+                                  width={20}
+                                  height={23}
+                                  style={{ width: '20px !important', height: '23px !important' }}
+                                />
+                              ) : (
+                                <img
+                                  src="/assets/card-add.svg"
+                                  alt="Add to cart"
+                                  width={20}
+                                  height={23}
+                                  style={{ width: '20px !important', height: '23px !important' }}
+                                />
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    </div>
+                    </div>
+                </div>
+              </div>
+              </div>
+              {unitsProducts.length >= 4 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={handleUnitsHomeLeftArrow}
+                    aria-label="Previous units"
+                    style={{
+                      position: 'absolute',
+                      left: 6,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      zIndex: 25,
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: '5px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <img src="/assets/NOIR/left-facing-arrow.svg" alt="" style={{ width: '14px', height: '14px', display: 'block' }} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleUnitsHomeRightArrow}
+                    aria-label="Next units"
+                    style={{
+                      position: 'absolute',
+                      right: 6,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      zIndex: 25,
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: '5px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <img src="/assets/NOIR/right-facing-arrow.svg" alt="" style={{ width: '14px', height: '14px', display: 'block' }} />
+                  </button>
+                </>
+              )}
+            </div>
+
+          {shopCategoryMarbleCards.map(({ title, route, categorySlug }, cardIdx) => (
+            <div
+              key={route}
+              className="px-0 md:px-0 transition-all duration-300 ease-out"
+              style={{ marginTop: '20px', marginBottom: '20px', overflow: 'visible' }}
+            >
+              <div
+                className="transition-all duration-300 ease-out"
+                style={{
+                  border: '1.3px solid black',
+                  backgroundColor: '#f5f5f5',
+                  backgroundImage: `url('/assets/marble-container.png')`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  padding: '0px',
+                  maxWidth: '100%',
+                  margin: '0 auto',
+                  overflow: 'visible',
+                  position: 'relative'
+                }}
+              >
+                <div style={{ textAlign: 'center', marginBottom: '2px' }}>
+                  <div style={{ width: '1px', height: '15px', backgroundColor: 'black', margin: '0 auto 2px auto' }} />
+                  <h3
+                    onClick={() => navigate(route)}
+                    style={{
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '13px',
+                      color: '#EB1C24',
+                      textTransform: 'uppercase',
+                      margin: '0',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      display: 'inline-block',
+                      width: 'auto',
+                      height: 'auto',
+                      transform: 'translateY(-1px)'
+                    }}
+                  >
+                    {title}
+                  </h3>
+                </div>
+
+                <div
+                  style={{
+                    position: 'relative',
+                    width: '100%',
+                    overflow: 'visible',
+                    boxSizing: 'border-box'
+                  }}
+                >
+                  <div style={{ width: '100%', position: 'relative', overflow: 'visible', minWidth: 0, boxSizing: 'border-box' }}>
+                    {textureCategoryMaxPage > 0 && (
+                      <>
+                        <div
+                          style={{
+                            position: 'absolute',
+                            left: '50%',
+                            top: '0',
+                            bottom: '6px',
+                            width: '1px',
+                            backgroundColor: 'black',
+                            zIndex: 20,
+                            transform: 'translateX(-50%)'
+                          }}
+                        />
+                        <div
+                          style={{
+                            position: 'absolute',
+                            left: '50%',
+                            top: '0',
+                            bottom: '6px',
+                            width: '10px',
+                            backgroundColor: 'transparent',
+                            zIndex: 15,
+                            transform: 'translateX(-50%)',
+                            pointerEvents: 'none'
+                          }}
+                        />
+                      </>
+                    )}
+
+                    <div
+                      ref={cardIdx === 0 && textureCategoryMaxPage > 0 ? textureCategoryViewportRef : undefined}
+                      style={{
+                        overflowX: 'hidden',
+                        overflowY: 'visible',
+                        width: '100%',
+                        position: 'relative',
+                        maxWidth: '100%',
+                        marginTop: 0,
+                        paddingTop: 0,
+                        paddingBottom: '10px',
+                        boxSizing: 'border-box'
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexWrap: 'nowrap',
+                          alignItems: 'stretch',
+                          gap: '0',
+                          transform: `translateX(${-textureCategoryPage[categorySlug] * textureCategoryCellStepPx}px)`,
+                          transition: 'none',
+                          width:
+                            textureStripCount >= 2 && textureCategoryMaxPage > 0
+                              ? `${textureCategoryRowPct}%`
+                              : '100%',
+                          margin: 0,
+                          boxSizing: 'border-box'
+                        }}
+                      >
+                        {shopTextureStripItems.map((t) => (
+                            <div
+                              key={`${route}-${t.label}`}
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => navigate(`/${t.slug}/${categorySlug}`)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  navigate(`/${t.slug}/${categorySlug}`);
+                                }
+                              }}
+                              style={{
+                                flex:
+                                  textureStripCount >= 2 && textureCategoryMaxPage > 0
+                                    ? `0 0 calc(100% / ${textureStripCount})`
+                                    : '0 0 33.333%',
+                                padding: 0,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'stretch',
+                                boxSizing: 'border-box',
+                                position: 'relative',
+                                overflow: 'visible',
+                                cursor: 'pointer',
+                                minWidth: 0,
+                                ...dbgProductCol
+                              }}
+                            >
+                              <div
+                                style={{
+                                  width: '100%',
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  alignItems: 'center',
+                                  boxSizing: 'border-box',
+                                  padding: '5px 12px 4px 12px',
+                                  transform: 'translateY(-8px)',
+                                  ...dbgProductBand
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    marginBottom: '5px'
+                                  }}
+                                >
+                                  <img
+                                    src={t.image}
+                                    alt={t.label}
+                                    style={{
+                                      width: '79.2%',
+                                      height: 'auto',
+                                      maxWidth: '100%',
+                                      display: 'block',
+                                      margin: 0,
+                                      pointerEvents: 'none'
+                                    }}
+                                  />
+                                </div>
+                                <p
+                                  style={{
+                                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                    fontSize: '18px',
+                                    color: 'black',
+                                    textTransform: 'uppercase',
+                                    margin: 0,
+                                    fontWeight: '500',
+                                    lineHeight: 1.05,
+                                    minHeight: '22px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    pointerEvents: 'none',
+                                    width: '100%',
+                                    textAlign: 'center',
+                                    boxSizing: 'border-box'
+                                  }}
+                                >
+                                  {t.label}
+                                </p>
+                                {(categorySlug === 'bundles' ||
+                                  categorySlug === 'closures' ||
+                                  categorySlug === 'frontals') && (
+                                  <>
+                                    <p
+                                      style={{
+                                        fontFamily: '"Futura PT Medium"',
+                                        fontSize: '10px',
+                                        color: '#EB1C24',
+                                        textTransform: 'uppercase',
+                                        margin: '2px 0 5px 0',
+                                        fontWeight: '500',
+                                        lineHeight: '0.84',
+                                        minHeight: '12px',
+                                        transform: 'translateY(1px)',
+                                        pointerEvents: 'none',
+                                        width: '100%',
+                                        textAlign: 'center',
+                                        boxSizing: 'border-box'
+                                      }}
+                                    >
+                                      {shopCategoryTextureLines[categorySlug][t.slug].redLine}
+                                    </p>
+                                    <p
+                                      style={{
+                                        fontFamily: '"Futura PT Medium"',
+                                        fontSize: '12px',
+                                        color: 'black',
+                                        textTransform: 'uppercase',
+                                        margin: '0 0 5px 0',
+                                        fontWeight: '500',
+                                        lineHeight: '0.84',
+                                        transform: 'translateY(2px)',
+                                        pointerEvents: 'none',
+                                        width: '100%',
+                                        textAlign: 'center',
+                                        boxSizing: 'border-box'
+                                      }}
+                                      dangerouslySetInnerHTML={formatShopTextureRange(
+                                        shopCategoryTextureLines[categorySlug][t.slug].priceMinUsd,
+                                        shopCategoryTextureLines[categorySlug][t.slug].priceMaxUsd
+                                      )}
+                                    />
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
-                
-                {/* Right Arrow (Conditional) */}
-                {unitsProducts.length >= 4 && (
-                <button 
-                    onClick={handleUnitsRightArrow}
-                  style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    padding: '5px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '50px',
-                    transform: 'translateX(-10px) translateY(-10px)'
-                  }}>
-                  <img
-                    src="/assets/NOIR/right-facing-arrow.svg"
-                    alt="Right Arrow"
-                    style={{ width: '14px', height: '14px' }}
-                  />
-                </button>
+                {textureCategoryMaxPage > 0 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => handleTextureCategoryLeft(categorySlug)}
+                      aria-label="Previous textures"
+                      style={{
+                        position: 'absolute',
+                        left: 6,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        zIndex: 25,
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '5px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <img src="/assets/NOIR/left-facing-arrow.svg" alt="" style={{ width: '14px', height: '14px', display: 'block' }} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleTextureCategoryRight(categorySlug)}
+                      aria-label="Next textures"
+                      style={{
+                        position: 'absolute',
+                        right: 6,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        zIndex: 25,
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '5px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <img src="/assets/NOIR/right-facing-arrow.svg" alt="" style={{ width: '14px', height: '14px', display: 'block' }} />
+                    </button>
+                  </>
                 )}
               </div>
             </div>
+          ))}
+
+          </div>
           </div>
             )}
         </div>

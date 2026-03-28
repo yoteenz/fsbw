@@ -1786,7 +1786,7 @@ function AccountPage() {
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
               <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-                <DynamicCartIcon count={cartCount} width={22} height={19} />
+                <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg
@@ -1825,10 +1825,11 @@ function AccountPage() {
                   maxWidth: 'none', 
                   overflow: 'visible',
                   backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                  minHeight: 'calc(100dvh - 160px)'
+                  minHeight: 'calc(100dvh - 160px)',
+                  height: 'calc(100dvh - 160px)'
                 }}
               >
-                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                 {/* Navigation Links */}
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                   <button
@@ -2552,19 +2553,6 @@ function AccountPage() {
             </p>
             <div className="flex space-x-3">
               <button
-                onClick={() => setShowResetConfirm(false)}
-                className="flex-1 py-2 px-4 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
-                style={{
-                  borderWidth: '1.3px',
-                  fontSize: '11px',
-                  fontFamily: '"Futura PT Medium"',
-                  color: '#000000',
-                  textTransform: 'uppercase'
-                }}
-              >
-                CANCEL
-              </button>
-              <button
                 onClick={handleConfirmReset}
                 className="flex-1 py-2 px-4 border border-black font-medium hover:bg-gray-50 transition-colors"
                 style={{
@@ -2577,6 +2565,19 @@ function AccountPage() {
                 }}
               >
                 RESET
+              </button>
+              <button
+                onClick={() => setShowResetConfirm(false)}
+                className="flex-1 py-2 px-4 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
+                style={{
+                  borderWidth: '1.3px',
+                  fontSize: '11px',
+                  fontFamily: '"Futura PT Medium"',
+                  color: '#000000',
+                  textTransform: 'uppercase'
+                }}
+              >
+                CANCEL
               </button>
             </div>
           </div>
@@ -2706,19 +2707,6 @@ function AccountPage() {
 
             <div className="flex space-x-3">
               <button
-                onClick={handleCancelCrop}
-                className="flex-1 py-2 px-4 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
-                style={{
-                  borderWidth: '1.3px',
-                  fontSize: '11px',
-                  fontFamily: '"Futura PT Medium"',
-                  color: '#000000',
-                  textTransform: 'uppercase'
-                }}
-              >
-                CANCEL
-              </button>
-              <button
                 onClick={handleApproveCrop}
                 className="flex-1 py-2 px-4 border border-black font-medium hover:bg-gray-50 transition-colors"
                 style={{
@@ -2731,6 +2719,19 @@ function AccountPage() {
                 }}
               >
                 APPROVE
+              </button>
+              <button
+                onClick={handleCancelCrop}
+                className="flex-1 py-2 px-4 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
+                style={{
+                  borderWidth: '1.3px',
+                  fontSize: '11px',
+                  fontFamily: '"Futura PT Medium"',
+                  color: '#000000',
+                  textTransform: 'uppercase'
+                }}
+              >
+                CANCEL
               </button>
             </div>
           </div>

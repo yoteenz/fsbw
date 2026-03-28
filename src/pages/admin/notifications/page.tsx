@@ -96,14 +96,14 @@ export default function AdminNotifications() {
               className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
               style={{ borderWidth: '1.3px', minHeight: '200px' }}
             >
-              <div className="px-4 pt-4 pb-2">
+              <div className="px-5 pt-4 pb-2">
                 <h2 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', margin: 0 }}>SEND NOTIFICATION</h2>
               </div>
               <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
 
               {feedback && (
                 <div
-                  className="mx-4 mb-3 px-3 py-2 text-sm"
+                  className="mx-5 mb-3 px-3 py-2 text-sm"
                   style={{
                     backgroundColor: feedback.type === 'success' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
                     color: feedback.type === 'success' ? '#166534' : '#b91c1c',
@@ -114,10 +114,10 @@ export default function AdminNotifications() {
               )}
 
               {loading ? (
-                <p className="px-4 py-6 text-gray-500 text-sm">Loading...</p>
+                <p className="px-5 py-6 text-gray-500 text-sm">Loading...</p>
               ) : (
                 <>
-                  <div className="px-4 space-y-3">
+                  <div className="px-5 space-y-3">
                     <label className="block text-xs text-gray-700" style={{ fontFamily: '"Futura PT Medium"' }}>User</label>
                     <select
                       value={selectedUserId}
@@ -136,7 +136,6 @@ export default function AdminNotifications() {
                     <textarea
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Enter notification text..."
                       rows={3}
                       className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
                       style={{ fontFamily: '"Futura PT Book"' }}
@@ -154,10 +153,10 @@ export default function AdminNotifications() {
 
                   {selectedClient && selectedNotifs.length > 0 && (
                     <>
-                      <div className="px-4 pt-6 pb-1">
+                      <div className="px-5 pt-6 pb-1">
                         <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#000', fontSize: '11px', margin: 0 }}>RECENT FOR THIS USER</h3>
                       </div>
-                      <div className="px-4 pb-4 space-y-2">
+                      <div className="px-5 pb-4 space-y-2">
                         {selectedNotifs.slice(-10).reverse().map((item, i) => (
                           <div key={item.id || i} className="border border-gray-200 rounded p-2 text-xs" style={{ backgroundColor: 'rgba(255,255,255,0.8)' }}>
                             {item.text || '—'}

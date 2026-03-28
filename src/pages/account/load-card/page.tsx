@@ -1,9 +1,33 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
+import ConfirmationModal from '../../../components/ConfirmationModal';
 import { clearAppAuth } from '../../../utils/adminAuth';
+import {
+  findGiftPromoByNormalizedCode,
+  giftPromoRedeemBlockReason,
+  parseGiftCardDollars,
+  updateBrandPromoCode,
+} from '../../../utils/adminBrandCodes';
+/** Bundled asset so dev/prod always resolve (avoids broken `/load-card.png` when public isn’t deployed). */
+import loadCardImage from './load-card.png';
+
+/** Uppercase A–Z / 0–9 only, max 12 chars, shown as XXXX-XXXX-XXXX */
+function formatGiftBarcodeInput(raw: string): string {
+  const alnum = raw.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12);
+  const a = alnum.slice(0, 4);
+  const b = alnum.slice(4, 8);
+  const c = alnum.slice(8, 12);
+  return [a, b, c].filter((p) => p.length > 0).join('-');
+}
+
+function toCanonicalBarcode(value: string): string {
+  const alnum = value.replace(/[^A-Z0-9]/gi, '').toUpperCase().slice(0, 12);
+  if (alnum.length !== 12) return '';
+  return `${alnum.slice(0, 4)}-${alnum.slice(4, 8)}-${alnum.slice(8, 12)}`;
+}
 
 function LoadCardPage() {
   const navigate = useNavigate();
@@ -46,7 +70,23 @@ function LoadCardPage() {
     }
     return null;
   });
-  const [barcodes, setBarcodes] = useState(['', '', '']);
+  const [barcodes, setBarcodes] = useState(['', '']);
+
+  type LoadCardNotice = {
+    title: string;
+    message: string;
+    preserveLineBreaks?: boolean;
+    afterClose?: () => void;
+  };
+  const [loadCardNotice, setLoadCardNotice] = useState<LoadCardNotice | null>(null);
+
+  const dismissLoadCardNotice = useCallback(() => {
+    setLoadCardNotice((prev) => {
+      const fn = prev?.afterClose;
+      if (fn) queueMicrotask(fn);
+      return null;
+    });
+  }, []);
 
   // Keep userData in sync with signed-in user so new accounts see their own data, not a previous (e.g. admin) user's
   useEffect(() => {
@@ -131,21 +171,117 @@ function LoadCardPage() {
   };
 
   const handleBarcodeChange = (index: number, value: string) => {
-    const newBarcodes = [...barcodes];
-    newBarcodes[index] = value;
-    setBarcodes(newBarcodes);
+    const next = [...barcodes];
+    next[index] = formatGiftBarcodeInput(value);
+    setBarcodes(next);
+  };
+
+  const persistUserBalance = (email: string, newBalance: number, historyEntry: { date: string; transaction: string; amount: number }) => {
+    try {
+      const raw = localStorage.getItem('currentUser');
+      if (!raw) return;
+      const u = JSON.parse(raw);
+      if ((u.email || '').toLowerCase() !== email.toLowerCase()) return;
+      const updated = {
+        ...u,
+        giftCardBalance: newBalance,
+        digitalCashHistory: [...(u.digitalCashHistory || []), historyEntry],
+      };
+      localStorage.setItem('currentUser', JSON.stringify(updated));
+      setUserData(updated);
+      const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const idx = registered.findIndex((x: { email?: string }) => (x.email || '').toLowerCase() === email.toLowerCase());
+      if (idx !== -1) {
+        registered[idx] = updated;
+        localStorage.setItem('registeredUsers', JSON.stringify(registered));
+      }
+    } catch {
+      /* ignore */
+    }
   };
 
   const handleSubmit = () => {
-    // Handle barcode submission logic here
-    const validBarcodes = barcodes.filter(barcode => barcode.trim() !== '');
-    if (validBarcodes.length > 0) {
-      // Process barcodes
-      console.log('Submitting barcodes:', validBarcodes);
-      // TODO: Add actual barcode processing logic
-      alert('Gift card codes submitted successfully!');
-      setBarcodes(['', '', '']);
+    if (!isSignedIn || !userData?.email) {
+      setLoadCardNotice({
+        title: 'SIGN IN REQUIRED',
+        message: 'PLEASE SIGN IN TO ADD FUNDS.',
+        afterClose: () => navigate('/sign-in'),
+      });
+      return;
     }
+    const codesToTry = barcodes
+      .map((s) => toCanonicalBarcode(s))
+      .filter(Boolean);
+    if (codesToTry.length === 0) {
+      setLoadCardNotice({
+        title: 'INCOMPLETE BARCODES',
+        message: 'ENTER COMPLETE BARCODES (XXXX-XXXX-XXXX).',
+      });
+      return;
+    }
+    const seen = new Set<string>();
+    let totalAdded = 0;
+    const errors: string[] = [];
+    const now = new Date();
+    const dateStr = `${now.getMonth() + 1}-${now.getDate()}-${now.getFullYear()}`;
+
+    for (const full of codesToTry) {
+      const key = full.toUpperCase();
+      if (seen.has(key)) {
+        errors.push(`${full}: DUPLICATE ENTRY`);
+        continue;
+      }
+      seen.add(key);
+      const promo = findGiftPromoByNormalizedCode(full);
+      if (!promo) {
+        errors.push(`${full}: INVALID CODE`);
+        continue;
+      }
+      const block = giftPromoRedeemBlockReason(promo);
+      if (block) {
+        errors.push(`${full}: ${block}`);
+        continue;
+      }
+      const dollars = parseGiftCardDollars(promo.valueLabel);
+      if (dollars == null) {
+        errors.push(`${full}: INVALID CODE VALUE`);
+        continue;
+      }
+      updateBrandPromoCode(promo.id, { uses: promo.uses + 1 });
+      totalAdded += dollars;
+    }
+
+    if (totalAdded > 0) {
+      const email = userData.email;
+      const prev = typeof userData.giftCardBalance === 'number' ? userData.giftCardBalance : 0;
+      persistUserBalance(email, prev + totalAdded, {
+        date: dateStr,
+        transaction: 'GIFT CARD BARCODE',
+        amount: totalAdded,
+      });
+    }
+
+    if (errors.length && totalAdded === 0) {
+      setLoadCardNotice({
+        title: 'UNABLE TO ADD FUNDS',
+        message: errors.join('\n'),
+        preserveLineBreaks: true,
+      });
+      return;
+    }
+    if (errors.length) {
+      setLoadCardNotice({
+        title: 'PARTIALLY ADDED',
+        message: `ADDED ${formatPrice(totalAdded)}.\n\nSOME CODES FAILED:\n${errors.join('\n')}`,
+        preserveLineBreaks: true,
+      });
+    } else {
+      setLoadCardNotice({
+        title: 'FUNDS ADDED',
+        message: `ADDED ${formatPrice(totalAdded)} TO YOUR ACCOUNT.`,
+      });
+    }
+    setBarcodes(['', '']);
   };
 
   const formatPrice = (amount: number) => {
@@ -227,23 +363,7 @@ function LoadCardPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => {
-                    try {
-                      const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
-                      if (isSignedIn) {
-                        const currentUser = localStorage.getItem('currentUser');
-                        if (currentUser) {
-                          const user = JSON.parse(currentUser);
-                          const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
-                          navigate(isPremium ? '/' : '/home/shop');
-                          return;
-                        }
-                      }
-                      navigate('/home/shop');
-                    } catch {
-                      navigate('/home/shop');
-                    }
-                  }}
+                    onClick={() => navigate('/lobby')}
                   >
                     HOME &gt;
                   </span>{' '}
@@ -264,7 +384,7 @@ function LoadCardPage() {
                   <span
                     style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
                   >
-                    GIFT CARD
+                    ADD FUNDS
                   </span>
                 </>
               )}
@@ -273,7 +393,7 @@ function LoadCardPage() {
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
               <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-                <DynamicCartIcon count={cartCount} width={22} height={19} />
+                <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg
@@ -312,11 +432,12 @@ function LoadCardPage() {
                   maxWidth: 'none', 
                   overflow: 'visible',
                   backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                  minHeight: '560px'
+                  minHeight: 'calc(100dvh - 160px)',
+                  height: 'calc(100dvh - 160px)'
                 }}
               >
                 {/* Mobile menu content - same structure as account page */}
-                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                   {/* Navigation Links */}
                   <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                     <button
@@ -533,168 +654,238 @@ function LoadCardPage() {
                 </div>
               </div>
             ) : (
-              /* MAIN CONTENT */
               <div
-                className="border border-black bg-white/60 backdrop-blur-sm w-full"
                 style={{
-                  borderWidth: '1.3px',
-                  padding: '40px 20px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '2px',
                   maxWidth: '600px',
                   margin: '0 auto'
                 }}
               >
-                {/* Back to Account Link */}
-                <p
-                  onClick={() => navigate('/account')}
+                <div
+                  className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
                   style={{
-                    fontFamily: '"Futura PT Book"',
-                    fontSize: '11px',
-                    color: '#000000',
-                    margin: '0 0 30px 0',
-                    cursor: 'pointer',
-                    textTransform: 'uppercase'
+                    borderWidth: '1.3px',
+                    paddingTop: '20px',
+                    paddingLeft: '20px',
+                    paddingRight: '20px',
+                    paddingBottom: '16px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.6)'
                   }}
                 >
-                  &lt; BACK TO ACCOUNT
-                </p>
-
-                {/* Title */}
-                <h1
-                  style={{
-                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                    fontSize: '32px',
-                    color: '#000000',
-                    margin: '0 0 8px 0',
-                    textAlign: 'center',
-                    fontWeight: '400'
-                  }}
-                >
-                  GIFT CARD
-                </h1>
-
-                {/* Subtitle */}
-                <p
-                  style={{
-                    fontFamily: '"Futura PT Medium"',
-                    fontSize: '12px',
-                    color: '#EB1C24',
-                    margin: '0 0 30px 0',
-                    textAlign: 'center',
-                    textTransform: 'uppercase',
-                    fontWeight: '500'
-                  }}
-                >
-                  ADD FUNDS TO YOUR ACCOUNT
-                </p>
-
-                {/* Gift Card Image */}
-                <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-                  <img
-                    src="/assets/gift-card.png"
-                    alt="Gift Card"
+                  <div
                     style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      width: '100%',
+                      alignItems: 'stretch'
+                    }}
+                  >
+                  <div style={{ marginBottom: 0, flexShrink: 0 }}>
+                    <div
+                      className="flex items-center justify-between"
+                      style={{ margin: '0 0 8px 0' }}
+                    >
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '12px',
+                          color: '#EB1C24',
+                          margin: 0,
+                          textTransform: 'uppercase',
+                          fontWeight: '500'
+                        }}
+                      >
+                        ADD FUNDS
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => navigate('/account')}
+                        aria-label="Back to account profile"
+                        style={{
+                          padding: 0,
+                          border: 'none',
+                          background: 'none',
+                          cursor: 'pointer',
+                          flexShrink: 0,
+                          lineHeight: 0
+                        }}
+                      >
+                        <img
+                          src="/assets/close-icon.svg"
+                          alt=""
+                          style={{
+                            width: '14.5px',
+                            height: '14.5px',
+                            display: 'block',
+                            filter:
+                              'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)'
+                          }}
+                        />
+                      </button>
+                    </div>
+                    <div style={{ borderBottom: '1px solid #e5e7eb' }} />
+                  </div>
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignSelf: 'center',
                       width: '100%',
                       maxWidth: '400px',
-                      height: 'auto',
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
-                    }}
-                  />
-                </div>
-
-                {/* Remaining Balance */}
-                <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-                  <p
-                    style={{
-                      fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                      fontSize: '18px',
-                      color: '#000000',
-                      margin: '0 0 8px 0',
-                      fontWeight: '400'
+                      marginTop: '-38px',
+                      marginBottom: '-26px',
+                      lineHeight: 0,
+                      flexShrink: 0
                     }}
                   >
-                    REMAINING BALANCE:
-                  </p>
-                  <p
-                    style={{
-                      fontFamily: '"Futura PT Medium"',
-                      fontSize: '20px',
-                      color: '#EB1C24',
-                      margin: '0',
-                      fontWeight: '500'
-                    }}
-                  >
-                    {formatPrice(userData?.giftCardBalance || 0)}
-                  </p>
-                </div>
-
-                {/* Barcode Input Section */}
-                <div style={{ marginBottom: '30px' }}>
-                  <p
-                    style={{
-                      fontFamily: '"Futura PT Book"',
-                      fontSize: '11px',
-                      color: '#000000',
-                      margin: '0 0 12px 0',
-                      textTransform: 'uppercase',
-                      fontWeight: '500'
-                    }}
-                  >
-                    ENTER BARCODE(S)
-                  </p>
-                  {barcodes.map((barcode, index) => (
-                    <input
-                      key={index}
-                      type="text"
-                      value={barcode}
-                      onChange={(e) => handleBarcodeChange(index, e.target.value)}
-                      placeholder=""
+                    <img
+                      src={loadCardImage}
+                      alt="Gift card"
+                      decoding="async"
                       style={{
                         width: '100%',
-                        padding: '12px',
-                        marginBottom: '12px',
-                        border: '1.3px solid #000000',
-                        backgroundColor: '#FFFFFF',
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '12px',
-                        color: '#000000',
-                        boxSizing: 'border-box'
+                        maxWidth: '400px',
+                        height: 'auto',
+                        display: 'block',
+                        margin: 0,
+                        padding: 0,
+                        border: 'none',
+                        borderRadius: 0
                       }}
                     />
-                  ))}
-                </div>
+                  </div>
 
-                {/* Submit Button */}
-                <button
-                  onClick={handleSubmit}
+                  <div
+                    style={{
+                      width: '100%',
+                      textAlign: 'center',
+                      marginTop: '-15px',
+                      marginBottom: 0,
+                      flexShrink: 0
+                    }}
+                  >
+                    <p
+                      style={{
+                        fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                        fontSize: '18px',
+                        color: '#000000',
+                        margin: '0 0 2px 0',
+                        fontWeight: '400',
+                        textAlign: 'center',
+                        width: '100%'
+                      }}
+                    >
+                      CURRENT BALANCE
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '16px',
+                        color: '#EB1C24',
+                        margin: '-2px 0 35px 0',
+                        fontWeight: '500',
+                        textAlign: 'center',
+                        width: '100%'
+                      }}
+                    >
+                      {formatPrice(userData?.giftCardBalance || 0)}
+                    </p>
+                  </div>
+
+                  <div
+                    style={{
+                      marginTop: 0,
+                      marginBottom: 0,
+                      paddingTop: 0,
+                      flexShrink: 0,
+                      width: '100%'
+                    }}
+                  >
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '10px',
+                        color: '#808080',
+                        margin: '0 0 12px 0',
+                        textTransform: 'uppercase',
+                        fontWeight: '500'
+                      }}
+                    >
+                      ENTER BARCODE(S):
+                    </p>
+                    {barcodes.map((barcode, index) => (
+                      <input
+                        key={index}
+                        type="text"
+                        inputMode="text"
+                        autoCapitalize="characters"
+                        autoCorrect="off"
+                        spellCheck={false}
+                        maxLength={14}
+                        value={barcode}
+                        onChange={(e) => handleBarcodeChange(index, e.target.value)}
+                        style={{
+                          width: '100%',
+                          height: '36px',
+                          padding: '8px',
+                          marginBottom: index < barcodes.length - 1 ? '12px' : '10px',
+                          border: '1.3px solid #000000',
+                          backgroundColor: '#FFFFFF',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '12px',
+                          color: '#000000',
+                          boxSizing: 'border-box',
+                          borderRadius: 0,
+                          textTransform: 'uppercase'
+                        }}
+                      />
+                    ))}
+                  </div>
+                  </div>
+                </div>
+                <div
+                  className="px-0 md:px-0 w-full"
                   style={{
-                    width: '100%',
-                    padding: '14px',
-                    backgroundColor: '#EB1C24',
-                    color: '#FFFFFF',
-                    border: '1.3px solid #000000',
-                    fontFamily: '"Futura PT Medium"',
-                    fontSize: '11px',
-                    textTransform: 'uppercase',
-                    fontWeight: '500',
-                    cursor: 'pointer',
-                    transition: 'background-color 0.2s'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#d0161e';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = '#EB1C24';
+                    marginTop: '2px',
+                    marginBottom: '20px',
+                    transform: 'translateY(-2px)'
                   }}
                 >
-                  SUBMIT CODE
-                </button>
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                    style={{
+                      borderWidth: '1.3px',
+                      color: '#EB1C24',
+                      fontFamily: '"Futura PT Medium"',
+                      backgroundColor: '#FFFFFF'
+                    }}
+                  >
+                    SUBMIT CODE
+                  </button>
+                </div>
               </div>
             )}
           </div>
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={loadCardNotice !== null}
+        onClose={dismissLoadCardNotice}
+        onConfirm={dismissLoadCardNotice}
+        title={loadCardNotice?.title ?? ''}
+        message={loadCardNotice?.message ?? ''}
+        confirmText="OK"
+        cancelText=""
+        dataAttribute="load-card-notice"
+        messagePreserveLineBreaks={loadCardNotice?.preserveLineBreaks ?? false}
+      />
     </div>
   );
 }

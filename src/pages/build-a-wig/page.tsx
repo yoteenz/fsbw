@@ -4802,30 +4802,7 @@ export default function BuildAWigPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => {
-                      // Check if user is premium member
-                      try {
-                        const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
-                        if (isSignedIn) {
-                          const currentUser = localStorage.getItem('currentUser');
-                          if (currentUser) {
-                            const user = JSON.parse(currentUser);
-                            const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
-                            if (isPremium) {
-                              navigate('/'); // Lobby for premium members
-                            } else {
-                              navigate('/home/shop'); // Shop for standard/non-members
-                            }
-                          } else {
-                            navigate('/home/shop'); // Default to shop if not signed in
-                          }
-                        } else {
-                          navigate('/home/shop'); // Default to shop if not signed in
-                        }
-                      } catch (e) {
-                        navigate('/home/shop'); // Default to shop on error
-                      }
-                    }}
+                    onClick={() => navigate('/lobby')}
                   >
                     HOME &gt;
                   </span>{' '}
@@ -4905,7 +4882,7 @@ export default function BuildAWigPage() {
             </p>
             <div className="gap-5 flex absolute" style={{ right: '17px', zIndex: 10 }}>
               <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-                  <DynamicCartIcon count={cartCount} width={22} height={19} />
+                  <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
                 </div>
                 <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'auto', zIndex: 11 }}>
                   <svg
@@ -4958,7 +4935,7 @@ export default function BuildAWigPage() {
         >
           {showMobileMenu ? (
             /* MENU CONTENT */
-            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
               {/* Navigation Links */}
               <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                 <button

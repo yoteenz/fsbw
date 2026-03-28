@@ -307,7 +307,7 @@ const NewsletterPanel = forwardRef<NewsletterPanelHandle, NewsletterPanelProps>(
 
       <label style={{ display: 'block', marginBottom: '10px' }}>
         <span style={labelStyle}>Subject</span>
-        <input value={subject} onChange={(e) => setSubject(e.target.value)} style={inputStyle} placeholder="EMAIL SUBJECT" />
+        <input value={subject} onChange={(e) => setSubject(e.target.value)} style={inputStyle} />
       </label>
 
       <label style={{ display: 'block', marginBottom: '12px' }}>

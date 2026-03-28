@@ -306,23 +306,7 @@ function ReferralsPage() {
             <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               {showMobileMenu ? (
                 <>
-                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => {
-                    try {
-                      const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
-                      if (isSignedIn) {
-                        const currentUser = localStorage.getItem('currentUser');
-                        if (currentUser) {
-                          const user = JSON.parse(currentUser);
-                          const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
-                          navigate(isPremium ? '/' : '/home/shop');
-                          return;
-                        }
-                      }
-                      navigate('/home/shop');
-                    } catch {
-                      navigate('/home/shop');
-                    }
-                  }}>
+                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => navigate('/lobby')}>
                     HOME &gt;
                   </span>{' '}
                   <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>
@@ -338,7 +322,7 @@ function ReferralsPage() {
             </p>
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
               <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-                <DynamicCartIcon count={cartCount} width={22} height={19} />
+                <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg width="17" height="18" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" onClick={handleMobileMenuToggle} style={{ marginTop: '2px' }}>
@@ -352,9 +336,9 @@ function ReferralsPage() {
             {showMobileMenu ? (
               <div
                 className="border border-black flex flex-col pt-6 pb-4 px-5 bg-white/60 backdrop-blur-sm w-full"
-                style={{ borderWidth: '1.3px', minWidth: '100%', maxWidth: 'none', overflow: 'visible', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: 'calc(100dvh - 160px)' }}
+                style={{ borderWidth: '1.3px', minWidth: '100%', maxWidth: 'none', overflow: 'visible', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: 'calc(100dvh - 160px)', height: 'calc(100dvh - 160px)' }}
               >
-                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                   <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                     {['SHOP', 'TOOLS', 'BRAND'].map((tab) => (
                       <button
@@ -599,14 +583,16 @@ function ReferralsPage() {
                       >
                         {inviteCopied === 'code' ? 'CODE COPIED' : 'COPY CODE'}
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => setShowInviteModal(false)}
-                        className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                        style={{ borderWidth: '1.3px', color: '#EB1C24', fontFamily: '"Futura PT Medium"', backgroundColor: '#FFFFFF' }}
-                      >
-                        CANCEL
-                      </button>
+                      <div className="flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => setShowInviteModal(false)}
+                          className="border border-black font-futura text-center py-2 px-8 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                          style={{ borderWidth: '1.3px', color: '#000000', fontFamily: '"Futura PT Medium"', backgroundColor: '#FFFFFF' }}
+                        >
+                          CANCEL
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

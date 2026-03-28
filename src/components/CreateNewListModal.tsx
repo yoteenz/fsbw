@@ -144,20 +144,6 @@ export default function CreateNewListModal({
         <div className="flex space-x-3">
           <button
             type="button"
-            onClick={onClose}
-            className="flex-1 py-2 px-4 border border-black bg-white font-medium hover:bg-gray-50"
-            style={{
-              borderWidth: '1.3px',
-              fontSize: '11px',
-              fontFamily: '"Futura PT Medium"',
-              color: '#000000',
-              textTransform: 'uppercase'
-            }}
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
             onClick={handleCreate}
             className="flex-1 py-2 px-4 border border-black font-medium hover:bg-gray-50"
             style={{
@@ -171,6 +157,20 @@ export default function CreateNewListModal({
             }}
           >
             Create
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 py-2 px-4 border border-black bg-white font-medium hover:bg-gray-50"
+            style={{
+              borderWidth: '1.3px',
+              fontSize: '11px',
+              fontFamily: '"Futura PT Medium"',
+              color: '#000000',
+              textTransform: 'uppercase'
+            }}
+          >
+            Cancel
           </button>
         </div>
       </div>

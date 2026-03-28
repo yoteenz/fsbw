@@ -204,7 +204,6 @@ function AdminRevenueOrdersTab({
                       onChange={(e) => setTrackingDraft((d) => ({ ...d, trackingNumber: e.target.value }))}
                       className="w-full py-2 px-2 border border-black"
                       style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', textTransform: 'uppercase', boxSizing: 'border-box' }}
-                      placeholder="OPTIONAL"
                     />
                   </div>
                   <div style={{ marginBottom: '14px' }}>
@@ -249,7 +248,6 @@ function AdminRevenueOrdersTab({
                       onChange={(e) => setTrackingDraft((d) => ({ ...d, adminStageOverride: e.target.value.replace(/[^\d]/g, '') }))}
                       className="w-full py-2 px-2 border border-black"
                       style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', boxSizing: 'border-box' }}
-                      placeholder="AUTO FROM STATUS"
                     />
                   </div>
                   <div className="border-t border-gray-200" style={{ marginTop: '16px', paddingTop: '12px' }}>
@@ -270,7 +268,6 @@ function AdminRevenueOrdersTab({
                           rows={2}
                           className="w-full py-2 px-2 border border-black"
                           style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', textTransform: 'uppercase', resize: 'vertical', boxSizing: 'border-box' }}
-                          placeholder="NOTE (VISIBLE TO CLIENT)"
                         />
                         <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px', fontFamily: '"Futura PT Book"', fontSize: '9px', textTransform: 'uppercase', cursor: 'pointer' }}>
                           <input
@@ -684,7 +681,7 @@ export default function AdminRevenue() {
               className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
               style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
             >
-              <div className="flex items-center justify-between -mt-1 pb-1 px-4 pt-4" style={{ marginBottom: 0 }}>
+              <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4" style={{ marginBottom: 0 }}>
                 <h2
                   className="flex-1"
                   style={{
@@ -754,7 +751,7 @@ export default function AdminRevenue() {
               <div className="overflow-y-auto" style={{ maxHeight: '380px' }}>
                 <div
                   className="admin-revenue-tab-content"
-                  style={{ paddingTop: '12px', paddingRight: '20px', paddingBottom: '0', paddingLeft: '20px', boxSizing: 'border-box' }}
+                  style={{ paddingTop: '2px', paddingRight: '20px', paddingBottom: '24px', paddingLeft: '20px', boxSizing: 'border-box' }}
                 >
                 {activeTab === 'OVERVIEW' && (
                   <>
@@ -962,8 +959,8 @@ export default function AdminRevenue() {
                     </div>
                   </>
                 )}
-                <div style={{ height: '24px', minHeight: '24px', flexShrink: 0 }} aria-hidden />
                 </div>
+              </div>
               </div>
             </div>
 
@@ -974,7 +971,7 @@ export default function AdminRevenue() {
                 className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden mt-4"
                 style={{ borderWidth: '1.3px', borderRadius: 0 }}
               >
-                <div className="flex items-center justify-between -mt-1 pb-1 px-4 pt-4" style={{ marginBottom: 0 }}>
+                <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4" style={{ marginBottom: 0 }}>
                   <h2
                     className="flex-1"
                     style={{
@@ -1003,8 +1000,9 @@ PENDING
                     <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>AWAITING TRACKING</p>
                   </div>
                 </div>
+                <div style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}>
                 <div className="overflow-y-auto" style={{ maxHeight: '280px' }}>
-                  <div style={{ paddingTop: '12px', paddingRight: '20px', paddingBottom: '24px', paddingLeft: '20px', boxSizing: 'border-box' }}>
+                  <div style={{ paddingTop: '12px', paddingRight: '20px', paddingLeft: '20px', boxSizing: 'border-box' }}>
                   {pendingOrders.length === 0 ? (
                     <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080', margin: 0, textTransform: 'uppercase' }}>NO PENDING ORDERS.</p>
                   ) : (
@@ -1033,8 +1031,8 @@ PENDING
                       })}
                     </div>
                   )}
-                  <div style={{ height: '24px', minHeight: '24px', flexShrink: 0 }} aria-hidden />
                   </div>
+                </div>
                 </div>
               </div>
             </>

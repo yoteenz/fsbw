@@ -1,6 +1,8 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
-import BrandAlertsPanel from '../components/BrandAlertsPanel';
+import BrandAlertsPanel, { type BrandAlertsPanelHandle } from '../components/BrandAlertsPanel';
+import BrandExpiresDatePicker from '../../../components/BrandExpiresDatePicker';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { getAdminBrand, getAdminAnalytics } from '../../../utils/api';
 import { getSocialAnalyticsSummary } from '../../../utils/socialAnalytics';
@@ -10,8 +12,13 @@ import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import {
   appendBrandPromoCode,
+  computeExpiresSpanCalendarDays,
+  computeReactivationExpiryPatch,
+  expiresAtFromDateInput,
+  formatExpiresAtForDisplay,
   generateCodePrefix,
   loadBrandPromoCodes,
+  sumBrandGeneratedDiscountUsd,
   updateBrandPromoCode,
   type BrandPromoCode,
 } from '../../../utils/adminBrandCodes';
@@ -42,6 +49,8 @@ const defaultBrandMetrics = {
 
 export default function AdminBrand() {
   useRequireAdminPageAccess();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<typeof BRAND_TABS[number]>('OVERVIEW');
   const [analyticsSubTab, setAnalyticsSubTab] = useState<typeof ANALYTICS_SUB_TABS[number]>('SUMMARY');
   const [brandMetrics, setBrandMetrics] = useState(defaultBrandMetrics);
@@ -53,23 +62,94 @@ export default function AdminBrand() {
     setPromoCodes(loadBrandPromoCodes());
   }, []);
 
+  const [copiedPromoId, setCopiedPromoId] = useState<string | null>(null);
+  const copyFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    return () => {
+      if (copyFeedbackTimeoutRef.current) clearTimeout(copyFeedbackTimeoutRef.current);
+    };
+  }, []);
+
+  const [discountLedgerSeq, setDiscountLedgerSeq] = useState(0);
+  useEffect(() => {
+    const onLedger = () => setDiscountLedgerSeq((s) => s + 1);
+    window.addEventListener('brandDiscountLedgerUpdated', onLedger);
+    return () => window.removeEventListener('brandDiscountLedgerUpdated', onLedger);
+  }, []);
+
   const codesSummary = useMemo(() => {
     const active = promoCodes.filter((c) => c.active).length;
-    const redemptions = promoCodes.reduce((sum, c) => sum + (c.uses ?? 0), 0);
-    return { active, redemptions };
-  }, [promoCodes]);
+    const discountsUsd = sumBrandGeneratedDiscountUsd();
+    return { active, discountsUsd };
+  }, [promoCodes, discountLedgerSeq]);
 
   const [alertsStats, setAlertsStats] = useState({ clientsWithNotifs: 0, totalSent: 0 });
   const onAlertsStats = useCallback((stats: { clientsWithNotifs: number; totalSent: number }) => {
     setAlertsStats(stats);
   }, []);
+  const brandAlertsPanelRef = useRef<BrandAlertsPanelHandle>(null);
+  const [alertsSendFooter, setAlertsSendFooter] = useState({
+    disabled: true,
+    label: 'SEND NOTIFICATION',
+  });
 
   const [codeKind, setCodeKind] = useState<BrandPromoCode['kind']>('gift');
-  const [manualCode, setManualCode] = useState('');
+  const [giftManualCode, setGiftManualCode] = useState('');
+  const [discountManualCode, setDiscountManualCode] = useState('');
   const [codeValue, setCodeValue] = useState('');
   const [codeMaxUses, setCodeMaxUses] = useState('');
   const [codeExpires, setCodeExpires] = useState('');
   const [codeNote, setCodeNote] = useState('');
+  const [showCreateCodePanel, setShowCreateCodePanel] = useState(false);
+
+  useEffect(() => {
+    if (activeTab !== 'CODES') setShowCreateCodePanel(false);
+  }, [activeTab]);
+
+  useEffect(() => {
+    const st = location.state as { openCreateCode?: boolean } | null | undefined;
+    if (st?.openCreateCode) {
+      setActiveTab('CODES');
+      setShowCreateCodePanel(true);
+      navigate('/admin/brand', { replace: true, state: {} });
+    }
+  }, [location.state, navigate]);
+
+  const handleSavePromoCode = useCallback(() => {
+    const raw = codeValue.trim();
+    if (!raw) return;
+    const valueLabel =
+      codeKind === 'gift'
+        ? (raw.startsWith('$') ? raw : `$${raw}`)
+        : (raw.includes('%') ? raw : `${raw}%`);
+    const maxU = codeMaxUses.trim() ? parseInt(codeMaxUses, 10) : null;
+    const manualForKind = codeKind === 'gift' ? giftManualCode : discountManualCode;
+    const codeStr = (manualForKind.trim() || generateCodePrefix(codeKind)).toUpperCase();
+    const createdAt = new Date().toISOString();
+    const expiresAt = codeExpires.trim() ? expiresAtFromDateInput(codeExpires.trim()) : null;
+    const row: BrandPromoCode = {
+      id: `code-${Date.now()}`,
+      kind: codeKind,
+      code: codeStr,
+      valueLabel,
+      maxUses: maxU != null && !Number.isNaN(maxU) ? maxU : null,
+      uses: 0,
+      expiresAt,
+      expiresSpanCalendarDays: computeExpiresSpanCalendarDays(createdAt, expiresAt) ?? undefined,
+      createdAt,
+      active: true,
+      note: codeNote.trim() || undefined,
+    };
+    appendBrandPromoCode(row);
+    setGiftManualCode('');
+    setDiscountManualCode('');
+    setCodeValue('');
+    setCodeMaxUses('');
+    setCodeExpires('');
+    setCodeNote('');
+    refreshCodes();
+    setShowCreateCodePanel(false);
+  }, [codeValue, codeKind, giftManualCode, discountManualCode, codeMaxUses, codeExpires, codeNote, refreshCodes]);
 
   useEffect(() => {
     let currentUser: { email?: string } | null = null;
@@ -134,21 +214,452 @@ export default function AdminBrand() {
       />
       <div className="relative z-10" style={{ textTransform: 'uppercase' }}>
         <AdminHeader
-          title="BRAND"
+          title={activeTab === 'CODES' && showCreateCodePanel ? 'CREATE CODE' : 'BRAND'}
           showBack
-          onBack={() => window.history.back()}
+          onBack={
+            activeTab === 'CODES' && showCreateCodePanel
+              ? () => setShowCreateCodePanel(false)
+              : () => window.history.back()
+          }
           breadcrumbParentLabel="ADMIN"
           breadcrumbParentPath="/admin/dashboard"
         />
 
         <div className="pb-6 px-4">
           <div className="max-w-md mx-auto">
-            {/* Main card */}
+            {activeTab === 'CODES' ? (
+              showCreateCodePanel ? (
+                <>
+                <div
+                  className="border border-black bg-white/60 backdrop-blur-sm w-full overflow-hidden flex flex-col transition-all duration-300 ease-out"
+                  style={{
+                    borderWidth: '1.3px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                    minHeight: 'calc(100vh * 520 / 745 + 7px)',
+                  }}
+                >
+                  <div className="shrink-0 px-5 pt-5">
+                    <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
+                      <h2
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          color: '#EB1C24',
+                          fontSize: '12px',
+                          fontWeight: '500',
+                          margin: '0',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        CREATE CODE
+                      </h2>
+                      <button
+                        type="button"
+                        onClick={() => setShowCreateCodePanel(false)}
+                        aria-label="Close create code"
+                        className="p-0 border-0 bg-transparent cursor-pointer shrink-0"
+                        style={{ lineHeight: 0 }}
+                      >
+                        <img
+                          src="/assets/close-icon.svg"
+                          alt=""
+                          style={{
+                            width: '20px',
+                            height: '20px',
+                            flexShrink: 0,
+                            objectFit: 'contain',
+                            marginTop: '-2px',
+                            display: 'block',
+                            filter:
+                              'invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)',
+                          }}
+                        />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex-1 min-h-0 flex flex-col min-h-0 px-5" style={{ paddingBottom: '24px' }}>
+                    <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+                    <div className="space-y-3 min-w-0 max-w-full">
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setCodeKind('gift')}
+                          className="flex-1 py-2 border"
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '10px',
+                            borderColor: '#000',
+                            borderWidth: codeKind === 'gift' ? '1.3px' : '1px',
+                            color: codeKind === 'gift' ? '#EB1C24' : '#808080',
+                            backgroundColor: '#FFFFFF',
+                          }}
+                        >
+                          GIFT CARD
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setCodeKind('discount')}
+                          className="flex-1 py-2 border"
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '10px',
+                            borderColor: '#000',
+                            borderWidth: codeKind === 'discount' ? '1.3px' : '1px',
+                            color: codeKind === 'discount' ? '#EB1C24' : '#808080',
+                            backgroundColor: '#FFFFFF',
+                          }}
+                        >
+                          DISCOUNT
+                        </button>
+                      </div>
+                      <div style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', display: 'block' }}>
+                        <span style={{ display: 'block', marginBottom: '6px' }}>CODE (OPTIONAL — AUTO IF EMPTY)</span>
+                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 8px 0', textTransform: 'none' }}>
+                          SAVE USES THE ROW THAT MATCHES {codeKind === 'gift' ? 'GIFT CARD' : 'DISCOUNT'} ABOVE.
+                        </p>
+                        <label style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', display: 'block', color: codeKind === 'gift' ? '#EB1C24' : '#808080' }}>
+                          GIFT CARD
+                          <div className="flex gap-2 mt-1">
+                            <input
+                              value={giftManualCode}
+                              onChange={(e) => setGiftManualCode(e.target.value.toUpperCase())}
+                              className="flex-1 border p-2"
+                              style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb', textTransform: 'uppercase' }}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setGiftManualCode(generateCodePrefix('gift'))}
+                              className="px-2 border border-black shrink-0"
+                              style={{ fontFamily: '"Futura PT Book"', fontSize: '10px' }}
+                            >
+                              GEN
+                            </button>
+                          </div>
+                        </label>
+                        <label style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', display: 'block', marginTop: '10px', color: codeKind === 'discount' ? '#EB1C24' : '#808080' }}>
+                          DISCOUNT
+                          <div className="flex gap-2 mt-1">
+                            <input
+                              value={discountManualCode}
+                              onChange={(e) => setDiscountManualCode(e.target.value.toUpperCase())}
+                              className="flex-1 border p-2"
+                              style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb', textTransform: 'uppercase' }}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setDiscountManualCode(generateCodePrefix('discount'))}
+                              className="px-2 border border-black shrink-0"
+                              style={{ fontFamily: '"Futura PT Book"', fontSize: '10px' }}
+                            >
+                              GEN
+                            </button>
+                          </div>
+                        </label>
+                      </div>
+                      <label style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', display: 'block' }}>
+                        {codeKind === 'gift' ? 'VALUE (E.G. $50 OR $50.00)' : 'VALUE (E.G. 15 FOR 15%)'}
+                        <input
+                          value={codeValue}
+                          onChange={(e) => setCodeValue(e.target.value)}
+                          className="mt-1 w-full border p-2"
+                          style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb' }}
+                        />
+                      </label>
+                      <label style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', display: 'block' }}>
+                        MAX USES (BLANK = UNLIMITED)
+                        <input
+                          value={codeMaxUses}
+                          onChange={(e) => setCodeMaxUses(e.target.value.replace(/\D/g, ''))}
+                          className="mt-1 w-full border p-2"
+                          style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb' }}
+                        />
+                      </label>
+                      <label
+                        className="min-w-0 max-w-full block"
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '10px',
+                          width: '100%',
+                        }}
+                      >
+                        EXPIRES (OPTIONAL)
+                        <div className="mt-1 w-full min-w-0 max-w-full overflow-visible">
+                          <BrandExpiresDatePicker value={codeExpires} onChange={setCodeExpires} />
+                        </div>
+                      </label>
+                      <label style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', display: 'block' }}>
+                        NOTE (INTERNAL)
+                        <input
+                          value={codeNote}
+                          onChange={(e) => setCodeNote(e.target.value.toUpperCase())}
+                          className="mt-1 w-full border p-2"
+                          style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb', textTransform: 'uppercase' }}
+                        />
+                      </label>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+                <div style={{ marginTop: '10px' }}>
+                  <button
+                    type="button"
+                    onClick={handleSavePromoCode}
+                    className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                    style={pageActionButtonStyle}
+                  >
+                    SAVE CODE
+                  </button>
+                </div>
+                </>
+              ) : (
+                <>
+                <div
+                  className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden flex flex-col"
+                  style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
+                >
+                  <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4 shrink-0" style={{ marginBottom: 0 }}>
+                    <h2
+                      className="flex-1"
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        color: '#EB1C24',
+                        fontSize: '12px',
+                        fontWeight: 500,
+                        margin: 0,
+                        marginLeft: '6px',
+                        textTransform: 'uppercase',
+                        textAlign: 'left',
+                      }}
+                    >
+                      BRAND
+                    </h2>
+                    <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '-5px', transform: 'translateX(-6px)' }}>
+                      <path d="M3 4H4V18L9.58 8.33L15.59 11.8L19.21 5.54L20.07 6.04L15.96 13.17L9.95 9.7L4 20H20V21H3V4Z" fill="#EB1C24"/>
+                    </svg>
+                  </div>
+                  <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
+
+                  <div className="grid grid-cols-2 gap-4 px-5 py-4 shrink-0">
+                    <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                      <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>{codesSummary.active}</p>
+                      <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>ACTIVE CODES</p>
+                    </div>
+                    <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                      <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>
+                        $
+                        {codesSummary.discountsUsd.toLocaleString('en-US', {
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 2,
+                        })}
+                      </p>
+                      <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>DISCOUNTS</p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap justify-center gap-[14px] px-5 shrink-0">
+                    {BRAND_TABS.map((tab) => (
+                      <button
+                        key={tab}
+                        type="button"
+                        onClick={() => setActiveTab(tab)}
+                        className="py-3 px-2 font-medium transition-colors"
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '10px',
+                          color: activeTab === tab ? '#EB1C24' : '#808080',
+                          border: 'none',
+                          paddingBottom: '4px',
+                          background: 'none',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            borderBottom: activeTab === tab ? '1px solid #EB1C24' : '1px solid transparent',
+                            paddingBottom: '4px',
+                          }}
+                        >
+                          {tab}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="flex-1 flex flex-col min-h-0 px-5 pb-4 overflow-hidden" style={{ paddingTop: '12px' }}>
+                  <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginTop: '0', marginBottom: '8px', flexShrink: 0 }}>TRACK USAGE</h3>
+                  {promoCodes.length === 0 ? (
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>NO CODES YET.</p>
+                  ) : (
+                    <div className="flex-1 min-h-0 flex flex-col min-h-0" style={{ paddingBottom: '24px' }}>
+                    <div className="flex-1 min-h-0 overflow-y-auto space-y-2 pr-1">
+                      {promoCodes
+                        .slice()
+                        .reverse()
+                        .map((c) => (
+                          <div
+                            key={c.id}
+                            className="border border-gray-200 p-3"
+                            style={{ backgroundColor: 'rgba(255,255,255,0.9)' }}
+                          >
+                            <div className="flex justify-between items-start gap-2">
+                              <div className="min-w-0">
+                                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', margin: 0 }}>
+                                  {c.code}
+                                </p>
+                                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', margin: '4px 0 0 0', textTransform: 'uppercase' }}>
+                                  {c.kind === 'gift' ? 'GIFT CARD' : 'DISCOUNT'} · {c.valueLabel}
+                                </p>
+                                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '4px 0 0 0' }}>
+                                  USES: {c.uses}
+                                  {c.maxUses != null ? ` / ${c.maxUses}` : ' / ∞'}
+                                  {c.expiresAt ? ` · ${formatExpiresAtForDisplay(c.expiresAt)}` : ''}
+                                </p>
+                                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', margin: '6px 0 0 0', textTransform: 'uppercase' }}>
+                                  STATUS:{' '}
+                                  {!c.active
+                                    ? 'INACTIVE'
+                                    : c.kind === 'gift'
+                                      ? c.maxUses != null
+                                        ? c.uses >= c.maxUses
+                                          ? 'REDEEMED'
+                                          : c.uses > 0
+                                            ? `${c.uses}/${c.maxUses} REDEEMED`
+                                            : 'ACTIVE'
+                                        : 'ACTIVE'
+                                      : c.maxUses != null && c.uses >= c.maxUses
+                                        ? 'MAX USES REACHED'
+                                        : c.maxUses != null && c.uses > 0
+                                          ? `${c.uses}/${c.maxUses} USED`
+                                          : 'ACTIVE'}
+                                </p>
+                                {c.note && (
+                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '4px 0 0 0' }}>{c.note}</p>
+                                )}
+                              </div>
+                              <div className="flex flex-col gap-2.5 shrink-0">
+                                <button
+                                  type="button"
+                                  onClick={async () => {
+                                    const text = c.code;
+                                    let copied = false;
+                                    try {
+                                      await navigator.clipboard.writeText(text);
+                                      copied = true;
+                                    } catch {
+                                      try {
+                                        const ta = document.createElement('textarea');
+                                        ta.value = text;
+                                        ta.style.position = 'fixed';
+                                        ta.style.left = '-9999px';
+                                        document.body.appendChild(ta);
+                                        ta.select();
+                                        copied = document.execCommand('copy');
+                                        document.body.removeChild(ta);
+                                      } catch {
+                                        /* ignore */
+                                      }
+                                    }
+                                    if (!copied) return;
+                                    if (copyFeedbackTimeoutRef.current) {
+                                      clearTimeout(copyFeedbackTimeoutRef.current);
+                                    }
+                                    setCopiedPromoId(c.id);
+                                    copyFeedbackTimeoutRef.current = setTimeout(() => {
+                                      setCopiedPromoId(null);
+                                      copyFeedbackTimeoutRef.current = null;
+                                    }, 2000);
+                                  }}
+                                  className="border"
+                                  style={{
+                                    fontFamily: '"Futura PT Medium"',
+                                    fontSize: '8px',
+                                    padding: '3px 6px',
+                                    borderColor: '#000',
+                                    color: '#EB1C24',
+                                    textTransform: 'uppercase',
+                                    borderWidth: '1px',
+                                    lineHeight: 1.2,
+                                  }}
+                                >
+                                  {copiedPromoId === c.id ? 'COPIED' : 'COPY'}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    updateBrandPromoCode(c.id, { uses: 0 });
+                                    refreshCodes();
+                                  }}
+                                  className="border"
+                                  style={{
+                                    fontFamily: '"Futura PT Medium"',
+                                    fontSize: '8px',
+                                    padding: '3px 6px',
+                                    borderColor: '#000',
+                                    color: '#EB1C24',
+                                    textTransform: 'uppercase',
+                                    borderWidth: '1px',
+                                    lineHeight: 1.2,
+                                  }}
+                                >
+                                  RESET
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (c.active) {
+                                      updateBrandPromoCode(c.id, { active: false });
+                                    } else {
+                                      const expiryPatch = computeReactivationExpiryPatch(c);
+                                      updateBrandPromoCode(c.id, {
+                                        active: true,
+                                        ...(expiryPatch ?? {}),
+                                      });
+                                    }
+                                    refreshCodes();
+                                  }}
+                                  style={{
+                                    fontFamily: '"Futura PT Medium"',
+                                    fontSize: '8px',
+                                    padding: '3px 6px',
+                                    backgroundColor: '#FFFFFF',
+                                    color: '#EB1C24',
+                                    border: '1px solid #000',
+                                    textTransform: 'uppercase',
+                                    lineHeight: 1.2,
+                                  }}
+                                >
+                                  {c.active ? 'DEACTIVATE' : 'ACTIVATE'}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                    </div>
+                  )}
+                  </div>
+                </div>
+
+                <div style={{ marginTop: '10px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowCreateCodePanel(true)}
+                    className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                    style={pageActionButtonStyle}
+                  >
+                    CREATE CODE
+                  </button>
+                </div>
+              </>
+            )
+            ) : (
+            <>
+            {/* Main card (non-CODES tabs) */}
             <div
               className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
               style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
             >
-              <div className="flex items-center justify-between -mt-1 pb-1 px-4 pt-4" style={{ marginBottom: 0 }}>
+              <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4" style={{ marginBottom: 0 }}>
                 <h2
                   className="flex-1"
                   style={{
@@ -170,7 +681,7 @@ export default function AdminBrand() {
               </div>
               <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
 
-              {/* Summary above tabs: analytics clicks, alerts usage, codes activity, or brand score */}
+              {/* Summary above tabs: analytics clicks, alerts usage, or brand score */}
               {activeTab === 'ANALYTICS' ? (
                 <div className="text-center py-4 px-5">
                   <p className="font-covered-by-your-grace text-4xl" style={{ color: '#EB1C24' }}>{analyticsSummary.total}</p>
@@ -185,17 +696,6 @@ export default function AdminBrand() {
                   <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
                     <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>{alertsStats.totalSent}</p>
                     <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>NOTIFICATIONS SENT</p>
-                  </div>
-                </div>
-              ) : activeTab === 'CODES' ? (
-                <div className="grid grid-cols-2 gap-4 px-5 py-4">
-                  <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                    <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>{codesSummary.active}</p>
-                    <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>ACTIVE CODES</p>
-                  </div>
-                  <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                    <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>{codesSummary.redemptions}</p>
-                    <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>TOTAL REDEMPTIONS</p>
                   </div>
                 </div>
               ) : (
@@ -235,29 +735,19 @@ export default function AdminBrand() {
                 ))}
               </div>
 
-              {/* Tab content */}
-              <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '380px', padding: '8px', paddingTop: '2px', boxSizing: 'border-box' }}>
+              {/* Tab content – padding below scroll viewport (above card bottom) */}
+              <div style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}>
+                <div
+                  className="overflow-y-auto overflow-x-hidden"
+                  style={{
+                    maxHeight: '380px',
+                    paddingTop: '2px',
+                    boxSizing: 'border-box',
+                  }}
+                >
                 {activeTab === 'OVERVIEW' && (
                   <>
-                    <div className="grid grid-cols-2 gap-4 mt-4">
-                      <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                        <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{brandMetrics.retention}</p>
-                        <p className="text-xs font-futura mt-1" style={{ color: '#808080' }}>CLIENT RETENTION</p>
-                      </div>
-                      <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                        <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{brandMetrics.referralRate}</p>
-                        <p className="text-xs font-futura mt-1" style={{ color: '#808080' }}>REFERRAL RATE</p>
-                      </div>
-                      <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                        <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{brandMetrics.repeatBookings}</p>
-                        <p className="text-xs font-futura mt-1" style={{ color: '#808080' }}>REPEAT BOOKINGS</p>
-                      </div>
-                      <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
-                        <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{brandMetrics.growthRate}</p>
-                        <p className="text-xs font-futura mt-1" style={{ color: '#808080' }}>GROWTH RATE</p>
-                      </div>
-                    </div>
-                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginTop: '20px', marginBottom: '8px' }}>KEY METRICS</h3>
+                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginTop: '16px', marginBottom: '8px' }}>KEY METRICS</h3>
                     <div className="space-y-2">
                       {[
                         { label: 'CLIENT RETENTION', value: brandMetrics.retention },
@@ -287,206 +777,12 @@ export default function AdminBrand() {
                     </div>
                   </>
                 )}
-                {activeTab === 'ALERTS' && <BrandAlertsPanel onStatsChange={onAlertsStats} />}
-                {activeTab === 'CODES' && (
-                  <>
-                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginTop: '8px', marginBottom: '10px' }}>
-                      CREATE CODE
-                    </h3>
-                    <div className="space-y-3 mb-4">
-                      <div className="flex gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setCodeKind('gift')}
-                          className="flex-1 py-2 border"
-                          style={{
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '10px',
-                            borderColor: '#000',
-                            borderWidth: codeKind === 'gift' ? '1.3px' : '1px',
-                            color: codeKind === 'gift' ? '#EB1C24' : '#808080',
-                            background: codeKind === 'gift' ? 'rgba(235,28,36,0.08)' : '#fff',
-                          }}
-                        >
-                          GIFT CARD
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setCodeKind('discount')}
-                          className="flex-1 py-2 border"
-                          style={{
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '10px',
-                            borderColor: '#000',
-                            borderWidth: codeKind === 'discount' ? '1.3px' : '1px',
-                            color: codeKind === 'discount' ? '#EB1C24' : '#808080',
-                            background: codeKind === 'discount' ? 'rgba(235,28,36,0.08)' : '#fff',
-                          }}
-                        >
-                          DISCOUNT
-                        </button>
-                      </div>
-                      <label style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', display: 'block' }}>
-                        CODE (OPTIONAL — AUTO IF EMPTY)
-                        <div className="flex gap-2 mt-1">
-                          <input
-                            value={manualCode}
-                            onChange={(e) => setManualCode(e.target.value.toUpperCase())}
-                            className="flex-1 border p-2"
-                            style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb', textTransform: 'uppercase' }}
-                            placeholder="AUTO-GENERATE"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setManualCode(generateCodePrefix(codeKind))}
-                            className="px-2 border border-black shrink-0"
-                            style={{ fontFamily: '"Futura PT Book"', fontSize: '10px' }}
-                          >
-                            GEN
-                          </button>
-                        </div>
-                      </label>
-                      <label style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', display: 'block' }}>
-                        {codeKind === 'gift' ? 'VALUE (E.G. 50 OR 50.00)' : 'VALUE (E.G. 15 FOR 15%)'}
-                        <input
-                          value={codeValue}
-                          onChange={(e) => setCodeValue(e.target.value)}
-                          className="mt-1 w-full border p-2"
-                          style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb' }}
-                        />
-                      </label>
-                      <label style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', display: 'block' }}>
-                        MAX USES (BLANK = UNLIMITED)
-                        <input
-                          value={codeMaxUses}
-                          onChange={(e) => setCodeMaxUses(e.target.value.replace(/\D/g, ''))}
-                          className="mt-1 w-full border p-2"
-                          style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb' }}
-                        />
-                      </label>
-                      <label style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', display: 'block' }}>
-                        EXPIRES (OPTIONAL)
-                        <input
-                          type="date"
-                          value={codeExpires}
-                          onChange={(e) => setCodeExpires(e.target.value)}
-                          className="mt-1 w-full border p-2"
-                          style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb' }}
-                        />
-                      </label>
-                      <label style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', display: 'block' }}>
-                        NOTE (INTERNAL)
-                        <input
-                          value={codeNote}
-                          onChange={(e) => setCodeNote(e.target.value.toUpperCase())}
-                          className="mt-1 w-full border p-2"
-                          style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb', textTransform: 'uppercase' }}
-                        />
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const raw = codeValue.trim();
-                          if (!raw) return;
-                          const valueLabel =
-                            codeKind === 'gift'
-                              ? (raw.startsWith('$') ? raw : `$${raw}`)
-                              : (raw.includes('%') ? raw : `${raw}%`);
-                          const maxU = codeMaxUses.trim() ? parseInt(codeMaxUses, 10) : null;
-                          const codeStr = (manualCode.trim() || generateCodePrefix(codeKind)).toUpperCase();
-                          const row: BrandPromoCode = {
-                            id: `code-${Date.now()}`,
-                            kind: codeKind,
-                            code: codeStr,
-                            valueLabel,
-                            maxUses: maxU != null && !Number.isNaN(maxU) ? maxU : null,
-                            uses: 0,
-                            expiresAt: codeExpires.trim() || null,
-                            createdAt: new Date().toISOString(),
-                            active: true,
-                            note: codeNote.trim() || undefined,
-                          };
-                          appendBrandPromoCode(row);
-                          setManualCode('');
-                          setCodeValue('');
-                          setCodeMaxUses('');
-                          setCodeExpires('');
-                          setCodeNote('');
-                          refreshCodes();
-                        }}
-                        className="w-full py-2 border border-black"
-                        style={{ ...pageActionButtonStyle, marginTop: '4px' }}
-                      >
-                        SAVE CODE
-                      </button>
-                    </div>
-                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>TRACK USAGE</h3>
-                    {promoCodes.length === 0 ? (
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>NO CODES YET.</p>
-                    ) : (
-                      <div className="space-y-2" style={{ maxHeight: '220px', overflowY: 'auto' }}>
-                        {promoCodes
-                          .slice()
-                          .reverse()
-                          .map((c) => (
-                            <div
-                              key={c.id}
-                              className="border border-gray-200 p-3"
-                              style={{ backgroundColor: 'rgba(255,255,255,0.9)' }}
-                            >
-                              <div className="flex justify-between items-start gap-2">
-                                <div className="min-w-0">
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', margin: 0 }}>
-                                    {c.code}
-                                  </p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 0 0' }}>
-                                    {c.kind === 'gift' ? 'GIFT CARD' : 'DISCOUNT'} · {c.valueLabel}
-                                  </p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '4px 0 0 0' }}>
-                                    USES: {c.uses}
-                                    {c.maxUses != null ? ` / ${c.maxUses}` : ' / ∞'}
-                                    {c.expiresAt ? ` · EXP ${c.expiresAt}` : ''}
-                                  </p>
-                                  {c.note && (
-                                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '4px 0 0 0' }}>{c.note}</p>
-                                  )}
-                                </div>
-                                <div className="flex flex-col gap-1 shrink-0">
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      if (c.maxUses != null && c.uses >= c.maxUses) return;
-                                      updateBrandPromoCode(c.id, { uses: c.uses + 1 });
-                                      refreshCodes();
-                                    }}
-                                    className="px-2 py-1 text-[10px] border"
-                                    style={{ fontFamily: '"Futura PT Book"', borderColor: '#000' }}
-                                  >
-                                    +1 USE
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      updateBrandPromoCode(c.id, { active: !c.active });
-                                      refreshCodes();
-                                    }}
-                                    className="px-2 py-1 text-[10px]"
-                                    style={{
-                                      fontFamily: '"Futura PT Book"',
-                                      backgroundColor: c.active ? '#f3f4f6' : '#EB1C24',
-                                      color: c.active ? '#000' : '#fff',
-                                      border: '1px solid #000',
-                                    }}
-                                  >
-                                    {c.active ? 'DEACTIVATE' : 'ACTIVATE'}
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                      </div>
-                    )}
-                  </>
+                {activeTab === 'ALERTS' && (
+                  <BrandAlertsPanel
+                    ref={brandAlertsPanelRef}
+                    onStatsChange={onAlertsStats}
+                    onSendFooterState={setAlertsSendFooter}
+                  />
                 )}
                 {activeTab === 'ANALYTICS' && (
                   <>
@@ -527,7 +823,18 @@ export default function AdminBrand() {
                         {analyticsSummary.recentEvents.length === 0 ? (
                           <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080', margin: 0, textTransform: 'uppercase' }}>NO CLICKS RECORDED YET.</p>
                         ) : (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '140px', overflowY: 'auto', padding: '8px', boxSizing: 'border-box' }}>
+                          <div
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '6px',
+                              maxHeight: '140px',
+                              overflowY: 'auto',
+                              paddingTop: '6px',
+                              paddingBottom: '6px',
+                              boxSizing: 'border-box',
+                            }}
+                          >
                             {analyticsSummary.recentEvents.slice(0, 10).map((evt, i) => (
                               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '10px', fontFamily: '"Futura PT Book"', color: '#000', padding: '6px 8px', backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
                                 <span style={{ fontWeight: '500' }}>{PLATFORM_LABEL[evt.platform]}</span>
@@ -575,19 +882,37 @@ export default function AdminBrand() {
                     )}
                   </>
                 )}
+                </div>
               </div>
             </div>
+            </>
+            )}
 
-            <PageActionsBelowCard>
-              <button
-                type="button"
-                onClick={() => {}}
-                className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-                style={pageActionButtonStyle}
-              >
-                EXPORT ANALYTICS
-              </button>
-            </PageActionsBelowCard>
+            {activeTab !== 'CODES' &&
+              (activeTab === 'ALERTS' ? (
+                <div style={{ marginTop: '10px' }}>
+                  <button
+                    type="button"
+                    onClick={() => void brandAlertsPanelRef.current?.sendNotification()}
+                    disabled={alertsSendFooter.disabled}
+                    className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={pageActionButtonStyle}
+                  >
+                    {alertsSendFooter.label}
+                  </button>
+                </div>
+              ) : (
+                <PageActionsBelowCard>
+                  <button
+                    type="button"
+                    onClick={() => {}}
+                    className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                    style={pageActionButtonStyle}
+                  >
+                    EXPORT ANALYTICS
+                  </button>
+                </PageActionsBelowCard>
+              ))}
           </div>
         </div>
       </div>

@@ -9,9 +9,11 @@ interface DynamicCartIconProps {
   width?: number;
   height?: number;
   className?: string;
+  /** Top nav bars: nudge icon 2px left (active + inactive) */
+  variant?: 'default' | 'nav';
 }
 
-export default function DynamicCartIcon({ count, size = 23, width, height, className = "" }: DynamicCartIconProps) {
+export default function DynamicCartIcon({ count, size = 23, width, height, className = "", variant = 'default' }: DynamicCartIconProps) {
   const [showCartDropdown, setShowCartDropdown] = useState(false);
   const location = useLocation();
   
@@ -48,7 +50,14 @@ export default function DynamicCartIcon({ count, size = 23, width, height, class
           minHeight: iconHeight, 
           maxWidth: iconWidth, 
           maxHeight: iconHeight,
-          transform: count === 0 ? 'translateY(2px)' : 'translateY(1px)',
+          transform:
+            variant === 'nav'
+              ? count === 0
+                ? 'translateX(-2px) translateY(2px)'
+                : 'translateX(-2px) translateY(1px)'
+              : count === 0
+                ? 'translateY(2px)'
+                : 'translateY(1px)',
           zIndex: 10
         }}
         onClick={(e) => {

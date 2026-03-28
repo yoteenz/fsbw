@@ -357,8 +357,23 @@ export default function AddToListModal({
           </p>
         )}
 
-        {/* Save & Cancel */}
+        {/* Primary left, cancel right */}
         <div className="flex space-x-3">
+          <button
+            onClick={isCreatingNewList ? handleCreateNewListSubmit : handleSave}
+            className="flex-1 py-2 px-4 border border-black font-medium hover:bg-gray-50"
+            style={{
+              borderWidth: '1.3px',
+              fontSize: '11px',
+              fontFamily: '"Futura PT Medium"',
+              backgroundColor: '#FFFFFF',
+              color: '#EB1C24',
+              textTransform: 'uppercase',
+              cursor: 'pointer'
+            }}
+          >
+            {isCreatingNewList ? 'Create' : 'Save'}
+          </button>
           <button
             onClick={() => {
               if (isCreatingNewList) {
@@ -378,21 +393,6 @@ export default function AddToListModal({
             }}
           >
             Cancel
-          </button>
-          <button
-            onClick={isCreatingNewList ? handleCreateNewListSubmit : handleSave}
-            className="flex-1 py-2 px-4 border border-black font-medium hover:bg-gray-50"
-            style={{
-              borderWidth: '1.3px',
-              fontSize: '11px',
-              fontFamily: '"Futura PT Medium"',
-              backgroundColor: '#FFFFFF',
-              color: '#EB1C24',
-              textTransform: 'uppercase',
-              cursor: 'pointer'
-            }}
-          >
-            {isCreatingNewList ? 'Create' : 'Save'}
           </button>
         </div>
       </div>

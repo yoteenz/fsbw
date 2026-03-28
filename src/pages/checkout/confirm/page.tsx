@@ -753,32 +753,8 @@ function CheckoutConfirmPage() {
     setShowMobileMenu(false);
   };
 
-  // Check if user is a premium member (uses effective subscription tier for admin override)
-  const isPremiumMember = (): boolean => {
-    if (!isSignedIn) return false;
-    try {
-      const currentUser = localStorage.getItem('currentUser');
-      if (currentUser) {
-        const user = JSON.parse(currentUser);
-        const effectiveTier = getEffectiveSubscriptionTier(user);
-        if (effectiveTier) return true;
-        if (user?.tier) {
-          const tier = user.tier.toUpperCase();
-          return tier === 'RED' || tier === 'GOLD' || tier === 'BLACK';
-        }
-      }
-    } catch (e) {
-      console.error('Error checking premium membership:', e);
-    }
-    return false;
-  };
-
   const handleHomeClick = () => {
-    if (isPremiumMember()) {
-      navigate('/');
-    } else {
-      navigate('/home/shop');
-    }
+    navigate('/lobby');
   };
 
   return (
@@ -881,23 +857,7 @@ function CheckoutConfirmPage() {
                   <>
                     <span 
                       style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                      onClick={() => {
-                      try {
-                        const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
-                        if (isSignedIn) {
-                          const currentUser = localStorage.getItem('currentUser');
-                          if (currentUser) {
-                            const user = JSON.parse(currentUser);
-                            const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
-                            navigate(isPremium ? '/' : '/home/shop');
-                            return;
-                          }
-                        }
-                        navigate('/home/shop');
-                      } catch {
-                        navigate('/home/shop');
-                      }
-                    }}
+                      onClick={() => navigate('/lobby')}
                     >
                       HOME &gt;
                     </span>{' '}
@@ -927,7 +887,7 @@ function CheckoutConfirmPage() {
               {/* Right side icons */}
               <div className="gap-5 flex absolute" style={{ right: '17px' }}>
                 <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-                  <DynamicCartIcon count={cartCount} width={22} height={19} />
+                  <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
                 </div>
                 <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <svg

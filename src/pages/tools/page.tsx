@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useMarbleStripSnapStep } from '../../hooks/useMarbleStripSnapStep';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { MouseEvent } from 'react';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
@@ -7,6 +8,8 @@ import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { clearAppAuth } from '../../utils/adminAuth';
+import type { CurrencyRatesRecord } from '../../utils/currencyFormat';
+import { formatPriceUsd } from '../../utils/currencyFormat';
 
 function ToolsPage() {
   const navigate = useNavigate();
@@ -160,9 +163,17 @@ function ToolsPage() {
     };
   }, []);
 
-  // Scroll state for gift card container
-  const [giftCardScroll, setGiftCardScroll] = useState(0);
+  // Gift card marble strip: measured snap (same as PDP similar / shop UNITS)
+  const [giftCardPage, setGiftCardPage] = useState(0);
+  const [giftCardSnapPx, setGiftCardStripViewportRef] = useMarbleStripSnapStep();
+  const giftCardPairCount = Math.ceil(giftCardProducts.length / 2);
+  const giftCardMaxPage = Math.max(0, giftCardPairCount - 1);
+  const giftCardScrollPx = -giftCardPage * giftCardSnapPx;
   const [isGiftCardDragging, setIsGiftCardDragging] = useState(false);
+
+  useEffect(() => {
+    setGiftCardPage((p) => Math.min(p, giftCardMaxPage));
+  }, [giftCardMaxPage]);
 
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -238,21 +249,10 @@ function ToolsPage() {
     };
   }, [currencyRates]);
 
-  // Format price with currency
-  const formatPrice = React.useCallback((price: number): { __html: string } => {
-    if (!price || isNaN(price)) {
-      const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
-      return { __html: currency.symbol + '0 ' + selectedCurrency };
-    }
-    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
-    const convertedPrice = price * currency.rate;
-    return {
-      __html: currency.symbol + convertedPrice.toLocaleString('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      }) + ' ' + selectedCurrency
-    };
-  }, [currencyRates, selectedCurrency]);
+  const formatPrice = React.useCallback(
+    (price: number) => formatPriceUsd(price, selectedCurrency, currencyRates as CurrencyRatesRecord),
+    [currencyRates, selectedCurrency]
+  );
 
   // Update active tab based on current route
   useEffect(() => {
@@ -323,35 +323,14 @@ function ToolsPage() {
 
   const handleGiftCardMouseUp = () => {
     setIsGiftCardDragging(false);
-    // Snap to nearest position (0, -71.3%, -142.6%, -213.9%)
-    const scrollPercent = Math.abs(giftCardScroll) / window.innerWidth;
-    if (scrollPercent < 0.3565) {
-      setGiftCardScroll(0);
-    } else if (scrollPercent < 1.0695) {
-      setGiftCardScroll(-window.innerWidth * 0.713);
-    } else if (scrollPercent < 1.7825) {
-      setGiftCardScroll(-window.innerWidth * 1.426);
-    } else {
-      setGiftCardScroll(-window.innerWidth * 2.139);
-    }
   };
 
   const handleGiftCardLeftArrow = () => {
-    setGiftCardScroll(0);
+    setGiftCardPage(0);
   };
 
   const handleGiftCardRightArrow = () => {
-    // Cycle through positions: 0 -> -71.3% -> -142.6% -> -213.9% -> 0
-    const scrollPercent = Math.abs(giftCardScroll) / window.innerWidth;
-    if (scrollPercent < 0.3565) {
-    setGiftCardScroll(-window.innerWidth * 0.713);
-    } else if (scrollPercent < 1.0695) {
-      setGiftCardScroll(-window.innerWidth * 1.426);
-    } else if (scrollPercent < 1.7825) {
-      setGiftCardScroll(-window.innerWidth * 2.139);
-    } else {
-      setGiftCardScroll(0);
-    }
+    setGiftCardPage((p) => (p >= giftCardMaxPage ? 0 : p + 1));
   };
 
   const handleAddToCart = (product: any, e?: MouseEvent<HTMLDivElement>) => {
@@ -526,7 +505,7 @@ function ToolsPage() {
             <p className="text-sm" style={{ fontFamily: '"Futura PT Book"' }}>
               <span 
                 style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/lobby')}
               >
                 HOME &gt;
               </span>{' '}
@@ -540,7 +519,7 @@ function ToolsPage() {
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
 <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-              <DynamicCartIcon count={cartCount} width={22} height={19} />
+              <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg
@@ -569,10 +548,11 @@ function ToolsPage() {
                 maxWidth: 'none', 
                 overflow: 'visible',
                 backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                minHeight: '560px'
+                minHeight: 'calc(100dvh - 80px)',
+                height: 'calc(100dvh - 80px)'
               }}
             >
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                 {/* Navigation Links */}
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                   <button
@@ -869,19 +849,22 @@ function ToolsPage() {
                   }}></div>
                   
                   {/* Scrolling Product Thumbnails Container */}
-                  <div style={{ 
-                    overflowX: 'hidden',
-                    width: '100%',
-                    position: 'relative',
-                    maxWidth: '100%'
-                  }}>
+                  <div
+                    ref={setGiftCardStripViewportRef}
+                    style={{
+                      overflowX: 'hidden',
+                      width: '100%',
+                      position: 'relative',
+                      maxWidth: '100%'
+                    }}
+                  >
                     <div 
                       style={{ 
                         display: 'flex', 
                         gap: '0',
-                        transform: `translateX(${giftCardScroll}px) translateY(-5px)`,
+                        transform: `translateX(${giftCardScrollPx}px) translateY(-5px)`,
                         transition: 'none',
-                        width: 'calc(400% - 20px)'
+                        width: `${giftCardPairCount * 100}%`
                       }}
                     >
                       {giftCardProducts.map((product, index) => (

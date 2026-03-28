@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useMarbleStripSnapStep } from '../../../hooks/useMarbleStripSnapStep';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -9,6 +10,17 @@ import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { trackActivity } from '../../../utils/activity';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { clearAppAuth } from '../../../utils/adminAuth';
+import {
+  marbleStripScrollRowStyle,
+  marbleStripCellOuter,
+  marbleStripCellBand,
+  marbleStripStarsRowStyle,
+  marbleStripNavRowStyle,
+  marbleStripNavArrowStyle,
+  marbleStripThumbWrap,
+  marbleStripThumbImg,
+  marbleStripTextCol,
+} from '../../../utils/marbleStripStyles';
 
 function SoftWaveSelection() {
   const navigate = useNavigate();
@@ -340,6 +352,8 @@ function SoftWaveSelection() {
   const [activeTab, setActiveTab] = useState('DETAILS');
   const [similarProductsScroll, setSimilarProductsScroll] = useState(0);
   const [recentlyViewedScroll, setRecentlyViewedScroll] = useState(0);
+  const [similarSnapPx, setSimilarStripViewportRef] = useMarbleStripSnapStep();
+  const [recentSnapPx, setRecentStripViewportRef] = useMarbleStripSnapStep();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
     const pathname = window.location.pathname;
@@ -634,7 +648,7 @@ function SoftWaveSelection() {
   };
 
   const handleSimilarProductsRightArrow = () => {
-    setSimilarProductsScroll(-window.innerWidth * 0.713);
+    setSimilarProductsScroll(-similarSnapPx);
   };
 
   const handleRecentlyViewedLeftArrow = () => {
@@ -642,7 +656,7 @@ function SoftWaveSelection() {
   };
 
   const handleRecentlyViewedRightArrow = () => {
-    setRecentlyViewedScroll(-window.innerWidth * 0.713);
+    setRecentlyViewedScroll(-recentSnapPx);
   };
 
   const getTotalPrice = () => {
@@ -887,23 +901,7 @@ function SoftWaveSelection() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => {
-                    try {
-                      const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
-                      if (isSignedIn) {
-                        const currentUser = localStorage.getItem('currentUser');
-                        if (currentUser) {
-                          const user = JSON.parse(currentUser);
-                          const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
-                          navigate(isPremium ? '/' : '/home/shop');
-                          return;
-                        }
-                      }
-                      navigate('/home/shop');
-                    } catch {
-                      navigate('/home/shop');
-                    }
-                  }}
+                    onClick={() => navigate('/lobby')}
                   >
                     HOME &gt;
                   </span>{' '}
@@ -931,7 +929,7 @@ function SoftWaveSelection() {
             </p>
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
               <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-                <DynamicCartIcon count={cartCount} width={22} height={19} />
+                <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg
@@ -2142,22 +2140,11 @@ width: 'clamp(230px, 57.5vw, 368px)',
             </div>
             
             {/* Content Area */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+            <div style={marbleStripNavRowStyle}>
               {/* Left Arrow */}
               <button 
                 onClick={handleSimilarProductsLeftArrow}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  cursor: 'pointer',
-                  padding: '5px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                  minHeight: '50px',
-                  transform: `translateX(10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                }}>
+                style={marbleStripNavArrowStyle('left', is3DView)}>
                 <img
                   src="/assets/NOIR/left-facing-arrow.svg"
                   alt="Left Arrow"
@@ -2196,63 +2183,52 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 }}></div>
                 
                 {/* Scrolling Product Thumbnails Container */}
-                <div style={{ 
+                <div
+                  ref={setSimilarStripViewportRef}
+                  style={{
                   overflowX: 'hidden',
                   width: '100%',
                   position: 'relative',
                   maxWidth: '100%'
-                }}>
-                  <div 
-                    style={{ 
-                      display: 'flex', 
-                      gap: '0',
-                      transform: `translateX(${similarProductsScroll}px) translateY(-15px)`,
-                      transition: 'none',
-                      width: 'calc(200% - 20px)'
-                    }}
-                  >
-                {/* Product 1 - BLANCO */}
-                <div 
-                  onClick={() => navigate('/straight/blanco')}
-                  style={{ 
-                    padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
-                    textAlign: 'center',
-                    transform: is3DView ? 'translateX(1px)' : 'translateX(-2.5px)',
-                    cursor: 'pointer'
-                  }}
+                }}
                 >
+                  <div style={marbleStripScrollRowStyle(similarProductsScroll)}>
+                {/* Product 1 - BEACH WAVE */}
+                <div onClick={() => navigate('/wavy/beach-wave')} style={marbleStripCellOuter}>
+                  <div style={marbleStripCellBand(is3DView)}>
+                    <div style={marbleStripThumbWrap(is3DView)}>
                   <img
-                    src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
-                    alt="BLANCO"
-                    style={{ 
-                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                      marginBottom: '10px',
-                      marginLeft: '10px'
-                    }}
+                    src={is3DView ? "/assets/BEACH WAVE FRONT.JPG" : "/assets/NOIR/wave-thumb.png"}
+                    alt="BEACH WAVE"
+                    style={marbleStripThumbImg(is3DView)}
                   />
+                    </div>
+                    <div style={marbleStripTextCol}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
-                    margin: '-10px 0 -3px 0',
+                    margin: '0 0 2px 0',
                     fontWeight: '500',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
+                    lineHeight: 1.05,
+                    minHeight: '22px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}>
-                    BLANCO
+                    BEACH WAVE
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
+                    margin: '2px 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
-                    24" RAW RUSSIAN
+                    24" RAW INDONESIAN
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2262,83 +2238,10 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
-                  }}
-                  dangerouslySetInnerHTML={formatPrice(820)}
-                  />
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
-                    {[...Array(5)].map((_, index) => (
-                      <img
-                        key={index}
-                        src="/assets/NOIR/star-symbol.png"
-                        alt="Star Rating"
-                        style={{ 
-                          width: '10px', 
-                          height: '10px',
-                          filter: 'drop-shadow(0 0 0 1px black)',
-                          stroke: '1px black'
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Product 2 - SOFT WAVE */}
-                <div 
-                  onClick={() => navigate('/wavy/soft-wave')}
-                  style={{ 
-                    padding: '10px 10px 4px 10px',
-                    textAlign: 'center',
-                    transform: 'translateX(13px)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <img
-                    src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/wave-thumb.png"}
-                    alt="SOFT WAVE"
-                    style={{ 
-                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                      marginBottom: '10px',
-                      marginLeft: '10px'
-                    }}
-                  />
-                  <p style={{ 
-                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                    fontSize: '18px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '-10px 0 -3px 0',
-                    fontWeight: '500',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
-                  }}>
-                    SOFT WAVE
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium"',
-                    fontSize: '10px',
-                    color: '#EB1C24',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
-                  }}>
-                    24" RAW INDIAN
-                  </p>
-                  <p style={{ 
-                    fontFamily: '"Futura PT Medium"',
-                    fontSize: '12px',
-                    color: 'black',
-                    textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
-                    fontWeight: '500',
-                    lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}
                   dangerouslySetInnerHTML={formatPrice(760)}
                   />
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
+                  <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
                       <img
                         key={index}
@@ -2353,36 +2256,33 @@ width: 'clamp(230px, 57.5vw, 368px)',
                       />
                     ))}
                   </div>
+                    </div>
+                  </div>
                 </div>
                 
-                {/* Product 3 - NOIR */}
-                <div 
-                  onClick={() => navigate('/straight/noir')}
-                  style={{ 
-                    padding: '10px 10px 4px 10px',
-                    textAlign: 'center',
-                    transform: is3DView ? 'translateX(-9.3px)' : 'translateX(-8.3px)',
-                    cursor: 'pointer'
-                  }}
-                >
+                {/* Product 2 - NOIR */}
+                <div onClick={() => navigate('/straight/noir')} style={marbleStripCellOuter}>
+                  <div style={marbleStripCellBand(is3DView)}>
+                    <div style={marbleStripThumbWrap(is3DView)}>
                   <img
                     src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
                     alt="NOIR"
-                    style={{ 
-                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                      marginBottom: '10px',
-                      marginLeft: is3DView ? '10px' : '10px'
-                    }}
+                    style={marbleStripThumbImg(is3DView)}
                   />
+                    </div>
+                    <div style={marbleStripTextCol}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
-                    margin: '-10px 0 -3px 0',
+                    margin: '0 0 2px 0',
                     fontWeight: '500',
-                    transform: !is3DView ? 'translateX(10.5px)' : undefined
+                    lineHeight: 1.05,
+                    minHeight: '22px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}>
                     NOIR
                   </p>
@@ -2391,10 +2291,9 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
+                    margin: '2px 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}>
                     24" RAW CAMBODIAN
                   </p>
@@ -2406,11 +2305,10 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}
                   dangerouslySetInnerHTML={formatPrice(740)}
                   />
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10.5px)' : undefined }}>
+                  <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
                       <img
                         key={index}
@@ -2425,50 +2323,46 @@ width: 'clamp(230px, 57.5vw, 368px)',
                       />
                     ))}
                   </div>
+                    </div>
+                  </div>
                 </div>
                 
-                {/* Product 4 - OCEAN CURL */}
-                <div 
-                  onClick={() => navigate('/curly/ocean-curl')}
-                  style={{ 
-                    padding: '10px 10px 4px 10px',
-                    textAlign: 'center',
-                    transform: is3DView ? 'translateX(2.9px)' : 'translateX(7.7px)',
-                    cursor: 'pointer'
-                  }}
-                >
+                {/* Product 3 - SOFT CURL */}
+                <div onClick={() => navigate('/curly/soft-curl')} style={marbleStripCellOuter}>
+                  <div style={marbleStripCellBand(is3DView)}>
+                    <div style={marbleStripThumbWrap(is3DView)}>
                   <img
-                    src={is3DView ? "/assets/ocean curl thumbnail.png" : "/assets/NOIR/curl-thumb.png"}
-                    alt="OCEAN CURL"
-                    style={{ 
-                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                      marginBottom: '10px',
-                      marginLeft: is3DView ? '10px' : '10px'
-                    }}
+                    src={is3DView ? "/assets/soft curl thumbnail.png" : "/assets/NOIR/curl-thumb.png"}
+                    alt="SOFT CURL"
+                    style={marbleStripThumbImg(is3DView)}
                   />
+                    </div>
+                    <div style={marbleStripTextCol}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
-                    margin: '-10px 0 -3px 0',
+                    margin: '0 0 2px 0',
                     fontWeight: '500',
-                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
+                    lineHeight: 1.05,
+                    minHeight: '22px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}>
-                    OCEAN CURL
+                    SOFT CURL
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
+                    margin: '2px 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84',
-                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}>
-                    24" RAW VIETNAMESE
+                    24" RAW FILIPINO
                   </p>
                   <p style={{ 
                     fontFamily: '"Futura PT Medium"',
@@ -2478,11 +2372,10 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84',
-                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}
                   dangerouslySetInnerHTML={formatPrice(780)}
                   />
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)' }}>
+                  <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
                       <img
                         key={index}
@@ -2496,6 +2389,75 @@ width: 'clamp(230px, 57.5vw, 368px)',
                         }}
                       />
                     ))}
+                  </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Product 4 - OCEAN CURL */}
+                <div onClick={() => navigate('/curly/ocean-curl')} style={marbleStripCellOuter}>
+                  <div style={marbleStripCellBand(is3DView)}>
+                    <div style={marbleStripThumbWrap(is3DView)}>
+                  <img
+                    src={is3DView ? "/assets/ocean curl thumbnail.png" : "/assets/NOIR/curl-thumb.png"}
+                    alt="OCEAN CURL"
+                    style={marbleStripThumbImg(is3DView)}
+                  />
+                    </div>
+                    <div style={marbleStripTextCol}>
+                  <p style={{ 
+                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                    fontSize: '18px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '0 0 2px 0',
+                    fontWeight: '500',
+                    lineHeight: 1.05,
+                    minHeight: '22px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    OCEAN CURL
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '10px',
+                    color: '#EB1C24',
+                    textTransform: 'uppercase',
+                    margin: '2px 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                  }}>
+                    24" RAW VIETNAMESE
+                  </p>
+                  <p style={{ 
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '12px',
+                    color: 'black',
+                    textTransform: 'uppercase',
+                    margin: '0 0 5px 0',
+                    fontWeight: '500',
+                    lineHeight: '0.84',
+                  }}
+                  dangerouslySetInnerHTML={formatPrice(780)}
+                  />
+                  <div style={marbleStripStarsRowStyle(is3DView)}>
+                    {[...Array(5)].map((_, index) => (
+                      <img
+                        key={index}
+                        src="/assets/NOIR/star-symbol.png"
+                        alt="Star Rating"
+                        style={{ 
+                          width: '10px', 
+                          height: '10px',
+                          filter: 'drop-shadow(0 0 0 1px black)',
+                          stroke: '1px black'
+                        }}
+                      />
+                    ))}
+                  </div>
+                    </div>
                   </div>
                 </div>
                   </div>
@@ -2562,22 +2524,11 @@ width: 'clamp(230px, 57.5vw, 368px)',
             </div>
             
             {/* Content Area */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+            <div style={marbleStripNavRowStyle}>
               {/* Left Arrow */}
               <button 
                 onClick={handleRecentlyViewedLeftArrow}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  cursor: 'pointer',
-                  padding: '5px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                  minHeight: '50px',
-                  transform: `translateX(10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                }}>
+                style={marbleStripNavArrowStyle('left', is3DView)}>
                 <img
                   src="/assets/NOIR/left-facing-arrow.svg"
                   alt="Left Arrow"
@@ -2616,49 +2567,39 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 }}></div>
                 
                 {/* Scrolling Product Thumbnails Container */}
-                <div style={{ 
+                <div
+                  ref={setRecentStripViewportRef}
+                  style={{
                   overflowX: 'hidden',
                   width: '100%',
                   position: 'relative',
                   maxWidth: '100%'
-                }}>
-                  <div 
-                    style={{ 
-                      display: 'flex', 
-                      gap: '0',
-                      transform: `translateX(${recentlyViewedScroll}px) translateY(-15px)`,
-                      transition: 'none',
-                      width: 'calc(200% - 20px)'
-                    }}
-                  >
-                {/* Product 1 - BEACH WAVE */}
-                <div 
-                  onClick={() => navigate('/wavy/soft-wave')}
-                  style={{ 
-                    padding: is3DView ? '10px 10px 4px 10px' : '10px 10px 4px 0px',
-                    textAlign: 'center',
-                    transform: is3DView ? 'translateX(1px)' : 'translateX(-2.5px)',
-                    cursor: 'pointer'
-                  }}
+                }}
                 >
+                  <div style={marbleStripScrollRowStyle(recentlyViewedScroll)}>
+                {/* Product 1 - BEACH WAVE */}
+                <div onClick={() => navigate('/wavy/soft-wave')} style={marbleStripCellOuter}>
+                  <div style={marbleStripCellBand(is3DView)}>
+                    <div style={marbleStripThumbWrap(is3DView)}>
                   <img
                     src={is3DView ? "/assets/NOIR/wave front.png" : "/assets/NOIR/wave-thumb.png"}
                     alt="SOFT WAVE"
-                    style={{ 
-                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                      marginBottom: '10px',
-                      marginLeft: '10px'
-                    }}
+                    style={marbleStripThumbImg(is3DView)}
                   />
+                    </div>
+                    <div style={marbleStripTextCol}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
-                    margin: '-10px 0 -3px 0',
+                    margin: '0 0 2px 0',
                     fontWeight: '500',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
+                    lineHeight: 1.05,
+                    minHeight: '22px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}>
                     SOFT WAVE
                   </p>
@@ -2667,10 +2608,9 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
+                    margin: '2px 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
                     24" RAW INDIAN
                   </p>
@@ -2682,11 +2622,10 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}
                   dangerouslySetInnerHTML={formatPrice(760)}
                   />
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
+                  <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
                       <img
                         key={index}
@@ -2701,36 +2640,33 @@ width: 'clamp(230px, 57.5vw, 368px)',
                       />
                     ))}
                   </div>
+                    </div>
+                  </div>
                 </div>
                 
                 {/* Product 2 - OCEAN CURL */}
-                <div 
-                  onClick={() => navigate('/curly/ocean-curl')}
-                  style={{ 
-                    padding: '10px 10px 4px 10px',
-                    textAlign: 'center',
-                    transform: 'translateX(13px)',
-                    cursor: 'pointer'
-                  }}
-                >
+                <div onClick={() => navigate('/curly/ocean-curl')} style={marbleStripCellOuter}>
+                  <div style={marbleStripCellBand(is3DView)}>
+                    <div style={marbleStripThumbWrap(is3DView)}>
                   <img
                     src={is3DView ? "/assets/ocean curl thumbnail.png" : "/assets/NOIR/curl-thumb.png"}
                     alt="OCEAN CURL"
-                    style={{ 
-                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                      marginBottom: '10px',
-                      marginLeft: '10px'
-                    }}
+                    style={marbleStripThumbImg(is3DView)}
                   />
+                    </div>
+                    <div style={marbleStripTextCol}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
-                    margin: '-10px 0 -3px 0',
+                    margin: '0 0 2px 0',
                     fontWeight: '500',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
+                    lineHeight: 1.05,
+                    minHeight: '22px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}>
                     OCEAN CURL
                   </p>
@@ -2739,10 +2675,9 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
+                    margin: '2px 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}>
                     24" RAW VIETNAMESE
                   </p>
@@ -2754,11 +2689,10 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10px)' : undefined
                   }}
                   dangerouslySetInnerHTML={formatPrice(780)}
                   />
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10px)' : undefined }}>
+                  <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
                       <img
                         key={index}
@@ -2773,36 +2707,33 @@ width: 'clamp(230px, 57.5vw, 368px)',
                       />
                     ))}
                   </div>
+                    </div>
+                  </div>
                 </div>
                 
                 {/* Product 3 - NOIR */}
-                <div 
-                  onClick={() => navigate('/straight/noir')}
-                  style={{ 
-                    padding: '10px 10px 4px 10px',
-                    textAlign: 'center',
-                    transform: is3DView ? 'translateX(-9.3px)' : 'translateX(-8.3px)',
-                    cursor: 'pointer'
-                  }}
-                >
+                <div onClick={() => navigate('/straight/noir')} style={marbleStripCellOuter}>
+                  <div style={marbleStripCellBand(is3DView)}>
+                    <div style={marbleStripThumbWrap(is3DView)}>
                   <img
                     src={is3DView ? "/assets/NOIR/noir front.png" : "/assets/NOIR/noir-thumb.png"}
                     alt="NOIR"
-                    style={{ 
-                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                      marginBottom: '10px',
-                      marginLeft: '10px'
-                    }}
+                    style={marbleStripThumbImg(is3DView)}
                   />
+                    </div>
+                    <div style={marbleStripTextCol}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
-                    margin: '-10px 0 -3px 0',
+                    margin: '0 0 2px 0',
                     fontWeight: '500',
-                    transform: !is3DView ? 'translateX(10.5px)' : undefined
+                    lineHeight: 1.05,
+                    minHeight: '22px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}>
                     NOIR
                   </p>
@@ -2811,10 +2742,9 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
+                    margin: '2px 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}>
                     24" RAW CAMBODIAN
                   </p>
@@ -2826,11 +2756,10 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84',
-                    transform: !is3DView ? 'translateX(10.5px)' : undefined
                   }}
                   dangerouslySetInnerHTML={formatPrice(740)}
                   />
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: !is3DView ? 'translateX(10.5px)' : undefined }}>
+                  <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
                       <img
                         key={index}
@@ -2845,36 +2774,33 @@ width: 'clamp(230px, 57.5vw, 368px)',
                       />
                     ))}
                   </div>
+                    </div>
+                  </div>
                 </div>
                 
                 {/* Product 4 - BLANCO */}
-                <div 
-                  onClick={() => navigate('/straight/blanco')}
-                  style={{ 
-                    padding: '10px 10px 4px 10px',
-                    textAlign: 'center',
-                    transform: is3DView ? 'translateX(2.9px)' : 'translateX(7.7px)',
-                    cursor: 'pointer'
-                  }}
-                >
+                <div onClick={() => navigate('/straight/blanco')} style={marbleStripCellOuter}>
+                  <div style={marbleStripCellBand(is3DView)}>
+                    <div style={marbleStripThumbWrap(is3DView)}>
                   <img
                     src={is3DView ? "/assets/NOIR/blanco front.png" : "/assets/NOIR/blanco-thumb.png"}
                     alt="BLANCO"
-                    style={{ 
-                        width: is3DView ? 'calc(100% - 24px)' : '100%', 
-                        height: is3DView ? 'calc(auto - 24px)' : 'auto',
-                      marginBottom: '10px',
-                      marginLeft: '10px'
-                    }}
+                    style={marbleStripThumbImg(is3DView)}
                   />
+                    </div>
+                    <div style={marbleStripTextCol}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
                     color: 'black',
                     textTransform: 'uppercase',
-                    margin: '-10px 0 -3px 0',
+                    margin: '0 0 2px 0',
                     fontWeight: '500',
-                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
+                    lineHeight: 1.05,
+                    minHeight: '22px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}>
                     BLANCO
                   </p>
@@ -2883,10 +2809,9 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     fontSize: '10px',
                     color: '#EB1C24',
                     textTransform: 'uppercase',
-                    margin: '0 0 5px 0',
+                    margin: '2px 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84',
-                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}>
                     24" RAW RUSSIAN
                   </p>
@@ -2898,11 +2823,10 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     margin: '0 0 5px 0',
                     fontWeight: '500',
                     lineHeight: '0.84',
-                    transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)'
                   }}
                   dangerouslySetInnerHTML={formatPrice(820)}
                   />
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: is3DView ? 'translateX(-0.5px)' : 'translateX(10px)' }}>
+                  <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
                       <img
                         key={index}
@@ -2917,6 +2841,8 @@ width: 'clamp(230px, 57.5vw, 368px)',
                       />
                     ))}
                   </div>
+                    </div>
+                  </div>
                 </div>
                   </div>
                 </div>
@@ -2925,18 +2851,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
               {/* Right Arrow */}
               <button 
                 onClick={handleRecentlyViewedRightArrow}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  cursor: 'pointer',
-                  padding: '5px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                  minHeight: '50px',
-                  transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                }}>
+                style={marbleStripNavArrowStyle('right', is3DView)}>
                 <img
                   src="/assets/NOIR/right-facing-arrow.svg"
                   alt="Right Arrow"

@@ -20,6 +20,14 @@ import {
   getAccessToken,
 } from '../../utils/api';
 import { syncProfileFromApi } from '../../utils/syncFromApi';
+import {
+  discountPromoCheckoutBlockReason,
+  findDiscountPromoByNormalizedCode,
+  loadBrandPromoCodes,
+  parseDiscountPercent,
+  recordBrandGeneratedDiscountOrderEvent,
+  updateBrandPromoCode,
+} from '../../utils/adminBrandCodes';
 
 function getCardBrandDisplay(fullNumber: string): string {
   const digits = fullNumber.replace(/\D/g, '');
@@ -168,6 +176,7 @@ function CheckoutPage() {
   const [showTermsRequiredModal, setShowTermsRequiredModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [checkoutNotice, setCheckoutNotice] = useState<{ title: string; message: string } | null>(null);
   const [selectedProcessing, setSelectedProcessing] = useState('standard');
   const [packageProtection, setPackageProtection] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState('');
@@ -203,6 +212,12 @@ function CheckoutPage() {
   const [discountCodeDisplay, setDiscountCodeDisplay] = useState('');
   const [discountCodeError, setDiscountCodeError] = useState('');
   const [appliedDiscount, setAppliedDiscount] = useState(0);
+  /** Admin Brand → CODES discount promo (% off eligible subtotal). Mutually exclusive with legacy flat codes. */
+  const [appliedBrandDiscountPromo, setAppliedBrandDiscountPromo] = useState<{
+    id: string;
+    code: string;
+    percent: number;
+  } | null>(null);
   const [isDiscountCodeFocused, setIsDiscountCodeFocused] = useState(false);
   
   // Referral code state
@@ -486,21 +501,30 @@ function CheckoutPage() {
   const handleStripeMembershipSubscribe = useCallback(async () => {
     const tierRaw = cartItems[0]?.subscriptionTier;
     if (!isSubscriptionTierId(tierRaw)) {
-      window.alert('SUBSCRIPTION TIER MISSING. RETURN TO REWARDS AND CHOOSE A TIER AGAIN.');
+      setCheckoutNotice({
+        title: 'SUBSCRIPTION',
+        message: 'SUBSCRIPTION TIER MISSING. RETURN TO REWARDS AND CHOOSE A TIER AGAIN.',
+      });
       return;
     }
     setStripeCheckoutLoading(true);
     try {
       const token = await getAccessToken();
       if (!token) {
-        window.alert('SIGN IN WITH YOUR SUPABASE ACCOUNT TO USE STRIPE SUBSCRIPTIONS.');
+        setCheckoutNotice({
+          title: 'SIGN IN REQUIRED',
+          message: 'SIGN IN WITH YOUR SUPABASE ACCOUNT TO USE STRIPE SUBSCRIPTIONS.',
+        });
         return;
       }
       trackActivity('membership_checkout_start', { tier: tierRaw });
       const url = await createStripeMembershipCheckoutSession(tierRaw, '/checkout/upgrade');
       window.location.assign(url);
     } catch (e) {
-      window.alert(e instanceof Error ? e.message : 'COULD NOT START CHECKOUT');
+      setCheckoutNotice({
+        title: 'CHECKOUT',
+        message: e instanceof Error ? e.message : 'COULD NOT START CHECKOUT',
+      });
     } finally {
       setStripeCheckoutLoading(false);
     }
@@ -519,6 +543,7 @@ function CheckoutPage() {
       setAppliedReferralCode('');
       setReferralDiscount(0);
       setAppliedDiscount(0);
+      setAppliedBrandDiscountPromo(null);
       setDiscountCode('');
       setDiscountCodeDisplay('');
       setDiscountCodeError('SPECIAL OFFERS CAN\'T BE COMBINED WITH VOUCHERS, DISCOUNT CODES, GIFT CARDS OR REFERRAL CODES.');
@@ -1328,7 +1353,7 @@ function CheckoutPage() {
       userSelectedDigitalCashRef.current = null;
       return;
     }
-    if (appliedReferralCode || appliedDiscount > 0) {
+    if (appliedReferralCode || appliedDiscount > 0 || appliedBrandDiscountPromo) {
       setAppliedGiftCardBalance(0);
       userSelectedDigitalCashRef.current = null;
       return;
@@ -1347,7 +1372,7 @@ function CheckoutPage() {
     } else {
       setAppliedGiftCardBalance(cappedBalance);
     }
-  }, [giftCardBalance, orderAmount, orderAmountExcludingSpecialOffer, hasSpecialOfferInCart, hasOnlySpecialOfferInCart, taxesProcessing, shippingHandling, selectedProcessing, packageProtection, isSubscriptionUpgrade, appliedReferralCode, appliedDiscount]);
+  }, [giftCardBalance, orderAmount, orderAmountExcludingSpecialOffer, hasSpecialOfferInCart, hasOnlySpecialOfferInCart, taxesProcessing, shippingHandling, selectedProcessing, packageProtection, isSubscriptionUpgrade, appliedReferralCode, appliedDiscount, appliedBrandDiscountPromo]);
   
   // Check if code is a referral code (matches referralCode or referralNumber so admin-created codes work)
   const isReferralCode = (code: string): boolean => {
@@ -1435,6 +1460,7 @@ function CheckoutPage() {
     if (!discountCode.trim()) {
       setDiscountCodeError('');
       setAppliedDiscount(0);
+      setAppliedBrandDiscountPromo(null);
       setAppliedReferralCode('');
       setReferralDiscount(0);
       return;
@@ -1450,6 +1476,7 @@ function CheckoutPage() {
     if (isSubscriptionUpgrade || isOnlyGiftCards) {
       setDiscountCodeError('SORRY, THIS CODE IS NOT VALID.');
       setAppliedDiscount(0);
+      setAppliedBrandDiscountPromo(null);
       setAppliedReferralCode('');
       setReferralDiscount(0);
       return;
@@ -1463,7 +1490,7 @@ function CheckoutPage() {
         setDiscountCodeError('SIGN IN OR CREATE AN ACCOUNT TO USE A REFERRAL CODE.');
         return;
       }
-      if (appliedDiscount > 0) {
+      if (appliedDiscount > 0 || appliedBrandDiscountPromo) {
         setDiscountCodeError('REFERRAL CODES CANNOT BE COMBINED WITH DISCOUNT CODES.');
         setAppliedReferralCode('');
         setReferralDiscount(0);
@@ -1523,6 +1550,7 @@ function CheckoutPage() {
       setReferralDiscount(20);
       setDiscountCodeError('');
       setAppliedDiscount(0);
+      setAppliedBrandDiscountPromo(null);
       return;
     }
     
@@ -1533,13 +1561,14 @@ function CheckoutPage() {
         setDiscountCodeError('GIFT CARDS CANNOT BE COMBINED WITH REFERRAL CODES.');
         return;
       }
-      if (appliedDiscount > 0) {
+      if (appliedDiscount > 0 || appliedBrandDiscountPromo) {
         setDiscountCodeError('GIFT CARDS CANNOT BE COMBINED WITH DISCOUNT CODES.');
         return;
       }
       // Gift card is handled separately via giftCardBalance
       setDiscountCodeError('PLEASE USE YOUR GIFT CARD BALANCE FROM YOUR ACCOUNT.');
       setAppliedDiscount(0);
+      setAppliedBrandDiscountPromo(null);
       setAppliedReferralCode('');
       setReferralDiscount(0);
       return;
@@ -1549,15 +1578,57 @@ function CheckoutPage() {
     if (appliedReferralCode) {
       setDiscountCodeError('DISCOUNT CODES CANNOT BE COMBINED WITH REFERRAL CODES.');
       setAppliedDiscount(0);
+      setAppliedBrandDiscountPromo(null);
       return;
     }
     if (appliedGiftCardBalance > 0) {
       setDiscountCodeError('DISCOUNT CODES CANNOT BE COMBINED WITH GIFT CARDS.');
       setAppliedDiscount(0);
+      setAppliedBrandDiscountPromo(null);
       return;
     }
     
-    // Try to validate as discount code
+    // Admin Brand → CODES: percent discount from generated codes
+    const brandPromo = findDiscountPromoByNormalizedCode(code);
+    if (brandPromo) {
+      const block = discountPromoCheckoutBlockReason(brandPromo);
+      if (block) {
+        const msg =
+          block === 'CODE INACTIVE'
+            ? 'THIS CODE IS INACTIVE.'
+            : block === 'CODE EXPIRED'
+              ? 'THIS CODE HAS EXPIRED.'
+              : block === 'CODE NO LONGER VALID'
+                ? 'THIS CODE CAN NO LONGER BE USED.'
+                : 'SORRY, THIS CODE IS NOT VALID.';
+        setDiscountCodeError(msg);
+        setAppliedDiscount(0);
+        setAppliedBrandDiscountPromo(null);
+        setAppliedReferralCode('');
+        setReferralDiscount(0);
+        return;
+      }
+      const pct = parseDiscountPercent(brandPromo.valueLabel);
+      if (pct == null) {
+        setDiscountCodeError('SORRY, THIS CODE IS NOT VALID.');
+        setAppliedDiscount(0);
+        setAppliedBrandDiscountPromo(null);
+        setAppliedReferralCode('');
+        setReferralDiscount(0);
+        return;
+      }
+      if (appliedGiftCardBalance > 0) {
+        setAppliedGiftCardBalance(0);
+      }
+      setAppliedBrandDiscountPromo({ id: brandPromo.id, code: brandPromo.code, percent: pct });
+      setAppliedDiscount(0);
+      setDiscountCodeError('');
+      setAppliedReferralCode('');
+      setReferralDiscount(0);
+      return;
+    }
+    
+    // Try to validate as built-in flat discount code
     const discountAmount = validateDiscountCode(code);
     
     if (discountAmount > 0) {
@@ -1565,19 +1636,20 @@ function CheckoutPage() {
       if (appliedGiftCardBalance > 0) {
         setAppliedGiftCardBalance(0);
       }
+      setAppliedBrandDiscountPromo(null);
       setAppliedDiscount(discountAmount);
       setDiscountCodeError('');
       setAppliedReferralCode('');
       setReferralDiscount(0);
     } else {
       setAppliedDiscount(0);
+      setAppliedBrandDiscountPromo(null);
       setDiscountCodeError('SORRY, THIS CODE IS NOT VALID.');
       setAppliedReferralCode('');
       setReferralDiscount(0);
     }
   };
   
-  const discount = appliedDiscount;
   // Gift card discount should NOT be applied to subscription upgrades. When applied, this is shown as "DIGITAL CASH" (account balance). This balance includes tier welcome discount (Silver $10, Red $40, Black $80) credited when the user reaches each spend tier. If a gift card code is applied instead, that replaces this line (label "GIFT CARD"); both cannot be applied together.
   const giftCardDiscount = isSubscriptionUpgrade ? 0 : appliedGiftCardBalance; // Automatically applied gift card balance (digital cash)
   // Voucher discount: one voucher at a time, cannot combine. Subtract add-on price for the single voucher (uses stored price or fallback so red (-$120) etc. always shows).
@@ -1610,6 +1682,24 @@ function CheckoutPage() {
     });
     return total;
   }, [voucherLineApplicable, appliedVoucherQuantities, cartItems]);
+
+  const brandDiscountAmount = useMemo(() => {
+    if (!appliedBrandDiscountPromo) return 0;
+    const eligible =
+      !hasSpecialOfferInCart || hasOnlySpecialOfferInCart
+        ? orderAmount
+        : orderAmountExcludingSpecialOffer;
+    const raw = (eligible * appliedBrandDiscountPromo.percent) / 100;
+    return Math.round(raw * 100) / 100;
+  }, [
+    appliedBrandDiscountPromo,
+    hasSpecialOfferInCart,
+    hasOnlySpecialOfferInCart,
+    orderAmount,
+    orderAmountExcludingSpecialOffer,
+  ]);
+
+  const discount = appliedDiscount + brandDiscountAmount;
   // When cart has special offer + other items, discount/referral/gift card apply only to the non–special-offer amount
   const { effectiveDiscount, effectiveReferralDiscount, effectiveGiftCardDiscount } = useMemo(() => {
     if (!hasSpecialOfferInCart || hasOnlySpecialOfferInCart) {
@@ -2011,23 +2101,7 @@ function CheckoutPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => {
-                      try {
-                        const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
-                        if (isSignedIn) {
-                          const currentUser = localStorage.getItem('currentUser');
-                          if (currentUser) {
-                            const user = JSON.parse(currentUser);
-                            const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
-                            navigate(isPremium ? '/' : '/home/shop');
-                            return;
-                          }
-                        }
-                        navigate('/home/shop');
-                      } catch {
-                        navigate('/home/shop');
-                      }
-                    }}
+                    onClick={() => navigate('/lobby')}
                   >
                     HOME &gt;
                   </span>{' '}
@@ -2057,7 +2131,7 @@ function CheckoutPage() {
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
               <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-                <DynamicCartIcon count={cartCount} width={22} height={19} />
+                <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg
@@ -2645,6 +2719,7 @@ function CheckoutPage() {
                         
                         setDiscountCodeError('');
                         setAppliedDiscount(0);
+                        setAppliedBrandDiscountPromo(null);
                         setAppliedReferralCode('');
                         setReferralDiscount(0);
                       }}
@@ -5657,6 +5732,34 @@ function CheckoutPage() {
                     }
                   }
                   
+                  // Admin Brand → CODES: record $ off from generated discount codes on confirmed checkout
+                  if (appliedBrandDiscountPromo && !isSubscriptionUpgrade) {
+                    try {
+                      const eligible =
+                        !hasSpecialOfferInCart || hasOnlySpecialOfferInCart
+                          ? orderAmount
+                          : orderAmountExcludingSpecialOffer;
+                      const raw = (eligible * appliedBrandDiscountPromo.percent) / 100;
+                      const discountUsd = Math.round(Math.min(raw, eligible) * 100) / 100;
+                      if (discountUsd > 0) {
+                        const list = loadBrandPromoCodes();
+                        const promo = list.find((c) => c.id === appliedBrandDiscountPromo.id);
+                        if (promo && promo.kind === 'discount') {
+                          updateBrandPromoCode(promo.id, { uses: (promo.uses ?? 0) + 1 });
+                          recordBrandGeneratedDiscountOrderEvent({
+                            orderId: `order-${nextOrderNumber}`,
+                            promoId: promo.id,
+                            code: promo.code,
+                            discountUsd,
+                            confirmedAt: new Date().toISOString(),
+                          });
+                        }
+                      }
+                    } catch (err) {
+                      console.error('Error recording brand discount order:', err);
+                    }
+                  }
+                  
                   // Create Route protection if package protection is selected (non-blocking)
                   if (packageProtection && !isSubscriptionUpgrade && !isOnlyDigitalProducts) {
                     try {
@@ -6117,21 +6220,8 @@ function CheckoutPage() {
             </p>
           </div>
 
-          {/* Buttons */}
+          {/* Buttons — primary left, dismiss right */}
           <div className="flex space-x-3">
-            <button
-              onClick={() => setShowTermsModal(false)}
-              className="flex-1 py-2 px-4 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
-              style={{
-                borderWidth: '1.3px',
-                fontSize: '11px',
-                fontFamily: '"Futura PT Medium"',
-                color: '#000000',
-                textTransform: 'uppercase'
-              }}
-            >
-              CLOSE
-            </button>
             <button
               onClick={() => {
                 setAgreeToTerms(true);
@@ -6148,6 +6238,19 @@ function CheckoutPage() {
               }}
             >
               ACCEPT
+            </button>
+            <button
+              onClick={() => setShowTermsModal(false)}
+              className="flex-1 py-2 px-4 border border-black bg-white font-medium hover:bg-gray-50 transition-colors"
+              style={{
+                borderWidth: '1.3px',
+                fontSize: '11px',
+                fontFamily: '"Futura PT Medium"',
+                color: '#000000',
+                textTransform: 'uppercase'
+              }}
+            >
+              CLOSE
             </button>
           </div>
         </div>
@@ -6237,7 +6340,19 @@ function CheckoutPage() {
       cancelText="CLOSE"
       messageTextTransform="uppercase"
     />
-    
+
+      <ConfirmationModal
+        isOpen={checkoutNotice !== null}
+        onClose={() => setCheckoutNotice(null)}
+        onConfirm={() => setCheckoutNotice(null)}
+        title={checkoutNotice?.title ?? ''}
+        message={checkoutNotice?.message ?? ''}
+        confirmText="OK"
+        cancelText=""
+        dataAttribute="checkout-notice"
+        messageTextTransform="none"
+      />
+
       {/* Sign Out Confirmation Modal */}
       <ConfirmationModal
       isOpen={showSignOutConfirm}

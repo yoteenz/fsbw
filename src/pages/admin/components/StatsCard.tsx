@@ -380,7 +380,7 @@ export default function StatsCard({ data, onCardClick, itemsMaxHeightPx }: Stats
           <div className="mt-1 overflow-hidden">
             <div
               ref={tiersRef}
-              className="pt-0.5 border-t border-gray-200 flex w-full flex-nowrap items-center gap-0.5 text-[7px] leading-tight overflow-hidden"
+              className="pt-0.5 border-t border-gray-200 flex w-full flex-nowrap items-center justify-between text-[7px] leading-tight overflow-x-auto scrollbar-hide"
               style={{ scrollBehavior: "auto" }}
             >
               {tiers.map((tier, idx) => {
@@ -396,7 +396,7 @@ export default function StatsCard({ data, onCardClick, itemsMaxHeightPx }: Stats
                 return (
                   <span
                     key={idx}
-                    className="min-w-0 flex-1 text-center font-futura uppercase whitespace-nowrap truncate"
+                    className="shrink-0 font-futura uppercase whitespace-nowrap"
                     style={{
                       fontWeight: '515',
                     }}

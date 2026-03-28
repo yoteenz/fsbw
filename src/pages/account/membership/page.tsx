@@ -492,6 +492,7 @@ function MembershipPage() {
   const [showCancelConfirmModal, setShowCancelConfirmModal] = useState(false);
   const [showLoyaltyRewards, setShowLoyaltyRewards] = useState(false);
   const [showBenefitsModal, setShowBenefitsModal] = useState(false);
+  const [redeemNoticeMessage, setRedeemNoticeMessage] = useState<string | null>(null);
 
   // Clear rewards card alerts when user visits rewards page (they've seen tier/subscription updates)
   useEffect(() => {
@@ -940,23 +941,7 @@ function MembershipPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => {
-                      try {
-                        const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
-                        if (isSignedIn) {
-                          const currentUser = localStorage.getItem('currentUser');
-                          if (currentUser) {
-                            const user = JSON.parse(currentUser);
-                            const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
-                            navigate(isPremium ? '/' : '/home/shop');
-                            return;
-                          }
-                        }
-                        navigate('/home/shop');
-                      } catch {
-                        navigate('/home/shop');
-                      }
-                    }}
+                    onClick={() => navigate('/lobby')}
                   >
                     HOME &gt;
                   </span>{' '}
@@ -986,7 +971,7 @@ function MembershipPage() {
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
               <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-                <DynamicCartIcon count={cartCount} width={22} height={19} />
+                <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg
@@ -1020,10 +1005,11 @@ function MembershipPage() {
                   maxWidth: 'none', 
                   overflow: 'visible',
                   backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                  minHeight: 'calc(100dvh - 160px)'
+                  minHeight: 'calc(100dvh - 160px)',
+                  height: 'calc(100dvh - 160px)'
                 }}
               >
-                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                 {/* Navigation Links */}
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                   <button
@@ -1374,7 +1360,9 @@ function MembershipPage() {
                                         rewardType: reward.type,
                                       });
                                       // Handle redemption logic here
-                                      alert(`Redeeming ${reward.detail} for ${reward.points.toLocaleString()} points`);
+                                      setRedeemNoticeMessage(
+                                        `Redeeming ${reward.detail} for ${reward.points.toLocaleString()} points`
+                                      );
                                     }
                                   }}
                                   disabled={!canRedeem}
@@ -2054,7 +2042,9 @@ fontFamily: '"Futura PT Book"',
                                             rewardType: reward.type,
                                           });
                                           // Handle redemption logic here
-                                          alert(`Redeeming ${reward.detail} for ${reward.points.toLocaleString()} points`);
+                                          setRedeemNoticeMessage(
+                                            `Redeeming ${reward.detail} for ${reward.points.toLocaleString()} points`
+                                          );
                                         }
                                       }}
                                       disabled={!canRedeem}
@@ -2688,6 +2678,18 @@ fontFamily: '"Futura PT Book"',
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="cancel-subscription"
+      />
+
+      <ConfirmationModal
+        isOpen={redeemNoticeMessage !== null}
+        onClose={() => setRedeemNoticeMessage(null)}
+        onConfirm={() => setRedeemNoticeMessage(null)}
+        title="REDEEM REWARD"
+        message={redeemNoticeMessage ?? ''}
+        confirmText="OK"
+        cancelText=""
+        dataAttribute="membership-redeem-notice"
+        messageTextTransform="none"
       />
 
     </div>

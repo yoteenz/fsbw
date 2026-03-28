@@ -204,7 +204,7 @@ export default function AdminMeetings() {
                 maxHeight: 'calc(100vh - 140px)',
               }}
             >
-              <div className="flex items-center justify-between -mt-1 pb-1 px-4 pt-4 flex-shrink-0" style={{ marginBottom: 0 }}>
+              <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4 flex-shrink-0" style={{ marginBottom: 0 }}>
                 <h2
                   className="flex-1"
                   style={{
@@ -276,8 +276,17 @@ export default function AdminMeetings() {
                 })}
               </div>
 
-              <div className="flex flex-col flex-1 min-h-0 overflow-hidden" style={{ padding: '8px', boxSizing: 'border-box' }}>
-                <div className="px-5 pb-2 flex-shrink-0">
+              <div
+                className="flex flex-col flex-1 min-h-0 overflow-hidden"
+                style={{
+                  paddingLeft: '20px',
+                  paddingRight: '20px',
+                  paddingTop: '2px',
+                  paddingBottom: '8px',
+                  boxSizing: 'border-box',
+                }}
+              >
+                <div className="pb-2 flex-shrink-0">
                   <input
                     type="date"
                     value={selectedDate}
@@ -296,10 +305,11 @@ export default function AdminMeetings() {
                   )}
                 </div>
 
-                <h3 className="px-5 flex-shrink-0" style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>
+                <h3 className="flex-shrink-0" style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>
                   {listTitle}
                 </h3>
-                <div className="flex-1 min-h-0 overflow-y-auto px-5 pb-2" style={{ paddingTop: '2px' }}>
+                <div className="flex-1 min-h-0 flex flex-col" style={{ paddingBottom: '24px', minHeight: 0 }}>
+                  <div className="flex-1 min-h-0 overflow-y-auto" style={{ paddingTop: '2px' }}>
                   {mergedMeetings.length === 0 ? (
                     <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080', textAlign: 'center', padding: '16px' }}>
                       NO MEETINGS IN THIS RANGE.
@@ -379,10 +389,11 @@ export default function AdminMeetings() {
                     })
                   )}
                 </div>
+                </div>
 
                 <div
                   className="flex-shrink-0"
-                  style={{ borderTop: '1px solid #e5e7eb', marginTop: '8px', paddingTop: '12px', marginLeft: '12px', marginRight: '12px', paddingBottom: '4px' }}
+                  style={{ borderTop: '1px solid #e5e7eb', marginTop: '8px', paddingTop: '12px', paddingBottom: '4px' }}
                 >
                   <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '10px' }}>QUICK SCHEDULE</h3>
                   <div className="grid grid-cols-1 gap-3">

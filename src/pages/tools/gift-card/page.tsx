@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useMarbleStripSnapStep } from '../../../hooks/useMarbleStripSnapStep';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
@@ -6,6 +7,8 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { clearAppAuth } from '../../../utils/adminAuth';
+import type { CurrencyRatesRecord } from '../../../utils/currencyFormat';
+import { formatPriceUsd } from '../../../utils/currencyFormat';
 
 function GiftCardPage() {
   const navigate = useNavigate();
@@ -15,6 +18,8 @@ function GiftCardPage() {
   const [activeTab, setActiveTab] = useState('DETAILS');
   const [similarProductsScroll, setSimilarProductsScroll] = useState(0);
   const [recentlyViewedScroll, setRecentlyViewedScroll] = useState(0);
+  const [similarSnapPx, setSimilarStripViewportRef] = useMarbleStripSnapStep();
+  const [recentSnapPx, setRecentStripViewportRef] = useMarbleStripSnapStep();
   const [cartCount, setCartCount] = useState(() => {
     return parseInt(localStorage.getItem('cartCount') || '0');
   });
@@ -149,21 +154,10 @@ function GiftCardPage() {
     };
   }, [currencyRates]);
 
-  // Format price with currency
-  const formatPrice = React.useCallback((price: number): { __html: string } => {
-    if (!price || isNaN(price)) {
-      const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
-      return { __html: currency.symbol + '0 ' + selectedCurrency };
-    }
-    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
-    const convertedPrice = price * currency.rate;
-    return {
-      __html: currency.symbol + convertedPrice.toLocaleString('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      }) + ' ' + selectedCurrency
-    };
-  }, [currencyRates, selectedCurrency]);
+  const formatPrice = React.useCallback(
+    (price: number) => formatPriceUsd(price, selectedCurrency, currencyRates as CurrencyRatesRecord),
+    [currencyRates, selectedCurrency]
+  );
 
   const handleBack = () => {
     navigate(-1);
@@ -334,8 +328,7 @@ function GiftCardPage() {
   };
 
   const handleSimilarProductsRightArrow = () => {
-    // Move to next 2 products (scroll left) - snap to 71.3% of viewport width
-    setSimilarProductsScroll(-window.innerWidth * 0.713);
+    setSimilarProductsScroll(-similarSnapPx);
   };
 
   const handleRecentlyViewedLeftArrow = () => {
@@ -344,8 +337,7 @@ function GiftCardPage() {
   };
 
   const handleRecentlyViewedRightArrow = () => {
-    // Move to next 2 products (scroll left) - snap to 71.3% of viewport width
-    setRecentlyViewedScroll(-window.innerWidth * 0.713);
+    setRecentlyViewedScroll(-recentSnapPx);
   };
 
   const balanceOptions = [10, 15, 25, 50, 75, 100, 250, 500];
@@ -430,7 +422,7 @@ function GiftCardPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/build-a-wig')}
+                    onClick={() => navigate('/lobby')}
                   >
                     HOME &gt;
                   </span>{' '}
@@ -458,7 +450,7 @@ function GiftCardPage() {
             </p>
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
 <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-              <DynamicCartIcon count={cartCount} width={22} height={19} />
+              <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg
@@ -1001,19 +993,22 @@ function GiftCardPage() {
                     pointerEvents: 'none'
                   }}></div>
                   
-                  <div style={{ 
+                  <div
+                    ref={setSimilarStripViewportRef}
+                    style={{
                     overflowX: 'hidden',
                     width: '100%',
                     position: 'relative',
                     maxWidth: '100%'
-                  }}>
+                  }}
+                  >
                     <div 
                       style={{ 
                         display: 'flex', 
                         gap: '0',
                         transform: `translateX(${similarProductsScroll}px) translateY(-15px)`,
                         transition: 'none',
-                        width: 'calc(200% - 20px)'
+                        width: '200%'
                       }}
                     >
                       {/* Product 1 - BLANCO */}
@@ -1407,19 +1402,22 @@ function GiftCardPage() {
                     pointerEvents: 'none'
                   }}></div>
                   
-                  <div style={{ 
+                  <div
+                    ref={setRecentStripViewportRef}
+                    style={{
                     overflowX: 'hidden',
                     width: '100%',
                     position: 'relative',
                     maxWidth: '100%'
-                  }}>
+                  }}
+                  >
                     <div 
                       style={{ 
                         display: 'flex', 
                         gap: '0',
                         transform: `translateX(${recentlyViewedScroll}px) translateY(-15px)`,
                         transition: 'none',
-                        width: 'calc(200% - 20px)'
+                        width: '200%'
                       }}
                     >
                       {/* Product 1 - BEACH WAVE */}

@@ -361,24 +361,7 @@ export default function BrandCareersPage() {
                 <>
                   <span
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => {
-                      try {
-                        const signedIn = localStorage.getItem('isSignedIn') === 'true';
-                        if (signedIn) {
-                          const currentUser = localStorage.getItem('currentUser');
-                          if (currentUser) {
-                            const user = JSON.parse(currentUser);
-                            const isPremium =
-                              user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
-                            navigate(isPremium ? '/' : '/home/shop');
-                            return;
-                          }
-                        }
-                        navigate('/home/shop');
-                      } catch {
-                        navigate('/home/shop');
-                      }
-                    }}
+                    onClick={() => navigate('/lobby')}
                   >
                     HOME &gt;
                   </span>{' '}
@@ -398,7 +381,7 @@ export default function BrandCareersPage() {
             </p>
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
               <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-                <DynamicCartIcon count={cartCount} width={22} height={19} />
+                <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg
@@ -429,10 +412,11 @@ export default function BrandCareersPage() {
                 maxWidth: 'none',
                 overflow: 'visible',
                 backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                minHeight: '560px',
+                minHeight: 'calc(100dvh - 80px)',
+                height: 'calc(100dvh - 80px)',
               }}
             >
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
               <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                 {(['SHOP', 'TOOLS', 'BRAND'] as const).map((tab) => (
                   <button
@@ -830,7 +814,6 @@ export default function BrandCareersPage() {
                           style={checkoutInputStyle}
                           value={form.currentLocation}
                           onChange={(e) => setForm((f) => ({ ...f, currentLocation: e.target.value }))}
-                          placeholder="CITY, STATE OR REGION"
                         />
                       </label>
                       <label>
@@ -840,7 +823,6 @@ export default function BrandCareersPage() {
                           style={checkoutInputStyle}
                           value={form.linkedInUrl}
                           onChange={(e) => setForm((f) => ({ ...f, linkedInUrl: e.target.value }))}
-                          placeholder="HTTPS://"
                         />
                       </label>
                       <label>
@@ -850,7 +832,6 @@ export default function BrandCareersPage() {
                           style={checkoutInputStyle}
                           value={form.portfolioUrl}
                           onChange={(e) => setForm((f) => ({ ...f, portfolioUrl: e.target.value }))}
-                          placeholder="HTTPS://"
                         />
                       </label>
                       <label>
@@ -890,7 +871,6 @@ export default function BrandCareersPage() {
                           style={checkoutInputStyle}
                           value={form.yearsExperience}
                           onChange={(e) => setForm((f) => ({ ...f, yearsExperience: e.target.value }))}
-                          placeholder="E.G. 3+"
                         />
                       </label>
                       <label>

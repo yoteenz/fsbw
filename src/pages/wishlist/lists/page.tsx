@@ -209,23 +209,7 @@ export default function ViewListsPage() {
             <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               {showMobileMenu ? (
                 <>
-                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => {
-                    try {
-                      const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
-                      if (isSignedIn) {
-                        const currentUser = localStorage.getItem('currentUser');
-                        if (currentUser) {
-                          const user = JSON.parse(currentUser);
-                          const isPremium = user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium';
-                          navigate(isPremium ? '/' : '/home/shop');
-                          return;
-                        }
-                      }
-                      navigate('/home/shop');
-                    } catch {
-                      navigate('/home/shop');
-                    }
-                  }}>
+                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => navigate('/lobby')}>
                     HOME &gt;
                   </span>{' '}
                   <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>
@@ -250,7 +234,7 @@ export default function ViewListsPage() {
             </p>
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
               <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-                <DynamicCartIcon count={cartCount} width={22} height={19} />
+                <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg
@@ -276,17 +260,24 @@ export default function ViewListsPage() {
               borderWidth: '1.3px',
               minWidth: '100%',
               maxWidth: 'none',
-              overflow: 'hidden',
+              overflow: showMobileMenu ? 'visible' : 'hidden',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              /* Same proportion as 520px on a 745px-tall viewport */
-              height: 'calc(100vh * 520 / 745)',
-              minHeight: 'calc(100vh * 520 / 745)',
-              maxHeight: 'calc(100vh * 520 / 745)'
+              ...(showMobileMenu
+                ? {
+                    minHeight: 'calc(100dvh - 80px)',
+                    height: 'calc(100dvh - 80px)',
+                  }
+                : {
+                    /* Same proportion as 520px on a 745px-tall viewport */
+                    height: 'calc(100vh * 520 / 745)',
+                    minHeight: 'calc(100vh * 520 / 745)',
+                    maxHeight: 'calc(100vh * 520 / 745)',
+                  }),
             }}
           >
             {showMobileMenu ? (
               /* Full menu - same as wishlist */
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                   {(['SHOP', 'TOOLS', 'BRAND'] as const).map((tab) => (
                     <button

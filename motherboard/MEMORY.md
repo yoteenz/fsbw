@@ -2493,3 +2493,1210 @@ Summary: **`npm run build`** on Vercel failed with **TS2367** (**`adminTrackingS
 
 - **Fixes:** **`fillTrackingDraftFromOrder`** — drop string compare; use **`!= null`** and **`!Number.isNaN(Number(...))`** before clamping. **`orderTracking.ts`** — remove unused **`USPS_RE`**; **`findIndex`** callback uses **`(o) => (o as { id?: string })?.id === orderId`**.
 - **Files:** **`src/pages/admin/revenue/page.tsx`**, **`src/utils/orderTracking.ts`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Account load gift card (Add funds) UI + admin barcode codes
+
+Summary: User wanted **Account → Load gift card** reworked: remove **BACK TO ACCOUNT**; **ADD FUNDS** as red section header with gray bottom rule and **red close (X)** to **`/account`**; hero image **`/assets/load-card.png`**; **SUBMIT CODE** below the main card with **red text / white background / black border** (shared **`pageActionButtonStyle`**); **REMAINING BALANCE** → **CURRENT BALANCE**; barcode entry as **three square (no radius) uppercase segment inputs per row** (XXXX-XXXX-XXXX), three rows; top nav crumb red label **ADD FUNDS**.
+
+- **Redemption:** Barcodes resolve against **`adminBrandPromoCodes`** (**Admin → Brand → CODES**): **`kind === 'gift'`**, active, not expired, under **max uses**; **`valueLabel`** parsed for dollar credit; **`updateBrandPromoCode`** increments **`uses`**; user **`giftCardBalance`** + **`digitalCashHistory`** (**GIFT CARD BARCODE**) via **`currentUser`** / **`registeredUsers`**.
+
+- **`src/utils/adminBrandCodes.ts`:** **`generateGiftBarcode()`** (XXXX-XXXX-XXXX); **`generateCodePrefix('gift')`** uses it; **`normalizePromoCode`**, **`parseGiftCardDollars`**, **`findGiftPromoByNormalizedCode`**, **`giftPromoRedeemBlockReason`**.
+
+- **`src/pages/admin/brand/page.tsx`:** Gift code placeholder **XXXX-XXXX-XXXX**; **STATUS:** ACTIVE / INACTIVE / **FULLY REDEEMED** (gift max uses) / **MAX USES REACHED** (discount).
+
+- **Files:** **`load-card/page.tsx`**, **`adminBrandCodes.ts`**, **`admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Load card: brand header line, one row per barcode, concierge submit
+
+Summary: User asked to match **Brand / About** header divider (**`#e5e7eb`**, title then rule—not **`#9ca3af`** on one flex); drop colon on **CURRENT BALANCE**; restore **one full-width input per row** (3 rows) with **square corners** and **XXXX-XXXX-XXXX** formatting while typing; use **`public/assets/load-card.png`** via **`import.meta.env.BASE_URL`**-aware URL; **SUBMIT CODE** below the card with the same classes/styles as **Concierge → SUBMIT MESSAGE** (not **`PageActionsBelowCard`** / **`pageActionButtonStyle`**).
+
+- **Files:** **`src/pages/account/load-card/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Load card: fix PNG src, Futura Medium barcode label, placeholder gray
+
+Summary: **`loadCardPngUrl()`** (BASE_URL string concat) could yield bad URLs; image **`src`** now uses fixed **`/assets/load-card.png`** (same as **`public/assets/load-card.png`** / marble pattern). **ENTER BARCODE(S):** → **Futura PT Medium** 10px **`#808080`**; barcode inputs use **`.load-card-barcode-input::placeholder`** with **`#808080`** + Futura Medium uppercase.
+
+- **Files:** **`load-card/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Load card: balance amount 16px, tighter gap, no barcode placeholder
+
+Summary: Digital cash line **16px** (was 20px); **CURRENT BALANCE** bottom margin **2px** (was 8px, **−6px** gap to amount); barcode inputs **no** **`placeholder`**; removed unused **`load-card-barcode-input`** placeholder CSS.
+
+- **Files:** **`src/pages/account/load-card/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Load card: balance label sizes, barcode label, concierge button spacing
+
+Summary: User asked for **CURRENT BALANCE** / amount font sizes (stated: **18px** Covered By Your Grace, **20px** Futura Medium red), **centered**; **ENTER BARCODE(S):** in **gray `#808080` Futura PT Demi 10px** uppercase; spacing above **SUBMIT CODE** aligned with **Concierge** (outer column **`gap: 2px`**, main card **`paddingBottom: 16px`**, **`mb-2`**, button wrapper **`marginTop: 2px`** + **`translateY(-2px)`**, button **`max-w-m`**).
+
+- **Files:** **`src/pages/account/load-card/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Load card art at `public/load-card.png`, barcode block `marginTop`
+
+Summary: Gift card image is **`public/load-card.png`** served as **`/load-card.png`** (removed **`public/assets/load-card.png`**). **`img`** uses **`decoding="async"`**, **`objectFit: 'contain'`**. Barcode section wrapper **`marginTop: 12px`**; balance block **`marginBottom: 0`**.
+
+- **Files:** **`public/load-card.png`**, **`load-card/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Load card: bundled `load-card.png` import + 2 barcode rows
+
+Summary: User still saw a broken/missing hero image (public URL may not deploy). **`load-card.png`** copied to **`src/pages/account/load-card/load-card.png`** and imported in **`page.tsx`** (**`import loadCardImage from './load-card.png'`**) so Vite emits a stable URL. Only **one** hero **`img`** in the card (no duplicate). Barcode inputs reduced from **3** to **2** (**`useState(['', ''])`**, reset **`['', '']`**).
+
+- **Files:** **`src/pages/account/load-card/load-card.png`**, **`load-card/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Load card image: no halo / extra bands
+
+Summary: Removed **`boxShadow`** and **`objectFit: 'contain'`** on hero **`img`**; wrapper uses **`display: flex`**, **`justifyContent: center`**, **`lineHeight: 0`**; **`img`** **`margin`/`padding` 0**, **`border: none`** to drop perceived white bars above/below.
+
+- **Files:** **`load-card/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Load card image spacing −20px top/bottom
+
+Summary: ADD FUNDS header block **`marginBottom`** **12px → 0**; image wrapper **`marginTop: -8px`**, **`marginBottom`** **24px → 4px** (20px less space below; 20px less above vs prior **12px** gap plus **8px** upward shift).
+
+- **Files:** **`load-card/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Load card hero: further −30px above & below
+
+Summary: Image wrapper **`marginTop`** **−8px → −38px**, **`marginBottom`** **4px → −26px** (another **30px** tighter each side vs prior).
+
+- **Files:** **`load-card/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Load card barcode inputs: 36px like Account Settings
+
+Summary: Barcode fields use **`height: '36px'`**, **`padding: '8px'`** (same as **`inputBaseStyle`** on **`account/settings/page.tsx`**), replacing **`padding: '12px'`** with no fixed height.
+
+- **Files:** **`load-card/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Load card: balance block −15px
+
+Summary: Wrapper around **CURRENT BALANCE** + amount **`marginTop: '-15px'`** so both lines shift up together (tuned from **`-20px`**). Amount line **`margin: '-2px 0 35px 0'`** under **CURRENT BALANCE**, **`35px`** below **$… USD** before barcodes. Last barcode input **`marginBottom: '10px'`**.
+
+- **Files:** **`load-card/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Load card: flex column inner + barcode block no marginTop
+
+Summary: User saw prior spacing tweaks not sticking (possible **margin collapse**). Main card content wrapped in **`display: flex`**, **`flexDirection: column`** so vertical spacing between header / hero / balance / barcode is predictable. Barcode block **`marginTop: 12px`** removed (**`0`**, **`paddingTop: 0`**). Hero row **`alignSelf: center`**, **`maxWidth: 400px`**, **`flexShrink: 0`**.
+
+- **Files:** **`load-card/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin Brand CODES: COPY above +1 USE
+
+Summary: **TRACK USAGE** rows: **COPY** button above **+1 USE**; copies **`c.code`** via **`navigator.clipboard.writeText`** with **`textarea` + `execCommand` fallback**.
+
+- **Files:** **`admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Site-wide square form controls
+
+Summary: **`src/index.css`** after **`@tailwind utilities`**: **`border-radius: 0 !important`** on **`input`** (except **`checkbox`**, **`radio`**, **`range`**, **`hidden`**), **`textarea`**, **`select`**. **CHOOSE FILE** inner spans **`borderRadius: '4px'` → `0`** in **`accounting-report`**, **`leave-review-order`**, **`order-form`**, **`affiliate`** (debug banner left at **4px**). Toggle / status pills / progress bars / avatars unchanged.
+
+- **Files:** **`index.css`**, **`accounting-report/page.tsx`**, **`leave-review-order/page.tsx`**, **`order-form/page.tsx`**, **`affiliate/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin cards: 20px horizontal padding (match load gift card)
+
+**Context:** User wanted admin **tab content** (and related card interiors) to use the same **left/right inset as `/account/load-card`** (**20px** on the main white card), because inputs and text sat too close to the card edges.
+
+**Root cause:** Several admin tab scroll areas used **`className="px-5 pb-6"`** together with inline **`padding: '8px'`**, which **overrides** Tailwind horizontal padding so effective horizontal padding was **8px** instead of **20px**.
+
+**Changes:**
+- **Tab bodies:** Replaced conflicting shorthand with explicit **`paddingLeft` / `paddingRight: '20px'`**, **`paddingBottom: '24px'`** (former **`pb-6`**), and top padding **`2px`** or **`8px`** as before (**`brand`**, **`backend`**, **`reviews`**, **`pending`**, **`referrals`**, **`analytics`**, **`marketing`**).
+- **Meetings:** Main flex column under tabs uses **20px** horizontal padding; removed redundant **`px-5`** on nested blocks; **QUICK SCHEDULE** footer no longer uses extra **`marginLeft` / `marginRight: 12px`**.
+- **Audit trail list:** Same **20px** horizontal pattern; empty/loading copy **`px-5`**.
+- **Clients:** Client list scroll area uses **20px** padding instead of **20px margin + 8px padding**; client **details** wrapper **`px-4` → `px-5`**; invite history popup scroll **20px** horizontal.
+- **Card headers:** Concierge-style header rows **`px-4` → `px-5`** where they match the tabbed admin card pattern (**`brand`**, **`backend`**, **`clients`**, **`marketing`**, **`meetings`**, **`reviews`**, **`pending`**, **`analytics`**, **`referrals`**, **`revenue`** main + pending sub-card, **`accounting-report`**).
+- **Other admin forms:** **`notifications`**, **`users`** body/header/feedback margins aligned to **`px-5` / `mx-5`**.
+- **Nested “recent clicks” lists** (**`brand`**, **`analytics`**): dropped horizontal padding on the inner scroll so content stays at **20px** from the card (only vertical padding on the inner list).
+- **Brand alerts client picker portal** (**`BrandAlertsPanel`**): list area **20px** horizontal padding (full-screen overlay).
+
+**Files:** **`admin/brand/page.tsx`**, **`admin/backend/page.tsx`**, **`admin/reviews/page.tsx`**, **`admin/pending/page.tsx`**, **`admin/referrals/page.tsx`**, **`admin/analytics/page.tsx`**, **`admin/marketing/page.tsx`**, **`admin/meetings/page.tsx`**, **`admin/audit/page.tsx`**, **`admin/clients/page.tsx`**, **`admin/revenue/page.tsx`**, **`admin/revenue/accounting-report/page.tsx`**, **`admin/notifications/page.tsx`**, **`admin/users/page.tsx`**, **`admin/components/BrandAlertsPanel.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand CODES: remove +1 USE, add RESET USES
+
+**Context:** User wanted the **+1 USE** control removed from under **COPY** on **TRACK USAGE** rows, and a way to **zero usage** on a code (e.g. after testing load-card redemption, which increments **`uses`** in **`localStorage`** via **`updateBrandPromoCode`**).
+
+**Changes:** Removed **+1 USE** button. Added **RESET USES** (same column under **COPY**, before **DEACTIVATE**) calling **`updateBrandPromoCode(c.id, { uses: 0 })`** and **`refreshCodes()`**.
+
+- **Files:** **`admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Confirm popups: primary left, cancel / dismiss right
+
+**Context:** User wanted **CANCEL** (and equivalent dismiss actions) on the **right** in confirmation dialogs, including sign-out — site-wide consistency.
+
+**Changes:**
+- **`ConfirmationModal`:** Removed **`swapButtons`**; default layout is always **confirm (primary, red)** **left**, **cancel** **right**. All existing usages inherit this (sign-out, checkout validation, admin clients, etc.). Removed redundant **`swapButtons`** from **`settings`** (delete account) and **`lobby`** (upgrade).
+- **Other marble-style / paired actions:** **`AddToListModal`**, **`CreateNewListModal`** — **Save/Create** left, **Cancel** right. **`account/page.tsx`** — **RESET** / **APPROVE** left, **CANCEL** right. **`checkout/page.tsx`** terms — **ACCEPT** left, **CLOSE** right. **`account/shipping`** & **`account/payment`** add forms — **SAVE** left, **CANCEL** right (row layout; cancel styled black like modal dismiss). **`account/referrals`** invite modal — **CANCEL** aligned **right** below copy actions.
+
+- **Files:** **`components/ConfirmationModal.tsx`**, **`components/AddToListModal.tsx`**, **`components/CreateNewListModal.tsx`**, **`account/page.tsx`**, **`account/settings/page.tsx`**, **`account/shipping/page.tsx`**, **`account/payment/page.tsx`**, **`account/referrals/page.tsx`**, **`checkout/page.tsx`**, **`lobby/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand CODES: “RESET USES” → “RESET”
+
+Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET USES** to **RESET** (behavior unchanged: zeros **`uses`** for that code).
+
+- **Files:** **`admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand CODES: EXPIRES date input full width
+
+**CREATE CODE** **EXPIRES (OPTIONAL)** **`type="date"`** field now matches other inputs: label **`width: '100%'`**, input **`display: block`**, **`width` / `maxWidth: '100%'`**, **`boxSizing: 'border-box'`**, **`minWidth: 0`** (avoids browser default min-width on date inputs).
+
+- **Files:** **`admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Native alerts → marble ConfirmationModal (load card, checkout, membership)
+
+**Context:** User wanted **submit code / message popups** (e.g. load gift card) to match **other app popups** (marble **`ConfirmationModal`**). All **`alert()` / `window.alert()`** message-style notices in **`src`** were replaced; **native `confirm()`** in admin users/backend left unchanged (sync confirm flows).
+
+**Changes:**
+- **`ConfirmationModal`:** New prop **`messagePreserveLineBreaks`** — **`whiteSpace: 'pre-line'`** on the message, optional **scroll** (**`maxHeight` / `overflowY`**) for long multiline text.
+- **`account/load-card`:** **`loadCardNotice`** state + **`ConfirmationModal`** (**OK** only, **`cancelText=""`**): sign-in required ( **`afterClose`** → navigate sign-in), incomplete barcodes, errors / partial success / success; multiline error lists use **`preserveLineBreaks`**.
+- **`checkout/page.tsx`:** **`checkoutNotice`** for Stripe membership subscribe failures (tier missing, no token, catch); **`messageTextTransform="none"`** for possible mixed-case errors.
+- **`account/membership/page.tsx`:** **`redeemNoticeMessage`** for redeem placeholder feedback; **`messageTextTransform="none"`**.
+
+- **Files:** **`components/ConfirmationModal.tsx`**, **`account/load-card/page.tsx`**, **`checkout/page.tsx`**, **`account/membership/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin Brand CODES: TRACK USAGE styling & gift status copy
+
+**TRACK USAGE** rows: **COPY** / **RESET** label color **#000**; **COPIED** stays **#EB1C24**. **DEACTIVATE** (active state) background **#FFFFFF** (was gray). **GIFT CARD · $…** line: **Futura PT Medium**, **9px**, **#808080**, **uppercase** (matches **STATUS** line). **STATUS** for gifts with **maxUses**: exhausted → **REDEEMED** (dropped “FULLY”); partial with **uses > 0** → **`{uses}/{maxUses} REDEEMED`**; **uses === 0** → **ACTIVE**; unlimited → **ACTIVE**. Discount codes: partial → **`N/M USED`**, maxed → **MAX USES REACHED**.
+
+- **Files:** **`admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand CODES TRACK USAGE: red action labels + 10px gray lines
+
+**COPY**, **RESET**, **DEACTIVATE** (white background state): **Futura PT Medium**, **#EB1C24**, **uppercase**; **ACTIVATE** stays white on red. **GIFT CARD · …** and **STATUS:** lines: **9px → 10px**, still **#808080** / **Futura PT Medium**.
+
+- **Files:** **`admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand CODES: EXPIRES date input no horizontal overflow
+
+**EXPIRES (OPTIONAL)** `type="date"` was wider than sibling inputs (UA **`min-inline-size`**), causing horizontal scroll. Fixes: **`overflow-x-hidden`** on Brand tab content scroll; **CREATE CODE** form **`min-w-0 max-w-full`**; EXPIRES label + **`min-w-0`** wrapper with **`overflow-hidden`**; **`index.css`** rule **`input.admin-brand-expires-date[type="date"]`** with **`min-width` / `min-inline-size: 0 !important`**, full width, border-box.
+
+- **Files:** **`admin/brand/page.tsx`**, **`index.css`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand CODES: white toggles + ACTIVATE same as DEACTIVATE
+
+**CREATE CODE** **GIFT CARD** / **DISCOUNT** toggles: both use **#FFFFFF** background; selected still **#EB1C24** text + **1.3px** border, unselected **#808080** + **1px** border (removed red tint **`rgba(235,28,36,0.08)`**). **ACTIVATE** / **DEACTIVATE**: both **white** background, **#EB1C24** **Futura PT Medium** text, black border (ACTIVATE no longer red fill).
+
+- **Files:** **`admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Promo code expiry: MM-DD-YYYY storage & display
+
+**Brand promo `expiresAt`:** Saved as **MM-DD-YYYY** (from date input **`expiresAtFromDateInput`**). **TRACK USAGE** shows **`EXP MM-DD-YYYY`** via **`formatExpiresAtForDisplay`**. **`giftPromoRedeemBlockReason`** uses **`parseExpiresAtToEndOfDayLocal`** — supports new format and legacy **YYYY-MM-DD** in **`localStorage`**.
+
+- **Files:** **`utils/adminBrandCodes.ts`**, **`admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — NOIR “product shots” font vs other unit pages
+
+**Context:** User asked why **NOIR**’s **“product shots”** overlay text did not match other products and looked like the wrong font.
+
+**Root cause:** In **`src/index.css`**, the rule grouping **`.font-covered`**, **`.noir-text`**, **`p[class*="noir"]`**, and **`div[class*="noir"]`** applies **Covered By Your Grace** with **`!important`**. The NOIR overlay uses class **`noir-product-shots-label`**, whose attribute contains the substring **`noir`**, so it matched **`div[class*="noir"]`** and overrode the inline **Bohemy** stack. Other unit pages use overlay divs without **`noir`** in the class name, so they kept **Bohemy**.
+
+**Changes:** Added **`.noir-product-shots-label { font-family: "Bohemy", sans-serif !important; }`** immediately after that rule so the label matches Beach Wave and siblings. Updated NOIR inline **`fontFamily`** for the overlay from **`cursive`** to **`sans-serif`** to align with **`beach-wave/page.tsx`**.
+
+- **Files:** **`src/index.css`**, **`src/pages/straight/noir/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+- **Convention:** Layout/helper classes on the NOIR page that include **`noir`** in the token can still hit **`div[class*="noir"]`**; use a dedicated class + CSS exception when a control should **not** use Covered By Your Grace.
+
+---
+
+## 2026-03-28 — NOIR “product shots” font: specificity + class rename
+
+**Follow-up:** User reported **no visible change** after the first fix (**.noir-product-shots-label** with Bohemy **`!important`**).
+
+**Additional root cause:** **`.noir-product-shots-label`** alone has specificity **(0,1,0)**; **`div[class*="noir"]`** is **(0,1,1)** (element + attribute), so the Covered rule **still won** even though the override came later.
+
+**Final approach:** Renamed NOIR-only product-shots layout classes so the **`class`** string **does not contain the substring `noir`** (avoids **`div[class*="noir"]`** / **`p[class*="noir"]`** entirely): **`noir-product-shots-*` → `unit-pdp-product-shots-*`** in **`src/pages/straight/noir/page.tsx`** (scoped **`<style>`** + JSX). Removed the redundant **`div.noir-product-shots-label`** block from **`src/index.css`**.
+
+- **Files:** **`src/pages/straight/noir/page.tsx`**, **`src/index.css`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Promo reactivate: same calendar span as original expiry
+
+**Context:** User wanted **ACTIVATE** (after **DEACTIVATE**) to reset the validity window so it lasts the **same number of calendar days** as when the code was created (e.g. 2-day code → 2 days from reactivation). Codes **without** `expiresAt` stay unchanged except `active: true`.
+
+**Implementation:**
+- **`BrandPromoCode.expiresSpanCalendarDays`** (optional): calendar days from **local start-of-day** of `createdAt` to **local start-of-day** of the expiry date. Set on **SAVE CODE** when an expiry is present via **`computeExpiresSpanCalendarDays`**.
+- **`computeReactivationExpiryPatch`**: if `expiresAt` is set, uses stored span or infers it for legacy rows from `createdAt` + current `expiresAt`; sets new **`expiresAt`** to **reactivation day + span** (MM-DD-YYYY) and persists **`expiresSpanCalendarDays`**. **`admin/brand/page.tsx`** ACTIVATE calls this instead of only `{ active: true }`.
+
+- **Files:** **`src/utils/adminBrandCodes.ts`**, **`src/pages/admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — NOIR product shots: match other units’ image height
+
+**Context:** User asked why NOIR **product shot** images did not match the **height** of other product pages.
+
+**Cause:** NOIR used a **300px** viewport, **`h-full`** on images (height followed the row, not a fixed pixel size), and **no** **`paddingTop: 70px`** / **`alignItems: 'center'`** / **`height: '100%'`** on the row in the default (mobile) layout. A **1024px+** scoped **`<style>`** block had copied Beach Wave’s **310px / 290px / translateY(-55px)** values for large screens only, so NOIR stayed shorter on typical phone widths. Other units (e.g. Blanco, Beach Wave) set **310px** viewport, **70px** top padding, row **100%** height + centered alignment, and each image **`height` / `maxHeight: 290px`** + **`translateY(-55px)`** inline for **all** breakpoints.
+
+**Changes:** Removed the product-shots **`<style>`** block; aligned NOIR’s product-shots block to the same inline structure as the other unit pages; **“product shots”** overlay **`bottom: '-1px'`** like Beach Wave; tabs wrapper **`translateY(-20px)`** like other units (replacing **`-66px`**). Dropped **`unit-pdp-product-shots-*`** classes (no longer used).
+
+- **Files:** **`src/pages/straight/noir/page.tsx`**, **`src/index.css`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin Brand CODES: CREATE CODE below main card
+
+**Context:** User wanted the **SAVE CODE** / **CREATE CODE** form **not** inside the main brand card; it should **replace** the **EXPORT ANALYTICS** button position (below the card).
+
+**Changes:** **`CREATE CODE`** + full form + **SAVE CODE** moved into **`PageActionsBelowCard`**, wrapped in its own **`bg-white/60 backdrop-blur-sm`** bordered panel (same width as **`max-w-md`** column). When **`activeTab === 'CODES'`**, that panel shows; other tabs still show **EXPORT ANALYTICS**. Main card **CODES** tab now starts with **TRACK USAGE** only.
+
+- **Files:** **`src/pages/admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand CODES: expiry shows date only (no “EXP”)
+
+**Context:** User asked to drop the **EXP** label on each code row so the line shows only the end date (e.g. **03-28-2026**).
+
+**Changes:** **`src/pages/admin/brand/page.tsx`** — **TRACK USAGE** uses **` · ${formatExpiresAtForDisplay(c.expiresAt)}`** instead of **` · EXP ${...}`**.
+
+- **Files:** **`src/pages/admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — NOIR DETAILS tabs: align with other unit pages (DOM nesting)
+
+**Context:** After matching NOIR product shots to other units, **DETAILS / SHIPPING / …** tabs sat **too low** vs Blanco / Beach Wave.
+
+**Cause:** A **`</div>`** immediately after the product-shots **viewport** closed the **`mt-8 mb-6`** wrapper **before** the tabs block. On Blanco / Beach Wave, **tabs live inside** that same **`mt-8 mb-6`** div, which applies **`transform: translateY(-34px)`** to **both** the carousel and the tabs. NOIR’s tabs were **siblings** of that wrapper (outside it), so they **did not** get the **`-34px`** vertical pull.
+
+**Changes:** Removed the premature closing **`</div>`** so **tabs stay inside** **`mt-8 mb-6`**, and added a matching **`</div>`** after the tabs section (with the existing **`mt-6` / `mt-4`** closes) so the JSX tree stays balanced.
+
+- **Files:** **`src/pages/straight/noir/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin Brand CODES: toggle create panel (premium-style) + SAVE below card
+
+**Context:** User did not want **CREATE CODE** always visible in a card below the main card. They asked for a **toggle with close** (like the premium upgrade chart): a **CREATE CODE** button opens a frosted panel; **close** (`/assets/close-icon.svg` in header) collapses it; **SAVE CODE** sits **below** the toggled card, not inside it. **CODES** main card stays **TRACK USAGE** only.
+
+**Changes:** **`showCreateCodePanel`** state; reset when leaving **CODES** tab. **`PageActionsBelowCard`**: on **CODES**, closed → **CREATE CODE** + **EXPORT ANALYTICS**; open → panel (header + fields only) + **SAVE CODE** + **EXPORT ANALYTICS**. **`handleSavePromoCode`** **`useCallback`** for save logic.
+
+- **Files:** **`src/pages/admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Mobile menu: SIGN IN / OUT + socials aligned to NOIR pattern
+
+**Context:** User wanted **menu toggle** footers (**SIGN IN/OUT** + **`SocialMenuIcons`**) in the **same position** as on the **NOIR** product page; **Wishlist** and others had them **too high**.
+
+**Reference (NOIR):** Menu card **`minHeight` / `height: calc(100dvh - 80px)`**; inner column **`flex: 1`, `minHeight: 0`**; link list in a **`flex: 1` `overflowY: auto`** region; **SIGN IN/OUT** row **`marginTop: 'auto'`**; socials below.
+
+**Root causes elsewhere:** (1) Inner menu wrapper used fixed **`height: '490px'`** instead of **`flex: 1` / `minHeight: 0`**, so **`marginTop: 'auto'`** could not push the footer to the bottom of a taller card. (2) Many pages used **`minHeight: '560px'`** (or a short fixed main-card height while the menu was open) for the menu panel, so the footer sat at the bottom of a **short** box, not near the **viewport** bottom like NOIR. (3) **Wishlist**, **Shopping bag**, and **Wishlist lists** kept **`calc(100vh - 270px)`** (or list proportion) while the menu was open instead of expanding the menu card.
+
+**Changes:** Replaced **`paddingTop: '20px', height: '490px', position: 'relative'`** with **`flex: 1`, `minHeight: 0`** on the inner menu column across **~26** page files. **Wishlist**, **Shopping bag**, **Wishlist lists:** when **`showMobileMenu`**, card uses **`calc(100dvh - 80px)`** and **`overflow: visible`** (same idea as NOIR). Shop-style menus (**units**, **tools**, **products**, **brand**, **careers**): menu panel **`560px` → `calc(100dvh - 80px)`** + explicit **`height`**. Account-style menus (**account**, **orders**, **payment**, **shipping**, **reviews**, **notifications**, **load-card**, **leave-review-order**, **settings**, **referrals** inner menu, **concierge**, **affiliate**, **membership**): **`560px` or min-only** menu shells updated to **`calc(100dvh - 160px)`** + **`height`** where needed (**`-160px`** for account chrome). Left **560px** on non-menu main cards (e.g. reviews list shell, referrals main card, membership benefits modal, admin deleted).
+
+- **Files:** Many under **`src/pages/`** (see chat), **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand CODES: DISCOUNTS ledger + checkout admin discount codes
+
+**Context:** User removed gray **placeholder** text from the optional manual **CODE** field on **CREATE CODE**. Replaced **TOTAL REDEMPTIONS** tile with **DISCOUNTS**, showing total **USD** off from **admin-generated discount codes** applied on **confirmed checkouts** (not gift redemptions).
+
+**Implementation:**
+- **`adminBrandCodes`:** **`findDiscountPromoByNormalizedCode`**, **`parseDiscountPercent`**, **`discountPromoCheckoutBlockReason`**, ledger **`adminBrandGeneratedDiscountOrders`** with **`recordBrandGeneratedDiscountOrderEvent`**, **`sumBrandGeneratedDiscountUsd`**, **`CustomEvent('brandDiscountLedgerUpdated')`**.
+- **`checkout/page.tsx`:** **`appliedBrandDiscountPromo`** (% off eligible subtotal, same special-offer rules as other codes); validate/apply before legacy flat codes; on successful order (non-subscription), increment promo **`uses`** and append ledger row with **`discountUsd`**. Gift-card / referral / legacy discount interactions clear brand promo as needed.
+- **`admin/brand/page.tsx`:** Tile shows **`$` + formatted sum**; listens for ledger event; optional code input has **no** **`placeholder`**.
+
+- **Files:** **`src/utils/adminBrandCodes.ts`**, **`src/pages/checkout/page.tsx`**, **`src/pages/admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin Brand CODES: create replaces main card; no EXPORT on CODES
+
+**Context:** User wanted **EXPORT ANALYTICS** removed on the **CODES** tab. **CREATE CODE** should **replace the main brand card** (same idea as the subscription **premium upgrade chart**), not sit in **`PageActionsBelowCard`**.
+
+**Changes:** When **`activeTab === 'CODES'`**, a dedicated layout: same **`minHeight`** frosted card with **BRAND** header, **ACTIVE CODES** / **DISCOUNTS** tiles, tab row; body is either a full-width **CREATE CODE** button (**`flex-1`** center) or the **CREATE CODE** form with **close** + scroll; **SAVE CODE** sits **below** that card when the form is open. **TRACK USAGE** is **below** the card (marble background, not inside it). Other tabs keep the original single main card. **`PageActionsBelowCard`** **EXPORT ANALYTICS** only when **`activeTab !== 'CODES'`**.
+
+- **Files:** **`src/pages/admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Home shop UNITS mannequin size matches shop/units
+
+**Context:** On **`/home/shop`** (`ProductsPage`), unit mannequin thumbnails were **larger** than on **`/shop/units`** and **overflowed** the marble card because the carousel used the **mobile “pair” flex math** on all breakpoints (`flex` based on `ceil(n/2)` and a very wide inner track), so each cell was ~**half** the card width on desktop instead of **quarter** like **`products/units/page.tsx`**.
+
+**Changes:** **`src/pages/products/page.tsx`**: **`windowWidth`** + resize listener; **`isLargeUnitsCarousel`** (`> 1024`). **Desktop:** inner row **`width: calc(100% - 20px)`**, each product **`flex: 0 0 25%`**, row transform **`translateX` only** (no extra **`translateY(-5px)`**), item **`translateX(0)`** + **`translateY(-4px)`** like units; scroll strip **`marginTop: '-4px'`**. **Cart icon** positions use **`index * 25%`** on desktop. **Arrow / snap** logic for desktop: step **`window.innerWidth * 0.5`**, **`totalViews = ceil(n / 4)`**. **Mobile:** unchanged (paired columns + existing scroll).
+
+- **Files:** **`src/pages/products/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Home shop UNITS: in-cell cart icons + marble clip + measured desktop scroll
+
+**Context:** Follow-up: desktop mannequin scale change looked ineffective; user saw **~6 add-to-cart controls** (expected **2 visible** with the 2-up mental model). Root cause: a **full-width absolute overlay** positioned every product’s bag icon with **`index * 25%`** of the **viewport** — icons at **100% / 125%** still painted because the overlay used **`overflow: visible`**, so **all six** stacked in view. Overlay **`translateX`** also did not match **per-cell** thumbnail motion reliably.
+
+**Changes (same file):** Removed the **global Shopping Bag Icons** layer. Each **card-add / card-added** control is **inside** the product flex cell (**`position: absolute; top: -38px`**, even → **`left: 16px`**, odd → **`right: 14px`**) so it **scrolls with** the strip — **one button per mannequin**, only off-screen cells hidden by **`overflowX: 'hidden'`** on the marble card and the **`flex: 1`** track. Thumbnails: **`marginLeft/Right: auto`**, **`display: 'block'`**, **`boxSizing: 'border-box'`** so **90% width** doesn’t spill past the cell. Desktop arrow paging uses **`unitsStripRef`** + **`ResizeObserver`**: **`unitsDesktopStepRef`** = **`(scrollWidth - clientWidth) / (pages - 1)`** with fallback to **`0.5 * innerWidth`**.
+
+- **Files:** **`src/pages/products/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Home shop UNITS: NOIR 2D scroll + single add-to-cart by viewport center
+
+**Context:** User wanted **`/home/shop`** UNITS mannequin strip to **scroll like NOIR “Similar Products” (2D)** and **one fixed add-to-cart** (upper area) that targets **whichever unit is nearest the strip center** while scrolling—not per-cell buttons following each mannequin.
+
+**Changes (`products/page.tsx`):** Scroll step **`0.713 * innerWidth`**, same as NOIR 2D; **drag** horizontal on the flex row (`grab`/`grabbing`) with **snap** to nearest page index; **arrows** move by one page using the same step; **`maxScroll`** from **`ceil(n / perPage) - 1`** (`perPage` 4 desktop / 2 mobile). Inner row **`translateY(-15px)`** like similar products. **`unitsStripRef`** + **`[data-units-product-cell]`** + **`useLayoutEffect`** pick **`unitsActiveIndex`** (closest cell midpoint to strip horizontal center). **Single** card-add / card-added control **`position: absolute; top: 2px; right: 10px`** calls **`handleAddToCart(active)`**. Removed **`ResizeObserver`** desktop step ref. **`unitsScrollRef`** updated live during drag so **snap** uses the final offset.
+
+- **Files:** **`src/pages/products/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Home shop UNITS: show all 6 products in one row
+
+**Context:** User wanted the **UNITS** card on **`/home/shop`** to **display all six** unit products at once (no horizontal carousel).
+
+**Changes (`products/page.tsx`):** Removed **arrows**, **drag**, **`unitsScroll`**, and NOIR step/snap logic. Row uses **`flex: 1 1 0`**, **`minWidth: 0`** per cell so **six** columns share width; inner width **`calc(100% - 20px)`**. **`narrowUnitsRow`** (`windowWidth < 560`) tightens padding and type. **Center line**, static **add-to-cart**, and **`unitsActiveIndex`** (nearest strip center) kept.
+
+- **Files:** **`src/pages/products/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Nav HOME breadcrumb → `/lobby` (not shop or `/`)
+
+**Context:** User wanted **HOME** in the **top nav** (mobile menu breadcrumb and checkout confirm **HOME** button) to go to **`/lobby`**, not **`/home/shop`** or **`/`** (root redirects to **`/shop/units`**). **Wishlist lists** was called out.
+
+**Changes:** Replaced premium/standard **`try` / `navigate(isPremium ? '/' : '/home/shop')` / `navigate('/home/shop')`** handlers with **`navigate('/lobby')`** across matching shop/account/checkout/product nav pages. **Shopping bag** and **tools** HOME had used **`navigate('/')`** → **`/lobby`**. **Gift card** menu HOME **`/build-a-wig`** → **`/lobby`**. **Checkout confirm** **`handleHomeClick`** → **`/lobby`**; removed unused **`isPremiumMember`**. **Leave-review-order** HOME → **`/lobby`**. Unchanged: **SHOP &gt;** / back to **`/home/shop`** or **`/shop/units`**, lobby shop CTAs, **`/`** redirect in **App.tsx**.
+
+- **Files:** Many **`src/pages/**/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Nav bar cart icon: 2px left (active + inactive)
+
+**Context:** User asked to move the **active/inactive** nav **`DynamicCartIcon`** **2px left** on **all** top nav bars, without affecting cart icons in modals/sheets (e.g. **`width={28}`** rows).
+
+**Changes:** **`DynamicCartIcon`**: optional **`variant?: 'default' | 'nav'`**; **`variant="nav"`** applies **`translateX(-2px)`** combined with existing **`translateY`** for empty vs non-empty cart. Every top-nav usage with **`width={22} height={19}`** now passes **`variant="nav"`** (~45 page files). Larger **`DynamicCartIcon`** instances unchanged.
+
+- **Files:** **`src/components/DynamicCartIcon.tsx`**, many **`src/pages/**/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand expiry picker: true floating popup (not in-flow below field)
+
+**Context:** User wanted the **SELECT DATE** calendar to behave as a **popup overlay**, not as content **expanding below** the input in the form layout.
+
+**Changes:** **`BrandExpiresDatePicker`**: **`useLayoutEffect`** + **`updatePopoverPosition`** (`getBoundingClientRect` on trigger, **`position: fixed`** coords) so the portaled panel anchors to the button; **flip above** when near viewport bottom; **scroll/resize** (capture) + **`requestAnimationFrame`** reposition; **outside click** uses **`triggerRef`** + **`popoverRef`** (replaced broken **`wrapRef`**). Root wrapper no longer **`relative`** (only the trigger occupies layout). Stronger **`boxShadow`**, **`zIndex: 10000`**.
+
+- **Files:** **`src/components/BrandExpiresDatePicker.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand expiry calendar: day cells like cap selection (no gray boxes)
+
+**Context:** User wanted **no gray boxes** on calendar dates; **selected** day should use **red border**, **white** background, **red** text (aligned with product **cap** selection styling — Futura PT Medium, brand red).
+
+**Changes:** **`BrandExpiresDatePicker`** day buttons: removed **gray** borders (**`#e5e7eb`**) and **`hover:bg-gray-50`**; default days **transparent** border/background (**`1px solid transparent`** for stable layout). **Selected:** **`1.3px solid #EB1C24`**, **`#FFFFFF`** fill, **`#EB1C24`** text, **`Futura PT Medium` / `fontWeight: 500`**. **Today** (when not selected): **`1.3px`** red border only, transparent fill, black text.
+
+- **Files:** **`src/components/BrandExpiresDatePicker.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin Brand CODES: create flow replaces main card; TRACK USAGE hidden; red close icon
+
+**Context:** User reported **CREATE CODE** did not truly **replace** the main brand card (still saw **BRAND**, stats, tabs); **TRACK USAGE** was visible in the wrong place while creating; close should match **membership premium upgrade chart** (**red** icon), not black **`close-icon.svg`**.
+
+**Changes:** **`admin/brand/page.tsx`**: When **`activeTab === 'CODES'`** and **`showCreateCodePanel`**, render **only** a dedicated frosted card (same shell as premium chart: **`border`**, **`bg-white/60`**, **`minHeight`**, transition) with header **CREATE CODE** (**12px** red Futura) + **`additional-features.svg`** (**`createCodePanelCloseIcon`**, **20×20** like **`membership/page.tsx`**). Form in **`flex-1`** scroll; **SAVE CODE** in card footer. **TRACK USAGE** only with the BRAND / tiles / tabs list view (**`!showCreateCodePanel`**). Nested ternary parentheses fixed.
+
+- **Files:** **`src/pages/admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand expiry date picker: calendar centered in viewport
+
+**Context:** User wanted the **SELECT DATE** popover **centered in the viewport** instead of anchored to the trigger.
+
+**Changes:** **`BrandExpiresDatePicker`**: portaled panel uses **`position: fixed`**, **`top/left: 50%`**, **`transform: translate(-50%, -50%)`**; **`maxHeight: calc(100vh - 32px)`** + **`overflowY: auto`** for short viewports. Removed **`popoverPos`**, **`updatePopoverPosition`**, and **`useLayoutEffect`** scroll/resize positioning.
+
+- **Files:** **`src/components/BrandExpiresDatePicker.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin Brand: header CREATE CODE + dashboard opens create; close panel on save
+
+**Context:** User wanted **AdminHeader** to show **CREATE CODE** (not **BRAND**) while the create panel is open; **SAVE** should **close** the panel; entry from dashboard should feel like the **full create card** replacing the main brand UI (not stuck on overview/tabs).
+
+**Changes:** **`admin/brand/page.tsx`**: **`useLocation` / `useNavigate`**; effect reads **`location.state.openCreateCode`** → **`setActiveTab('CODES')`**, **`setShowCreateCodePanel(true)`**, **`replace`** with cleared state. **`AdminHeader`** **`title`** and **`onBack`**: when create panel open, title **CREATE CODE** and back **closes panel** (else **`history.back`**). **`handleSavePromoCode`** calls **`setShowCreateCodePanel(false)`** after save. Create card top row: **red X only** (no duplicate **CREATE CODE** next to header title). **`admin/dashboard/page.tsx`**: **BRAND** card navigates to **`/admin/brand`** with **`{ state: { openCreateCode: true } }`**.
+
+- **Files:** **`src/pages/admin/brand/page.tsx`**, **`src/pages/admin/dashboard/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin Brand TRACK USAGE: smaller action buttons + more gap
+
+**Context:** User wanted **COPY** / **RESET** / **DEACTIVATE** (and **ACTIVATE**) buttons **~20% smaller** with **more space** between them on the CODES **TRACK USAGE** list.
+
+**Changes:** **`admin/brand/page.tsx`**: column **`gap-1` → `gap-2.5`**; buttons **`text-[10px]` → `8px`**, padding **`px-2 py-1` (8×4px) → `6×3px`** (~80% scale), **`lineHeight: 1.2`**; borders stay **1px**.
+
+- **Files:** **`src/pages/admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand expiry picker: single highlight, clear keeps calendar open, today ring rules
+
+**Context:** User saw **two** dates emphasized (**selected** + **today** ring). Wanted **CLEAR DATE** to clear selection **without closing** the popover.
+
+**Changes:** **`BrandExpiresDatePicker`**: **`selectedParsed`** from **`parseIsoLocal(value.trim())`**; **`isSelected`** by **year/month/day** match. **Today** red outline only when **no selection** or that cell **is** the selected day. **CLEAR DATE** only **`onChange('')`**. Month nav: no **`hover:bg-gray-50`**. Day **`key={iso}`**.
+
+- **Files:** **`src/components/BrandExpiresDatePicker.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin Brand CODES layout: X + title in create card; buttons below card; TRACK USAGE inside card
+
+**Context:** User lost a clear **close** on create (**X**); did not want only a header-style icon row without **CREATE CODE** + **X**. **CREATE CODE** and **SAVE CODE** should sit **below** the frosted main card, not inside it. **TRACK USAGE** should live **inside** the CODES list card again, not on the marble below the card.
+
+**Changes:** **`admin/brand/page.tsx`**: **Create** mode — card header **`justify-between`**: **CREATE CODE** (**h2**, red Futura) + **`additional-features.svg`** close; form only inside card (**`maxHeight`** scroll); **`SAVE CODE`** in **`marginTop: 10px`** block **below** card. **CODES list** mode — **TRACK USAGE** + list in **`flex-1 min-h-0 overflow-hidden`** region inside the card; list uses **`flex-1 min-h-0 overflow-y-auto`**; **CREATE CODE** button **below** card (**`marginTop: 10px`**). Create card dropped tall **`minHeight`**.
+
+- **Files:** **`src/pages/admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin dashboard: BRAND card right of REFERRALS
+
+**Context:** User wanted **BRAND** and **REFERRALS** tiles swapped on the **2-column** dashboard grid so **BRAND** is **to the right** of **REFERRALS**.
+
+**Changes:** **`admin/dashboard/page.tsx`**: In **`statsData`**, **`REFERRALS`** entry now immediately precedes **`BRAND`** (same row: referrals left, brand right).
+
+- **Files:** **`src/pages/admin/dashboard/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Home shop UNITS card matches /shop/units (size, overflow, cart icons)
+
+**Context:** On **`/home/shop`** (products page), the **UNITS** marble card had **smaller** mannequins than **`/shop/units`**, **top clipping** on bag icons / art, and a **single** top-right add-to-cart instead of **per-product** placement like the units page.
+
+**Changes:** **`src/pages/products/page.tsx`**: Replaced the “all six equal flex columns + one active product cart + `translateY(-10px)`” layout with the **same structure as** **`src/pages/products/units/page.tsx`**: marble **`overflow: 'visible'`**; content row **`space-between`** + **left/right arrows** when **`unitsProducts.length >= 4`**; middle column **`overflow: 'visible'`**; **shopping bag overlay** per product with **`top: '-38px'`** and **`calc(index * 50% + unitsScroll …)`** (even/odd left/right offsets); inner track **`translateX(unitsScroll)`**; desktop row **`calc(100% - 20px)`** + **`flex: 0 0 25%`**; mobile **`calc(300% - 20px)`** + **`flex: 0 0 calc(100% / 6)`** for six items; cell **`translateX`/`translateY(-4px)`** and image **`marginLeft: '10px'`**; typography matches units (NOIR 19px / others 18px, detail 10px, price/caps 12px, gap 14px). **State:** **`unitsScroll`** + **`unitsInnerRowRef`**; **`handleUnitsLeftArrow` / `handleUnitsRightArrow`** with step **`strip.clientWidth * 0.5`** (desktop) or **`window.innerWidth * 0.713`** (mobile) and max from **`strip.clientWidth - inner.scrollWidth`**; resize **clamp** effect. Removed **`unitsActiveIndex`**, **`useLayoutEffect`** centering, and **`narrowUnitsRow`**.
+
+- **Files:** **`src/pages/products/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Home shop UNITS: revert arrows/unitsScroll; mirror similar-products strip (static row)
+
+**Context:** User clarified they **did not** want arrows, **`unitsScroll`**, or NOIR-style step/snap on the home UNITS card; prior instructions were to **remove** those and mirror the **similar products** strip **without** the carousel.
+
+**Changes:** **`src/pages/products/page.tsx`**: Removed **`unitsScroll`**, refs, clamp **`useEffect`**, and arrow handlers/buttons. UNITS uses a **static** centered strip: **`translateY(-15px)`** only on the row (like similar products), **`width: calc(100% - 20px)`**, six columns **`flex: 1 1 0`**, **`minWidth: 0`**. Bag icons **per cell** (**`top: -38px`**, even **`left: 16px`**, odd **`right: 16px`**). Marble **`overflow: 'visible'`**. Removed unused **`useRef`** import.
+
+- **Files:** **`src/pages/products/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Home/shop: BUNDLES, CLOSURES & FRONTALS marbles + /shop routes
+
+**Context:** User wanted **three** marble cards **below UNITS** on **`/home/shop`**, **same vertical spacing** as stacked marbles on **`/shop/units`** (**`marginTop` / `marginBottom` `20px`** per card). Each card (**BUNDLES**, **CLOSURES**, **FRONTALS**) shows **STRAIGHT / WAVY / CURLY** texture thumbnails (not individual unit names); every tile and the header navigate to **`/shop/bundles`**, **`/shop/closures`**, or **`/shop/frontals`** respectively (same destination per category).
+
+**Changes:** **`src/pages/products/page.tsx`**: Wrapped shop content in a **`transition-all`** parent; **`shopTextureStripItems`** + **`shopCategoryMarbleCards`**; three marbles after UNITS with headers and a **three-column** strip (images from units thumbs, **18px** Covered labels). **`src/pages/shop/category/page.tsx`**: shared minimal landing (roses, back to **`/home/shop`**, marble title) keyed by **`pathname`**. **`src/App.tsx`**: lazy **`ShopCategoryPage`** + routes **`/shop/bundles`**, **`/shop/closures`**, **`/shop/frontals`**.
+
+- **Files:** **`src/pages/products/page.tsx`**, **`src/pages/shop/category/page.tsx`**, **`src/App.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Home shop UNITS: match /shop/units cell size + native horizontal scroll
+
+**Context:** User wanted home **`/home/shop`** UNITS to look **exactly** like **`/shop/units`** product rows (same thumbnail scale, no huge **`flex: 1 1 0`** overflow), with **scroll** but **without** re-adding arrow buttons or **`unitsScroll`** / snap logic.
+
+**Changes:** **`src/pages/products/page.tsx`**: Duplicated **shop/units** row math — desktop inner row **`calc(100% - 20px)`**, **`flex: 0 0 25%`**, cell **`translateX`/`translateY(-4px)`**; mobile **`calc(600% - 20px)`** row with **`flex: 0 0 calc(100% / 6)`** so each slot width equals units **50%-of-200%** mobile cell. **`space-between`** + **hidden arrow-sized placeholders** (same transforms as units arrows) so the **strip width** matches units between-arrows. Scroll via **`overflowX: 'auto'`** (**`WebkitOverflowScrolling: 'touch'`**, **`overscrollBehaviorX: 'contain'`**) — no **`translateX`** on the row. Header **`marginBottom: '1px'`** like units. Per-cell bag icons unchanged.
+
+- **Files:** **`src/pages/products/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin Brand create panel: red X close (match subscription upgrade)
+
+**Context:** Continuation from prior work on admin **Brand** create-code panel. The close control still used **`additional-features.svg`** (diamond / “header” mark). User wanted the same **red X** as the **subscription / membership upgrade** close.
+
+**Changes:** **`src/pages/admin/brand/page.tsx`**: Removed **`createCodePanelCloseIcon`** import from **`additional-features.svg`**. Close button **`img`** now **`src="/assets/close-icon.svg"`** with **`filter: invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)`** (same red treatment as membership tier-benefits close). Kept **20×20** and existing **`aria-label`**.
+
+- **Files:** **`src/pages/admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand expiry picker: CLEAR DATE without closing (stopPropagation on portal)
+
+**Context:** User reported **CLEAR DATE** on the branded expiration calendar still **closed** the popover; it should only **`onChange('')`** and leave the calendar open.
+
+**Changes:** **`BrandExpiresDatePicker`**: The dialog is portaled to **`document.body`**. The global **`mousedown`** outside handler could still treat some inside clicks as outside (e.g. target/ref edge cases). On the **popover root** (the element with **`popoverRef`**), added **`onPointerDown` + `onMouseDown`** with **`stopPropagation()`** so those events never bubble to **`document`**, while outside clicks still hit **`document`** and close as before. **CLEAR DATE** remains **`onChange('')`** only (no **`setOpen(false)`**).
+
+- **Files:** **`src/components/BrandExpiresDatePicker.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin Brand: create-code card height matches BRAND card
+
+**Context:** User wanted the **CREATE CODE** main frosted card to use the **same height** as the **admin BRAND** CODES card; create flow card was shorter.
+
+**Changes:** **`src/pages/admin/brand/page.tsx`**: On the create-code outer card, set **`minHeight: 'calc(100vh * 520 / 745 + 7px)'`** (same as BRAND card). Form scroll region: **`flex-1 min-h-0`** instead of a fixed **`maxHeight`**, so the body fills the card and scrolls inside like the **TRACK USAGE** block on the BRAND card.
+
+- **Files:** **`src/pages/admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Default site route: `/` → `/home/shop` (not `/shop/units`)
+
+**Context:** User wanted the **main** entry route for the site to be **`/home/shop`** instead of **`/shop/units`**.
+
+**Changes:** **`src/App.tsx`**: **`Route index`** and **`Route path="/"`** **`Navigate`** targets changed from **`/shop/units`** to **`/home/shop`**. **`motherboard/CORE.md`**: note that the app default redirect is **`/home/shop`**.
+
+- **Files:** **`src/App.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin Brand ALERTS: SEND NOTIFICATION below card (replaces EXPORT there)
+
+**Context:** User wanted **SEND NOTIFICATION** under the **ALERTS** tab to **replace** the bottom **EXPORT ANALYTICS** action for that tab, with the **same styling and position** as **CREATE CODE** under **CODES** (**`marginTop: 10px`**, full-width **`pageActionButtonStyle`**, not **`PageActionsBelowCard`**’s 14px).
+
+**Changes:** **`BrandAlertsPanel`**: **`forwardRef`** + **`useImperativeHandle`** exposing **`sendNotification()`** (via a ref to latest **`handleSendNotif`**); optional **`onSendFooterState`** reports **`{ disabled, label }`** for **`sending` / `loadingNotifs`**. Removed the in-card **SEND NOTIFICATION** button. **`admin/brand/page.tsx`**: **`brandAlertsPanelRef`**, **`alertsSendFooter`** state; when **`activeTab === 'ALERTS`**, bottom row is **`SEND NOTIFICATION`** / **`SENDING...`** matching CREATE CODE wrapper; **OVERVIEW** / **ANALYTICS** keep **EXPORT ANALYTICS** inside **`PageActionsBelowCard`**.
+
+- **Files:** **`src/pages/admin/components/BrandAlertsPanel.tsx`**, **`src/pages/admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Shop units / home shop: name spacing + cap-size panel
+
+**Context:** User wanted **6px** more space **above** the black **Covered By Your Grace** product name (NOIR, BLANCO, etc.) on **`/shop/units`** and **`/home/shop`**, and a **white** background with **gray** border around the **XS / S / M / L** cap row (similar to admin **client details** panels: **`bg-white`**, **`border-gray-200`**).
+
+**Changes:** **`products/units/page.tsx`** and **`products/page.tsx`**: product name **`margin`** top changed from **`-10px`** to **`-4px`** (**+6px** gap under the image). Cap-size row wrapped in a flex container with **`backgroundColor: '#FFFFFF'`**, **`border: '1px solid #e5e7eb'`**, **`padding: '6px 10px'`**, **`borderRadius: '2px'`**; spans unchanged (red when selected).
+
+- **Files:** **`src/pages/products/units/page.tsx`**, **`src/pages/products/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin create code: shorter code row labels; $ in value hint (gift)
+
+**Context:** User wanted to drop the **(BARCODE FORMAT)** and **(OFF-PREFIX FORMAT)** suffixes on the create-code **GIFT CARD** / **DISCOUNT** manual-code labels, and show **$** in the **VALUE** hint for gift amounts (**`$50` / `$50.00`**).
+
+**Changes:** **`src/pages/admin/brand/page.tsx`**: Labels **`GIFT CARD`** and **`DISCOUNT`** only; gift value label **`VALUE (E.G. $50 OR $50.00)`**; discount value hint unchanged (**`15 FOR 15%`**).
+
+- **Files:** **`src/pages/admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand alerts: chevron centered in dropdown triggers
+
+**Context:** Red chevrons on **custom header/topic** (and similar) controls used **`translateX(16px)`** (plus extra **`marginLeft`** on full-width rows), so arrows sat outside the **36×36** / padded boxes.
+
+**Changes:** **`BrandAlertsPanel.tsx`**: Removed horizontal offsets; **`transform`** is only **`rotate(180deg)`** when open else **`none`**; **`display: 'block'`** on SVGs; full-width header/topic/client rows rely on **`justifyContent: 'space-between'`** without extra chevron margin.
+
+- **Files:** **`src/pages/admin/components/BrandAlertsPanel.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand alerts: chevrons +8px right (custom header/topic only)
+
+**Context:** User wanted the **custom** header/topic **36×36** dropdown chevrons shifted **8px** right; full-width header/topic and **ADD CLIENTS** chevrons should stay centered (rotate only), not inherit **`translateX(8px)`**.
+
+**Changes:** **`BrandAlertsPanel.tsx`**: **`translateX(8px)`** / **`rotate(180deg) translateX(8px)`** only on the two chevrons beside **ENTER CUSTOM HEADER…** and **ENTER CUSTOM TOPIC…**. Full-width HEADER/TOPIC rows and the client row use **`rotate(180deg)`** vs **`none`** only.
+
+- **Files:** **`src/pages/admin/components/BrandAlertsPanel.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand alerts: header/topic/client borders match message (1.3px)
+
+**Context:** User wanted black borders on **header**, **topic**, and **client** controls to match the **MESSAGE** textarea (**`1.3px solid #000`**).
+
+**Changes:** **`BrandAlertsPanel.tsx`**: Replaced all **`0.8px`** border widths on those rows, their dropdown panels, and the client-picker shell with **`1.3px`** (same as message field).
+
+- **Files:** **`src/pages/admin/components/BrandAlertsPanel.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand alerts: no placeholder on MESSAGE textarea
+
+**Context:** User asked to remove **ENTER NOTIFICATION TEXT...** from the alerts message field; also requested a repo-wide list of input placeholders (answered in chat).
+
+**Changes:** **`BrandAlertsPanel.tsx`**: Removed **`placeholder`** from the **MESSAGE** `<textarea>`.
+
+- **Files:** **`src/pages/admin/components/BrandAlertsPanel.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Shop category pages: nav like /shop/units (no “back to shop”)
+
+**Context:** **`/shop/bundles`**, **`/shop/closures`**, **`/shop/frontals`** used a minimal layout with **← BACK TO SHOP** and no top bar. User wanted the **same nav** as **`/shop/units`**: frosted bar, back/search, **SHOP &gt;** + category title, cart + hamburger, full mobile menu (SHOP/TOOLS/BRAND), sign out modal, currency sync for cart.
+
+**Changes:** Rewrote **`src/pages/shop/category/page.tsx`**: mirrored **`products/units/page.tsx`** shell (roses, nav, menu, **`ConfirmationModal`**, **`DynamicCartIcon`**, **`BrandMenuLinks`**, **`SocialMenuIcons`**). Breadcrumb: **`SHOP &gt;`** → **`/home/shop`**, red label **BUNDLES** / **CLOSURES** / **FRONTALS**. Main content marble uses **`20px`** vertical margin like other shop marbles. Removed back-only button.
+
+- **Files:** **`src/pages/shop/category/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Revert cap-size white/gray panel on shop units + home/shop
+
+**Context:** User did not like the **white** + **`#e5e7eb`** bordered panel around **XS / S / M / L** on **`/shop/units`** and **`/home/shop`**.
+
+**Changes:** **`products/units/page.tsx`**, **`products/page.tsx`**: cap row is again a plain flex row (**`gap: 14px`**, **`marginTop` / `translateY`** only); removed **`backgroundColor`**, **`border`**, **`padding`**, **`borderRadius`**, and extra **`lineHeight`** on spans.
+
+- **Files:** **`src/pages/products/units/page.tsx`**, **`src/pages/products/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — +4px space above unit product names (shop/units + home/shop)
+
+**Context:** After the earlier **6px** loosening (name **`margin-top`** **`-10px` → `-4px`**), user wanted **4px** more space above the black **Covered By Your Grace** product name.
+
+**Changes:** **`products/units/page.tsx`**, **`products/page.tsx`**: product name **`margin`** top **`-4px` → `0`** (**`margin: '0 0 -3px 0'`**), **+4px** vs prior.
+
+- **Files:** **`src/pages/products/units/page.tsx`**, **`src/pages/products/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Home/shop UNITS: arrows + 2D Recently viewed snap scroll
+
+**Context:** User wanted **`/home/shop`** UNITS strip to use **visible arrows** and **snap scrolling** matching the **2D Recently viewed** carousel (**not** drag scroll): left snaps to **0**, right snaps to **`-window.innerWidth * 0.713`**, row **`translateY(-15px)`**.
+
+**Changes:** **`products/page.tsx`**: **`unitsScroll`** state; **`handleUnitsHomeLeftArrow` / `handleUnitsHomeRightArrow`**; **`useEffect`** resets scroll when **`windowWidth`** changes. Replaced hidden arrow placeholders with **NOIR** arrow **buttons**; scroll area **`overflowX: 'hidden'`**; inner track **`transform: translateX(unitsScroll) translateY(-15px)`**; removed **`overflow-x: auto`**. Per-cell vertical nudge **`translateY(-4px)`** dropped so vertical matches Recently viewed row.
+
+- **Files:** **`src/pages/products/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand alerts: custom chevrons +8px → +12px
+
+**Context:** User increased the horizontal nudge for **custom** header/topic **36×36** dropdown chevrons from **8px** to **12px**; full-width and client chevrons unchanged.
+
+**Changes:** **`BrandAlertsPanel.tsx`**: **`translateX(12px)`** / **`rotate(180deg) translateX(12px)`** on the two custom-only chevrons (same scope as prior **+8px** entry).
+
+- **Files:** **`src/pages/admin/components/BrandAlertsPanel.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Home/shop UNITS: true 2-up row, pixel snap, units-style bag overlay
+
+**Context (full chat):** User said the home **`/home/shop`** UNITS marble strip was still wrong: should show **two products per “page”** like **Recently viewed** (not four-at-25% desktop / old sixth-width-only mobile), with **three snap steps** for six units at **`window.innerWidth * 0.713`**, and **two add-to-cart icons per visible pair** using the same **single overlay** + **`index × slot% + scroll`** positioning as **`/shop/units`**, not per-cell corner bags. **`/shop/units`** itself stays unchanged.
+
+**Decisions / outcomes:** One scrolling row width **`calc(pairCount × 100% - 20px)`** with **`flex: 0 0 calc(100% / n)`** so each slot is half the viewport (2-up). Row transform **`translateX(unitsScrollPx) translateY(-15px)`**; cells use only **`translateX(0 / 10px)`** stagger (no **`translateY(-4px)`** on cells). Bag overlay uses **`translateY(-15px)`** so **`top: -38px`** stays aligned with the row (overlay sits outside the scrolling row). **`unitsScrollPx = -unitsHomePage × unitsSnapStepPx`**. **`unitsSlotPct = (100 × pairCount) / n`** so bag **`left`** math generalizes past exactly six items. **`useEffect`** clamps **`unitsHomePage`** when **`unitsHomeMaxPage`** shrinks.
+
+**Changes:** **`src/pages/products/page.tsx`**: fixed bug where JSX still referenced undefined **`unitsScroll`** (now **`unitsScrollPx`**); added **Shopping Bag Icons Container** mirroring units page; removed per-cell bag divs; dynamic row width / flex basis from **`unitsPairCount`** and **`unitsProducts.length`**.
+
+- **Files:** **`src/pages/products/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Site-wide placeholders trimmed; settings placeholder not gray
+
+**Context:** User wanted almost all **`placeholder`** text removed, **keeping**: search fields, sign-in **@** socials, **checkout** promos/ZIP/tip, **careers** skills + cover-letter lines, **Noir** review/contact fields, **settings** personal placeholders — and settings placeholders should **not** appear gray.
+
+**Changes:** Removed placeholders from **`BrandAlertsPanel`** (custom header/topic only; **TYPE TO SEARCH** kept), **`admin/notifications`**, **`admin/revenue`** (tracking + stage notes), **`NewsletterPanel`** subject (search kept), **`admin/meetings/schedule`** notes, **`brand/careers`** (location, URLs, years exp — skills + why-role kept), **`account/affiliate`** link inputs. **`settings/page.tsx`**: **`.settings-personal-input::placeholder`** **`#808080` → `#000`**, font **Futura PT Demi** to match inputs. Unchanged: **`AdminHeader`** search, **`checkout`**, **`sign-in`** socials, **`straight/noir`**, **`careers`** two textareas.
+
+- **Files:** **`BrandAlertsPanel.tsx`**, **`admin/notifications/page.tsx`**, **`admin/revenue/page.tsx`**, **`NewsletterPanel.tsx`**, **`admin/meetings/schedule/page.tsx`**, **`brand/careers/page.tsx`**, **`account/affiliate/page.tsx`**, **`account/settings/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand alerts: custom chevrons centered (no translateX)
+
+**Context:** User reported **custom** HEADER/TOPIC **36×36** chevrons still not centered in their boxes; prior **`translateX(8px/12px)`** nudges conflicted with **`justify-content: center`** on the button.
+
+**Changes:** **`BrandAlertsPanel.tsx`**: Custom header/topic dropdown triggers now use the same transform as full-width rows — **`rotate(180deg)`** when open, **`none`** when closed — no **`translateX`**. All five chevrons share one pattern; flex centers the SVG in the square.
+
+- **Files:** **`src/pages/admin/components/BrandAlertsPanel.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Marble strip headers: 2px above/below red title
+
+**Context:** User wanted **2px** spacing **above and below** the red marble title text (replacing the prior **~8px** rule-to-text and **1px** text-to-strip gaps from the header wrapper).
+
+**Changes:** Vertical rule **`margin`** bottom **`8px` → `2px`**; header wrapper **`marginBottom`** **`1px` → `2px`** on **`/home/shop`** UNITS + category marbles (**`products/page.tsx`**), texture marbles (**`products/units/page.tsx`**), and the matching block on **`shop/category/page.tsx`**.
+
+- **Files:** **`src/pages/products/page.tsx`**, **`src/pages/products/units/page.tsx`**, **`src/pages/shop/category/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin Brand OVERVIEW: remove redundant 2×2 metric panels
+
+**Context:** User found the **four** frosted stat tiles under **OVERVIEW** redundant with **KEY METRICS** (same retention, referral, repeat, growth values).
+
+**Changes:** **`src/pages/admin/brand/page.tsx`**: Removed the **`grid grid-cols-2`** block; **KEY METRICS** is now the first block in the tab (**`marginTop: 16px`** on its heading).
+
+- **Files:** **`src/pages/admin/brand/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — UNITS strip vertical nudge: shop/units −6px, home/shop +4px
+
+**Context:** User wanted mannequin thumbnails plus product info and cap sizes moved **up 6px** on **`/shop/units`** and **down 4px** on **`/home/shop`**, in tandem.
+
+**Changes:** **`units/page.tsx`**: product cell **`translateY(-4px)` → `translateY(-10px)`**; bag overlay icons **`top: -38px` → `-44px`** to stay aligned with thumbs. **`products/page.tsx`**: UNITS scrolling row and bag overlay **`translateY(-15px)` → `translateY(-11px)`** (4px downward).
+
+- **Files:** **`src/pages/products/units/page.tsx`**, **`src/pages/products/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Home/shop category thumbnails → texture PDPs (gift-card layout)
+
+**Context:** User wanted **BUNDLES / CLOSURES / FRONTALS** texture thumbnails on **`/home/shop`** to open product pages at **`/straight/bundles`**, **`/wavy/frontals`**, etc., with **gift card**–style layout (marble-half background, frosted main card, hero, tabs, add to bag, similar + recently viewed carousels).
+
+**Changes:** New **`src/pages/shop/texture-category-product/page.tsx`** parses **`/:texture/:category`**, renders gift-card–pattern UI, **SIMILAR** = other two textures same category, **RECENTLY VIEWED** matches gift card strip. **`App.tsx`**: nine lazy routes **`/straight|wavy|curly`/`bundles|closures|frontals`**. **`products/page.tsx`**: strip items include **`slug`**; marble cards **`categorySlug`**; thumbnail **`navigate(`/${slug}/${categorySlug}`)`** (red title still goes to **`/shop/...`**).
+
+- **Files:** **`src/pages/shop/texture-category-product/page.tsx`**, **`src/App.tsx`**, **`src/pages/products/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand alerts: full-width chevrons nudged right (12px)
+
+**Context:** User said **non-custom** (full-width HEADER/TOPIC, **ADD CLIENTS**) chevrons still had not moved right; prior “rotate only” state dropped **`translateX`** on those rows.
+
+**Changes:** **`BrandAlertsPanel.tsx`**: Module constant **`FULL_WIDTH_CHEVRON_NUDGE_PX = 12`**; full-width header/topic and client row SVGs use **`translateX(12px)`** closed and **`rotate(180deg) translateX(12px)`** open. **Custom** **36×36** triggers unchanged (**absolute** **`translate(-50%, -50%)`** ± rotate).
+
+- **Files:** **`src/pages/admin/components/BrandAlertsPanel.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — UNITS RAW line: +1px top margin for non-NOIR (align with NOIR)
+
+**Context:** **NOIR** uses **19px** name vs **18px** for others, so the red **RAW** line sat higher for non-NOIR; user wanted **1px** more space above the red line for every product **except** NOIR so the RAW row lines up visually.
+
+**Changes:** Hair-details **`<p>`** **`margin`**: **`NOIR`** **`0 0 5px 0`**; others **`1px 0 5px 0`** on **`/shop/units`** and **`/home/shop`** UNITS strip.
+
+- **Files:** **`src/pages/products/units/page.tsx`**, **`src/pages/products/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin marble cards: tab row `mb-6` + scroll `paddingTop` 2px (match client Activity)
+
+**Context:** User wanted spacing between admin tab strips and scrollable content to match **client details** **DETAILS** tabs (**Activity** list uses **`mb-6`** on tabs and **`paddingTop: '2px'`** on the scroll body) so scrolled text does not sit too close to tab labels.
+
+**Changes:** Added **`mb-6`** to admin tab rows using **`gap-[14px] px-5`** on **brand** (main + codes), **revenue**, **analytics**, **meetings**, **pending**, **referrals**, **reviews**, **backend**, **marketing** (tab strip wrapper), and **clients** main list tabs. Set tab-adjacent scroll areas to **`paddingTop: '2px'`** where they were **`8px`** or **`12px`** (revenue main tab content wrapper, clients list, meetings block below tabs, pending/referrals/reviews/backend). **Marketing:** removed **`marginTop: '16px'`** on the tab panel scroll (spacing from **`mb-6`** on tabs). **Clients:** **DETAILS | Cart | Wishlist** sub-tabs **`mb-4` → `mb-6`**.
+
+- **Files:** **`src/pages/admin/brand/page.tsx`**, **`revenue/page.tsx`**, **`analytics/page.tsx`**, **`marketing/page.tsx`**, **`meetings/page.tsx`**, **`pending/page.tsx`**, **`referrals/page.tsx`**, **`reviews/page.tsx`**, **`backend/page.tsx`**, **`clients/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Home/shop BUNDLES/CLOSURES/FRONTALS: 2-up carousel like UNITS
+
+**Context:** User asked why those marbles had no arrows or center line and showed all three textures; they wanted **two visible at a time** with the third sharing the previous slot (**STRAIGHT+WAVY** then **WAVY+CURLY**), matching UNITS behavior.
+
+**Changes:** **`products/page.tsx`**: Per-category **`textureCategoryPage`** state; **`150%`** row, **`calc(100%/3)`** cells; snap = **one cell width** **`(viewport.clientWidth * 1.5 - 20) / 3`** via **`ResizeObserver`** on first strip (not **`0.713 * innerWidth`**, which overscrolled so page 2 showed only CURLY). **NOIR** arrows, center line + tunnel mask, **`translateY(-11px)`** row; **`shopTextureStripItems` / `shopCategoryMarbleCards`** **`useMemo`** moved above carousel state. **`maxPage = n - 2`** for overlapping pairs.
+
+- **Files:** **`src/pages/products/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — /shop/units: bag icons +6px down, thumbnails −12%
+
+**Context:** User wanted add-to-cart icons **6px lower** on each unit card and mannequin thumbnails **12% smaller** on **`/shop/units`**.
+
+**Changes:** **`products/units/page.tsx`**: bag **`top`** **`-44px` → `-38px`**; product **`img`** **`width`** **`90%` → `calc(90% * 0.88)`** (12% reduction).
+
+- **Files:** **`src/pages/products/units/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — /shop/units: bag `top` −34px; column centering for mannequin + copy
+
+**Context:** User wanted bag **`top`** **`-38px` → `-34px`**, and content **centered in each half** (card edge ↔ center black line on 2-up): name, red RAW, price, caps; mannequin centered above that block.
+
+**Changes:** **`products/units/page.tsx`**: bag **`top: '-34px'`**; each product cell **`display: flex`**, **`flexDirection: column`**, **`alignItems: center`**; mannequin in full-width flex row **`justifyContent: center`**; copy in inner **`width: 100%`**, **`textAlign: center`**; removed **`marginLeft: 10px`** on thumb and mobile **`translateX(10px)`** stagger on odd columns.
+
+- **Files:** **`src/pages/products/units/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Half-band flex + snap alignment: /shop/units desktop 2-up, home/shop UNITS + category strips
+
+**Context:** User wanted **right** column content in the same **edge ↔ center line** band treatment as **left**, and **home/shop** UNITS + BUNDLES/CLOSURES/FRONTALS to use the same centered flex so **snap** lines up like the prior column.
+
+**Changes:** **`products/units/page.tsx`**: outer cell **`padding: 0`**, inner band **`width: 100%`**, **`alignItems: center`**, symmetric **`padding: 5px 12px`**; desktop **`flexBasis`** **`50%`** when **`< 4`** products (was **`25%`** for two units). **`products/page.tsx`**: UNITS strip same band wrapper, removed **`translateX(10px)`** stagger + thumb **`marginLeft`**; bag **`top`** **`-34px`**; category texture cells same band + no stagger.
+
+- **Files:** **`src/pages/products/units/page.tsx`**, **`src/pages/products/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand alerts: chevrons +4px, open/closed alignment, topic row nudge, taller dropdowns
+
+**Context:** User wanted full-width **HEADER** / **TOPIC** / **ADD CLIENTS** chevrons moved **4px further right** (from **12px** nudge), **up** (open) arrows to sit in the **same horizontal position** as **down** (closed) arrows, **TOPIC** full-width row to get the same nudge as **HEADER** (it previously had none), **CUSTOM** not clipped at the bottom of dropdowns, and **36×36** custom header/topic triggers to stay **centered** (**`translate(-50%, -50%)`** only — unchanged).
+
+**Changes:** **`BrandAlertsPanel.tsx`**: **`FULL_WIDTH_CHEVRON_NUDGE_PX` = 16**; open state uses **`translateX(16px) rotate(180deg)`** (not **`rotate` then `translateX`**) so the nudge stays in screen space and matches closed **`translateX(16px)`**. Full-width **TOPIC** chevron uses the same nudge + order. **`ALERT_DROPDOWN_MAX_HEIGHT_PX` = 300** for all four header/topic lists (was **220px**). Custom **36×36** SVGs unchanged.
+
+- **Files:** **`src/pages/admin/components/BrandAlertsPanel.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin tabs: remove `mb-6` below tab rows (match marketing spacing)
+
+**Context:** Prior change added **`mb-6`** under admin marble tab strips so scroll content wasn’t tight to tabs; user found body text then sat **too low** vs **admin marketing** (**AFFILIATE** / **CHALLENGES** / etc.), where tabs sit directly above the scroll with only **`paddingTop: '2px'`** on the scroll.
+
+**Changes:** Removed **`mb-6`** from all **`gap-[14px]`** tab rows on **analytics**, **pending**, **referrals**, **reviews**, **backend**, **revenue**, **meetings**, **brand** (both strips), **clients** (main list tabs, **DETAILS** tabs, **PERSONAL_SECTION** tabs). Kept **`paddingTop: '2px'`** on tab scroll areas where already set.
+
+- **Files:** **`src/pages/admin/analytics/page.tsx`**, **`pending/page.tsx`**, **`referrals/page.tsx`**, **`reviews/page.tsx`**, **`backend/page.tsx`**, **`revenue/page.tsx`**, **`meetings/page.tsx`**, **`brand/page.tsx`**, **`clients/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Brand alerts: full-width chevron nudge 20px (align with 36×36 custom arrow)
+
+**Context:** User wanted full-width row chevrons aligned horizontally with the down chevron on the **custom** **36×36** HEADER/TOPIC trigger (**+4px** from prior **16px** nudge).
+
+**Changes:** **`BrandAlertsPanel.tsx`**: **`FULL_WIDTH_CHEVRON_NUDGE_PX` = 20** (was **16**). Custom square buttons still use centered SVG only (no nudge constant).
+
+- **Files:** **`src/pages/admin/components/BrandAlertsPanel.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin Brand: dashboard opens OVERVIEW (not CODES / create)
+
+**Context:** User wanted **admin Brand** to load on the **OVERVIEW** tab, not the **CREATE CODE** flow.
+
+**Changes:** **`dashboard/page.tsx`**: **BRAND** card **`navigate('/admin/brand')`** without **`state: { openCreateCode: true }`** (that had forced **CODES** + create panel). **`brand/page.tsx`** still supports **`location.state.openCreateCode`** if something passes it later.
+
+- **Files:** **`src/pages/admin/dashboard/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Dashboard StatsCard tiers row: edge-aligned, space-between
+
+**Context:** User wanted **CLIENTS** (**BLACK / RED / SILVER**) and **REVENUE** (**Q1–Q4**) tier lines aligned with the **gray border** above (first/last text at the border’s left/right edges), not visually indented from **equal columns + centered** text, while keeping **even spacing between** items.
+
+**Changes:** **`StatsCard.tsx`**: tiers row **`justify-between`**, removed **`flex-1 text-center`** per cell; each segment **`shrink-0`** natural width; **`overflow-x-auto scrollbar-hide`** if the row overflows on narrow cards.
+
+- **Files:** **`src/pages/admin/components/StatsCard.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Shop product marble cards: arrows out of flex, center line + debug alignment
+
+**Context:** Continuing product flex debug on **`/shop/units`** and **`/home/shop`**: user wanted green debug column outlines’ **sides and bottom** to match the marble card, the **column split** to match the **black center line**, and **nav arrows removed from the flex row** so they don’t shrink the track or skew the 50/50 split.
+
+**Topics covered:** Layout of marble “content area” (center line at `left: 50%` of full-width strip), arrow placement, row width `calc(… - 20px)` legacy, vertical `translateY` on rows/columns, scroll snap distances tied to old inset width.
+
+**Decisions / outcomes:** Wrap content in **`position: relative; width: 100%`**, **`position: absolute`** left/right arrow buttons (`zIndex: 25`, vertically centered), single full-width inner column for line + scroll. Product flex row uses **full logical width** (`pairCount×100%` or `n×25%` on large screens for `/shop/units`; **`unitsPairCount×100%`** on home UNITS; **`textureCategoryRowPct%`** for BUNDLES/CLOSURES/FRONTALS) — **no `-20px`**. **`alignItems: stretch`** on product rows; removed **`translateY(-10px/-11px)`** and negative **`marginTop`** on scroll wrappers where they hurt alignment. **Scroll step** updates: **`/shop/units`** right-arrow uses **`Math.max(200, windowWidth - 32)`**; home **`unitsSnapStepPx`** same idea; texture category **`textureCategoryCellStepPx`** uses **`(w * 1.5) / 3`** (drop **`-20`**). Home UNITS cells use same **`dbgProductCol` / `dbgProductBand`** when debug is on. **`DEBUG_PRODUCT_FLEX_BOUNDS`** default **`false`** on both pages.
+
+**Changes:** **`src/pages/products/units/page.tsx`**, **`src/pages/products/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+**Conventions:** For these marbles, treat arrows as **overlays**; center line and 50% slots are defined against the **full card content width**, not a flex-shrunk middle column.
+
+---
+
+## 2026-03-28 — Home shop: fix “Cannot access uninitialized variable” (ProductsPage)
+
+**Context:** Red error screen on load after marble layout changes.
+
+**Cause:** **`unitsSnapStepPx`** used **`windowWidth`** before **`const [windowWidth, …]`** was declared (temporal dead zone).
+
+**Changes:** Moved **`unitsSnapStepPx`**, **`unitsScrollPx`**, and **`unitsSlotPct`** to immediately **after** the **`windowWidth`** **`useState`** in **`src/pages/products/page.tsx`**.
+
+---
+
+## 2026-03-28 — Admin marble scroll: `paddingBottom: 24px` (match client details + marketing)
+
+**Context:** Tab scroll areas had **`paddingTop: '2px'`**; user wanted **bottom** breathing room like **client details** and other marbles so scrolled text doesn’t hug the card edge.
+
+**Changes:** **`paddingBottom: '24px'`** on client-details scrollers (**activity**, reviews list, messages), **clients** main list (**8px → 24**), **revenue** main tab inner wrapper (**0 → 24**), **meetings** list scroll (**pb-2 → 24** in style; outer wrapper stays **8px**), **brand** create-code panel (**20 → 24**) and **CODES** usage list scroll, **audit** log list (**16 → 24**), **invites** popup table scroll (**8 → 24**), **BrandAlertsPanel** client picker (**8 → 24**). Pages already at **24px** (marketing, analytics main, pending, referrals, reviews, backend, brand main tab body) unchanged.
+
+- **Files:** **`clients/page.tsx`**, **`revenue/page.tsx`**, **`meetings/page.tsx`**, **`brand/page.tsx`**, **`audit/page.tsx`**, **`BrandAlertsPanel.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin marble scroll: bottom gap **outside** `overflow-y-auto` (wrapper `paddingBottom`)
+
+**Context:** User saw **no visible change** from **`paddingBottom`** on the same node as **`overflow-y-auto`**; they wanted space **between the scroll viewport bottom and the card’s bottom edge**, not only inside the scrollable content.
+
+**Changes:** Wrap each tab (or list) **`overflow-y-auto`** region in a non-scrolling parent with **`paddingLeft` / `paddingRight` / `paddingBottom: '24px'`** (horizontal on wrapper where needed); inner scroll keeps **`maxHeight`** + **`paddingTop: '2px'`** only. Applied across **marketing**, **analytics**, **pending**, **referrals**, **reviews**, **backend**, **brand** (main + create-code + CODES usage list), **clients** main list + **details** (activity, review cards list, messages) + **invites** popup, **revenue** main tab + **pending orders** card (removed in-scroll spacer div), **meetings** list block, **audit**, **BrandAlertsPanel** client picker (fixed portal closing **`</div>`** count).
+
+---
+
+## 2026-03-28 — Home/shop mannequin thumbnails −20%
+
+**Context:** User wanted mannequin thumbnails smaller on **`/home/shop`** (**`ProductsPage`**).
+
+**Changes:** **`src/pages/products/page.tsx`**: product **`img`** **`width`** **`'90%'` → `'72%'`** (×0.8) for **UNITS** strip and **BUNDLES / CLOSURES / FRONTALS** texture marbles.
+
+---
+
+## 2026-03-28 — Shop UNITS strips: measured snap + cart icons in cells
+
+**Context:** Paged UNITS scroll still misaligned center line / green debug vs previous page; user suspected name padding or add-to-bag overlay math.
+
+**Changes:** **`products/page.tsx`**: ref + **`ResizeObserver`** on UNITS **`overflow-x: hidden`** viewport → **`unitsStripViewportW`**; **`unitsSnapStepPx`** = that **`clientWidth`**. Add-to-bag moved **inside** each product column (**`position: absolute`**, **`left: 16`** vs **`right: 34`** by **`index % 2`**) so it scrolls with the row. Unified product title (**18px**, **`minHeight`**, flex-centered) and subtitle margins. Removed unused **`unitsSlotPct`**. **`units/page.tsx`**: same measured width from STRAIGHT strip ref (shared for WAVY/CURLY scroll steps); icons inlined per cell; same typography normalization.
+
+---
+
+## 2026-03-28 — Similar / Recently viewed marble strips: measured snap (all PDP-style pages)
+
+**Context:** User wanted the same **measured viewport snap** behavior as shop UNITS for **SIMILAR PRODUCTS** and **RECENTLY VIEWED** on product pages (2D/3D hero PDPs and related flows).
+
+**Changes:** New hook **`src/hooks/useMarbleStripSnapStep.ts`**: **`ResizeObserver`** on the **`overflow-x: hidden`** viewport → **`snapPx`** (min 200). Each strip gets its own hook instance + **`ref`** on that viewport. Right-arrow / drag snap uses **`-snapPx`** instead of **`window.innerWidth * 0.713`** (or 0.73). Inner row **`width`** **`calc(200% - 20px)` → `200%`**. **Noir** only: drag/arrow bounds keep **3D vs 2D** ratios using measured width (**similar:** `0.5/0.713` vs full **`similarSnapPx`**; **recent:** `0.53/0.73` vs full **`recentSnapPx`**).
+
+**Files:** **`straight/noir/page.tsx`**, **`straight/blanco/page.tsx`**, **`wavy/soft-wave/page.tsx`**, **`wavy/beach-wave/page.tsx`**, **`curly/soft-curl/page.tsx`**, **`curly/ocean-curl/page.tsx`**, **`shop/texture-category-product/page.tsx`**, **`tools/gift-card/page.tsx`**, **`hooks/useMarbleStripSnapStep.ts`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — PDP SIMILAR PRODUCTS order (six hero units)
+
+**Context:** User specified exact left-to-right order for the **SIMILAR PRODUCTS** strip (2D/3D) on six unit PDPs, **excluding** the current product from the four cards.
+
+**Orders implemented:**
+- **Noir:** Blanco → Soft wave → Beach wave → Soft curl (Soft wave copy **24" RAW INDIAN** / $760; Beach wave **BEACH WAVE FRONT.JPG** + Indonesian $760).
+- **Blanco:** Noir → Soft wave → Beach wave → Soft curl (removed duplicate Blanco card; fixed prior empty price `<p>`).
+- **Soft wave:** Beach wave → Noir → Soft curl → Ocean curl.
+- **Beach wave:** Soft wave → Noir → Soft curl → Ocean curl (dropped Blanco from similar strip).
+- **Soft curl:** Ocean curl → Beach wave → Soft wave → Noir.
+- **Ocean curl:** Soft curl → Beach wave → Soft wave → Noir.
+
+**Changes:** **`src/pages/straight/noir/page.tsx`**, **`straight/blanco/page.tsx`**, **`wavy/soft-wave/page.tsx`**, **`wavy/beach-wave/page.tsx`**, **`curly/soft-curl/page.tsx`**, **`curly/ocean-curl/page.tsx`**, **`motherboard/MEMORY.md`** (this entry). **Recently viewed** strips unchanged.
+
+---
+
+## 2026-03-28 — Home/shop strip arrows + recently viewed wiring (Q&A)
+
+**Context:** User asked to shrink **`/home/shop`** marble-strip arrows to match **SIMILAR PRODUCTS** / **RECENTLY VIEWED** on PDP-style pages, and whether **recently viewed** is dynamic from real history or static.
+
+**Changes:** **`src/pages/products/page.tsx`**: UNITS + texture-category marble **left/right arrow** buttons **`padding: '8px'` → `'5px'`** (SVGs already **14×14px**, same as similar/recently).
+
+**Answer (recently viewed):** **Static curated strips** in JSX per page—not backed by localStorage or a “last visited” queue. **`useMarbleStripSnapStep`** only measures snap distance; **`recentlyViewedScroll`** state controls horizontal scroll. Example: **`shop/texture-category-product/page.tsx`** hardcodes four cards (e.g. soft wave, soft curl, noir, blanco); hero PDPs (e.g. **`straight/noir/page.tsx`**) use the same pattern with fixed product blocks.
+
+---
+
+## 2026-03-28 — Shop marble headers: UNITS / BUNDLES / CLOSURES / FRONTALS nudge up 1px
+
+**Context:** User wanted only those category title texts moved **up 1px** on **`/home/shop`**.
+
+**Changes:** **`src/pages/products/page.tsx`**: **`transform: 'translateY(-1px)'`** on the red **`h3`** for **UNITS** and on the mapped **`h3`** for **BUNDLES**, **CLOSURES**, **FRONTALS** (divider line above unchanged).
+
+---
+
+## 2026-03-28 — Home/shop mannequin thumbnails +10%
+
+**Context:** User wanted mannequin thumbnails **10% larger** on **`/home/shop`**.
+
+**Changes:** **`src/pages/products/page.tsx`**: product **`img`** **`width`** **`'72%'` → `'79.2%'`** (×1.1) for **UNITS** strip and **BUNDLES / CLOSURES / FRONTALS** texture marbles.
+
+---
+
+## 2026-03-28 — Home/shop product band nudge up 8px
+
+**Context:** User wanted **mannequin thumbnail + product text + cap size row** moved **up 8px together** on **`/home/shop`**.
+
+**Changes:** **`src/pages/products/page.tsx`**: **`transform: 'translateY(-8px)'`** on the inner flex band (**thumbnail + copy + XS–L**) for **UNITS** and for **BUNDLES / CLOSURES / FRONTALS** texture cells. **UNITS** add-to-bag overlay **`top`** **`-34px` → `-42px`** so it stays aligned with the shifted thumb.
+
+---
+
+## 2026-03-28 — Similar/recently: 3D label alignment + Tools gift-card measured snap
+
+**Context:** User wanted **SIMILAR PRODUCTS** / **RECENTLY VIEWED** typography and star-row **`translateX`** nudges applied in **3D** as well (they were **`undefined`** or **`-0.5px`** in 3D vs 2D). User also asked to wire **`src/pages/tools/page.tsx`** main gift-card carousel off **`window.innerWidth * 0.713`** to **`useMarbleStripSnapStep`**.
+
+**Changes:**
+- **Six hero PDPs** (**`straight/noir`**, **`straight/blanco`**, **`wavy/soft-wave`**, **`wavy/beach-wave`**, **`curly/soft-curl`**, **`curly/ocean-curl`**): Replaced **`!is3DView ? translateX(...) : undefined`** with fixed **`translateX(10px)`** / **`translateX(10.5px)`**; replaced last-column **`is3DView ? -0.5px : 10px`** with **`translateX(10px)`** so 2D/3D match.
+- **`src/pages/tools/page.tsx`**: **`useMarbleStripSnapStep`** ref on the gift-card **`overflow-x: hidden`** viewport; **`giftCardPage`** state; **`giftCardScrollPx = -page * snapPx`**; row width **`pairCount * 100%`**; arrows use page index (right cycles **0…maxPage**); removed **`0.713`**-based pixel math. Drag mouseup snap logic dropped (drag was already inert).
+
+---
+
+## 2026-03-28 — Home/shop JSX: fix Vite parse after arrow refactor
+
+**Context:** Vite/Babel error **`Unexpected token, expected ","`** at **`shopCategoryMarbleCards.map`** on **`products/page.tsx`** — ternary **`) : (`** shop branch had **two adjacent roots** (closed **`px-0`** + **transition** **`</div></div>`** before **`map`**).
+
+**Changes:** **`src/pages/products/page.tsx`**: Removed the **two premature closes** after the **UNITS** marble card; **`shopCategoryMarbleCards.map`** stays **inside** the **`px-0`** wrapper; added the matching **`</div></div>`** after **`map`** so **px-0** then **transition** close correctly.
+
+---
+
+## 2026-03-28 — Home/shop UNITS: add-to-bag spacing
+
+**Context:** User reported **extra space above** UNITS **add-to-bag** icons on **`/home/shop`**.
+
+**Changes:** **`src/pages/products/page.tsx`**: **`unitsHomeStripViewportRef`** **`paddingTop`** **`'48px'` → `0`** (removes empty band above the row). Add-to-bag overlay **`top`** **`-34px` → `-42px`** so it stays aligned with the **`translateY(-8px)`** product band.
+
+---
+
+## 2026-03-28 — Home/shop UNITS add-to-bag invisible (overflow clip)
+
+**Context:** User could not see **add-to-bag** icons after **`paddingTop: 0`** + **`top: '-42px'`**.
+
+**Cause:** **`overflowX: 'hidden'`** on the strip viewport creates a scrollport that **clips vertical overflow** as well; icons with **negative `top`** were painted outside and **cut off**.
+
+**Changes:** **`paddingTop: '42px'`** on **`unitsHomeStripViewportRef`** so layout reserves space matching **`top: '-42px'`** on the bag.
+
+---
+
+## 2026-03-28 — Home/shop UNITS: 10px top band + bags outside horizontal clip
+
+**Context:** User wanted **`paddingTop` ~10px** instead of **42px** without losing **add-to-bag** icons (**`overflow-x: hidden`** clips vertical overflow when bags sat inside the same box with **`top: '-42px'`**).
+
+**Changes:** **`src/pages/products/page.tsx`**: **`unitsHomeStripViewportRef`** is **`overflow: visible`**, **`paddingTop: '10px'`**. Product row scrolls inside an inner **`overflowX: 'hidden'`** div only. A second flex row in an **`position: absolute`** overlay (**`top: '10px'`**, **`pointerEvents: 'none'`** / bags **`auto`**) mirrors **`translateX`** + column flex basis and holds **add-to-bag** at **`top: '-42px'`** so it is not clipped.
+
+---
+
+## 2026-03-28 — Home/shop BUNDLES card: donor line + price ranges
+
+**Context:** User wanted **BUNDLES** marble on **`/home/shop`** to show a **red “raw” line** and a **price line** per texture (**STRAIGHT / WAVY / CURLY**), same typography as **UNITS**.
+
+**Copy:** All three: **`SINGLE DONOR + DOUBLE DRAWN`**. Prices: straight **`$100-300`**, wavy **`$120-400`**, curly **`$160-500`**.
+
+**Changes:** **`src/pages/products/page.tsx`**: **`bundlesCardTextureLines`** map; in **`shopTextureStripItems.map`**, when **`categorySlug === 'bundles'`**, two **`<p>`**s after the texture title — red line matches UNITS length line (**Futura PT Medium** 10px **`#EB1C24`**); price line matches UNITS price (**12px** black, **`translateY(2px)`**). **CLOSURES** / **FRONTALS** unchanged.
+
+---
+
+## 2026-03-28 — BUNDLES copy + shared currency format (shop/tools)
+
+**Context:** User wanted BUNDLES red line **`RAW SINGLE DONOR`** (was **SINGLE DONOR + DOUBLE DRAWN**); bundle **price ranges** to show **currency code** and follow **global currency** like other prices; **home/shop**, **home/tools**, and **shop/tool** listing pages to use the same formatting.
+
+**Changes:**
+- **`src/utils/currencyFormat.ts`**: **`formatPriceUsd`**, **`formatPriceRangeUsd`** (USD amounts × **`rate`**, HTML **`symbol`**, trailing **` selectedCurrency`** e.g. **` USD`**).
+- **`src/pages/products/page.tsx`**: **`bundlesCardTextureLines`** uses **`priceMinUsd` / `priceMaxUsd`**; range line uses **`dangerouslySetInnerHTML={formatBundlesRange(...)}`**. **`formatPrice`** → **`formatPriceUsd`**.
+- **`src/pages/products/units/page.tsx`**, **`src/pages/tools/page.tsx`**, **`src/pages/tools/gift-card/page.tsx`**, **`src/pages/shop/texture-category-product/page.tsx`**: **`formatPrice`** delegates to **`formatPriceUsd`** (same behavior, single implementation).
+
+---
+
+## 2026-03-28 — Home/shop BUNDLES/CLOSURES/FRONTALS title spacing vs UNITS
+
+**Context:** User wanted **top spacing above STRAIGHT / WAVY / CURLY** on the three category marbles to match **UNITS** product names.
+
+**Changes:** **`src/pages/products/page.tsx`**: Texture title **`<p>`** dropped **`margin: '-10px 0 -3px 0'`**; aligned with UNITS name block — **`margin: 0`**, **`lineHeight: 1.05`**, **`minHeight: '22px'`**, flex centering. Thumb wrapper still **`marginBottom: '5px'`** (same as UNITS).
+
+---
+
+## 2026-03-28 — Home/shop CLOSURES + FRONTALS: RAW SINGLE DONOR + price ranges
+
+**Context:** User wanted the same **RAW SINGLE DONOR** red line and **currency-aware** range line as **BUNDLES** on **CLOSURES** and **FRONTALS**, with specified USD bounds.
+
+**Ranges (USD, then `formatPriceRangeUsd`):**
+- **CLOSURES:** straight **100–300**, wavy **120–400**, curly **140–500**.
+- **FRONTALS:** straight **200–600**, wavy **220–700**, curly **240–800**.
+
+**Changes:** **`src/pages/products/page.tsx`**: **`shopCategoryTextureLines`** **`Record<bundles|closures|frontals, Record<straight|wavy|curly, …>>`**; JSX shows both lines for all three marbles; **`formatShopTextureRange`** (was **`formatBundlesRange`**).
+
+---
+
+## 2026-03-28 — Curly PDPs: marble strip for Similar + Recently (soft-curl, ocean-curl)
+
+**Context:** Prior work added shared **`marbleStripStyles`** for hero PDP **SIMILAR PRODUCTS** / **RECENTLY VIEWED** (shop-aligned cells, uniform 2D/3D thumbs). **Soft-wave** and **beach-wave** were already migrated; **soft-curl** and **ocean-curl** still used the old flex row with **`translateX(...) translateY(-15px)`** and per-cell padding/transform hacks. User sent **"?"** (status check); this chat finished that migration.
+
+**Changes:**
+- **`src/pages/curly/soft-curl/page.tsx`**: Both strips use **`marbleStripScrollRowStyle(similarProductsScroll | recentlyViewedScroll)`**; all eight product cells use **`marbleStripCellOuter`**, **`marbleStripCellBand`**, **`marbleStripThumbWrap`**, **`marbleStripThumbImg`**, **`marbleStripTextCol`**. Kept existing **`navigate`**, image **`src`s**, copy, and **`formatPrice`** usage. Typography stays **`"Covered By Your Grace", "Covered By Your Grace Preload"`** + **`"Futura PT Medium"`**. Comment fix: recently viewed first tile comment **`BEACH WAVE` → `SOFT WAVE`** (route/content were already soft-wave).
+- **`src/pages/curly/ocean-curl/page.tsx`**: Same pattern for both strips and eight cells; same font preservation and comment fix for recently viewed first tile (**`SOFT WAVE`**). Product order and **SOFT CURL** vs **OCEAN CURL** placements unchanged per page.
+
+**Note:** Repo **`tsc --noEmit`** still reports parse errors in **`src/pages/admin/revenue/page.tsx`** (unrelated to these edits).
+
+---
+
+## 2026-03-28 — Marble strip 3D: clip + snap + cell centering
+
+**Context:** User reported **3D** similar/recently **thumbnails clipped at the top**, **scroll snap not landing** (second page felt off), and **columns 3–4 not centered** in their flex slots.
+
+**Causes / fixes:**
+- **`src/utils/marbleStripStyles.ts`**: Removed **`translateY(-15)`** from **`marbleStripScrollRowStyle`** (only **`translateX`** now) so the row is not shifted up into **`overflow-x: hidden`** clipping. **`marbleStripCellOuter`** is now a **column flex** with **`justifyContent: 'center'`** and **`minHeight: 0`** so each **25%** column **vertically centers** its band when the row **stretch**-aligns to the tallest cell.
+- **`src/pages/straight/noir/page.tsx`**: **3D** marble snap no longer uses legacy multipliers **`similarSnapPx * (0.5/0.713)`** / **`recentSnapPx * (0.53/0.73)`** — uses measured **`similarSnapPx`** / **`recentSnapPx`** like **2D**, matching **one viewport width** per “page” (two **25%**-of-**200%** columns).
+- **`src/pages/curly/ocean-curl/page.tsx`**: Right-arrow scroll was **`window.innerWidth * 0.713`**; now **`-similarSnapPx`** / **`-recentSnapPx`** so it matches the measured strip viewport.
+
+---
+
+## 2026-03-28 — Marble strip: 3D space below stars + 2D band nudge up
+
+**Context:** User wanted **10px** under the **stars** in **3D** on similar/recent strips, and **2D** thumb + product text + stars moved **up 10px together** on those strips.
+
+**Changes:** **`src/utils/marbleStripStyles.ts`**: **`marbleStripCellBand`** is now a function **`marbleStripCellBand(is3D)`** — **2D** adds **`transform: translateY(-10px)`** on the band; **3D** unchanged. New **`marbleStripStarsRowStyle(is3D)`** with **`marginBottom: '10px'`** when **3D**. All **six** hero PDPs import **`marbleStripStarsRowStyle`**, use **`marbleStripCellBand(is3DView)`**, and star rows use **`marbleStripStarsRowStyle(is3DView)`** instead of inline flex styles.
+
+---
+
+## 2026-03-28 — Marble strip stars: 5px below in 2D and 3D
+
+**Context:** User wanted **5px** space below stars on similar/recent strips in **both** 2D and 3D.
+
+**Changes:** **`src/utils/marbleStripStyles.ts`**: **`marbleStripStarsRowStyle`** is now a **`CSSProperties` const with **`marginBottom: '5px'`** (replaces 3D-only **10px**). Hero PDPs use **`style={marbleStripStarsRowStyle}`** (no args).
+
+---
+
+## 2026-03-28 — Marble strip: restore visible carousel arrows (esp. Recently viewed)
+
+**Context:** User could not see **Recently viewed** (and risk of same on **Similar**) **left/right arrows** — likely **flex-shrink** on the arrow buttons let the **200%-width strip** squeeze them to **zero width**, plus row **`overflow`** clipping.
+
+**Changes:** **`src/utils/marbleStripStyles.ts`**: Added **`marbleStripNavRowStyle`** (**`overflow: 'visible'`**) and **`marbleStripNavArrowStyle(side, is3D)`** (**`flexShrink: 0`**, **`minWidth: '28px'`**, **`position: 'relative'`**, **`zIndex: 3`**, same **`translateX` / `translateY`** as before; dropped **`height: '100%'`** on arrows). All **six** hero PDPs use these for **both** Similar and Recently **nav rows and four buttons**.
+
+---
+
+## 2026-03-28 — UNITS add-to-bag: symmetric left/right inset from card edge
+
+**Context:** User wanted the **right-column** add-to-bag icon on UNITS to sit the same distance from the **right** card edge as the **left-column** bag from the **left** edge (mirror spacing).
+
+**Changes:** **`right: 34` → `right: 16`** to match **`left: 16`** on the overlay bag row: **`src/pages/products/page.tsx`** (home/shop), **`src/pages/products/units/page.tsx`** (`/shop/units`).
+
+---
+
+## 2026-03-28 — Home/shop UNITS: duplicate bag icon outside marble (right edge)
+
+**Context:** User saw a **second add-to-bag** sitting **outside** the UNITS marble card to the **right** (not the in-column right product bag). Cause: the **bag overlay** used the same **extra-wide** transformed flex as products but lived **outside** the **`overflow-x: hidden`** wrapper that clipped the product row, so the wide row **painted past** the card.
+
+**Changes:** **`src/pages/products/page.tsx`**: Wrapped **product flex + bag overlay** in one inner **`position: relative`** container with **`overflowX: 'clip'`** and **`overflowY: 'visible'`** so horizontal bleed is clipped like the strip while bags can still sit above; removed the redundant inner-only overflow wrapper.
+
+---
+
+## 2026-03-28 — Shop marble center line: shorten from bottom only (below strip)
+
+**Context:** User wanted the **middle vertical black line** (between columns) **6px shorter** only **below** the **UNITS / BUNDLES / CLOSURES / FRONTALS** title block—**not** by pulling the line down from the top of the product area (leave **`top: 0`**; trim from the bottom).
+
+**Changes:** **`bottom: '0'` → `bottom: '6px'`** on the **1px black** divider and matching **10px transparent** mask: **`src/pages/products/page.tsx`** (UNITS + category marbles), **`src/pages/products/units/page.tsx`**, **`src/pages/shop/texture-category-product/page.tsx`** (both strips). The small **15px** hairline above titles unchanged.
+
+---
+
+## 2026-03-28 — Home/shop UNITS add-to-bag: `top` -42px → -36px
+
+**Context:** User asked to change the bag overlay offset to **`-36px`** (in context of the shared horizontal clip wrapper on the UNITS strip).
+
+**Changes:** **`src/pages/products/page.tsx`**: UNITS bag hit target **`top: '-42px'` → `top: '-36px'`** (moves bags **6px** lower). **`/shop/units`** (`units/page.tsx`) already used **`-34px`**; left as-is unless aligned later.
+
+---
+
+## 2026-03-28 — Red RAW sublines: +1px down (home/shop + shop texture PDP)
+
+**Context:** User wanted the **red RAW** product sublines moved **down 1px** on **home/shop** and **shop** pages.
+
+**Changes:** **`translateY(1px)`** on **10px #EB1C24** RAW lines: **`src/pages/products/page.tsx`** (UNITS **`length RAW origin`** + BUNDLES/CLOSURES/FRONTALS **`redLine`**), **`src/pages/products/units/page.tsx`** (UNITS strip). **`src/pages/shop/texture-category-product/page.tsx`**: **`translateX(10px)` → `translateX(10px) translateY(1px)`** on **`categoryTitle · RAW HAIR`** and the four **24" RAW …** cells in **Recently viewed**.
+
+---
+
+## 2026-03-28 — First marble card: top spacing matches stacked gap (nav-only above)
+
+**Context:** User wanted **less space above** the **first** marble card on **home/shop** and **shop** so it matches the **gap below each card** (stacked marbles use **collapsing** vertical margins → **~20px** between cards; **first** card had **nav `mb-5` (20px) + its own `marginTop` 20px** → **~40px** above).
+
+**Changes:** **`marginTop: '20px'` → `'0'`** on first card wrappers: **`src/pages/products/page.tsx`** (UNITS only). **`src/pages/products/units/page.tsx`**: **`renderProductContainer(..., isFirstMarble)`** — **`STRAIGHT`** passes **`true`**. **`src/pages/shop/category/page.tsx`** (bundles/closures/frontals). **`src/pages/shop/texture-category-product/page.tsx`**: **SIMILAR PRODUCTS** strip only (**Recently viewed** keeps **`marginTop: '20px'`**). Later marbles / second strips unchanged.

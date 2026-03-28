@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { createPortal } from 'react-dom';
-import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { getAdminClients, getAdminNotifications, postAdminNotification } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
@@ -19,17 +18,31 @@ const TOPICS_BY_HEADER: Record<AlertHeader, readonly string[]> = {
   CUSTOM: ['CUSTOM'],
 };
 
+/** Horizontal nudge for full-width HEADER/TOPIC and ADD CLIENTS chevrons (not the custom 36×36 squares). Aligns with chevron in 36×36 custom row (~20px from button edge). */
+const FULL_WIDTH_CHEVRON_NUDGE_PX = 20;
+
+/** Enough height for all header/topic rows (e.g. CUSTOM) without clipping. */
+const ALERT_DROPDOWN_MAX_HEIGHT_PX = 300;
+
 type NotifEntry = {
   userId: string;
   items: Array<{ id?: string; text?: string; read?: boolean; createdAt?: string }>;
   updatedAt?: string;
 };
 
-type Props = {
-  onStatsChange?: (stats: { clientsWithNotifs: number; totalSent: number }) => void;
+export type BrandAlertsPanelHandle = {
+  sendNotification: () => void;
 };
 
-export default function BrandAlertsPanel({ onStatsChange }: Props) {
+type Props = {
+  onStatsChange?: (stats: { clientsWithNotifs: number; totalSent: number }) => void;
+  onSendFooterState?: (state: { disabled: boolean; label: string }) => void;
+};
+
+const BrandAlertsPanel = forwardRef<BrandAlertsPanelHandle, Props>(function BrandAlertsPanel(
+  { onStatsChange, onSendFooterState },
+  ref
+) {
   const [notifList, setNotifList] = useState<NotifEntry[]>([]);
   const [clients, setClients] = useState<Array<{ id?: string; email?: string; firstName?: string; lastName?: string }>>([]);
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
@@ -121,6 +134,22 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
     }
   };
 
+  const handleSendRef = useRef(handleSendNotif);
+  handleSendRef.current = handleSendNotif;
+
+  useImperativeHandle(ref, () => ({
+    sendNotification: () => {
+      void handleSendRef.current();
+    },
+  }), []);
+
+  useEffect(() => {
+    onSendFooterState?.({
+      disabled: sending || loadingNotifs,
+      label: sending ? 'SENDING...' : 'SEND NOTIFICATION',
+    });
+  }, [sending, loadingNotifs, onSendFooterState]);
+
   const topicOptions = TOPICS_BY_HEADER[selectedHeader];
   const isTopicValid = topicOptions.includes(selectedTopic);
   const effectiveTopic = isTopicValid ? selectedTopic : topicOptions[0];
@@ -174,7 +203,7 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
             bottom: '24px',
             left: '12px',
             right: '12px',
-            borderWidth: '0.8px',
+            borderWidth: '1.3px',
             zIndex: 1000000001,
             pointerEvents: 'auto',
             display: 'flex',
@@ -204,7 +233,16 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
               }}
             />
           </div>
-          <div style={{ flex: '1 1 0', minHeight: 0, overflowY: 'auto', padding: '8px', boxSizing: 'border-box' }}>
+          <div style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box', flex: '1 1 0', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+            <div
+              style={{
+                flex: '1 1 0',
+                minHeight: 0,
+                overflowY: 'auto',
+                paddingTop: '8px',
+                boxSizing: 'border-box',
+              }}
+            >
             {filteredClients.map((c) => {
               const id = (c as { id?: string }).id || '';
               const isSelected = selectedUserIds.includes(id);
@@ -229,6 +267,7 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
                 </button>
               );
             })}
+            </div>
           </div>
         </div>
       </div>,
@@ -263,12 +302,11 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
                     type="text"
                     value={customHeaderText}
                     onChange={(e) => setCustomHeaderText(e.target.value.toUpperCase())}
-                    placeholder="ENTER CUSTOM HEADER..."
                     className="flex-1"
                     style={{
                       height: '36px',
                       padding: '8px 12px',
-                      border: '0.8px solid #000000',
+                      border: '1.3px solid #000000',
                       borderRadius: 0,
                       fontFamily: '"Futura PT Book", Futura, sans-serif',
                       fontSize: '11px',
@@ -287,16 +325,16 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
                       setShowTopicDropdown(false);
                     }}
                     style={{
+                      position: 'relative',
                       width: '36px',
                       height: '36px',
-                      border: '0.8px solid #000000',
+                      padding: 0,
+                      lineHeight: 0,
+                      border: '1.3px solid #000000',
                       borderRadius: 0,
                       background: '#fff',
                       cursor: 'pointer',
                       color: '#EB1C24',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
                     }}
                     aria-label="Change header"
                   >
@@ -305,7 +343,15 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
                       height="12"
                       viewBox="0 0 12 12"
                       fill="none"
-                      style={{ transform: showHeaderDropdown ? 'rotate(180deg) translateX(16px)' : 'translateX(16px)' }}
+                      style={{
+                        position: 'absolute',
+                        left: '50%',
+                        top: '50%',
+                        display: 'block',
+                        transform: showHeaderDropdown
+                          ? 'translate(-50%, -50%) rotate(180deg)'
+                          : 'translate(-50%, -50%)',
+                      }}
                     >
                       <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -315,7 +361,7 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
                       <div className="fixed inset-0 z-10" aria-hidden="true" onClick={() => setShowHeaderDropdown(false)} />
                       <div
                         className="absolute left-0 z-20 py-1 bg-white border border-black shadow-lg"
-                        style={{ borderWidth: '0.8px', marginTop: '7px', maxHeight: '220px', overflowY: 'auto', left: 0, right: 0 }}
+                        style={{ borderWidth: '1.3px', marginTop: '7px', maxHeight: `${ALERT_DROPDOWN_MAX_HEIGHT_PX}px`, overflowY: 'auto', left: 0, right: 0 }}
                       >
                         {ALERT_HEADERS.map((h) => (
                           <button
@@ -347,7 +393,7 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
                       width: '100%',
                       height: '36px',
                       padding: '8px 32px 8px 12px',
-                      border: '0.8px solid #000000',
+                      border: '1.3px solid #000000',
                       fontFamily: '"Futura PT Book", Futura, sans-serif',
                       fontSize: '11px',
                       fontWeight: 400,
@@ -371,9 +417,11 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
                       fill="none"
                       className="flex-shrink-0"
                       style={{
-                        transform: showHeaderDropdown ? 'rotate(180deg) translateX(16px)' : 'translateX(16px)',
+                        transform: showHeaderDropdown
+                          ? `translateX(${FULL_WIDTH_CHEVRON_NUDGE_PX}px) rotate(180deg)`
+                          : `translateX(${FULL_WIDTH_CHEVRON_NUDGE_PX}px)`,
                         color: '#EB1C24',
-                        marginLeft: '24px',
+                        display: 'block',
                       }}
                     >
                       <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
@@ -384,7 +432,7 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
                       <div className="fixed inset-0 z-10" aria-hidden="true" onClick={() => setShowHeaderDropdown(false)} />
                       <div
                         className="absolute left-0 right-0 z-20 py-1 bg-white border border-black shadow-lg"
-                        style={{ borderWidth: '0.8px', marginTop: '7px', maxHeight: '220px', overflowY: 'auto' }}
+                        style={{ borderWidth: '1.3px', marginTop: '7px', maxHeight: `${ALERT_DROPDOWN_MAX_HEIGHT_PX}px`, overflowY: 'auto' }}
                       >
                         {ALERT_HEADERS.map((h) => (
                           <button
@@ -417,12 +465,11 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
                     type="text"
                     value={customTopicText}
                     onChange={(e) => setCustomTopicText(e.target.value.toUpperCase())}
-                    placeholder="ENTER CUSTOM TOPIC..."
                     className="flex-1"
                     style={{
                       height: '36px',
                       padding: '8px 12px',
-                      border: '0.8px solid #000000',
+                      border: '1.3px solid #000000',
                       borderRadius: 0,
                       fontFamily: '"Futura PT Book", Futura, sans-serif',
                       fontSize: '11px',
@@ -441,16 +488,16 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
                       setShowHeaderDropdown(false);
                     }}
                     style={{
+                      position: 'relative',
                       width: '36px',
                       height: '36px',
-                      border: '0.8px solid #000000',
+                      padding: 0,
+                      lineHeight: 0,
+                      border: '1.3px solid #000000',
                       borderRadius: 0,
                       background: '#fff',
                       cursor: 'pointer',
                       color: '#EB1C24',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
                     }}
                     aria-label="Change topic"
                   >
@@ -459,7 +506,15 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
                       height="12"
                       viewBox="0 0 12 12"
                       fill="none"
-                      style={{ transform: showTopicDropdown ? 'rotate(180deg) translateX(16px)' : 'translateX(16px)' }}
+                      style={{
+                        position: 'absolute',
+                        left: '50%',
+                        top: '50%',
+                        display: 'block',
+                        transform: showTopicDropdown
+                          ? 'translate(-50%, -50%) rotate(180deg)'
+                          : 'translate(-50%, -50%)',
+                      }}
                     >
                       <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -469,7 +524,7 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
                       <div className="fixed inset-0 z-10" aria-hidden="true" onClick={() => setShowTopicDropdown(false)} />
                       <div
                         className="absolute left-0 z-20 py-1 bg-white border border-black shadow-lg"
-                        style={{ borderWidth: '0.8px', marginTop: '7px', maxHeight: '220px', overflowY: 'auto', left: 0, right: 0 }}
+                        style={{ borderWidth: '1.3px', marginTop: '7px', maxHeight: `${ALERT_DROPDOWN_MAX_HEIGHT_PX}px`, overflowY: 'auto', left: 0, right: 0 }}
                       >
                         {topicOptions.map((t) => (
                           <button
@@ -501,7 +556,7 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
                       width: '100%',
                       height: '36px',
                       padding: '8px 32px 8px 12px',
-                      border: '0.8px solid #000000',
+                      border: '1.3px solid #000000',
                       fontFamily: '"Futura PT Book", Futura, sans-serif',
                       fontSize: '11px',
                       fontWeight: 400,
@@ -525,9 +580,11 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
                       fill="none"
                       className="flex-shrink-0"
                       style={{
-                        transform: showTopicDropdown ? 'rotate(180deg) translateX(16px)' : 'translateX(16px)',
+                        transform: showTopicDropdown
+                          ? `translateX(${FULL_WIDTH_CHEVRON_NUDGE_PX}px) rotate(180deg)`
+                          : `translateX(${FULL_WIDTH_CHEVRON_NUDGE_PX}px)`,
                         color: '#EB1C24',
-                        marginLeft: '24px',
+                        display: 'block',
                       }}
                     >
                       <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
@@ -538,7 +595,7 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
                       <div className="fixed inset-0 z-10" aria-hidden="true" onClick={() => setShowTopicDropdown(false)} />
                       <div
                         className="absolute left-0 right-0 z-20 py-1 bg-white border border-black shadow-lg"
-                        style={{ borderWidth: '0.8px', marginTop: '7px', maxHeight: '220px', overflowY: 'auto' }}
+                        style={{ borderWidth: '1.3px', marginTop: '7px', maxHeight: `${ALERT_DROPDOWN_MAX_HEIGHT_PX}px`, overflowY: 'auto' }}
                       >
                         {topicOptions.map((t) => (
                           <button
@@ -598,7 +655,7 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
                   width: '100%',
                   height: '36px',
                   padding: '8px 32px 8px 12px',
-                  border: '0.8px solid #000000',
+                  border: '1.3px solid #000000',
                   fontFamily: '"Futura PT Book", Futura, sans-serif',
                   fontSize: '11px',
                   fontWeight: 400,
@@ -624,9 +681,11 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
                   fill="none"
                   className="flex-shrink-0"
                   style={{
-                    transform: showClientDropdown ? 'rotate(180deg) translateX(16px)' : 'translateX(16px)',
+                    transform: showClientDropdown
+                      ? `translateX(${FULL_WIDTH_CHEVRON_NUDGE_PX}px) rotate(180deg)`
+                      : `translateX(${FULL_WIDTH_CHEVRON_NUDGE_PX}px)`,
                     color: '#EB1C24',
-                    marginLeft: '34px',
+                    display: 'block',
                   }}
                 >
                   <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
@@ -650,7 +709,6 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value.toUpperCase())}
-              placeholder="ENTER NOTIFICATION TEXT..."
               rows={6}
               style={{
                 width: '100%',
@@ -724,19 +782,12 @@ export default function BrandAlertsPanel({ onStatsChange }: Props) {
                 </div>
               </>
             )}
-            <button
-              type="button"
-              disabled={sending || loadingNotifs}
-              onClick={() => void handleSendNotif()}
-              className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
-              style={pageActionButtonStyle}
-            >
-              {sending ? 'SENDING...' : 'SEND NOTIFICATION'}
-            </button>
           </>
         )}
       </div>
       {clientDropdownPortal}
     </>
   );
-}
+});
+
+export default BrandAlertsPanel;

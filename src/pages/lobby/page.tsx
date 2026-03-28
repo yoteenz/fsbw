@@ -801,7 +801,6 @@ const LobbyApp: React.FC = () => {
         message="YOU MUST BE A PREMIUM MEMBER TO ACCESS THIS AREA."
         confirmText="UPGRADE"
         cancelText="CANCEL"
-        swapButtons={true}
         dataAttribute="upgrade-subscription-modal"
       />
     </>

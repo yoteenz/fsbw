@@ -53,6 +53,7 @@ Canonical reference for stack, design, and main flows. Keep this updated when th
 ## Conventions
 
 - **Lobby (home) nav:** Neon logo (center) → `/home/shop`. Products (neon-products) → `/shop/units`. Tools (neon-tools) → `/home/tools`. Implemented in `src/pages/lobby/page.tsx`.
+- **App default route:** `/` and the index route redirect to **`/home/shop`** (`App.tsx`), not `/shop/units`.
 - **Paths:** Pages under `src/pages/` (e.g. `account/`, `account/settings/`, `account/concierge/`, `admin/`). Shared components in `src/components/`, utils in `src/utils/`.
 - **State:** React `useState`/`useEffect`; persistent data in localStorage (`currentUser`, `registeredUsers`, cart, wishlist, per-user keys). Supabase session for server-backed data.
 - **API:** Base URL from `VITE_API_BASE`; routes in `api/` (e.g. `api/admin/sync-profile`, `api/delete-account`). CORS and JSON error responses on API routes.

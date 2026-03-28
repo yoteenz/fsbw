@@ -259,7 +259,7 @@ export default function AdminReviews() {
               className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
               style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
             >
-              <div className="flex items-center justify-between -mt-1 pb-1 px-4 pt-4" style={{ marginBottom: 0 }}>
+              <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4" style={{ marginBottom: 0 }}>
                 <h2
                   className="flex-1"
                   style={{
@@ -341,8 +341,16 @@ export default function AdminReviews() {
                 ))}
               </div>
 
-              {/* Tab content */}
-              <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '380px', padding: '8px', boxSizing: 'border-box' }}>
+              {/* Tab content – padding below scroll viewport (above card bottom) */}
+              <div style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}>
+                <div
+                  className="overflow-y-auto"
+                  style={{
+                    maxHeight: '380px',
+                    paddingTop: '2px',
+                    boxSizing: 'border-box',
+                  }}
+                >
                 {activeTab === 'ALL' && (
                   <>
                     <div
@@ -459,6 +467,7 @@ export default function AdminReviews() {
                     )}
                   </>
                 )}
+                </div>
               </div>
             </div>
 

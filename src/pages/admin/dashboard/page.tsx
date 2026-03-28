@@ -703,6 +703,18 @@ export default function AdminDashboard() {
     })(),
 
     {
+      title: 'REFERRALS',
+      count: referralCountDisplay,
+      items: [
+        { label: 'INVITEES', value: String(referralCountDisplay), color: 'text-gray-500' },
+        { label: 'CODE STATUS', value: 'Active/Inactive', color: 'text-red-500' },
+        { label: 'EARNINGS TRACKING', value: 'Digital cash', color: 'text-gray-500' },
+        { label: 'VIEW DETAILS', value: 'Referrals', color: 'text-red-500' }
+      ],
+      activity: 'REFERRAL PROGRAM - TRACK INVITEES & EARNINGS'
+    },
+
+    {
       title: 'BRAND',
       count: '94%',
       items: [
@@ -713,18 +725,6 @@ export default function AdminDashboard() {
         { label: 'ANALYTICS', value: 'Clicks by source', color: 'text-red-500' }
       ],
       highlight: 'BRAND GROWTH STRONG - EXCELLENT CLIENT RETENTION'
-    },
-
-    {
-      title: 'REFERRALS',
-      count: referralCountDisplay,
-      items: [
-        { label: 'INVITEES', value: String(referralCountDisplay), color: 'text-gray-500' },
-        { label: 'CODE STATUS', value: 'Active/Inactive', color: 'text-red-500' },
-        { label: 'EARNINGS TRACKING', value: 'Digital cash', color: 'text-gray-500' },
-        { label: 'VIEW DETAILS', value: 'Referrals', color: 'text-red-500' }
-      ],
-      activity: 'REFERRAL PROGRAM - TRACK INVITEES & EARNINGS'
     },
 
     {

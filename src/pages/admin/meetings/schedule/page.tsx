@@ -362,7 +362,6 @@ export default function AdminMeetingsSchedule() {
                     rows={4}
                     className="mt-1 w-full border p-2 resize-none"
                     style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb', textTransform: 'uppercase' }}
-                    placeholder="NOTES…"
                   />
                 </label>
               </div>

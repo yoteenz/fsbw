@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { MouseEvent } from 'react';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -7,10 +7,21 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { clearAppAuth } from '../../../utils/adminAuth';
+import type { CurrencyRatesRecord } from '../../../utils/currencyFormat';
+import { formatPriceUsd } from '../../../utils/currencyFormat';
 
 function ProductsUnitsPage() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  /** TEMP: green outlines — outer = flex column (half-slot), inner = padded band. Set `false` to hide. */
+  const DEBUG_PRODUCT_FLEX_BOUNDS = false;
+  const dbgProductCol: React.CSSProperties = DEBUG_PRODUCT_FLEX_BOUNDS
+    ? { outline: '2px solid #00ff00', outlineOffset: '0px' }
+    : {};
+  const dbgProductBand: React.CSSProperties = DEBUG_PRODUCT_FLEX_BOUNDS
+    ? { outline: '2px dashed #00cc00', outlineOffset: '-2px' }
+    : {};
 
   // Cart count state
   const [cartCount, setCartCount] = useState(() => {
@@ -60,6 +71,26 @@ function ProductsUnitsPage() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  /** Measured overflow strip width (STRAIGHT card) — scroll step must match or columns drift. */
+  const productStripViewportRef = useRef<HTMLDivElement>(null);
+  const [stripViewportW, setStripViewportW] = useState(() =>
+    typeof window !== 'undefined' ? Math.max(200, window.innerWidth - 32) : 320
+  );
+
+  useLayoutEffect(() => {
+    if (showMobileMenu) return;
+    const el = productStripViewportRef.current;
+    if (!el) return;
+    const measure = () => {
+      const w = el.clientWidth;
+      if (w > 0) setStripViewportW(w);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [showMobileMenu, windowWidth]);
 
   // Currency state - per user
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -294,21 +325,10 @@ function ProductsUnitsPage() {
     setShowMobileMenu(false);
   };
 
-  // Format price with currency
-  const formatPrice = React.useCallback((price: number): { __html: string } => {
-    if (!price || isNaN(price)) {
-      const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
-      return { __html: currency.symbol + '0 ' + selectedCurrency };
-    }
-    const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
-    const convertedPrice = price * currency.rate;
-    return {
-      __html: currency.symbol + convertedPrice.toLocaleString('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      }) + ' ' + selectedCurrency
-    };
-  }, [currencyRates, selectedCurrency]);
+  const formatPrice = React.useCallback(
+    (price: number) => formatPriceUsd(price, selectedCurrency, currencyRates as CurrencyRatesRecord),
+    [currencyRates, selectedCurrency]
+  );
 
   // Check if product is in cart on mount and when cart changes
   useEffect(() => {
@@ -470,7 +490,7 @@ function ProductsUnitsPage() {
   };
 
   const handleStraightRightArrow = () => {
-    setStraightScroll(-window.innerWidth * 0.713);
+    setStraightScroll(-Math.max(200, windowWidth - 32));
   };
 
   const handleWavyLeftArrow = () => {
@@ -478,7 +498,7 @@ function ProductsUnitsPage() {
   };
 
   const handleWavyRightArrow = () => {
-    setWavyScroll(-window.innerWidth * 0.713);
+    setWavyScroll(-Math.max(200, stripViewportW));
   };
 
   const handleCurlyLeftArrow = () => {
@@ -486,17 +506,26 @@ function ProductsUnitsPage() {
   };
 
   const handleCurlyRightArrow = () => {
-    setCurlyScroll(-window.innerWidth * 0.713);
+    setCurlyScroll(-Math.max(200, stripViewportW));
   };
 
-  const renderProductContainer = (texture: string, textureLabel: string) => {
+  const renderProductContainer = (texture: string, textureLabel: string, isFirstMarble = false) => {
     const products = productsByTexture[texture as keyof typeof productsByTexture];
     const scrollState = texture === 'straight' ? straightScroll : texture === 'wavy' ? wavyScroll : curlyScroll;
     const handleLeftArrow = texture === 'straight' ? handleStraightLeftArrow : texture === 'wavy' ? handleWavyLeftArrow : handleCurlyLeftArrow;
     const handleRightArrow = texture === 'straight' ? handleStraightRightArrow : texture === 'wavy' ? handleWavyRightArrow : handleCurlyRightArrow;
+
+    const isLargeScreen = windowWidth > 1024;
+    const pairCount = Math.ceil(products.length / 2);
+    const productRowWidthPct =
+      products.length >= 4
+        ? isLargeScreen
+          ? products.length * 25
+          : pairCount * 100
+        : 100;
     
     return (
-      <div className="px-0 md:px-0 transition-all duration-300 ease-out" style={{ marginTop: '20px', marginBottom: '20px', overflow: 'visible' }}>
+      <div className="px-0 md:px-0 transition-all duration-300 ease-out" style={{ marginTop: isFirstMarble ? '0' : '20px', marginBottom: '20px', overflow: 'visible' }}>
         <div className="transition-all duration-300 ease-out" style={{
           border: '1.3px solid black',
           backgroundColor: '#f5f5f5',
@@ -511,8 +540,8 @@ function ProductsUnitsPage() {
           position: 'relative'
         }}>
           {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: '1px' }}>
-            <div style={{ width: '1px', height: '15px', backgroundColor: 'black', margin: '0 auto 8px auto' }}></div>
+          <div style={{ textAlign: 'center', marginBottom: '2px' }}>
+            <div style={{ width: '1px', height: '15px', backgroundColor: 'black', margin: '0 auto 2px auto' }}></div>
             <h3 
               onClick={() => {
                 if (texture === 'straight') navigate('/units/straight');
@@ -536,40 +565,43 @@ function ProductsUnitsPage() {
             </h3>
           </div>
           
-          {/* Content Area */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: products.length >= 4 ? 'space-between' : 'center', gap: '10px', overflow: 'visible' }}>
-            {/* Left Arrow - Only show if 4+ products */}
+          {/* Content area: full-width track; arrows absolutely positioned (not in flex) */}
+          <div style={{ position: 'relative', width: '100%', overflow: 'visible', boxSizing: 'border-box' }}>
             {products.length >= 4 && (
-              <button 
+              <button
+                type="button"
                 onClick={handleLeftArrow}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
+                aria-label="Previous products"
+                style={{
+                  position: 'absolute',
+                  left: 6,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  zIndex: 25,
+                  background: 'none',
+                  border: 'none',
                   cursor: 'pointer',
-                  padding: '5px',
+                  padding: '8px',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                  minHeight: '50px',
-                  transform: 'translateX(10px) translateY(-10px)'
-                }}>
+                  justifyContent: 'center'
+                }}
+              >
                 <img
                   src="/assets/NOIR/left-facing-arrow.svg"
-                  alt="Left Arrow"
-                  style={{ width: '14px', height: '14px' }}
+                  alt=""
+                  style={{ width: '14px', height: '14px', display: 'block' }}
                 />
               </button>
             )}
-            
-            {/* Product Thumbnails Container with Static Vertical Line */}
-            <div style={{ flex: '1', position: 'relative', overflow: 'visible' }}>
+
+            <div style={{ width: '100%', position: 'relative', overflow: 'visible', boxSizing: 'border-box' }}>
               {/* Single Center Line with Masking */}
               <div style={{
                 position: 'absolute',
                 left: '50%',
                 top: '0',
-                bottom: '0',
+                bottom: '6px',
                 width: '1px',
                 backgroundColor: 'black',
                 zIndex: 20,
@@ -581,7 +613,7 @@ function ProductsUnitsPage() {
                 position: 'absolute',
                 left: '50%',
                 top: '0',
-                bottom: '0',
+                bottom: '6px',
                 width: '10px',
                 backgroundColor: 'transparent',
                 zIndex: 15,
@@ -589,205 +621,296 @@ function ProductsUnitsPage() {
                 pointerEvents: 'none'
               }}></div>
               
-              {/* Shopping Bag Icons Container */}
-              <div style={{ 
-                position: 'absolute',
-                top: '0',
-                left: '0',
-                right: '0',
-                bottom: '0',
-                zIndex: 1000,
-                pointerEvents: 'none',
-                overflow: 'visible'
-              }}>
-                {products.map((product, index) => {
-                  // Position icons relative to their products
-                  // Left products (even index): left edge + 16px + scroll offset
-                  // Right products (odd index): right edge of product - 34px + scroll offset (-30px - 4px)
-                  const isLeft = index % 2 === 0;
-                  
-                  return (
-                    <div
-                      key={`icon-${product.id}`}
-                      style={{
-                        position: 'absolute',
-                        top: '-38px',
-                        ...(isLeft 
-                          ? { left: `calc(${index * 50}% + ${scrollState}px + 16px)` }
-                          : { left: `calc(${index * 50}% + 50% + ${scrollState}px - 34px)` }
-                        ),
-                        pointerEvents: 'auto',
-                        cursor: 'pointer',
-                        width: '20px',
-                        height: '23px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                      onClick={(e) => { e.stopPropagation(); handleAddToCart(product, texture, e); }}
-                    >
-                      {product.inCart ? (
-                        <img
-                          src="/assets/card-added.svg"
-                          alt="In cart"
-                          width={20}
-                          height={23}
-                          style={{ width: '20px !important', height: '23px !important' }}
-                        />
-                      ) : (
-                        <img
-                          src="/assets/card-add.svg"
-                          alt="Add to cart"
-                          width={20}
-                          height={23}
-                          style={{ width: '20px !important', height: '23px !important' }}
-                        />
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-              
-              {/* Scrolling Product Thumbnails Container */}
-              <div style={{ 
-                overflowX: 'hidden',
-                overflowY: 'visible',
-                width: '100%',
-                position: 'relative',
-                maxWidth: '100%',
-                marginTop: '-4px',
-                paddingTop: '0px'
-              }}>
-                <div 
-                  style={{ 
-                    display: 'flex', 
-                    flexWrap: 'nowrap',
-                    gap: '0',
-                    transform: `translateX(${scrollState}px)`,
-                    transition: 'none',
-                    width: windowWidth > 1024 
-                      ? (products.length >= 4 ? 'calc(100% - 20px)' : 'calc(100% - 20px)')
-                      : (products.length >= 4 ? 'calc(200% - 20px)' : 'calc(100% - 20px)')
+              {/* Strip: products row + bag overlay outside overflow-x clip (same pattern as home/shop UNITS) */}
+              <div
+                ref={texture === 'straight' ? productStripViewportRef : undefined}
+                style={{
+                  width: '100%',
+                  position: 'relative',
+                  maxWidth: '100%',
+                  marginTop: 0,
+                  paddingTop: '10px',
+                  paddingBottom: 0,
+                  overflow: 'visible',
+                  boxSizing: 'border-box'
+                }}
+              >
+                <div
+                  style={{
+                    position: 'relative',
+                    width: '100%',
+                    overflowX: 'clip',
+                    overflowY: 'visible',
+                    boxSizing: 'border-box'
                   }}
                 >
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexWrap: 'nowrap',
+                      alignItems: 'stretch',
+                      gap: '0',
+                      transform: `translateX(${scrollState}px)`,
+                      transition: 'none',
+                      width: `${productRowWidthPct}%`,
+                      boxSizing: 'border-box'
+                    }}
+                  >
                   {products.map((product, index) => {
-                    const isLargeScreen = windowWidth > 1024;
-                    const flexBasis = isLargeScreen ? '25%' : '50%';
-                    const transformX = isLargeScreen 
-                      ? '0px'
-                      : (index % 2 === 0 ? '0px' : '10px');
-                    
+                    const flexBasis =
+                      isLargeScreen && products.length >= 4 ? '25%' : '50%';
+
                     return (
                     <div
                       key={product.id}
-                      style={{ 
-                        padding: '5px 10px 4px 10px',
-                        textAlign: 'center',
-                        transform: `translateX(${transformX}) translateY(-4px)`,
+                      style={{
+                        padding: 0,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'stretch',
+                        justifyContent: 'flex-start',
                         flex: `0 0 ${flexBasis}`,
                         boxSizing: 'border-box',
                         position: 'relative',
-                        overflow: 'visible'
+                        overflow: 'visible',
+                        minWidth: 0,
+                        ...dbgProductCol
                       }}
                     >
-                      {/* Product Image */}
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        onClick={() => handleProductClick(product)}
-                        style={{ 
-                          width: '90%', 
-                          height: 'auto',
-                          marginBottom: '5px',
-                          marginLeft: '10px',
-                          maxWidth: '100%',
-                          cursor: 'pointer'
+                      {/* Full width from card edge ↔ center line (left column) or center line ↔ edge (right column) */}
+                      <div
+                        style={{
+                          width: '100%',
+                          flex: '1 1 auto',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          boxSizing: 'border-box',
+                          padding: '5px 12px 4px 12px',
+                          ...dbgProductBand
                         }}
-                      />
-                      
-                      {/* Product Name */}
-                      <p style={{ 
-                        fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                        fontSize: product.name === 'NOIR' ? '19px' : '18px',
-                        color: 'black',
-                        textTransform: 'uppercase',
-                        margin: '-10px 0 -3px 0',
-                        fontWeight: '500'
-                      }}>
-                        {product.name}
-                      </p>
-                      
-                      {/* Hair Details */}
-                      <p style={{ 
-                        fontFamily: '"Futura PT Medium"',
-                        fontSize: '10px',
-                        color: '#EB1C24',
-                        textTransform: 'uppercase',
-                        margin: '0 0 5px 0',
-                        fontWeight: '500',
-                        lineHeight: '0.84'
-                      }}>
-                        {product.length} RAW {product.hairOrigin}
-                      </p>
-                      
-                      {/* Price */}
-                      <p style={{ 
-                        fontFamily: '"Futura PT Medium"',
-                        fontSize: '12px',
-                        color: 'black',
-                        textTransform: 'uppercase',
-                        margin: '0 0 5px 0',
-                        fontWeight: '500',
-                        lineHeight: '0.84',
-                        transform: 'translateY(2px)'
-                      }}
-                      dangerouslySetInnerHTML={formatPrice(product.price)}
-                      />
-                      
-                      {/* Cap Size Options */}
-                      <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', marginTop: '2px', transform: 'translateY(1px)' }}>
-                        {['XS', 'S', 'M', 'L'].map(size => (
-                          <span
-                            key={size}
-                            onClick={(e) => { e.stopPropagation(); handleSizeSelect(product.id, texture, size); }}
-                            style={{
-                              fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                              fontSize: '12px',
-                              color: product.selectedSize === size ? '#EB1C24' : 'black',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            {size}
-                          </span>
-                        ))}
+                      >
+                      <div
+                        style={{
+                          width: '100%',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          marginBottom: '5px'
+                        }}
+                      >
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          onClick={() => handleProductClick(product)}
+                          style={{
+                            width: 'calc(90% * 0.88)',
+                            height: 'auto',
+                            maxWidth: '100%',
+                            display: 'block',
+                            margin: 0,
+                            cursor: 'pointer'
+                          }}
+                        />
+                      </div>
+
+                      <div
+                        style={{
+                          width: '100%',
+                          textAlign: 'center',
+                          boxSizing: 'border-box'
+                        }}
+                      >
+                        <p
+                          style={{
+                            fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                            fontSize: '18px',
+                            color: 'black',
+                            textTransform: 'uppercase',
+                            margin: 0,
+                            fontWeight: '500',
+                            lineHeight: 1.05,
+                            minHeight: '22px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          {product.name}
+                        </p>
+
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '10px',
+                            color: '#EB1C24',
+                            textTransform: 'uppercase',
+                            margin: '2px 0 5px 0',
+                            fontWeight: '500',
+                            lineHeight: '0.84',
+                            minHeight: '12px',
+                            transform: 'translateY(1px)'
+                          }}
+                        >
+                          {product.length} RAW {product.hairOrigin}
+                        </p>
+
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '12px',
+                            color: 'black',
+                            textTransform: 'uppercase',
+                            margin: '0 0 5px 0',
+                            fontWeight: '500',
+                            lineHeight: '0.84',
+                            transform: 'translateY(2px)'
+                          }}
+                          dangerouslySetInnerHTML={formatPrice(product.price)}
+                        />
+
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            gap: '14px',
+                            marginTop: '2px',
+                            transform: 'translateY(1px)'
+                          }}
+                        >
+                          {['XS', 'S', 'M', 'L'].map((size) => (
+                            <span
+                              key={size}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSizeSelect(product.id, texture, size);
+                              }}
+                              style={{
+                                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                fontSize: '12px',
+                                color: product.selectedSize === size ? '#EB1C24' : 'black',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              {size}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
                       </div>
                     </div>
                     );
                   })}
+                  </div>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      right: 0,
+                      top: '10px',
+                      pointerEvents: 'none',
+                      overflow: 'visible',
+                      zIndex: 24
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'nowrap',
+                        alignItems: 'flex-start',
+                        gap: '0',
+                        transform: `translateX(${scrollState}px)`,
+                        transition: 'none',
+                        width: `${productRowWidthPct}%`,
+                        boxSizing: 'border-box'
+                      }}
+                    >
+                      {products.map((product, index) => {
+                        const flexBasis =
+                          isLargeScreen && products.length >= 4 ? '25%' : '50%';
+                        const isLeftColumn = index % 2 === 0;
+                        return (
+                          <div
+                            key={`bag-${texture}-${product.id}`}
+                            style={{
+                              flex: `0 0 ${flexBasis}`,
+                              minWidth: 0,
+                              height: 0,
+                              position: 'relative',
+                              overflow: 'visible',
+                              pointerEvents: 'auto'
+                            }}
+                          >
+                            <div
+                              style={{
+                                position: 'absolute',
+                                top: '-36px',
+                                ...(isLeftColumn ? { left: 16 } : { right: 16 }),
+                                zIndex: 1000,
+                                pointerEvents: 'auto',
+                                cursor: 'pointer',
+                                width: '20px',
+                                height: '23px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleAddToCart(product, texture, e);
+                              }}
+                            >
+                              {product.inCart ? (
+                                <img
+                                  src="/assets/card-added.svg"
+                                  alt="In cart"
+                                  width={20}
+                                  height={23}
+                                  style={{ width: '20px !important', height: '23px !important' }}
+                                />
+                              ) : (
+                                <img
+                                  src="/assets/card-add.svg"
+                                  alt="Add to cart"
+                                  width={20}
+                                  height={23}
+                                  style={{ width: '20px !important', height: '23px !important' }}
+                                />
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-            
-            {/* Right Arrow - Only show if 4+ products */}
+
             {products.length >= 4 && (
-              <button 
+              <button
+                type="button"
                 onClick={handleRightArrow}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
+                aria-label="Next products"
+                style={{
+                  position: 'absolute',
+                  right: 6,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  zIndex: 25,
+                  background: 'none',
+                  border: 'none',
                   cursor: 'pointer',
-                  padding: '5px',
+                  padding: '8px',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                  minHeight: '50px',
-                  transform: 'translateX(-10px) translateY(-10px)'
-                }}>
+                  justifyContent: 'center'
+                }}
+              >
                 <img
                   src="/assets/NOIR/right-facing-arrow.svg"
-                  alt="Right Arrow"
-                  style={{ width: '14px', height: '14px' }}
+                  alt=""
+                  style={{ width: '14px', height: '14px', display: 'block' }}
                 />
               </button>
             )}
@@ -915,7 +1038,7 @@ function ProductsUnitsPage() {
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
 <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-              <DynamicCartIcon count={cartCount} width={22} height={19} />
+              <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg
@@ -944,10 +1067,11 @@ function ProductsUnitsPage() {
                 maxWidth: 'none', 
                 overflow: 'visible',
                 backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                minHeight: '560px'
+                minHeight: 'calc(100dvh - 80px)',
+                height: 'calc(100dvh - 80px)'
               }}
             >
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                 {/* Navigation Links */}
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                   <button
@@ -1159,7 +1283,7 @@ function ProductsUnitsPage() {
           ) : (
             <div className="transition-all duration-300 ease-out">
           {/* STRAIGHT CONTAINER */}
-          {renderProductContainer('straight', 'STRAIGHT')}
+          {renderProductContainer('straight', 'STRAIGHT', true)}
 
           {/* WAVY CONTAINER */}
           {renderProductContainer('wavy', 'WAVY')}

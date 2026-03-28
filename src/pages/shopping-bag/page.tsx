@@ -801,7 +801,7 @@ function ShoppingBagPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/')}
+                    onClick={() => navigate('/lobby')}
                   >
                     HOME &gt;
                   </span>{' '}
@@ -815,7 +815,7 @@ function ShoppingBagPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/')}
+                    onClick={() => navigate('/lobby')}
                   >
                     HOME &gt;
                   </span>{' '}
@@ -831,7 +831,7 @@ function ShoppingBagPage() {
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
 <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-              <DynamicCartIcon count={cartCount} width={22} height={19} />
+              <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg
@@ -857,10 +857,18 @@ function ShoppingBagPage() {
               borderWidth: '1.3px', 
               minWidth: '100%', 
               maxWidth: 'none', 
+              overflow: showMobileMenu ? 'visible' : 'hidden',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              height: 'calc(100vh - 270px)',
-              minHeight: 'calc(100vh - 270px)',
-              maxHeight: 'calc(100vh - 270px)'
+              ...(showMobileMenu
+                ? {
+                    minHeight: 'calc(100dvh - 80px)',
+                    height: 'calc(100dvh - 80px)',
+                  }
+                : {
+                    height: 'calc(100vh - 270px)',
+                    minHeight: 'calc(100vh - 270px)',
+                    maxHeight: 'calc(100vh - 270px)',
+                  }),
             }}
           >
             {showMobileMenu ? (

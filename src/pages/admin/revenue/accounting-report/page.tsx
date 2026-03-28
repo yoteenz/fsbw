@@ -298,7 +298,7 @@ export default function AdminAccountingReport() {
 
           {/* Receipts – upload quarterly; scan/photo like order-form; storage like affiliate tabs */}
           <div className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden mb-4" style={{ borderWidth: '1.3px' }}>
-            <div className="flex items-center justify-between -mt-1 pb-1 px-4 pt-4" style={{ marginBottom: 0 }}>
+            <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4" style={{ marginBottom: 0 }}>
               <h3 style={{ ...sectionTitleStyle, marginBottom: 0 }}>RECEIPTS</h3>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '-5px', transform: 'translateX(-6px)' }}>
                 <path d="M9 5H7C5.89543 5 5 5.89543 5 7V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V7C19 5.89543 18.1046 5 17 5H15" stroke="#EB1C24" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -307,7 +307,7 @@ export default function AdminAccountingReport() {
               </svg>
             </div>
             <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
-            <div className="px-4 pb-4">
+            <div className="px-5 pb-4">
               <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', marginBottom: '12px', textTransform: 'uppercase' }}>UPLOAD QUARTERLY FOR TRACKING, ANALYSIS & DATA FACTORING.</p>
               <div className="flex flex-wrap gap-2 mb-3">
                 {quarterKeys.map((q) => (
@@ -365,7 +365,7 @@ export default function AdminAccountingReport() {
                     alignItems: 'center',
                   }}
                 >
-                  <span style={{ padding: '4px 8px', border: '1px solid #808080', borderRadius: '4px', backgroundColor: '#F5F5F5', color: '#000000', fontFamily: '"Futura PT Book"' }}>CHOOSE FILE</span>
+                  <span style={{ padding: '4px 8px', border: '1px solid #808080', borderRadius: 0, backgroundColor: '#F5F5F5', color: '#000000', fontFamily: '"Futura PT Book"' }}>CHOOSE FILE</span>
                   <span style={{ marginLeft: '8px', color: '#808080', fontSize: '10px' }}>TAKE PHOTO, SCAN, OR CHOOSE FILE</span>
                 </div>
               </div>

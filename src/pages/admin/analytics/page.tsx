@@ -138,7 +138,7 @@ export default function AdminAnalytics() {
               className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
               style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
             >
-              <div className="flex items-center justify-between -mt-1 pb-1 px-4 pt-4" style={{ marginBottom: 0 }}>
+              <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4" style={{ marginBottom: 0 }}>
                 <h2
                   className="flex-1"
                   style={{
@@ -196,8 +196,16 @@ export default function AdminAnalytics() {
                 ))}
               </div>
 
-              {/* Tab content */}
-              <div className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: '380px', paddingTop: '2px' }}>
+              {/* Tab content – padding below scroll viewport (above card bottom) */}
+              <div style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}>
+                <div
+                  className="overflow-y-auto"
+                  style={{
+                    maxHeight: '380px',
+                    paddingTop: '2px',
+                    boxSizing: 'border-box',
+                  }}
+                >
                 {activeTab === 'SUMMARY' && (
                   <>
                     <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>BY SOURCE</h3>
@@ -215,7 +223,18 @@ export default function AdminAnalytics() {
                     {summary.recentEvents.length === 0 ? (
                       <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', margin: '0', textTransform: 'uppercase' }}>NO CLICKS RECORDED YET.</p>
                     ) : (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '140px', overflowY: 'auto', padding: '8px', boxSizing: 'border-box' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '6px',
+                          maxHeight: '140px',
+                          overflowY: 'auto',
+                          paddingTop: '6px',
+                          paddingBottom: '6px',
+                          boxSizing: 'border-box',
+                        }}
+                      >
                         {summary.recentEvents.slice(0, 10).map((evt, i) => (
                           <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '10px', fontFamily: '"Futura PT Book"', color: '#000', padding: '6px 8px', backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
                             <span style={{ fontWeight: '500' }}>{PLATFORM_LABEL[evt.platform]}</span>
@@ -262,6 +281,7 @@ export default function AdminAnalytics() {
                     </div>
                   </>
                 )}
+                </div>
               </div>
             </div>
 

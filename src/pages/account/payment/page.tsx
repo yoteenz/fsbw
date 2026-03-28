@@ -503,7 +503,7 @@ function PaymentPage() {
             </p>
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
               <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-                <DynamicCartIcon count={cartCount} width={22} height={19} />
+                <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg width="17" height="18" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" onClick={handleMobileMenuToggle} style={{ marginTop: '2px' }}>
@@ -516,9 +516,9 @@ function PaymentPage() {
           {showMobileMenu ? (
             <div
               className="border border-black flex flex-col pt-6 pb-4 px-5 bg-white/60 backdrop-blur-sm w-full"
-              style={{ borderWidth: '1.3px', minWidth: '100%', maxWidth: 'none', overflow: 'visible', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: '560px' }}
+              style={{ borderWidth: '1.3px', minWidth: '100%', maxWidth: 'none', overflow: 'visible', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: 'calc(100dvh - 160px)', height: 'calc(100dvh - 160px)' }}
             >
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                   {['SHOP', 'TOOLS', 'BRAND'].map((tab) => (
                     <button
@@ -779,11 +779,11 @@ function PaymentPage() {
                 </div>
               </div>
               {showAddPaymentForm ? (
-                <>
+                <div className="flex space-x-3" style={{ marginTop: '-5px' }}>
                   <button
                     type="button"
                     onClick={saveNewPaymentMethod}
-                    className="border border-black w-full py-2 font-medium"
+                    className="border border-black flex-1 py-2 font-medium"
                     style={{
                       borderWidth: '1.3px',
                       fontSize: '11px',
@@ -792,7 +792,6 @@ function PaymentPage() {
                       textTransform: 'uppercase',
                       backgroundColor: '#FFFFFF',
                       cursor: 'pointer',
-                      marginTop: '-5px'
                     }}
                   >
                     SAVE CARD
@@ -800,21 +799,20 @@ function PaymentPage() {
                   <button
                     type="button"
                     onClick={cancelAddPayment}
-                    className="border border-black w-full py-2 font-medium"
+                    className="border border-black flex-1 py-2 font-medium"
                     style={{
                       borderWidth: '1.3px',
                       fontSize: '11px',
                       fontFamily: '"Futura PT Medium"',
-                      color: '#EB1C24',
+                      color: '#000000',
                       textTransform: 'uppercase',
                       backgroundColor: '#FFFFFF',
                       cursor: 'pointer',
-                      marginTop: '-4px'
                     }}
                   >
                     CANCEL
                   </button>
-                </>
+                </div>
               ) : (
                 <button
                   type="button"

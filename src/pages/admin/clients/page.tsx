@@ -1578,7 +1578,7 @@ export default function AdminClients() {
                 style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
               >
                 {/* CLIENTS header (concierge-style): text left, icon right; when details view: X close on right; card header always "CLIENTS" */}
-                <div className="flex items-center justify-between -mt-1 pb-1 px-4 pt-4" style={{ marginBottom: 0 }}>
+                <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4" style={{ marginBottom: 0 }}>
                   {selectedClientEmail ? (
                     <>
                       <h2
@@ -1660,7 +1660,7 @@ export default function AdminClients() {
 
                 {selectedClientEmail ? (
                   /* Details view: profile, orders, appointments */
-                  <div className="px-4 pb-6" style={{ paddingTop: '10px' }}>
+                  <div className="px-5 pb-6" style={{ paddingTop: '10px' }}>
                     {selectedClient ? (
                       <>
                         {/* Circular profile area centered above the tab bar */}
@@ -2070,7 +2070,8 @@ export default function AdminClients() {
                           const renderReviewCards = (list: typeof reviewList, heading: string) => (
                             <div className="mt-4 pt-4" style={{ borderTop: '1px solid #e5e7eb' }}>
                               <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', marginBottom: '8px', textTransform: 'uppercase' }}>{heading}</p>
-                              <div className="space-y-3 max-h-64 overflow-y-auto" style={{ paddingTop: '2px' }}>
+                              <div style={{ paddingBottom: '24px' }}>
+                                <div className="space-y-3 max-h-64 overflow-y-auto" style={{ paddingTop: '2px' }}>
                                 {list.map((r: any, i: number) => {
                                   const dateStr = (r.updatedAt ?? r.updated_at ?? r.date ?? r.createdAt ?? r.submittedAt) || '—';
                                   const displayDate = typeof dateStr === 'string' ? (() => { try { return new Date(dateStr).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }); } catch { return dateStr; } })() : '—';
@@ -2087,6 +2088,7 @@ export default function AdminClients() {
                                     </div>
                                   );
                                 })}
+                                </div>
                               </div>
                             </div>
                           );
@@ -2144,7 +2146,7 @@ export default function AdminClients() {
                         })()}
                         {/* Client details section: DETAILS | Cart | Wishlist tabs – same spacing as marketing */}
                         <div className="bg-white border border-gray-200 p-4 mb-6">
-                          <div className="flex flex-wrap justify-center gap-[14px] mb-4">
+                          <div className="flex flex-wrap justify-center gap-[14px]">
                             {PERSONAL_SECTION_TABS.map((tab) => (
                               <button
                                 key={tab}
@@ -2346,7 +2348,7 @@ export default function AdminClients() {
                             );
                           })()}
                         </div>
-                        <div className="flex flex-wrap justify-center gap-[14px] mb-6">
+                        <div className="flex flex-wrap justify-center gap-[14px]">
                           {DETAILS_TABS.map((tab) => (
                             <button
                               key={tab}
@@ -2523,7 +2525,8 @@ export default function AdminClients() {
                                   ) : null}
                                 </div>
                               ) : (
-                                <div className="space-y-2 max-h-96 overflow-y-auto" style={{ paddingTop: '2px' }}>
+                                <div style={{ paddingBottom: '24px' }}>
+                                  <div className="space-y-2 max-h-96 overflow-y-auto" style={{ paddingTop: '2px' }}>
                                   {list.map((evt) => {
                                     const createdAt = evt.createdAt ? new Date(evt.createdAt).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'medium' }) : '—';
                                     const payload = evt.payload && typeof evt.payload === 'object' ? evt.payload as Record<string, unknown> : undefined;
@@ -2546,6 +2549,7 @@ export default function AdminClients() {
                                       </div>
                                     );
                                   })}
+                                  </div>
                                 </div>
                               )}
                             </div>
@@ -3164,7 +3168,8 @@ export default function AdminClients() {
                                   </p>
                                 </div>
                               ) : (
-                                <div className="space-y-3 max-h-64 overflow-y-auto" style={{ paddingTop: '2px' }}>
+                                <div style={{ paddingBottom: '24px' }}>
+                                  <div className="space-y-3 max-h-64 overflow-y-auto" style={{ paddingTop: '2px' }}>
                                   {messages.map((m) => (
                                     <div key={String(m.id)} className="py-3 border-b border-gray-100 last:border-0">
                                       {m.subject && (
@@ -3178,6 +3183,7 @@ export default function AdminClients() {
                                       )}
                                     </div>
                                   ))}
+                                  </div>
                                 </div>
                               )}
                             </div>
@@ -3313,12 +3319,17 @@ export default function AdminClients() {
                   )}
                 </div>
 
-                {/* Client rows – same line width as tabs (20px inset to match gray underline under header) */}
-                <div
-                  ref={clientsListScrollElRef}
-                  className="overflow-y-auto overflow-x-hidden min-w-0"
-                  style={{ maxHeight: '380px', padding: '8px', boxSizing: 'border-box', marginLeft: '20px', marginRight: '20px' }}
-                >
+                {/* Client rows – padding below scroll viewport (above card bottom) */}
+                <div style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}>
+                  <div
+                    ref={clientsListScrollElRef}
+                    className="overflow-y-auto overflow-x-hidden min-w-0"
+                    style={{
+                      maxHeight: '380px',
+                      paddingTop: '2px',
+                      boxSizing: 'border-box',
+                    }}
+                  >
                   {registeredUsers.length === 0 ? (
                     <div className="px-5 py-8 text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>
                       NO REGISTERED CLIENTS YET. LIST IS PER BROWSER.
@@ -3448,6 +3459,7 @@ export default function AdminClients() {
                       );
                     })
                   )}
+                </div>
                 </div>
                   </>
                 )}
@@ -3664,7 +3676,24 @@ export default function AdminClients() {
                 <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
               </button>
             </div>
-            <div className="overflow-y-auto flex-1 min-h-0" style={{ fontSize: '10px', padding: '8px', boxSizing: 'border-box' }}>
+            <div
+              className="flex-1 min-h-0 flex flex-col"
+              style={{
+                paddingLeft: '20px',
+                paddingRight: '20px',
+                paddingBottom: '24px',
+                boxSizing: 'border-box',
+                minHeight: 0,
+              }}
+            >
+              <div
+                className="overflow-y-auto flex-1 min-h-0"
+                style={{
+                  fontSize: '10px',
+                  paddingTop: '8px',
+                  boxSizing: 'border-box',
+                }}
+              >
               {invitesDetailRows.length === 0 ? (
                 <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', margin: 0, textAlign: 'center', padding: '16px 0', textTransform: 'uppercase' }}>THERE ARE NO INVITES YET.</p>
               ) : (
@@ -3689,6 +3718,7 @@ export default function AdminClients() {
                   </tbody>
                 </table>
               )}
+              </div>
             </div>
           </div>
         </div>

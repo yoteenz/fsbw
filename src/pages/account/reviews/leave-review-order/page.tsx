@@ -301,7 +301,7 @@ function LeaveReviewOrderPage() {
               </p>
               <div className="gap-5 flex absolute" style={{ right: '17px' }}>
                 <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-                  <DynamicCartIcon count={cartCount} width={22} height={19} />
+                  <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
                 </div>
                 <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <svg width="17" height="18" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" onClick={handleMobileMenuToggle} style={{ marginTop: '2px' }}>
@@ -358,7 +358,7 @@ function LeaveReviewOrderPage() {
             <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               {showMobileMenu ? (
                 <>
-                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => navigate('/home/shop')}>
+                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => navigate('/lobby')}>
                     HOME &gt;
                   </span>{' '}
                   <span style={{ color: BRAND_RED, fontFamily: '"Futura PT Medium"', fontWeight: '400' }}>
@@ -378,7 +378,7 @@ function LeaveReviewOrderPage() {
             </p>
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
               <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-                <DynamicCartIcon count={cartCount} width={22} height={19} />
+                <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg width="17" height="18" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" onClick={handleMobileMenuToggle} style={{ marginTop: '2px' }}>
@@ -397,10 +397,11 @@ function LeaveReviewOrderPage() {
                 maxWidth: 'none',
                 overflow: 'visible',
                 backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                minHeight: '560px'
+                minHeight: 'calc(100dvh - 160px)',
+                height: 'calc(100dvh - 160px)'
               }}
             >
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', height: '490px', position: 'relative' }}>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
                   {(['SHOP', 'TOOLS', 'BRAND'] as const).map((tab) => (
                     <button
@@ -769,7 +770,7 @@ function LeaveReviewOrderPage() {
                       <span style={{
                         padding: '4px 8px',
                         border: '1px solid #808080',
-                        borderRadius: '4px',
+                        borderRadius: 0,
                         backgroundColor: '#F5F5F5',
                         color: '#000000',
                         textTransform: 'uppercase',
@@ -836,7 +837,7 @@ function LeaveReviewOrderPage() {
                       <span style={{
                         padding: '4px 8px',
                         border: '1px solid #808080',
-                        borderRadius: '4px',
+                        borderRadius: 0,
                         backgroundColor: '#F5F5F5',
                         color: '#000000',
                         textTransform: 'uppercase',

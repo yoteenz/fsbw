@@ -108,14 +108,14 @@ export default function AdminUsers() {
               className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
               style={{ borderWidth: '1.3px', minHeight: '200px' }}
             >
-              <div className="flex justify-between items-center px-4 pt-4 pb-2">
+              <div className="flex justify-between items-center px-5 pt-4 pb-2">
                 <h2 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', margin: 0 }}>AUTH USERS</h2>
               </div>
               <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
 
               {actionFeedback && (
                 <div
-                  className="mx-4 mb-3 px-3 py-2 text-sm"
+                  className="mx-5 mb-3 px-3 py-2 text-sm"
                   style={{
                     backgroundColor: actionFeedback.type === 'success' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
                     color: actionFeedback.type === 'success' ? '#166534' : '#b91c1c',
@@ -126,13 +126,13 @@ export default function AdminUsers() {
               )}
 
               {loading ? (
-                <p className="px-4 py-6 text-gray-500 text-sm">Loading users...</p>
+                <p className="px-5 py-6 text-gray-500 text-sm">Loading users...</p>
               ) : error ? (
-                <p className="px-4 py-6 text-red-600 text-sm">{error}</p>
+                <p className="px-5 py-6 text-red-600 text-sm">{error}</p>
               ) : users.length === 0 ? (
-                <p className="px-4 py-6 text-gray-500 text-sm">No users found.</p>
+                <p className="px-5 py-6 text-gray-500 text-sm">No users found.</p>
               ) : (
-                <div className="px-4 pb-4 space-y-3">
+                <div className="px-5 pb-4 space-y-3">
                   {users.map((u) => (
                     <div
                       key={u.id}
@@ -178,7 +178,7 @@ export default function AdminUsers() {
               )}
 
               {!loading && users.length >= perPage && (
-                <div className="flex justify-center gap-2 px-4 pb-4">
+                <div className="flex justify-center gap-2 px-5 pb-4">
                   <button
                     type="button"
                     disabled={page <= 1}

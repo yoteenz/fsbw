@@ -488,6 +488,24 @@ img.natural-front-mobile {
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Square corners for text-like form controls site-wide (overrides Tailwind rounded-* and UA defaults).
+ * Excludes checkboxes, radios, range sliders, and hidden file inputs (custom row UI is styled separately).
+ */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+textarea,
+select {
+  border-radius: 0 !important;
+}
+
+/* Admin Brand → CODES: Chromium/WebKit apply a large min-inline-size on type=date, which overflows max-w-md cards */
+input.admin-brand-expires-date[type="date"] {
+  min-width: 0 !important;
+  min-inline-size: 0 !important;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
 
 /* Futura PT Demi Font Stack */
 .font-futura {
