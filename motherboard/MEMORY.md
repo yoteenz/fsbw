@@ -2399,8 +2399,36 @@ Summary: User wanted **only** the founder admin account (**`kateenaarmstrong@gma
 
 ---
 
+## 2026-03-27 — Founder "VIEW AS CLIENT" profile + rewards (clean hub)
+
+Summary: User wanted a **VIEW AS CLIENT** control on **Account → Profile** (same red **9px** styling as **LOAD GIFT CARD**) that toggles a persisted mode for **`kateenaarmstrong@gmail.com`** only: less mock/test chrome on the **profile hub** and **Rewards** while **checkout dummy card**, **orders**, and **loyalty math** stay as implemented.
+
+- **Storage / API:** **`FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY`** (`baw_founder_account_view_as_client`) in **`src/utils/adminAuth.ts`**. **`founderAccountViewAsClientChanged`** custom event keeps tabs in sync with Account toggle.
+- **Account profile (`src/pages/account/page.tsx`):** **`profileUsesMockChrome`** = mock founder minus (founder ∧ view-as-client). Hides **ADMIN: FOUNDER**, uses **stored** membership for the line (no **`getEffectiveSubscriptionTier`** on-profile), **concierge** only if real premium or admin test mode off, **review count** + **calculateTier** + digital/voucher **mock history** fallbacks follow client logic; **voucher** row hidden in client view; **gift-card top-up** effect skipped in client view; **alerts** merge uses empty voucher fields for notification generation. Toggle label: **VIEW AS CLIENT** / **VIEW AS ADMIN PROFILE** — rendered **under the profile photo**, **below CHANGE / RESET** or **CHANGE PHOTO** (not beside **LOAD GIFT CARD**).
+- **Rewards (`src/pages/account/membership/page.tsx`):** **`showTierColorsForAdmin`** false in client view → hides **SILVER/RED/BLACK** and **Standard / 3 / 6 / 12** toggle rows. Mock **tier progress**, **affiliate points**, **subscription end/tier** shortcuts, and **`hasEffectivePremium`** use real stored data when client view; **`getNextTierProgress`** uses profile **`lastKnownTier_`** / user fields instead of **`getEffectiveTierName`** overrides; **included benefits** IIFE uses **`userData.subscriptionTier`** not override when client view.
+- **Out of scope:** **Settings** page unchanged. Subpages (orders, concierge, etc.) still navigable; data in **localStorage** is not deleted.
+- **Changes:** **`adminAuth.ts`**, **`account/page.tsx`**, **`membership/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
 ## 2026-03-27 — Admin Activity tab: local backup + self-view merge (like cart/wishlist)
 
 Summary: User asked that the **Activity** tab on **Admin → Clients → client details** behave like **cart/wishlist** for **kateenaarmstrong** (tons of on-site activity not visible when cloud **`user_activity`** / POST fails).
 
 - **Changes:** **`src/utils/activity.ts`** — on **`POST /api/activity`** **failure** (not 401), append to **`localStorage`** key **`baw_activity_local_backup`** (capped); **`readLocalActivityForEmail(email)`** returns rows for merge. **`trackActivity`** uses **`.then`/`.catch`** so 401 still does not backup. **`src/pages/admin/clients/page.tsx`** — when **selected client email === `currentUser` email** on this device: merge **server** activity + **local backup**, sort by time; inject **`device_bag_status`** row from **`cartItems` / `wishlistItems`** counts (live preview); **`trackActivity('cart_snapshot'|'wishlist_snapshot', { source: 'admin_client_details_self' })`** after **450ms** when opening own row (nudge server like cart push); labels/captions for local-only rows; empty-state copy mentions local merge. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Account shipping: optional APT, UNIT, ETC on add address
+
+Summary: User asked for an optional **APT, UNIT, SUITE** field (no asterisk, no placeholder, same input styling as other fields) **below ADDRESS** on **Account → Shipping** when **add new address** is open.
+
+- **Changes:** **`src/pages/account/shipping/page.tsx`** — **`AddressEntry.aptSuite`**, **`newAptUnit`** state; label **APT, UNIT, SUITE** (optional); persisted on save; cleared on cancel/success; list display shows apt line under street; duplicate/remove matching includes **`aptSuite`**. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Account shipping: apt label + add-address scroll
+
+- **Label:** **APT, UNIT, ETC** → **APT, UNIT, SUITE** on add-address form.
+- **Scroll:** **`account-shipping-card-fields`** uses **`overflowY: 'auto'`**, **`minHeight: 0`**, **`WebkitOverflowScrolling: 'touch'`**, **`overscrollBehavior: 'contain'`** so the add-address form (and long address lists) scroll inside the fixed-height card instead of clipping. Removed extra card **`paddingBottom`** tied only to add form.
+- **Files:** **`src/pages/account/shipping/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).

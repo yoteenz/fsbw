@@ -361,6 +361,53 @@ export function isProtectedFromAccountDeletion(user: { email?: string } | null):
   return (user.email || '').trim().toLowerCase() === PROTECTED_FROM_ACCOUNT_DELETION_EMAIL;
 }
 
+/**
+ * When `localStorage` value is `'true'`, Account profile + Rewards hide founder-only test toggles and mock tier/affiliate chrome.
+ * Toggled from Account → Profile ("VIEW AS CLIENT" / "VIEW AS ADMIN PROFILE"). Checkout founder dummy card is unchanged.
+ */
+export const FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY = 'baw_founder_account_view_as_client';
+
+/** True when founder has enabled VIEW AS CLIENT (read from localStorage). */
+export function readFounderAccountViewAsClientFromStorage(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    return localStorage.getItem(FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Seeded mock profile chrome: test orders, mock tier bar, mock affiliate rows, etc.
+ * Off when the founder account uses VIEW AS CLIENT (same idea as Account `profileUsesMockChrome`).
+ */
+export function isMockProfileChromeActive(user: { email?: string; role?: string } | null): boolean {
+  return isMockDataAccount(user) && !readFounderAccountViewAsClientFromStorage();
+}
+
+/** Order ids used only for founder seed data on the orders page — exclude from tier/loyalty when VIEW AS CLIENT. */
+export const BAW_FOUNDER_SEED_MOCK_ORDER_IDS = new Set([
+  'test-order-1',
+  'test-order-2',
+  'test-order-3',
+  'test-order-4',
+  'test-order-5',
+  'kateena-1',
+  'kateena-2',
+  'kateena-3',
+  'detail-lines-test',
+  'multi-product-test',
+]);
+
+export function excludeFounderSeedMockOrders<T extends { id?: string; bawSeedMock?: boolean }>(orders: T[]): T[] {
+  return orders.filter((o) => {
+    if (o.bawSeedMock) return false;
+    const id = o.id != null ? String(o.id) : '';
+    if (id && BAW_FOUNDER_SEED_MOCK_ORDER_IDS.has(id)) return false;
+    return true;
+  });
+}
+
 /** localStorage key for founder-privileged admin subscription override (Standard / 3 / 6 / 12 month) for testing UI across pages. */
 export const ADMIN_SUBSCRIPTION_OVERRIDE_KEY = 'adminSubscriptionOverride';
 

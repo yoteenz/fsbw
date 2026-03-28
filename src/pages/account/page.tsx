@@ -4,7 +4,16 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../constants/tiers';
 import { getTotalReviewCount, getUserSubmittedReviewCount, hasNewReviewApproved } from '../../constants/reviews';
-import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier, clearAppAuth, markManualSignOutInProgress } from '../../utils/adminAuth';
+import {
+  isAyoteenzAdminAccount,
+  isMockDataAccount,
+  isMockProfileChromeActive,
+  getEffectiveSubscriptionTier,
+  clearAppAuth,
+  markManualSignOutInProgress,
+  FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY,
+  excludeFounderSeedMockOrders,
+} from '../../utils/adminAuth';
 import { swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
 import { getSupabase, isSupabaseConfigured, signOutIfSessionEmailUnconfirmed } from '../../utils/supabase';
 import { patchProfileWithRetryQueue } from '../../utils/profileSyncQueue';
@@ -203,10 +212,9 @@ function AccountPage() {
   });
 
   /** Founder-only: persisted profile hub mode — clean client-like chrome (no mock history, no admin tag, no tier overrides on this page). Checkout dummy card + order flow unchanged. */
-  const FOUNDER_VIEW_AS_CLIENT_KEY = 'baw_founder_account_view_as_client';
   const [founderViewAsClient, setFounderViewAsClient] = useState(() => {
     try {
-      return typeof window !== 'undefined' && localStorage.getItem(FOUNDER_VIEW_AS_CLIENT_KEY) === 'true';
+      return typeof window !== 'undefined' && localStorage.getItem(FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY) === 'true';
     } catch {
       return false;
     }
@@ -214,14 +222,41 @@ function AccountPage() {
 
   /** When false, founder mock account uses seeded/mock profile chrome on this page only. */
   const profileUsesMockChrome = React.useMemo(
-    () =>
-      Boolean(
-        userData &&
-          isMockDataAccount(userData) &&
-          !(isAyoteenzAdminAccount(userData) && founderViewAsClient)
-      ),
+    () => Boolean(userData && isMockProfileChromeActive(userData)),
     [userData, founderViewAsClient]
   );
+
+  const mergeUserOrdersFromStorageForAccount = (): any[] => {
+    if (!userData?.email) return [];
+    try {
+      const raw = localStorage.getItem(`userOrders_${userData.email}`);
+      if (!raw) return [];
+      const data = JSON.parse(raw);
+      const all = [...(data.activeOrders || []), ...(data.pastOrders || [])];
+      if (founderViewAsClient && isMockDataAccount(userData)) {
+        return excludeFounderSeedMockOrders(all);
+      }
+      return all;
+    } catch {
+      return [];
+    }
+  };
+
+  const activeUserOrdersFromStorageForAccount = (): any[] => {
+    if (!userData?.email) return [];
+    try {
+      const raw = localStorage.getItem(`userOrders_${userData.email}`);
+      if (!raw) return [];
+      const data = JSON.parse(raw);
+      const active = data.activeOrders || [];
+      if (founderViewAsClient && isMockDataAccount(userData)) {
+        return excludeFounderSeedMockOrders(active);
+      }
+      return active;
+    } catch {
+      return [];
+    }
+  };
 
   // Currency exchange rates (same as CartDropdown)
   const currencyRates = React.useMemo(() => ({
@@ -597,7 +632,7 @@ function AccountPage() {
     if (!isAyoteenzAdminAccount(userData)) return;
     const sync = () => {
       try {
-        const v = localStorage.getItem(FOUNDER_VIEW_AS_CLIENT_KEY) === 'true';
+        const v = localStorage.getItem(FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY) === 'true';
         setFounderViewAsClient(v);
       } catch {
         /* ignore */
@@ -808,12 +843,8 @@ function AccountPage() {
     if (!userData?.email) return false;
     
     try {
-      const userOrdersKey = `userOrders_${userData.email}`;
-      const storedOrders = localStorage.getItem(userOrdersKey);
-      if (!storedOrders) return false;
-      
-      const orders = JSON.parse(storedOrders);
-      const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
+      const allOrders = mergeUserOrdersFromStorageForAccount();
+      if (allOrders.length === 0) return false;
       
       // Calculate total lifetime spending
       let lifetimeSpending = 0;
@@ -2112,6 +2143,48 @@ function AccountPage() {
                         CHANGE PHOTO
                       </p>
                     )}
+                    {isAyoteenzAdminAccount(userData) && (
+                      <p
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => {
+                          const next = !founderViewAsClient;
+                          setFounderViewAsClient(next);
+                          try {
+                            localStorage.setItem(FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY, next ? 'true' : 'false');
+                          } catch {
+                            /* ignore */
+                          }
+                          window.dispatchEvent(new CustomEvent('founderAccountViewAsClientChanged', { detail: next }));
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            const next = !founderViewAsClient;
+                            setFounderViewAsClient(next);
+                            try {
+                              localStorage.setItem(FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY, next ? 'true' : 'false');
+                            } catch {
+                              /* ignore */
+                            }
+                            window.dispatchEvent(new CustomEvent('founderAccountViewAsClientChanged', { detail: next }));
+                          }
+                        }}
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          color: '#EB1C24',
+                          fontSize: '9px',
+                          margin: '4px 0 0 0',
+                          textTransform: 'uppercase',
+                          fontWeight: '500',
+                          cursor: 'pointer',
+                          textAlign: 'center',
+                          lineHeight: 1.3,
+                        }}
+                      >
+                        {founderViewAsClient ? 'VIEW AS ADMIN PROFILE' : 'VIEW AS CLIENT'}
+                      </p>
+                    )}
                   </div>
 
                   {/* Profile Details */}
@@ -2261,47 +2334,6 @@ function AccountPage() {
                     >
                       LOAD GIFT CARD
                     </p>
-                    {isAyoteenzAdminAccount(userData) && (
-                      <p
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => {
-                          const next = !founderViewAsClient;
-                          setFounderViewAsClient(next);
-                          try {
-                            localStorage.setItem(FOUNDER_VIEW_AS_CLIENT_KEY, next ? 'true' : 'false');
-                          } catch {
-                            /* ignore */
-                          }
-                          window.dispatchEvent(new CustomEvent('founderAccountViewAsClientChanged', { detail: next }));
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            const next = !founderViewAsClient;
-                            setFounderViewAsClient(next);
-                            try {
-                              localStorage.setItem(FOUNDER_VIEW_AS_CLIENT_KEY, next ? 'true' : 'false');
-                            } catch {
-                              /* ignore */
-                            }
-                            window.dispatchEvent(new CustomEvent('founderAccountViewAsClientChanged', { detail: next }));
-                          }
-                        }}
-                        style={{
-                          fontFamily: '"Futura PT Medium"',
-                          color: '#EB1C24',
-                          fontSize: '9px',
-                          margin: '0',
-                          textTransform: 'uppercase',
-                          fontWeight: '500',
-                          cursor: 'pointer',
-                          transform: 'translateY(6px)'
-                        }}
-                      >
-                        {founderViewAsClient ? 'VIEW AS ADMIN PROFILE' : 'VIEW AS CLIENT'}
-                      </p>
-                    )}
                   </div>
                 </div>
 

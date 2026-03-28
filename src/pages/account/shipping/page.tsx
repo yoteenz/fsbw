@@ -10,6 +10,7 @@ interface AddressEntry {
   firstName?: string;
   lastName?: string;
   address?: string;
+  aptSuite?: string;
   city?: string;
   state?: string;
   zip?: string;
@@ -67,6 +68,7 @@ function ShippingPage() {
   const [newFirstName, setNewFirstName] = useState('');
   const [newLastName, setNewLastName] = useState('');
   const [newAddress, setNewAddress] = useState('');
+  const [newAptUnit, setNewAptUnit] = useState('');
   const [newCity, setNewCity] = useState('');
   const [newState, setNewState] = useState('');
   const [newZip, setNewZip] = useState('');
@@ -162,7 +164,12 @@ function ShippingPage() {
       const saved = Array.isArray(user.savedAddresses) ? user.savedAddresses : [];
       const defaultAddr = user.defaultAddress;
       const isSame = (a: AddressEntry, b: AddressEntry) =>
-        (a.address === b.address && a.city === b.city && a.zip === b.zip && a.firstName === b.firstName && a.lastName === b.lastName);
+        (a.address === b.address &&
+          (a.aptSuite || '') === (b.aptSuite || '') &&
+          a.city === b.city &&
+          a.zip === b.zip &&
+          a.firstName === b.firstName &&
+          a.lastName === b.lastName);
       const newSaved = saved.filter((a: AddressEntry) => !isSame(a, addr));
       const wasDefault = defaultAddr && isSame(defaultAddr, addr);
       const updatedUser = {
@@ -195,6 +202,7 @@ function ShippingPage() {
     setNewFirstName('');
     setNewLastName('');
     setNewAddress('');
+    setNewAptUnit('');
     setNewCity('');
     setNewState('');
     setNewZip('');
@@ -260,6 +268,7 @@ function ShippingPage() {
       firstName: newFirstName.trim(),
       lastName: newLastName.trim(),
       address: newAddress.trim(),
+      ...(newAptUnit.trim() ? { aptSuite: newAptUnit.trim() } : {}),
       city: newCity.trim(),
       state: newState.trim(),
       zip: newZip.trim(),
@@ -294,6 +303,7 @@ function ShippingPage() {
       setNewFirstName('');
       setNewLastName('');
       setNewAddress('');
+      setNewAptUnit('');
       setNewCity('');
       setNewState('');
       setNewZip('');
@@ -351,7 +361,11 @@ function ShippingPage() {
       if (!a || typeof a !== 'object') return;
       if (!a.address && !a.city) return;
       const isDuplicate = addressList.some(
-        (e) => e.address === a.address && e.city === a.city && e.zip === a.zip
+        (e) =>
+          e.address === a.address &&
+          (e.aptSuite || '') === (a.aptSuite || '') &&
+          e.city === a.city &&
+          e.zip === a.zip
       );
       if (!isDuplicate) addressList.push(a);
     });
@@ -381,6 +395,7 @@ function ShippingPage() {
     if (!addr || typeof addr !== 'object') return null;
     const name = [addr.firstName, addr.lastName].filter(Boolean).join(' ') || (userData?.firstName && userData?.lastName ? `${userData.firstName} ${userData.lastName}` : '');
     const line1 = addr.address || '';
+    const lineApt = (addr.aptSuite || '').trim();
     const cityStateZip = [addr.city, addr.state, addr.zip].filter(Boolean).join(', ');
     const country = formatCountry(addr.country);
     const phone = addr.phoneNumber || '';
@@ -397,6 +412,11 @@ function ShippingPage() {
           {line1 && (
             <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#808080', margin: '0 0 4px 0', lineHeight: '1.4', textTransform: 'uppercase' }}>
               {line1}
+            </p>
+          )}
+          {lineApt && (
+            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#808080', margin: '0 0 4px 0', lineHeight: '1.4', textTransform: 'uppercase' }}>
+              {lineApt}
             </p>
           )}
           {cityStateZip && (
@@ -704,14 +724,13 @@ function ShippingPage() {
                 className="account-shipping-card border border-black bg-white/60 backdrop-blur-sm p-4 w-full"
                 style={{
                   borderWidth: '1.3px',
-                  /* Same as wishlist lists main card */
+                  /* Same as wishlist lists main card; add-address form scrolls inside fields area */
                   height: 'calc(100vh * 520 / 745)',
                   minHeight: 'calc(100vh * 520 / 745)',
                   maxHeight: 'calc(100vh * 520 / 745)',
                   display: 'flex',
                   flexDirection: 'column',
                   overflow: 'hidden',
-                  ...(showAddAddressForm && { paddingBottom: '24px' })
                 }}
               >
                 <div className="account-shipping-card-header flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px', flexShrink: 0 }}>
@@ -729,9 +748,21 @@ function ShippingPage() {
                   </h2>
                   <img src="/assets/ship-icon.svg" alt="" className="account-shipping-header-icon" style={{ width: 15, height: 15, opacity: 1 }} />
                 </div>
-                <div className="account-shipping-card-fields" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+                <div
+                  className="account-shipping-card-fields"
+                  style={{
+                    flex: 1,
+                    minHeight: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflowY: 'auto',
+                    WebkitOverflowScrolling: 'touch',
+                    overscrollBehavior: 'contain',
+                    paddingBottom: showAddAddressForm ? '8px' : 0,
+                  }}
+                >
                 {showAddAddressForm ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flexShrink: 0 }}>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                       <div>
                         <label style={inputLabelStyle}>FIRST NAME<span style={{ color: '#EB1C24' }}>*</span></label>
@@ -768,6 +799,15 @@ function ShippingPage() {
                           setInvalidAddressFields((prev) => { const next = new Set(prev); next.delete('address'); return next; });
                         }}
                         style={{ ...inputStyle, border: invalidAddressFields.has('address') ? '1.3px solid #EB1C24' : '1.3px solid #000000' }}
+                      />
+                    </div>
+                    <div>
+                      <label style={inputLabelStyle}>APT, UNIT, SUITE</label>
+                      <input
+                        type="text"
+                        value={newAptUnit}
+                        onChange={(e) => setNewAptUnit(e.target.value.toUpperCase())}
+                        style={{ ...inputStyle, border: '1.3px solid #000000' }}
                       />
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>

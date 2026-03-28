@@ -12,7 +12,18 @@ import pointsHistoryIcon from '../../../assets/icons/points-history.svg?url';
 import membershipIcon from '../../../assets/icons/membership-icon.svg?url';
 import moreWaysIcon from '../../../assets/icons/more-ways.svg?url';
 import additionalFeaturesIcon from '../../../assets/icons/additional-features.svg?url';
-import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier, getEffectiveTierName, ADMIN_SUBSCRIPTION_OVERRIDE_KEY, ADMIN_TIER_OVERRIDE_KEY, clearAppAuth } from '../../../utils/adminAuth';
+import {
+  isAyoteenzAdminAccount,
+  isMockDataAccount,
+  isMockProfileChromeActive,
+  getEffectiveSubscriptionTier,
+  getEffectiveTierName,
+  ADMIN_SUBSCRIPTION_OVERRIDE_KEY,
+  ADMIN_TIER_OVERRIDE_KEY,
+  clearAppAuth,
+  FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY,
+  excludeFounderSeedMockOrders,
+} from '../../../utils/adminAuth';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { trackActivity } from '../../../utils/activity';
 
@@ -114,6 +125,53 @@ function MembershipPage() {
   // Earn-task completion: backend only. Set userData.earnedEarnTaskIds when verified: newsletter list, first referral; content_review = from reviews tab/page; photo_video_tags = from affiliate page (social tags); social tasks = tracked links + follow.
   const earnedTaskIds: string[] = Array.isArray(userData?.earnedEarnTaskIds) ? userData.earnedEarnTaskIds : [];
 
+  const [founderViewAsClient, setFounderViewAsClient] = useState(() => {
+    try {
+      return typeof window !== 'undefined' && localStorage.getItem(FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    if (!isAyoteenzAdminAccount(userData)) return;
+    const sync = () => {
+      try {
+        setFounderViewAsClient(localStorage.getItem(FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY) === 'true');
+      } catch {
+        /* ignore */
+      }
+    };
+    const onEvt = (e: Event) => {
+      const ce = e as CustomEvent<boolean>;
+      if (typeof ce.detail === 'boolean') setFounderViewAsClient(ce.detail);
+      else sync();
+    };
+    window.addEventListener('storage', sync);
+    window.addEventListener('founderAccountViewAsClientChanged', onEvt as EventListener);
+    return () => {
+      window.removeEventListener('storage', sync);
+      window.removeEventListener('founderAccountViewAsClientChanged', onEvt as EventListener);
+    };
+  }, [userData]);
+
+  /** Orders from localStorage for spend / points history; strips founder seed mocks when VIEW AS CLIENT. */
+  const ordersFromStorageForRewards = (): any[] => {
+    if (!userData?.email) return [];
+    try {
+      const stored = localStorage.getItem(`userOrders_${userData.email}`);
+      if (!stored) return [];
+      const orders = JSON.parse(stored);
+      const all = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
+      if (founderViewAsClient && isMockDataAccount(userData)) {
+        return excludeFounderSeedMockOrders(all);
+      }
+      return all;
+    } catch {
+      return [];
+    }
+  };
+
   // Calculate total approved affiliate points
   const calculateTotalAffiliatePoints = (): number => {
     try {
@@ -130,7 +188,7 @@ function MembershipPage() {
 
       let deliveredOrders: any[] = [];
 
-      if (isMockDataAccount(userData)) {
+      if (isMockProfileChromeActive(userData)) {
         // Use mock data for admin account only (same as affiliate page)
         // Mock orders with approved content
         deliveredOrders = [
@@ -164,16 +222,7 @@ function MembershipPage() {
           }
         ];
       } else {
-        // Get delivered orders from localStorage
-        const userOrdersKey = `userOrders_${userData.email}`;
-        const storedOrders = localStorage.getItem(userOrdersKey);
-        
-        if (!storedOrders) return 0;
-
-        const orders = JSON.parse(storedOrders);
-        const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
-        
-        // Filter only delivered orders
+        const allOrders = ordersFromStorageForRewards();
         deliveredOrders = allOrders.filter((order: any) => order.status === 'DELIVERED');
       }
       
@@ -224,11 +273,7 @@ function MembershipPage() {
     if (!userData?.email) return 0;
     try {
       const period = getCurrentPeriod();
-      const userOrdersKey = `userOrders_${userData.email}`;
-      const stored = localStorage.getItem(userOrdersKey);
-      if (!stored) return 0;
-      const orders = JSON.parse(stored);
-      const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
+      const allOrders = ordersFromStorageForRewards();
       let total = 0;
       allOrders.forEach((order: any) => {
         if (order.date) {
@@ -292,11 +337,7 @@ function MembershipPage() {
       const currentMonth = new Date().getMonth();
       const currentYear = new Date().getFullYear();
       const currentPeriodStr = currentMonth < 6 ? `${currentYear}-Jan-Jun` : `${currentYear}-Jul-Dec`;
-      const userOrdersKey = `userOrders_${userData.email}`;
-      const stored = localStorage.getItem(userOrdersKey);
-      if (!stored) return [];
-      const orders = JSON.parse(stored);
-      const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
+      const allOrders = ordersFromStorageForRewards();
       const rows: { date: string; discount: string; points: string }[] = [];
       allOrders.forEach((order: any) => {
         if (!order.date) return;
@@ -352,7 +393,7 @@ function MembershipPage() {
         nextTierName: 'RED' as const
       };
     }
-    if (isMockDataAccount(userData)) {
+    if (isMockProfileChromeActive(userData)) {
       // Admin (mock-data) account: show RED tier with 700 pts; threshold 2,000 to remain Red → "EARN 1,300 MORE TO REMAIN RED TIER!"
       const adminCurrentSpend = 700;
       const adminBarMax = SPEND_TIER_THRESHOLDS.RED; // 2000 = remain Red
@@ -371,7 +412,17 @@ function MembershipPage() {
     const thresholds = [SPEND_TIER_THRESHOLDS.SILVER, SPEND_TIER_THRESHOLDS.RED, SPEND_TIER_THRESHOLDS.BLACK];
     const nextTierSpend = thresholds.find((t) => t > currentSpend) ?? null;
     const spendBasedTier = currentSpend >= SPEND_TIER_THRESHOLDS.BLACK ? 'BLACK' : currentSpend >= SPEND_TIER_THRESHOLDS.RED ? 'RED' : currentSpend >= SPEND_TIER_THRESHOLDS.SILVER ? 'SILVER' : null;
-    const effectiveTier = getEffectiveTierName(userData);
+    const effectiveTier = (() => {
+      if (founderViewAsClient && isAyoteenzAdminAccount(userData)) {
+        const stored =
+          typeof window !== 'undefined' && userData?.email
+            ? localStorage.getItem(`lastKnownTier_${(userData.email || '').trim().toLowerCase()}`)
+            : null;
+        const t = (userData?.currentTierName || userData?.tier || stored || '').toString().toUpperCase();
+        return t && ['SILVER', 'RED', 'BLACK'].includes(t) ? t : null;
+      }
+      return getEffectiveTierName(userData);
+    })();
     // Only retain stored tier if current period spend meets that tier's threshold; otherwise revert to spend-based tier (PENDING if below Silver).
     const hasRetainedTier = (effectiveTier === 'SILVER' && currentSpend >= SPEND_TIER_THRESHOLDS.SILVER)
       || (effectiveTier === 'RED' && currentSpend >= SPEND_TIER_THRESHOLDS.RED)
@@ -648,10 +699,13 @@ function MembershipPage() {
 
   // Check if user has existing premium subscription
   // Includes users with subscriptionTier OR the one admin Kateena account (by email) with PREMIUM
-  const hasPremiumSubscription = (userData?.subscriptionTier && userData?.membershipType === 'PREMIUM') || 
-                                  (isMockDataAccount(userData) && (userData?.membershipType === 'PREMIUM' || userData?.membershipType === 'Premium'));
+  const hasPremiumSubscription =
+    (userData?.subscriptionTier && userData?.membershipType === 'PREMIUM') ||
+    (isMockDataAccount(userData) &&
+      !founderViewAsClient &&
+      (userData?.membershipType === 'PREMIUM' || userData?.membershipType === 'Premium'));
   /** Only ayoteenz admin sees tier names (Black, Red, Silver) in their tier color for easier testing. */
-  const showTierColorsForAdmin = isAyoteenzAdminAccount(userData);
+  const showTierColorsForAdmin = isAyoteenzAdminAccount(userData) && !founderViewAsClient;
   /** Ayoteenz only: override displayed tier on membership status card to toggle through SILVER / RED / BLACK; persisted in localStorage so checkout uses it. */
   const [adminTierOverride, setAdminTierOverride] = useState<'SILVER' | 'RED' | 'BLACK' | null>(() => {
     if (typeof window === 'undefined') return null;
@@ -665,7 +719,10 @@ function MembershipPage() {
     return v && ['standard', '3months', '6months', '12months'].includes(v) ? v : null;
   });
   /** Effective premium for display: when Standard tab (or no premium) show upgrade section; when 3/6/12 show INCLUDED section. */
-  const hasEffectivePremium = getEffectiveSubscriptionTier(userData) != null;
+  const hasEffectivePremium =
+    founderViewAsClient && isAyoteenzAdminAccount(userData)
+      ? Boolean(userData?.subscriptionTier) && String(userData?.membershipType || '').toUpperCase() === 'PREMIUM'
+      : getEffectiveSubscriptionTier(userData) != null;
 
   const handleUpgradeButtonClick = () => {
     if (showPremiumView) {
@@ -716,7 +773,7 @@ function MembershipPage() {
     // Pre-select current subscription tier
     let currentTier = userData?.subscriptionTier;
     // For admin Kateena account only (by email), set to 12months
-    if (isMockDataAccount(userData) && !currentTier) {
+    if (isMockDataAccount(userData) && !founderViewAsClient && !currentTier) {
       currentTier = '12months';
     }
     setSelectedTier(currentTier || null);
@@ -765,7 +822,7 @@ function MembershipPage() {
   // Get subscription end date and format it
   const getSubscriptionEndDate = () => {
     // Check if this is the admin Kateena account (12 months from 1/4/2026)
-    if (isMockDataAccount(userData)) {
+    if (isMockDataAccount(userData) && !founderViewAsClient) {
       const startDate = new Date('2026-01-04');
       const endDate = new Date(startDate);
       endDate.setMonth(endDate.getMonth() + 12);
@@ -789,7 +846,7 @@ function MembershipPage() {
   // Get subscription tier name (3, 6, or 12 MONTHS)
   const getSubscriptionTierName = () => {
     // Admin Kateena account is 12 months premium
-    if (isMockDataAccount(userData)) return '12 MONTH';
+    if (isMockDataAccount(userData) && !founderViewAsClient) return '12 MONTH';
     
     if (!userData?.subscriptionTier) return '';
     const tier = userData.subscriptionTier;
@@ -2369,8 +2426,17 @@ fontFamily: '"Futura PT Book"',
                               {((() => {
                                 const effectiveTier = showTierColorsForAdmin && adminSubscriptionOverride != null
                                   ? (adminSubscriptionOverride === 'standard' ? null : adminSubscriptionOverride)
-                                  : (getEffectiveSubscriptionTier(userData) as keyof typeof PREMIUM_BENEFITS_BY_TIER | null);
-                                const benefits = effectiveTier && PREMIUM_BENEFITS_BY_TIER[effectiveTier] ? PREMIUM_BENEFITS_BY_TIER[effectiveTier] : (effectiveTier === null && showTierColorsForAdmin ? [] : (PREMIUM_BENEFITS_BY_TIER['12months']));
+                                  : founderViewAsClient && isAyoteenzAdminAccount(userData)
+                                    ? ((userData?.subscriptionTier as keyof typeof PREMIUM_BENEFITS_BY_TIER | undefined) ?? null)
+                                    : (getEffectiveSubscriptionTier(userData) as keyof typeof PREMIUM_BENEFITS_BY_TIER | null);
+                                const benefits =
+                                  effectiveTier && PREMIUM_BENEFITS_BY_TIER[effectiveTier]
+                                    ? PREMIUM_BENEFITS_BY_TIER[effectiveTier]
+                                    : effectiveTier === null && showTierColorsForAdmin
+                                      ? []
+                                      : founderViewAsClient && isAyoteenzAdminAccount(userData)
+                                        ? []
+                                        : PREMIUM_BENEFITS_BY_TIER['12months'];
                                 return benefits;
                               })()).map((label: string, i: number) => (
                                 <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
@@ -2517,7 +2583,7 @@ fontFamily: '"Futura PT Book"',
                   }}
                   type="button"
                 >
-                          {showPremiumView ? 'CONFIRM SUBSCRIPTION' : ((userData?.subscriptionTier === '12months' || (isMockDataAccount(userData) && !userData?.subscriptionTier)) ? 'CHANGE SUBSCRIPTION' : 'UPGRADE SUBSCRIPTION')}
+                          {showPremiumView ? 'CONFIRM SUBSCRIPTION' : ((userData?.subscriptionTier === '12months' || (isMockDataAccount(userData) && !founderViewAsClient && !userData?.subscriptionTier)) ? 'CHANGE SUBSCRIPTION' : 'UPGRADE SUBSCRIPTION')}
                         </button>
                       </div>
                       {/* CANCEL Button - below Confirm when subscription upgrade chart is open; returns to rewards page */}

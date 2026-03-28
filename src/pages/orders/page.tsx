@@ -4,7 +4,13 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
-import { isMockDataAccount, clearAppAuth } from '../../utils/adminAuth';
+import {
+  isMockDataAccount,
+  isMockProfileChromeActive,
+  readFounderAccountViewAsClientFromStorage,
+  excludeFounderSeedMockOrders,
+  clearAppAuth,
+} from '../../utils/adminAuth';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { formatCountryDisplay } from '../../utils/formatCountry';
 import summaryIcon from '../../assets/icons/summary-icon.svg?url';
@@ -112,8 +118,8 @@ function OrdersPage() {
     };
   }, []);
 
-  // Only the admin (mock-data) account gets test orders; all other accounts see real data only (empty if none)
-  const isMockOrdersAccount = () => isMockDataAccount(currentUser);
+  // Only mock profile chrome (not VIEW AS CLIENT) gets seeded test orders
+  const isMockOrdersAccount = () => isMockProfileChromeActive(currentUser);
 
   // Currency state - per user
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -613,10 +619,13 @@ function OrdersPage() {
       const storedOrders = localStorage.getItem(userOrdersKey);
       if (storedOrders) {
         const orders = JSON.parse(storedOrders);
-        return {
-          activeOrders: orders.activeOrders || [],
-          pastOrders: orders.pastOrders || []
-        };
+        let activeOrders = orders.activeOrders || [];
+        let pastOrders = orders.pastOrders || [];
+        if (isMockDataAccount(currentUser) && readFounderAccountViewAsClientFromStorage()) {
+          activeOrders = excludeFounderSeedMockOrders(activeOrders);
+          pastOrders = excludeFounderSeedMockOrders(pastOrders);
+        }
+        return { activeOrders, pastOrders };
       }
     } catch (e) {
       console.error('Error loading user orders:', e);
@@ -843,7 +852,7 @@ function OrdersPage() {
   // Real accounts: keep userOrders_* in localStorage in sync with React state so cloud push (App + Supabase) sees updates
   useEffect(() => {
     if (typeof window === 'undefined' || !currentUser?.email) return;
-    if (isMockDataAccount(currentUser)) return;
+    if (isMockProfileChromeActive(currentUser)) return;
     try {
       const key = `userOrders_${currentUser.email}`;
       localStorage.setItem(key, JSON.stringify({ activeOrders, pastOrders }));
@@ -860,7 +869,7 @@ function OrdersPage() {
         setCurrentUser(parsedUser);
 
         // Compute orders: mock only for admin (mock-data) account
-        const useMock = parsedUser ? isMockDataAccount(parsedUser) : false;
+        const useMock = parsedUser ? isMockProfileChromeActive(parsedUser) : false;
         let ordersData: { activeOrders: Order[]; pastOrders: Order[] };
         if (useMock) {
           ordersData = { activeOrders: kateenaMockActiveOrders, pastOrders: kateenaMockPastOrders };
@@ -872,7 +881,17 @@ function OrdersPage() {
                   const stored = localStorage.getItem(key);
                   if (stored) {
                     const o = JSON.parse(stored);
-                    return { activeOrders: o.activeOrders || [], pastOrders: o.pastOrders || [] };
+                    let activeOrders: Order[] = o.activeOrders || [];
+                    let pastOrders: Order[] = o.pastOrders || [];
+                    if (
+                      parsedUser &&
+                      isMockDataAccount(parsedUser) &&
+                      readFounderAccountViewAsClientFromStorage()
+                    ) {
+                      activeOrders = excludeFounderSeedMockOrders(activeOrders);
+                      pastOrders = excludeFounderSeedMockOrders(pastOrders);
+                    }
+                    return { activeOrders, pastOrders };
                   }
                 } catch (_) {}
                 return { activeOrders: [], pastOrders: [] };
@@ -886,7 +905,10 @@ function OrdersPage() {
         // Keep localStorage in sync for mock-data account so account profile card count matches orders page
         if (parsedUser?.email && useMock) {
           const key = `userOrders_${parsedUser.email}`;
-          localStorage.setItem(key, JSON.stringify({ activeOrders: ordersData.activeOrders, pastOrders: ordersData.pastOrders }));
+          localStorage.setItem(
+            key,
+            JSON.stringify({ activeOrders: ordersData.activeOrders, pastOrders: ordersData.pastOrders })
+          );
           window.dispatchEvent(new CustomEvent('ordersUpdated'));
         }
       } catch (e) {
@@ -898,14 +920,18 @@ function OrdersPage() {
     updateUser();
 
     // Listen for sign in/out events
+    const onViewAsClient = () => updateUser();
+
     window.addEventListener('signInStateChanged', updateUser);
     window.addEventListener('storage', updateUser);
     window.addEventListener('focus', updateUser);
+    window.addEventListener('founderAccountViewAsClientChanged', onViewAsClient);
 
     return () => {
       window.removeEventListener('signInStateChanged', updateUser);
       window.removeEventListener('storage', updateUser);
       window.removeEventListener('focus', updateUser);
+      window.removeEventListener('founderAccountViewAsClientChanged', onViewAsClient);
     };
   }, []);
 
