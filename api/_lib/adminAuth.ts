@@ -7,7 +7,7 @@ import { getAuthUser } from './auth';
 const DEFAULT_ADMIN_EMAILS = [
   'admin@frontalslayer.com',
   'kateena.armstrong@frontalslayer.com',
-  'ayoteenz@yahoo.com',
+  'kateenaarmstrong@gmail.com',
 ];
 
 function getAdminEmails(): string[] {

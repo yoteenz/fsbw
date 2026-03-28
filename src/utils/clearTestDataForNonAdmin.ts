@@ -1,5 +1,5 @@
 /**
- * Clear test/created data for signed-in accounts that are NOT the protected admin (ayoteenz@yahoo.com with admin tag).
+ * Clear test/created data for signed-in accounts that are NOT the founder-privileged admin (kateenaarmstrong@gmail.com with admin tag).
  * Non-signed-in users (e.g. Kristen Watson on preview server) are unaffected—we only run when there is a current user.
  * Runs once per email (versioned flag) so we remove existing test data but don't wipe future real data.
  */
@@ -53,7 +53,7 @@ function clearConciergeSeenForUserOrders(email: string): void {
 }
 
 /**
- * If the current signed-in user is NOT the ayoteenz admin (with admin tag), clear their test data once.
+ * If the current signed-in user is NOT the founder-privileged admin (with admin tag), clear their test data once.
  * Does nothing when not signed in (non-signed-in Kristen Watson on preview is unaffected).
  */
 export function clearTestDataForNonAdminUserIfNeeded(): void {

@@ -3,7 +3,7 @@ import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { isSignedIn, canAccessAdminPages } from '../utils/adminAuth';
 
 /**
- * Protects all /admin/* routes. Only the allowed admin account (e.g. ayoteenz@yahoo.com) may access.
+ * Protects all /admin/* routes. Only emails in VITE_ADMIN_EMAILS / defaults (e.g. kateenaarmstrong@gmail.com) may access.
  * - Signed out → redirect to /sign-in
  * - Signed in but not allowed → redirect to /account
  * - Allowed admin only → render child routes.

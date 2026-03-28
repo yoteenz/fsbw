@@ -304,7 +304,7 @@ function NoirSelection() {
   }, []);
 
   useEffect(() => {
-    trackActivity('view_product', { productName: 'NOIR', path: location.pathname });
+    trackActivity('view_product', { source: 'product_page', productName: 'NOIR', path: location.pathname });
   }, [location.pathname]);
 
   // Toggle wishlist handler
@@ -346,7 +346,7 @@ function NoirSelection() {
         const updatedItems = [...wishlistItems, noirItem];
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(true);
-        trackActivity('add_to_wishlist', { productName: 'NOIR' });
+        trackActivity('add_to_wishlist', { source: 'product_page', productName: 'NOIR' });
       }
       
       // Dispatch event to notify other components
@@ -1547,7 +1547,7 @@ function NoirSelection() {
         window.dispatchEvent(new CustomEvent('cartUpdated'));
       }, 100);
 
-      trackActivity('add_to_cart', { productName: 'NOIR', quantity });
+      trackActivity('add_to_cart', { source: 'product_page', productName: 'NOIR', quantity });
       
     } catch (error) {
       console.error('Error in handleAddToBag:', error);

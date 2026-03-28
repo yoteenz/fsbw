@@ -314,21 +314,27 @@ export const ADMIN_EMAILS: string[] = ADMIN_EMAILS_RAW
 const DEFAULT_ADMIN_EMAILS = [
   'admin@frontalslayer.com',
   'kateena.armstrong@frontalslayer.com',
-  'ayoteenz@yahoo.com',
+  'kateenaarmstrong@gmail.com',
 ];
 
 /** Single admin Kateena account (mock data, premium, test orders). Only this email gets the exception; same-name OAuth accounts do not. */
 export const ADMIN_KATEENA_EMAIL = 'kateena.armstrong@frontalslayer.com';
 
-/** Ayoteenz admin account – used for UI helpers (e.g. colored tier names on membership page). */
-export const AYOTEENZ_ADMIN_EMAIL = 'ayoteenz@yahoo.com';
+/**
+ * Founder-privileged admin: tier/subscription localStorage overrides, mock loyalty/vouchers when also admin,
+ * ADMIN: FOUNDER row, concierge test access, merged mock clients in admin UI.
+ */
+export const FOUNDER_PRIVILEGED_ADMIN_EMAIL = 'kateenaarmstrong@gmail.com';
+
+/** @deprecated Use FOUNDER_PRIVILEGED_ADMIN_EMAIL — kept for existing imports. */
+export const AYOTEENZ_ADMIN_EMAIL = FOUNDER_PRIVILEGED_ADMIN_EMAIL;
 
 /** Effective list of admin emails (env list or defaults). Used for isAdminEmail and for who can access /admin/*. */
 const allowedEmails = ADMIN_EMAILS.length > 0 ? ADMIN_EMAILS : DEFAULT_ADMIN_EMAILS;
 
 /**
  * Emails that are allowed to access admin/sensitive pages (dashboard, clients, etc.).
- * When env sets admin emails, that list is used; otherwise defaults to ayoteenz only.
+ * When env sets admin emails, that list is used; otherwise defaults above apply.
  */
 export const ALLOWED_ADMIN_PAGE_EMAILS: string[] = allowedEmails;
 
@@ -338,20 +344,20 @@ export function isAdminKateenaAccount(user: { email?: string } | null): boolean 
   return (user.email || '').trim().toLowerCase() === ADMIN_KATEENA_EMAIL;
 }
 
-/** True if user is the ayoteenz admin account (by email only). Use for admin-only UI (e.g. colored tier names). */
+/** True if user is the founder-privileged admin account (by email only). */
 export function isAyoteenzAdminAccount(user: { email?: string } | null): boolean {
   if (!user?.email) return false;
-  return (user.email || '').trim().toLowerCase() === AYOTEENZ_ADMIN_EMAIL;
+  return (user.email || '').trim().toLowerCase() === FOUNDER_PRIVILEGED_ADMIN_EMAIL;
 }
 
-/** localStorage key for ayoteenz admin subscription override (Standard / 3 / 6 / 12 month) for testing UI across pages. */
+/** localStorage key for founder-privileged admin subscription override (Standard / 3 / 6 / 12 month) for testing UI across pages. */
 export const ADMIN_SUBSCRIPTION_OVERRIDE_KEY = 'adminSubscriptionOverride';
 
-/** localStorage key for ayoteenz admin spend-tier override (SILVER / RED / BLACK) for testing UI and checkout logic across pages. */
+/** localStorage key for founder-privileged admin spend-tier override (SILVER / RED / BLACK) for testing UI and checkout logic across pages. */
 export const ADMIN_TIER_OVERRIDE_KEY = 'adminTierOverride';
 
 /**
- * Effective spend tier (SILVER / RED / BLACK) for the given user. For ayoteenz admin only, reads adminTierOverride from localStorage
+ * Effective spend tier (SILVER / RED / BLACK) for the given user. For founder-privileged admin only, reads adminTierOverride from localStorage
  * so the membership page toggle persists and applies on checkout, confirm, etc.
  */
 export function getEffectiveTierName(user: { email?: string; currentTierName?: string; tier?: string } | null): string | null {
@@ -371,7 +377,7 @@ export function getEffectiveTierName(user: { email?: string; currentTierName?: s
 }
 
 /**
- * Effective subscription tier for the given user. For ayoteenz admin only, reads adminSubscriptionOverride from localStorage
+ * Effective subscription tier for the given user. For founder-privileged admin only, reads adminSubscriptionOverride from localStorage
  * so toggles on membership page persist and apply on checkout, orders, etc. Values: '3months' | '6months' | '12months' | null (Standard).
  */
 export function getEffectiveSubscriptionTier(user: { email?: string; subscriptionTier?: string; membershipType?: string } | null): string | null {
@@ -388,7 +394,7 @@ export function getEffectiveSubscriptionTier(user: { email?: string; subscriptio
   return user.subscriptionTier || (user.membershipType === 'PREMIUM' || user.membershipType === 'Premium' ? '12months' : null);
 }
 
-/** True if this account should receive test/mock data (points, history, seed orders, etc.). Only the ayoteenz account when it has the admin tag (in admin list); OAuth/non-admin accounts (e.g. yoteenz@gmail.com) get no mock data. */
+/** True if this account should receive test/mock data (points, history, seed orders, etc.). Only the founder-privileged email when it has the admin tag (in admin list); other accounts with similar names get no mock data. */
 export function isMockDataAccount(user: { email?: string; role?: string } | null): boolean {
   if (!user?.email) return false;
   if (!isAyoteenzAdminAccount(user)) return false;
@@ -471,7 +477,7 @@ export function isAdminUser(): boolean {
 }
 
 /**
- * True only when signed in AND current user email is in ALLOWED_ADMIN_PAGE_EMAILS (e.g. ayoteenz@yahoo.com).
+ * True only when signed in AND current user email is in ALLOWED_ADMIN_PAGE_EMAILS.
  * Use this to gate access to /admin/* routes. All other accounts must be redirected.
  */
 export function canAccessAdminPages(): boolean {

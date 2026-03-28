@@ -82,7 +82,7 @@ function OceanCurlSelection() {
   }, []);
 
   useEffect(() => {
-    trackActivity('view_product', { productName: 'OCEAN CURL', path: location.pathname });
+    trackActivity('view_product', { source: 'product_page', productName: 'OCEAN CURL', path: location.pathname });
   }, [location.pathname]);
 
   // Toggle wishlist handler
@@ -805,7 +805,7 @@ function OceanCurlSelection() {
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
 
-      trackActivity('add_to_cart', { productName: 'OCEAN CURL', quantity });
+      trackActivity('add_to_cart', { source: 'product_page', productName: 'OCEAN CURL', quantity });
       
       setAddToBagState('added');
     } catch (error) {

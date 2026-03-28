@@ -8,10 +8,13 @@ const ROLE_HEADER_ICON_FILTER =
 export default function RoleCardSectionHeader({
   title,
   className = '',
+  iconSrc = '/assets/NOIR/account-icon.svg',
 }: {
   title: string;
   /** e.g. `pr-10` when a close (×) button sits in the top-right of the card */
   className?: string;
+  /** Public path under `public/` (e.g. `/assets/personal-assistant-icon.svg`). */
+  iconSrc?: string;
 }) {
   return (
     <div
@@ -30,7 +33,7 @@ export default function RoleCardSectionHeader({
         {title}
       </h2>
       <img
-        src="/assets/NOIR/account-icon.svg"
+        src={iconSrc}
         alt=""
         style={{
           width: '19.76px',

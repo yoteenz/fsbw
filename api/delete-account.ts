@@ -30,7 +30,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const protectedEmail = (process.env.PROTECTED_ACCOUNT_EMAIL || 'ayoteenz@yahoo.com').trim().toLowerCase();
+    const protectedEmail = (process.env.PROTECTED_ACCOUNT_EMAIL || 'kateenaarmstrong@gmail.com').trim().toLowerCase();
     if ((user.email || '').trim().toLowerCase() === protectedEmail) {
       return res.status(403).json({ error: 'This admin account cannot be deleted.' });
     }

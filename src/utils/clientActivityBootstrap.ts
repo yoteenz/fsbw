@@ -3,7 +3,7 @@
  * and optional CustomEvent bridge for scattered UI.
  */
 import { isSignedIn } from './adminAuth';
-import { trackActivity } from './activity';
+import { isActivityEventType, trackActivity } from './activity';
 
 let listenersRegistered = false;
 let lastViewKey = '';
@@ -22,9 +22,9 @@ function summarizeCart(): { itemCount: number; products: string[] } {
         return (o?.name || o?.productName || '').toString().trim();
       })
       .filter(Boolean);
-    const itemCount = items.reduce((s, i: unknown) => {
+    const itemCount = items.reduce((acc: number, i: unknown) => {
       const q = (i as { quantity?: number })?.quantity;
-      return s + (typeof q === 'number' && q > 0 ? q : 1);
+      return acc + (typeof q === 'number' && q > 0 ? q : 1);
     }, 0);
     return { itemCount, products: [...new Set(names)].slice(0, 16) };
   } catch {
@@ -43,9 +43,9 @@ function summarizeWishlist(): { itemCount: number; products: string[] } {
         return (o?.name || o?.productName || '').toString().trim();
       })
       .filter(Boolean);
-    const itemCount = items.reduce((s, i: unknown) => {
+    const itemCount = items.reduce((acc: number, i: unknown) => {
       const q = (i as { quantity?: number })?.quantity;
-      return s + (typeof q === 'number' && q > 0 ? q : 1);
+      return acc + (typeof q === 'number' && q > 0 ? q : 1);
     }, 0);
     return { itemCount, products: [...new Set(names)].slice(0, 16) };
   } catch {
@@ -73,7 +73,10 @@ function scheduleWishlistSnapshot(): void {
   }, 2200);
 }
 
-/** Record SPA navigation for signed-in clients (skips /admin). Dedupes rapid repeats. */
+/**
+ * Record a generic `view_page` event (legacy). Not called from `App` anymore — product views use
+ * `view_product`; we avoid logging every SPA route change. Kept for optional manual use or tests.
+ */
 export function trackClientViewPage(pathname: string, search: string): void {
   if (typeof window === 'undefined') return;
   if (!isSignedIn()) return;
@@ -102,7 +105,7 @@ export function registerGlobalClientActivityListeners(): void {
     ((e: Event) => {
       const ce = e as CustomEvent<{ eventType?: string; payload?: Record<string, unknown> }>;
       const t = ce.detail?.eventType?.toString().trim();
-      if (!t) return;
+      if (!t || !isActivityEventType(t)) return;
       trackActivity(t, ce.detail?.payload);
     }) as EventListener
   );

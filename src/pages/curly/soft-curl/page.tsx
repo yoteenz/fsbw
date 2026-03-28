@@ -82,7 +82,7 @@ function SoftCurlSelection() {
   }, []);
 
   useEffect(() => {
-    trackActivity('view_product', { productName: 'SOFT CURL', path: location.pathname });
+    trackActivity('view_product', { source: 'product_page', productName: 'SOFT CURL', path: location.pathname });
   }, [location.pathname]);
 
   // Toggle wishlist handler
@@ -120,7 +120,7 @@ function SoftCurlSelection() {
         const updatedItems = [...wishlistItems, softCurlItem];
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(true);
-        trackActivity('add_to_wishlist', { productName: 'SOFT CURL' });
+        trackActivity('add_to_wishlist', { source: 'product_page', productName: 'SOFT CURL' });
       }
       
       // Dispatch event to notify other components
@@ -794,7 +794,7 @@ function SoftCurlSelection() {
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
 
-      trackActivity('add_to_cart', { productName: 'SOFT CURL', quantity });
+      trackActivity('add_to_cart', { source: 'product_page', productName: 'SOFT CURL', quantity });
       
       setAddToBagState('added');
     } catch (error) {

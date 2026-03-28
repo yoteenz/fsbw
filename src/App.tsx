@@ -19,7 +19,7 @@ import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNo
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth';
 import { schedulePushCartWishlistToCloud } from './utils/pushCartWishlistToCloud';
 import { flushQueuedProfilePatch } from './utils/profileSyncQueue';
-import { registerGlobalClientActivityListeners, trackClientViewPage } from './utils/clientActivityBootstrap';
+import { registerGlobalClientActivityListeners } from './utils/clientActivityBootstrap';
 
 /** Lazy route imports with retries for chunk/network failures (common after deploys). */
 const lazyWithRetry = (importFn: () => Promise<any>, componentName: string) => {
@@ -268,7 +268,7 @@ const BuildAWigPageWrapper = () => {
 function App() {
   const location = useLocation();
 
-  // Clear test data for signed-in accounts that aren't ayoteenz@yahoo.com with admin tag (once per email)
+  // Clear test data for signed-in accounts that aren't the founder-privileged admin with admin tag (once per email)
   useEffect(() => {
     clearTestDataForNonAdminUserIfNeeded();
   }, []);
@@ -277,10 +277,6 @@ function App() {
   useEffect(() => {
     registerGlobalClientActivityListeners();
   }, []);
-
-  useEffect(() => {
-    trackClientViewPage(location.pathname, location.search);
-  }, [location.pathname, location.search]);
 
   // Auth persistence: restore from backup on every load (survives browser close), then re-persist backup and notify listeners.
   useEffect(() => {

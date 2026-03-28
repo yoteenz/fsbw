@@ -661,7 +661,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
     window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: updatedItems, count: newCount } }));
 
-    trackActivity('remove_from_cart', { productName });
+    trackActivity('remove_from_cart', { source: 'cart_dropdown', productName });
     
     // Reset state
     setShowRemoveConfirm(false);

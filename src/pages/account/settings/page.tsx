@@ -164,6 +164,8 @@ function SettingsPage() {
       notificationSales: boolean;
       notificationOrderTracking: boolean;
     }>;
+    /** Default true. Set false for background “sync form to cloud” on mount so we don’t log a fake settings change. */
+    recordActivity?: boolean;
   };
 
   /**
@@ -207,7 +209,9 @@ function SettingsPage() {
       }
       try {
         const ok = await patchProfileWithRetryQueue(payload);
-        if (ok) trackActivity('profile_update');
+        if (ok && opts?.recordActivity !== false) {
+          trackActivity('profile_update', { section: 'settings' });
+        }
         return ok;
       } catch {
         return false;
@@ -237,7 +241,7 @@ function SettingsPage() {
     if (settingsFullSyncOnceRef.current) return;
     const t = window.setTimeout(() => {
       settingsFullSyncOnceRef.current = true;
-      void pushFullSettingsProfileToCloud();
+      void pushFullSettingsProfileToCloud({ recordActivity: false });
     }, 1200);
     return () => window.clearTimeout(t);
   }, [userData?.email, isSignedIn, pushFullSettingsProfileToCloud]);

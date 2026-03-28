@@ -11,7 +11,7 @@ import { fromProfileRow } from '../_lib/profileMapping.js';
 const ADMIN_SYNC_EMAILS = [
   'admin@frontalslayer.com',
   'kateena.armstrong@frontalslayer.com',
-  'ayoteenz@yahoo.com',
+  'kateenaarmstrong@gmail.com',
 ];
 
 function isAllowedSyncEmail(email: string): boolean {

@@ -7,6 +7,7 @@ import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { clearAppAuth } from '../../utils/adminAuth';
+import { trackActivity } from '../../utils/activity';
 
 interface WigCustomization {
   capSize: string;
@@ -4219,6 +4220,10 @@ export default function BuildAWigPage() {
         localStorage.removeItem('editingSource');
         window.dispatchEvent(new CustomEvent('wishlistUpdated'));
         console.log('[EDIT MODE SAVE] Updated item in wishlist');
+        {
+          const pn = (updatedItem.name || updatedItem.productName || '').toString().trim();
+          trackActivity('cart_item_updated', { source: 'build_a_wig', context: 'wishlist', productName: pn || undefined });
+        }
       } else {
         // CRITICAL: If the item was in SAVED FOR LATER, update it there in place. Do NOT add to cart.
         const savedForLaterRaw = localStorage.getItem('savedForLater');
@@ -4238,6 +4243,10 @@ export default function BuildAWigPage() {
           localStorage.setItem('savedForLater', JSON.stringify(newSavedForLater));
           window.dispatchEvent(new CustomEvent('savedItemsChanged'));
           console.log('[EDIT MODE SAVE] Updated item in Saved for Later (in place), did not add to cart');
+          {
+            const pn = (updatedItem.name || updatedItem.productName || '').toString().trim();
+            trackActivity('cart_item_updated', { source: 'build_a_wig', context: 'saved_for_later', productName: pn || undefined });
+          }
         } else {
           // Item was in the cart: update cart only
           const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
@@ -4247,6 +4256,10 @@ export default function BuildAWigPage() {
           const newCartCount = updatedCartItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
           localStorage.setItem('cartCount', newCartCount.toString());
           console.log('[EDIT MODE SAVE] Updated item in cart');
+          {
+            const pn = (updatedItem.name || updatedItem.productName || '').toString().trim();
+            trackActivity('cart_item_updated', { source: 'build_a_wig', context: 'cart', productName: pn || undefined });
+          }
         }
       }
       
@@ -4486,6 +4499,7 @@ export default function BuildAWigPage() {
       // Dispatch both events after a small delay
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCartCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: JSON.parse(localStorage.getItem('cartItems') || '[]'), count: newCartCount } }));
+      trackActivity('add_to_cart', { source: 'build_a_wig', productName, quantity: 1 });
     }, 100);
     }
     

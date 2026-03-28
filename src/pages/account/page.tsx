@@ -1159,7 +1159,7 @@ function AccountPage() {
   const getDefaultCardOrder = (): Array<{ title: string; subtitle: string; route: string | null }> => {
     const userMembershipType = userData?.membershipType || membershipType;
     const isPremium = userMembershipType === 'PREMIUM' || userMembershipType === 'Premium';
-    const showConcierge = isPremium || isAyoteenzAdminAccount(userData); // Premium members + ayoteenz admin (for testing)
+    const showConcierge = isPremium || isAyoteenzAdminAccount(userData); // Premium members + founder-privileged admin (for testing)
     const defaultCards: Array<{ title: string; subtitle: string; route: string | null }> = [];
 
     let referralInvitesUsed = 0;
@@ -1584,13 +1584,13 @@ function AccountPage() {
             }
           }
           openProfileImageStatusPopup('PHOTO SAVED.');
-          void trackActivity('profile_update');
+          void trackActivity('profile_update', { section: 'photo' });
         } catch (err) {
           // Base64 is intentionally not sent via PATCH queue (api/profile rejects data URLs).
           const ok = await patchProfileWithRetryQueue({ profileImage: croppedImage });
           if (ok) {
             openProfileImageStatusPopup('PHOTO SAVED.');
-            void trackActivity('profile_update');
+            void trackActivity('profile_update', { section: 'photo' });
           } else {
             openProfileImageStatusPopup(
               'PHOTO SAVED ON THIS DEVICE ONLY. CLOUD UPLOAD FAILED — TRY AGAIN OR CHECK YOUR CONNECTION.'
@@ -2098,7 +2098,7 @@ function AccountPage() {
                     </p>
 
                     {(() => {
-                      // Get membership type from userData; for admin use only getEffectiveSubscriptionTier (override) so tier/membership toggles are reflected
+                      // Get membership type from userData; for founder-privileged admin use getEffectiveSubscriptionTier (override) so tier/membership toggles are reflected
                       const effectiveSubTier = getEffectiveSubscriptionTier(userData);
                       const userMembershipType = userData?.membershipType?.toUpperCase() || membershipType;
                       const displayMembershipType = isAyoteenzAdminAccount(userData)
@@ -2122,26 +2122,6 @@ function AccountPage() {
                           >
                             {displayMembershipType} REWARDS MEMBER
                           </p>
-                          {isAyoteenzAdminAccount(userData) && (
-                            <p
-                              role="button"
-                              tabIndex={0}
-                              onClick={() => navigate('/admin/dashboard')}
-                              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/admin/dashboard'); } }}
-                              style={{
-                                fontFamily: '"Futura PT Medium"',
-                                fontSize: '10px',
-                                margin: '-6px 0 0 0',
-                                textTransform: 'uppercase',
-                                fontWeight: '500',
-                                transform: 'translateY(-8px)',
-                                cursor: 'pointer'
-                              }}
-                            >
-                              <span style={{ color: '#EB1C24' }}>ADMIN: </span>
-                              <span style={{ color: '#000000' }}>FOUNDER</span>
-                            </p>
-                          )}
                         </>
                       );
                     })()}

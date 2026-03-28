@@ -92,7 +92,7 @@ function BlancoSelection() {
   }, []);
 
   useEffect(() => {
-    trackActivity('view_product', { productName: 'BLANCO', path: location.pathname });
+    trackActivity('view_product', { source: 'product_page', productName: 'BLANCO', path: location.pathname });
   }, [location.pathname]);
 
   // Helper function to check if a cart item matches the default configuration exactly
@@ -204,7 +204,7 @@ function BlancoSelection() {
         const updatedItems = [...wishlistItems, blancoItem];
         localStorage.setItem('wishlistItems', JSON.stringify(updatedItems));
         setIsInWishlist(true);
-        trackActivity('add_to_wishlist', { productName: 'BLANCO' });
+        trackActivity('add_to_wishlist', { source: 'product_page', productName: 'BLANCO' });
       }
       
       // Dispatch event to notify other components
@@ -792,7 +792,7 @@ function BlancoSelection() {
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
 
-      trackActivity('add_to_cart', { productName: 'BLANCO', quantity });
+      trackActivity('add_to_cart', { source: 'product_page', productName: 'BLANCO', quantity });
       
       setAddToBagState('added');
     } catch (error) {

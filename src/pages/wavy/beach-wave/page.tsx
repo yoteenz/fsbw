@@ -82,7 +82,7 @@ function BeachWaveSelection() {
   }, []);
 
   useEffect(() => {
-    trackActivity('view_product', { productName: 'BEACH WAVE', path: location.pathname });
+    trackActivity('view_product', { source: 'product_page', productName: 'BEACH WAVE', path: location.pathname });
   }, [location.pathname]);
 
   // Toggle wishlist handler
@@ -825,7 +825,7 @@ function BeachWaveSelection() {
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
 
-      trackActivity('add_to_cart', { productName: 'BEACH WAVE', quantity });
+      trackActivity('add_to_cart', { source: 'product_page', productName: 'BEACH WAVE', quantity });
       
       setAddToBagState('added');
     } catch (error) {

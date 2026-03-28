@@ -284,7 +284,7 @@ export function buildMinimalUserFromSupabaseSession(sessionUser: {
   const merged = {
     id: sessionUser.id,
     email: sessionUser.email || '',
-    // Do not inject email-prefix placeholders (e.g. "ayoteenz") on fallback restore.
+    // Do not inject email-prefix placeholders on fallback restore.
     // This can overwrite a real saved first name from profile sync.
     firstName: firstName || '',
     lastName: lastName || '',

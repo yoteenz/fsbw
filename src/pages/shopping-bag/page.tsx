@@ -8,6 +8,7 @@ import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { getPointsMultiplier } from '../../constants/tiers';
 import { getEffectiveTierName, getEffectiveSubscriptionTier, clearAppAuth } from '../../utils/adminAuth';
+import { trackActivity } from '../../utils/activity';
 
 function ShoppingBagPage() {
   const navigate = useNavigate();
@@ -284,6 +285,9 @@ function ShoppingBagPage() {
     }
   };
 
+  const cartLineLabel = (item: { name?: string; productName?: string } | undefined) =>
+    (item?.name || item?.productName || '').toString().trim();
+
   const handleQuantityChange = (itemId: string, delta: number) => {
     try {
       const currentItem = cartItems.find(i => i.id === itemId);
@@ -319,6 +323,13 @@ function ShoppingBagPage() {
       setCartCount(newCount);
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
+
+      const nm = cartLineLabel(currentItem);
+      if (delta === 1 && newQty >= 1) {
+        trackActivity('add_to_cart', { source: 'shopping_bag', change: 'quantity_up', productName: nm || undefined });
+      } else if (delta === -1 && newQty > 0) {
+        trackActivity('remove_from_cart', { source: 'shopping_bag', change: 'quantity_down', productName: nm || undefined });
+      }
       
       // If quantity becomes 0, set timeout to show popup after 400ms
       if (newQty === 0) {
@@ -362,6 +373,8 @@ function ShoppingBagPage() {
 
   const handleRemoveItem = (itemId: string) => {
     try {
+      const removed = cartItems.find((i) => i.id === itemId);
+      const nm = cartLineLabel(removed);
       const newItems = cartItems.filter(i => i.id !== itemId);
       setCartItems(newItems);
       localStorage.setItem('cartItems', JSON.stringify(newItems));
@@ -373,6 +386,7 @@ function ShoppingBagPage() {
       setCartCount(newCount);
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
+      trackActivity('remove_from_cart', { source: 'shopping_bag', change: 'removed_line', productName: nm || undefined });
     } catch (e) {
       console.error('Error removing item:', e);
     }
@@ -398,6 +412,7 @@ function ShoppingBagPage() {
       setCartCount(newCount);
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
+      trackActivity('save_for_later', { productName: cartLineLabel(item) || undefined });
     } catch (e) {
       console.error('Error saving for later:', e);
     }
@@ -423,6 +438,7 @@ function ShoppingBagPage() {
       setCartCount(newCount);
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
+      trackActivity('move_saved_to_cart', { productName: cartLineLabel(item) || undefined });
     } catch (e) {
       console.error('Error moving to cart:', e);
     }
@@ -430,10 +446,13 @@ function ShoppingBagPage() {
 
   const handleRemoveFromSaved = (itemId: string) => {
     try {
+      const removed = savedForLater.find((i) => i.id === itemId);
+      const nm = cartLineLabel(removed);
       const newSavedForLater = savedForLater.filter(i => i.id !== itemId);
       setSavedForLater(newSavedForLater);
       localStorage.setItem('savedForLater', JSON.stringify(newSavedForLater));
       window.dispatchEvent(new CustomEvent('savedItemsChanged'));
+      trackActivity('remove_saved_item', { productName: nm || undefined });
     } catch (e) {
       console.error('Error removing from saved:', e);
     }

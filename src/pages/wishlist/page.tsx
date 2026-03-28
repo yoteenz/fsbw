@@ -318,6 +318,7 @@ function WishlistSelection() {
 
   const handleRemoveFromBag = (item: any) => {
     try {
+      const pname = (item?.name || item?.productName || '').toString().trim();
       const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
       const updatedItems = cartItems.filter((ci: any) => ci.id !== item.id);
       localStorage.setItem('cartItems', JSON.stringify(updatedItems));
@@ -325,6 +326,7 @@ function WishlistSelection() {
       localStorage.setItem('cartCount', newCount.toString());
       setCartCount(newCount);
       window.dispatchEvent(new CustomEvent('cartUpdated'));
+      trackActivity('remove_from_cart', { source: 'wishlist_page', change: 'removed_line', productName: pname || undefined });
     } catch (e) {
       console.error('Error removing from bag:', e);
     }

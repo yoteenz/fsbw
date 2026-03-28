@@ -600,6 +600,7 @@ export default function AdminClients() {
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
   const [showCancelOrderConfirm, setShowCancelOrderConfirm] = useState(false);
   const [profilePhotoError, setProfilePhotoError] = useState(false);
+  const [showEnlargedProfileImage, setShowEnlargedProfileImage] = useState(false);
   const [rewardsExpand, setRewardsExpand] = useState<'photos' | 'videos' | 'tags' | null>(null);
   const [reviewsExpand, setReviewsExpand] = useState<'total' | 'media' | 'pending' | null>(null);
   const [showMediaViewer, setShowMediaViewer] = useState(false);
@@ -630,6 +631,7 @@ export default function AdminClients() {
   // Reset profile photo error when switching clients
   useEffect(() => {
     setProfilePhotoError(false);
+    setShowEnlargedProfileImage(false);
   }, [selectedClientEmail]);
   useEffect(() => {
     setRewardsExpand(null);
@@ -974,6 +976,15 @@ export default function AdminClients() {
   const selectedName = selectedClient
     ? ([(selectedClient.firstName || '').trim(), (selectedClient.lastName || '').trim()].filter(Boolean).join(' ') || selectedClient.email || '—').toUpperCase()
     : '—';
+  const selectedClientProfilePhotoSrc = selectedClient
+    ? String(
+        (selectedClient as any).profileImage ||
+          (selectedClient as any).photo ||
+          (selectedClient as any).profilePhoto ||
+          (selectedClient as any).avatar ||
+          '/assets/profile-thumb.png',
+      )
+    : '';
   const selectedMembershipType = (selectedClient?.membershipType || 'STANDARD').toUpperCase();
   const selectedTotalOrders = selectedOrderHistory.length;
   const selectedTotalSpent = selectedOrderHistory.reduce((s: number, o: any) => s + (o.amount || 0), 0);
@@ -1612,20 +1623,20 @@ export default function AdminClients() {
                               height: '100px',
                               backgroundColor: '#FFFFFF',
                               border: '1.3px solid #000',
+                              cursor: profilePhotoError ? 'default' : 'pointer',
+                            }}
+                            onClick={() => {
+                              if (!profilePhotoError) setShowEnlargedProfileImage(true);
                             }}
                           >
-                            {(() => {
-                              const c = selectedClient as any;
-                              const photoSrc = c?.profileImage || c?.photo || c?.profilePhoto || c?.avatar || '/assets/profile-thumb.png';
-                              return !profilePhotoError ? (
+                            {!profilePhotoError ? (
                                 <img
-                                  src={photoSrc}
+                                  src={selectedClientProfilePhotoSrc}
                                   alt=""
                                   className="absolute inset-0 w-full h-full object-cover"
                                   onError={() => setProfilePhotoError(true)}
                                 />
-                              ) : null;
-                            })()}
+                              ) : null}
                             <div
                               className="absolute inset-0 flex items-center justify-center font-futura font-bold text-lg"
                               style={{ backgroundColor: 'transparent', color: '#000000', zIndex: !profilePhotoError ? -1 : 0 }}
@@ -1730,7 +1741,8 @@ export default function AdminClients() {
                               columnGap: '10px',
                               rowGap: 0,
                               width: '100%',
-                              marginTop: '12px',
+                              /* +20px above red ORDERS / POINTS / TOTAL SPENT / MEMBERSHIP values (not between value and label) */
+                              marginTop: '32px',
                               marginLeft: '-4px',
                               boxSizing: 'border-box',
                             }}
@@ -1791,7 +1803,7 @@ export default function AdminClients() {
                                       fontFamily: '"Futura PT Book"',
                                       color: '#000000',
                                       fontSize: '10px',
-                                      margin: '24px 0 0 0',
+                                      margin: '4px 0 0 0',
                                       width: '100%',
                                       textAlign: 'center',
                                       wordBreak: 'break-word',
@@ -2296,11 +2308,18 @@ export default function AdminClients() {
                               membership_stripe_return: 'Returned from Stripe (membership)',
                               open_cart_dropdown: 'Opened cart',
                               cart_navigate: 'Cart menu',
+                              cart_item_updated: 'Saved customization (build-a-wig)',
+                              save_for_later: 'Saved for later (bag)',
+                              move_saved_to_cart: 'Moved saved item to bag',
+                              remove_saved_item: 'Removed from saved for later',
                             };
                             let label = labels[eventType] || eventType.replace(/_/g, ' ');
+                            if (eventType === 'profile_update' && payload?.section) {
+                              label += ` (${String(payload.section)})`;
+                            }
                             if (payload?.productName) label += `: ${String(payload.productName).toUpperCase()}`;
-                            else if (payload?.fullPath) label += `: ${String(payload.fullPath)}`;
-                            else if (payload?.path) label += `: ${String(payload.path)}${payload.search ? String(payload.search) : ''}`;
+                            else if (eventType === 'view_page' && payload?.fullPath) label += `: ${String(payload.fullPath)}`;
+                            else if (eventType === 'view_page' && payload?.path) label += `: ${String(payload.path)}${payload.search ? String(payload.search) : ''}`;
                             else if (payload?.page) label += `: ${String(payload.page)}`;
                             else if (
                               (eventType === 'cart_snapshot' || eventType === 'wishlist_snapshot') &&
@@ -2311,6 +2330,22 @@ export default function AdminClients() {
                             else if (payload?.method && eventType === 'sign_in') label += ` (${String(payload.method)})`;
                             else if (payload?.source && eventType === 'sign_up') label += ` (${String(payload.source)})`;
                             else if (payload?.destination && eventType === 'cart_navigate') label += `: ${String(payload.destination)}`;
+                            const actSrc = payload?.source != null ? String(payload.source) : '';
+                            if (
+                              actSrc &&
+                              eventType !== 'sign_up' &&
+                              ['view_product', 'add_to_cart', 'remove_from_cart', 'add_to_wishlist'].includes(eventType)
+                            ) {
+                              label += ` · ${actSrc.replace(/_/g, ' ')}`;
+                            }
+                            const qtyCh = payload?.change != null ? String(payload.change) : '';
+                            if (qtyCh && (eventType === 'add_to_cart' || eventType === 'remove_from_cart')) {
+                              label += ` (${qtyCh.replace(/_/g, ' ')})`;
+                            }
+                            const bawCtx = payload?.context != null ? String(payload.context) : '';
+                            if (bawCtx && eventType === 'cart_item_updated') {
+                              label += ` · ${bawCtx.replace(/_/g, ' ')}`;
+                            }
                             return label;
                           };
                           return (
@@ -3371,6 +3406,51 @@ export default function AdminClients() {
         currentIndex={mediaViewerIndex}
         onNavigate={setMediaViewerIndex}
       />
+      {/* Enlarged profile image — same overlay + circular frame as Account → Profile */}
+      {showEnlargedProfileImage && selectedClient && !profilePhotoError && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(255, 255, 255, 0.6)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+          }}
+          onClick={() => setShowEnlargedProfileImage(false)}
+        >
+          <div
+            style={{
+              position: 'relative',
+              maxWidth: '90%',
+              maxHeight: '90%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={selectedClientProfilePhotoSrc}
+              alt=""
+              style={{
+                maxWidth: '100%',
+                maxHeight: '100%',
+                objectFit: 'cover',
+                objectPosition: 'center',
+                borderRadius: '50%',
+                border: '1.3px solid #000',
+              }}
+            />
+          </div>
+        </div>
+      )}
       {showInvitesPopup && (
         <div
           className="fixed inset-0 z-[99999] flex items-center justify-center"

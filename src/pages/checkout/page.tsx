@@ -1780,7 +1780,8 @@ function CheckoutPage() {
           color: #808080 !important;
         }
         @media (min-width: 1024px) {
-          .checkout-cart-thumbnails-center-lg {
+          /* Class name must not contain substring "thumbnail" — global index.css uses [class*="thumbnail"] p { … !important } which would force script font on all lines below */
+          .checkout-cart-items-center-lg {
             display: flex;
             width: 100%;
             height: 100%;
@@ -2188,8 +2189,10 @@ function CheckoutPage() {
                       marginTop: '-10px'
                     }}
                   >
-                    {/* Body */}
-                    <div className="flex-1 flex flex-col overflow-hidden">
+                    {/* Body — flexShrink 0 + minHeight so loyalty/subtotal growth never shrinks the thumbnail strip */}
+                    <div className="flex-1 flex flex-col overflow-hidden" style={{ flexShrink: 0, minHeight: '190px' }}>
+                      {/* Space above thumbnails only (not via loyalty margin, which squeezed this row) */}
+                      <div style={{ paddingTop: '10px', flexShrink: 0 }}>
                       {/* Cart Items - horizontal scrollable */}
                       <div 
                         ref={scrollContainerRef}
@@ -2207,7 +2210,7 @@ function CheckoutPage() {
                         onTouchMove={handleTouchMove}
                         onTouchEnd={handleTouchEnd}
                       >
-                        <div className="checkout-cart-thumbnails-center-lg">
+                        <div className="checkout-cart-items-center-lg">
                         <div
                           className="flex"
                           style={{
@@ -2405,13 +2408,14 @@ function CheckoutPage() {
                         </div>
                         </div>
                       </div>
+                      </div>
                     </div>
 
                     {/* Subtotal */}
                     <div className="overflow-hidden mt-auto pt-2">
-                      {/* Loyalty Points Text */}
+                      {/* Loyalty Points Text — keep gap below cart strip without stealing height from thumbnails */}
                       <div style={{ 
-                        marginTop: '20px', 
+                        marginTop: '10px', 
                         marginBottom: '0',
                         textAlign: 'center'
                       }}>

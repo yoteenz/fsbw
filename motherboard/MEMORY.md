@@ -2023,3 +2023,83 @@ Summary: User asked for **10px more spacing above** the checkout subtotal loyalt
 Summary: User asked for **10px spacing above** the **DETAILS**, **SHIPPING**, **POLICY**, etc. tab row on the **six** ready-made unit product pages (**Noir**, **Blanco**, **Soft Wave**, **Beach Wave**, **Soft Curl**, **Ocean Curl**).
 
 - **Changes:** On each page’s **`{/* Tabs Section */}`** outer **`div`** (the one with **`mt-6`** and **`translateY`**), added **`paddingTop: '10px'`** in the inline **`style`** next to the existing **`transform`**. Files: **`src/pages/straight/noir/page.tsx`** (also has **`noir-product-shots-tabs`** and **`-66px`** translate), **`src/pages/straight/blanco/page.tsx`**, **`src/pages/wavy/soft-wave/page.tsx`**, **`src/pages/wavy/beach-wave/page.tsx`**, **`src/pages/curly/soft-curl/page.tsx`**, **`src/pages/curly/ocean-curl/page.tsx`**. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Admin client details: tap profile photo to enlarge (match Account Profile)
+
+Summary: User wanted **Admin → Clients → client details** profile photo to **open an enlarged view** using the **same styling** as **Account → Profile** (frosted white overlay, circular image, black border).
+
+- **Changes:** **`src/pages/admin/clients/page.tsx`** — **`showEnlargedProfileImage`** state; reset with **`profilePhotoError`** when **`selectedClientEmail`** changes; **`selectedClientProfilePhotoSrc`** derived from **`profileImage` / `photo` / `profilePhoto` / `avatar`** (fallback **`/assets/profile-thumb.png`**); circular avatar wrapper is **`pointer`** + **`onClick`** when the image loaded (**`!profilePhotoError`**); fixed full-screen modal duplicated from **`src/pages/account/page.tsx`** ( **`rgba(255,255,255,0.6)`**, blur, **`zIndex: 9999`**, inner **`maxWidth/maxHeight 90%`**, **`img`** **`borderRadius: 50%`**, **`1.3px solid #000`**, **`objectFit: cover`**). Tap backdrop closes. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Checkout cart strip: Futura for raw / cap / price (not Covered By Your Grace)
+
+Summary: **Checkout** order-summary thumbnails showed **Covered By Your Grace** on **24″ RAW…**, **CAP SIZE**, and **price** even though only the **product name** should use that font. **Cause:** **`src/index.css`** rule **`[class*="thumbnail"] p { font-family: … !important }`** matched the wrapper class **`checkout-cart-thumbnails-center-lg`** (substring **`thumbnail`** in **`thumbnails`**), so all **`p`** tags inside got the script font and **beat inline styles**.
+
+- **Changes:** **`src/pages/checkout/page.tsx`** — renamed wrapper + media query class to **`checkout-cart-items-center-lg`** (no **`thumbnail`** substring). Aligned **RAW** line with shopping bag: **`Futura PT Book`**, **9px**; **CAP SIZE**: **`Futura PT Medium`**, **10px**; **price**: **`Futura PT Book`**, **12px**, **`fontWeight: 600`**. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Vercel build: fix `clientActivityBootstrap` + `ActivityEventType` TS errors
+
+Summary: **`npm run build`** (**`tsc --noEmit`**) failed on Vercel with **`clientActivityBootstrap.ts`**: **`reduce`** accumulator **`s`** inferred as **`unknown`**; **`trackActivity(t, …)`** with **`t: string`** not assignable to **`ActivityEventType`**.
+
+- **Changes:** (1) **`src/utils/clientActivityBootstrap.ts`** — cart/wishlist **`reduce`** uses **`(acc: number, i: unknown)`** and **`return acc + …`**. (2) **`bawTrackActivity`** handler: **`import isActivityEventType`**, **`if (!isActivityEventType(t)) return`** then **`trackActivity(t, …)`**. (3) **`src/utils/activity.ts`** — **`ACTIVITY_EVENT_KEYS`** object **`satisfies Record<ActivityEventType, true>`** (exhaustive keys) + **`isActivityEventType`**. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Shift founder / full admin privileges from ayoteenz to kateenaarmstrong@gmail.com
+
+Summary of the **whole conversation so far** in this chat: User asked to move **all** privileges that were tied to the **ayoteenz** admin account to **`kateenaarmstrong@gmail.com`**: account profile (rewards toggles, ADMIN: FOUNDER, loyalty/vouchers/mock digital cash), and **full `/admin`** + API admin allow lists.
+
+- **Decisions / outcomes:** The **founder-privileged** identity (tier/subscription **`localStorage` overrides**, **`isMockDataAccount`** eligibility, **`isAyoteenzAdminAccount`** checks, default **protected delete** account) now uses **`kateenaarmstrong@gmail.com`**. **`ayoteenz@yahoo.com`** was **removed** from default admin/sync lists so it no longer gets those behaviors unless explicitly added via **`VITE_ADMIN_EMAILS` / `ADMIN_EMAILS`**.
+
+- **Changes:**
+  - **`src/utils/adminAuth.ts`** — **`DEFAULT_ADMIN_EMAILS`** includes **`kateenaarmstrong@gmail.com`** instead of ayoteenz; new **`FOUNDER_PRIVILEGED_ADMIN_EMAIL`**; **`AYOTEENZ_ADMIN_EMAIL`** aliases it for backward-compatible imports; **`isAyoteenzAdminAccount`** compares against the founder email; comments updated.
+  - **`api/_lib/adminAuth.ts`**, **`api/admin/sync-profile.ts`** — default allow lists aligned with the new Gmail address.
+  - **`api/delete-account.ts`** — default **`PROTECTED_ACCOUNT_EMAIL`** fallback is **`kateenaarmstrong@gmail.com`** (still overridable by env).
+  - **`src/components/AdminGuard.tsx`**, **`src/App.tsx`**, **`src/utils/clearTestDataForNonAdmin.ts`**, **`src/utils/syncFromApi.ts`** (comment), **`src/pages/account/page.tsx`** (comments), **`.env.example`**, **`motherboard/CORE.md`**.
+
+- **Conventions:** If **`VITE_ADMIN_EMAILS` / `ADMIN_EMAILS`** are set in deploy, **include every admin’s real Supabase email**; defaults in code no longer list ayoteenz. **`isAyoteenzAdminAccount`** remains the function name but means **founder-privileged** email only.
+
+---
+
+## 2026-03-27 — Client activity: no SPA `view_page` spam; bag / build-a-wig / sources / profile sections
+
+Summary: User wanted **each meaningful action** tracked **separately** (account, product, shop/cart/wishlist flows) and **not** generic **page navigation** / path spam like **`view_page`** on every route. **`profile_update`** should not read like “changed name from X to Y” in the feed — use **section** labels instead of logging every URL.
+
+- **Changes:** (1) **`src/App.tsx`** — removed **`trackClientViewPage`** on **`location`** changes. (2) **`src/utils/activity.ts`** — new **`ActivityEventType`**: **`cart_item_updated`**, **`save_for_later`**, **`move_saved_to_cart`**, **`remove_saved_item`**. (3) **`src/utils/clientActivityBootstrap.ts`** — comment that **`trackClientViewPage`** is legacy / unused from App. (4) **`src/pages/shopping-bag/page.tsx`** — **`add_to_cart`** / **`remove_from_cart`** with **`source: 'shopping_bag'`** + **`change`** for qty up/down / line remove; **`save_for_later`**, **`move_saved_to_cart`**, **`remove_saved_item`**. (5) **`src/pages/build-a-wig/page.tsx`** — **`add_to_cart`** **`source: 'build_a_wig'`** on new add; **`cart_item_updated`** with **`context`** wishlist / saved_for_later / cart on edit save. (6) **`src/pages/wishlist/page.tsx`** — **`remove_from_cart`** when removing a line from the mini-bag on wishlist (**`source: 'wishlist_page'`**). (7) **`src/components/CartDropdown.tsx`** — **`remove_from_cart`** includes **`source: 'cart_dropdown'`**. (8) Six unit **`page.tsx`** files — **`source: 'product_page'`** on **`view_product`**, **`add_to_cart`**, **`add_to_wishlist`**. (9) **`src/pages/account/page.tsx`** — **`profile_update`** with **`section: 'photo'`**; **`account/settings/page.tsx`** — **`section: 'settings'`** on user-driven PATCH only; initial settings **`pushFullSettingsProfileToCloud`** on mount uses **`recordActivity: false`** so opening Settings doesn’t emit a bogus update. (10) **`src/pages/admin/clients/page.tsx`** — **`formatEventLabel`**: labels for new types; **`view_page`** path only for **`view_page`**; **`profile_update (section)`**; append **`source`**, **`change`**, **`context`** where present. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Checkout order-summary lines: Futura sizes back to pre–shopping-bag values
+
+Summary: After fixing the **`[class*="thumbnail"] p`** font override, checkout RAW / CAP / price were aligned to **shopping bag** sizes (**9px / 10px / 12px**). User reported checkout should stay **slightly smaller** (~1–2px) than bag; restore **original checkout** typography while keeping **Futura** (not script).
+
+- **Changes:** **`src/pages/checkout/page.tsx`** — under-thumbnail lines: **RAW** **`Futura PT Medium` `8px`**; **CAP SIZE** **`Futura PT Demi` `9px`**; **price** **`Futura PT Medium` `10px`** **`fontWeight: 500`**. Product name line unchanged (**Covered By Your Grace**). Class **`checkout-cart-items-center-lg`** unchanged. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Checkout: space above thumbnails only (loyalty margin clipped strip)
+
+Summary: **`marginTop: 20px`** on the loyalty line increased **subtotal** height in a **flex** card; the **flex-1** body **shrank** and clipped the **180px** thumbnail row. User wanted **padding above thumbnails only**, not layout pressure from the loyalty block.
+
+- **Changes:** **`src/pages/checkout/page.tsx`** — wrap the scroll strip in **`paddingTop: '10px'`** (above thumbnails only); body **`flexShrink: 0`** + **`minHeight: '190px'`** so the strip doesn’t shrink; loyalty wrapper **`marginTop`** back to **`10px`** (from **`20px`**). **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Admin client details: stat labels vs space above red values
+
+Summary: Earlier change set **ORDERS / POINTS / TOTAL SPENT / MEMBERSHIP** label **`marginTop`** to **`24px`**, which added **20px between the red numbers and the captions** (wrong). User wanted **+20px above the red value row** only, with **~4px** between value and label again.
+
+- **Changes:** **`src/pages/admin/clients/page.tsx`** — label **`<p>`** **`margin`** restored to **`4px 0 0 0`**; the **4-column stats grid** **`marginTop`** increased from **`12px`** to **`32px`** (**+20px** above the red numbers). **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Account profile: remove ADMIN: FOUNDER debug row
+
+Summary: User asked to remove **profile debug text below the profile photo** and noted prior expectation that debugging was stripped from the site. The visible **ADMIN: FOUNDER** line on **Account → Profile** (founder-privileged admin only, tappable to **`/admin/dashboard`**) read as internal/testing UI.
+
+- **Changes:** **`src/pages/account/page.tsx`** — removed the conditional **`ADMIN: FOUNDER`** **`<p>`** under the membership line. Founder-privileged behavior (tier toggles, mock data, membership overrides, **`/admin`** access) is unchanged; admins can still open **`/admin/dashboard`** directly or via bookmarks. **`motherboard/MEMORY.md`** (this entry).

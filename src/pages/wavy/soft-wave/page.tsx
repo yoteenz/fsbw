@@ -82,7 +82,7 @@ function SoftWaveSelection() {
   }, []);
 
   useEffect(() => {
-    trackActivity('view_product', { productName: 'SOFT WAVE', path: location.pathname });
+    trackActivity('view_product', { source: 'product_page', productName: 'SOFT WAVE', path: location.pathname });
   }, [location.pathname]);
 
   // Toggle wishlist handler
@@ -796,7 +796,7 @@ function SoftWaveSelection() {
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
 
-      trackActivity('add_to_cart', { productName: 'SOFT WAVE', quantity });
+      trackActivity('add_to_cart', { source: 'product_page', productName: 'SOFT WAVE', quantity });
       
       setAddToBagState('added');
     } catch (error) {
