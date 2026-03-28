@@ -817,7 +817,7 @@ function OrdersPage() {
     }
   ];
 
-  // Get orders: mock only for admin (mock-data) account; all others get real orders (empty if none)
+  // Get orders: seeded mocks only when mock profile chrome is on (not VIEW AS CLIENT); otherwise real LS orders (seed IDs stripped for founder client view)
   const getUserOrdersData = () => {
     if (isMockOrdersAccount()) {
       return {

@@ -2432,3 +2432,24 @@ Summary: User asked for an optional **APT, UNIT, SUITE** field (no asterisk, no 
 - **Label:** **APT, UNIT, ETC** → **APT, UNIT, SUITE** on add-address form.
 - **Scroll:** **`account-shipping-card-fields`** uses **`overflowY: 'auto'`**, **`minHeight: 0`**, **`WebkitOverflowScrolling: 'touch'`**, **`overscrollBehavior: 'contain'`** so the add-address form (and long address lists) scroll inside the fixed-height card instead of clipping. Removed extra card **`paddingBottom`** tied only to add form.
 - **Files:** **`src/pages/account/shipping/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — VIEW AS CLIENT: no seed mock orders or loyalty from LS
+
+Summary: User reported that with **VIEW AS CLIENT** on, **Orders** and **loyalty / points** still showed **founder seed mock** data.
+
+- **Cause:** **`src/pages/orders/page.tsx`** treated any **`isMockDataAccount`** user as a mock-orders account and ignored **`baw_founder_account_view_as_client`**. Rewards/membership already branched on **`founderViewAsClient`** for some mock UI, but **spend**, **points history**, and **affiliate points** still read **`userOrders_*`** that had been **overwritten with seed mocks**, so inflated loyalty persisted.
+- **Decisions / helpers (`src/utils/adminAuth.ts`):** **`readFounderAccountViewAsClientFromStorage()`**, **`isMockProfileChromeActive(user)`** (mock founder **and** not view-as-client), **`BAW_FOUNDER_SEED_MOCK_ORDER_IDS`** + **`excludeFounderSeedMockOrders()`** to drop known seed order ids (and optional future **`bawSeedMock`** flag).
+- **Orders page:** Use **`isMockProfileChromeActive`** for seeded lists; when mock account + view-as-client, load from LS and **filter** seed ids; **`founderAccountViewAsClientChanged`** listener refreshes lists; persist-from-state effect skips only when **mock chrome** is active (view-as-client can sync real edits).
+- **Rewards (`membership/page.tsx`):** **`ordersFromStorageForRewards()`** applies the same filter when view-as-client; mock affiliate block uses **`isMockProfileChromeActive`**; tier mock bar uses **`isMockProfileChromeActive`**.
+- **Account hub (`account/page.tsx`):** **`profileUsesMockChrome`** derived from **`isMockProfileChromeActive`**; **`mergeUserOrdersFromStorageForAccount`** / **`activeUserOrdersFromStorageForAccount`** for **order count**, **tier spend**, **VIB**, **notifications**, **concierge** badges so seed mocks do not count in client view.
+- **Files:** **`adminAuth.ts`**, **`orders/page.tsx`**, **`membership/page.tsx`**, **`account/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Founder toggle label: "VIEW AS ADMIN"
+
+Summary: User asked to shorten the founder profile toggle label from **VIEW AS ADMIN PROFILE** to **VIEW AS ADMIN** (when already in client view).
+
+- **Changes:** **`src/pages/account/page.tsx`** — toggle text; **`src/utils/adminAuth.ts`** — JSDoc for **`FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY`**. **`motherboard/MEMORY.md`** (this entry).

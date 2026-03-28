@@ -2155,7 +2155,7 @@ function AccountPage() {
                           lineHeight: 1.3,
                         }}
                       >
-                        {founderViewAsClient ? 'VIEW AS ADMIN PROFILE' : 'VIEW AS CLIENT'}
+                        {founderViewAsClient ? 'VIEW AS ADMIN' : 'VIEW AS CLIENT'}
                       </p>
                     )}
                   </div>

@@ -363,7 +363,7 @@ export function isProtectedFromAccountDeletion(user: { email?: string } | null):
 
 /**
  * When `localStorage` value is `'true'`, Account profile + Rewards hide founder-only test toggles and mock tier/affiliate chrome.
- * Toggled from Account → Profile ("VIEW AS CLIENT" / "VIEW AS ADMIN PROFILE"). Checkout founder dummy card is unchanged.
+ * Toggled from Account → Profile ("VIEW AS CLIENT" / "VIEW AS ADMIN"). Checkout founder dummy card is unchanged.
  */
 export const FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY = 'baw_founder_account_view_as_client';
 
