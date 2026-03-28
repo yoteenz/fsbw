@@ -21,6 +21,13 @@ import {
   type MembershipPaymentRecord,
 } from '../../../utils/membershipPayments';
 import { getSubscriptionDisplayName, isSubscriptionTierId } from '../../../constants/subscriptionPricing';
+import {
+  ORDER_TRACKING_STAGE_LABELS,
+  ORDER_TRACKING_CARRIERS,
+  getCarrierTrackingUrl,
+  patchOrderInUserOrders,
+  appendOrderTrackingClientNotification,
+} from '../../../utils/orderTracking';
 
 const REVENUE_TABS = ['OVERVIEW', 'ORDERS', 'PRODUCTS', 'PAYMENTS'] as const;
 
@@ -106,7 +113,19 @@ type RevenueOrder = {
   discountCode?: string;
   shippingAddress?: { address?: string; city?: string; state?: string; zip?: string; country?: string };
   userEmail?: string;
+  trackingTimelineShiftDays?: number;
+  adminTrackingStageOverride?: number | null;
+  trackingStageNotes?: Record<string, string>;
   [k: string]: unknown;
+};
+
+type TrackingEditDraft = {
+  trackingNumber: string;
+  trackingCarrier: string;
+  timelineShiftDays: number;
+  stageNotes: string[];
+  notifyFlags: boolean[];
+  adminStageOverride: string;
 };
 
 function AdminRevenueOrdersTab({
@@ -116,6 +135,9 @@ function AdminRevenueOrdersTab({
   expandedOrderId,
   setExpandedOrderId,
   onCloseExpanded,
+  editTrackingMode,
+  trackingDraft,
+  setTrackingDraft,
 }: {
   orders: RevenueOrder[];
   setOrders: React.Dispatch<React.SetStateAction<RevenueOrder[]>>;
@@ -123,6 +145,9 @@ function AdminRevenueOrdersTab({
   expandedOrderId: string | null;
   setExpandedOrderId: (id: string | null) => void;
   onCloseExpanded: () => void;
+  editTrackingMode: boolean;
+  trackingDraft: TrackingEditDraft;
+  setTrackingDraft: React.Dispatch<React.SetStateAction<TrackingEditDraft>>;
 }) {
   const expandedOrder = useMemo(() => orders.find((o) => o.id === expandedOrderId) ?? null, [orders, expandedOrderId]);
 
@@ -166,6 +191,108 @@ function AdminRevenueOrdersTab({
                   <img src="/assets/close-icon.svg" alt="Close" style={{ width: '16px', height: '16px', filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
                 </button>
               </div>
+              {editTrackingMode ? (
+                <div style={{ maxHeight: 'min(62vh, 420px)', overflowY: 'auto', paddingRight: '4px' }}>
+                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '0 0 12px 0', textTransform: 'uppercase', lineHeight: 1.4 }}>
+                    CLIENT EMAIL: {order.userEmail || '—'} · SAVED TO USER ORDERS
+                  </p>
+                  <div style={{ marginBottom: '14px' }}>
+                    <label style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', display: 'block', marginBottom: '6px', textTransform: 'uppercase' }}>TRACKING NUMBER</label>
+                    <input
+                      type="text"
+                      value={trackingDraft.trackingNumber}
+                      onChange={(e) => setTrackingDraft((d) => ({ ...d, trackingNumber: e.target.value }))}
+                      className="w-full py-2 px-2 border border-black"
+                      style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', textTransform: 'uppercase', boxSizing: 'border-box' }}
+                      placeholder="OPTIONAL"
+                    />
+                  </div>
+                  <div style={{ marginBottom: '14px' }}>
+                    <label style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', display: 'block', marginBottom: '6px', textTransform: 'uppercase' }}>CARRIER</label>
+                    <select
+                      value={trackingDraft.trackingCarrier}
+                      onChange={(e) => setTrackingDraft((d) => ({ ...d, trackingCarrier: e.target.value }))}
+                      className="w-full py-2 px-2 border border-black"
+                      style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', textTransform: 'uppercase', boxSizing: 'border-box' }}
+                    >
+                      {ORDER_TRACKING_CARRIERS.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {trackingDraft.trackingNumber.trim() && (
+                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '-8px 0 14px 0', textTransform: 'uppercase' }}>
+                      <a href={getCarrierTrackingUrl(trackingDraft.trackingCarrier, trackingDraft.trackingNumber.trim())} target="_blank" rel="noopener noreferrer" style={{ color: '#EB1C24' }}>
+                        PREVIEW TRACKING LINK
+                      </a>
+                    </p>
+                  )}
+                  <div style={{ marginBottom: '14px' }}>
+                    <label style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', display: 'block', marginBottom: '6px', textTransform: 'uppercase' }}>TIMELINE SHIFT (DAYS)</label>
+                    <input
+                      type="number"
+                      value={trackingDraft.timelineShiftDays}
+                      onChange={(e) => setTrackingDraft((d) => ({ ...d, timelineShiftDays: Number(e.target.value) || 0 }))}
+                      className="w-full py-2 px-2 border border-black"
+                      style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', boxSizing: 'border-box' }}
+                    />
+                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', margin: '6px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35 }}>
+                      POSITIVE = DELAY (SLOWER PROGRESS). NEGATIVE = EXPEDITE. ZERO = DEFAULT TIMELINE.
+                    </p>
+                  </div>
+                  <div style={{ marginBottom: '14px' }}>
+                    <label style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', display: 'block', marginBottom: '6px', textTransform: 'uppercase' }}>CURRENT STAGE OVERRIDE (0–8, BLANK = AUTO)</label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={trackingDraft.adminStageOverride}
+                      onChange={(e) => setTrackingDraft((d) => ({ ...d, adminStageOverride: e.target.value.replace(/[^\d]/g, '') }))}
+                      className="w-full py-2 px-2 border border-black"
+                      style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', boxSizing: 'border-box' }}
+                      placeholder="AUTO FROM STATUS"
+                    />
+                  </div>
+                  <div className="border-t border-gray-200" style={{ marginTop: '16px', paddingTop: '12px' }}>
+                    <h4 style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', margin: '0 0 10px 0', textTransform: 'uppercase' }}>STAGES · CLIENT NOTES</h4>
+                    {ORDER_TRACKING_STAGE_LABELS.map((label, i) => (
+                      <div key={label} style={{ marginBottom: '12px' }}>
+                        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', margin: '0 0 4px 0', textTransform: 'uppercase' }}>{i}. {label}</p>
+                        <textarea
+                          value={trackingDraft.stageNotes[i] ?? ''}
+                          onChange={(e) => {
+                            const v = e.target.value;
+                            setTrackingDraft((d) => {
+                              const next = [...d.stageNotes];
+                              next[i] = v;
+                              return { ...d, stageNotes: next };
+                            });
+                          }}
+                          rows={2}
+                          className="w-full py-2 px-2 border border-black"
+                          style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', textTransform: 'uppercase', resize: 'vertical', boxSizing: 'border-box' }}
+                          placeholder="NOTE (VISIBLE TO CLIENT)"
+                        />
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px', fontFamily: '"Futura PT Book"', fontSize: '9px', textTransform: 'uppercase', cursor: 'pointer' }}>
+                          <input
+                            type="checkbox"
+                            checked={!!trackingDraft.notifyFlags[i]}
+                            onChange={(e) => {
+                              const checked = e.target.checked;
+                              setTrackingDraft((d) => {
+                                const nf = [...d.notifyFlags];
+                                nf[i] = checked;
+                                return { ...d, notifyFlags: nf };
+                              });
+                            }}
+                          />
+                          NOTIFY CLIENT (ALERT + ACCOUNT NOTIFICATION)
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <>
               <div style={{ minHeight: '180px', marginBottom: '20px', overflowX: orderProducts.length >= 3 ? 'auto' : 'hidden' }}>
                 <div className="flex" style={{ gap: '20px', minHeight: '180px', alignItems: 'flex-start', justifyContent: orderProducts.length === 1 ? 'center' : 'flex-start', paddingRight: orderProducts.length >= 3 ? 10 : 0 }}>
                   {orderProducts.map((product: { id: string; name: string; image: string; price: number; options?: Record<string, string> }) => (
@@ -216,7 +343,7 @@ function AdminRevenueOrdersTab({
                   {(order as any).trackingNumber && (
                     <div className="flex justify-between">
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', textTransform: 'uppercase' }}>TRACKING NUMBER</span>
-                      <a href={`https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${encodeURIComponent((order as any).trackingNumber)}`} target="_blank" rel="noopener noreferrer" style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>{(order as any).trackingNumber}</a>
+                      <a href={getCarrierTrackingUrl(String((order as any).trackingCarrier || 'USPS'), String((order as any).trackingNumber))} target="_blank" rel="noopener noreferrer" style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>{(order as any).trackingNumber}</a>
                     </div>
                   )}
                   {order.shippingAddress && typeof order.shippingAddress === 'object' ? (
@@ -232,6 +359,8 @@ function AdminRevenueOrdersTab({
                   )}
                 </div>
               </div>
+                </>
+              )}
             </div>
       </div>
     );
@@ -307,8 +436,16 @@ export default function AdminRevenue() {
     [localMembershipPayments, remoteMembershipPayments]
   );
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
-  const [addTrackingOrderId, setAddTrackingOrderId] = useState<string | null>(null);
-  const [trackingInput, setTrackingInput] = useState('');
+  const emptyTrackingDraft = (): TrackingEditDraft => ({
+    trackingNumber: '',
+    trackingCarrier: 'USPS',
+    timelineShiftDays: 0,
+    stageNotes: Array.from({ length: ORDER_TRACKING_STAGE_LABELS.length }, () => ''),
+    notifyFlags: Array.from({ length: ORDER_TRACKING_STAGE_LABELS.length }, () => false),
+    adminStageOverride: '',
+  });
+  const [editTrackingMode, setEditTrackingMode] = useState(false);
+  const [trackingDraft, setTrackingDraft] = useState<TrackingEditDraft>(() => emptyTrackingDraft());
 
   const refreshRemoteMembershipPayments = React.useCallback(async () => {
     if (!isSupabaseConfigured()) return;
@@ -369,42 +506,76 @@ export default function AdminRevenue() {
       if (addr.city || addr.state || addr.zip) lines.push(`  ${[addr.city, addr.state, addr.zip].filter(Boolean).join(', ')}`);
       if (addr.country) lines.push(`  ${addr.country}`);
     } else lines.push('  —');
-    if (order.trackingNumber) lines.push('', `Tracking: ${order.trackingNumber}`);
+    if (order.trackingNumber) lines.push('', `Tracking: ${order.trackingNumber}`, order.trackingCarrier ? `Carrier: ${order.trackingCarrier}` : '');
     const text = lines.join('\n');
     navigator.clipboard.writeText(text).then(() => { /* copied */ }).catch(() => {});
   };
 
-  const handleAddTracking = (order: RevenueOrder | null) => {
+  const fillTrackingDraftFromOrder = (order: RevenueOrder): TrackingEditDraft => {
+    const carrier = String(order.trackingCarrier || 'USPS').toUpperCase();
+    const safeCarrier = (ORDER_TRACKING_CARRIERS as readonly string[]).includes(carrier) ? carrier : 'USPS';
+    return {
+      trackingNumber: String(order.trackingNumber || ''),
+      trackingCarrier: safeCarrier,
+      timelineShiftDays: Number(order.trackingTimelineShiftDays) || 0,
+      stageNotes: ORDER_TRACKING_STAGE_LABELS.map((_, i) =>
+        String((order.trackingStageNotes as Record<string, string> | undefined)?.[String(i)] ?? '')
+      ),
+      notifyFlags: Array.from({ length: ORDER_TRACKING_STAGE_LABELS.length }, () => false),
+      adminStageOverride:
+        order.adminTrackingStageOverride != null && order.adminTrackingStageOverride !== ''
+          ? String(Math.min(8, Math.max(0, Number(order.adminTrackingStageOverride))))
+          : '',
+    };
+  };
+
+  const handleSaveTrackingEdit = () => {
+    const order = expandedOrder;
     if (!order) return;
-    const tn = trackingInput.trim();
-    if (!tn) return;
-    if (order.userEmail) {
-      try {
-        const key = `userOrders_${order.userEmail}`;
-        const raw = localStorage.getItem(key);
-        const data = raw ? JSON.parse(raw) : { activeOrders: [], pastOrders: [] };
-        const update = (list: RevenueOrder[]) => {
-          const idx = list.findIndex((o: RevenueOrder) => o.id === order.id);
-          if (idx >= 0) {
-            list[idx] = { ...list[idx], trackingNumber: tn, status: 'SHIPPED', trackingCarrier: 'USPS' };
-          }
-          return list;
-        };
-        data.activeOrders = update(data.activeOrders || []);
-        data.pastOrders = update(data.pastOrders || []);
-        localStorage.setItem(key, JSON.stringify(data));
-        setTrackingInput('');
-        setAddTrackingOrderId(null);
-        refreshOrders();
-        setExpandedOrderId(order.id);
-        return;
-      } catch {
-        // fall through to local state update
-      }
+    const tn = trackingDraft.trackingNumber.trim();
+    const notes: Record<string, string> = {};
+    trackingDraft.stageNotes.forEach((t, i) => {
+      const s = t.trim();
+      if (s) notes[String(i)] = s.toUpperCase();
+    });
+    const os = trackingDraft.adminStageOverride.trim();
+    let adminOverride: number | null;
+    if (os === '') adminOverride = null;
+    else {
+      const n = parseInt(os, 10);
+      adminOverride = Number.isNaN(n) ? null : Math.min(8, Math.max(0, n));
     }
-    setOrders((prev) => prev.map((o) => o.id === order.id ? { ...o, trackingNumber: tn, status: 'SHIPPED', trackingCarrier: 'USPS' } : o));
-    setTrackingInput('');
-    setAddTrackingOrderId(null);
+    const patch: Record<string, unknown> = {
+      trackingCarrier: trackingDraft.trackingCarrier || 'USPS',
+      trackingTimelineShiftDays: Number(trackingDraft.timelineShiftDays) || 0,
+      trackingStageNotes: notes,
+      adminTrackingStageOverride: adminOverride,
+      trackingNumber: tn || '',
+    };
+    if (tn) {
+      patch.status = 'SHIPPED';
+    }
+
+    if (order.userEmail) {
+      patchOrderInUserOrders(order.userEmail, order.id, patch);
+      trackingDraft.notifyFlags.forEach((flag, i) => {
+        if (flag && trackingDraft.stageNotes[i]?.trim()) {
+          appendOrderTrackingClientNotification(order.userEmail!, {
+            orderId: order.id,
+            stageLabel: ORDER_TRACKING_STAGE_LABELS[i],
+            note: trackingDraft.stageNotes[i].trim(),
+          });
+        }
+      });
+    } else {
+      setOrders((prev) =>
+        prev.map((o) => (o.id === order.id ? { ...o, ...(patch as object) } : o))
+      );
+    }
+    setEditTrackingMode(false);
+    setTrackingDraft(emptyTrackingDraft());
+    refreshOrders();
+    setExpandedOrderId(order.id);
   };
 
   const depletedInventory = useMemo(() => getDepletedInventory(orders), [orders]);
@@ -667,7 +838,14 @@ export default function AdminRevenue() {
                     refreshOrders={refreshOrders}
                     expandedOrderId={expandedOrderId}
                     setExpandedOrderId={setExpandedOrderId}
-                    onCloseExpanded={() => { setAddTrackingOrderId(null); setTrackingInput(''); setExpandedOrderId(null); }}
+                    onCloseExpanded={() => {
+                      setEditTrackingMode(false);
+                      setTrackingDraft(emptyTrackingDraft());
+                      setExpandedOrderId(null);
+                    }}
+                    editTrackingMode={editTrackingMode}
+                    trackingDraft={trackingDraft}
+                    setTrackingDraft={setTrackingDraft}
                   />
                 )}
                 {activeTab === 'PRODUCTS' && (
@@ -789,9 +967,9 @@ export default function AdminRevenue() {
               </div>
             </div>
 
-            {activeTab === 'ORDERS' && (
+            {activeTab === 'ORDERS' && !expandedOrderId && (
             <>
-              {/* Pending orders – own card below orders, square corners; only on ORDERS tab */}
+              {/* Pending orders – own card below orders, square corners; only on ORDERS tab; hidden while an order is expanded */}
               <div
                 className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden mt-4"
                 style={{ borderWidth: '1.3px', borderRadius: 0 }}
@@ -864,26 +1042,41 @@ PENDING
 
             <PageActionsBelowCard>
               {activeTab === 'ORDERS' && expandedOrderId && expandedOrder ? (
-                <>
-                  {addTrackingOrderId === expandedOrderId && (
-                    <>
-                      <input
-                        type="text"
-                        value={trackingInput}
-                        onChange={(e) => setTrackingInput(e.target.value)}
-                        placeholder="TRACKING NUMBER"
-                        className="w-full py-2 px-3 border border-black"
-                        style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', textTransform: 'uppercase', marginBottom: '10px', boxSizing: 'border-box' }}
-                      />
-                      <div className="flex gap-2" style={{ marginBottom: '10px' }}>
-                        <button type="button" onClick={() => handleAddTracking(expandedOrder)} disabled={!trackingInput.trim()} className="flex-1 py-2 border border-black font-medium" style={pageActionButtonStyle}>SAVE TRACKING</button>
-                        <button type="button" onClick={() => { setAddTrackingOrderId(null); setTrackingInput(''); }} className="py-2 px-3 border border-gray-300 font-medium" style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', textTransform: 'uppercase' }}>CANCEL</button>
-                      </div>
-                    </>
-                  )}
-                  <button type="button" onClick={() => handleCopyOrder(expandedOrder)} className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50" style={pageActionButtonStyle}>COPY</button>
-                  <button type="button" onClick={() => setAddTrackingOrderId(expandedOrderId)} className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50" style={{ ...pageActionButtonStyle, marginTop: '10px' }}>ADD TRACKING</button>
-                </>
+                editTrackingMode ? (
+                  <>
+                    <button type="button" onClick={handleSaveTrackingEdit} className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50" style={pageActionButtonStyle}>
+                      SAVE TRACKING
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditTrackingMode(false);
+                        setTrackingDraft(expandedOrder ? fillTrackingDraftFromOrder(expandedOrder) : emptyTrackingDraft());
+                      }}
+                      className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                      style={{ ...pageActionButtonStyle, marginTop: '10px' }}
+                    >
+                      CANCEL EDIT
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button type="button" onClick={() => handleCopyOrder(expandedOrder)} className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50" style={pageActionButtonStyle}>
+                      COPY
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTrackingDraft(fillTrackingDraftFromOrder(expandedOrder));
+                        setEditTrackingMode(true);
+                      }}
+                      className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                      style={{ ...pageActionButtonStyle, marginTop: '10px' }}
+                    >
+                      EDIT TRACKING
+                    </button>
+                  </>
+                )
               ) : activeTab === 'OVERVIEW' ? (
                 <button
                   type="button"

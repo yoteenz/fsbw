@@ -2453,3 +2453,34 @@ Summary: User reported that with **VIEW AS CLIENT** on, **Orders** and **loyalty
 Summary: User asked to shorten the founder profile toggle label from **VIEW AS ADMIN PROFILE** to **VIEW AS ADMIN** (when already in client view).
 
 - **Changes:** **`src/pages/account/page.tsx`** — toggle text; **`src/utils/adminAuth.ts`** — JSDoc for **`FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY`**. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Vercel build: `founder_test_checkout_order` on `ActivityEventType`
+
+Summary: **`npm run build`** (`tsc --noEmit && vite build`) failed on Vercel with **`TS2345`**: **`trackActivity('founder_test_checkout_order', …)`** in **`checkout/page.tsx`** not assignable to **`ActivityEventType`**.
+
+- **Fix:** Added **`founder_test_checkout_order`** to the **`ActivityEventType`** union and **`ACTIVITY_EVENT_KEYS`** in **`src/utils/activity.ts`** so it stays in sync with **`trackActivity`** / **`isActivityEventType`**.
+- **Files:** **`src/utils/activity.ts`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Admin Revenue: EDIT TRACKING + shared order tracking (Orders + Concierge)
+
+Summary: User asked to replace **ADD TRACKING** on **Admin → Revenue → Orders** (expanded order) with **EDIT TRACKING** that toggles the expanded order card into a full **tracking editor** (stages, client-visible notes with optional **notify** → unread **account notification** + Concierge deep link, **timeline shift** days for slower/faster progress, **carrier** + **tracking number** with correct carrier URLs), persisted on **`userOrders_${email}`** so **Orders** and **Account → Concierge** stay in sync.
+
+- **Context:** Prior behavior was a footer **ADD TRACKING** input that set **`trackingNumber`**, **`trackingCarrier: USPS`**, and **`status: SHIPPED`** in localStorage only.
+- **New util (`src/utils/orderTracking.ts`):** **`ORDER_TRACKING_STAGE_LABELS`**, **`ORDER_TRACKING_CARRIERS`**, **`getCarrierTrackingUrl`**, **`patchOrderInUserOrders`**, **`appendOrderTrackingClientNotification`** (merges into **`notifications_${email}`** via **`getAccountNotifications` / `mergeAccountNotifications`**), **`getOrderTrackingStageFromOrder`** (admin stage override, **`trackingStage`**, status map, form-signed rule).
+- **Admin Revenue (`src/pages/admin/revenue/page.tsx`):** **EDIT TRACKING** opens in-card editor; **SAVE TRACKING** writes **`trackingNumber`**, **`trackingCarrier`**, **`trackingTimelineShiftDays`**, **`adminTrackingStageOverride`** (null clears), **`trackingStageNotes`**; non-empty tracking still sets **`SHIPPED`**; per-stage **notify** fires **`appendOrderTrackingClientNotification`**. **COPY** / **CANCEL EDIT** unchanged pattern. View mode tracking link uses **`getCarrierTrackingUrl`**.
+- **Concierge (`src/pages/account/concierge/page.tsx`):** **`getOrderTrackingStage`** delegates to **`getOrderTrackingStageFromOrder`**; **`getStageProgress`** / **`getStageTimestamp`** accept **timeline shift**; tracking UI passes shift; expanded stage shows **UPDATE:** admin note when present.
+- **Orders (`src/pages/orders/page.tsx`):** **`Order`** type extended; **`?orderId=`** expands matching order; expanded + archived detail: **ORDER TRACKING** section (stages, notes, shift, **OPEN IN CONCIERGE**); list + detail tracking links use **`getCarrierTrackingUrl`**; carrier row prefers stored **`trackingCarrier`**.
+- **Email:** No new server email; **notify** = in-app notification + existing alert/badge pipeline.
+- **Files:** **`orderTracking.ts`**, **`admin/revenue/page.tsx`**, **`concierge/page.tsx`**, **`orders/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Admin Revenue Orders: hide PENDING card when expanded
+
+Summary: On **Admin → Revenue → Orders**, the bottom **PENDING** orders card is **not rendered** while an order is expanded (**`expandedOrderId`** set); it returns when the user closes the expanded order.
+
+- **Files:** **`src/pages/admin/revenue/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).

@@ -104,7 +104,9 @@ export type ActivityEventType =
   /** Shopping bag: moved a saved-for-later item back to cart */
   | 'move_saved_to_cart'
   /** Shopping bag: removed item from saved-for-later (not wishlist) */
-  | 'remove_saved_item';
+  | 'remove_saved_item'
+  /** Founder admin: product checkout completed using dummy test card */
+  | 'founder_test_checkout_order';
 
 /** Runtime set for narrowing string event names (e.g. `bawTrackActivity` bridge). Keeps exhaustiveness with `ActivityEventType`. */
 const ACTIVITY_EVENT_KEYS = {
@@ -136,6 +138,7 @@ const ACTIVITY_EVENT_KEYS = {
   save_for_later: true,
   move_saved_to_cart: true,
   remove_saved_item: true,
+  founder_test_checkout_order: true,
 } satisfies Record<ActivityEventType, true>;
 
 export function isActivityEventType(value: string): value is ActivityEventType {

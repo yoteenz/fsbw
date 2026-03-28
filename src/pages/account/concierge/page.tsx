@@ -8,6 +8,7 @@ import { getCurrentUser, getEffectiveSubscriptionTier, isMockDataAccount, isAyot
 import { calculateSpecialOfferPrice } from '../../../utils/specialOfferPrice';
 import { getOptionsForUnit, type UnitId } from '../../../utils/productOptions';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
+import { getOrderTrackingStageFromOrder } from '../../../utils/orderTracking';
 import { getSpecialOfferAdminConfig } from '../../../utils/api';
 import specialOfferIconUrl from '../../../assets/special-offer2.svg?url';
 
@@ -1154,51 +1155,10 @@ function ConciergePage() {
     } catch (_) {}
   }, []);
 
-  // Get current order's tracking stage
   const getOrderTrackingStage = (orderId: string): number => {
     if (!orderId) return 0;
     const order = activeOrders.find((o: any) => o.id === orderId);
-    if (!order) return 0;
-    
-    // CANCELED orders should NOT progress - stay at their current stage (or stage 0 if never confirmed)
-    if (order.status === 'CANCELED') {
-      // If trackingStage is set, use it (frozen at cancellation point)
-      // Otherwise, stay at stage 0 (confirmed/placed stage)
-      return order.trackingStage !== undefined ? Math.min(Math.max(0, order.trackingStage), 8) : 0;
-    }
-    
-    // If order is DELIVERED, all stages are completed (stage 8)
-    if (order.status === 'DELIVERED') {
-      return 8;
-    }
-    
-    // Map order status to tracking stage (0-8)
-    const statusMap: { [key: string]: number } = {
-      'PLACED': 0, // confirmation
-      'CONFIRMED': 1, // sourcing
-      'PREPARING': 2, // constructing
-      'SHIPPED_TO_HUB': 3, // shipped to hub
-      'IN_TRANSIT': 4, // arrived at hub
-      'PROCESSING': 5, // prep
-      'CUSTOMIZING': 6, // customize
-      'FINALIZING': 7, // finalize
-      'SHIPPED': 8 // shipped
-    };
-    
-    // Default to stage based on status, or use custom trackingStage if available
-    if (order.trackingStage !== undefined) {
-      return Math.min(Math.max(0, order.trackingStage), 8);
-    }
-    
-    const baseStage = statusMap[order.status] || 0;
-    
-    // If order form is signed and status is PLACED/CONFIRMED, confirmed stage (0) is complete
-    // Move to next stage (sourcing) if form is signed
-    if ((order.status === 'PLACED' || order.status === 'CONFIRMED') && order.orderFormSigned === true) {
-      return Math.max(1, baseStage); // At least stage 1 (sourcing) if form is signed
-    }
-    
-    return baseStage;
+    return getOrderTrackingStageFromOrder(order);
   };
   
   const currentTrackingStage = getOrderTrackingStage(selectedOrderId);
@@ -1211,9 +1171,10 @@ function ConciergePage() {
       if (selectedOrder) {
         const processingTime = selectedOrder.processingTime || '6-8 WEEKS';
         const hasCustomization = !processingTime.includes('4');
+        const tShift = Number(selectedOrder.trackingTimelineShiftDays) || 0;
         
         // Get the progress for the current stage
-        const currentStageProgress = getStageProgress(currentTrackingStage, selectedOrder.date, hasCustomization);
+        const currentStageProgress = getStageProgress(currentTrackingStage, selectedOrder.date, hasCustomization, false, tShift);
         
         // Find the next stage index (accounting for filtered stages)
         const trackingStagesArray = [
@@ -1290,9 +1251,10 @@ function ConciergePage() {
       if (selectedOrder) {
         const processingTime = selectedOrder.processingTime || '6-8 WEEKS';
         const hasCustomization = !processingTime.includes('4');
+        const tShift = Number(selectedOrder.trackingTimelineShiftDays) || 0;
         
         // Get the progress for the current stage
-        const currentStageProgress = getStageProgress(currentTrackingStage, selectedOrder.date, hasCustomization);
+        const currentStageProgress = getStageProgress(currentTrackingStage, selectedOrder.date, hasCustomization, false, tShift);
         
         // Find the next stage index (accounting for filtered stages)
         const trackingStagesArray = [
@@ -1327,7 +1289,7 @@ function ConciergePage() {
           // If any stage is 100% complete, ensure the next stage is expanded (but only if not manually collapsed)
           for (let i = 0; i <= currentTrackingStage; i++) {
             // Calculate actual progress for this stage (force calculation)
-            const stageProgress = getStageProgress(i, selectedOrder.date, hasCustomization, true);
+            const stageProgress = getStageProgress(i, selectedOrder.date, hasCustomization, true, tShift);
             
             const stageInFiltered = filteredStages.findIndex(s => s.originalIndex === i);
             
@@ -1419,7 +1381,13 @@ function ConciergePage() {
   };
   
   // Helper function to calculate progress percentage for any stage
-  const getStageProgress = (stageIndex: number, orderDate: string | undefined, hasCustomization: boolean = true, forceCalculate: boolean = false): number => {
+  const getStageProgress = (
+    stageIndex: number,
+    orderDate: string | undefined,
+    hasCustomization: boolean = true,
+    forceCalculate: boolean = false,
+    timelineShiftDays: number = 0
+  ): number => {
     if (!orderDate) {
       return stageIndex < currentTrackingStage ? 100 : 0;
     }
@@ -1449,6 +1417,9 @@ function ConciergePage() {
       
       // Normalize order date to midnight for accurate calculation
       orderDateObj.setHours(0, 0, 0, 0);
+      if (timelineShiftDays) {
+        orderDateObj.setDate(orderDateObj.getDate() + timelineShiftDays);
+      }
       
       const now = new Date();
       now.setHours(0, 0, 0, 0); // Normalize to midnight for consistent calculation
@@ -1779,7 +1750,12 @@ function ConciergePage() {
   };
 
   // Helper function to get timestamp for a stage based on order date
-  const getStageTimestamp = (stageIndex: number, orderDate: string | undefined, hasCustomization: boolean = true): { date: string; time: string } | null => {
+  const getStageTimestamp = (
+    stageIndex: number,
+    orderDate: string | undefined,
+    hasCustomization: boolean = true,
+    timelineShiftDays: number = 0
+  ): { date: string; time: string } | null => {
     if (!orderDate) return null;
     
     try {
@@ -1790,6 +1766,9 @@ function ConciergePage() {
         orderDateObj = new Date(year, month - 1, day);
       } else {
         orderDateObj = new Date(orderDate);
+      }
+      if (timelineShiftDays) {
+        orderDateObj.setDate(orderDateObj.getDate() + timelineShiftDays);
       }
       
       let stageDate = new Date(orderDateObj);
@@ -3362,6 +3341,7 @@ function ConciergePage() {
                           <div style={{ position: 'relative', paddingLeft: '12px' }}>
                             {(() => {
                               const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
+                              const tShift = Number(selectedOrder?.trackingTimelineShiftDays) || 0;
                               const processingTime = selectedOrder?.processingTime || '6-8 WEEKS';
                               const hasCustomization = !processingTime.includes('4'); // Rush (4-6 weeks) = no customization
                               
@@ -3431,13 +3411,13 @@ function ConciergePage() {
                                 const stageDuration = getStageDuration(index, hasCustomization, shippingMethod);
                                 // CANCELED orders should not show progress - freeze at 0% or current progress
                                 let progress = isDeliveredLastStage ? 100 : 
-                                  (isCanceled ? 0 : getStageProgress(index, selectedOrder?.date, hasCustomization, true));
+                                  (isCanceled ? 0 : getStageProgress(index, selectedOrder?.date, hasCustomization, true, tShift));
                                 
                                 // Check if previous stage is complete (100% progress) - needed for upcoming stage logic
                                 let previousStageComplete = false;
                                 if (displayIndex > 0) {
                                   const previousStageIndex = filteredStages[displayIndex - 1].originalIndex;
-                                  const previousStageProgress = getStageProgress(previousStageIndex, selectedOrder?.date, hasCustomization, true);
+                                  const previousStageProgress = getStageProgress(previousStageIndex, selectedOrder?.date, hasCustomization, true, tShift);
                                   previousStageComplete = previousStageProgress >= 100;
                                 }
                                 
@@ -3695,7 +3675,7 @@ function ConciergePage() {
                                           const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
                                           const processingTime = selectedOrder?.processingTime || '6-8 WEEKS';
                                           const hasCustomization = !processingTime.includes('4'); // Rush (4-6 weeks) = no customization
-                                          const timestamp = getStageTimestamp(index, selectedOrder?.date, hasCustomization);
+                                          const timestamp = getStageTimestamp(index, selectedOrder?.date, hasCustomization, tShift);
                                           return timestamp ? (
                                             <p
                                               style={{
@@ -3730,7 +3710,7 @@ function ConciergePage() {
                                             const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
                                             const processingTime = selectedOrder?.processingTime || '6-8 WEEKS';
                                             const hasCustomization = !processingTime.includes('4'); // Rush (4-6 weeks) = no customization
-                                            const timestamp = getStageTimestamp(index, selectedOrder?.date, hasCustomization);
+                                            const timestamp = getStageTimestamp(index, selectedOrder?.date, hasCustomization, tShift);
                                             return timestamp ? (
                                               <span
                                                 style={{
@@ -3756,6 +3736,16 @@ function ConciergePage() {
                                         marginTop: '0px',
                                         paddingTop: '6px'
                                       }}>
+                                        {(() => {
+                                          const so = activeOrders.find((o: any) => o.id === selectedOrderId);
+                                          const adminNote = so?.trackingStageNotes?.[String(index)]?.trim();
+                                          if (!adminNote) return null;
+                                          return (
+                                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#EB1C24', margin: '0 0 10px 0', textTransform: 'uppercase', lineHeight: 1.45 }}>
+                                              UPDATE: {adminNote}
+                                            </p>
+                                          );
+                                        })()}
                                         {/* Selection Icons for specific statuses */}
                                         {(() => {
                                           const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);

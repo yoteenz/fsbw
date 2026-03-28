@@ -13,6 +13,7 @@ import {
 } from '../../utils/adminAuth';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { formatCountryDisplay } from '../../utils/formatCountry';
+import { getCarrierTrackingUrl, getOrderTrackingStageFromOrder, ORDER_TRACKING_STAGE_LABELS } from '../../utils/orderTracking';
 import summaryIcon from '../../assets/icons/summary-icon.svg?url';
 
 interface OrderLineItem {
@@ -38,6 +39,9 @@ interface Order {
   reviewInfo?: string; // Optional review/points information
   trackingNumber?: string; // Optional tracking number
   trackingCarrier?: string; // Optional tracking carrier (e.g., "DHL", "FEDEX")
+  trackingTimelineShiftDays?: number;
+  adminTrackingStageOverride?: number | null;
+  trackingStageNotes?: Record<string, string>;
   deliveredAt?: number; // Timestamp when order was delivered (for 48-hour archive logic)
   placedAt?: number; // Timestamp when order was placed (for 24-hour authorization countdown)
   canceledAt?: number; // Timestamp when order was canceled (for 24-hour archive logic)
@@ -835,6 +839,15 @@ function OrdersPage() {
   const [pastOrders, setPastOrders] = useState<Order[]>(() => {
     return getUserOrdersData().pastOrders;
   });
+
+  useEffect(() => {
+    const id = new URLSearchParams(location.search).get('orderId');
+    if (!id) return;
+    const all = [...activeOrders, ...pastOrders];
+    if (all.some((o) => o.id === id)) {
+      setExpandedOrderId(id);
+    }
+  }, [location.search, activeOrders, pastOrders]);
 
   // Refs for auto-scrolling
   const activeOrdersRef = useRef<HTMLDivElement>(null);
@@ -1979,9 +1992,10 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    </span>
                                  </div>
                                  {expandedOrder.trackingNumber && (() => {
-                                   const shipCountry = currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || '';
-                                   const isDomestic = !shipCountry || /^US$|^USA$|^UNITED\s*STATES$/i.test(String(shipCountry).trim());
-                                   const trackingUrl = isDomestic ? `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${encodeURIComponent(expandedOrder.trackingNumber)}` : `https://www.dhl.com/en/express/tracking.html?AWB=${encodeURIComponent(expandedOrder.trackingNumber)}`;
+                                   const trackingUrl = getCarrierTrackingUrl(
+                                     (expandedOrder as Order).trackingCarrier,
+                                     expandedOrder.trackingNumber
+                                   );
                                    return (
                                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
@@ -1996,7 +2010,12 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  {(() => {
                                    const shipCountry = currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || '';
                                    const isDomestic = !shipCountry || /^US$|^USA$|^UNITED\s*STATES$/i.test(String(shipCountry).trim());
-                                   const carrierLabel = isDomestic ? 'DOMESTIC' : 'INTERNATIONAL';
+                                   const carrierFromOrder = (expandedOrder as Order).trackingCarrier?.trim();
+                                   const carrierLabel = carrierFromOrder
+                                     ? carrierFromOrder.toUpperCase()
+                                     : isDomestic
+                                       ? 'DOMESTIC'
+                                       : 'INTERNATIONAL';
                                    return (
                                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
@@ -2021,6 +2040,59 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    {formatCountryDisplay(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country)}
                                  </p>
                                </div>
+                             </div>
+                           )}
+
+                           {expandedOrder.status !== 'CANCELED' && expandedOrder.status !== 'CANCELLED' && (
+                             <div style={{ marginBottom: '20px' }}>
+                               <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                                 <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
+                                   ORDER TRACKING
+                                 </h2>
+                                 <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
+                               </div>
+                               <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '0 0 10px 0', textTransform: 'uppercase', lineHeight: 1.45 }}>
+                                 UPDATES FROM PRODUCTION. PREMIUM MEMBERS CAN ALSO USE CONCIERGE FOR LIVE DETAIL.
+                               </p>
+                               <button
+                                 type="button"
+                                 onClick={() => navigate(`/account/concierge?orderId=${expandedOrder.id}`)}
+                                 className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                                 style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', textTransform: 'uppercase', color: '#EB1C24', borderWidth: '1.3px', marginBottom: '12px', backgroundColor: '#fff' }}
+                               >
+                                 OPEN IN CONCIERGE
+                               </button>
+                               {(() => {
+                                 const st = getOrderTrackingStageFromOrder(expandedOrder as unknown as Record<string, unknown>);
+                                 const shift = Number((expandedOrder as Order).trackingTimelineShiftDays) || 0;
+                                 return (
+                                   <>
+                                     {shift !== 0 && (
+                                       <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
+                                         TIMELINE ADJUSTMENT: {shift > 0 ? `+${shift}` : shift} DAY{Math.abs(shift) === 1 ? '' : 'S'}
+                                       </p>
+                                     )}
+                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
+                                       {ORDER_TRACKING_STAGE_LABELS.map((label, i) => {
+                                         const note = (expandedOrder as Order).trackingStageNotes?.[String(i)]?.trim();
+                                         const isCurrent = i === st;
+                                         return (
+                                           <div key={`${expandedOrder.id}-st-${i}`}>
+                                             <p style={{ fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '9px', color: isCurrent ? '#EB1C24' : '#000', margin: 0, textTransform: 'uppercase' }}>
+                                               {isCurrent ? '● ' : '○ '}{label}{isCurrent ? ' · CURRENT' : ''}
+                                             </p>
+                                             {note ? (
+                                               <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35 }}>
+                                                 {note}
+                                               </p>
+                                             ) : null}
+                                           </div>
+                                         );
+                                       })}
+                                     </div>
+                                   </>
+                                 );
+                               })()}
                              </div>
                            )}
                            
@@ -2266,7 +2338,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            {order.trackingNumber ? (
                              <div>
                                <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10.5px', color: '#000000', margin: 0, lineHeight: '1.2', transform: 'translateY(-1px)' }}>
-                                 <a href={currentUser && /^US$|^USA$|^UNITED\s*STATES$/i.test(String(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'US').trim()) ? `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${encodeURIComponent(order.trackingNumber)}` : `https://www.dhl.com/en/express/tracking.html?AWB=${encodeURIComponent(order.trackingNumber)}`} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', cursor: 'pointer' }}>
+                                 <a href={getCarrierTrackingUrl(order.trackingCarrier, order.trackingNumber)} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', cursor: 'pointer' }}>
                                    {order.trackingNumber}
                                  </a>
                                </p>
@@ -2712,9 +2784,10 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    </span>
                                  </div>
                                  {expandedOrder.trackingNumber && (() => {
-                                   const shipCountry = currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || '';
-                                   const isDomestic = !shipCountry || /^US$|^USA$|^UNITED\s*STATES$/i.test(String(shipCountry).trim());
-                                   const trackingUrl = isDomestic ? `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${encodeURIComponent(expandedOrder.trackingNumber)}` : `https://www.dhl.com/en/express/tracking.html?AWB=${encodeURIComponent(expandedOrder.trackingNumber)}`;
+                                   const trackingUrl = getCarrierTrackingUrl(
+                                     (expandedOrder as Order).trackingCarrier,
+                                     expandedOrder.trackingNumber
+                                   );
                                    return (
                                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
@@ -2729,7 +2802,12 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  {(() => {
                                    const shipCountry = currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || '';
                                    const isDomestic = !shipCountry || /^US$|^USA$|^UNITED\s*STATES$/i.test(String(shipCountry).trim());
-                                   const carrierLabel = isDomestic ? 'DOMESTIC' : 'INTERNATIONAL';
+                                   const carrierFromOrder = (expandedOrder as Order).trackingCarrier?.trim();
+                                   const carrierLabel = carrierFromOrder
+                                     ? carrierFromOrder.toUpperCase()
+                                     : isDomestic
+                                       ? 'DOMESTIC'
+                                       : 'INTERNATIONAL';
                                    return (
                                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', textTransform: 'uppercase' }}>
@@ -2754,6 +2832,59 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    {formatCountryDisplay(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country)}
                                  </p>
                                </div>
+                             </div>
+                           )}
+
+                           {expandedOrder.status !== 'CANCELED' && expandedOrder.status !== 'CANCELLED' && (
+                             <div style={{ marginBottom: '20px' }}>
+                               <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                                 <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
+                                   ORDER TRACKING
+                                 </h2>
+                                 <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
+                               </div>
+                               <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '0 0 10px 0', textTransform: 'uppercase', lineHeight: 1.45 }}>
+                                 UPDATES FROM PRODUCTION. PREMIUM MEMBERS CAN ALSO USE CONCIERGE FOR LIVE DETAIL.
+                               </p>
+                               <button
+                                 type="button"
+                                 onClick={() => navigate(`/account/concierge?orderId=${expandedOrder.id}`)}
+                                 className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                                 style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', textTransform: 'uppercase', color: '#EB1C24', borderWidth: '1.3px', marginBottom: '12px', backgroundColor: '#fff' }}
+                               >
+                                 OPEN IN CONCIERGE
+                               </button>
+                               {(() => {
+                                 const st = getOrderTrackingStageFromOrder(expandedOrder as unknown as Record<string, unknown>);
+                                 const shift = Number((expandedOrder as Order).trackingTimelineShiftDays) || 0;
+                                 return (
+                                   <>
+                                     {shift !== 0 && (
+                                       <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
+                                         TIMELINE ADJUSTMENT: {shift > 0 ? `+${shift}` : shift} DAY{Math.abs(shift) === 1 ? '' : 'S'}
+                                       </p>
+                                     )}
+                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
+                                       {ORDER_TRACKING_STAGE_LABELS.map((label, i) => {
+                                         const note = (expandedOrder as Order).trackingStageNotes?.[String(i)]?.trim();
+                                         const isCurrent = i === st;
+                                         return (
+                                           <div key={`${expandedOrder.id}-st-${i}`}>
+                                             <p style={{ fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '9px', color: isCurrent ? '#EB1C24' : '#000', margin: 0, textTransform: 'uppercase' }}>
+                                               {isCurrent ? '● ' : '○ '}{label}{isCurrent ? ' · CURRENT' : ''}
+                                             </p>
+                                             {note ? (
+                                               <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35 }}>
+                                                 {note}
+                                               </p>
+                                             ) : null}
+                                           </div>
+                                         );
+                                       })}
+                                     </div>
+                                   </>
+                                 );
+                               })()}
                              </div>
                            )}
                            
@@ -2959,7 +3090,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            {order.trackingNumber ? (
                              <div>
                                <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10.5px', color: '#000000', margin: 0, lineHeight: '1.2', transform: 'translateY(-1px)' }}>
-                                 <a href={currentUser && /^US$|^USA$|^UNITED\s*STATES$/i.test(String(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'US').trim()) ? `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${encodeURIComponent(order.trackingNumber)}` : `https://www.dhl.com/en/express/tracking.html?AWB=${encodeURIComponent(order.trackingNumber)}`} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', cursor: 'pointer' }}>
+                                 <a href={getCarrierTrackingUrl(order.trackingCarrier, order.trackingNumber)} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', cursor: 'pointer' }}>
                                    {order.trackingNumber}
                                  </a>
                                </p>
