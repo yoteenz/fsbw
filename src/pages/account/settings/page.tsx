@@ -10,7 +10,7 @@ import { deleteAccount } from '../../../utils/api';
 import { patchProfileWithRetryQueue } from '../../../utils/profileSyncQueue';
 import { trackActivity } from '../../../utils/activity';
 import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
-import { clearAppAuth, isAyoteenzAdminAccount, isAdminEmail } from '../../../utils/adminAuth';
+import { clearAppAuth, isAyoteenzAdminAccount, isAdminEmail, isProtectedFromAccountDeletion } from '../../../utils/adminAuth';
 
 const inputBaseStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Demi"',
@@ -382,7 +382,7 @@ function SettingsPage() {
         return null;
       }
     })();
-    if (isAyoteenzAdminAccount(currentUserForDelete)) {
+    if (isProtectedFromAccountDeletion(currentUserForDelete)) {
       setDeleteAccountError('This admin account cannot be deleted.');
       return;
     }

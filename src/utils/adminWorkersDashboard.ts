@@ -1,5 +1,5 @@
 /**
- * Admin worker roster — ten explicit brand positions for Frontal Slayer / Build-a-Wig (online wig shop).
+ * Admin worker roster — brand positions for Frontal Slayer / Build-a-Wig (online wig shop).
  * Edit names, hours, pay, contacts here. Careers page and /admin/workers read this list.
  */
 export type AdminDashboardWorker = {
@@ -24,7 +24,7 @@ export type AdminDashboardWorker = {
   notes?: string;
 };
 
-/** Ten fixed positions: personal assistant/CS, creative director, accountant, lawyer, graphic designer, photographer, videographer/editor, social planner/manager, MUA, hair stylist. */
+/** Core staff + brand ambassador (contract). */
 export const ADMIN_DASHBOARD_WORKERS: AdminDashboardWorker[] = [
   {
     id: '1',
@@ -253,5 +253,34 @@ export const ADMIN_DASHBOARD_WORKERS: AdminDashboardWorker[] = [
     pay: '$—/hr + commission — edit in adminWorkersDashboard.ts',
     contact: 'stylist@example.com',
     notes: 'Lead on technical hair + install questions escalated from CS.',
+  },
+  {
+    id: '11',
+    name: 'PLACEHOLDER — AMBASSADOR',
+    role: 'Brand ambassador',
+    openings: 5,
+    aboutTheRole:
+      'You promote Frontal Slayer / Build-a-Wig through your channels with a clear monthly brief, trackable links, and your personal discount code. You earn when you hit agreed posting goals, when content converts, and when you complete program “quests” for complimentary units.',
+    requiredEducation:
+      'Minimum 50,000 combined followers across your active platforms; consistent, brand-safe content; willingness to follow disclosure and FTC guidelines for sponsored or affiliate-style posts.',
+    jobDuties: [
+      'One-year ambassador agreement; monthly payout when agreed post volume and social targets are met',
+      'Use your personal 10% shopper discount code; you retain 5% on qualifying sales attributed to your code',
+      'Deliver approved monthly content packages for flat fees tied to conversion and performance metrics',
+      'Maintain at least 50k combined followers and engagement that reflects the brand; wig perks ship only after you meet the program discount / redemption quota',
+      '50% off the invite-entry wig at default specs when eligible; link clicks, code purchases, and sign-ups accrue points toward your first free wig',
+      'Pick a 6-month quest tier (Slay Challenge–style): 12, 24, or 48 successful code uses unlocks one, two, or three wigs respectively over the period',
+      'Earn upgrades on a separate points track for spec bumps beyond base rewards',
+      'Top-performing ambassador receives an end-of-year bonus or gift',
+    ],
+    dailyTasks: [
+      'Publish agreed posts and stories per the brief; submit links or proof for verification',
+      'Share a short weekly snapshot: reach, clicks, and redemptions tied to your code',
+      'Join launch beats and use provided tags, sounds, and asset notes',
+    ],
+    scheduledHours: '1-year contract — posting & reporting cadence per program brief',
+    pay: 'Monthly (goals) + content package fees + code commission — edit in adminWorkersDashboard.ts',
+    contact: 'ambassador@example.com',
+    notes: 'Five seats; quotas and quest tiers defined in onboarding packet.',
   },
 ];

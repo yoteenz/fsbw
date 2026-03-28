@@ -5,7 +5,7 @@
  * effective behavior as Chrome keeping localStorage. Sign-out happens ONLY when the user
  * explicitly clicks Sign Out. When Supabase fires SIGNED_OUT we restore app auth from backup.
  */
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient, type Session, type User } from '@supabase/supabase-js';
 import { ensureAuthRestoredFromBackup, consumeManualSignOutFlag } from './adminAuth';
 
 const SUPABASE_SESSION_COOKIE = 'baw_sb_session';
@@ -158,4 +158,31 @@ export function isSupabaseConfigured(): boolean {
     (import.meta as unknown as { env?: { VITE_SUPABASE_URL?: string } }).env?.VITE_SUPABASE_URL &&
     (import.meta as unknown as { env?: { VITE_SUPABASE_ANON_KEY?: string } }).env?.VITE_SUPABASE_ANON_KEY
   );
+}
+
+/**
+ * True when the user has confirmed their email in Supabase (email/password signups).
+ * Users without an email (edge cases) are treated as OK so we do not block unexpectedly.
+ */
+export function isSupabaseUserEmailConfirmed(user: User | null | undefined): boolean {
+  if (!user?.email) return true;
+  return Boolean(user.email_confirmed_at);
+}
+
+/**
+ * If the session user has not confirmed their email, sign out of Supabase and optionally clear app auth.
+ * Use clearAppAuth: false right after signInWithPassword when app localStorage was not updated yet.
+ */
+export async function signOutIfSessionEmailUnconfirmed(
+  client: SupabaseClient,
+  session: Session | null | undefined,
+  options?: { clearAppAuth?: boolean }
+): Promise<boolean> {
+  if (!session?.user || isSupabaseUserEmailConfirmed(session.user)) return false;
+  if (options?.clearAppAuth !== false) {
+    const { clearAppAuth } = await import('./adminAuth');
+    clearAppAuth();
+  }
+  await client.auth.signOut();
+  return true;
 }

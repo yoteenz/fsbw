@@ -339,13 +339,14 @@ function App() {
     (async () => {
       if (typeof window === 'undefined') return;
       if (!isSignedIn()) return;
-      const { isSupabaseConfigured, getSupabase } = await import('./utils/supabase');
+      const { isSupabaseConfigured, getSupabase, signOutIfSessionEmailUnconfirmed } = await import('./utils/supabase');
       if (!isSupabaseConfigured()) return;
       const supabase = getSupabase();
       if (!supabase) return;
       const {
         data: { session },
       } = await supabase.auth.getSession();
+      if (await signOutIfSessionEmailUnconfirmed(supabase, session)) return;
       if (!session?.access_token || cancelled) return;
       const { syncAllFromApi } = await import('./utils/syncFromApi');
       const profile = await syncAllFromApi();

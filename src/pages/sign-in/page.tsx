@@ -7,7 +7,12 @@ import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { isAdminEmail, ensureAuthRestoredFromBackup, onSignInSuccess } from '../../utils/adminAuth';
 import { saveCartAndWishlistToUserKeys, swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
 import { normalizeEmail, normalizePassword } from '../../utils/credentialNormalize';
-import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
+import {
+  getSupabase,
+  isSupabaseConfigured,
+  isSupabaseUserEmailConfirmed,
+  signOutIfSessionEmailUnconfirmed,
+} from '../../utils/supabase';
 import {
   syncAllFromApi,
   buildMinimalUserFromSupabaseSession,
@@ -198,8 +203,9 @@ function SignInPage() {
     const supabase = getSupabase();
     if (!supabase) return;
     let cancelled = false;
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (cancelled) return;
+      if (await signOutIfSessionEmailUnconfirmed(supabase, session)) return;
       if (!session) {
         void tryServerSessionRestore();
         return;
@@ -371,6 +377,12 @@ function SignInPage() {
             password: passwordTrimmed
           });
           if (!error && data.session) {
+            if (!isSupabaseUserEmailConfirmed(data.session.user)) {
+              await signOutIfSessionEmailUnconfirmed(supabase, data.session, { clearAppAuth: false });
+              setValidationMessage('INVALID EMAIL OR PASSWORD.');
+              setShowValidationModal(true);
+              return;
+            }
             const passwordToStore = passwordTrimmed;
             const emailNorm = normalizeEmail(emailToSend);
             try {
@@ -448,7 +460,11 @@ function SignInPage() {
             if (isAdminEmail(email)) {
               // Fall through to local sign-in below
             } else {
-              const isInvalidCreds = error.message === 'Invalid login credentials';
+              const raw = (error.message || '').toLowerCase();
+              const isInvalidCreds =
+                error.message === 'Invalid login credentials' ||
+                raw.includes('email not confirmed') ||
+                raw.includes('not confirmed');
               const msg = isInvalidCreds ? 'INVALID EMAIL OR PASSWORD.' : error.message;
               setValidationMessage(import.meta.env.DEV && error.message ? `${msg} (${error.message})` : msg);
               setShowValidationModal(true);

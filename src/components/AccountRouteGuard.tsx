@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation, Navigate } from 'react-router-dom';
 import { isSignedIn, persistAuthBackup, ensureAuthRestoredFromBackup, onSignInSuccess } from '../utils/adminAuth';
-import { getSupabase, isSupabaseConfigured } from '../utils/supabase';
+import { getSupabase, isSupabaseConfigured, signOutIfSessionEmailUnconfirmed } from '../utils/supabase';
 import {
   syncAllFromApi,
   buildMinimalUserFromSupabaseSession,
@@ -72,6 +72,10 @@ export default function AccountRouteGuard({ children }: { children: React.ReactN
         // Fallback to app backup restore before redirect decision.
         ensureAuthRestoredFromBackup();
         persistAuthBackup();
+        setRecoveryDone(true);
+        return;
+      }
+      if (await signOutIfSessionEmailUnconfirmed(supabase, session)) {
         setRecoveryDone(true);
         return;
       }

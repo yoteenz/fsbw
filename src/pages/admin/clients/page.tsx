@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, useLayoutEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import ConfirmationModal from '../../../components/ConfirmationModal';
@@ -617,6 +617,30 @@ export default function AdminClients() {
   const [personalSectionTab, setPersonalSectionTab] = useState<typeof PERSONAL_SECTION_TABS[number]>('details');
   const [exportingCsv, setExportingCsv] = useState(false);
   const [adminClientsApiError, setAdminClientsApiError] = useState<'forbidden' | 'service_unavailable' | null>(null);
+
+  /** Overview list is a max-height scroll region; preserve its scrollTop when opening/closing details. */
+  const clientsListScrollElRef = useRef<HTMLDivElement | null>(null);
+  const clientsListScrollTopRestoreRef = useRef(0);
+
+  const openClientDetails = useCallback((email: string | null | undefined) => {
+    const e = (email || '').trim();
+    if (!e) return;
+    clientsListScrollTopRestoreRef.current = clientsListScrollElRef.current?.scrollTop ?? 0;
+    setSelectedClientEmail(e);
+  }, []);
+
+  const closeClientDetails = useCallback(() => {
+    setSelectedClientEmail(null);
+    setDetailsTab('activity');
+    setExpandedOrderId(null);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (selectedClientEmail != null) return;
+    const el = clientsListScrollElRef.current;
+    if (!el) return;
+    el.scrollTop = clientsListScrollTopRestoreRef.current;
+  }, [selectedClientEmail]);
 
   // Sync selectedClientEmail from URL (e.g. when redirected from /admin/clients/account?email=...)
   useEffect(() => {
@@ -1503,7 +1527,7 @@ export default function AdminClients() {
             showBack
             breadcrumbParentLabel="CLIENTS"
             breadcrumbParentPath="/admin/dashboard"
-            onBack={selectedClientEmail ? () => { setSelectedClientEmail(null); setDetailsTab('activity'); setExpandedOrderId(null); } : undefined}
+            onBack={selectedClientEmail ? closeClientDetails : undefined}
             breadcrumbParentOnClick={() => navigate('/admin/dashboard')}
             externalSearchValue={clientSearchQuery}
             onExternalSearchChange={setClientSearchQuery}
@@ -1549,7 +1573,7 @@ export default function AdminClients() {
                       </h2>
                       <button
                         type="button"
-                        onClick={() => { setSelectedClientEmail(null); setDetailsTab('activity'); setExpandedOrderId(null); }}
+                        onClick={closeClientDetails}
                         style={{
                           background: 'none',
                           border: 'none',
@@ -1741,8 +1765,8 @@ export default function AdminClients() {
                               columnGap: '10px',
                               rowGap: 0,
                               width: '100%',
-                              /* +20px above red ORDERS / POINTS / TOTAL SPENT / MEMBERSHIP values (not between value and label) */
-                              marginTop: '32px',
+                              /* Space above red ORDERS / POINTS / TOTAL SPENT / MEMBERSHIP values: was 12px → 32px (+20px), then +24px → 56px (not between value and label) */
+                              marginTop: '56px',
                               marginLeft: '-4px',
                               boxSizing: 'border-box',
                             }}
@@ -3137,7 +3161,11 @@ export default function AdminClients() {
                 </div>
 
                 {/* Client rows – same line width as tabs (20px inset to match gray underline under header) */}
-                <div className="overflow-y-auto overflow-x-hidden min-w-0" style={{ maxHeight: '380px', padding: '8px', boxSizing: 'border-box', marginLeft: '20px', marginRight: '20px' }}>
+                <div
+                  ref={clientsListScrollElRef}
+                  className="overflow-y-auto overflow-x-hidden min-w-0"
+                  style={{ maxHeight: '380px', padding: '8px', boxSizing: 'border-box', marginLeft: '20px', marginRight: '20px' }}
+                >
                   {registeredUsers.length === 0 ? (
                     <div className="px-5 py-8 text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>
                       NO REGISTERED CLIENTS YET. LIST IS PER BROWSER.
@@ -3157,7 +3185,7 @@ export default function AdminClients() {
                           >
                             <button
                               type="button"
-                              onClick={() => setSelectedClientEmail(u.email || null)}
+                              onClick={() => openClientDetails(u.email)}
                               className="min-w-0 text-left w-full bg-transparent border-none p-0 cursor-pointer hover:opacity-80 transition-opacity flex flex-col justify-center"
                               style={{ paddingLeft: '8px' }}
                             >
@@ -3188,7 +3216,7 @@ export default function AdminClients() {
                           >
                             <button
                               type="button"
-                              onClick={() => setSelectedClientEmail(u.email || null)}
+                              onClick={() => openClientDetails(u.email)}
                               className="min-w-0 text-left w-full bg-transparent border-none p-0 cursor-pointer hover:opacity-80 transition-opacity flex flex-col justify-center"
                               style={{ paddingLeft: '8px' }}
                             >
@@ -3217,7 +3245,7 @@ export default function AdminClients() {
                           >
                             <button
                               type="button"
-                              onClick={() => setSelectedClientEmail(u.email || null)}
+                              onClick={() => openClientDetails(u.email)}
                               className="min-w-0 text-left w-full bg-transparent border-none p-0 cursor-pointer hover:opacity-80 transition-opacity flex flex-col justify-center"
                               style={{ paddingLeft: '8px' }}
                             >
@@ -3246,7 +3274,7 @@ export default function AdminClients() {
                           >
                             <button
                               type="button"
-                              onClick={() => setSelectedClientEmail(u.email || null)}
+                              onClick={() => openClientDetails(u.email)}
                               className="min-w-0 text-left w-full bg-transparent border-none p-0 cursor-pointer hover:opacity-80 transition-opacity"
                               style={{ paddingLeft: '8px' }}
                             >
@@ -3348,7 +3376,7 @@ export default function AdminClients() {
             const allReg = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
             blockClient(selectedClient, Array.isArray(allReg) ? allReg : []);
             loadData();
-            setSelectedClientEmail(null);
+            closeClientDetails();
             setShowBlockConfirm(false);
             navigate('/admin/clients');
           }

@@ -7,6 +7,7 @@ import { ADMIN_DASHBOARD_WORKERS } from '../../../utils/adminWorkersDashboard';
 import { appendJobApplication, type JobApplication } from '../../../utils/jobApplicationsStorage';
 import { clearAppAuth } from '../../../utils/adminAuth';
 import RoleCardSectionHeader from '../../../components/RoleCardSectionHeader';
+import { workerRoleHeaderIconSrc } from '../../../utils/workerRoleHeaderIcon';
 
 const MAX_RESUME_BYTES = 1.5 * 1024 * 1024;
 
@@ -118,6 +119,7 @@ export default function BrandCareersPage() {
   });
 
   const [applyJobId, setApplyJobId] = useState<string | null>(null);
+  const [expandedListJobId, setExpandedListJobId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -128,11 +130,15 @@ export default function BrandCareersPage() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape' || !applyJobId) return;
-      setApplyJobId(null);
-      setSubmitting(false);
-      setSubmitError(null);
-      setSubmitDone(false);
+      if (e.key !== 'Escape') return;
+      if (applyJobId) {
+        setApplyJobId(null);
+        setSubmitting(false);
+        setSubmitError(null);
+        setSubmitDone(false);
+        return;
+      }
+      setExpandedListJobId(null);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -158,11 +164,16 @@ export default function BrandCareersPage() {
   }, []);
 
   const openApply = (jobId: string) => {
+    setExpandedListJobId(null);
     setApplyJobId(jobId);
     setForm(emptyForm);
     setResumeFile(null);
     setSubmitError(null);
     setSubmitDone(false);
+  };
+
+  const toggleCareersJobCard = (jobId: string) => {
+    setExpandedListJobId((id) => (id === jobId ? null : jobId));
   };
 
   const closeApply = () => {
@@ -575,88 +586,136 @@ export default function BrandCareersPage() {
               {ADMIN_DASHBOARD_WORKERS.map((job) => {
                 const openingsLabel =
                   job.openings === 1 ? '1 OPENING AVAILABLE' : `${job.openings} OPENINGS AVAILABLE`;
+                const isExpanded = expandedListJobId === job.id;
+                const roleIcon = workerRoleHeaderIconSrc(job.id);
                 return (
                   <div key={job.id} className="flex flex-col gap-2">
                     <div
-                      className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full"
+                      className="border border-black bg-white/60 backdrop-blur-sm w-full overflow-hidden"
                       style={{ borderWidth: '1.3px' }}
                     >
-                      <RoleCardSectionHeader title={job.role} />
-                      <p
-                        className="text-[9px] font-futura text-gray-600 tracking-wide mb-3 mt-1"
-                        style={{ fontWeight: 600 }}
-                      >
-                        {openingsLabel}
-                      </p>
-                      <div className="space-y-3 text-[10px] font-futura text-gray-800">
-                        <section>
-                          <p className="text-[9px] font-futura text-black font-medium mb-1" style={{ fontWeight: 600 }}>
-                            ABOUT THE ROLE
-                          </p>
-                          <p className="leading-snug">{job.aboutTheRole}</p>
-                        </section>
-                        <section>
-                          <p className="text-[9px] font-futura text-black font-medium mb-1" style={{ fontWeight: 600 }}>
-                            HOURS
-                          </p>
-                          <p className="leading-snug">{job.scheduledHours}</p>
-                        </section>
-                        <section>
-                          <p className="text-[9px] font-futura text-black font-medium mb-1" style={{ fontWeight: 600 }}>
-                            PAY
-                          </p>
-                          <p className="leading-snug">{job.pay}</p>
-                        </section>
-                        <section>
-                          <p className="text-[9px] font-futura text-black font-medium mb-1" style={{ fontWeight: 600 }}>
-                            REQUIRED EDUCATION
-                          </p>
-                          <p className="leading-snug">{job.requiredEducation}</p>
-                        </section>
-                        <section>
-                          <p className="text-[9px] font-futura text-black font-medium mb-1" style={{ fontWeight: 600 }}>
-                            JOB DUTIES
-                          </p>
-                          <ul className="list-disc pl-4 space-y-1">
-                            {job.jobDuties.map((d, i) => (
-                              <li key={i}>{d}</li>
-                            ))}
-                          </ul>
-                        </section>
-                        <section>
-                          <p className="text-[9px] font-futura text-black font-medium mb-1" style={{ fontWeight: 600 }}>
-                            DAILY TASKS
-                          </p>
-                          <ul className="list-disc pl-4 space-y-1">
-                            {job.dailyTasks.map((t, i) => (
-                              <li key={i}>{t}</li>
-                            ))}
-                          </ul>
-                        </section>
-                        {job.notes ? (
-                          <section>
-                            <p className="text-[9px] font-futura text-black font-medium mb-1" style={{ fontWeight: 600 }}>
-                              NOTES
-                            </p>
-                            <p className="leading-snug">{job.notes}</p>
-                          </section>
-                        ) : null}
-                      </div>
-                    </div>
-                    <div className="px-0" style={{ marginTop: '2px', transform: 'translateY(-2px)' }}>
                       <button
                         type="button"
-                        onClick={() => openApply(job.id)}
-                        className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 uppercase"
-                        style={{
-                          borderWidth: '1.3px',
-                          color: '#EB1C24',
-                          fontFamily: '"Futura PT Medium"',
-                          backgroundColor: '#FFFFFF',
-                        }}
+                        onClick={() => toggleCareersJobCard(job.id)}
+                        className="w-full text-left bg-transparent px-4 pt-4 pb-3 cursor-pointer hover:bg-white/40 transition-colors uppercase border-b border-black/20"
+                        style={{ textTransform: 'uppercase' }}
                       >
-                        APPLY
+                        <RoleCardSectionHeader title={job.role} iconSrc={roleIcon} />
+                        <p
+                          className="text-[9px] font-futura text-gray-600 tracking-wide mt-1.5 mb-0"
+                          style={{ fontWeight: 600 }}
+                        >
+                          {openingsLabel}
+                        </p>
+                        {!isExpanded ? (
+                          <p className="text-[9px] font-futura text-red-600 mt-2 font-medium uppercase">
+                            TAP FOR ROLE DETAILS &amp; APPLY
+                          </p>
+                        ) : null}
                       </button>
+                      {isExpanded ? (
+                        <div className="px-4 pb-4 pt-1 border-t border-black/15">
+                          <div className="space-y-3 text-[10px] font-futura text-gray-800 text-left uppercase">
+                            <section>
+                              <p
+                                className="text-[9px] font-futura text-black font-medium mb-1"
+                                style={{ fontWeight: 600 }}
+                              >
+                                ABOUT THE ROLE
+                              </p>
+                              <p className="leading-snug normal-case" style={{ textTransform: 'none' }}>
+                                {job.aboutTheRole}
+                              </p>
+                            </section>
+                            <section>
+                              <p
+                                className="text-[9px] font-futura text-black font-medium mb-1"
+                                style={{ fontWeight: 600 }}
+                              >
+                                HOURS
+                              </p>
+                              <p className="leading-snug">{job.scheduledHours}</p>
+                            </section>
+                            <section>
+                              <p
+                                className="text-[9px] font-futura text-black font-medium mb-1"
+                                style={{ fontWeight: 600 }}
+                              >
+                                PAY
+                              </p>
+                              <p className="leading-snug">{job.pay}</p>
+                            </section>
+                            <section>
+                              <p
+                                className="text-[9px] font-futura text-black font-medium mb-1"
+                                style={{ fontWeight: 600 }}
+                              >
+                                REQUIRED EDUCATION
+                              </p>
+                              <p className="leading-snug normal-case" style={{ textTransform: 'none' }}>
+                                {job.requiredEducation}
+                              </p>
+                            </section>
+                            <section>
+                              <p
+                                className="text-[9px] font-futura text-black font-medium mb-1"
+                                style={{ fontWeight: 600 }}
+                              >
+                                JOB DUTIES
+                              </p>
+                              <ul className="list-disc pl-4 space-y-1 normal-case" style={{ textTransform: 'none' }}>
+                                {job.jobDuties.map((d, i) => (
+                                  <li key={i}>{d}</li>
+                                ))}
+                              </ul>
+                            </section>
+                            <section>
+                              <p
+                                className="text-[9px] font-futura text-black font-medium mb-1"
+                                style={{ fontWeight: 600 }}
+                              >
+                                DAILY TASKS
+                              </p>
+                              <ul className="list-disc pl-4 space-y-1 normal-case" style={{ textTransform: 'none' }}>
+                                {job.dailyTasks.map((t, i) => (
+                                  <li key={i}>{t}</li>
+                                ))}
+                              </ul>
+                            </section>
+                            {job.notes ? (
+                              <section>
+                                <p
+                                  className="text-[9px] font-futura text-black font-medium mb-1"
+                                  style={{ fontWeight: 600 }}
+                                >
+                                  NOTES
+                                </p>
+                                <p className="leading-snug normal-case" style={{ textTransform: 'none' }}>
+                                  {job.notes}
+                                </p>
+                              </section>
+                            ) : null}
+                          </div>
+                          <div className="px-0 mt-3" style={{ marginTop: '12px' }}>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openApply(job.id);
+                              }}
+                              className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 uppercase"
+                              style={{
+                                borderWidth: '1.3px',
+                                color: '#EB1C24',
+                                fontFamily: '"Futura PT Medium"',
+                                backgroundColor: '#FFFFFF',
+                              }}
+                            >
+                              APPLY
+                            </button>
+                          </div>
+                        </div>
+                      ) : null}
                     </div>
                   </div>
                 );
@@ -700,6 +759,7 @@ export default function BrandCareersPage() {
                   <RoleCardSectionHeader
                     title={`Apply — ${activeJob.role}`}
                     className="pr-12"
+                    iconSrc={workerRoleHeaderIconSrc(activeJob.id)}
                   />
                   <p
                     className="mt-2 mb-4"

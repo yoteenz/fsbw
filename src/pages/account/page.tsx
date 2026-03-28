@@ -6,7 +6,7 @@ import { getWelcomeDiscountAmount } from '../../constants/tiers';
 import { getTotalReviewCount, getUserSubmittedReviewCount, hasNewReviewApproved } from '../../constants/reviews';
 import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier, clearAppAuth, markManualSignOutInProgress } from '../../utils/adminAuth';
 import { swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
-import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
+import { getSupabase, isSupabaseConfigured, signOutIfSessionEmailUnconfirmed } from '../../utils/supabase';
 import { patchProfileWithRetryQueue } from '../../utils/profileSyncQueue';
 import { uploadProfileImage } from '../../utils/api';
 import { trackActivity } from '../../utils/activity';
@@ -136,7 +136,9 @@ function AccountPage() {
     const supabase = getSupabase();
     if (!supabase) return;
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (cancelled || !session) return;
+      if (cancelled) return;
+      if (await signOutIfSessionEmailUnconfirmed(supabase, session)) return;
+      if (!session) return;
       const profile = await syncAllFromApi().catch(() => null);
       if (cancelled || !profile) return;
       try {
@@ -2122,6 +2124,31 @@ function AccountPage() {
                           >
                             {displayMembershipType} REWARDS MEMBER
                           </p>
+                          {isAyoteenzAdminAccount(userData) && (
+                            <p
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => navigate('/admin/dashboard')}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  navigate('/admin/dashboard');
+                                }
+                              }}
+                              style={{
+                                fontFamily: '"Futura PT Medium"',
+                                fontSize: '10px',
+                                margin: '-6px 0 0 0',
+                                textTransform: 'uppercase',
+                                fontWeight: '500',
+                                transform: 'translateY(-8px)',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              <span style={{ color: '#EB1C24' }}>ADMIN: </span>
+                              <span style={{ color: '#000000' }}>FOUNDER</span>
+                            </p>
+                          )}
                         </>
                       );
                     })()}

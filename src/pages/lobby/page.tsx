@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import LoadingScreen from '../../components/base/LoadingScreen';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getEffectiveSubscriptionTier, getEffectiveTierName, onSignInSuccess } from '../../utils/adminAuth';
-import { getSupabase, isSupabaseConfigured } from '../../utils/supabase';
+import { getSupabase, isSupabaseConfigured, signOutIfSessionEmailUnconfirmed } from '../../utils/supabase';
 import {
   syncAllFromApi,
   buildMinimalUserFromSupabaseSession,
@@ -24,8 +24,10 @@ const LobbyPage: React.FC = () => {
     const supabase = getSupabase();
     if (!supabase) return;
     let cancelled = false;
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (cancelled || !session) return;
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (cancelled) return;
+      if (await signOutIfSessionEmailUnconfirmed(supabase, session)) return;
+      if (!session) return;
       // Already signed in locally with same user – no need to re-sync
       try {
         const cur = localStorage.getItem('currentUser');

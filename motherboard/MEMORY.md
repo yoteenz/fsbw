@@ -2103,3 +2103,161 @@ Summary: Earlier change set **ORDERS / POINTS / TOTAL SPENT / MEMBERSHIP** label
 Summary: User asked to remove **profile debug text below the profile photo** and noted prior expectation that debugging was stripped from the site. The visible **ADMIN: FOUNDER** line on **Account → Profile** (founder-privileged admin only, tappable to **`/admin/dashboard`**) read as internal/testing UI.
 
 - **Changes:** **`src/pages/account/page.tsx`** — removed the conditional **`ADMIN: FOUNDER`** **`<p>`** under the membership line. Founder-privileged behavior (tier toggles, mock data, membership overrides, **`/admin`** access) is unchanged; admins can still open **`/admin/dashboard`** directly or via bookmarks. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Careers & admin workers: role header SVGs + expand-on-tap cards
+
+Summary: User wanted **role-specific header icons** on **Brand → Careers** and **Admin → Workers** using SVGs under **`public/assets/`** (personal assistant, creative director, accountant, lawyer, graphic designer, photographer, videographer, makeup artist, hair stylist). The **10th roster role** (social media planner) uses **`/assets/media-icon.svg`**. **Admin workers** should match **careers-style** behavior: **full role details (and applicants)** only after **tapping the card** to expand, not always visible below the header.
+
+- **Context:** Replace generic account icon in role card headers; align workers page expand/collapse with careers (tap card to toggle content).
+- **Decisions / outcomes:** Central map **`workerRoleHeaderIconSrc(workerId)`** in **`src/utils/workerRoleHeaderIcon.ts`**. **`RoleCardSectionHeader`** accepts optional **`iconSrc`** (default **`/assets/NOIR/account-icon.svg`**) with the existing red-tint **CSS filter**. **Careers** job list: **`expandedListJobId`** — collapsed row shows title, openings, **TAP FOR ROLE DETAILS & APPLY**; expanded shows all sections + **APPLY** inside the card; **Escape** clears expansion when not in apply flow; **`openApply`** clears expansion. **Admin workers:** **`HOURS` / `PAY` / about / duties / tasks / notes** **`<dl>`** only when **`isOpen`**; applicants block when open.
+- **Changes:** **`src/utils/workerRoleHeaderIcon.ts`** (new), **`src/components/RoleCardSectionHeader.tsx`**, **`src/pages/brand/careers/page.tsx`**, **`src/pages/admin/workers/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Vercel build: TS6133 unused `headerIcon` on admin workers
+
+Summary: **`npm run build`** on Vercel failed with **`TS6133`**: **`headerIcon`** declared in **`src/pages/admin/workers/page.tsx`** but never read (likely a branch where **`iconSrc`** was not wired to that variable).
+
+- **Changes:** Removed **`const headerIcon`**; pass **`iconSrc={workerRoleHeaderIconSrc(w.id)}`** inline on both **`RoleCardSectionHeader`** usages. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Block sign-in until Supabase email is confirmed
+
+Summary: User wanted **new sign-ups** unable to **log in** until they **confirm email** from Supabase; they should see the same **invalid email/password** modal as bad credentials, not access the app.
+
+- **Implementation:** **`src/utils/supabase.ts`** — **`isSupabaseUserEmailConfirmed(user)`** (requires **`email_confirmed_at`** when **`user.email`** is set) and **`signOutIfSessionEmailUnconfirmed(client, session, { clearAppAuth? })`** (signs out Supabase; clears app auth by default). **`src/pages/sign-in/page.tsx`** — after successful **`signInWithPassword`**, if email not confirmed: sign out (no app clear), **`INVALID EMAIL OR PASSWORD.`** modal; session-restore **`getSession`** effect rejects unconfirmed the same way. Supabase errors mentioning **email not confirmed** map to the same message. **`src/main.tsx`**, **`src/App.tsx`**, **`src/components/AccountRouteGuard.tsx`**, **`src/pages/lobby/page.tsx`**, **`src/pages/account/page.tsx`** — run **`signOutIfSessionEmailUnconfirmed`** so restored sessions cannot bypass confirmation. **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Admin client details: +24px above red stats row
+
+Summary: User asked for **another 24px** above the red **ORDERS / POINTS / TOTAL SPENT / MEMBERSHIP** value row, on top of the earlier change that set the **4-column stats grid** **`marginTop`** from **`12px`** to **`32px`** (**+20px** above those values only).
+
+- **Changes:** **`src/pages/admin/clients/page.tsx`** — stats grid **`marginTop`**: **`32px`** → **`56px`** (**+24px**). Comment updated to document the sequence. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Restore ADMIN: FOUNDER on profile (founder email only)
+
+Summary: User asked to bring back the **ADMIN: FOUNDER** tag on **Account → Profile** that navigates to **`/admin/dashboard`**. It had been removed as “debug” text; they want it **only** for the **`kateenaarmstrong@gmail.com`** founder account.
+
+- **Changes:** **`src/pages/account/page.tsx`** — re-added the tappable **ADMIN: FOUNDER** row under **…REWARDS MEMBER**, gated by **`isAyoteenzAdminAccount(userData)`** (same as **`FOUNDER_PRIVILEGED_ADMIN_EMAIL`** in **`adminAuth.ts`** → **`kateenaarmstrong@gmail.com`** only). **`motherboard/CORE.md`** (founder bullet mentions the row + email). **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Admin workers runtime: ReferenceError `headerIcon`
+
+Summary: Red **component failed to load** / **Can’t find variable: headerIcon** (Safari-style wording) on **Admin → Workers**. After removing **`const headerIcon`** for **`TS6133`**, one **`RoleCardSectionHeader`** still had **`iconSrc={headerIcon}`** while another used **`workerRoleHeaderIconSrc(w.id)`**, so the bundle referenced an undefined variable at runtime.
+
+- **Changes:** **`src/pages/admin/workers/page.tsx`** — top card header **`iconSrc={workerRoleHeaderIconSrc(w.id)}`** (match applications block). **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Delete account: fix flow; protect only founder Gmail
+
+Summary: User could not delete accounts via **Account → Settings → DELETE ACCOUNT** and asked to **remove delete protection from ayoteenz** so **only `kateenaarmstrong@gmail.com`** is blocked.
+
+- **Cause (likely):** **`DELETE`** requests with a **JSON body** are often **dropped or mishandled** by proxies/browsers; the API still worked when the body was missing, but **`deletedFrom`** and reliable routing mattered less than **401/503** from missing token or **`SUPABASE_SERVICE_ROLE_KEY`**. Client also used **`isAyoteenzAdminAccount`** for the block (same email as founder after the ayoteenz→Gmail migration, but ambiguous). **Fix:** send **`deletedFrom` as a query param**; parse **JSON errors** (403/500); gate UI with **`isProtectedFromAccountDeletion`** (**`PROTECTED_FROM_ACCOUNT_DELETION_EMAIL`** = founder Gmail only).
+
+- **Changes:** **`src/utils/adminAuth.ts`** — **`PROTECTED_FROM_ACCOUNT_DELETION_EMAIL`**, **`isProtectedFromAccountDeletion`**. **`src/pages/account/settings/page.tsx`** — delete guard uses **`isProtectedFromAccountDeletion`** (not generic founder helper name). **`src/utils/api.ts`** — **`deleteAccount`** uses **`fetch(DELETE)`** with **`?deletedFrom=`** + **Bearer**, no body; maps **403** to message text. **`api/delete-account.ts`** — read **`deletedFrom`** from **query or body**; **403** only when protected email is non-empty and matches. **`.env.example`** — **`SUPABASE_SERVICE_ROLE_KEY`** note for delete + optional **`PROTECTED_ACCOUNT_EMAIL`**. **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Role card header icons: no CSS filter on pre-red SVGs + thicker strokes
+
+Summary: **Brand Careers** (and shared **`RoleCardSectionHeader`**) showed **broken red squares** for worker role header icons. The header applies a **CSS filter** meant for **black NOIR** art; role SVGs already use **`#EB1C24`** strokes/fills, so the filter **corrupts** rendering in WebKit. User wanted icons to match **size** and **line weight** of the default header icon.
+
+- **Decisions / outcomes:** Export **`roleHeaderIconApplyCssFilter(iconSrc)`** — **`false`** for paths in **`workerRoleHeaderIcon`** roster (pre-colored art); **`true`** for **`media-icon.svg`** (black fill) and everything else (e.g. **`NOIR/account-icon.svg`**). **`RoleCardSectionHeader`** sets **`filter`** only when that returns true; **`img`** uses resolved **`src`**. Stroke-based role SVGs (**personal-assistant, creative-director, lawyer, accountant, makeup-artist**): **`stroke-width`** **`0.5` → `1.15`** for readability at **~20px**.
+- **Changes:** **`src/utils/workerRoleHeaderIcon.ts`**, **`src/components/RoleCardSectionHeader.tsx`**, five **`public/assets/*-icon.svg`** files, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Personal assistant role header: use `assistant-icon.svg`
+
+Summary: User asked to replace the **personal assistant** header asset with **`assistant-icon.svg`** from **`public/assets/`** (worker id **`1`** — personal assistant / customer service).
+
+- **Changes:** **`src/utils/workerRoleHeaderIcon.ts`** — id **`1`**: **`personal-assistant-icon.svg`** → **`assistant-icon.svg`**. **`public/assets/assistant-icon.svg`** — **`stroke-width`** **`0.5` → `1.15`** to align with other role header strokes. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Brand ambassador role (5 openings) + “More ways” header icon
+
+Summary: User asked for a **brand ambassador** listing on **Brand → Careers** and **Admin → Workers**, using the same header graphic as **Account → Membership → “More ways to earn”** (`more-ways.svg`), with **5 openings** and job duties covering a **1-year contract**, monthly pay for **post/social goals**, **10% code / 5% keep**, **flat fees** on content tied to **conversions**, **50k+ combined followers**, **50% off invite-entry wig** (default specs) with **quota** for wig perks, **points** from **clicks / purchases / sign-ups** toward a **first free wig**, **quest** tiers (**12 / 24 / 48** code uses per **6 months** → **1–3 wigs**), **separate upgrade points**, and **top influencer EOY bonus/gift**.
+
+- **Changes:** **`public/assets/more-ways-earn-icon.svg`** — copy of membership **`more-ways`** art for static **`/assets/...`** URLs. **`src/utils/workerRoleHeaderIcon.ts`** — worker id **`11`** → **`/assets/more-ways-earn-icon.svg`**. **`src/utils/adminWorkersDashboard.ts`** — new **`Brand ambassador`** row (**`id: '11'`**, **`openings: 5`**), **`aboutTheRole`**, **`requiredEducation`**, **`jobDuties`**, **`dailyTasks`**, pay/hours/contact placeholders aligned with other roles. Careers and admin workers both consume **`ADMIN_DASHBOARD_WORKERS`**, so they pick up the new card automatically. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Checkout: +20px air above cart thumbnails (no loyalty margin change)
+
+Summary: User said **checkout thumbnails were still clipped** and asked for **20px more space above** the thumbnail row, using **`paddingTop`** on the thumbnail wrapper (not loyalty **`marginTop`**).
+
+- **Changes:** **`src/pages/checkout/page.tsx`** — wrapper above the horizontal cart strip: **`paddingTop`** **`10px` → `30px`** (**+20px**). Parent body **`minHeight`** **`190px` → `210px`** so **`paddingTop + 180px`** strip height still fits and the row is not squeezed/clipped. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Checkout thumbnails: fix top clipping (layout, not only padding)
+
+Summary: **Padding-only** fix did not stop **tops of cart thumbnails** from clipping. **Cause:** the strip used a **fixed `height: 180px`** plus **`overflow-hidden`**, while each tile was **`height: 150px`** with **image + multi-line copy** taller than the box; the inner row used **`height: 100%`** + **`alignItems: center`**, which **vertically centered** overflowing content inside a **clipped** viewport.
+
+- **Changes:** **`src/pages/checkout/page.tsx`** — removed **`overflow-hidden`** from the cart **body** wrapper ( **`overflow: visible`** ). **Scroll strip:** **`height: auto`**, **`minHeight: 200px`**, **`overflowX: hidden`**, **`overflowY: visible`** (horizontal drag unchanged). **Inner flex:** dropped **`height: '100%'`**, **`alignItems: 'flex-start'`**, small **`paddingTop` / `paddingBottom`**. **Per-item column:** **`height: 'auto'`**, **`minHeight: '150px'`**, **`justifyContent: 'flex-start'`**. **`.checkout-cart-items-center-lg`:** **`align-items: flex-start`** (no **`height: 100%`**). Wrapper **`paddingTop`** **`30px` → `16px`** since vertical space now comes from intrinsic tile height. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Checkout thumbnails: −12px space above strip
+
+Summary: After fixing **vertical clipping**, user found **too much space above** cart thumbnails; asked to **reduce spacing above by 12px** without reintroducing a fixed vertical clip.
+
+- **Changes:** **`src/pages/checkout/page.tsx`** — wrapper above the scroll strip **`paddingTop`** **`16px` → `4px`** (**−12px**). **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Worker header icons: director + social manager assets
+
+Summary: User asked to use **`director-icon.svg`** for **creative director** (worker id **`2`**) and **`social-manager-icon.svg`** for **social media manager** (id **`8`**) instead of **`creative-director-icon.svg`** and **`media-icon.svg`**.
+
+- **Changes:** **`src/utils/workerRoleHeaderIcon.ts`** — id **`2`** → **`/assets/director-icon.svg`**, id **`8`** → **`/assets/social-manager-icon.svg`**; removed **`media-icon.svg`** special case in **`roleHeaderIconApplyCssFilter`** (all roster paths skip filter). **`public/assets/social-manager-icon.svg`** — **`stroke-width`** **`0.5` → `1.15`** for header size parity with other stroke role icons. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Worker id 8: re-point to `social-manager-icon.svg`
+
+Summary: User said the **id `8`** icon change (**`media-icon.svg`** → **`social-manager-icon.svg`**) had **not taken effect** in their tree. **`workerRoleHeaderIcon.ts`** still had **`'8': '/assets/media-icon.svg'`** (likely merge/revert).
+
+- **Changes:** **`src/utils/workerRoleHeaderIcon.ts`** — **`'8'`** → **`/assets/social-manager-icon.svg`**. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Admin clients: restore list scroll after closing details
+
+Summary: User reported that **Admin → Clients** overview **jumped back to the top** (first client) after closing **client details**; they wanted the **same scroll position** as when they opened a row (e.g. client **#17**).
+
+- **Cause:** The overview rows live in a **`max-height` + `overflow-y-auto`** container; opening details **unmounted** that node, so **`scrollTop` reset to 0** on return.
+- **Changes:** **`src/pages/admin/clients/page.tsx`** — **`ref`** on the list viewport; **`openClientDetails`** saves **`scrollTop`** before **`setSelectedClientEmail`**; **`useLayoutEffect`** when returning to overview (**`selectedClientEmail === null`**) reapplies saved **`scrollTop`**; **`closeClientDetails`** centralizes back/close/block-return cleanup. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Checkout thumbnails: −12px space above strip
+
+Summary: After fixing **vertical clipping**, user found **too much space above** cart thumbnails; asked to **reduce spacing above by 12px** without reintroducing a fixed vertical clip.
+
+- **Changes:** **`src/pages/checkout/page.tsx`** — wrapper above the scroll strip **`paddingTop`** **`16px` → `4px`** (**−12px**). **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Checkout thumbnails: −6px misread corrected (less space above)
+
+Summary: **−6px** was misread as **`paddingTop: 10px`** (**16 − 6**), which **increased** space vs the prior **`4px`** wrapper. User clarified they wanted **less** space above thumbnails.
+
+- **Changes:** **`src/pages/checkout/page.tsx`** — wrapper **`paddingTop`** **`10px` → `0px`**. Inner horizontal row **`paddingTop`** **`8px` → `2px`** (**−6px**). **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Checkout thumbnails: −6px more above strip
+
+Summary: User asked to **reduce space above thumbnails by another 6px**.
+
+- **Changes:** **`src/pages/checkout/page.tsx`** — thumbnail block wrapper **`marginTop: '-6px'`** (with **`paddingTop: 0`** unchanged). **`motherboard/MEMORY.md`** (this entry).

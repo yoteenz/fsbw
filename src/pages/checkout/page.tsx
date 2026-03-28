@@ -1784,9 +1784,9 @@ function CheckoutPage() {
           .checkout-cart-items-center-lg {
             display: flex;
             width: 100%;
-            height: 100%;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
+            box-sizing: border-box;
           }
         }
       `}</style>
@@ -2189,16 +2189,19 @@ function CheckoutPage() {
                       marginTop: '-10px'
                     }}
                   >
-                    {/* Body — flexShrink 0 + minHeight so loyalty/subtotal growth never shrinks the thumbnail strip */}
-                    <div className="flex-1 flex flex-col overflow-hidden" style={{ flexShrink: 0, minHeight: '190px' }}>
+                    {/* Body — flexShrink 0; no overflow-hidden (was clipping tops of tall cart tiles). Horizontal swipe still contained via overflow-x. */}
+                    <div className="flex-1 flex flex-col" style={{ flexShrink: 0, minHeight: 0, overflow: 'visible' }}>
                       {/* Space above thumbnails only (not via loyalty margin, which squeezed this row) */}
-                      <div style={{ paddingTop: '10px', flexShrink: 0 }}>
-                      {/* Cart Items - horizontal scrollable */}
+                      <div style={{ paddingTop: '0px', marginTop: '-6px', flexShrink: 0 }}>
+                      {/* Cart Items - horizontal scrollable; height auto so image+labels are never vertically clipped */}
                       <div 
                         ref={scrollContainerRef}
-                        className="relative overflow-hidden"
+                        className="relative"
                         style={{ 
-                          height: '180px',
+                          minHeight: '200px',
+                          height: 'auto',
+                          overflowX: 'hidden',
+                          overflowY: 'visible',
                           cursor: isDragging ? 'grabbing' : 'grab',
                           userSelect: 'none'
                         }}
@@ -2217,11 +2220,13 @@ function CheckoutPage() {
                             transform: cartItems.length === 1 ? 'none' : `translateX(${scrollPosition}px)`,
                             transition: 'none',
                             gap: '20px',
-                            height: '100%',
-                            alignItems: 'center',
+                            alignItems: 'flex-start',
                             justifyContent: cartItems.length === 1 ? 'center' : undefined,
                             willChange: 'transform',
-                            paddingRight: cartItems.length === 1 ? 0 : '10px'
+                            paddingRight: cartItems.length === 1 ? 0 : '10px',
+                            paddingTop: '2px',
+                            paddingBottom: '4px',
+                            boxSizing: 'border-box',
                           }}
                         >
                           {cartItems.map((item, index) => {
@@ -2296,15 +2301,17 @@ function CheckoutPage() {
                               className="flex-shrink-0"
                               style={{
                                 width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '165px' : '150px',
-                                height: '150px',
+                                minHeight: '150px',
+                                height: 'auto',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
-                                justifyContent: 'center',
+                                justifyContent: 'flex-start',
                                 paddingTop: '8px',
                                 paddingRight: '8px',
                                 paddingBottom: '8px',
-                                paddingLeft: '8px'
+                                paddingLeft: '8px',
+                                boxSizing: 'border-box',
                               }}
                             >
                               <img

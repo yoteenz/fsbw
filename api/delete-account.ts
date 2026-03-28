@@ -31,7 +31,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const protectedEmail = (process.env.PROTECTED_ACCOUNT_EMAIL || 'kateenaarmstrong@gmail.com').trim().toLowerCase();
-    if ((user.email || '').trim().toLowerCase() === protectedEmail) {
+    if (protectedEmail && (user.email || '').trim().toLowerCase() === protectedEmail) {
       return res.status(403).json({ error: 'This admin account cannot be deleted.' });
     }
 
@@ -49,7 +49,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const body = typeof req.body === 'object' && req.body !== null ? req.body : {};
-    const deletedFrom = (body as { deletedFrom?: string }).deletedFrom ?? undefined;
+    const q = req.query?.deletedFrom;
+    const deletedFromQuery =
+      typeof q === 'string'
+        ? q.trim() || undefined
+        : Array.isArray(q) && q[0]
+          ? String(q[0]).trim() || undefined
+          : undefined;
+    const deletedFromBody = (body as { deletedFrom?: string }).deletedFrom;
+    const deletedFrom =
+      deletedFromQuery ??
+      (typeof deletedFromBody === 'string' && deletedFromBody.trim() ? deletedFromBody.trim() : undefined);
 
     try {
       const serviceRole = getSupabaseAdminServiceRole();

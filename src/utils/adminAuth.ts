@@ -350,6 +350,17 @@ export function isAyoteenzAdminAccount(user: { email?: string } | null): boolean
   return (user.email || '').trim().toLowerCase() === FOUNDER_PRIVILEGED_ADMIN_EMAIL;
 }
 
+/**
+ * Only this email is blocked from self-service account deletion (Settings + DELETE /api/delete-account).
+ * Same value as founder Gmail by default; kept explicit so delete protection is not tied to other founder UI flags.
+ */
+export const PROTECTED_FROM_ACCOUNT_DELETION_EMAIL = FOUNDER_PRIVILEGED_ADMIN_EMAIL;
+
+export function isProtectedFromAccountDeletion(user: { email?: string } | null): boolean {
+  if (!user?.email) return false;
+  return (user.email || '').trim().toLowerCase() === PROTECTED_FROM_ACCOUNT_DELETION_EMAIL;
+}
+
 /** localStorage key for founder-privileged admin subscription override (Standard / 3 / 6 / 12 month) for testing UI across pages. */
 export const ADMIN_SUBSCRIPTION_OVERRIDE_KEY = 'adminSubscriptionOverride';
 

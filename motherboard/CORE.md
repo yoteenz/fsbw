@@ -33,9 +33,9 @@ Canonical reference for stack, design, and main flows. Keep this updated when th
 
 ## Auth & identity
 
-- **Sign-in:** Supabase email/password only; no OAuth (Google/Facebook). Admin emails (from `VITE_ADMIN_EMAILS` / `ADMIN_EMAILS`) can fall back to local sign-in if Supabase fails; local user stored in `registeredUsers` and `currentUser` in localStorage.
+- **Sign-in:** Supabase email/password only; no OAuth (Google/Facebook). Users with an email must have **`email_confirmed_at`** set (confirmed via Supabase email) before the app treats them as signed in; otherwise they see **INVALID EMAIL OR PASSWORD** and the session is cleared. Admin emails (from `VITE_ADMIN_EMAILS` / `ADMIN_EMAILS`) can fall back to local sign-in if Supabase fails; local user stored in `registeredUsers` and `currentUser` in localStorage.
 - **Admin list:** `src/utils/adminAuth.ts`. Default admin emails include `kateenaarmstrong@gmail.com`, `admin@frontalslayer.com`, `kateena.armstrong@frontalslayer.com`. Env overrides: `VITE_ADMIN_EMAILS` (frontend), `ADMIN_EMAILS` (Vercel API). When set, env list is used (include all desired admins, e.g. Supabase emails for each operator).
-- **Admin features:** Access to `/admin/*`, “Sync my account” in Account → Settings, Concierge card for founder-privileged admin and premium. Sync uses `POST /api/admin/sync-profile` with email + password (Supabase credentials). Founder-privileged account (`FOUNDER_PRIVILEGED_ADMIN_EMAIL` in `adminAuth.ts`): tier/subscription test toggles, mock loyalty/vouchers, merged mock clients in admin UI.
+- **Admin features:** Access to `/admin/*`, “Sync my account” in Account → Settings, Concierge card for founder-privileged admin and premium. Sync uses `POST /api/admin/sync-profile` with email + password (Supabase credentials). Founder-privileged account (`FOUNDER_PRIVILEGED_ADMIN_EMAIL` = `kateenaarmstrong@gmail.com` in `adminAuth.ts`): **ADMIN: FOUNDER** on Account → Profile (tap → `/admin/dashboard`), tier/subscription test toggles, mock loyalty/vouchers, merged mock clients in admin UI. **Delete account:** only `PROTECTED_FROM_ACCOUNT_DELETION_EMAIL` (same Gmail by default) is blocked client + server; `ayoteenz@yahoo.com` and all other users can delete if the API succeeds (`SUPABASE_SERVICE_ROLE_KEY` required on Vercel).
 
 ---
 

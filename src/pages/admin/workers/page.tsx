@@ -80,7 +80,6 @@ export default function AdminWorkersPage() {
               const applicants: JobApplication[] = isOpen ? getJobApplicationsForJob(w.id) : [];
               const openingsLabel =
                 w.openings === 1 ? '1 OPENING AVAILABLE' : `${w.openings} OPENINGS AVAILABLE`;
-              const headerIcon = workerRoleHeaderIconSrc(w.id);
 
               return (
                 <div
@@ -110,7 +109,11 @@ export default function AdminWorkersPage() {
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0 flex-1 text-left">
-                          <RoleCardSectionHeader title={w.role} className={isOpen ? 'pr-10' : ''} />
+                          <RoleCardSectionHeader
+                            title={w.role}
+                            className={isOpen ? 'pr-10' : ''}
+                            iconSrc={workerRoleHeaderIconSrc(w.id)}
+                          />
                           <p
                             className="text-[9px] font-futura text-gray-500 tracking-wide mt-1.5 mb-0"
                             style={{ fontWeight: 600 }}
@@ -140,77 +143,75 @@ export default function AdminWorkersPage() {
                         </div>
                       </div>
                     </button>
-                    {isOpen ? (
-                      <dl
-                        className="space-y-2 text-left uppercase px-4 pb-4 pt-1 border-t border-black/15"
-                        style={{ textTransform: 'uppercase' }}
-                      >
+                    <dl
+                      className="space-y-2 text-left uppercase px-4 pb-4 pt-1"
+                      style={{ textTransform: 'uppercase' }}
+                    >
+                      <div>
+                        <dt className="text-[9px] font-futura text-black font-medium" style={{ fontWeight: 600 }}>
+                          HOURS
+                        </dt>
+                        <dd className="text-[10px] font-futura text-gray-700 mt-0.5">{w.scheduledHours}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-[9px] font-futura text-black font-medium" style={{ fontWeight: 600 }}>
+                          PAY
+                        </dt>
+                        <dd className="text-[10px] font-futura text-gray-700 mt-0.5">{w.pay}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-[9px] font-futura text-black font-medium" style={{ fontWeight: 600 }}>
+                          ABOUT THE ROLE
+                        </dt>
+                        <dd className="text-[10px] font-futura text-gray-700 mt-0.5 leading-snug">{w.aboutTheRole}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-[9px] font-futura text-black font-medium" style={{ fontWeight: 600 }}>
+                          REQUIRED EDUCATION
+                        </dt>
+                        <dd className="text-[10px] font-futura text-gray-700 mt-0.5 leading-snug">{w.requiredEducation}</dd>
+                      </div>
+                      {w.contact ? (
                         <div>
                           <dt className="text-[9px] font-futura text-black font-medium" style={{ fontWeight: 600 }}>
-                            HOURS
+                            CONTACT
                           </dt>
-                          <dd className="text-[10px] font-futura text-gray-700 mt-0.5">{w.scheduledHours}</dd>
+                          <dd className="text-[10px] font-futura text-gray-700 mt-0.5 break-all">{w.contact}</dd>
                         </div>
+                      ) : null}
+                      <div>
+                        <dt className="text-[9px] font-futura text-black font-medium" style={{ fontWeight: 600 }}>
+                          JOB DUTIES
+                        </dt>
+                        <dd className="mt-1">
+                          <ul className="list-disc pl-4 space-y-1 text-[10px] font-futura text-gray-700">
+                            {w.jobDuties.map((d, i) => (
+                              <li key={i}>{d}</li>
+                            ))}
+                          </ul>
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-[9px] font-futura text-black font-medium" style={{ fontWeight: 600 }}>
+                          DAILY TASKS
+                        </dt>
+                        <dd className="mt-1">
+                          <ul className="list-disc pl-4 space-y-1 text-[10px] font-futura text-gray-700">
+                            {w.dailyTasks.map((t, i) => (
+                              <li key={i}>{t}</li>
+                            ))}
+                          </ul>
+                        </dd>
+                      </div>
+                      {w.notes ? (
                         <div>
                           <dt className="text-[9px] font-futura text-black font-medium" style={{ fontWeight: 600 }}>
-                            PAY
+                            NOTES
                           </dt>
-                          <dd className="text-[10px] font-futura text-gray-700 mt-0.5">{w.pay}</dd>
+                          <dd className="text-[10px] font-futura text-gray-700 mt-0.5">{w.notes}</dd>
                         </div>
-                        <div>
-                          <dt className="text-[9px] font-futura text-black font-medium" style={{ fontWeight: 600 }}>
-                            ABOUT THE ROLE
-                          </dt>
-                          <dd className="text-[10px] font-futura text-gray-700 mt-0.5 leading-snug">{w.aboutTheRole}</dd>
-                        </div>
-                        <div>
-                          <dt className="text-[9px] font-futura text-black font-medium" style={{ fontWeight: 600 }}>
-                            REQUIRED EDUCATION
-                          </dt>
-                          <dd className="text-[10px] font-futura text-gray-700 mt-0.5 leading-snug">{w.requiredEducation}</dd>
-                        </div>
-                        {w.contact ? (
-                          <div>
-                            <dt className="text-[9px] font-futura text-black font-medium" style={{ fontWeight: 600 }}>
-                              CONTACT
-                            </dt>
-                            <dd className="text-[10px] font-futura text-gray-700 mt-0.5 break-all">{w.contact}</dd>
-                          </div>
-                        ) : null}
-                        <div>
-                          <dt className="text-[9px] font-futura text-black font-medium" style={{ fontWeight: 600 }}>
-                            JOB DUTIES
-                          </dt>
-                          <dd className="mt-1">
-                            <ul className="list-disc pl-4 space-y-1 text-[10px] font-futura text-gray-700">
-                              {w.jobDuties.map((d, i) => (
-                                <li key={i}>{d}</li>
-                              ))}
-                            </ul>
-                          </dd>
-                        </div>
-                        <div>
-                          <dt className="text-[9px] font-futura text-black font-medium" style={{ fontWeight: 600 }}>
-                            DAILY TASKS
-                          </dt>
-                          <dd className="mt-1">
-                            <ul className="list-disc pl-4 space-y-1 text-[10px] font-futura text-gray-700">
-                              {w.dailyTasks.map((t, i) => (
-                                <li key={i}>{t}</li>
-                              ))}
-                            </ul>
-                          </dd>
-                        </div>
-                        {w.notes ? (
-                          <div>
-                            <dt className="text-[9px] font-futura text-black font-medium" style={{ fontWeight: 600 }}>
-                              NOTES
-                            </dt>
-                            <dd className="text-[10px] font-futura text-gray-700 mt-0.5">{w.notes}</dd>
-                          </div>
-                        ) : null}
-                      </dl>
-                    ) : null}
+                      ) : null}
+                    </dl>
 
                     {isOpen ? (
                       <div
@@ -224,7 +225,10 @@ export default function AdminWorkersPage() {
                         >
                           APPLICATIONS
                         </p>
-                        <RoleCardSectionHeader title={w.role} />
+                        <RoleCardSectionHeader
+                          title={w.role}
+                          iconSrc={workerRoleHeaderIconSrc(w.id)}
+                        />
                         <p className="text-[10px] font-futura text-gray-600 mb-4">
                           {applicants.length} submission(s). Data is stored in this browser (
                           <code className="text-[9px]">localStorage: brandJobApplications_v1</code>) until you add a

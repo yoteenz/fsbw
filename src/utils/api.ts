@@ -213,12 +213,33 @@ export async function putAdminSpecialOfferConfig(config: Record<string, unknown>
 
 /** Delete the current user from Supabase Auth so they cannot sign back in. Call before sign-out when user confirms delete account. Throws if unauthenticated (401), not configured (503), or any API error so the UI does not sign out and pretend success. */
 export async function deleteAccount(options?: { deletedFrom?: string }): Promise<void> {
-  const res = await apiFetch('/api/delete-account', { method: 'DELETE', body: options ?? undefined });
+  const token = await getAccessToken();
+  const base = API_BASE.replace(/\/$/, '');
+  const qs =
+    options?.deletedFrom != null && String(options.deletedFrom).trim()
+      ? `?deletedFrom=${encodeURIComponent(String(options.deletedFrom).trim())}`
+      : '';
+  const path = `/api/delete-account${qs}`;
+  const url = base ? `${base}${path}` : path;
+  const res = await fetch(url, {
+    method: 'DELETE',
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
   if (!res.ok) {
     const text = await res.text();
+    let message = text;
+    try {
+      const j = JSON.parse(text) as { error?: string };
+      if (typeof j?.error === 'string' && j.error.trim()) message = j.error.trim();
+    } catch {
+      /* use raw text */
+    }
     if (res.status === 401) throw new Error('Not signed in. Sign in and try again.');
+    if (res.status === 403) throw new Error(message || 'This action is not allowed.');
     if (res.status === 503) throw new Error('Account deletion is not available. Please contact support.');
-    throw new Error(text || 'Failed to delete account');
+    throw new Error(message || 'Failed to delete account');
   }
 }
 

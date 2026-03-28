@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App.tsx'
 import './index.css'
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth'
-import { restoreSupabaseSessionFromCookie, getSupabase } from './utils/supabase'
+import { restoreSupabaseSessionFromCookie, getSupabase, signOutIfSessionEmailUnconfirmed } from './utils/supabase'
 import { tryServerSessionRestore } from './utils/sessionRestore'
 import { flushQueuedProfilePatch } from './utils/profileSyncQueue'
 import { buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage } from './utils/syncFromApi'
@@ -28,6 +28,9 @@ async function bootstrapAuthBeforeRender(): Promise<void> {
   }
   try {
     const { data: { session } } = await supabase.auth.getSession();
+    if (await signOutIfSessionEmailUnconfirmed(supabase, session)) {
+      return;
+    }
     if (session?.user) {
       const minimal = buildMinimalUserFromSupabaseSession(session.user);
       applyMinimalUserToStorage(minimal);
