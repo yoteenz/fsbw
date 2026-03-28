@@ -33,7 +33,6 @@ export type OrderTrackingPersistedFields = {
   trackingStageNotes?: TrackingStageNotesMap;
 };
 
-const USPS_RE = /^usps$/i;
 const UPS_RE = /^ups$/i;
 const DHL_RE = /^dhl$/i;
 const FEDEX_RE = /^fedex|fed\s*ex$/i;
@@ -71,7 +70,7 @@ export function patchOrderInUserOrders(
     const data = raw ? JSON.parse(raw) : { activeOrders: [], pastOrders: [] };
     const updateList = (list: unknown[]) => {
       const arr = Array.isArray(list) ? list : [];
-      const idx = arr.findIndex((o: { id?: string }) => o?.id === orderId);
+      const idx = arr.findIndex((o) => (o as { id?: string })?.id === orderId);
       if (idx < 0) return arr;
       const next = [...arr];
       next[idx] = { ...(next[idx] as object), ...patch };

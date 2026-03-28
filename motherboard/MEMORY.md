@@ -2484,3 +2484,12 @@ Summary: User asked to replace **ADD TRACKING** on **Admin → Revenue → Order
 Summary: On **Admin → Revenue → Orders**, the bottom **PENDING** orders card is **not rendered** while an order is expanded (**`expandedOrderId`** set); it returns when the user closes the expanded order.
 
 - **Files:** **`src/pages/admin/revenue/page.tsx`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-28 — Vercel `tsc`: revenue + orderTracking fixes
+
+Summary: **`npm run build`** on Vercel failed with **TS2367** (**`adminTrackingStageOverride !== ''`** vs **`number | null`**), **TS6133** (unused **`USPS_RE`**), and **TS2345** (**`findIndex`** on **`unknown[]`**).
+
+- **Fixes:** **`fillTrackingDraftFromOrder`** — drop string compare; use **`!= null`** and **`!Number.isNaN(Number(...))`** before clamping. **`orderTracking.ts`** — remove unused **`USPS_RE`**; **`findIndex`** callback uses **`(o) => (o as { id?: string })?.id === orderId`**.
+- **Files:** **`src/pages/admin/revenue/page.tsx`**, **`src/utils/orderTracking.ts`**, **`motherboard/MEMORY.md`** (this entry).

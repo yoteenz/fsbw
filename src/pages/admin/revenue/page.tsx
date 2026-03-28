@@ -523,7 +523,7 @@ export default function AdminRevenue() {
       ),
       notifyFlags: Array.from({ length: ORDER_TRACKING_STAGE_LABELS.length }, () => false),
       adminStageOverride:
-        order.adminTrackingStageOverride != null && order.adminTrackingStageOverride !== ''
+        order.adminTrackingStageOverride != null && !Number.isNaN(Number(order.adminTrackingStageOverride))
           ? String(Math.min(8, Math.max(0, Number(order.adminTrackingStageOverride))))
           : '',
     };
