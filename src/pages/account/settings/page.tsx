@@ -11,6 +11,7 @@ import { patchProfileWithRetryQueue } from '../../../utils/profileSyncQueue';
 import { trackActivity } from '../../../utils/activity';
 import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
 import { clearAppAuth, isAyoteenzAdminAccount, isAdminEmail, isProtectedFromAccountDeletion } from '../../../utils/adminAuth';
+import { profileSocialStorageValue, stripSocialPlatformPrefixes, type SocialPlatform } from '../../../utils/socialLinks';
 
 const inputBaseStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Demi"',
@@ -182,13 +183,12 @@ function SettingsPage() {
         data: { session },
       } = await supabase.auth.getSession();
       if (!session) return false;
-      const stripAt = (s: string) => s.trim().replace(/^@/, '');
       const social = {
-        facebook: stripAt(facebook) ? `facebook.com/${stripAt(facebook)}` : '',
-        instagram: stripAt(instagram) ? `instagram.com/${stripAt(instagram)}` : '',
-        youtube: stripAt(youtube) ? `youtube.com/${stripAt(youtube)}` : '',
-        tiktok: stripAt(tiktok) ? `tiktok.com/${stripAt(tiktok)}` : '',
-        twitter: stripAt(twitter) ? `x.com/${stripAt(twitter)}` : '',
+        facebook: profileSocialStorageValue('facebook', facebook),
+        instagram: profileSocialStorageValue('instagram', instagram),
+        youtube: profileSocialStorageValue('youtube', youtube),
+        tiktok: profileSocialStorageValue('tiktok', tiktok),
+        twitter: profileSocialStorageValue('twitter', twitter),
       };
       const fn = (opts?.personal?.firstName ?? firstName).trim();
       const ln = (opts?.personal?.lastName ?? lastName).trim();
@@ -258,13 +258,12 @@ function SettingsPage() {
     try {
       const email = (userData?.email || '').trim().toLowerCase();
       if (!email) return;
-      const stripAt = (s: string) => s.trim().replace(/^@/, '');
       const payload = {
-        facebook: stripAt(facebook) ? `facebook.com/${stripAt(facebook)}` : '',
-        instagram: stripAt(instagram) ? `instagram.com/${stripAt(instagram)}` : '',
-        youtube: stripAt(youtube) ? `youtube.com/${stripAt(youtube)}` : '',
-        tiktok: stripAt(tiktok) ? `tiktok.com/${stripAt(tiktok)}` : '',
-        twitter: stripAt(twitter) ? `x.com/${stripAt(twitter)}` : ''
+        facebook: profileSocialStorageValue('facebook', facebook),
+        instagram: profileSocialStorageValue('instagram', instagram),
+        youtube: profileSocialStorageValue('youtube', youtube),
+        tiktok: profileSocialStorageValue('tiktok', tiktok),
+        twitter: profileSocialStorageValue('twitter', twitter),
       };
       const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
       const idx = registered.findIndex((u: any) => (u.email || '').trim().toLowerCase() === email);
@@ -486,17 +485,19 @@ function SettingsPage() {
     return '';
   })();
 
-  // Parse stored social value to handle only (strip domain prefix and any leading @)
+  const SETTINGS_SOCIAL_KEY_TO_PLATFORM: Record<string, SocialPlatform> = {
+    facebook: 'facebook',
+    instagram: 'instagram',
+    youtube: 'youtube',
+    tiktok: 'tiktok',
+    twitter: 'twitter',
+  };
+
+  /** Show handle-only in inputs; strip https/www and repeated host segments (e.g. pasted URLs). */
   const parseSocialHandle = (key: string, raw: string): string => {
-    const v = (raw || '').trim();
-    const prefixes: Record<string, RegExp> = {
-      facebook: /^facebook\.com\/?/i,
-      instagram: /^instagram\.com\/?/i,
-      youtube: /^youtube\.com\/?/i,
-      tiktok: /^tiktok\.com\/?/i,
-      twitter: /^(?:twitter|x)\.com\/?/i
-    };
-    return v.replace(prefixes[key] || /^@/, '').replace(/^@/, '').trim();
+    const p = SETTINGS_SOCIAL_KEY_TO_PLATFORM[key];
+    if (!p) return (raw || '').trim().replace(/^@/, '').trim();
+    return stripSocialPlatformPrefixes(p, raw);
   };
 
   // Format birthday as MM/DD/YYYY (same as sign-in page)

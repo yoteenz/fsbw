@@ -203,6 +203,27 @@ function AccountPage() {
   });
 
   // Currency exchange rates (same as CartDropdown)
+  /** Founder-only: persisted profile hub mode — clean client-like chrome (no mock history, no admin tag, no tier overrides on this page). Checkout dummy card + order flow unchanged. */
+  const FOUNDER_VIEW_AS_CLIENT_KEY = 'baw_founder_account_view_as_client';
+  const [founderViewAsClient, setFounderViewAsClient] = useState(() => {
+    try {
+      return typeof window !== 'undefined' && localStorage.getItem(FOUNDER_VIEW_AS_CLIENT_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  /** When false, founder mock account uses seeded/mock profile chrome on this page only. */
+  const profileUsesMockChrome = React.useMemo(
+    () =>
+      Boolean(
+        userData &&
+          isMockDataAccount(userData) &&
+          !(isAyoteenzAdminAccount(userData) && founderViewAsClient)
+      ),
+    [userData, founderViewAsClient]
+  );
+
   const currencyRates = React.useMemo(() => ({
     USD: { symbol: '&#36;', rate: 1.0, name: 'US Dollar' },
     EUR: { symbol: '&euro;', rate: 0.85, name: 'Euro' },
@@ -477,7 +498,7 @@ function AccountPage() {
 
   // Initialize admin (mock-data) account only with proper gift card balance and unlocked discounts – no test data for non-admin accounts
   useEffect(() => {
-    if (userData && isMockDataAccount(userData)) {
+    if (userData && isMockDataAccount(userData) && !(isAyoteenzAdminAccount(userData) && founderViewAsClient)) {
         try {
           const currentUser = localStorage.getItem('currentUser');
           if (currentUser) {
@@ -846,8 +867,8 @@ function AccountPage() {
     let totalSpending = 0;
     const highestTierEver = getHighestTierEver();
 
-    // For mock account, no tier
-    if (isMockDataAccount(userData)) {
+    // Mock founder profile chrome: no spend tier (rewards use toggles elsewhere). Client view uses real order-based tier.
+    if (profileUsesMockChrome) {
       return null;
     }
 
@@ -971,7 +992,11 @@ function AccountPage() {
       const key = userData?.email ? `notifications_${userData.email}` : 'notifications';
       const storedStr = localStorage.getItem(key);
       const stored: any[] = storedStr && Array.isArray(JSON.parse(storedStr)) ? JSON.parse(storedStr) : [];
-      const account = getAccountNotifications(userData);
+      const userForNotifs =
+        founderViewAsClient && isAyoteenzAdminAccount(userData)
+          ? { ...userData, voucherList: [], voucherCount: 0, voucherHistory: [] as typeof userData.voucherHistory }
+          : userData;
+      const account = getAccountNotifications(userForNotifs);
       const merged = mergeAccountNotifications(stored, account);
       if (merged.some((n: any) => !n.isRead)) return true;
       const unreadKey = getPerUserKey(PER_USER_KEYS.hasUnreadNotifications, userData?.email ?? getCurrentUserEmailFromStorage());
@@ -1161,7 +1186,8 @@ function AccountPage() {
   const getDefaultCardOrder = (): Array<{ title: string; subtitle: string; route: string | null }> => {
     const userMembershipType = userData?.membershipType || membershipType;
     const isPremium = userMembershipType === 'PREMIUM' || userMembershipType === 'Premium';
-    const showConcierge = isPremium || isAyoteenzAdminAccount(userData); // Premium members + founder-privileged admin (for testing)
+    const showConcierge =
+      isPremium || (isAyoteenzAdminAccount(userData) && !founderViewAsClient);
     const defaultCards: Array<{ title: string; subtitle: string; route: string | null }> = [];
 
     let referralInvitesUsed = 0;
@@ -1594,9 +1620,7 @@ function AccountPage() {
             openProfileImageStatusPopup('PHOTO SAVED.');
             void trackActivity('profile_update', { section: 'photo' });
           } else {
-            openProfileImageStatusPopup(
-              'PHOTO SAVED ON THIS DEVICE ONLY. CLOUD UPLOAD FAILED — TRY AGAIN OR CHECK YOUR CONNECTION.'
-            );
+            console.warn('Cloud profile photo upload failed; photo kept locally only.');
           }
         }
       } else {
@@ -2100,12 +2124,17 @@ function AccountPage() {
                     </p>
 
                     {(() => {
-                      // Get membership type from userData; for founder-privileged admin use getEffectiveSubscriptionTier (override) so tier/membership toggles are reflected
-                      const effectiveSubTier = getEffectiveSubscriptionTier(userData);
+                      // Founder: test toggles read overrides from localStorage. "View as client" uses stored membership/subscription only (no override on this page).
+                      const effectiveSubTier =
+                        founderViewAsClient && isAyoteenzAdminAccount(userData)
+                          ? userData?.subscriptionTier ?? null
+                          : getEffectiveSubscriptionTier(userData);
                       const userMembershipType = userData?.membershipType?.toUpperCase() || membershipType;
-                      const displayMembershipType = isAyoteenzAdminAccount(userData)
+                      const displayMembershipType = isAyoteenzAdminAccount(userData) && !founderViewAsClient
                         ? (effectiveSubTier != null ? 'PREMIUM' : 'BASIC')
-                        : (userMembershipType === 'PREMIUM' ? 'PREMIUM' : 'BASIC');
+                        : userMembershipType === 'PREMIUM' || Boolean(userData?.subscriptionTier)
+                          ? 'PREMIUM'
+                          : 'BASIC';
                       // For BASIC: always use gray regardless of tier
                       // Premium = black, Standard = gray; rewards page explains tier levels
                       const membershipTextColor = displayMembershipType === 'PREMIUM' ? '#000000' : '#808080';

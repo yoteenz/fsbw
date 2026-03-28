@@ -14,6 +14,9 @@ import { formatBirthday } from '../../../utils/formatBirthday';
 import { formatCountryDisplay } from '../../../utils/formatCountry';
 import ImageViewerModal from '../../../components/ImageViewerModal';
 import { isNewsletterOptIn } from '../../../utils/newsletterOptIn';
+import { schedulePushCartWishlistToCloud } from '../../../utils/pushCartWishlistToCloud';
+import { readLocalActivityForEmail, trackActivity } from '../../../utils/activity';
+import { socialStorageToHttpsUrl, type SocialPlatform } from '../../../utils/socialLinks';
 
 const TABS = ['ALL', 'REVIEWS', 'REWARDS', 'INVITES'] as const;
 
@@ -39,26 +42,6 @@ const SORT_OPTIONS = [
   'Black',
 ] as const;
 type SortOption = typeof SORT_OPTIONS[number];
-
-/** Build clickable URL for a social platform from handle or existing URL */
-function getSocialUrl(platform: string, val: string): string {
-  const v = String(val || '').trim();
-  if (/^https?:\/\//i.test(v)) return v;
-  const handle = v.replace(/^@/, '');
-  if (!handle) return '#';
-  const base: Record<string, string> = {
-    facebook: 'https://facebook.com/',
-    instagram: 'https://instagram.com/',
-    twitter: 'https://x.com/',
-    tiktok: 'https://tiktok.com/@',
-    youtube: 'https://youtube.com/',
-    linkedin: 'https://linkedin.com/in/',
-  };
-  const baseUrl = base[platform] || '#';
-  if (platform === 'tiktok') return baseUrl + (v.startsWith('@') ? v.slice(1) : handle);
-  if (platform === 'youtube') return baseUrl + (handle.startsWith('@') || handle.startsWith('channel/') ? handle : `@${handle}`);
-  return baseUrl + handle;
-}
 
 function sortOptionToLabel(opt: SortOption): string {
   return opt.toUpperCase().replace(/\s+/g, ' ');
@@ -666,6 +649,48 @@ export default function AdminClients() {
   }, [selectedClientEmail]);
   useEffect(() => {
     setPersonalSectionTab('details');
+  }, [selectedClientEmail]);
+
+  /** Viewing your own client row: debounced push local cart/wishlist to Supabase so admin GET tabs match this browser. */
+  useEffect(() => {
+    const e = (selectedClientEmail || '').trim().toLowerCase();
+    if (!e) return;
+    try {
+      const curRaw = localStorage.getItem('currentUser');
+      const cur = curRaw ? JSON.parse(curRaw) : null;
+      if ((cur?.email || '').trim().toLowerCase() === e) {
+        schedulePushCartWishlistToCloud();
+      }
+    } catch {
+      /* ignore */
+    }
+  }, [selectedClientEmail]);
+
+  /** Same user on this device: re-emit cart/wishlist snapshots so POST /api/activity can populate server activity (mirrors cart/wishlist nudge). */
+  useEffect(() => {
+    const e = (selectedClientEmail || '').trim().toLowerCase();
+    if (!e) return;
+    let cur = '';
+    try {
+      const u = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      cur = (u?.email || '').trim().toLowerCase();
+    } catch {
+      return;
+    }
+    if (cur !== e) return;
+    const t = window.setTimeout(() => {
+      try {
+        const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+        const wish = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
+        const c = Array.isArray(cart) ? cart.length : 0;
+        const w = Array.isArray(wish) ? wish.length : 0;
+        if (c > 0) trackActivity('cart_snapshot', { itemCount: c, source: 'admin_client_details_self' });
+        if (w > 0) trackActivity('wishlist_snapshot', { itemCount: w, source: 'admin_client_details_self' });
+      } catch {
+        /* ignore */
+      }
+    }, 450);
+    return () => window.clearTimeout(t);
   }, [selectedClientEmail]);
 
   const loadData = useCallback(() => {
@@ -2176,7 +2201,7 @@ export default function AdminClients() {
                                 const val = (selectedClient as any)?.[key];
                                 if (!val || String(val).trim() === '') return null;
                                 const label = key.toLowerCase() + ':';
-                                const url = getSocialUrl(key, String(val).trim());
+                                const url = socialStorageToHttpsUrl(key as SocialPlatform, String(val).trim());
                                 const displayVal = String(val).trim().toUpperCase();
                                 return (
                                   <div key={key} className="flex justify-between">
@@ -2220,22 +2245,46 @@ export default function AdminClients() {
                           )}
                           {personalSectionTab === 'cart' && selectedClient && (() => {
                             const id = (selectedClientForOrders?.id || selectedClient.id) as string | undefined;
-                            const items = (id ? adminCartByUserId[id] : null) ?? [];
-                            const list = Array.isArray(items) ? items : [];
-                            if (cartWishlistLoading && isSupabaseUserId(id)) {
-                              return (
-                                <p className="text-center py-4" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}>LOADING CART…</p>
-                              );
-                            }
                             if (id && !isSupabaseUserId(id)) {
                               return (
                                 <p className="text-center py-4" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}>CART SYNC USES SUPABASE ACCOUNTS (UUID). MOCK / LOCAL-ONLY CLIENTS HAVE NO CLOUD CART.</p>
                               );
                             }
+                            const fetching = Boolean(id && isSupabaseUserId(id) && adminCartByUserId[id as string] === undefined);
+                            if (fetching || (cartWishlistLoading && isSupabaseUserId(id))) {
+                              return (
+                                <p className="text-center py-4" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}>LOADING CART…</p>
+                              );
+                            }
+                            const apiItems = id && adminCartByUserId[id] !== undefined ? adminCartByUserId[id] : [];
+                            let list = Array.isArray(apiItems) ? apiItems : [];
+                            let source: 'cloud' | 'this_device' = 'cloud';
+                            if (list.length === 0 && selectedClient?.email) {
+                              try {
+                                const em = (selectedClient.email || '').trim().toLowerCase();
+                                const curRaw = localStorage.getItem('currentUser');
+                                const cur = curRaw ? JSON.parse(curRaw) : null;
+                                if ((cur?.email || '').trim().toLowerCase() === em) {
+                                  const raw = localStorage.getItem('cartItems');
+                                  const loc = raw ? JSON.parse(raw) : [];
+                                  if (Array.isArray(loc) && loc.length > 0) {
+                                    list = loc;
+                                    source = 'this_device';
+                                  }
+                                }
+                              } catch {
+                                /* ignore */
+                              }
+                            }
                             return list.length === 0 ? (
                               <p className="text-center py-4" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}>THIS CART IS EMPTY.</p>
                             ) : (
                               <div className="space-y-2">
+                                {source === 'this_device' && (
+                                  <p className="text-center pb-1" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: '9px', color: '#a3a3a3', textTransform: 'none', margin: '0', lineHeight: 1.35 }}>
+                                    Showing cart from this browser (localStorage). Cloud row is empty or not synced — cart/wishlist push runs on navigation; check Network for PUT /api/cart.
+                                  </p>
+                                )}
                                 {list.map((item: any, i: number) => (
                                   <div key={item?.id ?? i} className="flex justify-between items-center border-b border-gray-100 py-2">
                                     <span className="text-xs" style={{ fontFamily: '"Futura PT Book"' }}>{(item?.name ?? item?.productName ?? 'Item').toString().toUpperCase()}</span>
@@ -2247,22 +2296,46 @@ export default function AdminClients() {
                           })()}
                           {personalSectionTab === 'wishlist' && selectedClient && (() => {
                             const id = (selectedClientForOrders?.id || selectedClient.id) as string | undefined;
-                            const items = (id ? adminWishlistByUserId[id] : null) ?? [];
-                            const list = Array.isArray(items) ? items : [];
-                            if (cartWishlistLoading && isSupabaseUserId(id)) {
-                              return (
-                                <p className="text-center py-4" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}>LOADING WISHLIST…</p>
-                              );
-                            }
                             if (id && !isSupabaseUserId(id)) {
                               return (
                                 <p className="text-center py-4" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}>WISHLIST SYNC USES SUPABASE ACCOUNTS (UUID). MOCK / LOCAL-ONLY CLIENTS HAVE NO CLOUD WISHLIST.</p>
                               );
                             }
+                            const fetching = Boolean(id && isSupabaseUserId(id) && adminWishlistByUserId[id as string] === undefined);
+                            if (fetching || (cartWishlistLoading && isSupabaseUserId(id))) {
+                              return (
+                                <p className="text-center py-4" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}>LOADING WISHLIST…</p>
+                              );
+                            }
+                            const apiItems = id && adminWishlistByUserId[id] !== undefined ? adminWishlistByUserId[id] : [];
+                            let list = Array.isArray(apiItems) ? apiItems : [];
+                            let source: 'cloud' | 'this_device' = 'cloud';
+                            if (list.length === 0 && selectedClient?.email) {
+                              try {
+                                const em = (selectedClient.email || '').trim().toLowerCase();
+                                const curRaw = localStorage.getItem('currentUser');
+                                const cur = curRaw ? JSON.parse(curRaw) : null;
+                                if ((cur?.email || '').trim().toLowerCase() === em) {
+                                  const raw = localStorage.getItem('wishlistItems');
+                                  const loc = raw ? JSON.parse(raw) : [];
+                                  if (Array.isArray(loc) && loc.length > 0) {
+                                    list = loc;
+                                    source = 'this_device';
+                                  }
+                                }
+                              } catch {
+                                /* ignore */
+                              }
+                            }
                             return list.length === 0 ? (
                               <p className="text-center py-4" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}>THIS WISHLIST IS EMPTY.</p>
                             ) : (
                               <div className="space-y-2">
+                                {source === 'this_device' && (
+                                  <p className="text-center pb-1" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: '9px', color: '#a3a3a3', textTransform: 'none', margin: '0', lineHeight: 1.35 }}>
+                                    Showing wishlist from this browser (localStorage). Cloud row is empty or not synced — check Network for PUT /api/wishlist.
+                                  </p>
+                                )}
                                 {list.map((item: any, i: number) => (
                                   <div key={item?.id ?? i} className="flex justify-between items-center border-b border-gray-100 py-2">
                                     <span className="text-xs" style={{ fontFamily: '"Futura PT Book"' }}>{(item?.name ?? item?.productName ?? 'Item').toString().toUpperCase()}</span>
@@ -2305,7 +2378,59 @@ export default function AdminClients() {
                         {detailsTab === 'activity' && selectedClient && (() => {
                           const isMayaOwen = (selectedClient.email || '').toString().trim().toLowerCase() === MAYA_OWEN_MOCK_EMAIL;
                           const id = selectedClient.id as string | undefined;
-                          const list = isMayaOwen ? getMockActivityForMayaOwen() : ((id ? adminActivityByUserId[id] : null) ?? []);
+                          const activityFetching =
+                            !isMayaOwen && Boolean(id && isSupabaseUserId(id) && adminActivityByUserId[id as string] === undefined);
+                          if (activityFetching) {
+                            return (
+                              <div className="bg-white border border-gray-200 p-4 text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>LOADING ACTIVITY…</div>
+                            );
+                          }
+                          const emailLower = (selectedClient.email || '').trim().toLowerCase();
+                          let curEmailLower = '';
+                          try {
+                            const cu = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                            curEmailLower = (cu?.email || '').trim().toLowerCase();
+                          } catch {
+                            /* ignore */
+                          }
+                          const isSelfOnThisDevice = Boolean(emailLower && curEmailLower && emailLower === curEmailLower);
+
+                          const sortActivityByTime = (a: { createdAt?: string }, b: { createdAt?: string }) => {
+                            const ta = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+                            const tb = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+                            return tb - ta;
+                          };
+
+                          let list = isMayaOwen ? getMockActivityForMayaOwen() : ((id ? adminActivityByUserId[id] : null) ?? []);
+
+                          if (!isMayaOwen && isSelfOnThisDevice) {
+                            const localBackup = readLocalActivityForEmail(emailLower);
+                            list = [...list, ...localBackup].sort(sortActivityByTime);
+                            try {
+                              const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+                              const wish = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
+                              const c = Array.isArray(cart) ? cart.length : 0;
+                              const w = Array.isArray(wish) ? wish.length : 0;
+                              if (c > 0 || w > 0) {
+                                list = [
+                                  {
+                                    id: `baw_syn_device_bag_${c}_${w}`,
+                                    eventType: 'device_bag_status',
+                                    createdAt: new Date().toISOString(),
+                                    payload: {
+                                      cartItems: c,
+                                      wishlistItems: w,
+                                      source: 'this_browser_admin_preview',
+                                    },
+                                  },
+                                  ...list,
+                                ].sort(sortActivityByTime);
+                              }
+                            } catch {
+                              /* ignore */
+                            }
+                          }
+
                           const formatEventLabel = (eventType: string, payload?: Record<string, unknown>) => {
                             const labels: Record<string, string> = {
                               sign_in: 'Signed in',
@@ -2327,6 +2452,7 @@ export default function AdminClients() {
                               cart_snapshot: 'Cart updated',
                               wishlist_snapshot: 'Wishlist updated',
                               cloud_sync: 'Synced cart/wishlist to cloud',
+                              device_bag_status: 'Active on this device (bag / wishlist)',
                               membership_checkout_start: 'Membership Stripe checkout',
                               membership_upgrade_checkout: 'Membership upgrade checkout',
                               membership_stripe_return: 'Returned from Stripe (membership)',
@@ -2338,6 +2464,11 @@ export default function AdminClients() {
                               remove_saved_item: 'Removed from saved for later',
                             };
                             let label = labels[eventType] || eventType.replace(/_/g, ' ');
+                            if (eventType === 'device_bag_status' && payload) {
+                              const c = payload.cartItems != null ? Number(payload.cartItems) : 0;
+                              const w = payload.wishlistItems != null ? Number(payload.wishlistItems) : 0;
+                              label += `: bag ${c} · wishlist ${w} (this browser localStorage)`;
+                            }
                             if (eventType === 'profile_update' && payload?.section) {
                               label += ` (${String(payload.section)})`;
                             }
@@ -2358,9 +2489,17 @@ export default function AdminClients() {
                             if (
                               actSrc &&
                               eventType !== 'sign_up' &&
+                              eventType !== 'device_bag_status' &&
                               ['view_product', 'add_to_cart', 'remove_from_cart', 'add_to_wishlist'].includes(eventType)
                             ) {
                               label += ` · ${actSrc.replace(/_/g, ' ')}`;
+                            }
+                            if (
+                              actSrc &&
+                              (eventType === 'cart_snapshot' || eventType === 'wishlist_snapshot') &&
+                              actSrc === 'admin_client_details_self'
+                            ) {
+                              label += ' · admin preview nudge';
                             }
                             const qtyCh = payload?.change != null ? String(payload.change) : '';
                             if (qtyCh && (eventType === 'add_to_cart' || eventType === 'remove_from_cart')) {
@@ -2375,17 +2514,31 @@ export default function AdminClients() {
                           return (
                             <div className="space-y-3">
                               {list.length === 0 ? (
-                                <div className="bg-white border border-gray-200 p-4 text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>NO ACTIVITY YET. EVENTS WILL APPEAR HERE AS THE CLIENT USES THE SITE.</div>
+                                <div className="bg-white border border-gray-200 p-4 text-center space-y-2">
+                                  <div style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>NO ACTIVITY YET. EVENTS WILL APPEAR HERE AS THE CLIENT USES THE SITE.</div>
+                                  {id && isSupabaseUserId(id) && !isMayaOwen ? (
+                                    <div style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: '9px', color: '#a3a3a3', textTransform: 'none', lineHeight: 1.4 }}>
+                                      Rows come from Supabase user_activity (POST /api/activity). Apply the migration if the table is missing. Failed POSTs are also appended in this browser and merged here when you open your own client on this device.
+                                    </div>
+                                  ) : null}
+                                </div>
                               ) : (
                                 <div className="space-y-2 max-h-96 overflow-y-auto" style={{ paddingTop: '2px' }}>
                                   {list.map((evt) => {
                                     const createdAt = evt.createdAt ? new Date(evt.createdAt).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'medium' }) : '—';
                                     const payload = evt.payload && typeof evt.payload === 'object' ? evt.payload as Record<string, unknown> : undefined;
+                                    const isLocalBackup = String(evt.id || '').startsWith('local_');
+                                    const isDeviceSyn = String(evt.eventType || '') === 'device_bag_status';
                                     return (
                                       <div key={evt.id} className="bg-white border border-gray-200 p-3 flex flex-col gap-1">
                                         <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '11px', color: '#000', margin: 0 }}>
                                           {formatEventLabel(evt.eventType, payload)}
                                         </p>
+                                        {(isLocalBackup || isDeviceSyn) && (
+                                          <p style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: '9px', color: '#a3a3a3', margin: 0, textTransform: 'uppercase' }}>
+                                            {isDeviceSyn ? 'Live preview · this browser only' : 'Saved after failed cloud POST · this browser'}
+                                          </p>
+                                        )}
                                         <p style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#EB1C24', margin: 0 }}>{createdAt}</p>
                                         {payload && Object.keys(payload).length > 0 && (
                                           <pre className="text-left text-xs text-gray-500 mt-1 overflow-x-auto whitespace-pre-wrap break-words" style={{ fontFamily: '"Futura PT Book"', margin: 0 }}>{JSON.stringify(payload)}</pre>

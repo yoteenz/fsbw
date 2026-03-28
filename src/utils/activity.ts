@@ -5,6 +5,73 @@
  */
 import { recordActivity as apiRecordActivity } from './api';
 
+/** Max events kept when POST /api/activity fails (per browser). Shown on Admin → Clients → Activity when viewing that user on this device. */
+const LOCAL_ACTIVITY_KEY = 'baw_activity_local_backup';
+const MAX_LOCAL_ACTIVITY = 500;
+
+export type ClientActivityRow = {
+  id: string;
+  eventType: string;
+  payload?: Record<string, unknown>;
+  createdAt: string;
+};
+
+type LocalActivityStored = ClientActivityRow & { userEmail: string };
+
+function getCurrentUserEmailLower(): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem('currentUser');
+    const u = raw ? (JSON.parse(raw) as { email?: string }) : null;
+    const e = (u?.email || '').trim().toLowerCase();
+    return e || null;
+  } catch {
+    return null;
+  }
+}
+
+function appendLocalActivityBackup(eventType: string, payload?: Record<string, unknown>): void {
+  const email = getCurrentUserEmailLower();
+  if (!email) return;
+  try {
+    const entry: LocalActivityStored = {
+      id: `local_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`,
+      userEmail: email,
+      eventType,
+      payload: payload && typeof payload === 'object' ? { ...payload } : undefined,
+      createdAt: new Date().toISOString(),
+    };
+    const raw = localStorage.getItem(LOCAL_ACTIVITY_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    const arr: LocalActivityStored[] = Array.isArray(parsed) ? parsed : [];
+    const next = [entry, ...arr].slice(0, MAX_LOCAL_ACTIVITY);
+    localStorage.setItem(LOCAL_ACTIVITY_KEY, JSON.stringify(next));
+  } catch {
+    /* quota or parse */
+  }
+}
+
+/** Events that failed to POST (same browser) for this email — merged in admin client Activity when you view your own row. */
+export function readLocalActivityForEmail(emailLower: string): ClientActivityRow[] {
+  if (typeof window === 'undefined' || !emailLower) return [];
+  try {
+    const raw = localStorage.getItem(LOCAL_ACTIVITY_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    const arr: LocalActivityStored[] = Array.isArray(parsed) ? parsed : [];
+    const e = emailLower.trim().toLowerCase();
+    return arr
+      .filter((r) => (r.userEmail || '').trim().toLowerCase() === e)
+      .map((r) => ({
+        id: r.id,
+        eventType: r.eventType,
+        payload: r.payload,
+        createdAt: r.createdAt,
+      }));
+  } catch {
+    return [];
+  }
+}
+
 export type ActivityEventType =
   | 'sign_in'
   | 'sign_out'
@@ -77,7 +144,16 @@ export function isActivityEventType(value: string): value is ActivityEventType {
 
 /** Record an activity event (no-op if API not configured or user not signed in). */
 export function trackActivity(eventType: ActivityEventType, payload?: Record<string, unknown>): void {
-  apiRecordActivity(eventType, payload).catch(() => {});
+  apiRecordActivity(eventType, payload)
+    .then(() => {
+      /* success — row should appear via GET /api/admin/activity */
+    })
+    .catch((err) => {
+      if (typeof import.meta !== 'undefined' && (import.meta as { env?: { DEV?: boolean } }).env?.DEV) {
+        console.warn('[trackActivity]', eventType, err instanceof Error ? err.message : err);
+      }
+      appendLocalActivityBackup(eventType, payload);
+    });
 }
 
 /**

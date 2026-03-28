@@ -7,7 +7,8 @@ import { createRouteProtection, prepareRouteProtectionData } from '../../utils/r
 import { getPointsMultiplier } from '../../constants/tiers';
 import { getSubscriptionPriceUsd, isSubscriptionTierId } from '../../constants/subscriptionPricing';
 import { recordMembershipPayment } from '../../utils/membershipPayments';
-import { getEffectiveSubscriptionTier, getEffectiveTierName, clearAppAuth } from '../../utils/adminAuth';
+import { getEffectiveSubscriptionTier, getEffectiveTierName, clearAppAuth, isAyoteenzAdminAccount } from '../../utils/adminAuth';
+import { validateCheckoutCardInput, FOUNDER_CHECKOUT_DUMMY_PAN } from '../../utils/checkoutCardValidation';
 import { hasIdentityAlreadyUsedReferralCode, recordReferralCodeUsedByClient } from '../../utils/blockedClients';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
@@ -232,7 +233,8 @@ function CheckoutPage() {
   const [validationMessage, setValidationMessage] = useState('');
   const [fieldToFocus, setFieldToFocus] = useState<string | null>(null);
   const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
-  
+  const [showFounderTestCheckoutHint, setShowFounderTestCheckoutHint] = useState(false);
+
   // Refs for input fields
   const firstNameRef = useRef<HTMLInputElement>(null);
   const lastNameRef = useRef<HTMLInputElement>(null);
@@ -622,6 +624,29 @@ function CheckoutPage() {
       window.removeEventListener('signInStateChanged', handleSignInStateChange as EventListener);
     };
   }, []);
+
+  useEffect(() => {
+    const syncFounderHint = () => {
+      try {
+        if (!isSignedIn) {
+          setShowFounderTestCheckoutHint(false);
+          return;
+        }
+        const raw = localStorage.getItem('currentUser');
+        const u = raw ? JSON.parse(raw) : null;
+        setShowFounderTestCheckoutHint(isAyoteenzAdminAccount(u));
+      } catch {
+        setShowFounderTestCheckoutHint(false);
+      }
+    };
+    syncFounderHint();
+    window.addEventListener('signInStateChanged', syncFounderHint);
+    window.addEventListener('focus', syncFounderHint);
+    return () => {
+      window.removeEventListener('signInStateChanged', syncFounderHint);
+      window.removeEventListener('focus', syncFounderHint);
+    };
+  }, [isSignedIn]);
 
   // Auto-populate billing address from shipping address when checkbox is checked
   useEffect(() => {
@@ -3679,6 +3704,26 @@ function CheckoutPage() {
                   >
                     PAYMENT:
                   </h2>
+                  {showFounderTestCheckoutHint && (
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '9px',
+                        color: '#000000',
+                        margin: '0 0 12px 0',
+                        lineHeight: 1.45,
+                        textTransform: 'uppercase',
+                        border: '1.3px solid #000000',
+                        padding: '10px',
+                        boxSizing: 'border-box',
+                        backgroundColor: '#FAFAFA',
+                      }}
+                    >
+                      FOUNDER QA: USE CARD {FOUNDER_CHECKOUT_DUMMY_PAN.replace(/(\d{4})(?=\d)/g, '$1 ')} — ANY FUTURE
+                      EXPIRATION (E.G. 12/30) AND ANY 3–4 DIGIT CVV. NO REAL CHARGE. CHECKOUT EMAIL MUST MATCH YOUR
+                      SIGNED-IN ACCOUNT. OTHER ACCOUNTS NEED A VALID CARD NUMBER (LUHN).
+                    </p>
+                  )}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                           <div>
                             <label 
@@ -5129,6 +5174,30 @@ function CheckoutPage() {
                     setShowValidationModal(true);
                     return;
                   }
+
+                  let signedInUserForCard: { email?: string } | null = null;
+                  try {
+                    const rawUser = isSignedIn ? localStorage.getItem('currentUser') : null;
+                    signedInUserForCard = rawUser ? JSON.parse(rawUser) : null;
+                  } catch {
+                    signedInUserForCard = null;
+                  }
+                  const cardCheck = validateCheckoutCardInput({
+                    signedInUser: signedInUserForCard,
+                    checkoutEmail: email,
+                    cardNumber,
+                    expirationDate,
+                    cvv,
+                  });
+                  if (!cardCheck.ok) {
+                    setValidationMessage(cardCheck.message);
+                    setFieldToFocus('cardNumber');
+                    setInvalidFields((prev) => new Set(prev).add('cardNumber'));
+                    setShowValidationModal(true);
+                    return;
+                  }
+                  const usedFounderDummyPan = cardCheck.usedFounderDummyPan;
+
                   // Billing required when not same-as-shipping, or when digital-only (no shipping collected)
                   const requireBilling = !sameAsBilling || isOnlyDigitalProducts || isSubscriptionUpgrade;
                   if (requireBilling) {
@@ -5226,9 +5295,12 @@ function CheckoutPage() {
                   
                   // Get payment method display (single brand: VISA, MASTERCARD, AMERICAN EXPRESS, etc.)
                   const cardBrandDisplay = getCardBrandDisplay(cardNumber);
-                  const paymentMethodDisplay = cardNumber.length >= 4 
-                    ? `${cardBrandDisplay} ENDING IN ${cardNumber.slice(-4)}`
-                    : 'CARD ENDING IN XXXX';
+                  const panDigits = cardNumber.replace(/\D/g, '');
+                  const paymentMethodDisplay = usedFounderDummyPan
+                    ? 'VISA (FOUNDER TEST) ENDING IN 4242'
+                    : panDigits.length >= 4
+                      ? `${cardBrandDisplay} ENDING IN ${panDigits.slice(-4)}`
+                      : 'CARD ENDING IN XXXX';
                   
                   // Get shipping method display
                   const shippingMethodDisplay = selectedShippingMethod 
@@ -5630,6 +5702,10 @@ function CheckoutPage() {
                   } catch (_) {}
 
                   sessionStorage.setItem('checkoutSummaryRewards', JSON.stringify({ pointsEarned, tier: effectiveTierSummary }));
+
+                  if (usedFounderDummyPan) {
+                    trackActivity('founder_test_checkout_order', { orderNumber: nextOrderNumber });
+                  }
 
                   navigate('/checkout/summary', {
                     state: {

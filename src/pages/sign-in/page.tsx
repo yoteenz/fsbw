@@ -23,6 +23,7 @@ import {
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
 import { tryServerSessionRestore } from '../../utils/sessionRestore';
 import { trackActivity } from '../../utils/activity';
+import { profileSocialStorageValue } from '../../utils/socialLinks';
 import { flushQueuedProfilePatch } from '../../utils/profileSyncQueue';
 import {
   getReviewsLastSeenShopCountKey,
@@ -1888,13 +1889,12 @@ function SignInPage() {
                               const digits = phoneNumber.replace(/\D/g, '').slice(-2) || '47';
                               return `${fi}${li}${day}${digits}`;
                             })();
-                            const stripAt = (s: string) => s.trim().replace(/^@/, '');
                             const socialSignup = {
-                              facebook: stripAt(facebook) ? `facebook.com/${stripAt(facebook)}` : '',
-                              instagram: stripAt(instagram) ? `instagram.com/${stripAt(instagram)}` : '',
-                              youtube: stripAt(youtube) ? `youtube.com/${stripAt(youtube)}` : '',
-                              tiktok: stripAt(tiktok) ? `tiktok.com/${stripAt(tiktok)}` : '',
-                              twitter: stripAt(twitter) ? `x.com/${stripAt(twitter)}` : '',
+                              facebook: profileSocialStorageValue('facebook', facebook),
+                              instagram: profileSocialStorageValue('instagram', instagram),
+                              youtube: profileSocialStorageValue('youtube', youtube),
+                              tiktok: profileSocialStorageValue('tiktok', tiktok),
+                              twitter: profileSocialStorageValue('twitter', twitter),
                             };
                             const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
                               email: email.trim(),

@@ -2345,9 +2345,62 @@ Summary: User reported that after **sign out → sign in**, **name, email in UI,
 
 ---
 
+## 2026-03-27 — `GET /api/stripe/membership-available` 500 on Vercel
+
+Summary: **`https://fsbw.vercel.app/api/stripe/membership-available`** returned **FUNCTION_INVOCATION_FAILED** (500) instead of JSON.
+
+- **Cause:** The handler imported **`../_lib/stripeMembership`**. Other API routes (`api/profile.ts`, `api/special-offer-config.ts`) document that importing **`api/_lib`** can trigger **Vercel bundling resolution/runtime failures** for some serverless functions.
+- **Changes:** **`api/stripe/membership-available.ts`** — removed `_lib` import; inlined the same env check as **`membershipStripeConfigured()`**; added **`sendJson`** + top-level **`try/catch`**. **`docs/STRIPE_MEMBERSHIP_SETUP.md`** — troubleshooting subsection. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
 ## 2026-03-27 — Photo sync fix vs founder admin data (clarify + harden)
 
 Summary: User asked whether **`getLocalUserSnapshotForEmail`** / profile merge **reset** **`kateenaarmstrong@gmail.com`** admin privileges (**ADMIN: FOUNDER**, Rewards tier/sub toggles, settings). **Answer:** That change **does not strip** admin data—it **adds** **`registeredUsers`** as merge base when **`currentUser`** is missing so **fewer** fields are wiped when the API is sparse; **`syncProfileFromApi`** already forces **`role: admin`** and reapplies **`adminTierOverride` / `adminSubscriptionOverride`** for founder + env admins.
 
 - **Real causes of “wiped” feel (if it happened):** wrong email (**`kateena.armstrong@frontalslayer.com`** is not founder), **`VITE_ADMIN_EMAILS`** omitting founder Gmail so older **`buildMinimalUserFromSupabaseSession`** left **`role`** undefined, sparse API overwrite for fields **outside** the preserve list, or cleared **`registeredUsers` / site data**. **Sign-out does not clear** **`adminTierOverride`** / **`adminSubscriptionOverride`**.
 - **Follow-up changes:** **`src/utils/syncFromApi.ts`** — **`buildMinimalUserFromSupabaseSession`**: **`role: admin`** when **`isAyoteenzAdminAccount`** (not only **`isAdminEmail`**). **`applyMinimalUserToStorage`**: after merge, set **`role: admin`** and reapply tier/sub overrides for founder + env admins (parity with full profile sync). **`applyAdminSyncPayload`**: **`role`** and override reapply use **`isAdminEmail` OR `isAyoteenzAdminAccount`**. **`buildProfilePayloadForBackend`**: set **`role: admin`** for founder too. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Account profile photo: remove “device only” status popup
+
+Summary: User asked to **remove the popup** that said **photo saved on this device only** (cloud upload failed) when changing the **Account** profile photo.
+
+- **Changes:** **`src/pages/account/page.tsx`** — when **`uploadProfileImage`** fails and **`patchProfileWithRetryQueue`** also fails, **no longer** call **`openProfileImageStatusPopup`** with that message; **`console.warn`** only. Other photo toasts (**PHOTO SAVED.**, **PHOTO SAVED LOCALLY.**, **PHOTO SAVE FAILED.**) unchanged. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Admin client details: empty cart/wishlist vs local; activity not showing
+
+Summary: User reported **kateenaarmstrong** (founder) had **2 cart** and **1 wishlist** items in the app but **Admin → Clients → client details** **Cart** / **Wishlist** tabs showed **empty**; also said **track activity** was **not implemented**.
+
+- **Why cart/wishlist looked empty:** Tabs load **only from Supabase** via **`GET /api/admin/cart`** and **`GET /api/admin/wishlist`** (service role). The shopping UI uses **`localStorage`** (`cartItems`, `wishlistItems`). **`schedulePushCartWishlistToCloud`** debounces **PUT /api/cart** and **PUT /api/wishlist** on navigation / **`cartUpdated`** / **`wishlistUpdated`**; failures are **caught and ignored** in **`pushCartWishlistToCloud.ts`**, so the cloud row can stay **empty** while the browser still has items. The admin UI also treated **`adminCartByUserId[id] === undefined`** as **`[]`**, so it showed **empty before the fetch finished** (no real loading state).
+- **Why activity looked “not implemented”:** **`trackActivity`** is wired in many places and **`registerGlobalClientActivityListeners`** runs from **`App`**, but **`POST /api/activity`** inserts into **`user_activity`**. There was **no repo migration** for that table; inserts can **500**, and **`trackActivity`** **swallows errors** in production (so nothing appears in admin).
+- **Changes:** **`src/pages/admin/clients/page.tsx`** — when opening a client whose email matches **`currentUser`**, call **`schedulePushCartWishlistToCloud()`**; **loading** while cart/wishlist fetch not yet stored; if cloud list is empty but **same browser + same email**, **fallback** to **`localStorage`** cart/wishlist with a short “this browser / check PUT” note; **activity** tab shows **LOADING** until fetch completes and an empty-state hint about **`user_activity`** + failed POSTs. **`src/utils/activity.ts`** — in **`import.meta.env.DEV`**, **`console.warn`** on **`recordActivity`** failure. **`supabase/migrations/20260327210000_user_activity.sql`** — creates **`user_activity`**, index, RLS **insert/select own** for **`authenticated`**. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Admin client details: broken social links (double instagram.com)
+
+Summary: User reported **invalid social URLs** on **Admin → Clients → client details** (e.g. **`instagram.com/instagram.com/vexedmental`** instead of **`instagram.com/vexedmental`**).
+
+- **Cause:** **Account → Settings** (and **sign-up**) saved socials as **`instagram.com/${stripAt(input)}`** without stripping an already-present **`instagram.com/`** (or **`https://…`**) prefix when users pasted URLs. **`getSocialUrl`** in admin then prepended **`https://instagram.com/`** again, producing doubled hosts in the href.
+- **Changes:** **`src/utils/socialLinks.ts`** — **`stripSocialPlatformPrefixes`**, **`profileSocialStorageValue`** (normalized **`facebook.com/…`** etc. for PATCH), **`socialStorageToHttpsUrl`** (admin links). **`src/pages/account/settings/page.tsx`** — **`parseSocialHandle`** uses strip loop; **`pushFullSettingsProfileToCloud`** / **`persistSocials`** use **`profileSocialStorageValue`**. **`src/pages/sign-in/page.tsx`** — sign-up metadata uses **`profileSocialStorageValue`**. **`src/pages/admin/clients/page.tsx`** — removed local **`getSocialUrl`**; uses **`socialStorageToHttpsUrl`**. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Founder-only dummy card at product checkout (QA)
+
+Summary: User wanted **only** the founder admin account (**`kateenaarmstrong@gmail.com`**, **`isAyoteenzAdminAccount`**) to complete **in-app product checkout** with a **dummy/test card** while the rest of the flow stays identical (orders in **`userOrders_*`**, points on the order, summary, reviews path, etc.) for pre-deploy bug-hunting.
+
+- **Decisions:** Dummy PAN is **`4242424242424242`** (**`FOUNDER_CHECKOUT_DUMMY_PAN`**). Allowed only when **signed in** as founder **and** the **checkout email field matches** that session’s email (prevents unlocking dummy mode with a different email). Everyone else must pass **Luhn + length (13–19)** and basic **MM/YY|MM/YYYY** exp plus **3–4 digit** CVN. Non-founder using the dummy PAN gets an explicit error. Summary line shows **`VISA (FOUNDER TEST) ENDING IN 4242`** when dummy is used; **`trackActivity('founder_test_checkout_order', { orderNumber })`** fires on confirm.
+- **Changes:** **`src/utils/checkoutCardValidation.ts`** (new) — **`validateCheckoutCardInput`**, **`canUseFounderDummyCheckout`**, exports. **`src/pages/checkout/page.tsx`** — founder-only hint under **PAYMENT**, card validation after required fields, payment label + activity. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Admin Activity tab: local backup + self-view merge (like cart/wishlist)
+
+Summary: User asked that the **Activity** tab on **Admin → Clients → client details** behave like **cart/wishlist** for **kateenaarmstrong** (tons of on-site activity not visible when cloud **`user_activity`** / POST fails).
+
+- **Changes:** **`src/utils/activity.ts`** — on **`POST /api/activity`** **failure** (not 401), append to **`localStorage`** key **`baw_activity_local_backup`** (capped); **`readLocalActivityForEmail(email)`** returns rows for merge. **`trackActivity`** uses **`.then`/`.catch`** so 401 still does not backup. **`src/pages/admin/clients/page.tsx`** — when **selected client email === `currentUser` email** on this device: merge **server** activity + **local backup**, sort by time; inject **`device_bag_status`** row from **`cartItems` / `wishlistItems`** counts (live preview); **`trackActivity('cart_snapshot'|'wishlist_snapshot', { source: 'admin_client_details_self' })`** after **450ms** when opening own row (nudge server like cart push); labels/captions for local-only rows; empty-state copy mentions local merge. **`motherboard/MEMORY.md`** (this entry).

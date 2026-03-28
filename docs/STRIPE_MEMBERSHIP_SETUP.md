@@ -53,7 +53,12 @@ Redeploy after changing env vars.
 - **Webhooks**: Update `profiles` and append rows to `membership_payments` (initial + renewal via `invoice.paid`). **`invoice.payment_failed`** sets `last_payment_failure_at` and inserts into **`membership_payment_failures`**. **`customer.subscription.updated`** stores **`stripe_subscription_status`** (e.g. `active`, `past_due`, `unpaid`). Successful **`invoice.paid`** clears **`last_payment_failure_at`**. The app does **not** auto-downgrade PREMIUM on `past_due` (Stripe retries; you can add that rule later).
 - **Admin → Revenue → Payments**: Merges **localStorage** demo rows with **Supabase** rows; lines from Stripe show **· STRIPE** in the list.
 
-## 5. Local development
+## 5. Troubleshooting `GET /api/stripe/membership-available`
+
+- You should get **`200`** and **`{"available":true}`** or **`{"available":false}`** — never a Vercel **FUNCTION_INVOCATION_FAILED** page. If you see **500 / crashed**, redeploy after updating the repo: the route is implemented **without** importing `api/_lib` so Vercel’s bundler does not hit the same resolution issues documented on `api/profile.ts` / `api/special-offer-config.ts`.
+- **`available:false`** with **200** means missing **`STRIPE_SECRET_KEY`** or any of the three **`STRIPE_PRICE_ID_*`** on the deployment that serves the request (check **Production** vs **Preview** env).
+
+## 6. Local development
 
 The Vite app proxies `/api` to `VITE_DEV_PROXY_TARGET` / `VITE_API_BASE`. Stripe webhooks need a **public** URL; use [Stripe CLI](https://stripe.com/docs/stripe-cli) to forward:
 
@@ -63,7 +68,7 @@ stripe listen --forward-to https://<your-vercel-preview>/api/stripe/webhook
 
 Use test keys and test price ids in a non-production Vercel env.
 
-## 6. Security notes
+## 7. Security notes
 
 - Clients **cannot** PATCH `stripeCustomerId` / `stripeSubscriptionId` via `/api/profile`; the API strips those fields. Only server routes and webhooks update them.
 - The webhook handler runs on the **Edge** runtime so the raw body is available for signature verification.
