@@ -13,6 +13,34 @@ export function didLastProfileSyncError(): boolean {
   return lastProfileSyncErrored;
 }
 
+/**
+ * `clearAppAuth()` removes `currentUser`, but `registeredUsers` still holds the last saved profile for that email
+ * (including `profileImage`). Without this, `syncProfileFromApi` sees no `existing` user, merges only API fields,
+ * and overwrites `profileImage` with the default when the backend omits or clears `profile_image`.
+ */
+export function getLocalUserSnapshotForEmail(email: string): Record<string, unknown> | null {
+  const e = (email || '').trim().toLowerCase();
+  if (!e) return null;
+  try {
+    const existingRaw = localStorage.getItem('currentUser');
+    if (existingRaw) {
+      const cur = JSON.parse(existingRaw) as Record<string, unknown>;
+      if (((cur.email as string) || '').trim().toLowerCase() === e) return cur;
+    }
+  } catch {
+    // ignore
+  }
+  try {
+    const registeredUsers: unknown[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    const reg = registeredUsers.find(
+      (u: unknown) => (((u as { email?: string }).email || '').trim().toLowerCase() === e)
+    ) as Record<string, unknown> | undefined;
+    return reg && typeof reg === 'object' ? reg : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function syncProfileFromApi(): Promise<Record<string, unknown> | null> {
   try {
     const profile = await getProfile();
@@ -319,11 +347,8 @@ export function applyMinimalUserToStorage(merged: Record<string, unknown>): void
   const email = (merged.email as string) || '';
   if (!email) return;
 
-  const existingRaw = localStorage.getItem('currentUser');
-  const existing = (existingRaw ? JSON.parse(existingRaw) : null) as Record<string, unknown> | null;
-  const sameEmail =
-    existing &&
-    ((existing.email as string) || '').trim().toLowerCase() === email.trim().toLowerCase();
+  const existing = getLocalUserSnapshotForEmail(email);
+  const sameEmail = Boolean(existing);
 
   const readStr = (obj: Record<string, unknown> | null | undefined, ...keys: string[]): string => {
     if (!obj) return '';

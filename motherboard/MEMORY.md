@@ -1846,6 +1846,16 @@ Summary of the **whole conversation so far** in this chat: user asked to impleme
 
 ---
 
+## 2026-03-28 — Stripe: invoice.payment_failed + subscription status on profile
+
+Summary of the **whole conversation so far** in this chat: user asked whether existing webhooks cover **failed renewals / missed payments**; answer was **partially** (`subscription.updated` fires but app did not use status). User asked to **add** handling and what to configure on their side.
+
+- **Decisions / outcomes:** (1) **Migration** `supabase/migrations/20260328120000_stripe_payment_failures.sql` — `profiles.stripe_subscription_status`, `profiles.last_payment_failure_at`; table **`membership_payment_failures`** (append-only rows on each `invoice.payment_failed`). (2) **Webhook** `invoice.payment_failed` — updates **`last_payment_failure_at`**, inserts failure row. **`customer.subscription.updated`** now sets **`stripe_subscription_status`**. **`invoice.paid`** clears **`last_payment_failure_at`**. **`checkout.session.completed`** sets status and clears failure timestamp. **`customer.subscription.deleted`** clears status + failure fields. (3) **Admin** `GET /api/admin/membership-payments` merges successes + failures; Payments tab shows **PAYMENT FAILED**. (4) **Profile API** strips/preserves new billing columns like other Stripe fields. **`profileMapping`** exposes **`stripeSubscriptionStatus`**, **`lastPaymentFailureAt`**. (5) **`MembershipPaymentKind`** includes **`failed`**. Docs **`.env.example`**, **`docs/STRIPE_MEMBERSHIP_SETUP.md`**, **`docs/PROFILES_COLUMNS_AND_APP_MAPPING.md`** updated. (6) **Product:** app does **not** auto-downgrade PREMIUM on `past_due` (documented); ops can add later.
+- **Changes:** `api/stripe/webhook.ts`, `api/admin/membership-payments.ts`, `api/profile.ts`, `api/_lib/profileMapping.ts`, `src/utils/membershipPayments.ts`, `src/pages/admin/revenue/page.tsx`, `supabase/migrations/20260328120000_stripe_payment_failures.sql`, docs, this MEMORY entry.
+- **User action:** Run the new SQL in Supabase; in Stripe **webhook destination**, subscribe to **`invoice.payment_failed`**; redeploy if needed (no new env vars).
+
+---
+
 ## 2026-03-27 — Profile photo persists after sign-in: profile-image writes DB with service role
 
 Summary of the **whole conversation so far** in this chat: user asked to **fix** profile photos **resetting after sign out / sign in**. Prior analysis (handoff): Supabase stores **`profile_image` as a URL** only; **`syncProfileFromApi`** overwrites the avatar when the server has no URL; **`patchProfileWithRetryQueue`** strips base64 so the upload failure fallback never reaches the DB.
@@ -2261,3 +2271,29 @@ Summary: **−6px** was misread as **`paddingTop: 10px`** (**16 − 6**), which 
 Summary: User asked to **reduce space above thumbnails by another 6px**.
 
 - **Changes:** **`src/pages/checkout/page.tsx`** — thumbnail block wrapper **`marginTop: '-6px'`** (with **`paddingTop: 0`** unchanged). **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Checkout: hide loyalty line on subscription upgrade
+
+Summary: User asked to remove **“you’re earning X loyalty points…”** (and the signed-out **sign in to earn** variant) on **subscription upgrade checkout only** — memberships don’t earn that points line.
+
+- **Changes:** **`src/pages/checkout/page.tsx`** — wrap the loyalty block in **`!isSubscriptionUpgrade`**; simplified signed-in **`basePoints`** (no redundant **`isSubscriptionUpgrade`** branch). **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Profile photo reset after sign-out: cause + fix
+
+Summary: User asked **why profile photos reset** after **sign out → sign in**. **Cause:** **`clearAppAuth()`** clears **`currentUser`**, but **`registeredUsers`** still holds the saved row. **`syncProfileFromApi`** / **`applyMinimalUserToStorage`** only treated **`currentUser`** as **`existing`**, so after sign-out **`sameEmail` was false**, merge started from **`{}`**, and when **`getProfile()`** returned empty **`profile_image`**, **`profileImage` in localStorage** fell through to the **default thumb**—wiping the prior photo even though **`registeredUsers`** still had it.
+
+- **Changes:** **`src/utils/syncFromApi.ts`** — added **`getLocalUserSnapshotForEmail(email)`** (prefers matching **`currentUser`**, else matching **`registeredUsers`** row). **`syncProfileFromApi`** and **`applyMinimalUserToStorage`** use it for **`existing` / `sameEmail`** so re-login **preserves local photo** when the API omits image data. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Rewards vs “Membership” nav; Stripe CTA visibility + on-page hints
+
+Summary of the **whole conversation so far** in this chat (including handoff): User clarified there is **no Account → Membership** in the app; they use **Account → Rewards** for the subscription upgrade flow and still did not see **Subscribe with card (Stripe)** on “step 3.” Prior work fixed the Stripe return path to **`/account/rewards`** (not `/account/membership`) in **`createStripeMembershipCheckoutSession`** default in **`src/utils/api.ts`**, and docs were pointed at Rewards → open chart → tier → CTA under **CONFIRM SUBSCRIPTION**.
+
+- **Context:** Align naming with the real UI; explain why the Stripe button is hidden; reduce confusion when env/API/session conditions fail.
+- **Outcomes:** **Account → Rewards** at **`/account/rewards`** is the correct place (same **`MembershipPage`**). The Stripe button renders only when **`showPremiumView`** (premium chart open), **`stripeMembershipAvailable`** (**`GET /api/stripe/membership-available`** → **`available: true`**: **`STRIPE_SECRET_KEY`** + all three **`STRIPE_PRICE_ID_*`** on the server), and **`hasSupabaseSession`** (**Supabase JWT** via **`getAccessToken()`**—not local-only admin fallback without a session). Tier must be chosen (**SELECT**); button is **below CONFIRM SUBSCRIPTION** (and disabled until a tier is selected).
+- **Changes:** **`src/pages/account/membership/page.tsx`** — after availability fetch completes (**`stripeAvailabilityLoaded`**), show short gray copy when Stripe is unavailable (server config) or when Stripe is available but there is **no Supabase session** (sign in with Supabase email). **`motherboard/CORE.md`** — one bullet under **Key flows** documenting Rewards path, no “Membership” nav, and Stripe visibility rules. **`motherboard/MEMORY.md`** (this entry).

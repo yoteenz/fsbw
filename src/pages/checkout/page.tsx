@@ -2418,7 +2418,8 @@ function CheckoutPage() {
                       </div>
                     </div>
 
-                    {/* Subtotal */}
+                    {/* Loyalty line — hidden on subscription upgrade (no points on membership purchase) */}
+                    {!isSubscriptionUpgrade && (
                     <div className="overflow-hidden mt-auto pt-2">
                       {/* Loyalty Points Text — keep gap below cart strip without stealing height from thumbnails */}
                       <div style={{ 
@@ -2436,7 +2437,7 @@ function CheckoutPage() {
                           {isSignedIn ? (
                             <>
                               {(() => {
-                                const basePoints = (isSubscriptionUpgrade || isOnlyDigitalProducts ? 0 : Math.round(pointsEligibleAmount));
+                                const basePoints = isOnlyDigitalProducts ? 0 : Math.round(pointsEligibleAmount);
                                 const multiplier = getPointsMultiplierForUser();
                                 const actualPoints = Math.round(basePoints * multiplier);
                                 const punctuation = actualPoints === 0 ? '.' : '!';
@@ -2460,16 +2461,17 @@ function CheckoutPage() {
                         </p>
                       </div>
                     </div>
+                    )}
                   </div>
                 )}
 
-                {/* BLACK LINE SEPARATOR */}
+                {/* BLACK LINE SEPARATOR — subscription upgrade: loyalty row is hidden; pull line up 6px more */}
                 <div>
                       <div style={{ 
                     paddingTop: '0', 
                     paddingBottom: '1px',
                         borderTop: '1.3px solid #000',
-                    marginTop: '-8px'
+                    marginTop: isSubscriptionUpgrade ? '-14px' : '-8px'
                   }}>
                   </div>
                 </div>

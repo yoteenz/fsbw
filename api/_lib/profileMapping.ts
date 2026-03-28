@@ -21,6 +21,8 @@ export function fromProfileRow(row: Record<string, unknown>): Record<string, unk
     autoRenewMembership: row.auto_renew_membership ?? row.autoRenewMembership,
     subscriptionEndDate: row.subscription_period_end ?? row.subscriptionEndDate,
     subscriptionPurchasedAt: row.subscription_purchased_at ?? row.subscriptionPurchasedAt,
+    stripeSubscriptionStatus: row.stripe_subscription_status ?? row.stripeSubscriptionStatus,
+    lastPaymentFailureAt: row.last_payment_failure_at ?? row.lastPaymentFailureAt,
     currentTierName: row.current_tier_name ?? row.currentTierName ?? row.tier,
     defaultAddress: row.default_address,
     shippingAddress: row.shipping_address,

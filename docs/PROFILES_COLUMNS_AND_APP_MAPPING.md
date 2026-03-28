@@ -30,6 +30,8 @@ These are the **snake_case** column names the backend reads/writes. The API conv
 | `auto_renew_membership` | boolean — synced from Stripe `cancel_at_period_end` |
 | `subscription_period_end` | timestamptz \| null — current period end from Stripe |
 | `subscription_purchased_at` | timestamptz \| null — first subscription activation |
+| `stripe_subscription_status` | string \| null — Stripe `Subscription.status` (`active`, `past_due`, `unpaid`, `canceled`, …) |
+| `last_payment_failure_at` | timestamptz \| null — last `invoice.payment_failed` (cleared on `invoice.paid`) |
 | `current_tier_name` | string \| null (rewards tier: `SILVER`, `RED`, `BLACK`) |
 | `default_address` | object \| null |
 | `shipping_address` | object \| null |
@@ -84,6 +86,8 @@ If the table is missing any of these columns, GET/PATCH and sync may return part
 | `autoRenewMembership` | `auto_renew_membership` | |
 | `subscriptionEndDate` | `subscription_period_end` | ISO string in API JSON |
 | `subscriptionPurchasedAt` | `subscription_purchased_at` | |
+| `stripeSubscriptionStatus` | `stripe_subscription_status` | Webhook / Stripe only (not client PATCH) |
+| `lastPaymentFailureAt` | `last_payment_failure_at` | Webhook only (not client PATCH) |
 | `currentTierName` | `current_tier_name` or `tier` | SILVER \| RED \| BLACK (rewards) |
 | `defaultAddress` | `default_address` | |
 | `shippingAddress` | `shipping_address` | |

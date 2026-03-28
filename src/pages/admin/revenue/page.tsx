@@ -743,7 +743,11 @@ export default function AdminRevenue() {
                               </div>
                               <div className="flex justify-between items-center">
                                 <span style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', textTransform: 'uppercase' }}>
-                                  {row.kind === 'renewal' ? 'RENEWAL' : 'INITIAL'}
+                                  {row.kind === 'failed'
+                                    ? 'PAYMENT FAILED'
+                                    : row.kind === 'renewal'
+                                      ? 'RENEWAL'
+                                      : 'INITIAL'}
                                   {row.autoRenew ? ' · AUTO-RENEW' : ''}
                                   {row.source === 'supabase' ? ' · STRIPE' : ''}
                                 </span>

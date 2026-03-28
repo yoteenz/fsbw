@@ -5,7 +5,7 @@
 
 export const ADMIN_MEMBERSHIP_PAYMENTS_KEY = 'adminMembershipPayments';
 
-export type MembershipPaymentKind = 'initial' | 'renewal';
+export type MembershipPaymentKind = 'initial' | 'renewal' | 'failed';
 
 export type MembershipPaymentRecord = {
   id: string;

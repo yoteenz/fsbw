@@ -43,11 +43,13 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session, 
     .update({
       stripe_customer_id: customerId,
       stripe_subscription_id: subId,
+      stripe_subscription_status: sub.status,
       membership_type: 'PREMIUM',
       subscription_tier: tier,
       auto_renew_membership: sub.cancel_at_period_end !== true,
       subscription_period_end: periodEnd,
       subscription_purchased_at: purchasedAt,
+      last_payment_failure_at: null,
       updated_at: now,
     })
     .eq('id', userId);
@@ -84,6 +86,14 @@ async function handleInvoicePaid(invoice: Stripe.Invoice): Promise<void> {
   const billingPeriodEnd = periodEndSec ? new Date(periodEndSec * 1000).toISOString() : null;
 
   const supabase = getServiceSupabase();
+  await supabase
+    .from('profiles')
+    .update({
+      last_payment_failure_at: null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('stripe_subscription_id', subId);
+
   const { data: prof, error: profErr } = await supabase
     .from('profiles')
     .select('id,email,subscription_tier,stripe_customer_id')
@@ -118,12 +128,58 @@ async function handleInvoicePaid(invoice: Stripe.Invoice): Promise<void> {
   }
 }
 
+async function handleInvoicePaymentFailed(invoice: Stripe.Invoice): Promise<void> {
+  const subId = subscriptionIdFromInvoice(invoice);
+  if (!subId) return;
+  const invId = invoice.id;
+  if (!invId) return;
+
+  const amountDueUsd = (invoice.amount_due ?? 0) / 100;
+  const now = new Date().toISOString();
+  const supabase = getServiceSupabase();
+
+  const { data: prof, error: profErr } = await supabase
+    .from('profiles')
+    .select('id,email,subscription_tier')
+    .eq('stripe_subscription_id', subId)
+    .maybeSingle();
+
+  if (profErr) {
+    console.error('[stripe webhook] invoice.payment_failed profile lookup', profErr);
+    return;
+  }
+  const row = prof as { id: string; email?: string | null; subscription_tier?: string | null } | null;
+  if (!row?.id) return;
+
+  const { error: upErr } = await supabase
+    .from('profiles')
+    .update({
+      last_payment_failure_at: now,
+      updated_at: now,
+    })
+    .eq('id', row.id);
+
+  if (upErr) console.error('[stripe webhook] invoice.payment_failed profile update', upErr);
+
+  const { error: insErr } = await supabase.from('membership_payment_failures').insert({
+    user_id: row.id,
+    user_email: row.email ?? invoice.customer_email ?? null,
+    stripe_invoice_id: invId,
+    stripe_subscription_id: subId,
+    amount_usd: amountDueUsd,
+    currency: invoice.currency || 'usd',
+  });
+
+  if (insErr) console.error('[stripe webhook] invoice.payment_failed insert', insErr);
+}
+
 async function handleSubscriptionUpdated(sub: Stripe.Subscription): Promise<void> {
   const supabase = getServiceSupabase();
   const periodEnd = new Date(sub.current_period_end * 1000).toISOString();
   const { error } = await supabase
     .from('profiles')
     .update({
+      stripe_subscription_status: sub.status,
       auto_renew_membership: sub.cancel_at_period_end !== true,
       subscription_period_end: periodEnd,
       updated_at: new Date().toISOString(),
@@ -139,6 +195,8 @@ async function handleSubscriptionDeleted(sub: Stripe.Subscription): Promise<void
     .from('profiles')
     .update({
       stripe_subscription_id: null,
+      stripe_subscription_status: null,
+      last_payment_failure_at: null,
       membership_type: 'STANDARD',
       subscription_tier: null,
       auto_renew_membership: false,
@@ -188,6 +246,9 @@ export default async function handler(request: Request): Promise<Response> {
         break;
       case 'invoice.paid':
         await handleInvoicePaid(event.data.object as Stripe.Invoice);
+        break;
+      case 'invoice.payment_failed':
+        await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice);
         break;
       case 'customer.subscription.updated':
         await handleSubscriptionUpdated(event.data.object as Stripe.Subscription);

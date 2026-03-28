@@ -234,10 +234,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       const strip = [
         'stripeCustomerId',
         'stripeSubscriptionId',
+        'stripeSubscriptionStatus',
+        'lastPaymentFailureAt',
         'stripe_customer_id',
         'stripe_subscription_id',
+        'stripe_subscription_status',
         'subscription_period_end',
         'subscription_purchased_at',
+        'last_payment_failure_at',
       ] as const;
       for (const k of strip) {
         delete body[k];
@@ -271,8 +275,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       const preserveKeys = [
         'stripe_customer_id',
         'stripe_subscription_id',
+        'stripe_subscription_status',
         'subscription_period_end',
         'subscription_purchased_at',
+        'last_payment_failure_at',
       ] as const;
       for (const k of preserveKeys) {
         if (existingRow && existingRow[k] != null && existingRow[k] !== '') {
