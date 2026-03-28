@@ -1323,13 +1323,7 @@ function AccountPage() {
   const getActiveOrdersCount = (): number => {
     if (!userData?.email) return 0;
     try {
-      const userOrdersKey = `userOrders_${userData.email}`;
-      const storedOrders = localStorage.getItem(userOrdersKey);
-      if (storedOrders) {
-        const orders = JSON.parse(storedOrders);
-        const activeOrders = orders.activeOrders || [];
-        return activeOrders.length;
-      }
+      return activeUserOrdersFromStorageForAccount().length;
     } catch (e) {
       console.error('Error loading order count:', e);
     }
