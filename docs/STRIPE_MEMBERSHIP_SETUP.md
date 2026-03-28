@@ -46,10 +46,10 @@ Redeploy after changing env vars.
 
 ## 4. App behavior
 
-- **Account → Rewards** (route **`/account/rewards`**; the premium chart lives here): Tap **UPGRADE SUBSCRIPTION** (or **CHANGE SUBSCRIPTION**) so the **premium comparison chart** is open, **select a tier (3 / 6 / 12 mo)**, then **Subscribe with card (Stripe)** appears **below CONFIRM SUBSCRIPTION** when:
+- **Account → Rewards** → open the premium chart → **CONFIRM SUBSCRIPTION** navigates to **`/checkout/upgrade`** (subscription checkout). **Subscribe with card (Stripe)** appears **above the in-app CONFIRM ORDER button** on that page only when:
   1. **`GET /api/stripe/membership-available`** returns `{ "available": true }` (Vercel has **`STRIPE_SECRET_KEY`** + all three **`STRIPE_PRICE_ID_*`**), and  
   2. The user has a **Supabase Auth session** (Bearer token from email sign-in — not local-only demo sign-in without Supabase).
-- After Checkout success, Stripe redirects to **`/account/rewards?stripe=success`**, which triggers a profile sync so `currentUser` gets `stripeSubscriptionId`, `membershipType`, `subscriptionTier`, etc.
+- After Stripe Checkout success, the user returns to **`/checkout/upgrade?stripe=success&session_id=…`**; the app syncs the profile then sends them to **`/account/rewards`** so `currentUser` reflects `stripeSubscriptionId`, `membershipType`, `subscriptionTier`, etc. (from webhooks + **`GET /api/profile`**).
 - **Webhooks**: Update `profiles` and append rows to `membership_payments` (initial + renewal via `invoice.paid`). **`invoice.payment_failed`** sets `last_payment_failure_at` and inserts into **`membership_payment_failures`**. **`customer.subscription.updated`** stores **`stripe_subscription_status`** (e.g. `active`, `past_due`, `unpaid`). Successful **`invoice.paid`** clears **`last_payment_failure_at`**. The app does **not** auto-downgrade PREMIUM on `past_due` (Stripe retries; you can add that rule later).
 - **Admin → Revenue → Payments**: Merges **localStorage** demo rows with **Supabase** rows; lines from Stripe show **· STRIPE** in the list.
 

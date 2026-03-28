@@ -1,5 +1,5 @@
 /**
- * Premium membership tiers: same USD base prices as the upgrade chart on Account → Membership.
+ * Premium membership tiers: same USD base prices as the upgrade chart on Account → Rewards.
  * Used at checkout, admin revenue (membership payments), and for renewal amount reference.
  */
 export type SubscriptionTierId = '3months' | '6months' | '12months';

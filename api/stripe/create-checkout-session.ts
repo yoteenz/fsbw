@@ -83,9 +83,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
 
-  let returnPath = typeof body.returnPath === 'string' ? body.returnPath.trim() : '/account/membership';
+  let returnPath = typeof body.returnPath === 'string' ? body.returnPath.trim() : '/checkout/upgrade';
   if (!returnPath.startsWith('/') || returnPath.startsWith('//')) {
-    returnPath = '/account/membership';
+    returnPath = '/checkout/upgrade';
   }
   const sep = returnPath.includes('?') ? '&' : '?';
   const successUrl = `${site}${returnPath}${sep}stripe=success&session_id={CHECKOUT_SESSION_ID}`;

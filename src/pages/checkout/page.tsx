@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { handlePaymentOption, PaymentProvider, PaymentData } from '../../utils/paymentHandlers';
@@ -13,6 +13,12 @@ import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { trackActivity } from '../../utils/activity';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
+import {
+  fetchStripeMembershipAvailable,
+  createStripeMembershipCheckoutSession,
+  getAccessToken,
+} from '../../utils/api';
+import { syncProfileFromApi } from '../../utils/syncFromApi';
 
 function getCardBrandDisplay(fullNumber: string): string {
   const digits = fullNumber.replace(/\D/g, '');
@@ -95,6 +101,7 @@ function getVoucherAddOnPriceForItem(item: any, type: string): number {
 function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [cartCount, setCartCount] = useState(() => {
     try {
@@ -339,6 +346,10 @@ function CheckoutPage() {
 
   // Check if this is a subscription upgrade
   const [isSubscriptionUpgrade, setIsSubscriptionUpgrade] = useState(false);
+  const [stripeMembershipAvailable, setStripeMembershipAvailable] = useState(false);
+  const [hasSupabaseSession, setHasSupabaseSession] = useState(false);
+  const [stripeCheckoutLoading, setStripeCheckoutLoading] = useState(false);
+  const [stripeAvailabilityLoaded, setStripeAvailabilityLoaded] = useState(false);
 
   // Load cart items from localStorage
   const loadCartItems = () => {
@@ -389,6 +400,109 @@ function CheckoutPage() {
   useEffect(() => {
     loadCartItems();
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (!isSubscriptionUpgrade) {
+      setStripeMembershipAvailable(false);
+      setStripeAvailabilityLoaded(false);
+      setHasSupabaseSession(false);
+      return;
+    }
+    let cancelled = false;
+    setStripeAvailabilityLoaded(false);
+    void (async () => {
+      try {
+        const [avail, token] = await Promise.all([fetchStripeMembershipAvailable(), getAccessToken()]);
+        if (!cancelled) {
+          setStripeMembershipAvailable(avail);
+          setHasSupabaseSession(Boolean(token));
+        }
+      } finally {
+        if (!cancelled) setStripeAvailabilityLoaded(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isSubscriptionUpgrade]);
+
+  useEffect(() => {
+    if (!isSubscriptionUpgrade) return;
+    const refreshSession = () => {
+      void getAccessToken().then((t) => setHasSupabaseSession(Boolean(t)));
+    };
+    window.addEventListener('signInStateChanged', refreshSession);
+    window.addEventListener('focus', refreshSession);
+    return () => {
+      window.removeEventListener('signInStateChanged', refreshSession);
+      window.removeEventListener('focus', refreshSession);
+    };
+  }, [isSubscriptionUpgrade]);
+
+  useEffect(() => {
+    if (location.pathname !== '/checkout/upgrade') return;
+    const stripeStatus = searchParams.get('stripe');
+    if (stripeStatus === 'cancel') {
+      setSearchParams({}, { replace: true });
+      return;
+    }
+    if (stripeStatus !== 'success') return;
+    const sessionId = searchParams.get('session_id');
+    const dedupeKey = sessionId ? `baw_stripe_membership_return_${sessionId}` : null;
+    if (dedupeKey) {
+      try {
+        if (sessionStorage.getItem(dedupeKey)) {
+          setSearchParams({}, { replace: true });
+          navigate('/account/rewards', { replace: true });
+          return;
+        }
+        sessionStorage.setItem(dedupeKey, '1');
+      } catch {
+        /* ignore storage; still try sync */
+      }
+    }
+    trackActivity('membership_stripe_return', { status: 'success' });
+    let cancelled = false;
+    void (async () => {
+      await syncProfileFromApi();
+      if (cancelled) return;
+      try {
+        localStorage.removeItem('subscriptionUpgrade');
+        localStorage.removeItem('isSubscriptionUpgrade');
+        localStorage.removeItem('isSubscriptionChange');
+      } catch {
+        /* ignore */
+      }
+      setSearchParams({}, { replace: true });
+      navigate('/account/rewards', { replace: true });
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [location.pathname, searchParams, navigate, setSearchParams]);
+
+  const handleStripeMembershipSubscribe = useCallback(async () => {
+    const tierRaw = cartItems[0]?.subscriptionTier;
+    if (!isSubscriptionTierId(tierRaw)) {
+      window.alert('SUBSCRIPTION TIER MISSING. RETURN TO REWARDS AND CHOOSE A TIER AGAIN.');
+      return;
+    }
+    setStripeCheckoutLoading(true);
+    try {
+      const token = await getAccessToken();
+      if (!token) {
+        window.alert('SIGN IN WITH YOUR SUPABASE ACCOUNT TO USE STRIPE SUBSCRIPTIONS.');
+        return;
+      }
+      trackActivity('membership_checkout_start', { tier: tierRaw });
+      const url = await createStripeMembershipCheckoutSession(tierRaw, '/checkout/upgrade');
+      window.location.assign(url);
+    } catch (e) {
+      window.alert(e instanceof Error ? e.message : 'COULD NOT START CHECKOUT');
+    } finally {
+      setStripeCheckoutLoading(false);
+    }
+  }, [cartItems]);
 
   // Subscription upgrades default to auto-renew; when auto-renew is enabled we hide Pay-in-4 style plans.
   useEffect(() => {
@@ -2482,7 +2596,7 @@ function CheckoutPage() {
                     <input
                       type="text"
                       className="discount-code-input"
-                      placeholder="REFERRAL, DISCOUNT CODE OR GIFT CARD"
+                      placeholder="REFERRAL CODE, DISCOUNT CODE OR GIFT CARD"
                       value={isDiscountCodeFocused ? discountCode : discountCodeDisplay || discountCode}
                       onChange={(e) => {
                         let rawValue = e.target.value;
@@ -4856,6 +4970,73 @@ function CheckoutPage() {
             )}
           </div>
           
+          {/* Stripe Billing — only on subscription upgrade checkout (`/checkout/upgrade`) */}
+          {!showMobileMenu && isSubscriptionUpgrade && (
+            <div className="px-0 md:px-0" style={{ marginTop: '8px', marginBottom: '12px' }}>
+              {stripeAvailabilityLoaded && !stripeMembershipAvailable && (
+                <p
+                  style={{
+                    fontFamily: '"Futura PT Book"',
+                    fontSize: '9px',
+                    color: '#808080',
+                    margin: '0 0 8px 0',
+                    textTransform: 'uppercase',
+                    textAlign: 'center',
+                    lineHeight: 1.45,
+                  }}
+                >
+                  STRIPE CARD CHECKOUT UNAVAILABLE — SERVER NEEDS STRIPE SECRET KEY + ALL THREE PRICE IDS (SEE DOCS).
+                </p>
+              )}
+              {stripeAvailabilityLoaded && stripeMembershipAvailable && !hasSupabaseSession && (
+                <p
+                  style={{
+                    fontFamily: '"Futura PT Book"',
+                    fontSize: '9px',
+                    color: '#808080',
+                    margin: '0 0 8px 0',
+                    textTransform: 'uppercase',
+                    textAlign: 'center',
+                    lineHeight: 1.45,
+                  }}
+                >
+                  TO PAY WITH CARD VIA STRIPE, SIGN IN WITH YOUR SUPABASE EMAIL (NOT LOCAL-ONLY SIGN-IN).
+                </p>
+              )}
+              {stripeMembershipAvailable && hasSupabaseSession && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => void handleStripeMembershipSubscribe()}
+                    disabled={stripeCheckoutLoading}
+                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 disabled:opacity-50"
+                    style={{
+                      borderWidth: '1.3px',
+                      color: '#000000',
+                      fontFamily: '"Futura PT Medium"',
+                      backgroundColor: '#FFFFFF',
+                    }}
+                  >
+                    {stripeCheckoutLoading ? 'REDIRECTING…' : 'SUBSCRIBE WITH CARD (STRIPE)'}
+                  </button>
+                  <p
+                    style={{
+                      fontFamily: '"Futura PT Book"',
+                      fontSize: '8px',
+                      color: '#808080',
+                      margin: '6px 0 0 0',
+                      textTransform: 'uppercase',
+                      textAlign: 'center',
+                      lineHeight: 1.35,
+                    }}
+                  >
+                    RECURRING BILLING — SAME TIERS AS CHART. IN-APP FORM BELOW STILL AVAILABLE.
+                  </p>
+                </>
+              )}
+            </div>
+          )}
+
           {/* CONFIRM ORDER BUTTON - Outside main card */}
           {!showMobileMenu && (
             <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>

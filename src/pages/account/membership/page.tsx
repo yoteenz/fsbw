@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../../constants/tiers';
@@ -14,12 +14,6 @@ import moreWaysIcon from '../../../assets/icons/more-ways.svg?url';
 import additionalFeaturesIcon from '../../../assets/icons/additional-features.svg?url';
 import { isAyoteenzAdminAccount, isMockDataAccount, getEffectiveSubscriptionTier, getEffectiveTierName, ADMIN_SUBSCRIPTION_OVERRIDE_KEY, ADMIN_TIER_OVERRIDE_KEY, clearAppAuth } from '../../../utils/adminAuth';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
-import {
-  fetchStripeMembershipAvailable,
-  createStripeMembershipCheckoutSession,
-  getAccessToken,
-} from '../../../utils/api';
-import { syncProfileFromApi } from '../../../utils/syncFromApi';
 import { trackActivity } from '../../../utils/activity';
 
 const BRAND_GRAY = '#808080';
@@ -51,7 +45,6 @@ const EARN_TASKS = [
 
 function MembershipPage() {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
   const [cartCount, setCartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
@@ -448,10 +441,6 @@ function MembershipPage() {
   const [showCancelConfirmModal, setShowCancelConfirmModal] = useState(false);
   const [showLoyaltyRewards, setShowLoyaltyRewards] = useState(false);
   const [showBenefitsModal, setShowBenefitsModal] = useState(false);
-  const [stripeMembershipAvailable, setStripeMembershipAvailable] = useState(false);
-  const [hasSupabaseSession, setHasSupabaseSession] = useState(false);
-  const [stripeCheckoutLoading, setStripeCheckoutLoading] = useState(false);
-  const [stripeAvailabilityLoaded, setStripeAvailabilityLoaded] = useState(false);
 
   // Clear rewards card alerts when user visits rewards page (they've seen tier/subscription updates)
   useEffect(() => {
@@ -465,57 +454,6 @@ function MembershipPage() {
       window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
     } catch (_) {}
   }, [userData?.email]);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const [avail, token] = await Promise.all([fetchStripeMembershipAvailable(), getAccessToken()]);
-        if (!cancelled) {
-          setStripeMembershipAvailable(avail);
-          setHasSupabaseSession(Boolean(token));
-        }
-      } finally {
-        if (!cancelled) setStripeAvailabilityLoaded(true);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    const refreshSession = () => {
-      getAccessToken().then((t) => setHasSupabaseSession(Boolean(t)));
-    };
-    window.addEventListener('signInStateChanged', refreshSession);
-    window.addEventListener('focus', refreshSession);
-    return () => {
-      window.removeEventListener('signInStateChanged', refreshSession);
-      window.removeEventListener('focus', refreshSession);
-    };
-  }, []);
-
-  const stripeReturnStatus = searchParams.get('stripe');
-  useEffect(() => {
-    if (stripeReturnStatus !== 'success') return;
-    trackActivity('membership_stripe_return', { status: 'success' });
-    let cancelled = false;
-    (async () => {
-      await syncProfileFromApi();
-      if (cancelled) return;
-      try {
-        const cu = localStorage.getItem('currentUser');
-        if (cu) setUserData(JSON.parse(cu));
-      } catch {
-        /* ignore */
-      }
-      setSearchParams({}, { replace: true });
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [stripeReturnStatus, setSearchParams]);
 
   // Subscription tier data (USD base; single source: constants/subscriptionPricing)
   const subscriptionTiers = Object.fromEntries(
@@ -728,28 +666,6 @@ function MembershipPage() {
   });
   /** Effective premium for display: when Standard tab (or no premium) show upgrade section; when 3/6/12 show INCLUDED section. */
   const hasEffectivePremium = getEffectiveSubscriptionTier(userData) != null;
-
-  const handleStripeSubscribe = useCallback(async () => {
-    if (!selectedTier) {
-      setShowValidationModal(true);
-      return;
-    }
-    setStripeCheckoutLoading(true);
-    try {
-      const token = await getAccessToken();
-      if (!token) {
-        window.alert('SIGN IN WITH YOUR SUPABASE ACCOUNT TO USE STRIPE SUBSCRIPTIONS.');
-        return;
-      }
-      trackActivity('membership_checkout_start', { tier: selectedTier });
-      const url = await createStripeMembershipCheckoutSession(selectedTier as SubscriptionTierId);
-      window.location.assign(url);
-    } catch (e) {
-      window.alert(e instanceof Error ? e.message : 'COULD NOT START CHECKOUT');
-    } finally {
-      setStripeCheckoutLoading(false);
-    }
-  }, [selectedTier]);
 
   const handleUpgradeButtonClick = () => {
     if (showPremiumView) {
@@ -2604,71 +2520,6 @@ fontFamily: '"Futura PT Book"',
                           {showPremiumView ? 'CONFIRM SUBSCRIPTION' : ((userData?.subscriptionTier === '12months' || (isMockDataAccount(userData) && !userData?.subscriptionTier)) ? 'CHANGE SUBSCRIPTION' : 'UPGRADE SUBSCRIPTION')}
                         </button>
                       </div>
-                      {showPremiumView && stripeAvailabilityLoaded && !stripeMembershipAvailable && (
-                        <div className="px-0 md:px-0" style={{ marginBottom: '8px' }}>
-                          <p
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '9px',
-                              color: '#808080',
-                              margin: 0,
-                              textTransform: 'uppercase',
-                              textAlign: 'center',
-                              lineHeight: 1.45,
-                            }}
-                          >
-                            STRIPE CARD CHECKOUT UNAVAILABLE — SERVER NEEDS STRIPE SECRET KEY + ALL THREE PRICE IDS (SEE DOCS).
-                          </p>
-                        </div>
-                      )}
-                      {showPremiumView && stripeAvailabilityLoaded && stripeMembershipAvailable && !hasSupabaseSession && (
-                        <div className="px-0 md:px-0" style={{ marginBottom: '8px' }}>
-                          <p
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '9px',
-                              color: '#808080',
-                              margin: 0,
-                              textTransform: 'uppercase',
-                              textAlign: 'center',
-                              lineHeight: 1.45,
-                            }}
-                          >
-                            TO SUBSCRIBE WITH CARD, SIGN IN WITH YOUR SUPABASE EMAIL (NOT LOCAL-ONLY SIGN-IN).
-                          </p>
-                        </div>
-                      )}
-                      {showPremiumView && stripeMembershipAvailable && hasSupabaseSession && (
-                        <div className="px-0 md:px-0" style={{ marginBottom: '8px' }}>
-                          <button
-                            type="button"
-                            onClick={() => void handleStripeSubscribe()}
-                            disabled={stripeCheckoutLoading || !selectedTier}
-                            className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 disabled:opacity-50"
-                            style={{
-                              borderWidth: '1.3px',
-                              color: '#000000',
-                              fontFamily: '"Futura PT Medium"',
-                              backgroundColor: '#FFFFFF',
-                            }}
-                          >
-                            {stripeCheckoutLoading ? 'REDIRECTING…' : 'SUBSCRIBE WITH CARD (STRIPE)'}
-                          </button>
-                          <p
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '8px',
-                              color: '#808080',
-                              margin: '6px 0 0 0',
-                              textTransform: 'uppercase',
-                              textAlign: 'center',
-                              lineHeight: 1.35,
-                            }}
-                          >
-                            RECURRING BILLING — SAME TIERS AS CHART. IN-APP CHECKOUT REMAINS AVAILABLE ABOVE.
-                          </p>
-                        </div>
-                      )}
                       {/* CANCEL Button - below Confirm when subscription upgrade chart is open; returns to rewards page */}
                       {showPremiumView && (
                         <div className="px-0 md:px-0" style={{ marginBottom: '10px' }}>
@@ -2723,71 +2574,6 @@ fontFamily: '"Futura PT Book"',
                           {showPremiumView ? 'CONFIRM SUBSCRIPTION' : 'UPGRADE SUBSCRIPTION'}
                         </button>
                       </div>
-                      {showPremiumView && stripeAvailabilityLoaded && !stripeMembershipAvailable && (
-                        <div className="px-0 md:px-0" style={{ marginBottom: '8px' }}>
-                          <p
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '9px',
-                              color: '#808080',
-                              margin: 0,
-                              textTransform: 'uppercase',
-                              textAlign: 'center',
-                              lineHeight: 1.45,
-                            }}
-                          >
-                            STRIPE CARD CHECKOUT UNAVAILABLE — SERVER NEEDS STRIPE SECRET KEY + ALL THREE PRICE IDS (SEE DOCS).
-                          </p>
-                        </div>
-                      )}
-                      {showPremiumView && stripeAvailabilityLoaded && stripeMembershipAvailable && !hasSupabaseSession && (
-                        <div className="px-0 md:px-0" style={{ marginBottom: '8px' }}>
-                          <p
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '9px',
-                              color: '#808080',
-                              margin: 0,
-                              textTransform: 'uppercase',
-                              textAlign: 'center',
-                              lineHeight: 1.45,
-                            }}
-                          >
-                            TO SUBSCRIBE WITH CARD, SIGN IN WITH YOUR SUPABASE EMAIL (NOT LOCAL-ONLY SIGN-IN).
-                          </p>
-                        </div>
-                      )}
-                      {showPremiumView && stripeMembershipAvailable && hasSupabaseSession && (
-                        <div className="px-0 md:px-0" style={{ marginBottom: '8px' }}>
-                          <button
-                            type="button"
-                            onClick={() => void handleStripeSubscribe()}
-                            disabled={stripeCheckoutLoading || !selectedTier}
-                            className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 disabled:opacity-50"
-                            style={{
-                              borderWidth: '1.3px',
-                              color: '#000000',
-                              fontFamily: '"Futura PT Medium"',
-                              backgroundColor: '#FFFFFF',
-                            }}
-                          >
-                            {stripeCheckoutLoading ? 'REDIRECTING…' : 'SUBSCRIBE WITH CARD (STRIPE)'}
-                          </button>
-                          <p
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '8px',
-                              color: '#808080',
-                              margin: '6px 0 0 0',
-                              textTransform: 'uppercase',
-                              textAlign: 'center',
-                              lineHeight: 1.35,
-                            }}
-                          >
-                            RECURRING BILLING — SAME TIERS AS CHART. IN-APP CHECKOUT REMAINS AVAILABLE ABOVE.
-                          </p>
-                        </div>
-                      )}
                       {showPremiumView && (
                         <div className="px-0 md:px-0" style={{ marginBottom: '20px' }}>
                           <button

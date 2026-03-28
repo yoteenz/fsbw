@@ -141,8 +141,8 @@ export async function fetchStripeMembershipAvailable(): Promise<boolean> {
  */
 export async function createStripeMembershipCheckoutSession(
   tier: '3months' | '6months' | '12months',
-  /** Rewards page hosts premium chart + Stripe CTA (`MembershipPage`). */
-  returnPath = '/account/rewards'
+  /** Subscription upgrade checkout (`/checkout/upgrade`) — Stripe return + success handling live there. */
+  returnPath = '/checkout/upgrade'
 ): Promise<string> {
   const res = await apiFetch('/api/stripe/create-checkout-session', {
     method: 'POST',

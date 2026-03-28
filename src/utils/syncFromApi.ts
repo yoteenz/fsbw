@@ -5,7 +5,13 @@
  * We never remove adminSubscriptionOverride or adminTierOverride (rewards/membership page); only explicit Sign Out clears auth.
  */
 import { getProfile, getOrders, getCart, getWishlist, getAccessToken } from './api';
-import { isAdminEmail, persistAuthBackup, ADMIN_TIER_OVERRIDE_KEY, ADMIN_SUBSCRIPTION_OVERRIDE_KEY } from './adminAuth';
+import {
+  isAdminEmail,
+  isAyoteenzAdminAccount,
+  persistAuthBackup,
+  ADMIN_TIER_OVERRIDE_KEY,
+  ADMIN_SUBSCRIPTION_OVERRIDE_KEY,
+} from './adminAuth';
 
 let lastProfileSyncErrored = false;
 
@@ -67,15 +73,26 @@ export async function syncProfileFromApi(): Promise<Record<string, unknown> | nu
       currentTierName: profile.currentTierName ?? profile.current_tier_name ?? profile.tier,
     } as Record<string, unknown>;
 
+    const emailNorm = email.trim().toLowerCase();
     const existingRaw = localStorage.getItem('currentUser');
-    const existing = (existingRaw ? JSON.parse(existingRaw) : null) as Record<string, unknown> | null;
-    const sameEmail = existing && ((existing.email as string) || '').toLowerCase() === email.toLowerCase();
+    let existing = (existingRaw ? JSON.parse(existingRaw) : null) as Record<string, unknown> | null;
+    const currentUserMatchesApi =
+      existing &&
+      ((existing.email as string) || '').trim().toLowerCase() === emailNorm;
+    // If currentUser is missing, wrong account, or stale, still merge from registeredUsers so API sync does not wipe local profile fields.
+    if (!currentUserMatchesApi) {
+      existing = getLocalUserSnapshotForEmail(email);
+    }
+    const sameEmail = Boolean(existing);
 
     const merged = {
       ...(sameEmail && existing ? existing : {}),
       ...normalized,
       email,
-      role: isAdminEmail(email) ? 'admin' : (profile.role as string),
+      role:
+        isAdminEmail(email) || isAyoteenzAdminAccount({ email })
+          ? 'admin'
+          : (profile.role as string),
     } as Record<string, unknown>;
 
     // Do not wipe useful local values when backend returns null/empty fields.
@@ -93,6 +110,19 @@ export async function syncProfileFromApi(): Promise<Record<string, unknown> | nu
             (merged as Record<string, unknown>)[key] = existingVal;
           }
         }
+      }
+    }
+
+    // Keep founder / admin test toggles aligned with localStorage (same as applyAdminSyncPayload).
+    if (isAdminEmail(email) || isAyoteenzAdminAccount({ email })) {
+      const tierOverride = (localStorage.getItem(ADMIN_TIER_OVERRIDE_KEY) || '').trim().toUpperCase();
+      if (tierOverride === 'SILVER' || tierOverride === 'RED' || tierOverride === 'BLACK') {
+        merged.currentTierName = tierOverride;
+        merged.tier = tierOverride;
+      }
+      const subOverride = (localStorage.getItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY) || '').trim().toLowerCase();
+      if (subOverride === '3months' || subOverride === '6months' || subOverride === '12months') {
+        merged.subscriptionTier = subOverride;
       }
     }
 
@@ -206,7 +236,10 @@ export function applyAdminSyncPayload(
       ...(sameEmail && existing ? existing : {}),
       ...normalized,
       email: (payload.profile.email as string) || e,
-      role: isAdminEmail(e) ? 'admin' : (payload.profile.role as string),
+      role:
+        isAdminEmail(e) || isAyoteenzAdminAccount({ email: e })
+          ? 'admin'
+          : (payload.profile.role as string),
     } as Record<string, unknown>;
     if (options?.preservePassword) merged.password = options.preservePassword;
 
@@ -227,7 +260,7 @@ export function applyAdminSyncPayload(
       }
     }
 
-    if (isAdminEmail(e)) {
+    if (isAdminEmail(e) || isAyoteenzAdminAccount({ email: e })) {
       const tierOverride = (localStorage.getItem(ADMIN_TIER_OVERRIDE_KEY) || '').trim().toUpperCase();
       if (tierOverride === 'SILVER' || tierOverride === 'RED' || tierOverride === 'BLACK') {
         merged.currentTierName = tierOverride;
@@ -329,7 +362,7 @@ export function buildMinimalUserFromSupabaseSession(sessionUser: {
     referralCode: referralCode || undefined,
     createdAt,
     membershipType: 'STANDARD',
-    role: isAdminEmail(email) ? 'admin' : undefined,
+    role: isAdminEmail(email) || isAyoteenzAdminAccount({ email }) ? 'admin' : undefined,
     giftCardBalance: 10,
     hasMadeFirstPurchase: false,
     loyaltyPoints: 0,
@@ -386,7 +419,8 @@ export function applyMinimalUserToStorage(merged: Record<string, unknown>): void
   };
 
   if (sameEmail && existing && hasRicherStoredIdentity(existing, merged)) {
-    localStorage.setItem('isSignedIn', 'true');
+    // After explicit sign-out, `currentUser` is cleared but `registeredUsers` may still hold the full row.
+    // This branch must restore `currentUser` — otherwise isSignedIn is true with no user object (no email, no admin UI, no name).
     const existingImg =
       (typeof existing.profileImage === 'string' && existing.profileImage.trim())
         ? existing.profileImage
@@ -394,6 +428,37 @@ export function applyMinimalUserToStorage(merged: Record<string, unknown>): void
           ? existing.profile_image
           : '';
     if (existingImg) localStorage.setItem('profileImage', String(existingImg));
+
+    const restored: Record<string, unknown> = {
+      ...existing,
+      id: merged.id ?? existing.id,
+      email: (merged.email as string) || (existing.email as string) || email,
+    };
+    if (isAdminEmail(email) || isAyoteenzAdminAccount({ email })) {
+      restored.role = 'admin';
+      const tierOverride = (localStorage.getItem(ADMIN_TIER_OVERRIDE_KEY) || '').trim().toUpperCase();
+      if (tierOverride === 'SILVER' || tierOverride === 'RED' || tierOverride === 'BLACK') {
+        restored.currentTierName = tierOverride;
+        restored.tier = tierOverride;
+      }
+      const subOverride = (localStorage.getItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY) || '').trim().toLowerCase();
+      if (subOverride === '3months' || subOverride === '6months' || subOverride === '12months') {
+        restored.subscriptionTier = subOverride;
+      }
+    }
+
+    localStorage.setItem('currentUser', JSON.stringify(restored));
+    localStorage.setItem('isSignedIn', 'true');
+    const registeredUsersEarly: unknown[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    const idxEarly = registeredUsersEarly.findIndex(
+      (u: unknown) => ((u as { email?: string }).email || '').toLowerCase() === email.toLowerCase()
+    );
+    if (idxEarly !== -1) {
+      (registeredUsersEarly as Record<string, unknown>[])[idxEarly] = restored;
+    } else {
+      registeredUsersEarly.push(restored);
+    }
+    localStorage.setItem('registeredUsers', JSON.stringify(registeredUsersEarly));
     persistAuthBackup();
     return;
   }
@@ -421,6 +486,20 @@ export function applyMinimalUserToStorage(merged: Record<string, unknown>): void
           preserved[key] = existingVal;
         }
       }
+    }
+  }
+
+  // Match syncProfileFromApi: founder + env-listed admins keep admin role and Rewards test toggles from localStorage.
+  if (isAdminEmail(email) || isAyoteenzAdminAccount({ email })) {
+    preserved.role = 'admin';
+    const tierOverride = (localStorage.getItem(ADMIN_TIER_OVERRIDE_KEY) || '').trim().toUpperCase();
+    if (tierOverride === 'SILVER' || tierOverride === 'RED' || tierOverride === 'BLACK') {
+      preserved.currentTierName = tierOverride;
+      preserved.tier = tierOverride;
+    }
+    const subOverride = (localStorage.getItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY) || '').trim().toLowerCase();
+    if (subOverride === '3months' || subOverride === '6months' || subOverride === '12months') {
+      preserved.subscriptionTier = subOverride;
     }
   }
 
@@ -474,7 +553,7 @@ export function buildProfilePayloadForBackend(minimal: Record<string, unknown>):
     loyaltyPoints: Number(minimal.loyaltyPoints) || 0,
     unlockedDiscounts: Array.isArray(minimal.unlockedDiscounts) ? minimal.unlockedDiscounts : ['signup'],
   };
-  if (email && isAdminEmail(email)) {
+  if (email && (isAdminEmail(email) || isAyoteenzAdminAccount({ email }))) {
     payload.role = 'admin';
   }
   return payload;

@@ -2297,3 +2297,57 @@ Summary of the **whole conversation so far** in this chat (including handoff): U
 - **Context:** Align naming with the real UI; explain why the Stripe button is hidden; reduce confusion when env/API/session conditions fail.
 - **Outcomes:** **Account → Rewards** at **`/account/rewards`** is the correct place (same **`MembershipPage`**). The Stripe button renders only when **`showPremiumView`** (premium chart open), **`stripeMembershipAvailable`** (**`GET /api/stripe/membership-available`** → **`available: true`**: **`STRIPE_SECRET_KEY`** + all three **`STRIPE_PRICE_ID_*`** on the server), and **`hasSupabaseSession`** (**Supabase JWT** via **`getAccessToken()`**—not local-only admin fallback without a session). Tier must be chosen (**SELECT**); button is **below CONFIRM SUBSCRIPTION** (and disabled until a tier is selected).
 - **Changes:** **`src/pages/account/membership/page.tsx`** — after availability fetch completes (**`stripeAvailabilityLoaded`**), show short gray copy when Stripe is unavailable (server config) or when Stripe is available but there is **no Supabase session** (sign in with Supabase email). **`motherboard/CORE.md`** — one bullet under **Key flows** documenting Rewards path, no “Membership” nav, and Stripe visibility rules. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Stripe membership CTA moved to `/checkout/upgrade` only
+
+Summary: User asked for **Stripe subscription functionality only on the subscription checkout page**, not on **Account → Rewards**.
+
+- **Changes:**
+  - **`src/pages/account/membership/page.tsx`** — removed all Stripe UI, availability/session fetches, **`handleStripeSubscribe`**, **`useSearchParams`** / **`?stripe=success`** handling, and related **`api` / `syncFromApi`** imports. Rewards flow unchanged: chart → **CONFIRM SUBSCRIPTION** → **`/checkout/upgrade`** via existing **`localStorage`** + **`navigate`**.
+  - **`src/pages/checkout/page.tsx`** — on **`isSubscriptionUpgrade`** only: fetch **`/api/stripe/membership-available`** + **`getAccessToken()`**, show the same unavailable / sign-in hints and **Subscribe with card (Stripe)** button above **CONFIRM ORDER**; **`handleStripeMembershipSubscribe`** uses tier from **`cartItems[0].subscriptionTier`**. Stripe return: **`/checkout/upgrade?stripe=success`** (with optional **`session_id`** dedupe via **`sessionStorage`**) → **`syncProfileFromApi()`** → clear upgrade **`localStorage`** keys → **`navigate('/account/rewards', { replace: true })`**.
+  - **`src/utils/api.ts`** — **`createStripeMembershipCheckoutSession`** default **`returnPath`** → **`/checkout/upgrade`**.
+  - **`api/stripe/create-checkout-session.ts`** — default / invalid **`returnPath`** fallback → **`/checkout/upgrade`** (was **`/account/membership`**).
+  - **`docs/STRIPE_MEMBERSHIP_SETUP.md`** §4 — documents checkout-only Stripe CTA and post-success flow.
+  - **`motherboard/CORE.md`** — Rewards vs **`/checkout/upgrade`** Stripe placement updated.
+  - **`src/constants/subscriptionPricing.ts`** — comment fix (Rewards, not “Membership”).
+  - **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Checkout discount input placeholder: “REFERRAL CODE”
+
+Summary: User asked to change checkout **placeholder** copy to **“REFERRAL CODE, DISCOUNT CODE OR GIFT CARD”** (add **“code”** after referral).
+
+- **Changes:** **`src/pages/checkout/page.tsx`** — discount code **`input`** **`placeholder`** updated (only occurrence in **`src`**). **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Founder admin profile “wiped”; sync merge + role
+
+Summary: User (**kateenaarmstrong** admin) saw **Account** profile/settings data reset, **ADMIN: FOUNDER** and **Rewards** tier/membership toggles gone—“like the account no longer exists.”
+
+- **Why (root causes):**
+  1. **`syncProfileFromApi`** only used **`currentUser`** as the merge base when emails matched. If **`currentUser` was missing or a different email** (backup restore, race, partial clear), merge started from **`{}`**, so a **sparse Supabase `profiles` row overwrote** **`registeredUsers`** and wiped local name/socials/membership fields.
+  2. **`ADMIN: FOUNDER` / Rewards toggles** depend on **`isAyoteenzAdminAccount(userData)`** → email must be exactly **`kateenaarmstrong@gmail.com`**. Signing in with **`kateena.armstrong@frontalslayer.com`** (the separate **mock “Kateena”** admin email in code) is **not** founder—no FOUNDER row, different mock rules.
+  3. **`role`** in merged user was **`admin` only when `isAdminEmail(email)`**. If **`VITE_ADMIN_EMAILS`** is set and **omits** the founder Gmail, **`role`** could become non-admin → **`isMockDataAccount`** (requires founder + admin role or admin email) turns **off**, changing premium/mock behavior.
+- **Changes:** **`src/utils/syncFromApi.ts`** — merge base falls back to **`getLocalUserSnapshotForEmail(email)`** when **`currentUser` doesn’t match API email;** set **`role` to `admin` when `isAdminEmail` OR `isAyoteenzAdminAccount`;** after preserve loop, reapply **`adminTierOverride` / `adminSubscriptionOverride`** from localStorage for those users (parity with **`applyAdminSyncPayload`**). **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Sign-in after sign-out: profile “empty” except photo (`applyMinimalUserToStorage`)
+
+Summary: User reported that after **sign out → sign in**, **name, email in UI, admin tag, Rewards toggles** disappeared while **profile photo** still showed—like the account reset except the image.
+
+- **Cause:** In **`applyMinimalUserToStorage`**, when **`hasRicherStoredIdentity`** was true (stored **`registeredUsers`** row had name/birthday/image but Supabase minimal user did not), the code **returned early** after setting **`isSignedIn`** and **`profileImage`** only. **`clearAppAuth()`** on sign-out removes **`currentUser`**, so that path left the user **signed in with no `currentUser`** → React **`userData`** null/empty → no email match for founder UI, no admin row, while **`profileImage`** still displayed from the separate key.
+- **Changes:** **`src/utils/syncFromApi.ts`** — in that branch, **rebuild `currentUser`** from **`existing` + session `id`/`email`**, reapply admin **`role`** and tier/subscription overrides from localStorage, update **`registeredUsers`**, then **`persistAuthBackup()`**. **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-03-27 — Photo sync fix vs founder admin data (clarify + harden)
+
+Summary: User asked whether **`getLocalUserSnapshotForEmail`** / profile merge **reset** **`kateenaarmstrong@gmail.com`** admin privileges (**ADMIN: FOUNDER**, Rewards tier/sub toggles, settings). **Answer:** That change **does not strip** admin data—it **adds** **`registeredUsers`** as merge base when **`currentUser`** is missing so **fewer** fields are wiped when the API is sparse; **`syncProfileFromApi`** already forces **`role: admin`** and reapplies **`adminTierOverride` / `adminSubscriptionOverride`** for founder + env admins.
+
+- **Real causes of “wiped” feel (if it happened):** wrong email (**`kateena.armstrong@frontalslayer.com`** is not founder), **`VITE_ADMIN_EMAILS`** omitting founder Gmail so older **`buildMinimalUserFromSupabaseSession`** left **`role`** undefined, sparse API overwrite for fields **outside** the preserve list, or cleared **`registeredUsers` / site data**. **Sign-out does not clear** **`adminTierOverride`** / **`adminSubscriptionOverride`**.
+- **Follow-up changes:** **`src/utils/syncFromApi.ts`** — **`buildMinimalUserFromSupabaseSession`**: **`role: admin`** when **`isAyoteenzAdminAccount`** (not only **`isAdminEmail`**). **`applyMinimalUserToStorage`**: after merge, set **`role: admin`** and reapply tier/sub overrides for founder + env admins (parity with full profile sync). **`applyAdminSyncPayload`**: **`role`** and override reapply use **`isAdminEmail` OR `isAyoteenzAdminAccount`**. **`buildProfilePayloadForBackend`**: set **`role: admin`** for founder too. **`motherboard/MEMORY.md`** (this entry).
