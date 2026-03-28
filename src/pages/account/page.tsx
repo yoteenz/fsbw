@@ -2153,7 +2153,7 @@ function AccountPage() {
                           >
                             {displayMembershipType} REWARDS MEMBER
                           </p>
-                          {isAyoteenzAdminAccount(userData) && (
+                          {isAyoteenzAdminAccount(userData) && !founderViewAsClient && (
                             <p
                               role="button"
                               tabIndex={0}
