@@ -866,12 +866,8 @@ function AccountPage() {
     if (!userData?.email) return null;
     
     try {
-      const userOrdersKey = `userOrders_${userData.email}`;
-      const storedOrders = localStorage.getItem(userOrdersKey);
-      if (!storedOrders) return null;
-      
-      const orders = JSON.parse(storedOrders);
-      const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
+      const allOrders = mergeUserOrdersFromStorageForAccount();
+      if (allOrders.length === 0) return null;
       
       let highestTier: string | null = null;
       const periods: { [key: string]: number } = {};
