@@ -926,26 +926,16 @@ function AccountPage() {
     // For real users, calculate from orders
     if (userData?.email) {
       try {
-        const userOrdersKey = `userOrders_${userData.email}`;
-        const storedOrders = localStorage.getItem(userOrdersKey);
-        if (storedOrders) {
-          const orders = JSON.parse(storedOrders);
-          const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
-          
-          // Calculate spending in current period
-          allOrders.forEach((order: any) => {
-            if (order.date) {
-              // Parse date (format: MM-DD-YYYY)
-              const [month, day, year] = order.date.split('-').map(Number);
-              const orderDate = new Date(year, month - 1, day);
-              
-              // Check if order is within current period
-              if (orderDate >= period.start && orderDate <= period.end) {
-                totalSpending += order.total || 0;
-              }
+        const allOrders = mergeUserOrdersFromStorageForAccount();
+        allOrders.forEach((order: any) => {
+          if (order.date) {
+            const [month, day, year] = order.date.split('-').map(Number);
+            const orderDate = new Date(year, month - 1, day);
+            if (orderDate >= period.start && orderDate <= period.end) {
+              totalSpending += order.total || 0;
             }
-          });
-        }
+          }
+        });
       } catch (e) {
         console.error('Error calculating tier:', e);
         // If calculation fails, return null (base state - shows "MEMBER")
@@ -1002,12 +992,8 @@ function AccountPage() {
   const hasOrdersNotifications = (): boolean => {
     if (!userData) return false;
     try {
-      const userOrdersKey = `userOrders_${userData.email}`;
-      const storedOrders = localStorage.getItem(userOrdersKey);
-      if (!storedOrders) return false;
-      
-      const orders = JSON.parse(storedOrders);
-      const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
+      const allOrders = mergeUserOrdersFromStorageForAccount();
+      if (allOrders.length === 0) return false;
       
       // Check for orders with status updates (SHIPPED, PREPARING, CONFIRMED, etc.)
       // that haven't been seen by the user
@@ -1150,11 +1136,8 @@ function AccountPage() {
   const hasConciergeNotifications = (): boolean => {
     if (!userData?.email) return false;
     try {
-      const userOrdersKey = `userOrders_${userData.email}`;
-      const stored = localStorage.getItem(userOrdersKey);
-      if (!stored) return false;
-      const orders = JSON.parse(stored);
-      const allOrders = [...(orders.activeOrders || []), ...(orders.pastOrders || [])];
+      const allOrders = mergeUserOrdersFromStorageForAccount();
+      if (allOrders.length === 0) return false;
       return allOrders.some((order: any) => {
         if (!order?.id || !order?.status) return false;
         if (!CONCIERGE_TRACKING_STATUSES.includes(order.status)) return false;
