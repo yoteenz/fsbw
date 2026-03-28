@@ -202,7 +202,6 @@ function AccountPage() {
     return 'USD';
   });
 
-  // Currency exchange rates (same as CartDropdown)
   /** Founder-only: persisted profile hub mode — clean client-like chrome (no mock history, no admin tag, no tier overrides on this page). Checkout dummy card + order flow unchanged. */
   const FOUNDER_VIEW_AS_CLIENT_KEY = 'baw_founder_account_view_as_client';
   const [founderViewAsClient, setFounderViewAsClient] = useState(() => {
@@ -224,6 +223,7 @@ function AccountPage() {
     [userData, founderViewAsClient]
   );
 
+  // Currency exchange rates (same as CartDropdown)
   const currencyRates = React.useMemo(() => ({
     USD: { symbol: '&#36;', rate: 1.0, name: 'US Dollar' },
     EUR: { symbol: '&euro;', rate: 0.85, name: 'Euro' },
@@ -545,7 +545,7 @@ function AccountPage() {
           console.error('Error initializing admin mock-data account:', e);
         }
     }
-  }, [userData]);
+  }, [userData, founderViewAsClient]);
 
   // Update active orders count when user data or orders change
   useEffect(() => {
@@ -574,7 +574,7 @@ function AccountPage() {
   // Update review count when user data or stored reviews change (synced with reviews page). New accounts show only their submitted count (0); mock data accounts see mock + submitted.
   useEffect(() => {
     const updateReviewCount = () => {
-      const count = isMockDataAccount(userData) ? getTotalReviewCount(userData?.email) : getUserSubmittedReviewCount(userData?.email);
+      const count = profileUsesMockChrome ? getTotalReviewCount(userData?.email) : getUserSubmittedReviewCount(userData?.email);
       setReviewCount(count);
     };
 
@@ -590,7 +590,31 @@ function AccountPage() {
       window.removeEventListener('reviewsUpdated', handleStorageChange);
       window.removeEventListener('focus', handleStorageChange);
     };
-  }, [userData, location.pathname]);
+  }, [userData, location.pathname, profileUsesMockChrome]);
+
+  // Keep founder "view as client" in sync across tabs / custom events
+  useEffect(() => {
+    if (!isAyoteenzAdminAccount(userData)) return;
+    const sync = () => {
+      try {
+        const v = localStorage.getItem(FOUNDER_VIEW_AS_CLIENT_KEY) === 'true';
+        setFounderViewAsClient(v);
+      } catch {
+        /* ignore */
+      }
+    };
+    const onEvt = (e: Event) => {
+      const ce = e as CustomEvent<boolean>;
+      if (typeof ce.detail === 'boolean') setFounderViewAsClient(ce.detail);
+      else sync();
+    };
+    window.addEventListener('storage', sync);
+    window.addEventListener('founderAccountViewAsClientChanged', onEvt as EventListener);
+    return () => {
+      window.removeEventListener('storage', sync);
+      window.removeEventListener('founderAccountViewAsClientChanged', onEvt as EventListener);
+    };
+  }, [userData]);
 
   // REVIEWS card alert is derived from hasNewReviewApproved (user-submitted flag + shop/tool last-seen counts); no effect needed.
 
@@ -2182,6 +2206,7 @@ function AccountPage() {
                       );
                     })()}
 
+                    {!(isAyoteenzAdminAccount(userData) && founderViewAsClient) && (
                     <p
                       role="button"
                       tabIndex={0}
@@ -2200,6 +2225,7 @@ function AccountPage() {
                     >
                       VOUCHER: {(userData?.voucherList && Array.isArray(userData.voucherList) ? userData.voucherList.length : userData?.voucherCount) ?? 0} AVAILABLE
                     </p>
+                    )}
 
                     <p
                       role="button"
@@ -2235,6 +2261,47 @@ function AccountPage() {
                     >
                       LOAD GIFT CARD
                     </p>
+                    {isAyoteenzAdminAccount(userData) && (
+                      <p
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => {
+                          const next = !founderViewAsClient;
+                          setFounderViewAsClient(next);
+                          try {
+                            localStorage.setItem(FOUNDER_VIEW_AS_CLIENT_KEY, next ? 'true' : 'false');
+                          } catch {
+                            /* ignore */
+                          }
+                          window.dispatchEvent(new CustomEvent('founderAccountViewAsClientChanged', { detail: next }));
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            const next = !founderViewAsClient;
+                            setFounderViewAsClient(next);
+                            try {
+                              localStorage.setItem(FOUNDER_VIEW_AS_CLIENT_KEY, next ? 'true' : 'false');
+                            } catch {
+                              /* ignore */
+                            }
+                            window.dispatchEvent(new CustomEvent('founderAccountViewAsClientChanged', { detail: next }));
+                          }
+                        }}
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          color: '#EB1C24',
+                          fontSize: '9px',
+                          margin: '0',
+                          textTransform: 'uppercase',
+                          fontWeight: '500',
+                          cursor: 'pointer',
+                          transform: 'translateY(6px)'
+                        }}
+                      >
+                        {founderViewAsClient ? 'VIEW AS ADMIN PROFILE' : 'VIEW AS CLIENT'}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -2733,7 +2800,7 @@ function AccountPage() {
                   if (!isNaN(d.getTime())) return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                   return dateStr;
                 };
-                const displayHistory = history.length === 0 && isMockDataAccount(userData)
+                const displayHistory = history.length === 0 && profileUsesMockChrome
                   ? MOCK_DIGITAL_CASH_HISTORY
                   : history;
                 if (displayHistory.length === 0) {
@@ -2837,7 +2904,7 @@ function AccountPage() {
                   if (!isNaN(d.getTime())) return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                   return dateStr;
                 };
-                const displayHistory = history.length === 0 && isMockDataAccount(userData) ? MOCK_VOUCHER_HISTORY : history;
+                const displayHistory = history.length === 0 && profileUsesMockChrome ? MOCK_VOUCHER_HISTORY : history;
                 if (displayHistory.length === 0) {
                   return (
                     <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: '#808080', margin: '6px 0', textTransform: 'uppercase', textAlign: 'center' }}>
