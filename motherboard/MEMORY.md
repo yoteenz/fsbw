@@ -4132,3 +4132,59 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** User asked to shrink the **premium membership upgrade** hero **another 20%** from the prior **420px** cap.
 
 **Changes:** **`src/pages/account/membership/page.tsx`**: hero **`maxWidth`** **`min(100%, 420px)` → `min(100%, 336px)`** (**420 × 0.8**; **~40%** of original **560px**).
+
+---
+
+## 2026-03-29 — Account rewards: loyalty icon → `loyalty-points-rewards.png`
+
+**Context:** User asked to replace the **loyalty points** SVG above the **PTS** balance on **`/account/rewards`** with **`loyalty-points-rewards.png`** in **`public/assets`**.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: both **LOYALTY POINTS** blocks (**`showLoyaltyRewards`** overlay and main card) **`/assets/points-icon.svg`** → **`/assets/loyalty-points-rewards.png`**; **`objectFit: 'contain'`** on the **`<img>`**.
+
+---
+
+## 2026-03-29 — Account rewards: loyalty PNG +100% size
+
+**Context:** User asked to **double** the **`loyalty-points-rewards.png`** icon size (**+100%**) above the **PTS** text on **`/account/rewards`**.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: both loyalty **`<img>`** **`width`/`height`** **`31.68px` → `63.36px`**.
+
+---
+
+## 2026-03-29 — Account rewards: loyalty PNG +500% (from 63.36px)
+
+**Context:** User asked to increase the **`loyalty-points-rewards.png`** size **another 500%** (interpreted as **×6** on the prior **63.36px** edge: **63.36 × 6 = 380.16px**).
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: both loyalty **`<img>`** **`width`/`height`** **`63.36px` → `380.16px`**.
+
+---
+
+## 2026-03-29 — Account rewards: loyalty PNG smaller after “−300%”
+
+**Context:** User said **380.16px** was **too big** and asked to **decrease by 300%** (not standard percentage math). Applied **one-third** of prior edge: **380.16 ÷ 3 = 126.72px**.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: both loyalty **`<img>`** **`380.16px` → `126.72px`**.
+
+---
+
+## 2026-03-29 — Account rewards: loyalty PNG +150%
+
+**Context:** User asked to **increase** the **`loyalty-points-rewards.png`** size by **150%** (interpreted as **×2.5**: **126.72 × 2.5 = 316.8px**).
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: both loyalty **`<img>`** **`width`/`height`** **`126.72px` → `316.8px`**.
+
+---
+
+## 2026-03-29 — Account rewards: loyalty PNG −50%
+
+**Context:** User asked to **decrease** the **`loyalty-points-rewards.png`** size by **50%** (**316.8 × 0.5 = 158.4px**).
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: both loyalty **`<img>`** **`316.8px` → `158.4px`**.
+
+---
+
+## 2026-03-29 — Account rewards: loyalty PNG +15%
+
+**Context:** User asked to **increase** the **`loyalty-points-rewards.png`** size by **15%** (**158.4 × 1.15 = 182.16px**).
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: both loyalty **`<img>`** **`158.4px` → `182.16px`**.

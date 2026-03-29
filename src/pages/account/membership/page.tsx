@@ -1260,7 +1260,7 @@ function MembershipPage() {
                       <div>
                         {/* Current Points */}
                         <div style={{ textAlign: 'center', marginBottom: '12px', marginTop: '10px' }}>
-                          <img src="/assets/loyalty-points-rewards.png" alt="" style={{ width: '31.68px', height: '31.68px', marginTop: '20px', marginBottom: '6px', display: 'block', marginLeft: 'auto', marginRight: 'auto', objectFit: 'contain' }} />
+                          <img src="/assets/loyalty-points-rewards.png" alt="" style={{ width: '182.16px', height: '182.16px', marginTop: '16px', marginBottom: '2px', display: 'block', marginLeft: 'auto', marginRight: 'auto', objectFit: 'contain' }} />
                           <p
                             style={{
                               fontFamily: '"Futura PT Medium"',
@@ -1965,7 +1965,7 @@ function MembershipPage() {
                   <div>
                         {/* Current Points */}
                             <div style={{ textAlign: 'center', marginBottom: '12px', marginTop: '10px' }}>
-                              <img src="/assets/loyalty-points-rewards.png" alt="" style={{ width: '31.68px', height: '31.68px', marginTop: '20px', marginBottom: '6px', display: 'block', marginLeft: 'auto', marginRight: 'auto', objectFit: 'contain' }} />
+                              <img src="/assets/loyalty-points-rewards.png" alt="" style={{ width: '182.16px', height: '182.16px', marginTop: '16px', marginBottom: '2px', display: 'block', marginLeft: 'auto', marginRight: 'auto', objectFit: 'contain' }} />
                               <p
                                 style={{
                                   fontFamily: '"Futura PT Medium"',

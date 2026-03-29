@@ -1561,7 +1561,8 @@ function ProductsPage() {
                                     display: 'flex',
                                     justifyContent: 'center',
                                     alignItems: 'center',
-                                    marginBottom: '5px'
+                                    marginBottom: '5px',
+                                    transform: 'translateY(3px)'
                                   }}
                                 >
                                   <img
