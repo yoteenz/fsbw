@@ -1522,7 +1522,8 @@ function MembershipPage() {
                             height: 'auto',
                             objectFit: 'contain',
                             display: 'block',
-                            imageRendering: 'high-quality',
+                            /* Draft CSS; DOM supports it but TS `ImageRendering` union does not yet */
+                            imageRendering: 'high-quality' as CSSProperties['imageRendering'],
                           }}
                         />
                       </div>

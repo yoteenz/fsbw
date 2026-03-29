@@ -4444,3 +4444,11 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** User saw **no visible change** from inline **`translateY(-4px)`** on curly product copy; suspected overrides.
 
 **Changes:** **`src/index.css`**: **`.shop-bcf-curly-product-copy-lift`** — **`position: relative; top: -5px !important`** (was **`-6px`**, moved **down 1px**). **`src/pages/products/page.tsx`** and **`texture-category-product/page.tsx`**: curly-only wrappers use that **`className`** instead of inline transform. **Note for QA:** texture marbles with three columns live on **`/home/shop`**, not **`/shop/bundles`** (that route is a different placeholder page).
+
+---
+
+## 2026-03-29 — Vercel build: fix `imageRendering: 'high-quality'` TS2322
+
+**Context:** Vercel **`npm run build`** failed: **`Type '"high-quality"' is not assignable to type 'ImageRendering | undefined'`** in **`membership/page.tsx`** premium chart image.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: cast **`imageRendering: 'high-quality' as CSSProperties['imageRendering']`** so runtime CSS stays **`high-quality`** while **`tsc`** accepts it (DOM/CSS draft value not yet in TS **`ImageRendering`** union).
