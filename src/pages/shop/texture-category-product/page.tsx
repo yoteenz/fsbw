@@ -12,7 +12,8 @@ import { formatPriceUsd } from '../../../utils/currencyFormat';
 import {
   shopTextureCategoryThumbDisplayScale,
   shopTextureCategoryThumbFallbackSrc,
-  shopTextureCategoryThumbSrc
+  shopTextureCategoryThumbSrc,
+  isShopTextureCurlyFrontals
 } from '../../../utils/shopTextureCategoryThumb';
 
 type Texture = 'straight' | 'wavy' | 'curly';
@@ -606,7 +607,10 @@ export default function ShopTextureCategoryProductPage() {
                         width: '100%',
                         maxWidth: `${400 * shopTextureCategoryThumbDisplayScale(texture)}px`,
                         height: 'auto',
-                        margin: '0 auto'
+                        margin: '0 auto',
+                        ...(isShopTextureCurlyFrontals(texture, category)
+                          ? { transform: 'translateY(-2px)' }
+                          : {})
                       }}
                     />
                   </div>
@@ -897,9 +901,18 @@ export default function ShopTextureCategoryProductPage() {
                                     marginBottom: '10px',
                                     marginLeft: '10px',
                                     cursor: 'pointer',
-                                    ...(shopTextureCategoryThumbDisplayScale(ot) !== 1
-                                      ? { transform: 'scale(1.1)', transformOrigin: 'center top' }
-                                      : {})
+                                    ...(() => {
+                                      const scale = shopTextureCategoryThumbDisplayScale(ot);
+                                      const nudge = isShopTextureCurlyFrontals(ot, category);
+                                      const parts: string[] = [];
+                                      if (scale !== 1) parts.push(`scale(${scale})`);
+                                      if (nudge) parts.push('translateY(-2px)');
+                                      if (parts.length === 0) return {};
+                                      return {
+                                        transform: parts.join(' '),
+                                        ...(scale !== 1 ? { transformOrigin: 'center top' as const } : {})
+                                      };
+                                    })()
                                   }}
                                 />
                                 <p

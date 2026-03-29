@@ -44,7 +44,14 @@ export const shopTextureCategoryThumbFallbackSrc: Record<ShopTextureCategoryThum
   curly: '/assets/NOIR/curl-thumb.png'
 };
 
-/** Curly bundles / closures / frontals thumbnails render 10% larger than straight / wavy (home marbles + PDP). */
+/** Curly bundles / closures / frontals: was +10% vs straight/wavy; reduced by 5% → ×1.045 (home marbles + PDP). */
 export function shopTextureCategoryThumbDisplayScale(texture: ShopTextureCategoryThumbTexture): number {
-  return texture === 'curly' ? 1.1 : 1;
+  return texture === 'curly' ? 1.1 * 0.95 : 1;
+}
+
+export function isShopTextureCurlyFrontals(
+  texture: ShopTextureCategoryThumbTexture,
+  category: ShopTextureCategoryThumbCategory
+): boolean {
+  return texture === 'curly' && category === 'frontals';
 }

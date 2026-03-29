@@ -487,6 +487,7 @@ function MembershipPage() {
   const [showCancelConfirmModal, setShowCancelConfirmModal] = useState(false);
   const [showLoyaltyRewards, setShowLoyaltyRewards] = useState(false);
   const [showBenefitsModal, setShowBenefitsModal] = useState(false);
+  const [showPremiumUpgradeAllBenefits, setShowPremiumUpgradeAllBenefits] = useState(false);
   const [redeemNoticeMessage, setRedeemNoticeMessage] = useState<string | null>(null);
 
   // Clear rewards card alerts when user visits rewards page (they've seen tier/subscription updates)
@@ -846,6 +847,7 @@ function MembershipPage() {
   const handleClosePremiumView = () => {
     setShowPremiumView(false);
     setSelectedTier(null);
+    setShowPremiumUpgradeAllBenefits(false);
     // Clear saved state when user closes premium view
     localStorage.removeItem('membershipShowPremiumView');
     sessionStorage.removeItem('returningFromCheckout');
@@ -1246,7 +1248,7 @@ function MembershipPage() {
                       <div>
                         {/* Current Points */}
                         <div style={{ textAlign: 'center', marginBottom: '12px', marginTop: '10px' }}>
-                          <img src="/assets/premium-rewards.png" alt="" style={{ width: '136.62px', height: '136.62px', marginTop: '16px', marginBottom: '2px', display: 'block', marginLeft: 'auto', marginRight: 'auto', objectFit: 'contain' }} />
+                          <img src="/assets/premium-rewards.png" alt="" style={{ width: '182.16px', height: '182.16px', marginTop: '16px', marginBottom: '2px', display: 'block', marginLeft: 'auto', marginRight: 'auto', objectFit: 'contain' }} />
                           <p
                             style={{
                               fontFamily: '"Futura PT Medium"',
@@ -1424,8 +1426,8 @@ function MembershipPage() {
                         style={{
                           display: 'flex',
                           justifyContent: 'center',
-                          marginTop: '12px',
-                          marginBottom: '16px',
+                          marginTop: '-8px',
+                          marginBottom: '6px',
                           width: '100%',
                           boxSizing: 'border-box',
                         }}
@@ -1436,7 +1438,7 @@ function MembershipPage() {
                           decoding="async"
                           style={{
                             width: '100%',
-                            maxWidth: 'min(100%, 252px)',
+                            maxWidth: 'min(100%, 200px)',
                             height: 'auto',
                             objectFit: 'contain',
                             display: 'block',
@@ -1445,8 +1447,81 @@ function MembershipPage() {
                         />
                       </div>
 
+                      <button
+                        type="button"
+                        onClick={() => setShowPremiumUpgradeAllBenefits((v) => !v)}
+                        aria-expanded={showPremiumUpgradeAllBenefits}
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          textAlign: 'center',
+                          fontFamily: '"Futura PT Medium"',
+                          fontWeight: '500',
+                          color: '#000000',
+                          fontSize: '10px',
+                          textTransform: 'uppercase',
+                          margin: '0 0 18px 0',
+                          padding: 0,
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          lineHeight: 1.35
+                        }}
+                      >
+                        {showPremiumUpgradeAllBenefits ? 'HIDE ALL BENEFITS' : 'VIEW ALL BENEFITS'}
+                      </button>
+                      {showPremiumUpgradeAllBenefits && (
+                        <div
+                          style={{
+                            marginBottom: '16px',
+                            paddingLeft: '8px',
+                            paddingRight: '8px',
+                            boxSizing: 'border-box'
+                          }}
+                        >
+                          {(['3months', '6months', '12months'] as const).map((tierKey) => (
+                            <div key={tierKey} style={{ marginBottom: '14px' }}>
+                              <p
+                                style={{
+                                  fontFamily: '"Futura PT Medium"',
+                                  fontSize: '10px',
+                                  color: '#000000',
+                                  margin: '0 0 6px 0',
+                                  textTransform: 'uppercase',
+                                  textAlign: 'center',
+                                  fontWeight: '500'
+                                }}
+                              >
+                                {tierKey === '3months'
+                                  ? '3 MONTHS PREMIUM'
+                                  : tierKey === '6months'
+                                    ? '6 MONTHS PREMIUM'
+                                    : '12 MONTHS PREMIUM'}
+                              </p>
+                              <ul
+                                style={{
+                                  margin: 0,
+                                  paddingLeft: '20px',
+                                  fontFamily: '"Futura PT Book"',
+                                  fontSize: '9px',
+                                  color: '#000000',
+                                  textTransform: 'uppercase',
+                                  lineHeight: 1.4
+                                }}
+                              >
+                                {PREMIUM_BENEFITS_BY_TIER[tierKey].map((b) => (
+                                  <li key={b} style={{ marginBottom: '3px' }}>
+                                    {b}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
                       {/* Comparison Table */}
-                        <div style={{ overflowX: 'auto', marginTop: '24px', marginBottom: '38px', display: 'flex', justifyContent: 'center' }}>
+                        <div style={{ overflowX: 'auto', marginTop: '44px', marginBottom: '38px', display: 'flex', justifyContent: 'center' }}>
                           <table style={{ width: 'max-content', borderCollapse: 'collapse', fontSize: '9px', transform: 'translateZ(0)' }}>
                             <thead>
                               <tr>
@@ -1951,7 +2026,7 @@ function MembershipPage() {
                   <div>
                         {/* Current Points */}
                             <div style={{ textAlign: 'center', marginBottom: '12px', marginTop: '10px' }}>
-                              <img src="/assets/premium-rewards.png" alt="" style={{ width: '136.62px', height: '136.62px', marginTop: '16px', marginBottom: '2px', display: 'block', marginLeft: 'auto', marginRight: 'auto', objectFit: 'contain' }} />
+                              <img src="/assets/premium-rewards.png" alt="" style={{ width: '182.16px', height: '182.16px', marginTop: '16px', marginBottom: '2px', display: 'block', marginLeft: 'auto', marginRight: 'auto', objectFit: 'contain' }} />
                               <p
                                 style={{
                                   fontFamily: '"Futura PT Medium"',

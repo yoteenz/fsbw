@@ -4308,3 +4308,91 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** User asked to increase **only** **curly** **bundles**, **closures**, and **frontals** thumbnails by **10%** (not straight or wavy).
 
 **Changes:** **`src/utils/shopTextureCategoryThumb.ts`**: **`shopTextureCategoryThumbDisplayScale(texture)`** → **`1.1`** for **`curly`**, else **`1`**. **`src/pages/products/page.tsx`**: home/shop marble **`<img>`** width **`49.5% × scale`** (curly **54.45%**). **`src/pages/shop/texture-category-product/page.tsx`**: PDP hero **`maxWidth` `400 × scale` px** (curly **440px**); **Similar** strip curly thumbs **`transform: scale(1.1)`**, **`transformOrigin: center top`**.
+
+---
+
+## 2026-03-29 — Loyalty `premium-rewards.png` size restored
+
+**Context:** User said the prior **−25%** resize targeted the **wrong** asset; restore the loyalty **`premium-rewards.png`** above **PTS** on the main rewards page.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: both **`premium-rewards.png`** **`<img>`**s **`136.62px` → `182.16px`** width/height.
+
+---
+
+## 2026-03-29 — Shop: curly texture marbles −5% (from prior curly bump)
+
+**Context:** User asked to decrease **only** curly **bundles / closures / frontals** thumbnails by **5%** (straight/wavy unchanged).
+
+**Changes:** **`src/utils/shopTextureCategoryThumb.ts`**: curly **`shopTextureCategoryThumbDisplayScale`** **`1.1` → `1.1 × 0.95` (`1.045`)**. **`src/pages/shop/texture-category-product/page.tsx`**: **Similar** strip uses **`scale(${shopTextureCategoryThumbDisplayScale(ot)})`** so it tracks the util (no hardcoded **1.1**). Home marbles (**`products/page.tsx`**) pick up new width via existing **`49.5 × scale`**.
+
+---
+
+## 2026-03-29 — Premium chart hero `maxWidth` 200px
+
+**Context:** User asked to set **`premium-membership-upgrade.png`** hero **`maxWidth`** to **200px** instead of **252px** (above the comparison chart when **`showPremiumView`**).
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: **`min(100%, 252px)` → `min(100%, 200px)`**.
+
+---
+
+## 2026-03-29 — Shop: curly frontal thumb −2px vertical nudge
+
+**Context:** User asked to move **only** the **curly frontal** thumbnail **up 2px** (not other textures/categories).
+
+**Changes:** **`src/utils/shopTextureCategoryThumb.ts`**: **`isShopTextureCurlyFrontals(texture, category)`**. **`src/pages/products/page.tsx`**: frontals marble **curly** **`<img>`** **`transform: translateY(-2px)`**. **`src/pages/shop/texture-category-product/page.tsx`**: **`/curly/frontals`** hero same; **Similar** strip curly frontal combines **`translateY(-2px)`** with existing **`scale(...)`** when applicable.
+
+---
+
+## 2026-03-29 — Premium chart: “VIEW ALL BENEFITS” toggle
+
+**Context:** User asked for a centered **black** **Futura PT Book** line **VIEW ALL BENEFITS** directly under **`premium-membership-upgrade.png`** and above the comparison chart, toggling full premium benefit lists.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: **`showPremiumUpgradeAllBenefits`** state; **`button`** (**VIEW ALL BENEFITS** / **HIDE ALL BENEFITS**), **`aria-expanded`**; expanded block lists **`PREMIUM_BENEFITS_BY_TIER`** for **3 / 6 / 12 months** (centered tier labels **Futura PT Medium**, bullets **Futura PT Book**). Reset when **`handleClosePremiumView`** runs.
+
+---
+
+## 2026-03-29 — Premium chart hero thumbnail vertical spacing −10px
+
+**Context:** User asked to **decrease spacing above and below** the **`premium-membership-upgrade.png`** block by **10px** each.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: wrapper **`marginTop` `12px` → `2px`**, **`marginBottom` `16px` → `6px`**.
+
+---
+
+## 2026-03-29 — Premium chart: +10px below VIEW ALL BENEFITS
+
+**Context:** User asked for **10px** more space **below** the **VIEW ALL BENEFITS** control on the upgrade chart.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: that **`button`** **`margin`** bottom **`12px` → `22px`**.
+
+---
+
+## 2026-03-29 — Premium chart hero: −10px space above thumbnail
+
+**Context:** User asked to **decrease spacing above** the **`premium-membership-upgrade.png`** block by **10px**.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: thumbnail wrapper **`marginTop` `2px` → `-8px`** (**−10px**).
+
+---
+
+## 2026-03-29 — Premium chart table: +20px margin above
+
+**Context:** User asked for **20px** more space **above** the premium upgrade **comparison table** (below **VIEW ALL BENEFITS**).
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: chart wrapper **`marginTop` `24px` → `44px`**.
+
+---
+
+## 2026-03-29 — Premium chart: VIEW ALL BENEFITS → Futura Medium
+
+**Context:** User asked to set **VIEW ALL BENEFITS** / **HIDE ALL BENEFITS** control to **Futura Medium**.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: that **`button`** **`fontFamily` `Futura PT Book` → `Futura PT Medium`**, added **`fontWeight: '500'`** to match other medium labels.
+
+---
+
+## 2026-03-29 — Premium chart: VIEW ALL BENEFITS margin −4px bottom
+
+**Context:** User asked to **decrease spacing below** **VIEW ALL BENEFITS** by **4px**.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: that **`button`** bottom margin **`22px` → `18px`**.

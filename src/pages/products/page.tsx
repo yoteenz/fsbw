@@ -11,7 +11,8 @@ import { formatPriceRangeUsd, formatPriceUsd, type CurrencyRatesRecord } from '.
 import {
   shopTextureCategoryThumbDisplayScale,
   shopTextureCategoryThumbFallbackSrc,
-  shopTextureCategoryThumbSrc
+  shopTextureCategoryThumbSrc,
+  isShopTextureCurlyFrontals
 } from '../../utils/shopTextureCategoryThumb';
 
 function ProductsPage() {
@@ -1581,7 +1582,10 @@ function ProductsPage() {
                                       maxWidth: '100%',
                                       display: 'block',
                                       margin: 0,
-                                      pointerEvents: 'none'
+                                      pointerEvents: 'none',
+                                      ...(isShopTextureCurlyFrontals(t.slug, categorySlug)
+                                        ? { transform: 'translateY(-2px)' }
+                                        : {})
                                     }}
                                   />
                                 </div>
