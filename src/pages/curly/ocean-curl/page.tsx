@@ -16,7 +16,9 @@ import {
   marbleStripCellBand,
   marbleStripStarsRowStyle,
   marbleStripNavRowStyle,
+  marbleStripNavMiddleColStyle,
   marbleStripNavArrowStyle,
+  marbleStripViewportStyle,
   marbleStripThumbWrap,
   marbleStripThumbImg,
   marbleStripTextCol,
@@ -2237,7 +2239,7 @@ function OceanCurlSelection() {
               </button>
               
               {/* Product Thumbnails Container with Static Vertical Line */}
-              <div style={{ flex: '1', position: 'relative' }}>
+              <div style={marbleStripNavMiddleColStyle}>
                 {/* Single Center Line with Masking */}
                 <div style={{
                   position: 'absolute',
@@ -2266,12 +2268,7 @@ function OceanCurlSelection() {
                 {/* Scrolling Product Thumbnails Container */}
                 <div
                   ref={setSimilarStripViewportRef}
-                  style={{
-                  overflowX: 'hidden',
-                  width: '100%',
-                  position: 'relative',
-                  maxWidth: '100%'
-                }}
+                  style={marbleStripViewportStyle}
                 >
                   <div style={marbleStripScrollRowStyle(similarProductsScroll)}>
                 {/* Product 1 - SOFT CURL */}
@@ -2563,7 +2560,7 @@ function OceanCurlSelection() {
         </div>
 
         {/* RECENTLY VIEWED SECTION */}
-        <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
+        <div className="px-0 md:px-0" style={{ marginTop: '3px', marginBottom: '20px' }}>
           <div 
             className="backdrop-blur-sm"
             style={{ 
@@ -2621,7 +2618,7 @@ function OceanCurlSelection() {
               </button>
               
               {/* Product Thumbnails Container with Static Vertical Line */}
-              <div style={{ flex: '1', position: 'relative' }}>
+              <div style={marbleStripNavMiddleColStyle}>
                 {/* Single Center Line with Masking */}
                 <div style={{
                   position: 'absolute',
@@ -2650,12 +2647,7 @@ function OceanCurlSelection() {
                 {/* Scrolling Product Thumbnails Container */}
                 <div
                   ref={setRecentStripViewportRef}
-                  style={{
-                  overflowX: 'hidden',
-                  width: '100%',
-                  position: 'relative',
-                  maxWidth: '100%'
-                }}
+                  style={marbleStripViewportStyle}
                 >
                   <div style={marbleStripScrollRowStyle(recentlyViewedScroll)}>
                 {/* Product 1 - SOFT WAVE */}

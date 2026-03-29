@@ -1086,7 +1086,7 @@ function ProductsPage() {
                     position: 'absolute',
                     left: '50%',
                     top: '0',
-                    bottom: '6px',
+                    bottom: '0',
                     width: '1px',
                     backgroundColor: 'black',
                     zIndex: 20,
@@ -1097,7 +1097,7 @@ function ProductsPage() {
                     position: 'absolute',
                     left: '50%',
                     top: '0',
-                    bottom: '6px',
+                    bottom: '0',
                     width: '10px',
                     backgroundColor: 'transparent',
                     zIndex: 15,
@@ -1235,7 +1235,7 @@ function ProductsPage() {
                                 margin: '0 0 5px 0',
                                 fontWeight: '500',
                                 lineHeight: '0.84',
-                                transform: 'translateY(2px)'
+                                transform: 'translateY(1px)'
                               }}
                               dangerouslySetInnerHTML={formatPrice(product.price)}
                               />
@@ -1306,7 +1306,7 @@ function ProductsPage() {
                             <div
                               style={{
                                 position: 'absolute',
-                                top: '-36px',
+                                top: '-52px',
                                 ...(isLeftColumn ? { left: 16 } : { right: 16 }),
                                 zIndex: 1000,
                                 pointerEvents: 'auto',
@@ -1457,7 +1457,7 @@ function ProductsPage() {
                             position: 'absolute',
                             left: '50%',
                             top: '0',
-                            bottom: '6px',
+                            bottom: '0',
                             width: '1px',
                             backgroundColor: 'black',
                             zIndex: 20,
@@ -1469,7 +1469,7 @@ function ProductsPage() {
                             position: 'absolute',
                             left: '50%',
                             top: '0',
-                            bottom: '6px',
+                            bottom: '0',
                             width: '10px',
                             backgroundColor: 'transparent',
                             zIndex: 15,
@@ -1626,7 +1626,7 @@ function ProductsPage() {
                                         margin: '0 0 5px 0',
                                         fontWeight: '500',
                                         lineHeight: '0.84',
-                                        transform: 'translateY(2px)',
+                                        transform: 'translateY(1px)',
                                         pointerEvents: 'none',
                                         width: '100%',
                                         textAlign: 'center',

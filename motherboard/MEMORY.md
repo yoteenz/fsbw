@@ -3700,3 +3700,79 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** User wanted **less space above** the **first** marble card on **home/shop** and **shop** so it matches the **gap below each card** (stacked marbles use **collapsing** vertical margins → **~20px** between cards; **first** card had **nav `mb-5` (20px) + its own `marginTop` 20px** → **~40px** above).
 
 **Changes:** **`marginTop: '20px'` → `'0'`** on first card wrappers: **`src/pages/products/page.tsx`** (UNITS only). **`src/pages/products/units/page.tsx`**: **`renderProductContainer(..., isFirstMarble)`** — **`STRAIGHT`** passes **`true`**. **`src/pages/shop/category/page.tsx`** (bundles/closures/frontals). **`src/pages/shop/texture-category-product/page.tsx`**: **SIMILAR PRODUCTS** strip only (**Recently viewed** keeps **`marginTop: '20px'`**). Later marbles / second strips unchanged.
+
+---
+
+## 2026-03-28 — `/shop/units`: restore add-to-bag icons (overlay + clip)
+
+**Context:** Add-to-bag icons were **missing** on all three texture marbles because bags sat **inside** the strip under **`overflowX: 'hidden'`**, which forces effective vertical clipping so **`top: -34px`** bags were cut off.
+
+**Changes:** **`src/pages/products/units/page.tsx`**: Matched **home/shop UNITS** — horizontal **`overflowX: 'clip'`** wrapper around **product flex + separate bag overlay** (same **`translateX`**, bag **`top: '-48px'`**, **`left`/`right` 16**). Viewport **`paddingTop: '10px'`**, overlay **`top: '10px'`**.
+
+---
+
+## 2026-03-28 — UNITS add-to-bag overlay: `top` → `-48px` (higher on card)
+
+**Context:** User wanted bags **higher** (more negative **`top`**), not lower; **`'-36px'`** was **6px below** original **`-42px`**. Requested **`-48px`** on **home/shop** and **shop/units**; shared **`overflowX: 'clip'`** wrapper unchanged.
+
+**Changes:** **`top: '-36px'` → `'-48px'`** on bag hit targets: **`src/pages/products/page.tsx`**, **`src/pages/products/units/page.tsx`**.
+
+---
+
+## 2026-03-28 — UNITS add-to-bag overlay: `top` → `-52px`
+
+**Context:** User asked to move bags **4px higher** than **`-48px`**.
+
+**Changes:** **`top: '-48px'` → `'-52px'`** on UNITS bag overlays: **`src/pages/products/page.tsx`** (home/shop), **`src/pages/products/units/page.tsx`**. Shared **`overflowX: 'clip'`** layout unchanged.
+
+---
+
+## 2026-03-28 — Marble center divider: larger bottom inset (visible trim)
+
+**Context:** User reported the **middle vertical black line** (below red **UNITS** / category titles) **did not look shorter** after **`bottom: '6px'`** — **6px** on a tall strip is easy to miss.
+
+**Changes:** **`bottom: '6px'` → `bottom: '28px'`** on the **1px** divider and **10px** hit mask: **`src/pages/products/page.tsx`** (UNITS + texture marbles), **`src/pages/products/units/page.tsx`**, **`src/pages/shop/texture-category-product/page.tsx`**. Still **`top: '0'`** (trim from the bottom only).
+
+---
+
+## 2026-03-28 — Price text up 1px (home/shop + shop)
+
+**Context:** User wanted **price** copy moved **up 1px** only on **home/shop** and **shop** (not other PDPs).
+
+**Changes:** **`src/pages/products/page.tsx`**: UNITS product price **`translateY(2px)` → `translateY(1px)`**; BUNDLES/CLOSURES/FRONTALS range line same. **`src/pages/products/units/page.tsx`**: product price **`translateY(2px)` → `translateY(1px)`**. **`src/pages/shop/texture-category-product/page.tsx`**: hero price **`translateY(-136px)` → `-137px`**; **Similar** + **Recently viewed** price rows **`translateX(10px)` → `translateX(10px) translateY(-1px)`**.
+
+---
+
+## 2026-03-28 — `/units/straight|wavy|curly`: remove toggle + “N UNITS” above grid
+
+**Context:** User wanted the **sorting toggle** image (**`/assets/toggle.svg`**) and the **`{count} UNITS`** label above the product cards removed on texture units listing pages.
+
+**Changes:** **`src/pages/units/straight/page.tsx`**, **`wavy/page.tsx`**, **`curly/page.tsx`**: deleted **`index === 0`** toggle and **`index === 1`** count overlays; grid **`paddingTop`** **`35px` → `12px`** (straight/wavy); curly was **`50px` → `12px`**.
+
+---
+
+## 2026-03-28 — Hero PDP Recently viewed: right arrow inside strip + align with Similar
+
+**Context:** **Recently viewed** right carousel arrow looked **misaligned** and **outside** the bordered strip (2D and 3D) vs **Similar products** above; user wanted it **inside** the container and **vertically consistent** with the upper strip’s right arrow.
+
+**Decisions / outcomes:** The **200%-wide** scroll row could inflate the flex middle column’s **min-content width**, pushing the **right** nav button past the box; **Recently**’s **`transform: translateY(-17px)`** nested with arrow transforms and hurt alignment.
+
+**Changes:** **`src/utils/marbleStripStyles.ts`**: **`marbleStripNavMiddleColStyle`** (**`flex: 1`**, **`position: 'relative'`**, **`minWidth: 0`**, **`minHeight: 0`**). **Six** hero PDPs (**noir**, **blanco**, **soft-wave**, **beach-wave**, **soft-curl**, **ocean-curl**): middle column uses it for **both** strips; **Recently** outer **`transform: translateY(-17px)`** removed and **`marginTop: '20px'`** → **`'3px'`** (keep **`marginBottom: '20px'`**) to preserve spacing vs Similar without a parent transform. **Noir** keeps full-bleed width/margins on **Recently** unchanged aside from that.
+
+---
+
+## 2026-03-28 — Hero marble strip 3D: star row 5px visible + viewport overflow
+
+**Context:** User reported **no visible change** for **3D** star spacing; spec is **`paddingBottom: '5px'`** on the star row, **`marginBottom: 0`**, so the **5px** sits **inside** the row under the icons.
+
+**Decisions / outcomes:** **`overflow-x: hidden`** on the strip viewport makes browsers treat **`overflow-y: visible`** as clipping, so the **bottom** of cells (including star **`paddingBottom`**) was **clipped**. **`overflow-x: clip`** + **`overflow-y: visible`** clips horizontal scroll only.
+
+**Changes:** **`src/utils/marbleStripStyles.ts`**: **`marbleStripViewportStyle`** (**`overflowX: 'clip'`**, **`overflowY: 'visible'`**, width/position/maxWidth). **`marbleStripStarsRowStyle`**: **`flexShrink: 0`**, **`alignItems: 'center'`**, explicit **`paddingTop: 0`** / **`paddingBottom: 0`** on 2D vs 3D branches. **Six** hero PDPs: **Similar** + **Recently** viewport **`div`**s use **`marbleStripViewportStyle`** instead of **`overflowX: 'hidden'`**.
+
+---
+
+## 2026-03-28 — Marble center divider: `bottom` inset removed (line meets container)
+
+**Context:** **`bottom: '28px'`** on the middle vertical rule left a **visible gap** between the line’s end and the strip container bottom; user wanted the line **down** so it **meets the bottom edge** again.
+
+**Changes:** **`bottom: '28px'` → `bottom: '0'`** on the **1px** black divider and **10px** mask: **`src/pages/products/page.tsx`**, **`src/pages/products/units/page.tsx`**, **`src/pages/shop/texture-category-product/page.tsx`**.

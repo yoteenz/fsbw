@@ -16,7 +16,9 @@ import {
   marbleStripCellBand,
   marbleStripStarsRowStyle,
   marbleStripNavRowStyle,
+  marbleStripNavMiddleColStyle,
   marbleStripNavArrowStyle,
+  marbleStripViewportStyle,
   marbleStripThumbWrap,
   marbleStripThumbImg,
   marbleStripTextCol,
@@ -2172,12 +2174,7 @@ function SoftCurlSelection() {
                 {/* Scrolling Product Thumbnails Container */}
                 <div
                   ref={setSimilarStripViewportRef}
-                  style={{
-                  overflowX: 'hidden',
-                  width: '100%',
-                  position: 'relative',
-                  maxWidth: '100%'
-                }}
+                  style={marbleStripViewportStyle}
                 >
                   <div style={marbleStripScrollRowStyle(similarProductsScroll)}>
                 {/* Product 1 - OCEAN CURL */}
@@ -2469,7 +2466,7 @@ function SoftCurlSelection() {
         </div>
 
         {/* RECENTLY VIEWED SECTION */}
-        <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
+        <div className="px-0 md:px-0" style={{ marginTop: '3px', marginBottom: '20px' }}>
           <div 
             className="backdrop-blur-sm"
             style={{ 
@@ -2545,12 +2542,7 @@ function SoftCurlSelection() {
                 {/* Scrolling Product Thumbnails Container */}
                 <div
                   ref={setRecentStripViewportRef}
-                  style={{
-                  overflowX: 'hidden',
-                  width: '100%',
-                  position: 'relative',
-                  maxWidth: '100%'
-                }}
+                  style={marbleStripViewportStyle}
                 >
                   <div style={marbleStripScrollRowStyle(recentlyViewedScroll)}>
                 {/* Product 1 - SOFT WAVE */}

@@ -642,7 +642,7 @@ export default function ShopTextureCategoryProductPage() {
                       fontFamily: '"Futura PT Medium"',
                       fontSize: '16px',
                       fontWeight: '500',
-                      transform: 'translateY(-136px)',
+                      transform: 'translateY(-137px)',
                       width: '100%'
                     }}
                     dangerouslySetInnerHTML={formatPrice(price)}
@@ -824,7 +824,7 @@ export default function ShopTextureCategoryProductPage() {
                           position: 'absolute',
                           left: '50%',
                           top: '0',
-                          bottom: '6px',
+                          bottom: '0',
                           width: '1px',
                           backgroundColor: 'black',
                           zIndex: 20,
@@ -836,7 +836,7 @@ export default function ShopTextureCategoryProductPage() {
                           position: 'absolute',
                           left: '50%',
                           top: '0',
-                          bottom: '6px',
+                          bottom: '0',
                           width: '10px',
                           backgroundColor: 'transparent',
                           zIndex: 15,
@@ -919,7 +919,7 @@ export default function ShopTextureCategoryProductPage() {
                                     margin: '0 0 5px 0',
                                     fontWeight: '500',
                                     lineHeight: '0.84',
-                                    transform: 'translateX(10px)'
+                                    transform: 'translateX(10px) translateY(-1px)'
                                   }}
                                   dangerouslySetInnerHTML={formatPrice(PRICE_BY_CATEGORY[category])}
                                 />
@@ -1035,7 +1035,7 @@ export default function ShopTextureCategoryProductPage() {
                           position: 'absolute',
                           left: '50%',
                           top: '0',
-                          bottom: '6px',
+                          bottom: '0',
                           width: '1px',
                           backgroundColor: 'black',
                           zIndex: 20,
@@ -1047,7 +1047,7 @@ export default function ShopTextureCategoryProductPage() {
                           position: 'absolute',
                           left: '50%',
                           top: '0',
-                          bottom: '6px',
+                          bottom: '0',
                           width: '10px',
                           backgroundColor: 'transparent',
                           zIndex: 15,
@@ -1117,7 +1117,7 @@ export default function ShopTextureCategoryProductPage() {
                                 margin: '0 0 5px 0',
                                 fontWeight: '500',
                                 lineHeight: '0.84',
-                                transform: 'translateX(10px)'
+                                transform: 'translateX(10px) translateY(-1px)'
                               }}
                               dangerouslySetInnerHTML={formatPrice(760)}
                             />
@@ -1190,7 +1190,7 @@ export default function ShopTextureCategoryProductPage() {
                                 margin: '0 0 5px 0',
                                 fontWeight: '500',
                                 lineHeight: '0.84',
-                                transform: 'translateX(10px)'
+                                transform: 'translateX(10px) translateY(-1px)'
                               }}
                               dangerouslySetInnerHTML={formatPrice(780)}
                             />
@@ -1263,7 +1263,7 @@ export default function ShopTextureCategoryProductPage() {
                                 margin: '0 0 5px 0',
                                 fontWeight: '500',
                                 lineHeight: '0.84',
-                                transform: 'translateX(10px)'
+                                transform: 'translateX(10px) translateY(-1px)'
                               }}
                               dangerouslySetInnerHTML={formatPrice(740)}
                             />
@@ -1336,7 +1336,7 @@ export default function ShopTextureCategoryProductPage() {
                                 margin: '0 0 5px 0',
                                 fontWeight: '500',
                                 lineHeight: '0.84',
-                                transform: 'translateX(10px)'
+                                transform: 'translateX(10px) translateY(-1px)'
                               }}
                               dangerouslySetInnerHTML={formatPrice(820)}
                             />

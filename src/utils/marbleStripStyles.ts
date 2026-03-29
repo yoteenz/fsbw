@@ -40,19 +40,30 @@ export function marbleStripCellBand(is3D: boolean): CSSProperties {
   return { ...marbleStripCellBandBase, transform: 'translateY(-10px)' };
 }
 
-/** Star row under price — 5px below stars. 2D: marginBottom. 3D: paddingBottom (margin often collapses / gets lost with centered strip cells). */
+/** Star row under price — 5px below stars. 2D: marginBottom. 3D: paddingBottom inside the row (marginBottom 0) so space stays visible under icons. */
 export function marbleStripStarsRowStyle(is3D: boolean): CSSProperties {
   return {
     display: 'flex',
     justifyContent: 'center',
+    alignItems: 'center',
     gap: '2px',
     marginTop: '2px',
     boxSizing: 'border-box',
+    flexShrink: 0,
     ...(is3D
-      ? { paddingBottom: '5px', marginBottom: 0 }
-      : { marginBottom: '5px' }),
+      ? { paddingBottom: '5px', marginBottom: 0, paddingTop: 0 }
+      : { marginBottom: '5px', paddingBottom: 0, paddingTop: 0 }),
   };
 }
+
+/** Horizontal clip only: `overflow-x: hidden` forces `overflow-y` to clip too, eating star-row padding in 3D. */
+export const marbleStripViewportStyle: CSSProperties = {
+  overflowX: 'clip',
+  overflowY: 'visible',
+  width: '100%',
+  position: 'relative',
+  maxWidth: '100%',
+};
 
 /** Fixed-height box in 3D so mixed JPG/PNG assets align; 2D uses natural thumb height. */
 export function marbleStripThumbWrap(is3D: boolean): CSSProperties {
@@ -100,6 +111,14 @@ export const marbleStripNavRowStyle: CSSProperties = {
   justifyContent: 'space-between',
   gap: '10px',
   overflow: 'visible',
+};
+
+/** Viewport column between nav arrows — minWidth 0 prevents the 200%-wide strip from forcing the row wider than the container. */
+export const marbleStripNavMiddleColStyle: CSSProperties = {
+  flex: '1',
+  position: 'relative',
+  minWidth: 0,
+  minHeight: 0,
 };
 
 /** Similar / recently carousel arrows — flexShrink 0 so the strip never squeezes them to zero width. */
