@@ -2260,7 +2260,6 @@ export default function AdminClients() {
                             }
                             const apiItems = id && adminCartByUserId[id] !== undefined ? adminCartByUserId[id] : [];
                             let list = Array.isArray(apiItems) ? apiItems : [];
-                            let source: 'cloud' | 'this_device' = 'cloud';
                             if (list.length === 0 && selectedClient?.email) {
                               try {
                                 const em = (selectedClient.email || '').trim().toLowerCase();
@@ -2271,7 +2270,6 @@ export default function AdminClients() {
                                   const loc = raw ? JSON.parse(raw) : [];
                                   if (Array.isArray(loc) && loc.length > 0) {
                                     list = loc;
-                                    source = 'this_device';
                                   }
                                 }
                               } catch {
@@ -2282,11 +2280,6 @@ export default function AdminClients() {
                               <p className="text-center py-4" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}>THIS CART IS EMPTY.</p>
                             ) : (
                               <div className="space-y-2">
-                                {source === 'this_device' && (
-                                  <p className="text-center pb-1" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: '9px', color: '#a3a3a3', textTransform: 'none', margin: '0', lineHeight: 1.35 }}>
-                                    Showing cart from this browser (localStorage). Cloud row is empty or not synced — cart/wishlist push runs on navigation; check Network for PUT /api/cart.
-                                  </p>
-                                )}
                                 {list.map((item: any, i: number) => (
                                   <div key={item?.id ?? i} className="flex justify-between items-center border-b border-gray-100 py-2">
                                     <span className="text-xs" style={{ fontFamily: '"Futura PT Book"' }}>{(item?.name ?? item?.productName ?? 'Item').toString().toUpperCase()}</span>
@@ -2311,7 +2304,6 @@ export default function AdminClients() {
                             }
                             const apiItems = id && adminWishlistByUserId[id] !== undefined ? adminWishlistByUserId[id] : [];
                             let list = Array.isArray(apiItems) ? apiItems : [];
-                            let source: 'cloud' | 'this_device' = 'cloud';
                             if (list.length === 0 && selectedClient?.email) {
                               try {
                                 const em = (selectedClient.email || '').trim().toLowerCase();
@@ -2322,7 +2314,6 @@ export default function AdminClients() {
                                   const loc = raw ? JSON.parse(raw) : [];
                                   if (Array.isArray(loc) && loc.length > 0) {
                                     list = loc;
-                                    source = 'this_device';
                                   }
                                 }
                               } catch {
@@ -2333,11 +2324,6 @@ export default function AdminClients() {
                               <p className="text-center py-4" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}>THIS WISHLIST IS EMPTY.</p>
                             ) : (
                               <div className="space-y-2">
-                                {source === 'this_device' && (
-                                  <p className="text-center pb-1" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: '9px', color: '#a3a3a3', textTransform: 'none', margin: '0', lineHeight: 1.35 }}>
-                                    Showing wishlist from this browser (localStorage). Cloud row is empty or not synced — check Network for PUT /api/wishlist.
-                                  </p>
-                                )}
                                 {list.map((item: any, i: number) => (
                                   <div key={item?.id ?? i} className="flex justify-between items-center border-b border-gray-100 py-2">
                                     <span className="text-xs" style={{ fontFamily: '"Futura PT Book"' }}>{(item?.name ?? item?.productName ?? 'Item').toString().toUpperCase()}</span>

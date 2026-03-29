@@ -600,7 +600,7 @@ function ProductsUnitsPage() {
               <div style={{
                 position: 'absolute',
                 left: '50%',
-                top: '0',
+                top: '6px',
                 bottom: '0',
                 width: '1px',
                 backgroundColor: 'black',
@@ -612,7 +612,7 @@ function ProductsUnitsPage() {
               <div style={{
                 position: 'absolute',
                 left: '50%',
-                top: '0',
+                top: '6px',
                 bottom: '0',
                 width: '10px',
                 backgroundColor: 'transparent',
@@ -668,7 +668,6 @@ function ProductsUnitsPage() {
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'stretch',
-                        justifyContent: 'flex-start',
                         flex: `0 0 ${flexBasis}`,
                         boxSizing: 'border-box',
                         position: 'relative',
@@ -687,6 +686,7 @@ function ProductsUnitsPage() {
                           alignItems: 'center',
                           boxSizing: 'border-box',
                           padding: '5px 12px 4px 12px',
+                          transform: 'translateY(-14px)',
                           ...dbgProductBand
                         }}
                       >
@@ -704,7 +704,7 @@ function ProductsUnitsPage() {
                           alt={product.name}
                           onClick={() => handleProductClick(product)}
                           style={{
-                            width: 'calc(90% * 0.88)',
+                            width: '79.2%',
                             height: 'auto',
                             maxWidth: '100%',
                             display: 'block',

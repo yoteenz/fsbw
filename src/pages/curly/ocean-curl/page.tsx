@@ -15,13 +15,12 @@ import {
   marbleStripCellOuter,
   marbleStripCellBand,
   marbleStripStarsRowStyle,
-  marbleStripNavRowStyle,
   marbleStripNavMiddleColStyle,
   marbleStripNavArrowStyle,
   marbleStripViewportStyle,
   marbleStripThumbWrap,
   marbleStripThumbImg,
-  marbleStripTextCol,
+  marbleStripTextColStrip,
 } from '../../../utils/marbleStripStyles';
 
 function OceanCurlSelection() {
@@ -2281,7 +2280,7 @@ function OceanCurlSelection() {
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
@@ -2348,7 +2347,7 @@ function OceanCurlSelection() {
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
@@ -2415,7 +2414,7 @@ function OceanCurlSelection() {
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
@@ -2482,7 +2481,7 @@ function OceanCurlSelection() {
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
@@ -2660,7 +2659,7 @@ function OceanCurlSelection() {
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
@@ -2727,7 +2726,7 @@ function OceanCurlSelection() {
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
@@ -2794,7 +2793,7 @@ function OceanCurlSelection() {
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
@@ -2861,7 +2860,7 @@ function OceanCurlSelection() {
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',

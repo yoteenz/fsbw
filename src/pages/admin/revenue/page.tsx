@@ -653,6 +653,105 @@ export default function AdminRevenue() {
         }
       : panelLabelsAndValues[activeTab];
 
+  const revenuePageActions: React.ReactNode = (() => {
+    if (activeTab === 'ORDERS' && expandedOrderId && expandedOrder) {
+      if (editTrackingMode) {
+        return (
+          <>
+            <button
+              type="button"
+              onClick={handleSaveTrackingEdit}
+              className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+              style={pageActionButtonStyle}
+            >
+              SAVE TRACKING
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEditTrackingMode(false);
+                setTrackingDraft(expandedOrder ? fillTrackingDraftFromOrder(expandedOrder) : emptyTrackingDraft());
+              }}
+              className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+              style={{ ...pageActionButtonStyle, marginTop: '10px' }}
+            >
+              CANCEL EDIT
+            </button>
+          </>
+        );
+      }
+      return (
+        <>
+          <button
+            type="button"
+            onClick={() => handleCopyOrder(expandedOrder)}
+            className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+            style={pageActionButtonStyle}
+          >
+            COPY
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setTrackingDraft(fillTrackingDraftFromOrder(expandedOrder));
+              setEditTrackingMode(true);
+            }}
+            className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+            style={{ ...pageActionButtonStyle, marginTop: '10px' }}
+          >
+            EDIT TRACKING
+          </button>
+        </>
+      );
+    }
+    if (activeTab === 'OVERVIEW') {
+      return (
+        <button
+          type="button"
+          onClick={() => navigate('/admin/revenue/accounting-report')}
+          className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+          style={pageActionButtonStyle}
+        >
+          VIEW ACCOUNTING REPORT
+        </button>
+      );
+    }
+    if (activeTab === 'ORDERS') {
+      return (
+        <button
+          type="button"
+          onClick={() => navigate('/admin/revenue/fulfilled-orders')}
+          className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+          style={pageActionButtonStyle}
+        >
+          VIEW FULFILLED ORDERS
+        </button>
+      );
+    }
+    if (activeTab === 'PRODUCTS') {
+      return (
+        <button
+          type="button"
+          onClick={() => navigate('/admin/revenue/edit-inventory')}
+          className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+          style={pageActionButtonStyle}
+        >
+          EDIT INVENTORY
+        </button>
+      );
+    }
+    return (
+      <button
+        type="button"
+        onClick={() => navigate('/admin/revenue/fraud-analysis')}
+        className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+        style={pageActionButtonStyle}
+      >
+        VIEW FRAUD ANALYSIS
+      </button>
+    );
+  })();
+
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
       <div
@@ -961,7 +1060,6 @@ export default function AdminRevenue() {
                 )}
                 </div>
               </div>
-              </div>
             </div>
 
             {activeTab === 'ORDERS' && !expandedOrderId && (
@@ -1038,81 +1136,7 @@ PENDING
             </>
             )}
 
-            <PageActionsBelowCard>
-              {activeTab === 'ORDERS' && expandedOrderId && expandedOrder ? (
-                editTrackingMode ? (
-                  <>
-                    <button type="button" onClick={handleSaveTrackingEdit} className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50" style={pageActionButtonStyle}>
-                      SAVE TRACKING
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEditTrackingMode(false);
-                        setTrackingDraft(expandedOrder ? fillTrackingDraftFromOrder(expandedOrder) : emptyTrackingDraft());
-                      }}
-                      className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-                      style={{ ...pageActionButtonStyle, marginTop: '10px' }}
-                    >
-                      CANCEL EDIT
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button type="button" onClick={() => handleCopyOrder(expandedOrder)} className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50" style={pageActionButtonStyle}>
-                      COPY
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setTrackingDraft(fillTrackingDraftFromOrder(expandedOrder));
-                        setEditTrackingMode(true);
-                      }}
-                      className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-                      style={{ ...pageActionButtonStyle, marginTop: '10px' }}
-                    >
-                      EDIT TRACKING
-                    </button>
-                  </>
-                )
-              ) : activeTab === 'OVERVIEW' ? (
-                <button
-                  type="button"
-                  onClick={() => navigate('/admin/revenue/accounting-report')}
-                  className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-                  style={pageActionButtonStyle}
-                >
-                  VIEW ACCOUNTING REPORT
-                </button>
-              ) : activeTab === 'ORDERS' ? (
-                <button
-                  type="button"
-                  onClick={() => navigate('/admin/revenue/fulfilled-orders')}
-                  className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-                  style={pageActionButtonStyle}
-                >
-                  VIEW FULFILLED ORDERS
-                </button>
-              ) : activeTab === 'PRODUCTS' ? (
-                <button
-                  type="button"
-                  onClick={() => navigate('/admin/revenue/edit-inventory')}
-                  className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-                  style={pageActionButtonStyle}
-                >
-                  EDIT INVENTORY
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => navigate('/admin/revenue/fraud-analysis')}
-                  className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-                  style={pageActionButtonStyle}
-                >
-                  VIEW FRAUD ANALYSIS
-                </button>
-              )}
-            </PageActionsBelowCard>
+            <PageActionsBelowCard>{revenuePageActions}</PageActionsBelowCard>
           </div>
         </div>
       </div>

@@ -24,7 +24,7 @@ import {
   marbleStripViewportStyle,
   marbleStripThumbWrap,
   marbleStripThumbImg,
-  marbleStripTextCol,
+  marbleStripTextColStrip,
 } from '../../../utils/marbleStripStyles';
 
 interface DensityOption {
@@ -3654,7 +3654,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", cursive',
                     fontSize: '18px',
@@ -3721,7 +3721,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", cursive',
                     fontSize: '18px',
@@ -3788,7 +3788,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", cursive',
                     fontSize: '18px',
@@ -3855,7 +3855,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", cursive',
                     fontSize: '18px',
@@ -4023,7 +4023,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", cursive',
                     fontSize: '18px',
@@ -4090,7 +4090,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", cursive',
                     fontSize: '18px',
@@ -4157,7 +4157,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", cursive',
                     fontSize: '18px',
@@ -4224,7 +4224,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", cursive',
                     fontSize: '18px',

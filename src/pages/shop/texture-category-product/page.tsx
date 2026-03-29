@@ -823,7 +823,7 @@ export default function ShopTextureCategoryProductPage() {
                         style={{
                           position: 'absolute',
                           left: '50%',
-                          top: '0',
+                          top: '6px',
                           bottom: '0',
                           width: '1px',
                           backgroundColor: 'black',
@@ -835,7 +835,7 @@ export default function ShopTextureCategoryProductPage() {
                         style={{
                           position: 'absolute',
                           left: '50%',
-                          top: '0',
+                          top: '6px',
                           bottom: '0',
                           width: '10px',
                           backgroundColor: 'transparent',
@@ -1034,7 +1034,7 @@ export default function ShopTextureCategoryProductPage() {
                         style={{
                           position: 'absolute',
                           left: '50%',
-                          top: '0',
+                          top: '6px',
                           bottom: '0',
                           width: '1px',
                           backgroundColor: 'black',
@@ -1046,7 +1046,7 @@ export default function ShopTextureCategoryProductPage() {
                         style={{
                           position: 'absolute',
                           left: '50%',
-                          top: '0',
+                          top: '6px',
                           bottom: '0',
                           width: '10px',
                           backgroundColor: 'transparent',

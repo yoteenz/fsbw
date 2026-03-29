@@ -233,19 +233,19 @@ function ProductsPage() {
     Record<HomeShopTextureSlug, { redLine: string; priceMinUsd: number; priceMaxUsd: number }>
   > = {
     bundles: {
-      straight: { redLine: 'RAW SINGLE DONOR', priceMinUsd: 100, priceMaxUsd: 300 },
-      wavy: { redLine: 'RAW SINGLE DONOR', priceMinUsd: 120, priceMaxUsd: 400 },
-      curly: { redLine: 'RAW SINGLE DONOR', priceMinUsd: 160, priceMaxUsd: 500 }
+      straight: { redLine: 'RAW HUMAN HAIR', priceMinUsd: 100, priceMaxUsd: 300 },
+      wavy: { redLine: 'RAW HUMAN HAIR', priceMinUsd: 120, priceMaxUsd: 400 },
+      curly: { redLine: 'RAW HUMAN HAIR', priceMinUsd: 160, priceMaxUsd: 500 }
     },
     closures: {
-      straight: { redLine: 'RAW SINGLE DONOR', priceMinUsd: 100, priceMaxUsd: 300 },
-      wavy: { redLine: 'RAW SINGLE DONOR', priceMinUsd: 120, priceMaxUsd: 400 },
-      curly: { redLine: 'RAW SINGLE DONOR', priceMinUsd: 140, priceMaxUsd: 500 }
+      straight: { redLine: 'RAW HUMAN HAIR', priceMinUsd: 100, priceMaxUsd: 300 },
+      wavy: { redLine: 'RAW HUMAN HAIR', priceMinUsd: 120, priceMaxUsd: 400 },
+      curly: { redLine: 'RAW HUMAN HAIR', priceMinUsd: 140, priceMaxUsd: 500 }
     },
     frontals: {
-      straight: { redLine: 'RAW SINGLE DONOR', priceMinUsd: 200, priceMaxUsd: 600 },
-      wavy: { redLine: 'RAW SINGLE DONOR', priceMinUsd: 220, priceMaxUsd: 700 },
-      curly: { redLine: 'RAW SINGLE DONOR', priceMinUsd: 240, priceMaxUsd: 800 }
+      straight: { redLine: 'RAW HUMAN HAIR', priceMinUsd: 200, priceMaxUsd: 600 },
+      wavy: { redLine: 'RAW HUMAN HAIR', priceMinUsd: 220, priceMaxUsd: 700 },
+      curly: { redLine: 'RAW HUMAN HAIR', priceMinUsd: 240, priceMaxUsd: 800 }
     }
   };
 
@@ -1085,7 +1085,7 @@ function ProductsPage() {
                   <div style={{
                     position: 'absolute',
                     left: '50%',
-                    top: '0',
+                    top: '6px',
                     bottom: '0',
                     width: '1px',
                     backgroundColor: 'black',
@@ -1096,7 +1096,7 @@ function ProductsPage() {
                   <div style={{
                     position: 'absolute',
                     left: '50%',
-                    top: '0',
+                    top: '6px',
                     bottom: '0',
                     width: '10px',
                     backgroundColor: 'transparent',
@@ -1139,7 +1139,7 @@ function ProductsPage() {
                           boxSizing: 'border-box'
                         }}
                       >
-                      {unitsProducts.map((product, index) => {
+                      {unitsProducts.map((product) => {
                         const flexBasis =
                           unitsProducts.length >= 4
                             ? `calc(100% / ${unitsProducts.length})`
@@ -1168,7 +1168,7 @@ function ProductsPage() {
                               alignItems: 'center',
                               boxSizing: 'border-box',
                               padding: '5px 12px 4px 12px',
-                              transform: 'translateY(-8px)',
+                              transform: 'translateY(-14px)',
                               ...dbgProductBand
                             }}
                           >
@@ -1456,7 +1456,7 @@ function ProductsPage() {
                           style={{
                             position: 'absolute',
                             left: '50%',
-                            top: '0',
+                            top: '6px',
                             bottom: '0',
                             width: '1px',
                             backgroundColor: 'black',
@@ -1468,7 +1468,7 @@ function ProductsPage() {
                           style={{
                             position: 'absolute',
                             left: '50%',
-                            top: '0',
+                            top: '6px',
                             bottom: '0',
                             width: '10px',
                             backgroundColor: 'transparent',

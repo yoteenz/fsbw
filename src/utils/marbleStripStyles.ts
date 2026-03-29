@@ -9,6 +9,7 @@ export function marbleStripScrollRowStyle(scrollPx: number): CSSProperties {
     transform: `translateX(${scrollPx}px)`,
     transition: 'none',
     width: '200%',
+    overflow: 'visible',
   };
 }
 
@@ -16,13 +17,13 @@ export function marbleStripScrollRowStyle(scrollPx: number): CSSProperties {
 export const marbleStripCellOuter: CSSProperties = {
   flex: '0 0 25%',
   minWidth: 0,
-  minHeight: 0,
   boxSizing: 'border-box',
   cursor: 'pointer',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'stretch',
   justifyContent: 'center',
+  overflow: 'visible',
 };
 
 /** Inner band: same padding/centering as `products/page.tsx` UNITS cells. 2D: shift thumb + copy + stars up together. */
@@ -36,11 +37,25 @@ const marbleStripCellBandBase: CSSProperties = {
 };
 
 export function marbleStripCellBand(is3D: boolean): CSSProperties {
-  if (is3D) return marbleStripCellBandBase;
+  if (is3D) return { ...marbleStripCellBandBase, overflow: 'visible' };
   return { ...marbleStripCellBandBase, transform: 'translateY(-10px)' };
 }
 
-/** Star row under price — 5px below stars. 2D: marginBottom. 3D: paddingBottom inside the row (marginBottom 0) so space stays visible under icons. */
+/** Title + price + stars column. 3D: extra space under the stars via column padding only (2D uses star row marginBottom). */
+export function marbleStripTextColStrip(is3D: boolean): CSSProperties {
+  return {
+    ...marbleStripTextCol,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '100%',
+    flexShrink: 0,
+    overflow: 'visible',
+    paddingBottom: is3D ? '10px' : 0,
+  };
+}
+
+/** Star row under price — 2D: marginBottom 5px below stars. 3D: spacing comes from marbleStripTextColStrip paddingBottom; keep this row flush. */
 export function marbleStripStarsRowStyle(is3D: boolean): CSSProperties {
   return {
     display: 'flex',
@@ -51,7 +66,7 @@ export function marbleStripStarsRowStyle(is3D: boolean): CSSProperties {
     boxSizing: 'border-box',
     flexShrink: 0,
     ...(is3D
-      ? { paddingBottom: '5px', marginBottom: 0, paddingTop: 0 }
+      ? { paddingBottom: 0, marginBottom: 0, paddingTop: 0 }
       : { marginBottom: '5px', paddingBottom: 0, paddingTop: 0 }),
   };
 }

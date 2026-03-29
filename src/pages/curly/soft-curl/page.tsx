@@ -21,7 +21,7 @@ import {
   marbleStripViewportStyle,
   marbleStripThumbWrap,
   marbleStripThumbImg,
-  marbleStripTextCol,
+  marbleStripTextColStrip,
 } from '../../../utils/marbleStripStyles';
 
 function SoftCurlSelection() {
@@ -2145,7 +2145,7 @@ function SoftCurlSelection() {
               </button>
               
               {/* Product Thumbnails Container with Static Vertical Line */}
-              <div style={{ flex: '1', position: 'relative' }}>
+              <div style={marbleStripNavMiddleColStyle}>
                 {/* Single Center Line with Masking */}
                 <div style={{
                   position: 'absolute',
@@ -2187,7 +2187,7 @@ function SoftCurlSelection() {
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
@@ -2254,7 +2254,7 @@ function SoftCurlSelection() {
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
@@ -2321,7 +2321,7 @@ function SoftCurlSelection() {
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
@@ -2388,7 +2388,7 @@ function SoftCurlSelection() {
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
@@ -2513,7 +2513,7 @@ function SoftCurlSelection() {
               </button>
               
               {/* Product Thumbnails Container with Static Vertical Line */}
-              <div style={{ flex: '1', position: 'relative' }}>
+              <div style={marbleStripNavMiddleColStyle}>
                 {/* Single Center Line with Masking */}
                 <div style={{
                   position: 'absolute',
@@ -2555,7 +2555,7 @@ function SoftCurlSelection() {
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
@@ -2622,7 +2622,7 @@ function SoftCurlSelection() {
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
@@ -2689,7 +2689,7 @@ function SoftCurlSelection() {
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',
@@ -2756,7 +2756,7 @@ function SoftCurlSelection() {
                     style={marbleStripThumbImg(is3DView)}
                   />
                     </div>
-                    <div style={marbleStripTextCol}>
+                    <div style={marbleStripTextColStrip(is3DView)}>
                   <p style={{ 
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                     fontSize: '18px',

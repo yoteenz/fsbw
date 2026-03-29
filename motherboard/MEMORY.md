@@ -3776,3 +3776,71 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** **`bottom: '28px'`** on the middle vertical rule left a **visible gap** between the line’s end and the strip container bottom; user wanted the line **down** so it **meets the bottom edge** again.
 
 **Changes:** **`bottom: '28px'` → `bottom: '0'`** on the **1px** black divider and **10px** mask: **`src/pages/products/page.tsx`**, **`src/pages/products/units/page.tsx`**, **`src/pages/shop/texture-category-product/page.tsx`**.
+
+---
+
+## 2026-03-28 — Marble center line: shorten height from top (not bottom inset)
+
+**Context:** User clarified **`bottom: Npx`** was the **wrong** way to shorten: it **cuts the lower end** and leaves **empty space** below the line. They want **true shorter line length** with the **bottom still on the container edge**.
+
+**Changes:** **`top: '0'` → `top: '6px'`** and keep **`bottom: '0'`** on the **1px** divider + **10px** mask (line is **6px shorter**, anchored to the **bottom** of the strip): **`src/pages/products/page.tsx`**, **`src/pages/products/units/page.tsx`**, **`src/pages/shop/texture-category-product/page.tsx`** (Similar + Recently).
+
+---
+
+## 2026-03-28 — Hero marble strip 3D: 5px below stars on text column (override-resistant)
+
+**Context:** User still saw **no effective change** under **3D** stars; something appeared to **override** star-row-only padding so **2D vs 3D** looked the same.
+
+**Decisions / outcomes:** Put the **5px** gap on the **title/price/stars** wrapper (**`marbleStripTextColStrip(is3D)`**) as **`paddingBottom: '5px'`** when **`is3D`**, with **`flexShrink: 0`** and **`overflow: 'visible'`**; **3D** star row stays **flush** (**no** star-row padding/margin bottom). **2D** keeps **`marginBottom: '5px'`** on the star row; text column **`paddingBottom: 0`**. Removed **`minHeight: 0`** from **`marbleStripCellOuter`** (kept **`minWidth: 0`**) so strip cells are not vertically squashed by flex; **`overflow: 'visible'`** on cell outer, **3D** band, and scroll row.
+
+**Changes:** **`src/utils/marbleStripStyles.ts`** (**`marbleStripTextColStrip`**, **`marbleStripStarsRowStyle`**, **`marbleStripCellOuter`**, **`marbleStripCellBand`**, **`marbleStripScrollRowStyle`**). **Six** hero PDPs: **`marbleStripTextCol` → `marbleStripTextColStrip(is3DView)`** on all marble strip product cells.
+
+---
+
+## 2026-03-28 — Home/shop UNITS band up 6px; `/shop/units` matched
+
+**Context:** User wanted **thumb + product copy + cap sizes** on **home/shop UNITS** moved **up 6px together**, and **`/shop/units`** three marbles to **match** home for symmetry.
+
+**Changes:** **`src/pages/products/page.tsx`** (UNITS only): inner product band **`translateY(-8px)` → `translateY(-14px)`** (price stays in same band); bag overlay **`top: '-52px'` → `'-58px'`** to track row. **`src/pages/products/units/page.tsx`**: same **`translateY(-14px)`** on inner band, thumb **`width: '79.2%'`** (was **`calc(90% * 0.88)`**), drop **`justifyContent: 'flex-start'`** on column + **`flex: '1 1 auto'`** on band to mirror home; bag **`'-52px'` → `'-58px'`**.
+
+---
+
+## 2026-03-28 — Home/shop UNITS bags: undo +6px (top `-58px` → `-52px`)
+
+**Context:** User said home/shop add-to-bag was **moved incorrectly** with the prior symmetry pass; move bags **down 6px** **only** on home/shop (**`/shop/units`** unchanged at **`-58px`**).
+
+**Changes:** **`src/pages/products/page.tsx`**: UNITS bag overlay **`top: '-58px'` → `'-52px'`**.
+
+---
+
+## 2026-03-28 — Admin client details: remove cart/wishlist “Showing … localStorage” gray copy
+
+**Context:** User wanted the gray **“Showing cart from this browser…”** / **“Showing wishlist from this browser…”** lines removed below the **CART** / **WISHLIST** tabs on the client details panel.
+
+**Changes:** **`src/pages/admin/clients/page.tsx`**: Removed those **`source === 'this_device'`** helper paragraphs; dropped unused **`source`** tracking while keeping **localStorage** fallback list behavior.
+
+---
+
+## 2026-03-28 — Home/shop BUNDLES/CLOSURES/FRONTALS red line: RAW HUMAN HAIR
+
+**Context:** User wanted the red subline copy **`RAW SINGLE DONOR`** → **`RAW HUMAN HAIR`** on the texture marbles.
+
+**Changes:** **`src/pages/products/page.tsx`**: **`shopCategoryTextureLines`** all **`redLine`** values **`'RAW SINGLE DONOR'` → `'RAW HUMAN HAIR'`** (bundles, closures, frontals × straight/wavy/curly).
+
+---
+
+## 2026-03-29 — Vercel build: admin revenue JSX + `tsc` clean
+
+**Context:** **`npm run build`** failed on Vercel with **`src/pages/admin/revenue/page.tsx(1119,5): error TS1005: ')' expected`** (parser pointed at final **`</div>`**s).
+
+**Decisions / outcomes:** One extra **`</div>`** after the main card tab scroll area (after **`admin-revenue-tab-content`** + **`overflow-y-auto`**) threw off the JSX tree; the nested ternary under **`PageActionsBelowCard`** was refactored to a precomputed **`revenuePageActions`** block for clarity. **`tsc --noEmit`** also reported **`noUnusedLocals`**: removed unused **`marbleStripNavRowStyle`** import on **`ocean-curl`**; **`soft-curl`** and **`soft-wave`** middle column now uses **`marbleStripNavMiddleColStyle`** (had been imported but inline **`flex: '1'`** still used); home **`products/page.tsx`** first UNITS **`map`** uses **`(product)`** only; bag overlay row keeps **`(product, index)`** for **`isLeftColumn`**.
+
+**Changes:** **`src/pages/admin/revenue/page.tsx`**, **`src/pages/curly/ocean-curl/page.tsx`**, **`src/pages/curly/soft-curl/page.tsx`**, **`src/pages/wavy/soft-wave/page.tsx`**, **`src/pages/products/page.tsx`**.
+
+---
+
+## 2026-03-29 — Hero marble strip 3D: 10px under stars (text column)
+
+**Context:** User still saw no visible change after refresh; asked for **10px** spacing **below stars in 3D only** to verify the style path applies. **2D** unchanged (**`marbleStripStarsRowStyle`** **`marginBottom: '5px'`**).
+
+**Changes:** **`src/utils/marbleStripStyles.ts`**: **`marbleStripTextColStrip`** **`paddingBottom`** for **`is3D`** **`'5px'` → `'10px'`**; comment updated.
