@@ -4396,3 +4396,11 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** User asked to **decrease spacing below** **VIEW ALL BENEFITS** by **4px**.
 
 **Changes:** **`src/pages/account/membership/page.tsx`**: that **`button`** bottom margin **`22px` → `18px`**.
+
+---
+
+## 2026-03-29 — Premium chart: CHALLENGES, PRIORITY MESSAGES, SPECIAL OFFERS rows
+
+**Context:** User asked to **add** **challenges**, **priority messages**, and **special offers** to the **premium upgrade** comparison chart.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: after **WELCOME DISCOUNT**, three **`PremiumChartBenefitRow`** rows — **CHALLENGES** (✓ 3 / 6 / 12 mo), **PRIORITY MESSAGES** (✓ 6 & 12 only), **SPECIAL OFFERS** (✓ 12 mo only). **`PREMIUM_BENEFITS_BY_TIER`** updated to match (**CHALLENGES** / **PRIORITY MESSAGES** / **SPECIAL OFFERS** at correct tiers); **`MEMBER REWARDS + CHALLENGES`** shortened to **`MEMBER REWARDS`** to avoid duplicating the new **CHALLENGES** line.
