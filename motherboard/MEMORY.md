@@ -4412,3 +4412,27 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** User asked to move **CHALLENGES** and **PRIORITY MESSAGES** to **below PRIORITY BOOKING**, and **SPECIAL OFFERS** to **below LIVE ORDER TRACKING** (no longer directly under **WELCOME DISCOUNT**).
 
 **Changes:** **`src/pages/account/membership/page.tsx`**: **`PremiumChartBenefitRow`** positions updated; **`PREMIUM_BENEFITS_BY_TIER`** list order aligned (**CHALLENGES** after **PRIORITY BOOKING**; **SPECIAL OFFERS** after **LIVE ORDER TRACKING** on 12 mo).
+
+---
+
+## 2026-03-29 — Shop BUNDLES / CLOSURES / FRONTALS thumbnails −10%
+
+**Context:** User asked to **decrease thumbnail sizes by 10%** for **bundles, closures & frontals** (shared shop texture category imagery).
+
+**Changes:** **`src/utils/shopTextureCategoryThumb.ts`**: **`shopTextureCategoryThumbDisplayScale`** now multiplies the previous straight/wavy vs curly ratio by **`0.9`**, so home/products marbles, texture PDP hero **`maxWidth`**, and similar-products strip **`scale()`** all shrink together without duplicating magic numbers in page files.
+
+---
+
+## 2026-03-29 — Curly BUNDLES/CLOSURES/FRONTALS: product text −2px, thumbs unchanged
+
+**Context:** User asked to move **product text** up **2px** for **curly** only on **bundles, closures & frontals**, and **not** change curly **thumbnail images** (no img transform/scale edits for this request).
+
+**Changes:** **`src/pages/products/page.tsx`**: wrapper **`translateY(-2px)`** around texture **label + red line + price** when **`t.slug === 'curly'`** (img block unchanged). **`src/pages/shop/texture-category-product/page.tsx`**: same for desktop hero (**title, subline, price, stars**) when **`texture === 'curly'`**; **SIMILAR PRODUCTS** strip wraps text/stars after each thumb with **`translateY(-2px)`** when **`ot === 'curly'`**. Left existing **`isShopTextureCurlyFrontals`** img nudge and **`shopTextureCategoryThumbDisplayScale`** on **`<img>`** as-is.
+
+---
+
+## 2026-03-29 — Curly BUNDLES/CLOSURES/FRONTALS: product text nudge −2px → −4px
+
+**Context:** User said the prior **2px** text lift was not noticeable enough; asked to move the **CURLY** row product text up **another 2px** (same pattern as home marbles: wrapper after image, label + red line + price only).
+
+**Changes:** **`translateY(-2px)` → `translateY(-4px)`** on curly-only text wrappers in **`src/pages/products/page.tsx`** (`t.slug === 'curly'`) and **`src/pages/shop/texture-category-product/page.tsx`** (hero when **`texture === 'curly'`**, **SIMILAR PRODUCTS** when **`ot === 'curly'`**). Thumbnail **`<img>`** nudges unchanged.

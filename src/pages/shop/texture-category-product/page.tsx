@@ -615,66 +615,74 @@ export default function ShopTextureCategoryProductPage() {
                     />
                   </div>
 
-                  <p
-                    className="text-center text-black mb-2 gift-card-product-name"
-                    style={{
-                      fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif !important',
-                      fontSize: '32px !important',
-                      fontWeight: '400 !important',
-                      lineHeight: '1.15 !important',
-                      margin: '0 !important',
-                      padding: '0 8px !important',
-                      display: 'block !important',
-                      textAlign: 'center' as const,
-                      whiteSpace: 'normal !important',
-                      width: '100% !important',
-                      transform: 'translateY(-128px) !important',
-                      position: 'relative' as const,
-                      zIndex: '999 !important'
-                    }}
+                  <div
+                    style={
+                      texture === 'curly'
+                        ? { transform: 'translateY(-4px)' }
+                        : undefined
+                    }
                   >
-                    {productTitle}
-                  </p>
+                    <p
+                      className="text-center text-black mb-2 gift-card-product-name"
+                      style={{
+                        fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif !important',
+                        fontSize: '32px !important',
+                        fontWeight: '400 !important',
+                        lineHeight: '1.15 !important',
+                        margin: '0 !important',
+                        padding: '0 8px !important',
+                        display: 'block !important',
+                        textAlign: 'center' as const,
+                        whiteSpace: 'normal !important',
+                        width: '100% !important',
+                        transform: 'translateY(-128px) !important',
+                        position: 'relative' as const,
+                        zIndex: '999 !important'
+                      }}
+                    >
+                      {productTitle}
+                    </p>
 
-                  <p
-                    className="text-center text-red-500 uppercase mb-2"
-                    style={{
-                      fontFamily: '"Futura PT Medium"',
-                      fontWeight: '500',
-                      transform: 'translateY(-128px)',
-                      fontSize: '12px',
-                      padding: '0 12px'
-                    }}
-                  >
-                    {meta.subline}
-                  </p>
+                    <p
+                      className="text-center text-red-500 uppercase mb-2"
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        fontWeight: '500',
+                        transform: 'translateY(-128px)',
+                        fontSize: '12px',
+                        padding: '0 12px'
+                      }}
+                    >
+                      {meta.subline}
+                    </p>
 
-                  <p
-                    className="text-center text-black mb-1"
-                    style={{
-                      fontFamily: '"Futura PT Medium"',
-                      fontSize: '16px',
-                      fontWeight: '500',
-                      transform: 'translateY(-137px)',
-                      width: '100%'
-                    }}
-                    dangerouslySetInnerHTML={formatPrice(price)}
-                  />
+                    <p
+                      className="text-center text-black mb-1"
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '16px',
+                        fontWeight: '500',
+                        transform: 'translateY(-137px)',
+                        width: '100%'
+                      }}
+                      dangerouslySetInnerHTML={formatPrice(price)}
+                    />
 
-                  <div className="flex justify-center mb-4 gap-1" style={{ transform: 'translateY(-137px)' }}>
-                    {[...Array(5)].map((_, index) => (
-                      <img
-                        key={index}
-                        src="/assets/NOIR/star-symbol.png"
-                        alt=""
-                        style={{
-                          width: '15px',
-                          height: '15px',
-                          filter: 'drop-shadow(0 0 0 1px black)',
-                          stroke: '1px black'
-                        }}
-                      />
-                    ))}
+                    <div className="flex justify-center mb-4 gap-1" style={{ transform: 'translateY(-137px)' }}>
+                      {[...Array(5)].map((_, index) => (
+                        <img
+                          key={index}
+                          src="/assets/NOIR/star-symbol.png"
+                          alt=""
+                          style={{
+                            width: '15px',
+                            height: '15px',
+                            filter: 'drop-shadow(0 0 0 1px black)',
+                            stroke: '1px black'
+                          }}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
 
@@ -915,67 +923,75 @@ export default function ShopTextureCategoryProductPage() {
                                     })()
                                   }}
                                 />
-                                <p
-                                  style={{
-                                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                                    fontSize: '18px',
-                                    color: 'black',
-                                    textTransform: 'uppercase',
-                                    margin: '-10px 0 -3px 0',
-                                    fontWeight: '500',
-                                    transform: 'translateX(10px)'
-                                  }}
-                                >
-                                  {simTitle}
-                                </p>
-                                <p
-                                  style={{
-                                    fontFamily: '"Futura PT Medium"',
-                                    fontSize: '10px',
-                                    color: '#EB1C24',
-                                    textTransform: 'uppercase',
-                                    margin: '0 0 5px 0',
-                                    fontWeight: '500',
-                                    lineHeight: '0.84',
-                                    transform: 'translateX(10px) translateY(1px)'
-                                  }}
-                                >
-                                  {categoryTitle} · RAW HAIR
-                                </p>
-                                <p
-                                  style={{
-                                    fontFamily: '"Futura PT Medium"',
-                                    fontSize: '12px',
-                                    color: 'black',
-                                    textTransform: 'uppercase',
-                                    margin: '0 0 5px 0',
-                                    fontWeight: '500',
-                                    lineHeight: '0.84',
-                                    transform: 'translateX(10px) translateY(-1px)'
-                                  }}
-                                  dangerouslySetInnerHTML={formatPrice(PRICE_BY_CATEGORY[category])}
-                                />
                                 <div
-                                  style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    gap: '2px',
-                                    marginTop: '2px',
-                                    transform: 'translateX(10px)'
-                                  }}
+                                  style={
+                                    ot === 'curly'
+                                      ? { transform: 'translateY(-4px)' }
+                                      : undefined
+                                  }
                                 >
-                                  {[...Array(5)].map((_, si) => (
-                                    <img
-                                      key={si}
-                                      src="/assets/NOIR/star-symbol.png"
-                                      alt=""
-                                      style={{
-                                        width: '10px',
-                                        height: '10px',
-                                        filter: 'drop-shadow(0 0 0 1px black)'
-                                      }}
-                                    />
-                                  ))}
+                                  <p
+                                    style={{
+                                      fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                      fontSize: '18px',
+                                      color: 'black',
+                                      textTransform: 'uppercase',
+                                      margin: '-10px 0 -3px 0',
+                                      fontWeight: '500',
+                                      transform: 'translateX(10px)'
+                                    }}
+                                  >
+                                    {simTitle}
+                                  </p>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Medium"',
+                                      fontSize: '10px',
+                                      color: '#EB1C24',
+                                      textTransform: 'uppercase',
+                                      margin: '0 0 5px 0',
+                                      fontWeight: '500',
+                                      lineHeight: '0.84',
+                                      transform: 'translateX(10px) translateY(1px)'
+                                    }}
+                                  >
+                                    {categoryTitle} · RAW HAIR
+                                  </p>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Medium"',
+                                      fontSize: '12px',
+                                      color: 'black',
+                                      textTransform: 'uppercase',
+                                      margin: '0 0 5px 0',
+                                      fontWeight: '500',
+                                      lineHeight: '0.84',
+                                      transform: 'translateX(10px) translateY(-1px)'
+                                    }}
+                                    dangerouslySetInnerHTML={formatPrice(PRICE_BY_CATEGORY[category])}
+                                  />
+                                  <div
+                                    style={{
+                                      display: 'flex',
+                                      justifyContent: 'center',
+                                      gap: '2px',
+                                      marginTop: '2px',
+                                      transform: 'translateX(10px)'
+                                    }}
+                                  >
+                                    {[...Array(5)].map((_, si) => (
+                                      <img
+                                        key={si}
+                                        src="/assets/NOIR/star-symbol.png"
+                                        alt=""
+                                        style={{
+                                          width: '10px',
+                                          height: '10px',
+                                          filter: 'drop-shadow(0 0 0 1px black)'
+                                        }}
+                                      />
+                                    ))}
+                                  </div>
                                 </div>
                               </div>
                             );

@@ -1589,72 +1589,80 @@ function ProductsPage() {
                                     }}
                                   />
                                 </div>
-                                <p
-                                  style={{
-                                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                                    fontSize: '18px',
-                                    color: 'black',
-                                    textTransform: 'uppercase',
-                                    margin: 0,
-                                    fontWeight: '500',
-                                    lineHeight: 1.05,
-                                    minHeight: '22px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    pointerEvents: 'none',
-                                    width: '100%',
-                                    textAlign: 'center',
-                                    boxSizing: 'border-box'
-                                  }}
+                                <div
+                                  style={
+                                    t.slug === 'curly'
+                                      ? { transform: 'translateY(-4px)' }
+                                      : undefined
+                                  }
                                 >
-                                  {t.label}
-                                </p>
-                                {(categorySlug === 'bundles' ||
-                                  categorySlug === 'closures' ||
-                                  categorySlug === 'frontals') && (
-                                  <>
-                                    <p
-                                      style={{
-                                        fontFamily: '"Futura PT Medium"',
-                                        fontSize: '10px',
-                                        color: '#EB1C24',
-                                        textTransform: 'uppercase',
-                                        margin: '2px 0 5px 0',
-                                        fontWeight: '500',
-                                        lineHeight: '0.84',
-                                        minHeight: '12px',
-                                        transform: 'translateY(1px)',
-                                        pointerEvents: 'none',
-                                        width: '100%',
-                                        textAlign: 'center',
-                                        boxSizing: 'border-box'
-                                      }}
-                                    >
-                                      {shopCategoryTextureLines[categorySlug][t.slug].redLine}
-                                    </p>
-                                    <p
-                                      style={{
-                                        fontFamily: '"Futura PT Medium"',
-                                        fontSize: '12px',
-                                        color: 'black',
-                                        textTransform: 'uppercase',
-                                        margin: '0 0 5px 0',
-                                        fontWeight: '500',
-                                        lineHeight: '0.84',
-                                        transform: 'translateY(1px)',
-                                        pointerEvents: 'none',
-                                        width: '100%',
-                                        textAlign: 'center',
-                                        boxSizing: 'border-box'
-                                      }}
-                                      dangerouslySetInnerHTML={formatShopTextureRange(
-                                        shopCategoryTextureLines[categorySlug][t.slug].priceMinUsd,
-                                        shopCategoryTextureLines[categorySlug][t.slug].priceMaxUsd
-                                      )}
-                                    />
-                                  </>
-                                )}
+                                  <p
+                                    style={{
+                                      fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                      fontSize: '18px',
+                                      color: 'black',
+                                      textTransform: 'uppercase',
+                                      margin: 0,
+                                      fontWeight: '500',
+                                      lineHeight: 1.05,
+                                      minHeight: '22px',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      pointerEvents: 'none',
+                                      width: '100%',
+                                      textAlign: 'center',
+                                      boxSizing: 'border-box'
+                                    }}
+                                  >
+                                    {t.label}
+                                  </p>
+                                  {(categorySlug === 'bundles' ||
+                                    categorySlug === 'closures' ||
+                                    categorySlug === 'frontals') && (
+                                    <>
+                                      <p
+                                        style={{
+                                          fontFamily: '"Futura PT Medium"',
+                                          fontSize: '10px',
+                                          color: '#EB1C24',
+                                          textTransform: 'uppercase',
+                                          margin: '2px 0 5px 0',
+                                          fontWeight: '500',
+                                          lineHeight: '0.84',
+                                          minHeight: '12px',
+                                          transform: 'translateY(1px)',
+                                          pointerEvents: 'none',
+                                          width: '100%',
+                                          textAlign: 'center',
+                                          boxSizing: 'border-box'
+                                        }}
+                                      >
+                                        {shopCategoryTextureLines[categorySlug][t.slug].redLine}
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontFamily: '"Futura PT Medium"',
+                                          fontSize: '12px',
+                                          color: 'black',
+                                          textTransform: 'uppercase',
+                                          margin: '0 0 5px 0',
+                                          fontWeight: '500',
+                                          lineHeight: '0.84',
+                                          transform: 'translateY(1px)',
+                                          pointerEvents: 'none',
+                                          width: '100%',
+                                          textAlign: 'center',
+                                          boxSizing: 'border-box'
+                                        }}
+                                        dangerouslySetInnerHTML={formatShopTextureRange(
+                                          shopCategoryTextureLines[categorySlug][t.slug].priceMinUsd,
+                                          shopCategoryTextureLines[categorySlug][t.slug].priceMaxUsd
+                                        )}
+                                      />
+                                    </>
+                                  )}
+                                </div>
                               </div>
                             </div>
                         ))}

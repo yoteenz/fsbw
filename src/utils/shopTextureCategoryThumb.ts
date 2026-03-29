@@ -44,9 +44,10 @@ export const shopTextureCategoryThumbFallbackSrc: Record<ShopTextureCategoryThum
   curly: '/assets/NOIR/curl-thumb.png'
 };
 
-/** Curly bundles / closures / frontals: was +10% vs straight/wavy; reduced by 5% → ×1.045 (home marbles + PDP). */
+/** Curly vs straight/wavy: ×1.1 then ×0.95; all textures ×0.9 vs prior (home marbles, PDP hero, similar strip). */
 export function shopTextureCategoryThumbDisplayScale(texture: ShopTextureCategoryThumbTexture): number {
-  return texture === 'curly' ? 1.1 * 0.95 : 1;
+  const relativeToStraight = texture === 'curly' ? 1.1 * 0.95 : 1;
+  return relativeToStraight * 0.9;
 }
 
 export function isShopTextureCurlyFrontals(
