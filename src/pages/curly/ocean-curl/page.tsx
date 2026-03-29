@@ -2199,7 +2199,7 @@ function OceanCurlSelection() {
             backgroundColor: 'rgba(255, 255, 255, 0.6)',
             padding: '0px',
             maxWidth: '100%',
-            margin: '0 auto'
+            margin: '0 auto',
           }}>
             {/* Header */}
             <div style={{ textAlign: 'center', marginBottom: '15px' }}>
@@ -2567,7 +2567,7 @@ function OceanCurlSelection() {
             backgroundColor: 'rgba(255, 255, 255, 0.6)',
             padding: '0px',
             maxWidth: '100%',
-            margin: '0 auto'
+            margin: '0 auto',
           }}>
             {/* Header */}
             <div style={{ textAlign: 'center', marginBottom: '15px' }}>

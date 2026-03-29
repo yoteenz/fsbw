@@ -92,7 +92,7 @@ const WishlistPage = lazyWithRetry(() => import('./pages/wishlist/page'), 'Wishl
 const ViewListsPage = lazyWithRetry(() => import('./pages/wishlist/lists/page'), 'ViewListsPage');
 const AccountPage = lazyWithRetry(() => import('./pages/account/page'), 'AccountPage');
 const ConciergePage = lazyWithRetry(() => import('./pages/account/concierge/page'), 'ConciergePage');
-const MembershipPage = lazyWithRetry(() => import('./pages/account/membership/page'), 'MembershipPage');
+const RewardsPage = lazyWithRetry(() => import('./pages/account/rewards/page'), 'RewardsPage');
 const ReferralsPage = lazyWithRetry(() => import('./pages/account/referrals/page'), 'ReferralsPage');
 const AffiliatePage = lazyWithRetry(() => import('./pages/account/affiliate/page'), 'AffiliatePage');
 const NotificationsPage = lazyWithRetry(() => import('./pages/account/notifications/page'), 'NotificationsPage');
@@ -841,7 +841,7 @@ function App() {
         <Route path="/account/rewards" element={
           <AccountRouteGuard>
             <Suspense fallback={<LoadingScreen />}>
-              <MembershipPage />
+              <RewardsPage />
             </Suspense>
           </AccountRouteGuard>
         } />

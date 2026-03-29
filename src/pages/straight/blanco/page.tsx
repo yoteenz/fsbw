@@ -2106,7 +2106,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
               padding: '0px',
               maxWidth: '100%',
-              margin: '0 auto'
+              margin: '0 auto',
             }}>
               <div style={{ textAlign: 'center', marginBottom: '15px' }}>
                 <div style={{ 
@@ -2459,7 +2459,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
               padding: '0px',
               maxWidth: '100%',
-              margin: '0 auto'
+              margin: '0 auto',
             }}>
               <div style={{ textAlign: 'center', marginBottom: '15px' }}>
                 <div style={{ 

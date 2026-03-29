@@ -3573,7 +3573,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
             padding: '0px',
             minWidth: '100%',
             maxWidth: 'none',
-            margin: '0 auto'
+            margin: '0 auto',
           }}>
             {/* Header */}
             <div style={{ textAlign: 'center', marginBottom: '15px' }}>
@@ -3942,7 +3942,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
             padding: '0px',
             minWidth: '100%',
             maxWidth: 'none',
-            margin: '0 auto'
+            margin: '0 auto',
           }}>
             {/* Header */}
             <div style={{ textAlign: 'center', marginBottom: '15px' }}>

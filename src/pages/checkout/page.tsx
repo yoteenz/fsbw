@@ -2451,7 +2451,25 @@ function CheckoutPage() {
                             if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
                               return '/assets/gift-card asset.png';
                             }
-                            
+                            if (
+                              item.subscriptionTier === '12months' ||
+                              (isSubscriptionUpgrade && /\b12\s*MONTHS\b/i.test(String(item.name || '')))
+                            ) {
+                              return '/assets/12-months-premium.png';
+                            }
+                            if (
+                              item.subscriptionTier === '6months' ||
+                              (isSubscriptionUpgrade && /\b6\s*MONTHS\b/i.test(String(item.name || '')))
+                            ) {
+                              return '/assets/6-months-premium.png';
+                            }
+                            if (
+                              item.subscriptionTier === '3months' ||
+                              (isSubscriptionUpgrade && /\b3\s*MONTHS\b/i.test(String(item.name || '')))
+                            ) {
+                              return '/assets/3-months-premium.png';
+                            }
+
                             const productName = item.name || 'NOIR';
                             
                             // For NOIR, check hairline to use appropriate front image
@@ -2484,7 +2502,20 @@ function CheckoutPage() {
                             }
                           };
                           const itemImage = getItemImage();
-                          
+                          const isMembershipTierThumb =
+                            item.subscriptionTier === '3months' ||
+                            item.subscriptionTier === '6months' ||
+                            item.subscriptionTier === '12months' ||
+                            (isSubscriptionUpgrade &&
+                              /\b(3|6|12)\s*MONTHS\b/i.test(String(item.name || '')));
+                          const cartThumbPx = isMembershipTierThumb ? 138 : 120; /* 120 * 1.15 for upgrade tiers */
+                          const cartCellWidthPx =
+                            item.name === 'GIFT CARD' || item.type === 'gift-card'
+                              ? 165
+                              : isMembershipTierThumb
+                                ? 173
+                                : 150; /* ~150 * 1.15 when thumb grows */
+
                           const getHairOrigin = (productName: string) => {
                             switch (productName) {
                               case 'NOIR':
@@ -2513,7 +2544,7 @@ function CheckoutPage() {
                               key={itemId}
                               className="flex-shrink-0"
                               style={{
-                                width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '165px' : '150px',
+                                width: `${cartCellWidthPx}px`,
                                 minHeight: '150px',
                                 height: 'auto',
                                 display: 'flex',
@@ -2531,8 +2562,14 @@ function CheckoutPage() {
                                 src={itemImage}
                                 alt={itemName}
                                 style={{
-                                  width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '165px' : '120px',
-                                  height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '165px' : '120px',
+                                  width:
+                                    item.name === 'GIFT CARD' || item.type === 'gift-card'
+                                      ? '165px'
+                                      : `${cartThumbPx}px`,
+                                  height:
+                                    item.name === 'GIFT CARD' || item.type === 'gift-card'
+                                      ? '165px'
+                                      : `${cartThumbPx}px`,
                                   objectFit: 'contain'
                                 }}
                                 draggable={false}

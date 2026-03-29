@@ -9,17 +9,18 @@ import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '..
 import { clearAppAuth } from '../../../utils/adminAuth';
 import type { CurrencyRatesRecord } from '../../../utils/currencyFormat';
 import { formatPriceUsd } from '../../../utils/currencyFormat';
+import {
+  shopTextureCategoryThumbFallbackSrc,
+  shopTextureCategoryThumbSrc
+} from '../../../utils/shopTextureCategoryThumb';
 
 type Texture = 'straight' | 'wavy' | 'curly';
 type Category = 'bundles' | 'closures' | 'frontals';
 
-const TEXTURE_META: Record<
-  Texture,
-  { label: string; image: string; subline: string }
-> = {
-  straight: { label: 'STRAIGHT', image: '/assets/NOIR/noir-thumb.png', subline: 'STRAIGHT TEXTURE · RAW HAIR' },
-  wavy: { label: 'WAVY', image: '/assets/NOIR/wave-thumb.png', subline: 'WAVY TEXTURE · RAW HAIR' },
-  curly: { label: 'CURLY', image: '/assets/NOIR/curl-thumb.png', subline: 'CURLY TEXTURE · RAW HAIR' }
+const TEXTURE_META: Record<Texture, { label: string; subline: string }> = {
+  straight: { label: 'STRAIGHT', subline: 'STRAIGHT TEXTURE · RAW HAIR' },
+  wavy: { label: 'WAVY', subline: 'WAVY TEXTURE · RAW HAIR' },
+  curly: { label: 'CURLY', subline: 'CURLY TEXTURE · RAW HAIR' }
 };
 
 const CATEGORY_TITLE: Record<Category, string> = {
@@ -189,6 +190,7 @@ export default function ShopTextureCategoryProductPage() {
   const navCrumb = productTitle;
   const price = PRICE_BY_CATEGORY[category];
   const otherTextures = TEXTURE_ORDER.filter((t) => t !== texture);
+  const heroThumbSrc = shopTextureCategoryThumbSrc(texture, category);
 
   const handleAddToBag = () => {
     setAddToBagState('adding');
@@ -200,7 +202,7 @@ export default function ShopTextureCategoryProductPage() {
           name: productTitle,
           price,
           quantity: 1,
-          image: meta.image,
+          image: heroThumbSrc,
           type: 'shop-texture-category',
           texture,
           category
@@ -591,8 +593,14 @@ export default function ShopTextureCategoryProductPage() {
                     }}
                   >
                     <img
-                      src={meta.image}
+                      src={heroThumbSrc}
                       alt={productTitle}
+                      onError={(e) => {
+                        const img = e.currentTarget;
+                        if (img.getAttribute('data-fallback-tried') === '1') return;
+                        img.setAttribute('data-fallback-tried', '1');
+                        img.src = shopTextureCategoryThumbFallbackSrc[texture];
+                      }}
                       style={{
                         width: '100%',
                         maxWidth: '400px',
@@ -860,6 +868,7 @@ export default function ShopTextureCategoryProductPage() {
                           {otherTextures.map((ot, idx) => {
                             const om = TEXTURE_META[ot];
                             const simTitle = `${om.label} ${categoryTitle}`;
+                            const simThumbSrc = shopTextureCategoryThumbSrc(ot, category);
                             return (
                               <div
                                 key={ot}
@@ -872,9 +881,15 @@ export default function ShopTextureCategoryProductPage() {
                                 }}
                               >
                                 <img
-                                  src={om.image}
+                                  src={simThumbSrc}
                                   alt={simTitle}
                                   onClick={() => navigate(`/${ot}/${category}`)}
+                                  onError={(e) => {
+                                    const img = e.currentTarget;
+                                    if (img.getAttribute('data-fallback-tried') === '1') return;
+                                    img.setAttribute('data-fallback-tried', '1');
+                                    img.src = shopTextureCategoryThumbFallbackSrc[ot];
+                                  }}
                                   style={{
                                     width: '100%',
                                     height: 'auto',

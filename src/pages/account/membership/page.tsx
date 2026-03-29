@@ -1260,7 +1260,7 @@ function MembershipPage() {
                       <div>
                         {/* Current Points */}
                         <div style={{ textAlign: 'center', marginBottom: '12px', marginTop: '10px' }}>
-                          <img src="/assets/points-icon.svg" alt="" style={{ width: '31.68px', height: '31.68px', marginTop: '20px', marginBottom: '6px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
+                          <img src="/assets/loyalty-points-rewards.png" alt="" style={{ width: '31.68px', height: '31.68px', marginTop: '20px', marginBottom: '6px', display: 'block', marginLeft: 'auto', marginRight: 'auto', objectFit: 'contain' }} />
                           <p
                             style={{
                               fontFamily: '"Futura PT Medium"',
@@ -1434,8 +1434,33 @@ function MembershipPage() {
                         />
                       </div>
 
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'center',
+                          marginTop: '12px',
+                          marginBottom: '16px',
+                          width: '100%',
+                          boxSizing: 'border-box',
+                        }}
+                      >
+                        <img
+                          src="/assets/premium-membership-upgrade.png"
+                          alt="Premium membership comparison"
+                          decoding="async"
+                          style={{
+                            width: '100%',
+                            maxWidth: 'min(100%, 336px)',
+                            height: 'auto',
+                            objectFit: 'contain',
+                            display: 'block',
+                            imageRendering: 'high-quality',
+                          }}
+                        />
+                      </div>
+
                       {/* Comparison Table */}
-                        <div style={{ overflowX: 'auto', marginTop: '40px', marginBottom: '38px', display: 'flex', justifyContent: 'center' }}>
+                        <div style={{ overflowX: 'auto', marginTop: '24px', marginBottom: '38px', display: 'flex', justifyContent: 'center' }}>
                           <table style={{ width: 'max-content', borderCollapse: 'collapse', fontSize: '9px', transform: 'translateZ(0)' }}>
                             <thead>
                               <tr>
@@ -1940,7 +1965,7 @@ function MembershipPage() {
                   <div>
                         {/* Current Points */}
                             <div style={{ textAlign: 'center', marginBottom: '12px', marginTop: '10px' }}>
-                              <img src="/assets/points-icon.svg" alt="" style={{ width: '31.68px', height: '31.68px', marginTop: '20px', marginBottom: '6px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
+                              <img src="/assets/loyalty-points-rewards.png" alt="" style={{ width: '31.68px', height: '31.68px', marginTop: '20px', marginBottom: '6px', display: 'block', marginLeft: 'auto', marginRight: 'auto', objectFit: 'contain' }} />
                               <p
                                 style={{
                                   fontFamily: '"Futura PT Medium"',

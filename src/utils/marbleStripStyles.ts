@@ -13,9 +13,13 @@ export function marbleStripScrollRowStyle(scrollPx: number): CSSProperties {
   };
 }
 
-/** One product column: quarter of strip, matches home/shop UNITS flex basis. */
+/**
+ * One product column: exactly 1/4 of the 200%-wide row (= half the viewport per cell when two show).
+ * Use flex-grow distribution (`1 1 0`) instead of `0 0 25%` so % flex-basis does not resolve too small
+ * against a %%-width row on mobile WebKit (cells stayed narrow; center line correct but sides inset).
+ */
 export const marbleStripCellOuter: CSSProperties = {
-  flex: '0 0 25%',
+  flex: '1 1 0',
   minWidth: 0,
   boxSizing: 'border-box',
   cursor: 'pointer',
@@ -51,7 +55,7 @@ export function marbleStripTextColStrip(is3D: boolean): CSSProperties {
     width: '100%',
     flexShrink: 0,
     overflow: 'visible',
-    paddingBottom: is3D ? '10px' : 0,
+    paddingBottom: is3D ? '15px' : 0,
   };
 }
 
@@ -119,27 +123,35 @@ export const marbleStripTextCol: CSSProperties = {
   boxSizing: 'border-box',
 };
 
-/** Flex row: arrows + strip. overflow visible so nav arrows are not clipped. */
+/**
+ * Nav row: full width of the backdrop card. Side arrows are `position: absolute` (see
+ * `marbleStripNavArrowStyle`) so they do not steal main-axis space — the middle column
+ * spans edge-to-edge like the blue-outline reference.
+ */
 export const marbleStripNavRowStyle: CSSProperties = {
   display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  gap: '10px',
+  position: 'relative',
+  width: '100%',
+  boxSizing: 'border-box',
+  alignItems: 'stretch',
+  justifyContent: 'flex-start',
+  gap: 0,
   overflow: 'visible',
 };
 
-/** Viewport column between nav arrows — minWidth 0 prevents the 200%-wide strip from forcing the row wider than the container. */
+/** Viewport column — sole in-flow flex child; fills 100% when arrows are out of flow. */
 export const marbleStripNavMiddleColStyle: CSSProperties = {
-  flex: '1',
+  flex: '1 1 0',
+  width: '100%',
   position: 'relative',
   minWidth: 0,
   minHeight: 0,
 };
 
-/** Similar / recently carousel arrows — flexShrink 0 so the strip never squeezes them to zero width. */
+/** Carousel arrows overlaid on the left/right edges of the nav row (above strip content). */
 export function marbleStripNavArrowStyle(side: 'left' | 'right', is3D: boolean): CSSProperties {
-  const y = is3D ? '-26px' : '-10px';
-  const x = side === 'left' ? '10px' : '-10px';
+  const vertUp = is3D ? 26 : 10;
+  const x = side === 'left' ? 10 : -10;
   return {
     background: 'none',
     border: 'none',
@@ -149,10 +161,12 @@ export function marbleStripNavArrowStyle(side: 'left' | 'right', is3D: boolean):
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: '50px',
-    flexShrink: 0,
     minWidth: '28px',
-    position: 'relative',
-    zIndex: 3,
-    transform: `translateX(${x}) translateY(${y})`,
+    position: 'absolute',
+    top: '50%',
+    left: side === 'left' ? 0 : undefined,
+    right: side === 'right' ? 0 : undefined,
+    zIndex: 4,
+    transform: `translateX(${x}px) translateY(calc(-50% - ${vertUp}px))`,
   };
 }

@@ -3839,8 +3839,296 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
-## 2026-03-29 — Hero marble strip 3D: 10px under stars (text column)
+## 2026-03-29 — Hero marble strip 3D: 15px under stars (text column)
 
-**Context:** User still saw no visible change after refresh; asked for **10px** spacing **below stars in 3D only** to verify the style path applies. **2D** unchanged (**`marbleStripStarsRowStyle`** **`marginBottom: '5px'`**).
+**Context:** User wanted more obvious spacing **below stars in 3D only** (after **5px** then **10px** trials). **2D** unchanged (**`marbleStripStarsRowStyle`** **`marginBottom: '5px'`**; text column **`paddingBottom: 0`**).
 
-**Changes:** **`src/utils/marbleStripStyles.ts`**: **`marbleStripTextColStrip`** **`paddingBottom`** for **`is3D`** **`'5px'` → `'10px'`**; comment updated.
+**Changes:** **`src/utils/marbleStripStyles.ts`**: **`marbleStripTextColStrip`** **`paddingBottom`** for **`is3D`** is **`'15px'`**.
+
+---
+
+## 2026-03-29 — Hero PDP Similar/Recently: green flex debug outlines
+
+**Context:** User wanted **green debug flexbox borders** on **Similar** and **Recently** for **both 2D and 3D** to inspect **thumbnail + product text** centering.
+
+**Changes:** **`src/utils/marbleStripStyles.ts`**: **`DEBUG_MARBLE_STRIP_FLEX_BOUNDS`** (**`true`** — set **`false`** to hide); **`marbleDbg`** outlines on **nav row**, **middle col**, **viewport**, **scroll row**, **cell outer**, **cell band**, **thumb wrap**, **text col strip**, **stars row**; exports **`marbleStripHeroSectionOuterDebugStyle`** / **`marbleStripHeroSectionBackdropDebugStyle`** for section wrappers. **Six** hero PDPs: merge those onto **outer** + **`backdrop-blur-sm`** **`div`**s for **both** strips.
+
+---
+
+## 2026-03-29 — Hero marble strip: cells fill half-viewport (flex `1 1 0`)
+
+**Context:** Debug overlays showed the **center divider** correct but **product columns** too narrow (inset from outer strip and from **50%**); user wanted column edges to match **container sides** and **center** like the blue reference.
+
+**Decisions / outcomes:** **`flex: 0 0 25%`** on children of a **`width: 200%`** row was resolving so each cell was **smaller** than a quarter of the row on some engines (e.g. mobile WebKit). Switched to **`flex: 1 1 0`** with **`minWidth: 0`** so four items **split the row evenly** (each **half** viewport width when two are visible).
+
+**Changes:** **`src/utils/marbleStripStyles.ts`**: **`marbleStripCellOuter`** **`flex`** **`'0 0 25%'` → `'1 1 0'`**; comment documents why.
+
+---
+
+## 2026-03-28 — Home/shop category-specific texture PNG thumbs
+
+**Context:** User wanted BUNDLES / CLOSURES / FRONTALS marble texture thumbnails to use **`public/assets`** PNGs named **`{straight|wavy|curly}-{bundles|closure|frontal}.png`** instead of shared NOIR thumbs.
+
+**Changes:** **`src/pages/products/page.tsx`**: Added **`homeShopCategoryTextureThumbSrc`** (paths **`/assets/{texture}-bundles.png`**, **`-closure.png`**, **`-frontal.png`**); **`shopTextureStripItems`** no longer carries **`image`**; marble strip **`<img src>`** uses **`homeShopCategoryTextureThumbSrc(categorySlug, t.slug)`**.
+
+---
+
+## 2026-03-28 — Home/shop texture thumbs: fix bundle filename (broken images)
+
+**Context:** BUNDLES marble thumbnails 404’d: code used **`straight-bundles.png`** etc., but **`public/assets`** files are **`straight-bundle.png`**, **`wavy-bundle.png`**, **`curly-bundle.png`** (singular **`bundle`**). CLOSURES / FRONTALS names already matched.
+
+**Changes:** **`src/pages/products/page.tsx`**: **`homeShopCategoryTextureThumbSrc`** bundles suffix **`'bundles'` → `'bundle'`**.
+
+---
+
+## 2026-03-28 — Hero marble strip: full backdrop width (arrows overlay)
+
+**Context:** User reported **no visible fix** after **`flex: 1 1 0`** on cells: the **blue-outline** target was the **full inner width of the black-bordered backdrop card**, but the **scroll row** stayed inset because **`marbleStripNavRowStyle`** was **`justifyContent: 'space-between'`** with **arrows + gap** in the flex row — the **middle column** only received the **space between** arrows, not the **full card** width.
+
+**Decisions / outcomes:** Treat the **nav row** as **`position: 'relative'`**, **`width: '100%'`**, **`gap: 0`**, **`justifyContent: 'flex-start'`**; **middle column** **`flex: '1 1 0'`** + **`width: '100%'`** as the **sole in-flow** flex child. **Carousel arrows** use **`position: 'absolute'`** on **`left: 0` / `right: 0`**, **`top: '50%'`**, **`zIndex: 4`**, and **`transform: translateX(±10px) translateY(calc(-50% - {10|26}px))`** so prior **2D / 3D** vertical nudges are preserved while arrows **no longer consume** main-axis width.
+
+**Changes:** **`src/utils/marbleStripStyles.ts`** only (**`marbleStripNavRowStyle`**, **`marbleStripNavMiddleColStyle`**, **`marbleStripNavArrowStyle`**). No JSX reorder required on hero PDPs.
+
+**Conventions:** For this strip, **edge-to-edge** alignment with the **backdrop card** depends on **out-of-flow** side controls, not only cell **`flex`** on the **200%** row.
+
+---
+
+## 2026-03-28 — Home/shop texture thumbs: actual asset names are SVG `bundle-*` style
+
+**Context:** User still saw **broken** thumbnails; asked whether paths were wrong and to try **`bundle-straight.svg`**. In repo, **`public/assets`** has **`bundle-straight.svg`** (not **`straight-bundle.png`**). **`base`** is **`/`** so **`/assets/...`** is correct for Vite **`public/`**.
+
+**Decisions / outcomes:** Use **`/assets/{bundle|closure|frontal}-{texture}.svg`**. **`onError`** once swaps to prior **NOIR** texture PNGs if an SVG is missing so tiles are not broken while assets are added.
+
+**Changes:** **`src/pages/products/page.tsx`**: **`homeShopCategoryTextureThumbSrc`** rewritten to **`.svg`** + **`bundle-` / `closure-` / `frontal-`** prefix; **`homeShopTextureThumbFallbackSrc`** + **`img` `onError`**.
+
+---
+
+## 2026-03-28 — Hero marble strip: remove green flex debug outlines
+
+**Context:** User confirmed the **full-width backdrop** strip fix worked and asked to **remove the green debugging outlines**.
+
+**Changes:** **`src/utils/marbleStripStyles.ts`**: Removed **`DEBUG_MARBLE_STRIP_FLEX_BOUNDS`**, **`marbleDbg`**, **`marbleStripHeroSectionOuterDebugStyle`** / **`marbleStripHeroSectionBackdropDebugStyle`**, and all **`...marbleDbg.*`** merges from shared strip styles. **Six** hero PDPs (**noir**, **blanco**, **soft-wave**, **beach-wave**, **soft-curl**, **ocean-curl**): dropped imports and **`style`** spreads for those debug exports on **Similar** / **Recently** wrappers.
+
+---
+
+## 2026-03-28 — Account rewards: premium-upgrade SVG above subscription chart
+
+**Context:** User wanted **`public/assets/premium-upgrade.svg`** shown **above** the subscription upgrade comparison table on the account **rewards** page.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: In the **PREMIUM MEMBERSHIP** view (premium upgrade chart), added a centered **`<img src="/assets/premium-upgrade.svg" alt="Premium upgrade">`** between the section header row and the comparison **`<table>`** wrapper; **`maxWidth: 320px`**, responsive **`width: 100%`**; chart wrapper **`marginTop`** **`40px` → `24px`** to keep overall spacing reasonable.
+
+---
+
+## 2026-03-28 — Account rewards: premium-upgrade asset SVG → PNG
+
+**Context:** User asked to use the **`premium-upgrade` PNG** in **`public/assets`** instead of the SVG for the graphic above the subscription upgrade chart.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: **`src`** **`/assets/premium-upgrade.svg` → `/assets/premium-upgrade.png`**.
+
+---
+
+## 2026-03-28 — Account rewards: premium graphic → premium-membership PNG
+
+**Context:** User asked to replace **`premium-upgrade.png`** with **`premium-membership.png`** from **`public/assets`** for the image above the subscription upgrade chart.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: **`src`** **`/assets/premium-upgrade.png` → `/assets/premium-membership.png`**; **`alt`** **`Premium upgrade` → `Premium membership`**.
+
+---
+
+## 2026-03-28 — Home/shop: wavy bundle thumb → `wavy-bundle.png`
+
+**Context:** User wanted the **wavy** tile under **BUNDLES** to use **`wavy-bundle.png`** in **`public/assets`**.
+
+**Changes:** **`src/pages/products/page.tsx`**: **`homeShopCategoryTextureThumbSrc`** returns **`/assets/wavy-bundle.png`** for **`bundles` + `wavy`**.
+
+---
+
+## 2026-03-28 — Home/shop: curly bundle thumb → `curly-bundle.png`
+
+**Context:** User wanted the **curly** tile under **BUNDLES** to use **`curly-bundle.png`** in **`public/assets`**.
+
+**Changes:** **`src/pages/products/page.tsx`**: **`homeShopCategoryTextureThumbSrc`** returns **`/assets/curly-bundle.png`** for **`bundles` + `curly`**.
+
+---
+
+## 2026-03-28 — Home/shop: curly closure thumb → `curly-closure.png`
+
+**Context:** User wanted the **curly** tile under **CLOSURES** to use **`curly-closure.png`** in **`public/assets`**.
+
+**Changes:** **`src/pages/products/page.tsx`**: **`homeShopCategoryTextureThumbSrc`** returns **`/assets/curly-closure.png`** for **`closures` + `curly`**; SVG path branch uses **`frontal`** only (all **closures** use PNGs).
+
+---
+
+## 2026-03-28 — Home/shop: straight frontal thumb → `straight-frontal.png`
+
+**Context:** User wanted the **straight** tile under **FRONTALS** to use **`straight-frontal.png`** in **`public/assets`**.
+
+**Changes:** **`src/pages/products/page.tsx`**: **`homeShopCategoryTextureThumbSrc`** returns **`/assets/straight-frontal.png`** for **`frontals` + `straight`**; **wavy/curly** frontals still use **`frontal-{texture}.svg`**.
+
+---
+
+## 2026-03-28 — Home/shop: wavy frontal thumb → `wavy-frontal.png`
+
+**Context:** User wanted the **wavy** tile under **FRONTALS** to use **`wavy-frontal.png`** in **`public/assets`**.
+
+**Changes:** **`src/pages/products/page.tsx`**: **`homeShopCategoryTextureThumbSrc`** returns **`/assets/wavy-frontal.png`** for **`frontals` + `wavy`**; **curly** still **`frontal-curly.svg`**.
+
+---
+
+## 2026-03-28 — Home/shop: curly frontal thumb → `curly-frontal.png`
+
+**Context:** User wanted the **curly** tile under **FRONTALS** to use **`curly-frontal.png`** in **`public/assets`**.
+
+**Changes:** **`src/pages/products/page.tsx`**: **`homeShopCategoryTextureThumbSrc`** returns **`/assets/curly-frontal.png`** for **`frontals` + `curly`**; all **9** home/shop marble texture tiles now use **`{texture}-{bundle|closure|frontal}.png`**; final branch **`throw`** for exhaustiveness (no SVG fallback path).
+
+---
+
+## 2026-03-28 — Account rewards: premium image on main rewards card + canonical `rewards/page` route
+
+**Context:** User said the **premium-membership** graphic was tied to the **wrong page**; they consider it part of the **account rewards** page.
+
+**Decisions / outcomes:** **`/account/rewards`** is still one React module ( **`membership/page.tsx`** ). Added **`src/pages/account/rewards/page.tsx`** re-exporting it; **`App.tsx`** lazy-loads **`RewardsPage`** from that path. **`premium-membership.png`** now appears on the default **UNLOCK PREMIUM REWARDS** card (under the section header, above the benefit bullets) so it shows on the main rewards scroll. The same asset **remains above the comparison table** when the **PREMIUM MEMBERSHIP** upgrade chart is open.
+
+**Changes:** **`src/pages/account/rewards/page.tsx`** (new), **`src/App.tsx`**, **`src/pages/account/membership/page.tsx`**.
+
+---
+
+## 2026-03-28 — Account rewards: broken premium image → use existing `premium-upgrade.svg`
+
+**Context:** User saw a **broken image** on rewards; earlier prompts used an asset that **loaded**, then paths moved to **`premium-membership.png`** / **`premium-upgrade.png`**.
+
+**Decisions / outcomes:** In repo **`public/assets`** only **`premium-upgrade.svg`** exists (plus **`premium-x.svg`**, **`premium-check.svg`**); **`premium-membership.png`** and **`premium-upgrade.png`** are **not** in the tree, so **`/assets/premium-membership.png`** 404s. Reverted **`src`** to **`/assets/premium-upgrade.svg`** for both placements (**UNLOCK PREMIUM REWARDS** card and **above the comparison table** in premium view). Re-added the graphic **above the chart** in **`showPremiumView`** where it had been dropped.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**.
+
+---
+
+## 2026-03-28 — Account rewards: premium hero only above upgrade chart + sharper image
+
+**Context:** User wanted **`premium-upgrade.svg` only after tapping UPGRADE SUBSCRIPTION** (above the comparison chart), **not** above **UNLOCK PREMIUM REWARDS** copy. Image looked **blurry** (was capped at **`320px`** wide).
+
+**Decisions / outcomes:** Removed the hero **`<img>`** from the **UNLOCK PREMIUM REWARDS** card. Single placement remains in **`showPremiumView`** above the table. Styling: **`maxWidth: 'min(100%, 560px)'`**, full-width wrapper, **`imageRendering: 'high-quality'`** for better downscale. **`premium-upgrade.svg`** is very large and may embed a raster—if it stays soft, replace with a **vector** SVG or a **2× PNG** and point **`src`** at that file.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**.
+
+---
+
+## 2026-03-29 — Checkout upgrade: 12-month membership thumbnail
+
+**Context:** User asked to use **`12-months.png`** in **`public/assets`** as the cart line-item thumbnail for **12-month** premium on **`/checkout/upgrade`** (replacing the default wig thumbnail).
+
+**Changes:** **`src/pages/checkout/page.tsx`**: In **`getItemImage()`**, return **`/assets/12-months.png`** when **`item.subscriptionTier === '12months'`** or when **`isSubscriptionUpgrade`** and the item name matches **12 MONTHS** (regex fallback for older stored payloads).
+
+---
+
+## 2026-03-29 — Checkout upgrade: 6-month thumbnail → `12-months.svg`
+
+**Context:** User asked to replace the **6-month** membership line-item thumbnail on **`/checkout/upgrade`** with **`12-months.svg`** in **`public/assets`** (filename as specified).
+
+**Changes:** **`src/pages/checkout/page.tsx`**: In **`getItemImage()`**, return **`/assets/12-months.svg`** when **`item.subscriptionTier === '6months'`** or when **`isSubscriptionUpgrade`** and the item name matches **6 MONTHS** (regex fallback). **12-month** tier still uses **`/assets/12-months.png`**.
+
+---
+
+## 2026-03-29 — Checkout upgrade: 3 / 6 / 12 month thumbnails → matching SVGs
+
+**Context:** User asked that **`/checkout/upgrade`** cart line-item thumbnails use **`3-months.svg`**, **`6-months.svg`**, and **`12-months.svg`** respectively for **3-, 6-, and 12-month** premium tiers (replacing prior **PNG** for 12-mo and **wrong** 6-mo asset).
+
+**Changes:** **`src/pages/checkout/page.tsx`** **`getItemImage()`**: **`subscriptionTier`** / name regex ( **`isSubscriptionUpgrade`** ) map **`3months`** → **`/assets/3-months.svg`**, **`6months`** → **`/assets/6-months.svg`**, **`12months`** → **`/assets/12-months.svg`**. **12** branch is evaluated before **6** then **3** so names like **12 MONTHS** do not match shorter patterns.
+
+---
+
+## 2026-03-29 — Checkout upgrade: 3 / 6 / 12 month thumbnails → PNG assets
+
+**Context:** User asked to use **`3-months.png`**, **`6-months.png`**, and **`12-months.png`** from **`public/assets`** for the corresponding premium line-item thumbnails on **`/checkout/upgrade`** (instead of **SVG**).
+
+**Changes:** **`src/pages/checkout/page.tsx`** **`getItemImage()`**: same tier / name logic; **`src`** paths now **`/assets/3-months.png`**, **`/assets/6-months.png`**, **`/assets/12-months.png`**.
+
+---
+
+## 2026-03-29 — Checkout upgrade: 3-month thumbnail → `premium-3.png`
+
+**Context:** User asked to use **`premium-3.png`** in **`public/assets`** for the **3-month** premium line-item thumbnail on **`/checkout/upgrade`**.
+
+**Changes:** **`src/pages/checkout/page.tsx`** **`getItemImage()`**: **`3months`** / **3 MONTHS** name branch now returns **`/assets/premium-3.png`** (6- and 12-month paths unchanged).
+
+---
+
+## 2026-03-29 — Checkout upgrade: 3-month thumbnail → `3-months-premium.png`
+
+**Context:** User asked to use **`3-months-premium.png`** in **`public/assets`** for the **3-month** premium thumbnail on **`/checkout/upgrade`**.
+
+**Changes:** **`src/pages/checkout/page.tsx`** **`getItemImage()`**: **`3months`** / **3 MONTHS** branch **`src`** is **`/assets/3-months-premium.png`**.
+
+---
+
+## 2026-03-29 — Checkout upgrade: 6-month thumbnail → `6-months-premium.png`
+
+**Context:** User asked to use **`6-months-premium.png`** in **`public/assets`** for the **6-month** premium thumbnail on **`/checkout/upgrade`**.
+
+**Changes:** **`src/pages/checkout/page.tsx`** **`getItemImage()`**: **`6months`** / **6 MONTHS** branch **`src`** is **`/assets/6-months-premium.png`**.
+
+---
+
+## 2026-03-29 — Shop texture/category PDPs: same PNG thumbs as home/shop marbles
+
+**Context:** User noted **`/straight/bundles`**, **`/wavy/closures`**, etc. (**`ShopTextureCategoryProductPage`**) still used generic **NOIR** texture thumbs in **`TEXTURE_META`**, not the **`{texture}-bundle|closure|frontal.png`** assets used on **`home/shop`**.
+
+**Decisions / outcomes:** Centralize paths in **`shopTextureCategoryThumbSrc(texture, category)`** → **`/assets/${texture}-bundle.png`**, **`-closure.png`**, **`-frontal.png`**. **`products/page.tsx`** imports the util (arg order **`texture`**, **`category`**) instead of an inline **`if`** chain.
+
+**Changes:** **`src/utils/shopTextureCategoryThumb.ts`** (new; exports **`shopTextureCategoryThumbSrc`**, **`shopTextureCategoryThumbFallbackSrc`**), **`src/pages/products/page.tsx`**, **`src/pages/shop/texture-category-product/page.tsx`** (hero **`img`**, add-to-bag **`image`**, **Similar** strip; **`onError`** → **NOIR** fallback by texture).
+
+---
+
+## 2026-03-29 — Checkout upgrade: 12-month thumbnail → `12-months-premium.png`
+
+**Context:** User asked to use **`12-months-premium.png`** in **`public/assets`** for the **12-month** premium thumbnail on **`/checkout/upgrade`**.
+
+**Changes:** **`src/pages/checkout/page.tsx`** **`getItemImage()`**: **`12months`** / **12 MONTHS** branch **`src`** is **`/assets/12-months-premium.png`**.
+
+---
+
+## 2026-03-29 — Home/shop: BUNDLES/CLOSURES/FRONTALS texture thumbs 50% smaller
+
+**Context:** User wanted **bundles, closures & frontals** marble **thumbnail** images on **`home/shop`** reduced by **50%** (not **UNITS**).
+
+**Changes:** **`src/pages/products/page.tsx`**: texture-strip **`<img>`** for **`shopCategoryMarbleCards`** **`width`** **`79.2%` → `39.6%`** (half).
+
+---
+
+## 2026-03-29 — Home/shop: BUNDLES/CLOSURES/FRONTALS texture thumbs +25%
+
+**Context:** User wanted those marble thumbnails **25% larger** than the **`39.6%`** width (**`39.6 × 1.25 = 49.5%`**).
+
+**Changes:** **`src/pages/products/page.tsx`**: same **`<img>`** **`width`** **`39.6%` → `49.5%`**.
+
+---
+
+## 2026-03-29 — Home/shop: BUNDLES/CLOSURES/FRONTALS thumb + copy block +6px down
+
+**Context:** User wanted **thumbnail + all text below** (**label**, red line, price) moved **down 6px** together on **`home/shop`** marbles.
+
+**Changes:** **`src/pages/products/page.tsx`**: inner **`dbgProductBand`** wrapper **`transform`** **`translateY(-8px)` → `translateY(-2px)`** (**+6px** vertical).
+
+---
+
+## 2026-03-29 — Account rewards: premium upgrade hero → `premium-membership-upgrade.png`
+
+**Context:** User asked to replace the **premium membership** hero image on **`/account/rewards`** when **UPGRADE SUBSCRIPTION** opens the comparison chart (**`showPremiumView`**) with **`premium-membership-upgrade.png`** in **`public/assets`**.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: hero **`<img>`** above the comparison table **`src`** **`/assets/premium-upgrade.svg`** → **`/assets/premium-membership-upgrade.png`**.
+
+---
+
+## 2026-03-29 — Premium hero −25%; checkout upgrade tier thumbs +15%
+
+**Context:** User asked to **shrink** the **premium membership upgrade** hero (rewards comparison view) by **25%**, and **enlarge** **3 / 6 / 12 month** line-item thumbnails on **`/checkout/upgrade`** by **15%**.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: hero **`maxWidth`** **`min(100%, 560px)` → `min(100%, 420px)`** (**560 × 0.75**). **`src/pages/checkout/page.tsx`**: **`isMembershipTierThumb`** from **`subscriptionTier`** or upgrade name; cart **`img`** **120px → 138px** (**×1.15**); non–gift-card cell **width 150px → 173px** when tier thumb so layout fits padding.
+
+---
+
+## 2026-03-29 — Account rewards: premium hero another −20%
+
+**Context:** User asked to shrink the **premium membership upgrade** hero **another 20%** from the prior **420px** cap.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: hero **`maxWidth`** **`min(100%, 420px)` → `min(100%, 336px)`** (**420 × 0.8**; **~40%** of original **560px**).

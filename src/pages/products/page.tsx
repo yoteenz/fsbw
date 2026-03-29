@@ -8,6 +8,10 @@ import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { clearAppAuth } from '../../utils/adminAuth';
 import { formatPriceRangeUsd, formatPriceUsd, type CurrencyRatesRecord } from '../../utils/currencyFormat';
+import {
+  shopTextureCategoryThumbFallbackSrc,
+  shopTextureCategoryThumbSrc
+} from '../../utils/shopTextureCategoryThumb';
 
 function ProductsPage() {
   const navigate = useNavigate();
@@ -217,9 +221,9 @@ function ProductsPage() {
   const shopTextureStripItems = React.useMemo(
     () =>
       [
-        { label: 'STRAIGHT', slug: 'straight' as const, image: '/assets/NOIR/noir-thumb.png' },
-        { label: 'WAVY', slug: 'wavy' as const, image: '/assets/NOIR/wave-thumb.png' },
-        { label: 'CURLY', slug: 'curly' as const, image: '/assets/NOIR/curl-thumb.png' }
+        { label: 'STRAIGHT', slug: 'straight' as const },
+        { label: 'WAVY', slug: 'wavy' as const },
+        { label: 'CURLY', slug: 'curly' as const }
       ] as const,
     []
   );
@@ -1547,7 +1551,7 @@ function ProductsPage() {
                                   alignItems: 'center',
                                   boxSizing: 'border-box',
                                   padding: '5px 12px 4px 12px',
-                                  transform: 'translateY(-8px)',
+                                  transform: 'translateY(-2px)',
                                   ...dbgProductBand
                                 }}
                               >
@@ -1561,10 +1565,16 @@ function ProductsPage() {
                                   }}
                                 >
                                   <img
-                                    src={t.image}
+                                    src={shopTextureCategoryThumbSrc(t.slug, categorySlug)}
                                     alt={t.label}
+                                    onError={(e) => {
+                                      const img = e.currentTarget;
+                                      if (img.getAttribute('data-fallback-tried') === '1') return;
+                                      img.setAttribute('data-fallback-tried', '1');
+                                      img.src = shopTextureCategoryThumbFallbackSrc[t.slug];
+                                    }}
                                     style={{
-                                      width: '79.2%',
+                                      width: '49.5%',
                                       height: 'auto',
                                       maxWidth: '100%',
                                       display: 'block',
