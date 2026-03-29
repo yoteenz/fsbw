@@ -3909,3 +3909,12 @@ select.careers-apply-checkout-field option {
   font-family: 'Futura PT Book', sans-serif;
   font-size: 11px;
 }
+
+/*
+ * BUNDLES / CLOSURES / FRONTALS — CURLY row only: lift product copy (label + lines).
+ * Uses `top` + !important so it wins over nested transforms (/home/shop + texture PDP). Currently 5px up.
+ */
+.shop-bcf-curly-product-copy-lift {
+  position: relative !important;
+  top: -5px !important;
+}

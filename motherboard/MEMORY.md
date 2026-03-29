@@ -4436,3 +4436,11 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** User said the prior **2px** text lift was not noticeable enough; asked to move the **CURLY** row product text up **another 2px** (same pattern as home marbles: wrapper after image, label + red line + price only).
 
 **Changes:** **`translateY(-2px)` → `translateY(-4px)`** on curly-only text wrappers in **`src/pages/products/page.tsx`** (`t.slug === 'curly'`) and **`src/pages/shop/texture-category-product/page.tsx`** (hero when **`texture === 'curly'`**, **SIMILAR PRODUCTS** when **`ot === 'curly'`**). Thumbnail **`<img>`** nudges unchanged.
+
+---
+
+## 2026-03-29 — Curly BCF copy lift: class + `top` !important (override / route clarity)
+
+**Context:** User saw **no visible change** from inline **`translateY(-4px)`** on curly product copy; suspected overrides.
+
+**Changes:** **`src/index.css`**: **`.shop-bcf-curly-product-copy-lift`** — **`position: relative; top: -5px !important`** (was **`-6px`**, moved **down 1px**). **`src/pages/products/page.tsx`** and **`texture-category-product/page.tsx`**: curly-only wrappers use that **`className`** instead of inline transform. **Note for QA:** texture marbles with three columns live on **`/home/shop`**, not **`/shop/bundles`** (that route is a different placeholder page).

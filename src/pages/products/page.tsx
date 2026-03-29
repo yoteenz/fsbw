@@ -1590,11 +1590,7 @@ function ProductsPage() {
                                   />
                                 </div>
                                 <div
-                                  style={
-                                    t.slug === 'curly'
-                                      ? { transform: 'translateY(-4px)' }
-                                      : undefined
-                                  }
+                                  className={t.slug === 'curly' ? 'shop-bcf-curly-product-copy-lift' : undefined}
                                 >
                                   <p
                                     style={{

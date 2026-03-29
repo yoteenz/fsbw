@@ -616,11 +616,7 @@ export default function ShopTextureCategoryProductPage() {
                   </div>
 
                   <div
-                    style={
-                      texture === 'curly'
-                        ? { transform: 'translateY(-4px)' }
-                        : undefined
-                    }
+                    className={texture === 'curly' ? 'shop-bcf-curly-product-copy-lift' : undefined}
                   >
                     <p
                       className="text-center text-black mb-2 gift-card-product-name"
@@ -924,11 +920,7 @@ export default function ShopTextureCategoryProductPage() {
                                   }}
                                 />
                                 <div
-                                  style={
-                                    ot === 'curly'
-                                      ? { transform: 'translateY(-4px)' }
-                                      : undefined
-                                  }
+                                  className={ot === 'curly' ? 'shop-bcf-curly-product-copy-lift' : undefined}
                                 >
                                   <p
                                     style={{
