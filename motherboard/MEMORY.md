@@ -4404,3 +4404,11 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** User asked to **add** **challenges**, **priority messages**, and **special offers** to the **premium upgrade** comparison chart.
 
 **Changes:** **`src/pages/account/membership/page.tsx`**: after **WELCOME DISCOUNT**, three **`PremiumChartBenefitRow`** rows — **CHALLENGES** (✓ 3 / 6 / 12 mo), **PRIORITY MESSAGES** (✓ 6 & 12 only), **SPECIAL OFFERS** (✓ 12 mo only). **`PREMIUM_BENEFITS_BY_TIER`** updated to match (**CHALLENGES** / **PRIORITY MESSAGES** / **SPECIAL OFFERS** at correct tiers); **`MEMBER REWARDS + CHALLENGES`** shortened to **`MEMBER REWARDS`** to avoid duplicating the new **CHALLENGES** line.
+
+---
+
+## 2026-03-29 — Premium chart row order: challenges / priority messages / special offers
+
+**Context:** User asked to move **CHALLENGES** and **PRIORITY MESSAGES** to **below PRIORITY BOOKING**, and **SPECIAL OFFERS** to **below LIVE ORDER TRACKING** (no longer directly under **WELCOME DISCOUNT**).
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: **`PremiumChartBenefitRow`** positions updated; **`PREMIUM_BENEFITS_BY_TIER`** list order aligned (**CHALLENGES** after **PRIORITY BOOKING**; **SPECIAL OFFERS** after **LIVE ORDER TRACKING** on 12 mo).

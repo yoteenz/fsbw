@@ -588,39 +588,39 @@ function MembershipPage() {
   /** Benefits included per premium tier (matches premium upgrade chart: 3mo, 6mo, 12mo). */
   const PREMIUM_BENEFITS_BY_TIER: Record<string, string[]> = {
     '3months': [
-      'CHALLENGES',
       'BIRTHDAY GIFT',
       'DISCOUNTED SHIPPING',
       'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
       'ENTRY TO VIP MEMBERS ONLY LOUNGE',
       'FAST TRACK CUSTOMER SUPPORT',
       'PRIORITY BOOKING',
+      'CHALLENGES',
       'MEMBER REWARDS'
     ],
     '6months': [
-      'CHALLENGES',
-      'PRIORITY MESSAGES',
       'BIRTHDAY GIFT',
       'DISCOUNTED SHIPPING',
       'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
       'ENTRY TO VIP MEMBERS ONLY LOUNGE',
       'FAST TRACK CUSTOMER SUPPORT',
       'PRIORITY BOOKING',
+      'CHALLENGES',
+      'PRIORITY MESSAGES',
       'MEMBER REWARDS',
       'LIVE ORDER TRACKING'
     ],
     '12months': [
-      'CHALLENGES',
-      'PRIORITY MESSAGES',
-      'SPECIAL OFFERS',
       'BIRTHDAY GIFT',
       'DISCOUNTED SHIPPING',
       'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
       'ENTRY TO VIP MEMBERS ONLY LOUNGE',
       'FAST TRACK CUSTOMER SUPPORT',
       'PRIORITY BOOKING',
+      'CHALLENGES',
+      'PRIORITY MESSAGES',
       'MEMBER REWARDS',
       'LIVE ORDER TRACKING',
+      'SPECIAL OFFERS',
       '2X LOYALTY POINTS'
     ]
   };
@@ -1681,9 +1681,6 @@ function MembershipPage() {
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', fontSize: '10px', padding: '6px 4px', textAlign: 'center', whiteSpace: 'nowrap', lineHeight: '1.25' }}><span dangerouslySetInnerHTML={formatPrice(40)} /></td>
                                 <td style={{ borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', fontSize: '10px', padding: '6px 4px', textAlign: 'center', whiteSpace: 'nowrap', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '12px' }}><span dangerouslySetInnerHTML={formatPrice(60)} /></span></td>
                               </tr>
-                              <PremiumChartBenefitRow label="CHALLENGES" m3 m6 m12 />
-                              <PremiumChartBenefitRow label="PRIORITY MESSAGES" m3={false} m6 m12 />
-                              <PremiumChartBenefitRow label="SPECIAL OFFERS" m3={false} m6={false} m12 />
                               <tr>
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>BIRTHDAY GIFT</span></td>
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
@@ -1834,6 +1831,8 @@ function MembershipPage() {
                                   </span>
                                 </td>
                               </tr>
+                              <PremiumChartBenefitRow label="CHALLENGES" m3 m6 m12 />
+                              <PremiumChartBenefitRow label="PRIORITY MESSAGES" m3={false} m6 m12 />
                               <tr>
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>LIVE ORDER TRACKING</span></td>
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
@@ -1859,6 +1858,7 @@ function MembershipPage() {
                                   </span>
                                 </td>
                               </tr>
+                              <PremiumChartBenefitRow label="SPECIAL OFFERS" m3={false} m6={false} m12 />
                               <tr>
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>EXCLUSIVE REWARDS</span></td>
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
