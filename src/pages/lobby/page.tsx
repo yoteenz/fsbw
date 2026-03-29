@@ -672,6 +672,7 @@ const LobbyApp: React.FC = () => {
     // while preserving the flag so the chart opens after sign-in.
     try {
       sessionStorage.setItem('returningFromCheckout', 'true');
+      localStorage.setItem('membershipShowPremiumView', 'true');
       // Match membership page behavior when upgrading from Standard: no preselected tier.
       localStorage.removeItem('membershipSelectedTier');
     } catch (_) {}

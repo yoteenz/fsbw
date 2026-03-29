@@ -10,6 +10,7 @@ import { clearAppAuth } from '../../../utils/adminAuth';
 import type { CurrencyRatesRecord } from '../../../utils/currencyFormat';
 import { formatPriceUsd } from '../../../utils/currencyFormat';
 import {
+  shopTextureCategoryThumbDisplayScale,
   shopTextureCategoryThumbFallbackSrc,
   shopTextureCategoryThumbSrc
 } from '../../../utils/shopTextureCategoryThumb';
@@ -603,7 +604,7 @@ export default function ShopTextureCategoryProductPage() {
                       }}
                       style={{
                         width: '100%',
-                        maxWidth: '400px',
+                        maxWidth: `${400 * shopTextureCategoryThumbDisplayScale(texture)}px`,
                         height: 'auto',
                         margin: '0 auto'
                       }}
@@ -895,7 +896,10 @@ export default function ShopTextureCategoryProductPage() {
                                     height: 'auto',
                                     marginBottom: '10px',
                                     marginLeft: '10px',
-                                    cursor: 'pointer'
+                                    cursor: 'pointer',
+                                    ...(shopTextureCategoryThumbDisplayScale(ot) !== 1
+                                      ? { transform: 'scale(1.1)', transformOrigin: 'center top' }
+                                      : {})
                                   }}
                                 />
                                 <p

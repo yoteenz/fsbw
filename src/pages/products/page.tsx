@@ -9,6 +9,7 @@ import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '..
 import { clearAppAuth } from '../../utils/adminAuth';
 import { formatPriceRangeUsd, formatPriceUsd, type CurrencyRatesRecord } from '../../utils/currencyFormat';
 import {
+  shopTextureCategoryThumbDisplayScale,
   shopTextureCategoryThumbFallbackSrc,
   shopTextureCategoryThumbSrc
 } from '../../utils/shopTextureCategoryThumb';
@@ -1575,7 +1576,7 @@ function ProductsPage() {
                                       img.src = shopTextureCategoryThumbFallbackSrc[t.slug];
                                     }}
                                     style={{
-                                      width: '49.5%',
+                                      width: `${49.5 * shopTextureCategoryThumbDisplayScale(t.slug)}%`,
                                       height: 'auto',
                                       maxWidth: '100%',
                                       display: 'block',

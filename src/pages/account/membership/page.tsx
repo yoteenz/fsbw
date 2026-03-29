@@ -462,19 +462,14 @@ function MembershipPage() {
   };
 
   const [showPremiumView, setShowPremiumView] = useState(() => {
-    // Only restore premium view state if we're coming back from checkout
+    // Restore premium chart after: lobby upgrade, explicit back from `/checkout/upgrade`, or browser back (localStorage kept while on checkout).
     try {
-      // Check if we have sessionStorage flag indicating we're returning from checkout
       const isReturningFromCheckout = sessionStorage.getItem('returningFromCheckout') === 'true';
-      
       if (isReturningFromCheckout) {
-        // Clear the flag after checking
         sessionStorage.removeItem('returningFromCheckout');
         return true;
       }
-      
-      // Default to false (rewards program card) - always start with rewards program
-      return false;
+      return localStorage.getItem('membershipShowPremiumView') === 'true';
     } catch (e) {
       return false;
     }
@@ -632,15 +627,6 @@ function MembershipPage() {
       __html: currency.symbol + convertedPrice.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' ' + selectedCurrency
     };
   }, [currencyRates, selectedCurrency]);
-
-  // Reset premium view when navigating away from membership page
-  useEffect(() => {
-    return () => {
-      // Clear premium view state when component unmounts (navigating away)
-      localStorage.removeItem('membershipShowPremiumView');
-      sessionStorage.removeItem('returningFromCheckout');
-    };
-  }, []);
 
   // Listen for cart count changes
   useEffect(() => {
@@ -1260,7 +1246,7 @@ function MembershipPage() {
                       <div>
                         {/* Current Points */}
                         <div style={{ textAlign: 'center', marginBottom: '12px', marginTop: '10px' }}>
-                          <img src="/assets/loyalty-points-rewards.png" alt="" style={{ width: '182.16px', height: '182.16px', marginTop: '16px', marginBottom: '2px', display: 'block', marginLeft: 'auto', marginRight: 'auto', objectFit: 'contain' }} />
+                          <img src="/assets/premium-rewards.png" alt="" style={{ width: '136.62px', height: '136.62px', marginTop: '16px', marginBottom: '2px', display: 'block', marginLeft: 'auto', marginRight: 'auto', objectFit: 'contain' }} />
                           <p
                             style={{
                               fontFamily: '"Futura PT Medium"',
@@ -1450,7 +1436,7 @@ function MembershipPage() {
                           decoding="async"
                           style={{
                             width: '100%',
-                            maxWidth: 'min(100%, 336px)',
+                            maxWidth: 'min(100%, 252px)',
                             height: 'auto',
                             objectFit: 'contain',
                             display: 'block',
@@ -1965,7 +1951,7 @@ function MembershipPage() {
                   <div>
                         {/* Current Points */}
                             <div style={{ textAlign: 'center', marginBottom: '12px', marginTop: '10px' }}>
-                              <img src="/assets/loyalty-points-rewards.png" alt="" style={{ width: '182.16px', height: '182.16px', marginTop: '16px', marginBottom: '2px', display: 'block', marginLeft: 'auto', marginRight: 'auto', objectFit: 'contain' }} />
+                              <img src="/assets/premium-rewards.png" alt="" style={{ width: '136.62px', height: '136.62px', marginTop: '16px', marginBottom: '2px', display: 'block', marginLeft: 'auto', marginRight: 'auto', objectFit: 'contain' }} />
                               <p
                                 style={{
                                   fontFamily: '"Futura PT Medium"',

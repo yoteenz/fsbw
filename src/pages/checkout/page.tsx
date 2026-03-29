@@ -418,6 +418,17 @@ function CheckoutPage() {
     loadCartItems();
   }, [location.pathname]);
 
+  /** Return to Account → Rewards with the premium comparison chart open (tier selection), not the default rewards cards. */
+  const goBackToMembershipUpgradeChart = useCallback(() => {
+    try {
+      sessionStorage.setItem('returningFromCheckout', 'true');
+      localStorage.setItem('membershipShowPremiumView', 'true');
+    } catch {
+      /* ignore */
+    }
+    navigate('/account/rewards');
+  }, [navigate]);
+
   useEffect(() => {
     if (!isSubscriptionUpgrade) {
       setStripeMembershipAvailable(false);
@@ -470,6 +481,13 @@ function CheckoutPage() {
       try {
         if (sessionStorage.getItem(dedupeKey)) {
           setSearchParams({}, { replace: true });
+          try {
+            localStorage.removeItem('membershipShowPremiumView');
+            sessionStorage.removeItem('returningFromCheckout');
+            localStorage.removeItem('membershipSelectedTier');
+          } catch {
+            /* ignore */
+          }
           navigate('/account/rewards', { replace: true });
           return;
         }
@@ -487,6 +505,9 @@ function CheckoutPage() {
         localStorage.removeItem('subscriptionUpgrade');
         localStorage.removeItem('isSubscriptionUpgrade');
         localStorage.removeItem('isSubscriptionChange');
+        localStorage.removeItem('membershipShowPremiumView');
+        sessionStorage.removeItem('returningFromCheckout');
+        localStorage.removeItem('membershipSelectedTier');
       } catch {
         /* ignore */
       }
@@ -2072,7 +2093,7 @@ function CheckoutPage() {
               ) : (
                 <>
                   <button 
-                    onClick={() => isSubscriptionUpgrade ? navigate('/account/rewards') : navigate('/bag')} 
+                    onClick={() => (isSubscriptionUpgrade ? goBackToMembershipUpgradeChart() : navigate('/bag'))}
                     className="cursor-pointer"
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
                   >
@@ -2115,7 +2136,7 @@ function CheckoutPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => isSubscriptionUpgrade ? navigate('/account/rewards') : navigate('/bag')}
+                    onClick={() => (isSubscriptionUpgrade ? goBackToMembershipUpgradeChart() : navigate('/bag'))}
                   >
                     CHECKOUT &gt;
                   </span>{' '}

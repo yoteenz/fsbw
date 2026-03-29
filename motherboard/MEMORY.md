@@ -4196,3 +4196,115 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** User asked to **reduce spacing above and below** the **`loyalty-points-rewards.png`** thumbnail by **4px** each.
 
 **Changes:** **`src/pages/account/membership/page.tsx`**: both loyalty **`<img>`** **`marginTop`** **`20px` → `16px`**, **`marginBottom`** **`6px` → `2px`**.
+
+---
+
+## 2026-03-29 — Account rewards: loyalty hero → `premium-rewards.png`
+
+**Context:** User asked to replace the **`loyalty-points-rewards.png`** image (above the PTS balance on Account → Rewards) with **`premium-rewards.png`** from **`public/assets`**.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: both LOYALTY POINTS hero images (overlay when **`showLoyaltyRewards`** and main card) **`/assets/loyalty-points-rewards.png` → `/assets/premium-rewards.png`**; sizing and margins unchanged (**182.16px**, **`objectFit: 'contain'`**).
+
+---
+
+## 2026-03-29 — Shop: straight bundles thumbnail → `bundle-straight.png`
+
+**Context:** User asked to use **`bundle-straight.png`** from **`public/assets`** for the **straight bundle** thumbnail.
+
+**Changes:** **`src/utils/shopTextureCategoryThumb.ts`**: **`shopTextureCategoryThumbSrc('straight', 'bundles')`** returns **`/assets/bundle-straight.png`** (was **`/assets/straight-bundle.png`** via the generic pattern). Wavy/curly bundles and closures/frontals unchanged. Updates home/shop marbles and **`/straight/bundles`** PDP (hero, add-to-bag, similar strip) through existing **`shopTextureCategoryThumbSrc`** imports.
+
+---
+
+## 2026-03-29 — Shop: wavy bundles thumbnail → `bundle-wavy.png`
+
+**Context:** User asked to use **`bundle-wavy.png`** from **`public/assets`** for the **wavy bundle** thumbnail.
+
+**Changes:** **`src/utils/shopTextureCategoryThumb.ts`**: **`shopTextureCategoryThumbSrc('wavy', 'bundles')`** returns **`/assets/bundle-wavy.png`**. Straight bundles still use **`bundle-straight.png`**; curly bundles and closures/frontals unchanged.
+
+---
+
+## 2026-03-29 — Shop: curly bundles thumbnail → `bundle-curly.png`
+
+**Context:** User asked to replace the **curly bundle** thumbnail with a **`curly-straight`** PNG in **`public/assets`**. That filename is **not** in the repo; **`bundle-curly.png`** exists and matches the **`bundle-straight` / `bundle-wavy`** naming used for the other textures.
+
+**Changes:** **`src/utils/shopTextureCategoryThumb.ts`**: **`shopTextureCategoryThumbSrc('curly', 'bundles')`** returns **`/assets/bundle-curly.png`** (generic path was **`/assets/curly-bundle.png`**). Closures/frontals unchanged.
+
+---
+
+## 2026-03-29 — Shop: straight closures thumbnail → `closure-straight.png`
+
+**Context:** User asked to use **`closure-straight.png`** from **`public/assets`** for the **straight closures** thumbnail.
+
+**Changes:** **`src/utils/shopTextureCategoryThumb.ts`**: **`shopTextureCategoryThumbSrc('straight', 'closures')`** returns **`/assets/closure-straight.png`** (was **`/assets/straight-closure.png`** via the generic pattern). Wavy/curly closures and all frontals unchanged.
+
+---
+
+## 2026-03-29 — Shop: wavy closures thumbnail → `closure-wavy.png`
+
+**Context:** User asked to use **`closure-wavy.png`** from **`public/assets`** for the **wavy closures** thumbnail.
+
+**Changes:** **`src/utils/shopTextureCategoryThumb.ts`**: **`shopTextureCategoryThumbSrc('wavy', 'closures')`** returns **`/assets/closure-wavy.png`**. Straight closures still use **`closure-straight.png`**; curly closures and all frontals unchanged.
+
+---
+
+## 2026-03-29 — Shop: curly closures thumbnail → `closure-curly.png`
+
+**Context:** User asked to use **`closure-curly.png`** from **`public/assets`** for the **curly closures** thumbnail.
+
+**Changes:** **`src/utils/shopTextureCategoryThumb.ts`**: **`shopTextureCategoryThumbSrc('curly', 'closures')`** returns **`/assets/closure-curly.png`**. Straight/wavy closures use **`closure-straight` / `closure-wavy`**; all frontals still use the generic pattern.
+
+---
+
+## 2026-03-29 — Shop: straight frontals thumbnail → `frontal-straight.png`
+
+**Context:** User asked to use **`frontal-straight.png`** from **`public/assets`** for the **straight frontals** thumbnail.
+
+**Changes:** **`src/utils/shopTextureCategoryThumb.ts`**: **`shopTextureCategoryThumbSrc('straight', 'frontals')`** returns **`/assets/frontal-straight.png`** (was **`/assets/straight-frontal.png`** via the generic pattern). Wavy/curly frontals unchanged.
+
+---
+
+## 2026-03-29 — Shop: wavy frontals thumbnail → `frontal-wavy.png`
+
+**Context:** User asked to use **`frontal-wavy.png`** from **`public/assets`** for the **wavy frontals** thumbnail.
+
+**Changes:** **`src/utils/shopTextureCategoryThumb.ts`**: **`shopTextureCategoryThumbSrc('wavy', 'frontals')`** returns **`/assets/frontal-wavy.png`**. Straight frontals still use **`frontal-straight.png`**; curly frontals unchanged (generic **`/assets/curly-frontal.png`**).
+
+---
+
+## 2026-03-29 — Shop: curly frontals thumbnail → `frontal-curly.png`
+
+**Context:** User asked to use **`frontal-curly.png`** from **`public/assets`** for the **curly frontals** thumbnail.
+
+**Changes:** **`src/utils/shopTextureCategoryThumb.ts`**: **`shopTextureCategoryThumbSrc('curly', 'frontals')`** returns **`/assets/frontal-curly.png`**. Straight/wavy frontals use **`frontal-straight` / `frontal-wavy`**; the generic **`${texture}-frontal.png`** fallback is now unused for the three main textures (all nine combos are explicit).
+
+---
+
+## 2026-03-29 — Account rewards: premium upgrade hero −25%
+
+**Context:** User asked to **decrease by 25%** the **premium rewards** thumbnail on the **upgrade subscription** flow **above** the premium comparison chart (the hero shown when **`showPremiumView`** after **UPGRADE SUBSCRIPTION**).
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: **`premium-membership-upgrade.png`** **`<img>`** **`maxWidth`** **`min(100%, 336px)` → `min(100%, 252px)`** (**336 × 0.75**).
+
+---
+
+## 2026-03-29 — Checkout upgrade back → premium chart (not default rewards)
+
+**Context:** User asked that **back** from **`/checkout/upgrade`** (nav back icon or breadcrumb) return to the **premium comparison chart** on **`/account/rewards`** so they can pick another tier, not the default rewards cards view.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: Initial **`showPremiumView`** also true when **`localStorage.membershipShowPremiumView === 'true'`** (persists while on upgrade checkout so **browser back** restores the chart). Removed unmount cleanup that deleted **`membershipShowPremiumView`** / **`returningFromCheckout`** (it ran when leaving for checkout and broke restore). **`src/pages/checkout/page.tsx`**: **`goBackToMembershipUpgradeChart()`** sets **`returningFromCheckout`** + **`membershipShowPremiumView`** then **`navigate('/account/rewards')`**; used for subscription-upgrade **back** and **CHECKOUT > UPGRADE** breadcrumb. **Stripe success** (and deduped repeat) clears **`membershipShowPremiumView`**, **`returningFromCheckout`**, **`membershipSelectedTier`** so post-purchase lands on normal rewards. **`src/pages/lobby/page.tsx`**: lobby **upgrade to rewards** also sets **`membershipShowPremiumView`** alongside **`returningFromCheckout`** for consistent persistence.
+
+---
+
+## 2026-03-29 — Loyalty `premium-rewards.png` −25%
+
+**Context:** User confirmed they meant the **loyalty** **`premium-rewards.png`** above **PTS** (182.16px), not only the **`premium-membership-upgrade.png`** chart hero. Apply **25%** smaller: **182.16 × 0.75 = 136.62px**.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: both **`premium-rewards.png`** images (**LOYALTY POINTS** overlay + main card) **width/height `182.16px` → `136.62px`**.
+
+---
+
+## 2026-03-29 — Shop: curly texture marbles +10% (bundles / closures / frontals)
+
+**Context:** User asked to increase **only** **curly** **bundles**, **closures**, and **frontals** thumbnails by **10%** (not straight or wavy).
+
+**Changes:** **`src/utils/shopTextureCategoryThumb.ts`**: **`shopTextureCategoryThumbDisplayScale(texture)`** → **`1.1`** for **`curly`**, else **`1`**. **`src/pages/products/page.tsx`**: home/shop marble **`<img>`** width **`49.5% × scale`** (curly **54.45%**). **`src/pages/shop/texture-category-product/page.tsx`**: PDP hero **`maxWidth` `400 × scale` px** (curly **440px**); **Similar** strip curly thumbs **`transform: scale(1.1)`**, **`transformOrigin: center top`**.
