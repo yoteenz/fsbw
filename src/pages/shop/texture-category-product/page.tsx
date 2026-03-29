@@ -608,9 +608,10 @@ export default function ShopTextureCategoryProductPage() {
                         maxWidth: `${400 * shopTextureCategoryThumbDisplayScale(texture)}px`,
                         height: 'auto',
                         margin: '0 auto',
-                        ...(isShopTextureCurlyFrontals(texture, category)
-                          ? { transform: 'translateY(-2px)' }
-                          : {})
+                        ...((): { transform?: string } => {
+                          const y = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
+                          return y != null ? { transform: `translateY(${y}px)` } : {};
+                        })()
                       }}
                     />
                   </div>

@@ -488,6 +488,11 @@ img.natural-front-mobile {
 @tailwind components;
 @tailwind utilities;
 
+/* Popups / confirmation dialogs: strict brand uppercase (inherited by title, body, buttons). */
+.baw-brand-modal-shell {
+  text-transform: uppercase !important;
+}
+
 /*
  * Square corners for text-like form controls site-wide (overrides Tailwind rounded-* and UA defaults).
  * Excludes checkboxes, radios, range sliders, and hidden file inputs (custom row UI is styled separately).
@@ -496,6 +501,26 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="
 textarea,
 select {
   border-radius: 0 !important;
+}
+
+/* File inputs: whole control stays square (rule above); round only the UA "Choose file" / "Browse" button. */
+input[type="file"]::file-selector-button {
+  border-radius: 4px !important;
+}
+input[type="file"]::-webkit-file-upload-button {
+  border-radius: 4px !important;
+}
+
+/* Typed text: brand uppercase. Passwords stay case-sensitive (including reveal-as-text via .password-field). */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="password"]):not([type="file"]),
+textarea,
+select {
+  text-transform: uppercase !important;
+}
+
+input[type="password"],
+input.password-field {
+  text-transform: none !important;
 }
 
 /* Admin Brand → CODES: Chromium/WebKit apply a large min-inline-size on type=date, which overflows max-w-md cards */
@@ -3912,9 +3937,9 @@ select.careers-apply-checkout-field option {
 
 /*
  * BUNDLES / CLOSURES / FRONTALS — CURLY row only: lift product copy (label + lines).
- * Uses `top` + !important so it wins over nested transforms (/home/shop + texture PDP). Currently 5px up.
+ * Uses `top` + !important so it wins over nested transforms (/home/shop + texture PDP). Curly copy only (+0.5px vs prior −5px); thumbnails not nudged.
  */
 .shop-bcf-curly-product-copy-lift {
   position: relative !important;
-  top: -5px !important;
+  top: -5.5px !important;
 }

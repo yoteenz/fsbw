@@ -986,6 +986,7 @@ function SettingsPage() {
                         type="text"
                         value={resetOldPassword}
                         onChange={(e) => setResetOldPassword(e.target.value)}
+                        className="password-field"
                         style={{ ...inputBaseStyle, marginBottom: '12px' }}
                       />
                       <div style={{ marginBottom: '12px' }}>
@@ -994,6 +995,7 @@ function SettingsPage() {
                           type="text"
                           value={resetNewPassword}
                           onChange={(e) => setResetNewPassword(e.target.value)}
+                          className="password-field"
                           style={inputBaseStyle}
                         />
                       </div>
@@ -1003,6 +1005,7 @@ function SettingsPage() {
                           type="text"
                           value={resetConfirmPassword}
                           onChange={(e) => setResetConfirmPassword(e.target.value)}
+                          className="password-field"
                           style={inputBaseStyle}
                         />
                       </div>

@@ -4452,3 +4452,150 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** Vercel **`npm run build`** failed: **`Type '"high-quality"' is not assignable to type 'ImageRendering | undefined'`** in **`membership/page.tsx`** premium chart image.
 
 **Changes:** **`src/pages/account/membership/page.tsx`**: cast **`imageRendering: 'high-quality' as CSSProperties['imageRendering']`** so runtime CSS stays **`high-quality`** while **`tsc`** accepts it (DOM/CSS draft value not yet in TS **`ImageRendering`** union).
+
+---
+
+## 2026-03-29 — Curly B/C/F thumbnails up 0.5px
+
+**Context:** User asked to move **curly bundles, closures & frontals** **thumbnail images** up **0.5px** (in addition to existing curly **frontals** img nudge).
+
+**Changes:** **`src/utils/shopTextureCategoryThumb.ts`**: **`shopTextureCategoryCurlyThumbTranslateYPx`** — **`curly` + bundles/closures → `−0.5`**, **`curly` + frontals → `−2.5`**. **`src/pages/products/page.tsx`** (home marbles), **`texture-category-product/page.tsx`** (hero + similar strip) use it; removed direct **`isShopTextureCurlyFrontals`** img imports where superseded.
+
+**Follow-up (revert + correct):** User wanted **text only** up **0.5px**, not thumbnail moves. **Removed** **`shopTextureCategoryCurlyThumbTranslateYPx`**; restored **`isShopTextureCurlyFrontals`** **`translateY(-2px)`** on **imgs** only (curly frontals). **`.shop-bcf-curly-product-copy-lift`** **`top` `−5px` → `−5.5px`** for curly B/C/F copy.
+
+---
+
+## 2026-03-29 — Account Rewards: SILVER tier label uses brand gray (not black)
+
+**Context:** On **Account → Rewards** (`/account/rewards`), the membership status card showed **SILVER** in **NEXT TIER** and in **MORE POINTS TO REACH / UNLOCK / REMAIN** as black; user wanted it to match the period line (**JAN 1 – JUN 30**), which uses **`BRAND_GRAY`** (`#808080`).
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: Removed the non-admin fallback that forced **`#000000`** on those tier-name spans; they now always use the existing **`nextTierColor`** / **`targetTierColor`** values (**SILVER → `BRAND_GRAY`**, **RED → `#EB1C24`**, **BLACK → `#000000`**), same as the admin tier-color preview.
+
+---
+
+## 2026-03-29 — Premium upgrade chart: header close (red X), drop CANCEL under CONFIRM
+
+**Context (this chat):** Earlier: membership status **SILVER** tier labels use **`BRAND_GRAY`** (see entry above). User asked: on the **premium upgrade chart**, put a **red X close** where the header icon was, and **remove the CANCEL** button below **CONFIRM SUBSCRIPTION**.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: Replaced **`additionalFeaturesIcon`** in the **PREMIUM MEMBERSHIP** chart header with **`/assets/close-icon.svg`** inside an **`aria-label`** close **`button`**, brand-red CSS **`filter`** (same as loyalty-points close on this page). **`handleClosePremiumView`** unchanged. Removed both **CANCEL** blocks that showed when **`showPremiumView`** (premium vs non-premium subscription button branches). Slightly increased **`marginBottom`** on the **CONFIRM SUBSCRIPTION** wrapper when the chart is open so spacing stays reasonable.
+
+---
+
+## 2026-03-29 — Checkout summary: premium tier thumbs, hide shipping/rewards for membership
+
+**Context (this chat):** Prior entries: rewards **SILVER** gray labels; premium chart red close + no **CANCEL**. User asked: **`/checkout/summary`** should use **3 / 6 / 12 month premium upgrade thumbnails** (not wig defaults); **no SHIPPING** or **REWARDS** for **premium upgrade** (digital-only, no points).
+
+**Changes:** **`src/pages/checkout/confirm/page.tsx`**: Helpers **`isMembershipTierCartItem`**, **`isPremiumMembershipUpgradeSummary`**, **`summaryScrollItemWidthPx`**. **`getProductImage`** matches checkout: **`/assets/3-months-premium.png`**, **`6-months-premium.png`**, **`12-months-premium.png`** via **`subscriptionTier`** or name. Cart row: **138px** thumb / **173px** cell, **DIGITAL ONLY** subline (like gift card). Horizontal scroll widths use membership width. **`isPremiumMembershipSummary`**: hide **SHIPPING** + **REWARDS**; replace order-form blurb with premium thank-you; hide **SIGN ORDER FORM**. **`src/pages/checkout/page.tsx`**: **`isSubscriptionUpgrade`** on **`orderDataForReturn`**, both **`navigate('/checkout/summary', …)`** payloads, and **`pointsEarned: 0`** in **`checkoutSummaryRewards`** when subscription upgrade.
+
+---
+
+## 2026-03-29 — Rewards: premium chart persist cleared when leaving page (not when going to upgrade checkout)
+
+**Context (this chat):** User reported **`membershipShowPremiumView` / premium upgrade chart** stayed open after leaving **`/account/rewards`** and coming back; wanted it **closed** on leave, but **back from `/checkout/upgrade`** should **still reopen** the chart (**`goBackToMembershipUpgradeChart`** + session **`returningFromCheckout`**).
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: **`preservePremiumPersistForCheckoutRef`** set **`true`** immediately before **`navigate('/checkout/upgrade')`** from **CONFIRM**. **`useEffect`** cleanup on unmount removes **`membershipShowPremiumView`** and **`membershipSelectedTier`** unless that ref is set (so persist survives only for the upgrade-checkout hop). Ref reset after skip.
+
+---
+
+## 2026-03-29 — File picker: round CHOOSE FILE chip, square outer row
+
+**Context (this chat):** User wanted the inner **CHOOSE FILE** control rounded again while the outer row (**NO FILE SELECTED**) stays square.
+
+**Changes:** Inner gray **CHOOSE FILE** **`span`**s: **`borderRadius: '4px'`** (was **`0`**) on **order form**, **leave-review**, **affiliate** (all upload rows), **accounting-report**. **`src/index.css`**: **`input[type="file"]::file-selector-button`** and **`-webkit-file-upload-button`** **`border-radius: 4px !important`** so native file inputs keep a square field but a rounded browse button.
+
+---
+
+## 2026-03-29 — Unit PDP 2D/3D toggle: one localStorage key (fix NOIR split)
+
+**Context:** User reported **2D/3D view** not persisting when leaving a product page; they want the same mode on **all unit product pages** until they toggle again.
+
+**Root cause:** **`/straight/noir`** used **`noir-3d-view`** while **NOIR, Blanco, Soft Wave, Beach Wave, Soft Curl, Ocean Curl** used **`product-3d-view`**, so toggling on NOIR did not update the shared key other pages read.
+
+**Changes:** **`src/utils/product3dViewPreference.ts`**: **`readProduct3dViewPreference`** / **`persistProduct3dViewPreference`** with key **`product-3d-view`**; one-time migration from legacy **`noir-3d-view`**. All six unit PDPs import these helpers for **`useState`** init and toggle persistence.
+
+---
+
+## 2026-03-29 — Premium upgrade checkout: tier title −1px, −10px above badges
+
+**Context:** User asked on **subscription upgrade checkout** only: move **3 / 6 / 12 months premium** product name (**above** red **DIGITAL ONLY**) up **1px**; reduce space **above premium badge thumbnails** by **10px**.
+
+**Changes:** **`src/pages/checkout/page.tsx`**: horizontal cart row **`paddingTop` `2px` → `0`** when **`isSubscriptionUpgrade`**. Premium tier cells (**`isMembershipTierThumb`**) **`paddingTop` `8px` → `0`** when **`isSubscriptionUpgrade`**. Tier title **`<p>`** **`translateY(-1px)`** when **`isSubscriptionUpgrade && isMembershipTierThumb`** (gift card title behavior unchanged).
+
+---
+
+## 2026-03-29 — `/units/straight|wavy|curly`: center thumbnails over product copy
+
+**Context:** User asked to **center thumbnails** on **units** listing pages above **product info** below.
+
+**Changes:** **`src/pages/units/straight/page.tsx`**, **`wavy/page.tsx`**, **`curly/page.tsx`**: marble card uses **`display: flex; flexDirection: column; alignItems: center`**. Image row is a **`flex`** wrapper (**`justifyContent: center`**, full width); removed **`marginLeft: 5px`** from **`img`**, symmetric **`margin`**, **`display: block`**. Name / hair / price **`p`** and cap-size row use **`width: 100%`** + **`textAlign: center`** so copy lines up under the image.
+
+---
+
+## 2026-03-29 — Unit PDP back button: history-first (fix NOIR → build-a-wig)
+
+**Context (this chat):** User said the **back button** did not follow **recently viewed / navigated** pages correctly.
+
+**Root cause:** **`/straight/noir`** **`handleBack`** always **`navigate('/build-a-wig')`** after saving cap to **`localStorage`**, so flows like **units listing → NOIR** or **another PDP → NOIR** could not pop real history. Other unit PDPs used plain **`navigate(-1)`** with no fallback when **`history.length === 1`**.
+
+**Decisions / outcomes:** Align with **lobby** pattern: **`window.history.length > 1`** → **`navigate(-1)`**; else navigate to a sensible default (**`/units/straight|wavy|curly`** by product path, else **`/home/shop`**).
+
+**Changes:** New **`src/utils/navigateBack.ts`** — **`navigateUnitProductBack(navigate, pathname)`**. **`src/pages/straight/noir/page.tsx`**: keep cap persistence, then **`navigateUnitProductBack`**. **`blanco`**, **`wavy/soft-wave`**, **`wavy/beach-wave`**, **`curly/soft-curl`**, **`curly/ocean-curl`**: **`handleBack`** uses the same helper.
+
+---
+
+## 2026-03-29 — Build-a-wig CONFIRM SELECTION: match ADD TO BAG typography
+
+**Context (this chat):** User asked for **CONFIRM SELECTION** on build-a-wig step pages to use the **same font weight** as **ADD TO BAG** on the main build-a-wig page.
+
+**Root cause:** **`font-futura`** in CSS uses **`Futura PT Demi`** at **600**. **ADD TO BAG** overrides **`font-family`** inline to **`Futura PT Medium`** (same stack as the button), so the two controls did not match visually.
+
+**Changes:** All **CONFIRM SELECTION** buttons in **`build-a-wig`** subpages (**`texture`**, **`length`**, **`color`**, **`density`**, **`lace`**, **`hairline`**, **`cap-size`**, **`styling`**, **`addons`**) now include the same inline **`fontFamily`** as **ADD TO BAG** in **`page.tsx`**, preserving existing **`font-semibold`** / **`.font-futura`** weight (**600**).
+
+---
+
+## 2026-03-29 — Rewards copy + alerts: free gifts do not expire
+
+**Context (this chat):** User corrected policy: **free gifts** do **not** expire (unlike vouchers); they apply **once on the next purchase**, use **unique codes** at checkout like vouchers, are **combinable**, and will tie to **admin/inventory** later (e.g. 5k vs 45k tier gifts). **Discount codes & vouchers** still **6 months from redemption**; **digital cash / gift cards** never expire.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: rewards disclaimer (2×) + admin tier explainer paragraph updated—removed free gifts from the expiring bucket; noted next-purchase / unique code / admin inventory. **`src/pages/account/notifications/page.tsx`**: **`isFreeGiftVoucherLabel`**; **`getVoucherExpirations`** skips **`FREE GIFT`** rows so expiring-soon alerts do not fire for free gifts. **`src/pages/account/page.tsx`**: **VOUCHER HISTORY** modal footer adds matching policy line.
+
+---
+
+## 2026-03-29 — Free gifts: 6-month expiry again (inventory)
+
+**Context (this chat):** User reversed prior policy: **free gifts** should **expire in 6 months** as well (with vouchers / discount codes) to **keep inventory moving**.
+
+**Changes:** Restored copy: **`FREE GIFTS, DISCOUNT CODES & VOUCHERS EXPIRE 6 MONTHS…`** on **`membership/page.tsx`** (2×), admin tier paragraph, and **`account/page.tsx`** voucher history modal footer. **`notifications/page.tsx`**: removed **`isFreeGiftVoucherLabel`** and the skip in **`getVoucherExpirations`**; comment notes vouchers + free gifts use the 6-month window.
+
+---
+
+## 2026-03-29 — Premium upgrade chart close icon −20%
+
+**Context (this chat):** User asked to shrink the **red X** close on the **premium subscription upgrade chart** by **20%**.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: **PREMIUM MEMBERSHIP** header close **`img`** **`20px` → `16px`** width/height (**×0.8**).
+
+---
+
+## 2026-03-29 — Free gifts combinable at checkout (copy + logic)
+
+**Context (this chat):** User asked to keep **free gifts combinable with anything** at checkout while **6-month expiry** remains.
+
+**Changes:** **Rewards / account copy** (**`membership/page.tsx`**, **`account/page.tsx`**): added that **free gifts can be combined with any other offer at checkout**. **`checkout/page.tsx`**: **`SPECIAL_OFFER_CHECKOUT_COMBO_MESSAGE`**—special-offer-only carts block codes / referral / gift card / **service** vouchers but state **free gifts still apply**; **`isFreeGiftVoucherKey`**, **`normalizeVoucherQuantitiesForModalOpen`**, **`buildAppliedVoucherQuantitiesFromModal`** so **only COLOR/HAIRLINE/STYLING** are limited to one at a time and **free gift counts are preserved** (modal **+** / apply / open). **`voucherLineApplicable`** true when user has free-gift credit. Voucher row shows **free gift + service**; modal lists service types only; empty-state note when none apply. Modal copy explains service vs free gifts. **`concierge/page.tsx`**: special-offer blurb allows **free gifts**. **`notifications/page.tsx`**: comment on combinable free gifts.
+
+---
+
+## 2026-03-29 — Popups: strict uppercase (brand)
+
+**Context (this chat):** User asked that **all** popups (vouchers, loyalty redemption, confirmations, etc.) use **uppercase**; **`messageTextTransform="none"`** and mixed-case body copy were slipping through.
+
+**Changes:** **`ConfirmationModal`**: removed **`messageTextTransform`** prop; message body always **`textTransform: 'uppercase'`**; inner shell **`className="baw-brand-modal-shell"`**. **`src/index.css`**: **`.baw-brand-modal-shell { text-transform: uppercase !important; }`**. Applied shell class to **AddToListModal**, **CreateNewListModal**, **checkout** digital cash + voucher + terms modals, **CartDropdown** currency panel, **account/page** profile / reset / crop marble popups. Removed all **`messageTextTransform`** usages from **checkout**, **concierge**, **membership**, **order-form**, **payment**, **shipping**, **sign-in**, **CartDropdown**, **NewsletterPanel**.
+
+---
+
+## 2026-03-29 — Upgrade checkout: premium badge spacing + DIGITAL ONLY/price nudge
+
+**Context (this chat):** On **subscription upgrade** checkout only, for **3 / 6 / 12 months premium** cart cells: move **DIGITAL ONLY** and **price** down **1.5px** without moving the black **premium title** above; add **5px** space **above** the tier badge thumbnails.
+
+**Changes:** **`src/pages/checkout/page.tsx`**: **`paddingTop`** for **`isSubscriptionUpgrade && isMembershipTierThumb`** cells **`0` → `5px`**. Wrapped **DIGITAL ONLY** (and following cap line + price) in a div with **`transform: translateY(1.5px)`** only when **`isSubscriptionUpgrade && isMembershipTierThumb`**; title **`<p>`** stays outside that wrapper.
+

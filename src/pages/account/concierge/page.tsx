@@ -2673,7 +2673,7 @@ function ConciergePage() {
                         />
                       </div>
                       <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0 0 25px 0', textTransform: 'uppercase', textAlign: 'center', lineHeight: 1.45 }}>
-                        CAN NOT BE COMBINED WITH VOUCHER OR DISCOUNT CODE.
+                        CAN NOT BE COMBINED WITH SERVICE VOUCHER OR DISCOUNT CODE. FREE GIFTS MAY STILL BE APPLIED.
                         <br />
                         YOU MAY REDEEM A TOTAL OF <span style={{ color: '#EB1C24' }}>2</span> QTY AMOUNTS FOR EACH CAP SIZE.
                         <br />
@@ -5113,7 +5113,6 @@ function ConciergePage() {
         message={successMessage}
         confirmText="OK"
         cancelText=""
-        messageTextTransform="uppercase"
       />
       
       {/* Free Gift Confirmation Modal */}
@@ -5125,7 +5124,6 @@ function ConciergePage() {
         message={freeGiftModalMessage}
         confirmText="CLOSE"
         cancelText=""
-        messageTextTransform="uppercase"
       />
       
       {/* Birthday Gift Confirmation Modal */}
@@ -5137,7 +5135,6 @@ function ConciergePage() {
         message={birthdayGiftModalMessage}
         confirmText="CLOSE"
         cancelText=""
-        messageTextTransform="uppercase"
       />
 
     </div>

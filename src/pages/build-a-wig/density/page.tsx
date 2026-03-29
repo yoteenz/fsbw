@@ -1471,7 +1471,11 @@ function DensitySelection() {
             <button
               onClick={handleConfirmSelection}
             className="border border-black font-futura w-full max-w-m text-center py-2 text-[12px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-            style={{ borderWidth: '1.3px', color: '#EB1C24' }}
+            style={{
+              borderWidth: '1.3px',
+              color: '#EB1C24',
+              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+            }}
             >
               CONFIRM SELECTION
             </button>

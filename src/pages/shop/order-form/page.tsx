@@ -578,7 +578,6 @@ function OrderFormPage() {
           font-family: "Futura PT Demi", "Futura PT Medium", "Futura PT Book", "Covered By Your Grace", "Covered By Your Grace Preload" !important;
           font-weight: 500 !important;
           color: #808080 !important;
-          text-transform: uppercase !important;
           background-color: #FFFFFF !important;
         }
         input:focus,
@@ -1352,7 +1351,7 @@ function OrderFormPage() {
                               <span style={{ 
                                 padding: '4px 8px',
                                 border: '1px solid #808080',
-                                borderRadius: 0,
+                                borderRadius: '4px',
                                 backgroundColor: '#F5F5F5',
                                 color: '#000000',
                                 textTransform: 'uppercase',
@@ -1441,7 +1440,7 @@ function OrderFormPage() {
                               <span style={{ 
                                 padding: '4px 8px',
                                 border: '1px solid #808080',
-                                borderRadius: 0,
+                                borderRadius: '4px',
                                 backgroundColor: '#F5F5F5',
                                 color: '#000000',
                                 textTransform: 'uppercase',
@@ -1689,7 +1688,6 @@ function OrderFormPage() {
         message={validationMessage}
         confirmText="OK"
         cancelText="CLOSE"
-        messageTextTransform="uppercase"
       />
       </div>
     </>

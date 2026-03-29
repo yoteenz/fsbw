@@ -770,7 +770,7 @@ function LeaveReviewOrderPage() {
                       <span style={{
                         padding: '4px 8px',
                         border: '1px solid #808080',
-                        borderRadius: 0,
+                        borderRadius: '4px',
                         backgroundColor: '#F5F5F5',
                         color: '#000000',
                         textTransform: 'uppercase',
@@ -837,7 +837,7 @@ function LeaveReviewOrderPage() {
                       <span style={{
                         padding: '4px 8px',
                         border: '1px solid #808080',
-                        borderRadius: 0,
+                        borderRadius: '4px',
                         backgroundColor: '#F5F5F5',
                         color: '#000000',
                         textTransform: 'uppercase',

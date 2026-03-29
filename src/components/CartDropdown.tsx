@@ -1701,7 +1701,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
       }}
     >
       <div
-        className="absolute bg-white border border-black shadow-lg"
+        className="absolute bg-white border border-black shadow-lg baw-brand-modal-shell"
         style={{
           borderWidth: '1.3px',
           display: 'flex',
@@ -1847,7 +1847,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
           message="ARE YOU SURE YOU WANT TO REMOVE THIS ITEM?"
           confirmText="CONFIRM"
           cancelText="CANCEL"
-          messageTextTransform="uppercase"
           dataAttribute="remove-confirm"
         />,
         document.body

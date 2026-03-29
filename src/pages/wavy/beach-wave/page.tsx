@@ -8,6 +8,8 @@ import ImageViewerModal from '../../../components/ImageViewerModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { trackActivity } from '../../../utils/activity';
+import { persistProduct3dViewPreference, readProduct3dViewPreference } from '../../../utils/product3dViewPreference';
+import { navigateUnitProductBack } from '../../../utils/navigateBack';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { clearAppAuth } from '../../../utils/adminAuth';
 import {
@@ -363,19 +365,7 @@ function BeachWaveSelection() {
     }
   }, []);
   const [selectedMannequinView, setSelectedMannequinView] = useState(0);
-  const [is3DView, setIs3DView] = useState(() => {
-    // Check localStorage for saved 3D view preference, default to false (2D view)
-    // Use shared key so 3D/2D view preference persists across all product pages
-    if (typeof window !== 'undefined') {
-      try {
-        const saved3DView = localStorage.getItem('product-3d-view');
-        return saved3DView === 'true';
-      } catch (e) {
-        return false;
-      }
-    }
-    return false;
-  });
+  const [is3DView, setIs3DView] = useState(() => readProduct3dViewPreference());
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -481,7 +471,7 @@ function BeachWaveSelection() {
   }, []);
 
   const handleBack = () => {
-    navigate(-1);
+    navigateUnitProductBack(navigate, location.pathname);
   };
 
   const handleMobileMenuToggle = () => {
@@ -1234,7 +1224,7 @@ function BeachWaveSelection() {
                       setIs3DView(new3DView);
                       if (typeof window !== 'undefined') {
                         try {
-                          localStorage.setItem('product-3d-view', new3DView.toString());
+                          persistProduct3dViewPreference(new3DView);
                         } catch (e) {
                           console.error('Error saving 3D view:', e);
                         }

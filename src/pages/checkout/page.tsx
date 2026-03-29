@@ -29,6 +29,10 @@ import {
   updateBrandPromoCode,
 } from '../../utils/adminBrandCodes';
 
+/** Special-offer-only cart: block codes, referral, gift card, service vouchers (COLOR/HAIRLINE/STYLING); free gifts stay combinable. */
+const SPECIAL_OFFER_CHECKOUT_COMBO_MESSAGE =
+  "SPECIAL OFFERS CAN'T BE COMBINED WITH DISCOUNT CODES, GIFT CARDS, REFERRAL CODES OR SERVICE VOUCHERS. FREE GIFTS STILL APPLY.";
+
 function getCardBrandDisplay(fullNumber: string): string {
   const digits = fullNumber.replace(/\D/g, '');
   if (digits.length < 4) return 'CARD';
@@ -105,6 +109,61 @@ function getVoucherAddOnPriceForItem(item: any, type: string): number {
     return base;
   }
   return 0;
+}
+
+/** Loyalty free-gift rows (not service vouchers); may stack with a service voucher at checkout. */
+function isFreeGiftVoucherKey(type: string): boolean {
+  return /\bFREE\s*GIFT\b/i.test((type || '').trim());
+}
+
+/** Opening voucher modal: drop inapplicable service vouchers; keep free gifts; at most one service type selected. */
+function normalizeVoucherQuantitiesForModalOpen(
+  applied: Record<string, number>,
+  available: Record<string, number>,
+  cartApplicable: Record<string, boolean | undefined>
+): Record<string, number> {
+  const next: Record<string, number> = { ...applied };
+  Object.keys(available).forEach((t) => {
+    if (!cartApplicable[t] && !isFreeGiftVoucherKey(t)) next[t] = 0;
+  });
+  const serviceKeys = Object.keys(VOUCHER_TYPE_CONFIG);
+  const serviceSum = serviceKeys.reduce((s, k) => s + (next[k] || 0), 0);
+  if (serviceSum > 1) {
+    const first = serviceKeys.find((k) => (next[k] || 0) > 0);
+    serviceKeys.forEach((k) => {
+      next[k] = k === first ? Math.min(1, next[k] || 0) : 0;
+    });
+  }
+  return next;
+}
+
+/** Apply modal: service vouchers from cart applicability; free gifts keep chosen or prior counts (combinable). */
+function buildAppliedVoucherQuantitiesFromModal(
+  modalQty: Record<string, number>,
+  priorApplied: Record<string, number>,
+  available: Record<string, number>,
+  cartApplicable: Record<string, boolean | undefined>
+): Record<string, number> {
+  const raw: Record<string, number> = {};
+  Object.keys(available).forEach((type) => {
+    if (isFreeGiftVoucherKey(type)) {
+      const avail = available[type] || 0;
+      const q = modalQty[type] ?? priorApplied[type] ?? Math.min(1, avail);
+      raw[type] = Math.min(avail, Math.max(0, q));
+    } else {
+      raw[type] = cartApplicable[type] ? (modalQty[type] ?? 0) : 0;
+    }
+  });
+  const serviceKeys = Object.keys(VOUCHER_TYPE_CONFIG);
+  const serviceSum = serviceKeys.reduce((s, k) => s + (raw[k] || 0), 0);
+  const next = { ...raw };
+  if (serviceSum > 1) {
+    const first = serviceKeys.find((k) => (raw[k] || 0) > 0);
+    serviceKeys.forEach((k) => {
+      next[k] = k === first ? Math.min(1, raw[k] || 0) : 0;
+    });
+  }
+  return next;
 }
 
 function CheckoutPage() {
@@ -324,7 +383,7 @@ function CheckoutPage() {
     });
   }, [cartItems]);
 
-  // Voucher applicability: only when the selection is an upgrade (add-on price > 0). Excludes special offer items (cannot combine with vouchers).
+  // Voucher applicability: service vouchers only (COLOR/HAIRLINE/STYLING); add-on price > 0. Excludes special-offer lines (no service voucher discount there). Free gifts are separate loyalty redemptions and remain combinable.
   const cartVoucherApplicability = useMemo(() => {
     const isPhysical = (item: any) => item.name !== 'GIFT CARD' && item.type !== 'gift-card' && item.type !== 'digital' && !item.isSpecialOffer;
     const out: Record<string, boolean> = {};
@@ -341,9 +400,10 @@ function CheckoutPage() {
   const voucherLineApplicable = useMemo(() => {
     if (Object.keys(availableVouchersByType).length === 0) return false;
     return Object.keys(availableVouchersByType).some((type) => {
-      const available = availableVouchersByType[type] > 0;
-      const cartHas = cartVoucherApplicability[type] === true;
-      return available && cartHas;
+      const available = (availableVouchersByType[type] || 0) > 0;
+      if (!available) return false;
+      if (isFreeGiftVoucherKey(type)) return true;
+      return cartVoucherApplicability[type] === true;
     });
   }, [availableVouchersByType, cartVoucherApplicability]);
   
@@ -567,9 +627,11 @@ function CheckoutPage() {
       setAppliedBrandDiscountPromo(null);
       setDiscountCode('');
       setDiscountCodeDisplay('');
-      setDiscountCodeError('SPECIAL OFFERS CAN\'T BE COMBINED WITH VOUCHERS, DISCOUNT CODES, GIFT CARDS OR REFERRAL CODES.');
+      setDiscountCodeError(SPECIAL_OFFER_CHECKOUT_COMBO_MESSAGE);
     } else {
-      setDiscountCodeError((prev) => (prev === 'SPECIAL OFFERS CAN\'T BE COMBINED WITH DISCOUNT CODES, GIFT CARDS OR REFERRAL CODES.' ? '' : prev));
+      setDiscountCodeError((prev) =>
+        typeof prev === 'string' && prev.startsWith("SPECIAL OFFERS CAN'T BE COMBINED") ? '' : prev
+      );
     }
   }, [hasOnlySpecialOfferInCart]);
 
@@ -1489,7 +1551,7 @@ function CheckoutPage() {
     
     // When cart contains only special offer items, codes cannot be applied
     if (hasOnlySpecialOfferInCart) {
-      setDiscountCodeError('SPECIAL OFFERS CAN\'T BE COMBINED WITH VOUCHERS, DISCOUNT CODES, GIFT CARDS OR REFERRAL CODES.');
+      setDiscountCodeError(SPECIAL_OFFER_CHECKOUT_COMBO_MESSAGE);
       return;
     }
     
@@ -1830,6 +1892,7 @@ function CheckoutPage() {
             cartItems: cartItems,
             pointsEarned: pointsEarned,
             tier: effectiveTier,
+            isSubscriptionUpgrade,
             firstName: firstName,
             lastName: lastName,
             shippingAddress: shippingAddress,
@@ -1921,7 +1984,13 @@ function CheckoutPage() {
             }
           }
           
-          sessionStorage.setItem('checkoutSummaryRewards', JSON.stringify({ pointsEarned, tier: effectiveTier }));
+          sessionStorage.setItem(
+            'checkoutSummaryRewards',
+            JSON.stringify({
+              pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
+              tier: effectiveTier
+            })
+          );
           navigate('/checkout/summary', {
             state: {
               orderNumber: orderNumber,
@@ -1931,8 +2000,9 @@ function CheckoutPage() {
               transactionId: result.transactionId,
               paymentMethod: provider,
               cartItems: cartItems,
-              pointsEarned: pointsEarned,
+              pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
               tier: effectiveTier,
+              isSubscriptionUpgrade
             }
           });
         }
@@ -2458,7 +2528,7 @@ function CheckoutPage() {
                             justifyContent: cartItems.length === 1 ? 'center' : undefined,
                             willChange: 'transform',
                             paddingRight: cartItems.length === 1 ? 0 : '10px',
-                            paddingTop: '2px',
+                            paddingTop: isSubscriptionUpgrade ? '0px' : '2px',
                             paddingBottom: '4px',
                             boxSizing: 'border-box',
                           }}
@@ -2572,7 +2642,8 @@ function CheckoutPage() {
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 justifyContent: 'flex-start',
-                                paddingTop: '8px',
+                                paddingTop:
+                                  isSubscriptionUpgrade && isMembershipTierThumb ? '5px' : '8px',
                                 paddingRight: '8px',
                                 paddingBottom: '8px',
                                 paddingLeft: '8px',
@@ -2610,11 +2681,23 @@ function CheckoutPage() {
                                     textTransform: 'uppercase',
                                     textAlign: 'center',
                                     lineHeight: '1.2',
-                                    transform: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? 'translateY(-1px)' : 'none'
+                                    transform:
+                                      item.name === 'GIFT CARD' || item.type === 'gift-card'
+                                        ? 'translateY(-1px)'
+                                        : isSubscriptionUpgrade && isMembershipTierThumb
+                                          ? 'translateY(-1px)'
+                                          : 'none'
                                   }}
                                 >
                                   {itemName}
                               </p>
+                              <div
+                                style={
+                                  isSubscriptionUpgrade && isMembershipTierThumb
+                                    ? { transform: 'translateY(1.5px)' }
+                                    : undefined
+                                }
+                              >
                               <p
                                 style={{
                                     fontFamily: '"Futura PT Medium"',
@@ -2679,6 +2762,7 @@ function CheckoutPage() {
                                   }}
                                   dangerouslySetInnerHTML={formatPrice(itemPrice)}
                                 />
+                              </div>
                               </div>
                             </div>
                           );
@@ -4883,34 +4967,44 @@ function CheckoutPage() {
                           role="button"
                           tabIndex={0}
                           onClick={() => {
-                            const next: Record<string, number> = { ...appliedVoucherQuantities };
-                            Object.keys(availableVouchersByType).forEach(t => { if (!cartVoucherApplicability[t]) next[t] = 0; });
-                            const total = Object.values(next).reduce((s, n) => s + (n || 0), 0);
-                            if (total > 1) {
-                              const first = Object.keys(next).find(t => (next[t] || 0) > 0);
-                              Object.keys(next).forEach(t => { next[t] = t === first ? 1 : 0; });
-                            }
+                            const next = normalizeVoucherQuantitiesForModalOpen(
+                              appliedVoucherQuantities,
+                              availableVouchersByType,
+                              cartVoucherApplicability
+                            );
                             setVoucherModalQuantities(next);
                             setShowVoucherModal(true);
                           }}
-                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); const next: Record<string, number> = { ...appliedVoucherQuantities }; Object.keys(availableVouchersByType).forEach(t => { if (!cartVoucherApplicability[t]) next[t] = 0; }); const total = Object.values(next).reduce((s, n) => s + (n || 0), 0); if (total > 1) { const first = Object.keys(next).find(t => (next[t] || 0) > 0); Object.keys(next).forEach(t => { next[t] = t === first ? 1 : 0; }); } setVoucherModalQuantities(next); setShowVoucherModal(true); } }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              const next = normalizeVoucherQuantitiesForModalOpen(
+                                appliedVoucherQuantities,
+                                availableVouchersByType,
+                                cartVoucherApplicability
+                              );
+                              setVoucherModalQuantities(next);
+                              setShowVoucherModal(true);
+                            }
+                          }}
                           style={{ fontFamily: '"Futura PT Demi"', color: '#808080', cursor: 'pointer' }}
                         >
-                          {Object.entries(appliedVoucherQuantities).filter(([type, n]) => n > 0 && cartVoucherApplicability[type]).map(([type, n]) => `${n}X ${type}`).join(', ') || 'NONE'}
+                          {Object.entries(appliedVoucherQuantities)
+                            .filter(([type, n]) => n > 0 && (cartVoucherApplicability[type] || isFreeGiftVoucherKey(type)))
+                            .map(([type, n]) => `${n}X ${type}`)
+                            .join(', ') || 'NONE'}
                         </span>
                         <button
                           type="button"
                           onClick={() => {
-                          const next: Record<string, number> = { ...appliedVoucherQuantities };
-                          Object.keys(availableVouchersByType).forEach(t => { if (!cartVoucherApplicability[t]) next[t] = 0; });
-                          const total = Object.values(next).reduce((s, n) => s + (n || 0), 0);
-                          if (total > 1) {
-                            const first = Object.keys(next).find(t => (next[t] || 0) > 0);
-                            Object.keys(next).forEach(t => { next[t] = t === first ? 1 : 0; });
-                          }
-                          setVoucherModalQuantities(next);
-                          setShowVoucherModal(true);
-                        }}
+                            const next = normalizeVoucherQuantitiesForModalOpen(
+                              appliedVoucherQuantities,
+                              availableVouchersByType,
+                              cartVoucherApplicability
+                            );
+                            setVoucherModalQuantities(next);
+                            setShowVoucherModal(true);
+                          }}
                           style={{ padding: 0, border: 'none', background: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
                           aria-label="Edit voucher amount"
                         >
@@ -5862,7 +5956,13 @@ function CheckoutPage() {
                     if (cu) { const u = JSON.parse(cu); effectiveTierSummary = getEffectiveTierName(u) || 'SILVER'; }
                   } catch (_) {}
 
-                  sessionStorage.setItem('checkoutSummaryRewards', JSON.stringify({ pointsEarned, tier: effectiveTierSummary }));
+                  sessionStorage.setItem(
+                    'checkoutSummaryRewards',
+                    JSON.stringify({
+                      pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
+                      tier: effectiveTierSummary
+                    })
+                  );
 
                   if (usedFounderDummyPan) {
                     trackActivity('founder_test_checkout_order', { orderNumber: nextOrderNumber });
@@ -5884,9 +5984,10 @@ function CheckoutPage() {
                       country: selectedCountry || 'US',
                       paymentMethod: paymentMethodDisplay,
                       email,
-                      pointsEarned,
+                      pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
                       tier: effectiveTierSummary,
-                      cartItems: cartItems
+                      cartItems: cartItems,
+                      isSubscriptionUpgrade
                     }
                   });
                     }}
@@ -5931,7 +6032,7 @@ function CheckoutPage() {
           }}
         >
           <div
-            className="p-6 bg-white border border-black"
+            className="p-6 bg-white border border-black baw-brand-modal-shell"
             style={{ width: 'calc(100vw - 32px)', maxWidth: 'none', borderWidth: '1.3px', boxSizing: 'border-box' }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -6020,7 +6121,7 @@ function CheckoutPage() {
           onClick={(e) => { if (e.target === e.currentTarget) setShowVoucherModal(false); }}
         >
           <div
-            className="p-6 bg-white border border-black"
+            className="p-6 bg-white border border-black baw-brand-modal-shell"
             style={{ width: 'calc(100vw - 32px)', maxWidth: 'none', borderWidth: '1.3px', boxSizing: 'border-box' }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -6028,17 +6129,29 @@ function CheckoutPage() {
               VOUCHER
             </h3>
             <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', marginBottom: '8px', textTransform: 'uppercase' }}>
-              You can only use 1 voucher at a time. Vouchers cannot be combined with other vouchers.
+              You can only use one service voucher at a time (color, hairline, styling). Those vouchers cannot be combined with each other.
             </p>
             <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', marginBottom: '16px', textTransform: 'uppercase' }}>
-              Choose one voucher to apply to this order.
+              Free gifts from rewards are separate and can be combined with this voucher and other checkout offers. Choose one service voucher to apply to this order.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
-              {Object.entries(availableVouchersByType).map(([type, available]) => {
+              {!Object.entries(availableVouchersByType).some(
+                ([t, n]) => (n || 0) > 0 && Object.prototype.hasOwnProperty.call(VOUCHER_TYPE_CONFIG, t)
+              ) && (
+                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
+                  No service vouchers apply to this cart. Free gifts on your account still apply when you tap apply.
+                </p>
+              )}
+              {Object.entries(availableVouchersByType)
+                .filter(([type]) => Object.prototype.hasOwnProperty.call(VOUCHER_TYPE_CONFIG, type))
+                .map(([type, available]) => {
                 const inCart = cartVoucherApplicability[type] === true;
                 const current = inCart ? (voucherModalQuantities[type] ?? 0) : 0;
-                const totalVouchersSelected = Object.values(voucherModalQuantities).reduce((s, n) => s + (n || 0), 0);
-                const canAddThis = inCart && available >= 1 && current < 1 && totalVouchersSelected === 0;
+                const totalServiceVouchersSelected = Object.keys(VOUCHER_TYPE_CONFIG).reduce(
+                  (s, k) => s + (voucherModalQuantities[k] || 0),
+                  0
+                );
+                const canAddThis = inCart && available >= 1 && current < 1 && totalServiceVouchersSelected === 0;
                 return (
                 <div key={type} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                   <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', textTransform: 'uppercase' }}>
@@ -6098,9 +6211,12 @@ function CheckoutPage() {
                     </div>
                     <button
                       type="button"
-                      onClick={() => inCart && setVoucherModalQuantities(() => {
-                        const next: Record<string, number> = {};
-                        Object.keys(availableVouchersByType).forEach(t => { next[t] = t === type ? 1 : 0; });
+                      onClick={() => inCart && setVoucherModalQuantities((prev) => {
+                        const next = { ...prev };
+                        Object.keys(availableVouchersByType).forEach((t) => {
+                          if (isFreeGiftVoucherKey(t)) return;
+                          next[t] = t === type ? 1 : 0;
+                        });
                         return next;
                       })}
                       disabled={!canAddThis}
@@ -6133,13 +6249,12 @@ function CheckoutPage() {
               <button
                 type="button"
                 onClick={() => {
-                  const raw = Object.fromEntries(
-                    Object.keys(availableVouchersByType).map(type => [type, cartVoucherApplicability[type] ? (voucherModalQuantities[type] ?? 0) : 0])
+                  const next = buildAppliedVoucherQuantitiesFromModal(
+                    voucherModalQuantities,
+                    appliedVoucherQuantities,
+                    availableVouchersByType,
+                    cartVoucherApplicability
                   );
-                  const total = Object.values(raw).reduce((s, n) => s + (n || 0), 0);
-                  const next = total > 1
-                    ? (() => { const first = Object.keys(raw).find(t => (raw[t] || 0) > 0); return Object.fromEntries(Object.keys(raw).map(t => [t, t === first ? 1 : 0])); })()
-                    : raw;
                   setAppliedVoucherQuantities(next);
                   setShowVoucherModal(false);
                 }}
@@ -6198,7 +6313,7 @@ function CheckoutPage() {
         }}
       >
         <div
-          className="p-6"
+          className="p-6 baw-brand-modal-shell"
           style={{
             maxWidth: '400px',
             width: '90%',
@@ -6324,7 +6439,6 @@ function CheckoutPage() {
       message=" YOU MUST AGREE TO THE TERMS TO FINALIZE THIS PURCHASE."
       confirmText="OK"
       cancelText="CLOSE"
-      messageTextTransform="uppercase"
     />
 
       {/* Validation Modal */}
@@ -6396,7 +6510,6 @@ function CheckoutPage() {
       message={validationMessage}
       confirmText="OK"
       cancelText="CLOSE"
-      messageTextTransform="uppercase"
     />
 
       <ConfirmationModal
@@ -6408,7 +6521,6 @@ function CheckoutPage() {
         confirmText="OK"
         cancelText=""
         dataAttribute="checkout-notice"
-        messageTextTransform="none"
       />
 
       {/* Sign Out Confirmation Modal */}

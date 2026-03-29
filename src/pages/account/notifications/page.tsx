@@ -33,7 +33,7 @@ export function parseAdminSentNotificationText(text: string): { title: string; m
   return { title: 'ALERT', message: t.toUpperCase() || 'VIEW DETAILS.' };
 }
 
-/** Vouchers are valid for 6 months once added. */
+/** Vouchers and free gifts are valid for 6 months once credited (keeps inventory moving). Free gifts stay combinable with other checkout offers (see checkout / rewards copy). */
 const VOUCHER_VALIDITY_MONTHS = 6;
 
 /** Parse M-D-YYYY to Date; return null if invalid. */
@@ -52,7 +52,7 @@ function getVoucherExpiration(addedDate: Date): Date {
   return exp;
 }
 
-/** Get list of { type, expiresAt } for each voucher the user has, using voucherList + voucherHistory (credits only; 6 months from credit date). */
+/** Get list of { type, expiresAt } for each voucher/free-gift row, using voucherList + voucherHistory (credits only; 6 months from credit date). */
 function getVoucherExpirations(user: { voucherList?: string[]; voucherHistory?: Array<{ date: string; transaction: string; amount: number }> }): Array<{ type: string; expiresAt: Date }> {
   const list = Array.isArray(user.voucherList) ? user.voucherList : [];
   const history = Array.isArray(user.voucherHistory) ? user.voucherHistory : [];

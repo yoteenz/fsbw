@@ -9,7 +9,6 @@ interface ConfirmationModalProps {
   confirmText?: string;
   cancelText?: string;
   dataAttribute?: string;
-  messageTextTransform?: 'uppercase' | 'lowercase' | 'none';
   /** When true, `\n` in string messages renders as line breaks (e.g. stacked errors from native alert replacements). */
   messagePreserveLineBreaks?: boolean;
 }
@@ -24,7 +23,6 @@ export default function ConfirmationModal({
   confirmText = 'CONFIRM',
   cancelText = 'CANCEL',
   dataAttribute = 'confirmation-modal',
-  messageTextTransform = 'uppercase',
   messagePreserveLineBreaks = false,
 }: ConfirmationModalProps) {
   if (!isOpen) return null;
@@ -53,7 +51,7 @@ export default function ConfirmationModal({
       }}
     >
       <div
-        className="p-6"
+        className="p-6 baw-brand-modal-shell"
         style={{
           maxWidth: '400px',
           width: '90%',
@@ -95,7 +93,7 @@ export default function ConfirmationModal({
               fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
               fontSize: '10px',
               color: '#000000',
-              textTransform: messageTextTransform,
+              textTransform: 'uppercase',
               textAlign: 'center',
               transform: 'translateY(-1px)',
               whiteSpace: messagePreserveLineBreaks ? 'pre-line' : 'normal',

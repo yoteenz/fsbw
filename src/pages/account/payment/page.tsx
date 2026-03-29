@@ -863,7 +863,6 @@ function PaymentPage() {
         message={validationMessage}
         confirmText="OK"
         cancelText="CLOSE"
-        messageTextTransform="uppercase"
       />
     </>
   );

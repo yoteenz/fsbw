@@ -11,6 +11,8 @@ import ImageViewerModal from '../../../components/ImageViewerModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { trackActivity } from '../../../utils/activity';
+import { persistProduct3dViewPreference, readProduct3dViewPreference } from '../../../utils/product3dViewPreference';
+import { navigateUnitProductBack } from '../../../utils/navigateBack';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { clearAppAuth } from '../../../utils/adminAuth';
 import {
@@ -50,11 +52,7 @@ function NoirSelection() {
   const [quantity, setQuantity] = useState(1);
   const [showChartModal, setShowChartModal] = useState(false);
   const [selectedMannequinView, setSelectedMannequinView] = useState(0);
-  const [is3DView, setIs3DView] = useState(() => {
-    // Check localStorage for saved 3D view preference, default to false (2D view)
-    const saved3DView = localStorage.getItem('noir-3d-view');
-    return saved3DView === 'true';
-  });
+  const [is3DView, setIs3DView] = useState(() => readProduct3dViewPreference());
   const [showImageViewer, setShowImageViewer] = useState(false);
   const [viewerImages, setViewerImages] = useState<string[]>([]);
   const [viewerCurrentIndex, setViewerCurrentIndex] = useState(0);
@@ -1028,7 +1026,7 @@ function NoirSelection() {
       localStorage.setItem('selectedCapSize', selectedFlexibleCap);
       localStorage.setItem('selectedCapSizePrice', '60'); // Flexible cap has $60 additional price
     }
-    navigate('/build-a-wig');
+    navigateUnitProductBack(navigate, location.pathname);
   };
 
   const handleMobileMenuToggle = () => {
@@ -2334,7 +2332,7 @@ function NoirSelection() {
                   onClick={() => {
                     const new3DView = !is3DView;
                     setIs3DView(new3DView);
-                    localStorage.setItem('noir-3d-view', new3DView.toString());
+                    persistProduct3dViewPreference(new3DView);
                   }}
                 >
                   <span className="product-view-toggle-text" style={{ color: is3DView ? '#000000' : '#EB1C24', fontFamily: is3DView ? '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', fontWeight: is3DView ? '400' : '500', margin: '0' }}>2D VIEW</span>

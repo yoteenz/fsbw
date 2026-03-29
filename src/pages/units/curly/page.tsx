@@ -834,6 +834,9 @@ function CurlyUnitsPage() {
                       borderWidth: '1.3px',
                       padding: '10px 6px 14px 6px',
                       textAlign: 'center',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
                       backgroundColor: '#f5f5f5',
                       backgroundImage: `url('/assets/marble bg.png')`,
                       backgroundSize: 'cover',
@@ -879,17 +882,26 @@ function CurlyUnitsPage() {
                     </div>
 
                     {/* Product Image */}
-                    <div style={{ textAlign: 'center', marginTop: '2px', marginBottom: '0' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: '100%',
+                        marginTop: '2px',
+                        marginBottom: '0'
+                      }}
+                    >
                       <img
                         src={product.image}
                         alt={product.name}
                         onClick={() => handleCardClick(product)}
                         style={{
                           width: '100%',
+                          maxWidth: '100%',
                           height: 'auto',
-                          marginBottom: '10px',
-                          marginLeft: '5px',
-                          marginTop: '0',
+                          margin: '0 0 10px 0',
+                          display: 'block',
                           cursor: (product.name === 'SOFT CURL' || product.name === 'OCEAN CURL') ? 'pointer' : 'default'
                         }}
                       />
@@ -904,7 +916,9 @@ function CurlyUnitsPage() {
                         textTransform: 'uppercase',
                         margin: '-10px 0 -3px 0',
                         fontWeight: '500',
-                        transform: 'translateY(4px)'
+                        transform: 'translateY(4px)',
+                        width: '100%',
+                        textAlign: 'center'
                       }}
                     >
                       {product.name}
@@ -920,7 +934,9 @@ function CurlyUnitsPage() {
                         margin: '0 0 5px 0',
                         fontWeight: '500',
                         lineHeight: '0.84',
-                        transform: 'translateY(4px)'
+                        transform: 'translateY(4px)',
+                        width: '100%',
+                        textAlign: 'center'
                       }}
                     >
                       {product.length} RAW {product.hairOrigin}
@@ -936,13 +952,24 @@ function CurlyUnitsPage() {
                         margin: '0 0 5px 0',
                         fontWeight: '500',
                         lineHeight: '0.84',
-                        transform: 'translateY(4px)'
+                        transform: 'translateY(4px)',
+                        width: '100%',
+                        textAlign: 'center'
                       }}
                       dangerouslySetInnerHTML={formatPrice(product.price)}
                     />
 
                     {/* Cap Size Options */}
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', marginTop: '2px', transform: 'translateY(3px)' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: '14px',
+                        marginTop: '2px',
+                        transform: 'translateY(3px)',
+                        width: '100%'
+                      }}
+                    >
                       {['XS', 'S', 'M', 'L'].map(size => (
                         <span
                           key={size}

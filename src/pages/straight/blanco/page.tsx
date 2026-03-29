@@ -8,6 +8,8 @@ import ImageViewerModal from '../../../components/ImageViewerModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { trackActivity } from '../../../utils/activity';
+import { persistProduct3dViewPreference, readProduct3dViewPreference } from '../../../utils/product3dViewPreference';
+import { navigateUnitProductBack } from '../../../utils/navigateBack';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { clearAppAuth } from '../../../utils/adminAuth';
 import {
@@ -335,12 +337,7 @@ function BlancoSelection() {
     }
   }, []);
   const [selectedMannequinView, setSelectedMannequinView] = useState(0);
-  const [is3DView, setIs3DView] = useState(() => {
-    // Check localStorage for saved 3D view preference, default to false (2D view)
-    // Use shared key so 3D/2D view preference persists across all product pages
-    const saved3DView = localStorage.getItem('product-3d-view');
-    return saved3DView === 'true';
-  });
+  const [is3DView, setIs3DView] = useState(() => readProduct3dViewPreference());
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -446,7 +443,7 @@ function BlancoSelection() {
   }, []);
 
   const handleBack = () => {
-    navigate(-1);
+    navigateUnitProductBack(navigate, location.pathname);
   };
 
   const handleMobileMenuToggle = () => {
@@ -1201,7 +1198,7 @@ function BlancoSelection() {
                     onClick={() => {
                       const new3DView = !is3DView;
                       setIs3DView(new3DView);
-                      localStorage.setItem('product-3d-view', new3DView.toString());
+                      persistProduct3dViewPreference(new3DView);
                     }}
                   >
                     <span style={{ color: is3DView ? '#000000' : '#EB1C24', fontFamily: is3DView ? '"Futura PT Book"' : '"Futura PT Medium"', fontSize: '11px', fontWeight: is3DView ? '400' : '500', margin: '0' }}>2D VIEW</span>

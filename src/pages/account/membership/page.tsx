@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, type CSSProperties, type ReactNode } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef, type CSSProperties, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
@@ -535,6 +535,9 @@ function MembershipPage() {
     };
   };
 
+  /** When true, unmount cleanup skips clearing premium persist (user is navigating to `/checkout/upgrade`). */
+  const preservePremiumPersistForCheckoutRef = useRef(false);
+
   const [showPremiumView, setShowPremiumView] = useState(() => {
     // Restore premium chart after: lobby upgrade, explicit back from `/checkout/upgrade`, or browser back (localStorage kept while on checkout).
     try {
@@ -548,6 +551,22 @@ function MembershipPage() {
       return false;
     }
   });
+
+  // Leaving rewards (any route except upgrade checkout) should close the chart next visit — clear persist. Skip when heading to `/checkout/upgrade` so back from checkout can still reopen via `returningFromCheckout` + localStorage.
+  useEffect(() => {
+    return () => {
+      if (preservePremiumPersistForCheckoutRef.current) {
+        preservePremiumPersistForCheckoutRef.current = false;
+        return;
+      }
+      try {
+        localStorage.removeItem('membershipShowPremiumView');
+        localStorage.removeItem('membershipSelectedTier');
+      } catch {
+        /* ignore */
+      }
+    };
+  }, []);
   const [selectedTier, setSelectedTier] = useState<string | null>(() => {
     // Restore selected tier from localStorage if coming back from checkout
     try {
@@ -826,6 +845,7 @@ function MembershipPage() {
       localStorage.setItem('membershipShowPremiumView', 'true');
       sessionStorage.setItem('returningFromCheckout', 'true');
       trackActivity('membership_upgrade_checkout', { tier: selectedTier });
+      preservePremiumPersistForCheckoutRef.current = true;
       navigate('/checkout/upgrade');
     } else {
       // Switch to premium view
@@ -1455,7 +1475,7 @@ function MembershipPage() {
                           })}
                         </div>
                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: BRAND_GRAY, margin: '12px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35 }}>
-                          FREE GIFTS, DISCOUNT CODES & VOUCHERS EXPIRE 6 MONTHS FROM REDEMPTION. DIGITAL CASH / GIFT CARDS DO NOT EXPIRE.
+                          FREE GIFTS, DISCOUNT CODES & VOUCHERS EXPIRE 6 MONTHS FROM REDEMPTION. FREE GIFTS CAN BE COMBINED WITH ANY OTHER OFFER AT CHECKOUT. DIGITAL CASH / GIFT CARDS DO NOT EXPIRE.
                         </p>
                       </div>
                     </div>
@@ -1487,19 +1507,34 @@ function MembershipPage() {
                         >
                           PREMIUM MEMBERSHIP
                         </h2>
-                        <img
-                          src={additionalFeaturesIcon}
-                          alt="Unlock Premium Rewards"
+                        <button
+                          type="button"
                           onClick={handleClosePremiumView}
+                          aria-label="Close premium membership chart"
                           style={{
-                            width: '20px',
-                            height: '20px',
-                            flexShrink: 0,
-                            objectFit: 'contain',
+                            background: 'none',
+                            border: 'none',
+                            padding: 0,
                             marginTop: '-2px',
-                            cursor: 'pointer'
+                            flexShrink: 0,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
                           }}
-                        />
+                        >
+                          <img
+                            src="/assets/close-icon.svg"
+                            alt=""
+                            style={{
+                              width: '16px',
+                              height: '16px',
+                              objectFit: 'contain',
+                              filter:
+                                'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)'
+                            }}
+                          />
+                        </button>
                       </div>
 
                       <div
@@ -2072,7 +2107,7 @@ function MembershipPage() {
                       <p style={{ margin: '6px 0 8px 0' }}><strong>Black only:</strong> Annual Black tier gift; status protection (stay Black when short on points, 1x per year).</p>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 6px 0', textTransform: 'uppercase' }}>HOW IT WORKS</p>
                       <p style={{ margin: 0 }}>Tiers run in 6-month cycles. Earn points from purchases to unlock or keep a tier. Hit the threshold (1,000 Silver, 2,000 Red, 4,000 Black) by period end to keep that tier and its perks for the next cycle. Intro benefits unlock once per account; recurring perks apply each cycle you maintain or reach that tier.</p>
-                      <p style={{ margin: '8px 0 0 0' }}>Free gifts, discount codes and vouchers expire 6 months from the date they&apos;re redeemed. Digital cash and gift cards do not expire.</p>
+                      <p style={{ margin: '8px 0 0 0' }}>Free gifts, discount codes and vouchers expire 6 months from the date they&apos;re redeemed. Free gifts can be combined with any other checkout offer. Digital cash and gift cards do not expire.</p>
                       <p style={{ margin: '10px 0 0 0', fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000000' }}><strong>12-month Premium</strong> members earn 2x points on purchases (takes precedence over tier). Red and Black tiers earn 1.25x and 1.5x points when not on 12-month Premium. Premium also includes lounge access, fast-track support, and more.</p>
                     </div>
                   </div>
@@ -2239,7 +2274,7 @@ fontFamily: '"Futura PT Book"',
                               })}
                         </div>
                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: BRAND_GRAY, margin: '12px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35 }}>
-                          FREE GIFTS, DISCOUNT CODES & VOUCHERS EXPIRE 6 MONTHS FROM REDEMPTION. DIGITAL CASH / GIFT CARDS DO NOT EXPIRE.
+                          FREE GIFTS, DISCOUNT CODES & VOUCHERS EXPIRE 6 MONTHS FROM REDEMPTION. FREE GIFTS CAN BE COMBINED WITH ANY OTHER OFFER AT CHECKOUT. DIGITAL CASH / GIFT CARDS DO NOT EXPIRE.
                         </p>
                   </div>
                 </div>
@@ -2368,15 +2403,15 @@ fontFamily: '"Futura PT Book"',
                                       }
                                       if (displayNextTier == null && displayTier !== 'BLACK') return null;
                                       if (hasSecuredCurrentTier) {
-                                        return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{displaySpendRemaining.toLocaleString()}</span> MORE POINTS TO UNLOCK <span style={{ color: showTierColorsForAdmin ? nextTierColor : '#000000', fontFamily: '"Futura PT Medium"' }}>{displayNextTier}</span> TIER!</>;
+                                        return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{displaySpendRemaining.toLocaleString()}</span> MORE POINTS TO UNLOCK <span style={{ color: nextTierColor, fontFamily: '"Futura PT Medium"' }}>{displayNextTier}</span> TIER!</>;
                                       }
                                       const targetTierColor = remainTier === 'BLACK' ? '#000000' : remainTier === 'SILVER' ? BRAND_GRAY : '#EB1C24';
                                       const pointsNeeded = Math.max(0, remainThreshold - displayCurrentSpend);
                                       // PENDING = haven't unlocked Silver yet → "to reach Silver"; otherwise "to remain [current tier]"
                                       if (displayTier === 'PENDING') {
-                                        return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{pointsNeeded.toLocaleString()}</span> MORE POINTS TO REACH <span style={{ color: showTierColorsForAdmin ? targetTierColor : '#000000', fontFamily: '"Futura PT Medium"' }}>{remainTier}</span> TIER!</>;
+                                        return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{pointsNeeded.toLocaleString()}</span> MORE POINTS TO REACH <span style={{ color: targetTierColor, fontFamily: '"Futura PT Medium"' }}>{remainTier}</span> TIER!</>;
                                       }
-                                      return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{pointsNeeded.toLocaleString()}</span> MORE POINTS TO REMAIN <span style={{ color: showTierColorsForAdmin ? targetTierColor : '#000000', fontFamily: '"Futura PT Medium"' }}>{remainTier}</span> TIER!</>;
+                                      return <>EARN <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{pointsNeeded.toLocaleString()}</span> MORE POINTS TO REMAIN <span style={{ color: targetTierColor, fontFamily: '"Futura PT Medium"' }}>{remainTier}</span> TIER!</>;
                                     })();
                                     return (
                                   <>
@@ -2452,7 +2487,7 @@ fontFamily: '"Futura PT Book"',
                                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0' }}>
                                         {displayTier !== 'BLACK' && displayNextTier != null ? (
                                           <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
-                                            NEXT TIER: <span style={{ color: showTierColorsForAdmin ? nextTierColor : '#000000', fontFamily: '"Futura PT Medium"' }}>{displayNextTier}</span>
+                                            NEXT TIER: <span style={{ color: nextTierColor, fontFamily: '"Futura PT Medium"' }}>{displayNextTier}</span>
                                           </p>
                                         ) : <span />}
                                         <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '10px', margin: 0, textTransform: 'uppercase' }}>
@@ -2731,7 +2766,7 @@ fontFamily: '"Futura PT Book"',
                         {hasPremiumSubscription ? (
                     <>
                       {/* CHANGE / CONFIRM SUBSCRIPTION Button - extra top spacing when chart is open (CONFIRM SUBSCRIPTION) */}
-                      <div className="px-0 md:px-0" style={{ marginTop: showPremiumView ? '12px' : '-2px', marginBottom: showPremiumView ? '8px' : '10px', transform: showPremiumView ? 'none' : 'translateY(-2px)' }}>
+                      <div className="px-0 md:px-0" style={{ marginTop: showPremiumView ? '12px' : '-2px', marginBottom: showPremiumView ? '18px' : '10px', transform: showPremiumView ? 'none' : 'translateY(-2px)' }}>
                 <button
                           onClick={showPremiumView ? handleUpgradeButtonClick : handleChangeSubscription}
                   className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
@@ -2746,24 +2781,6 @@ fontFamily: '"Futura PT Book"',
                           {showPremiumView ? 'CONFIRM SUBSCRIPTION' : ((userData?.subscriptionTier === '12months' || (isMockDataAccount(userData) && !founderViewAsClient && !userData?.subscriptionTier)) ? 'CHANGE SUBSCRIPTION' : 'UPGRADE SUBSCRIPTION')}
                         </button>
                       </div>
-                      {/* CANCEL Button - below Confirm when subscription upgrade chart is open; returns to rewards page */}
-                      {showPremiumView && (
-                        <div className="px-0 md:px-0" style={{ marginBottom: '10px' }}>
-                          <button
-                            onClick={handleClosePremiumView}
-                            className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                            style={{ 
-                              borderWidth: '1.3px', 
-                              color: '#EB1C24',
-                              fontFamily: '"Futura PT Medium"',
-                              backgroundColor: '#FFFFFF'
-                            }}
-                            type="button"
-                          >
-                            CANCEL
-                          </button>
-                        </div>
-                      )}
                       {/* CANCEL SUBSCRIPTION Button - Hidden when chart is open */}
                       {!showPremiumView && (
                         <div className="px-0 md:px-0" style={{ marginTop: '0px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
@@ -2785,7 +2802,7 @@ fontFamily: '"Futura PT Book"',
                     </>
                   ) : (
                     <>
-                      <div className="px-0 md:px-0" style={{ marginTop: showPremiumView ? '12px' : '-2px', marginBottom: showPremiumView ? '8px' : '20px', transform: showPremiumView ? 'none' : 'translateY(-2px)' }}>
+                      <div className="px-0 md:px-0" style={{ marginTop: showPremiumView ? '12px' : '-2px', marginBottom: showPremiumView ? '28px' : '20px', transform: showPremiumView ? 'none' : 'translateY(-2px)' }}>
                         <button
                           onClick={handleUpgradeButtonClick}
                           className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
@@ -2800,23 +2817,6 @@ fontFamily: '"Futura PT Book"',
                           {showPremiumView ? 'CONFIRM SUBSCRIPTION' : 'UPGRADE SUBSCRIPTION'}
                         </button>
                       </div>
-                      {showPremiumView && (
-                        <div className="px-0 md:px-0" style={{ marginBottom: '20px' }}>
-                          <button
-                            onClick={handleClosePremiumView}
-                            className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                            style={{ 
-                              borderWidth: '1.3px', 
-                              color: '#EB1C24',
-                              fontFamily: '"Futura PT Medium"',
-                              backgroundColor: '#FFFFFF'
-                            }}
-                            type="button"
-                          >
-                            CANCEL
-                          </button>
-                        </div>
-                      )}
                     </>
                   )}
                       </>
@@ -2859,7 +2859,6 @@ fontFamily: '"Futura PT Book"',
         confirmText="OK"
         cancelText=""
         dataAttribute="membership-redeem-notice"
-        messageTextTransform="none"
       />
 
     </div>

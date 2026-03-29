@@ -10,6 +10,29 @@ import summaryIcon from '../../../assets/icons/summary-icon.svg?url';
 import { trackActivity } from '../../../utils/activity';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 
+/** Line item is a premium subscription tier (matches checkout upgrade cart shape). */
+function isMembershipTierCartItem(item: any): boolean {
+  if (!item || item.name === 'GIFT CARD' || item.type === 'gift-card') return false;
+  const st = item.subscriptionTier;
+  if (st === '3months' || st === '6months' || st === '12months') return true;
+  return (
+    item.type === 'digital' &&
+    /\b(3|6|12)\s*MONTHS\b/i.test(String(item.name || ''))
+  );
+}
+
+function isPremiumMembershipUpgradeSummary(cartItems: any[], orderData: any): boolean {
+  if (orderData?.isSubscriptionUpgrade === true) return true;
+  if (!cartItems?.length) return false;
+  return cartItems.every(isMembershipTierCartItem);
+}
+
+function summaryScrollItemWidthPx(item: any): number {
+  if (item.name === 'GIFT CARD' || item.type === 'gift-card') return 165;
+  if (isMembershipTierCartItem(item)) return 173;
+  return 150;
+}
+
 function CheckoutConfirmPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -147,6 +170,11 @@ function CheckoutConfirmPage() {
     } catch (_) {}
     return {};
   });
+
+  const isPremiumMembershipSummary = React.useMemo(
+    () => isPremiumMembershipUpgradeSummary(cartItems, orderData),
+    [cartItems, orderData]
+  );
 
   // Helper function to get ordinal suffix (ST, ND, RD, TH)
   const getOrdinalSuffix = (day: number): string => {
@@ -562,15 +590,12 @@ function CheckoutConfirmPage() {
     
     // Calculate scroll limits dynamically based on container and item widths
     const containerWidth = scrollContainerRef.current?.offsetWidth || 0;
-    const itemWidth = 150; // Regular item width
-    const giftCardWidth = 165; // Gift card width
     const gap = 20;
     const paddingRight = 10;
     
     // Calculate total content width
     const totalContentWidth = cartItems.reduce((sum, item) => {
-      const width = (item.name === 'GIFT CARD' || item.type === 'gift-card') ? giftCardWidth : itemWidth;
-      return sum + width + gap;
+      return sum + summaryScrollItemWidthPx(item) + gap;
     }, 0) + paddingRight - gap; // Subtract last gap, add padding
     
     const maxScroll = 0;
@@ -597,15 +622,12 @@ function CheckoutConfirmPage() {
     
     // Calculate scroll limits dynamically based on container and item widths
     const containerWidth = scrollContainerRef.current?.offsetWidth || 0;
-    const itemWidth = 150; // Regular item width
-    const giftCardWidth = 165; // Gift card width
     const gap = 20;
     const paddingRight = 10;
     
     // Calculate total content width
     const totalContentWidth = cartItems.reduce((sum, item) => {
-      const width = (item.name === 'GIFT CARD' || item.type === 'gift-card') ? giftCardWidth : itemWidth;
-      return sum + width + gap;
+      return sum + summaryScrollItemWidthPx(item) + gap;
     }, 0) + paddingRight - gap; // Subtract last gap, add padding
     
     const maxScroll = 0;
@@ -633,10 +655,28 @@ function CheckoutConfirmPage() {
     };
   }, [currencyRates, selectedCurrency]);
 
-  // Get product image - same logic as checkout page
+  // Get product image - same logic as checkout page (incl. premium tier thumbnails)
   const getProductImage = (item: any): string => {
     if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
       return '/assets/gift-card asset.png';
+    }
+    if (
+      item.subscriptionTier === '12months' ||
+      /\b12\s*MONTHS\b/i.test(String(item.name || ''))
+    ) {
+      return '/assets/12-months-premium.png';
+    }
+    if (
+      item.subscriptionTier === '6months' ||
+      /\b6\s*MONTHS\b/i.test(String(item.name || ''))
+    ) {
+      return '/assets/6-months-premium.png';
+    }
+    if (
+      item.subscriptionTier === '3months' ||
+      /\b3\s*MONTHS\b/i.test(String(item.name || ''))
+    ) {
+      return '/assets/3-months-premium.png';
     }
     
     const productName = item.name || 'NOIR';
@@ -771,7 +811,6 @@ function CheckoutConfirmPage() {
           font-family: "Futura PT Demi", "Futura PT Medium", "Futura PT Book", "Covered By Your Grace", "Covered By Your Grace Preload" !important;
           font-weight: 500 !important;
           color: #808080 !important;
-          text-transform: uppercase !important;
           background-color: #FFFFFF !important;
         }
       `}</style>
@@ -1210,13 +1249,18 @@ function CheckoutConfirmPage() {
                     const itemLength = item.length || '24"';
                     const itemHairOrigin = getHairOrigin(item.name);
                     const itemPrice = item.price || 580;
+                    const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+                    const isMemThumb = isMembershipTierCartItem(item);
+                    const cellW = isGiftCard ? '165px' : isMemThumb ? '173px' : '150px';
+                    const imgPx = isGiftCard ? '165px' : isMemThumb ? '138px' : '120px';
+                    const digitalOnlyLine = isGiftCard || isMemThumb;
                     
                     return (
                       <div
                         key={index}
                         className="flex-shrink-0"
                         style={{
-                          width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '165px' : '150px',
+                          width: cellW,
                           height: '150px',
                           display: 'flex',
                           flexDirection: 'column',
@@ -1232,15 +1276,15 @@ function CheckoutConfirmPage() {
                           src={itemImage}
                           alt={itemName}
                           style={{
-                            width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '165px' : '120px',
-                            height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '165px' : '120px',
+                            width: imgPx,
+                            height: imgPx,
                             objectFit: 'contain'
                           }}
                           draggable={false}
                         />
                         <div
                           style={{
-                            transform: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? 'translateY(-25px)' : 'none'
+                            transform: digitalOnlyLine ? 'translateY(-25px)' : 'none'
                           }}
                         >
                         <p
@@ -1253,7 +1297,7 @@ function CheckoutConfirmPage() {
                             textTransform: 'uppercase',
                             textAlign: 'center',
                             lineHeight: '1.2',
-                            transform: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? 'translateY(-1px)' : 'none'
+                            transform: digitalOnlyLine ? 'translateY(-1px)' : 'none'
                           }}
                         >
                           {itemName}
@@ -1272,9 +1316,8 @@ function CheckoutConfirmPage() {
                                              (item.addOns && item.addOns.length > 0) ||
                                              (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
                                              (item.length && item.length !== '24"');
-                              const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
                               const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
-                              if (isGiftCard) return '-2px';
+                              if (digitalOnlyLine) return '-2px';
                               if (isBlancoNoSpecs) return '-2px';
                               return '-2px';
                             })(),
@@ -1286,13 +1329,13 @@ function CheckoutConfirmPage() {
                           }}
                         >
                           {(() => {
-                            if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
+                            if (digitalOnlyLine) {
                               return 'DIGITAL ONLY';
                             }
                             return `${itemLength} RAW ${itemHairOrigin}`;
                           })()}
                         </p>
-                        {!(item.name === 'GIFT CARD' || item.type === 'gift-card') && item.capSize && (
+                        {!digitalOnlyLine && item.capSize && (
                           <p
                               style={{
                               fontFamily: '"Futura PT Demi"',
@@ -1313,7 +1356,7 @@ function CheckoutConfirmPage() {
                             fontSize: '10px',
                             fontWeight: '500',
                             color: '#000000',
-                            margin: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '4px 0 0 0' : '1px 0 0 0',
+                            margin: digitalOnlyLine ? '4px 0 0 0' : '1px 0 0 0',
                             textTransform: 'uppercase',
                             textAlign: 'center'
                           }}
@@ -1350,15 +1393,19 @@ function CheckoutConfirmPage() {
                   fontWeight: '600'
                 }}
               >
-                YOUR ORDER IS BEING PROCESSED BUT YOU'RE NOT FINISHED YET.<br/>YOU STILL NEED TO <span style={{ color: '#EB1C24' }}>COMPLETE + SIGN</span> AN ORDER FORM WITHIN 24 HOURS OR YOUR ORDER WILL BE <span style={{ color: '#EB1C24' }}>CANCELED + REFUNDED</span>.
+                {isPremiumMembershipSummary ? (
+                  <>THANK YOU! YOUR <span style={{ color: '#EB1C24' }}>PREMIUM MEMBERSHIP</span> PURCHASE IS COMPLETE.<br />ACCESS AND BENEFITS WILL REFLECT ON YOUR ACCOUNT SHORTLY.</>
+                ) : (
+                  <>YOUR ORDER IS BEING PROCESSED BUT YOU'RE NOT FINISHED YET.<br/>YOU STILL NEED TO <span style={{ color: '#EB1C24' }}>COMPLETE + SIGN</span> AN ORDER FORM WITHIN 24 HOURS OR YOUR ORDER WILL BE <span style={{ color: '#EB1C24' }}>CANCELED + REFUNDED</span>.</>
+                )}
               </p>
               </div>
               </>
             )}
             </div>
 
-            {/* Sign Order Form Button - Outside main card */}
-            {!showMobileMenu && (
+            {/* Sign Order Form Button - Outside main card (physical orders only) */}
+            {!showMobileMenu && !isPremiumMembershipSummary && (
               <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                 <button
                   onClick={() => {
@@ -1444,7 +1491,8 @@ function CheckoutConfirmPage() {
                 </div>
               </div>
 
-              {/* SHIPPING */}
+              {/* SHIPPING — hidden for premium membership (digital-only) */}
+              {!isPremiumMembershipSummary && (
               <div style={{ marginBottom: '55px' }}>
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                   <h2
@@ -1519,6 +1567,7 @@ function CheckoutConfirmPage() {
                   </p>
                 </div>
               </div>
+              )}
 
               {/* PAYMENT */}
               <div style={{ marginBottom: '55px' }}>
@@ -1619,8 +1668,9 @@ function CheckoutConfirmPage() {
                 </div>
               </div>
 
-              {/* REWARDS - sessionStorage (from checkout) first, then compute from same logic as checkout so toggle + cart always match */}
+              {/* REWARDS - sessionStorage (from checkout) first, then compute from same logic as checkout so toggle + cart always match (hidden for premium membership — no points) */}
               {(() => {
+                if (isPremiumMembershipSummary) return null;
                 let displayPoints: number | undefined;
                 let displayTier: string | undefined;
                 try {

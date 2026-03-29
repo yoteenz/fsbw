@@ -432,7 +432,6 @@ const NewsletterPanel = forwardRef<NewsletterPanelHandle, NewsletterPanelProps>(
         message={`Send this email to ${selected.size} recipient(s)? This cannot be undone.`}
         confirmText={sending ? 'SENDING…' : 'SEND'}
         cancelText="CANCEL"
-        messageTextTransform="none"
         dataAttribute="newsletter-send-confirm"
       />
     </div>

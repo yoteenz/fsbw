@@ -67,7 +67,7 @@ export default function CreateNewListModal({
       }}
     >
       <div
-        className="p-6"
+        className="p-6 baw-brand-modal-shell"
         style={{
           maxWidth: '400px',
           width: '90%',
