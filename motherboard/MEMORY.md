@@ -4188,3 +4188,11 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** User asked to **increase** the **`loyalty-points-rewards.png`** size by **15%** (**158.4 × 1.15 = 182.16px**).
 
 **Changes:** **`src/pages/account/membership/page.tsx`**: both loyalty **`<img>`** **`158.4px` → `182.16px`**.
+
+---
+
+## 2026-03-29 — Account rewards: loyalty thumbnail margins −4px
+
+**Context:** User asked to **reduce spacing above and below** the **`loyalty-points-rewards.png`** thumbnail by **4px** each.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**: both loyalty **`<img>`** **`marginTop`** **`20px` → `16px`**, **`marginBottom`** **`6px` → `2px`**.
