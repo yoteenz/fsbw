@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, type CSSProperties, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
@@ -29,6 +29,80 @@ import { trackActivity } from '../../../utils/activity';
 
 const BRAND_GRAY = '#808080';
 const CHART_BORDER = '0.8px solid #000';
+
+const premiumChartLabelTd: CSSProperties = {
+  borderRight: CHART_BORDER,
+  borderBottom: CHART_BORDER,
+  fontFamily: '"Futura PT Medium"',
+  padding: '6px 4px',
+  textTransform: 'uppercase',
+  color: BRAND_GRAY,
+  textAlign: 'center',
+  minWidth: '68px',
+  maxWidth: '68px',
+  lineHeight: '1.25'
+};
+
+function PremiumChartIncCell({
+  inc,
+  borderRight = true,
+  marginLeft12 = false
+}: {
+  inc: boolean;
+  borderRight?: boolean;
+  marginLeft12?: boolean;
+}) {
+  const inner = (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <img
+        src={inc ? '/assets/premium-check.svg' : '/assets/premium-x.svg'}
+        alt={inc ? 'Included' : 'Not included'}
+        style={inc ? { width: '10px', height: '10px' } : { width: '15.2px', height: '15.2px' }}
+      />
+    </div>
+  );
+  return (
+    <td
+      style={{
+        borderRight: borderRight ? CHART_BORDER : undefined,
+        borderBottom: CHART_BORDER,
+        fontFamily: '"Futura PT Book"',
+        padding: '6px 4px',
+        textAlign: 'center'
+      }}
+    >
+      {marginLeft12 ? (
+        <span style={{ display: 'inline-block', marginLeft: '12px' }}>{inner}</span>
+      ) : (
+        inner
+      )}
+    </td>
+  );
+}
+
+function PremiumChartBenefitRow({
+  label,
+  m3,
+  m6,
+  m12
+}: {
+  label: ReactNode;
+  m3: boolean;
+  m6: boolean;
+  m12: boolean;
+}) {
+  return (
+    <tr>
+      <td style={premiumChartLabelTd}>
+        <span style={{ display: 'inline-block', marginLeft: '-12px' }}>{label}</span>
+      </td>
+      <PremiumChartIncCell inc={false} />
+      <PremiumChartIncCell inc={m3} />
+      <PremiumChartIncCell inc={m6} />
+      <PremiumChartIncCell inc={m12} borderRight={false} marginLeft12 />
+    </tr>
+  );
+}
 
 const LOYALTY_REWARDS = [
   { type: 'free_gift' as const, label: 'FREE GIFT', detail: 'WITH PURCHASE', points: 5000 },
@@ -514,32 +588,38 @@ function MembershipPage() {
   /** Benefits included per premium tier (matches premium upgrade chart: 3mo, 6mo, 12mo). */
   const PREMIUM_BENEFITS_BY_TIER: Record<string, string[]> = {
     '3months': [
+      'CHALLENGES',
       'BIRTHDAY GIFT',
       'DISCOUNTED SHIPPING',
       'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
       'ENTRY TO VIP MEMBERS ONLY LOUNGE',
       'FAST TRACK CUSTOMER SUPPORT',
       'PRIORITY BOOKING',
-      'MEMBER REWARDS + CHALLENGES'
+      'MEMBER REWARDS'
     ],
     '6months': [
+      'CHALLENGES',
+      'PRIORITY MESSAGES',
       'BIRTHDAY GIFT',
       'DISCOUNTED SHIPPING',
       'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
       'ENTRY TO VIP MEMBERS ONLY LOUNGE',
       'FAST TRACK CUSTOMER SUPPORT',
       'PRIORITY BOOKING',
-      'MEMBER REWARDS + CHALLENGES',
+      'MEMBER REWARDS',
       'LIVE ORDER TRACKING'
     ],
     '12months': [
+      'CHALLENGES',
+      'PRIORITY MESSAGES',
+      'SPECIAL OFFERS',
       'BIRTHDAY GIFT',
       'DISCOUNTED SHIPPING',
       'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
       'ENTRY TO VIP MEMBERS ONLY LOUNGE',
       'FAST TRACK CUSTOMER SUPPORT',
       'PRIORITY BOOKING',
-      'MEMBER REWARDS + CHALLENGES',
+      'MEMBER REWARDS',
       'LIVE ORDER TRACKING',
       '2X LOYALTY POINTS'
     ]
@@ -1601,6 +1681,9 @@ function MembershipPage() {
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', fontSize: '10px', padding: '6px 4px', textAlign: 'center', whiteSpace: 'nowrap', lineHeight: '1.25' }}><span dangerouslySetInnerHTML={formatPrice(40)} /></td>
                                 <td style={{ borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', fontSize: '10px', padding: '6px 4px', textAlign: 'center', whiteSpace: 'nowrap', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '12px' }}><span dangerouslySetInnerHTML={formatPrice(60)} /></span></td>
                               </tr>
+                              <PremiumChartBenefitRow label="CHALLENGES" m3 m6 m12 />
+                              <PremiumChartBenefitRow label="PRIORITY MESSAGES" m3={false} m6 m12 />
+                              <PremiumChartBenefitRow label="SPECIAL OFFERS" m3={false} m6={false} m12 />
                               <tr>
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>BIRTHDAY GIFT</span></td>
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
