@@ -115,11 +115,12 @@ const ProductsUnitsPage = lazyWithRetry(() => import('./pages/products/units/pag
 const ToolsPage = lazyWithRetry(() => import('./pages/tools/page'), 'ToolsPage');
 const GiftCardPage = lazyWithRetry(() => import('./pages/tools/gift-card/page'), 'GiftCardPage');
 const OrderFormPage = lazyWithRetry(() => import('./pages/shop/order-form/page'), 'OrderFormPage');
-const ShopCategoryPage = lazyWithRetry(() => import('./pages/shop/category/page'), 'ShopCategoryPage');
 const ShopTextureCategoryProductPage = lazyWithRetry(
   () => import('./pages/shop/texture-category-product/page'),
   'ShopTextureCategoryProductPage'
 );
+const BookingConsultationPage = lazyWithRetry(() => import('./pages/booking/consultation/page'), 'BookingConsultationPage');
+const BookingAppointmentPage = lazyWithRetry(() => import('./pages/booking/appointment/page'), 'BookingAppointmentPage');
 const BrandPage = lazyWithRetry(() => import('./pages/brand/page'), 'BrandPage');
 const BrandCareersPage = lazyWithRetry(() => import('./pages/brand/careers/page'), 'BrandCareersPage');
 
@@ -531,51 +532,15 @@ function App() {
             <BlancoUnitPage />
           </Suspense>
         } />
-        <Route path="/straight/bundles" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <ShopTextureCategoryProductPage />
-          </Suspense>
-        } />
-        <Route path="/straight/closures" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <ShopTextureCategoryProductPage />
-          </Suspense>
-        } />
-        <Route path="/straight/frontals" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <ShopTextureCategoryProductPage />
-          </Suspense>
-        } />
-        <Route path="/wavy/bundles" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <ShopTextureCategoryProductPage />
-          </Suspense>
-        } />
-        <Route path="/wavy/closures" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <ShopTextureCategoryProductPage />
-          </Suspense>
-        } />
-        <Route path="/wavy/frontals" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <ShopTextureCategoryProductPage />
-          </Suspense>
-        } />
-        <Route path="/curly/bundles" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <ShopTextureCategoryProductPage />
-          </Suspense>
-        } />
-        <Route path="/curly/closures" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <ShopTextureCategoryProductPage />
-          </Suspense>
-        } />
-        <Route path="/curly/frontals" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <ShopTextureCategoryProductPage />
-          </Suspense>
-        } />
+        <Route path="/straight/bundles" element={<Navigate to="/shop/bundles" replace />} />
+        <Route path="/straight/closures" element={<Navigate to="/shop/closures" replace />} />
+        <Route path="/straight/frontals" element={<Navigate to="/shop/frontals" replace />} />
+        <Route path="/wavy/bundles" element={<Navigate to="/shop/bundles" replace />} />
+        <Route path="/wavy/closures" element={<Navigate to="/shop/closures" replace />} />
+        <Route path="/wavy/frontals" element={<Navigate to="/shop/frontals" replace />} />
+        <Route path="/curly/bundles" element={<Navigate to="/shop/bundles" replace />} />
+        <Route path="/curly/closures" element={<Navigate to="/shop/closures" replace />} />
+        <Route path="/curly/frontals" element={<Navigate to="/shop/frontals" replace />} />
         {/* Build-a-wig routes - specific routes must come before general /build-a-wig route */}
         
         {/* Noir routes */}
@@ -759,24 +724,50 @@ function App() {
             <ProductsUnitsPage />
           </Suspense>
         } />
-        <Route path="/shop/order-form" element={
+        <Route path="/tools/order-form" element={
           <Suspense fallback={<LoadingScreen />}>
             <OrderFormPage />
           </Suspense>
         } />
+        <Route path="/shop/order-form" element={<Navigate to="/tools/order-form" replace />} />
+        <Route path="/booking/consultation" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <BookingConsultationPage />
+          </Suspense>
+        } />
+        <Route path="/booking/appointment" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <BookingAppointmentPage />
+          </Suspense>
+        } />
+        <Route path="/booking/premium/consultation" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <BookingConsultationPage />
+          </Suspense>
+        } />
+        <Route path="/booking/premium/consult" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <BookingConsultationPage />
+          </Suspense>
+        } />
+        <Route path="/booking/premium/appointment" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <BookingAppointmentPage />
+          </Suspense>
+        } />
         <Route path="/shop/bundles" element={
           <Suspense fallback={<LoadingScreen />}>
-            <ShopCategoryPage />
+            <ShopTextureCategoryProductPage />
           </Suspense>
         } />
         <Route path="/shop/closures" element={
           <Suspense fallback={<LoadingScreen />}>
-            <ShopCategoryPage />
+            <ShopTextureCategoryProductPage />
           </Suspense>
         } />
         <Route path="/shop/frontals" element={
           <Suspense fallback={<LoadingScreen />}>
-            <ShopCategoryPage />
+            <ShopTextureCategoryProductPage />
           </Suspense>
         } />
         <Route path="/home/shop" element={
@@ -801,12 +792,12 @@ function App() {
         } />
         {/* Brand pages: /brand/about … /brand/reviews, /brand/careers, /brand/terms */}
         <Route path="/brand/jobs" element={<Navigate to="/brand/careers" replace />} />
+        <Route path="/brand/care" element={<Navigate to="/brand/about" replace />} />
+        <Route path="/brand/payment" element={<Navigate to="/brand/about" replace />} />
         <Route path="/brand/about" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
         <Route path="/brand/contact" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
-        <Route path="/brand/care" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
         <Route path="/brand/member" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
         <Route path="/brand/faq" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
-        <Route path="/brand/payment" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
         <Route path="/brand/reviews" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />
         <Route path="/brand/careers" element={<Suspense fallback={<LoadingScreen />}><BrandCareersPage /></Suspense>} />
         <Route path="/brand/terms" element={<Suspense fallback={<LoadingScreen />}><BrandPage /></Suspense>} />

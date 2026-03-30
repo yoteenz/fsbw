@@ -1,4 +1,4 @@
-/** `/straight/bundles`, `/wavy/closures`, etc. — hero + home/shop marbles share these `public/assets` PNGs. */
+/** `/shop/bundles?texture=…` PDP + home/shop marbles share these `public/assets` PNGs. */
 export type ShopTextureCategoryThumbTexture = 'straight' | 'wavy' | 'curly';
 export type ShopTextureCategoryThumbCategory = 'bundles' | 'closures' | 'frontals';
 
@@ -48,6 +48,11 @@ export const shopTextureCategoryThumbFallbackSrc: Record<ShopTextureCategoryThum
 export function shopTextureCategoryThumbDisplayScale(texture: ShopTextureCategoryThumbTexture): number {
   const relativeToStraight = texture === 'curly' ? 1.1 * 0.95 : 1;
   return relativeToStraight * 0.9;
+}
+
+/** BCF PDP (`/shop/bundles`, etc.): hero + in-page strips use half of marble/display scale. */
+export function shopTextureCategoryProductPageDisplayScale(texture: ShopTextureCategoryThumbTexture): number {
+  return shopTextureCategoryThumbDisplayScale(texture) * 0.5;
 }
 
 export function isShopTextureCurlyFrontals(

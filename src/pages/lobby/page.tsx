@@ -2,7 +2,8 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from '../../components/base/LoadingScreen';
 import ConfirmationModal from '../../components/ConfirmationModal';
-import { getEffectiveSubscriptionTier, getEffectiveTierName, onSignInSuccess } from '../../utils/adminAuth';
+import { onSignInSuccess } from '../../utils/adminAuth';
+import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
 import { getSupabase, isSupabaseConfigured, signOutIfSessionEmailUnconfirmed } from '../../utils/supabase';
 import {
   syncAllFromApi,
@@ -94,6 +95,8 @@ const LobbyPage: React.FC = () => {
     }
   }, []);
 
+  const [bookingNeonSrc, setBookingNeonSrc] = useState('/assets/neon-booking.png');
+
   return (
     <div className="bg-red-900 relative" style={{ minHeight: '100vh', width: '100vw', flexShrink: 0, backgroundColor: 'white' }}>
       {/* Background Image */}
@@ -143,17 +146,21 @@ const LobbyPage: React.FC = () => {
         </div>
         
         {/* Navigation Links Container */}
-        <div className="flex flex-row justify-center items-center" style={{ 
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(calc(-50% + 51px), calc(-50% - 131px))',
-          zIndex: 20,
-          margin: 0,
-          padding: 0
-        }}>
+        <div
+          className="flex flex-row justify-center items-center"
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(calc(-50% + 51px), calc(-50% - 131px))',
+            zIndex: 35,
+            margin: 0,
+            padding: 0,
+            pointerEvents: 'none'
+          }}
+        >
           {/* Products: overlay sized from measured image so debug square matches asset */}
-          <span style={{ position: 'relative', display: 'inline-block' }}>
+          <span style={{ position: 'relative', display: 'inline-block', flexShrink: 0, pointerEvents: 'auto' }}>
             <img 
               ref={productsImgRef}
               src="/assets/neon-products.png" 
@@ -166,8 +173,8 @@ const LobbyPage: React.FC = () => {
               <span
                 role="button"
                 tabIndex={0}
-                onClick={() => navigate('/shop/units')}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/shop/units'); } }}
+                onClick={() => navigate('/home/shop')}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/home/shop'); } }}
                 style={{
                   position: 'absolute',
                   top: 0,
@@ -180,12 +187,12 @@ const LobbyPage: React.FC = () => {
                   zIndex: 1,
                   background: 'transparent'
                 }}
-                aria-label="Go to shop"
+                aria-label="Go to home shop"
               />
             )}
           </span>
           {/* Tools: overlay sized from measured image so debug square matches asset */}
-          <span style={{ position: 'relative', display: 'inline-block' }}>
+          <span style={{ position: 'relative', display: 'inline-block', flexShrink: 0, pointerEvents: 'auto' }}>
             <img 
               ref={toolsImgRef}
               src="/assets/neon-tools.png" 
@@ -216,12 +223,57 @@ const LobbyPage: React.FC = () => {
               />
             )}
           </span>
-          <img 
-            src="/assets/neon-booking.png" 
-            alt="Booking" 
-            className="w-auto cursor-pointer hover:opacity-80 transition-opacity"
-            style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(-104px)', height: '41px' }}
-          />
+          {/* Booking: to the right of tools (same kern as legacy PNG layout). PNG if present in public/assets; else SVG. */}
+          <span
+            style={{
+              position: 'relative',
+              display: 'inline-flex',
+              flexShrink: 0,
+              transform: 'translateX(-104px)',
+              pointerEvents: 'auto',
+              alignItems: 'center'
+            }}
+          >
+            <img
+              src={bookingNeonSrc}
+              alt=""
+              onError={() => {
+                if (bookingNeonSrc.endsWith('.png')) setBookingNeonSrc('/assets/neon-booking.svg');
+              }}
+              className="w-auto pointer-events-none select-none"
+              style={{
+                margin: 0,
+                padding: 0,
+                display: 'block',
+                height: '41px',
+                width: 'auto',
+                maxWidth: 'none',
+                verticalAlign: 'top'
+              }}
+              aria-hidden
+              draggable={false}
+            />
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={() => navigate('/booking/premium/appointment')}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  navigate('/booking/premium/appointment');
+                }
+              }}
+              className="hover:opacity-90 transition-opacity"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                cursor: 'pointer',
+                zIndex: 1,
+                background: 'transparent'
+              }}
+              aria-label="Premium booking — wig installation appointment"
+            />
+          </span>
         </div>
         
         {/* Product Display Shelves */}
@@ -614,34 +666,6 @@ const LobbyApp: React.FC = () => {
   const [showLoading, setShowLoading] = useState<boolean>(true);
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
 
-  // Check if user is a premium member or BLACK tier member
-  // Only BLACK tier members and PREMIUM members have access to the lobby
-  const isPremiumMember = (): boolean => {
-    try {
-      const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
-      if (!isSignedIn) return false;
-      
-      const currentUser = localStorage.getItem('currentUser');
-      if (currentUser) {
-        const user = JSON.parse(currentUser);
-
-        // Use the same "effective" subscription/tier evaluation as the Membership (rewards) page
-        // so lobby gating matches what the client UI and admin client details show.
-        const effectiveSubscriptionTier = getEffectiveSubscriptionTier(user);
-        const isPremium = effectiveSubscriptionTier != null;
-
-        const effectiveTierName = getEffectiveTierName(user);
-        const isBlackTier = (effectiveTierName || '').toUpperCase() === 'BLACK';
-
-        // Only BLACK tier members and PREMIUM members have access.
-        return Boolean(isPremium || isBlackTier);
-      }
-    } catch (e) {
-      console.error('Error checking premium membership:', e);
-    }
-    return false;
-  };
-
   // Confirm membership by syncing the authenticated client's profile from the backend
   // (same underlying profile data the rewards page + admin client details display).
   useEffect(() => {
@@ -656,7 +680,7 @@ const LobbyApp: React.FC = () => {
       }
 
       if (cancelled) return;
-      setShowUpgradeModal(!isPremiumMember());
+      setShowUpgradeModal(!isPremiumMemberForGatedFeatures());
     };
 
     void run();
@@ -667,15 +691,7 @@ const LobbyApp: React.FC = () => {
 
   const handleUpgrade = () => {
     setShowUpgradeModal(false);
-    // Membership page shows the premium upgrade chart when this session flag is set.
-    // This also lets AccountRouteGuard redirect unauthenticated users to /sign-in,
-    // while preserving the flag so the chart opens after sign-in.
-    try {
-      sessionStorage.setItem('returningFromCheckout', 'true');
-      localStorage.setItem('membershipShowPremiumView', 'true');
-      // Match membership page behavior when upgrading from Standard: no preselected tier.
-      localStorage.removeItem('membershipSelectedTier');
-    } catch (_) {}
+    prepareMembershipUpgradeNavigation();
     navigate('/account/rewards');
   };
 

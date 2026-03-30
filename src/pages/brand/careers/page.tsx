@@ -8,6 +8,8 @@ import { appendJobApplication, type JobApplication } from '../../../utils/jobApp
 import { clearAppAuth } from '../../../utils/adminAuth';
 import RoleCardSectionHeader from '../../../components/RoleCardSectionHeader';
 import { workerRoleHeaderIconSrc } from '../../../utils/workerRoleHeaderIcon';
+import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
+import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 
 const MAX_RESUME_BYTES = 1.5 * 1024 * 1024;
 
@@ -443,103 +445,26 @@ export default function BrandCareersPage() {
               <div style={{ flex: '1', overflowY: 'auto', marginBottom: '20px', minHeight: '0' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
                   {mobileMenuActiveTab === 'TOOLS' ? (
-                    <div
-                      className="flex cursor-pointer"
-                      onClick={() => navigate('/tools/gift-card')}
-                      role="button"
-                    >
-                      <span
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '14px',
-                          color: 'black',
-                          fontWeight: '500',
-                          textTransform: 'uppercase',
-                          transform: 'translateX(13px)',
-                        }}
-                      >
-                        GIFT CARD
-                      </span>
-                    </div>
+
+                    <ShopMobileMenuToolsTab
+
+                      navigate={navigate}
+
+                      closeMenu={() => setShowMobileMenu(false)}
+
+                      labelTranslateX="13px"
+
+                    />
                   ) : mobileMenuActiveTab === 'BRAND' ? (
                     <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />
                   ) : (
-                    [
-                      { label: 'UNITS', hasArrow: true, isExpandable: true, subItems: ['STRAIGHT', 'WAVY', 'CURLY'] },
-                      { label: 'BOOKING', hasArrow: true, isExpandable: true, subItems: ['APPOINTMENT', 'CONSULTATION'] },
-                      { label: 'BUILD-A-WIG', hasArrow: false },
-                      { label: 'ORDER AUTHORIZATION FORM', hasArrow: false },
-                    ].map((item, index) => (
-                      <div key={index}>
-                        <div className="flex items-center justify-between">
-                          <span
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '14px',
-                              color: 'black',
-                              fontWeight: '500',
-                              textTransform: 'uppercase',
-                              cursor: 'pointer',
-                              transform: 'translateX(13px)',
-                            }}
-                            onClick={() => {
-                              if (item.isExpandable) {
-                                if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                  navigate('/shop/units');
-                                } else {
-                                  handleMobileMenuItemToggle(item.label);
-                                }
-                              } else if (item.label === 'BUILD-A-WIG') navigate('/build-a-wig');
-                              else if (item.label === 'ORDER AUTHORIZATION FORM') navigate('/shop/order-form');
-                            }}
-                          >
-                            {item.label}
-                          </span>
-                          {item.hasArrow && (
-                            <img
-                              src="/assets/NOIR/closed-arrow.svg"
-                              alt=""
-                              style={{
-                                width: '16px',
-                                height: '16px',
-                                transform: mobileMenuExpandedItems.includes(item.label)
-                                  ? 'translateX(-11px) translateY(-4px) rotate(90deg)'
-                                  : 'translateX(-11px) translateY(-4px) rotate(0deg)',
-                                cursor: 'pointer',
-                              }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (item.isExpandable) handleMobileMenuItemToggle(item.label);
-                              }}
-                            />
-                          )}
-                        </div>
-                        {item.isExpandable && mobileMenuExpandedItems.includes(item.label) && item.subItems && (
-                          <div className="ml-5 mt-2 flex flex-col gap-2">
-                            {item.subItems.map((subItem, subIndex) => (
-                              <span
-                                key={subIndex}
-                                style={{
-                                  fontFamily: '"Futura PT Book"',
-                                  fontSize: '14px',
-                                  color: '#EB1C24',
-                                  fontWeight: '500',
-                                  textTransform: 'uppercase',
-                                  cursor: 'pointer',
-                                }}
-                                onClick={() => {
-                                  if (subItem === 'STRAIGHT') navigate('/units/straight');
-                                  else if (subItem === 'WAVY') navigate('/units/wavy');
-                                  else if (subItem === 'CURLY') navigate('/units/curly');
-                                }}
-                              >
-                                {subItem}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))
+                                          <ShopMobileMenuShopTab
+                                            navigate={navigate}
+                                            mobileMenuExpandedItems={mobileMenuExpandedItems}
+                                            handleMobileMenuItemToggle={handleMobileMenuItemToggle}
+                                            closeSubItemMenu={() => setShowMobileMenu(false)}
+                                            labelTranslateX="13px"
+                                          />
                   )}
                 </div>
               </div>

@@ -9,6 +9,14 @@ import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import summaryIcon from '../../../assets/icons/summary-icon.svg?url';
 import { trackActivity } from '../../../utils/activity';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
+import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
+import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import {
+  BOOKING_BADGE_CART_CELL_WIDTH_PX,
+  BOOKING_BADGE_DISPLAY_PX,
+  bookingCartItemThumbnailSrc,
+  isBookingCartBadgeItem,
+} from '../../../utils/bookingBadges';
 
 /** Line item is a premium subscription tier (matches checkout upgrade cart shape). */
 function isMembershipTierCartItem(item: any): boolean {
@@ -29,6 +37,7 @@ function isPremiumMembershipUpgradeSummary(cartItems: any[], orderData: any): bo
 
 function summaryScrollItemWidthPx(item: any): number {
   if (item.name === 'GIFT CARD' || item.type === 'gift-card') return 165;
+  if (isBookingCartBadgeItem(item)) return BOOKING_BADGE_CART_CELL_WIDTH_PX;
   if (isMembershipTierCartItem(item)) return 173;
   return 150;
 }
@@ -660,6 +669,8 @@ function CheckoutConfirmPage() {
     if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
       return '/assets/gift-card asset.png';
     }
+    const bookingThumb = bookingCartItemThumbnailSrc(item);
+    if (bookingThumb) return bookingThumb;
     if (
       item.subscriptionTier === '12months' ||
       /\b12\s*MONTHS\b/i.test(String(item.name || ''))
@@ -1039,117 +1050,22 @@ function CheckoutConfirmPage() {
                 <div style={{ flex: '1', overflowY: 'auto', marginBottom: '20px', minHeight: '0' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
                     {mobileMenuActiveTab === 'TOOLS' ? (
-                      ['GIFT CARD'].map((item, index) => (
-                        <div 
-                          key={index} 
-                          className="flex items-center justify-between cursor-pointer"
-                          onClick={() => navigate('/tools/gift-card')}
-                        >
-                          <span style={{ 
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '14px',
-                            color: 'black',
-                            fontWeight: '500',
-                            textTransform: 'uppercase',
-                            transform: 'translateX(13px)'
-                          }}>
-                            {item}
-                          </span>
-                        </div>
-                      ))
+                      <ShopMobileMenuToolsTab
+                        navigate={navigate}
+                        closeMenu={() => setShowMobileMenu(false)}
+                        labelTranslateX="13px"
+                      />
                     ) : mobileMenuActiveTab === 'BRAND' ? (
                       <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />
                     ) : (
                       // SHOP tab with dropdown functionality
-                      [
-                        { label: 'UNITS', hasArrow: true, isExpandable: true, subItems: ['STRAIGHT', 'WAVY', 'CURLY'] },
-                        { label: 'BOOKING', hasArrow: true, isExpandable: true, subItems: ['APPOINTMENT', 'CONSULTATION'] },
-                        { label: 'BUILD-A-WIG', hasArrow: false },
-                        { label: 'ORDER AUTHORIZATION FORM', hasArrow: false }
-                      ].map((item, index) => (
-                        <div key={index}>
-                          <div 
-                            className="flex items-center justify-between"
-                            style={{ alignItems: 'center' }}
-                          >
-                            <span 
-                              style={{ 
-                                fontFamily: '"Futura PT Book"',
-                                fontSize: '14px',
-                                color: 'black',
-                                fontWeight: '500',
-                                textTransform: 'uppercase',
-                                cursor: 'pointer',
-                                transform: 'translateX(13px)'
-                              }}
-                              onClick={() => {
-                                if (item.isExpandable) {
-                                  // If UNITS is already expanded, navigate to shop/units page
-                                  if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                    navigate('/shop/units');
-                                  } else {
-                                    // Otherwise, toggle expansion
-                                    handleMobileMenuItemToggle(item.label);
-                                  }
-                                } else if (item.label === 'ORDER AUTHORIZATION FORM') {
-                                  navigate('/shop/order-form');
-                                }
-                              }}
-                            >
-                              {item.label}
-                            </span>
-                            {item.hasArrow && (
-                              <img
-                                src="/assets/NOIR/closed-arrow.svg"
-                                alt="Arrow"
-                                style={{ 
-                                  width: '16px', 
-                                  height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-11px) translateY(-4px) rotate(90deg)' : 'translateX(-11px) translateY(-4px) rotate(0deg)'}`,
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  cursor: 'pointer'
-                                }}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  if (item.isExpandable) {
-                                    handleMobileMenuItemToggle(item.label);
-                                  }
-                                }}
-                              />
-                            )}
-                          </div>
-                          {item.isExpandable && mobileMenuExpandedItems.includes(item.label) && item.subItems && (
-                            <div className="ml-4 mt-2 space-y-2">
-                              {item.subItems.map((subItem, subIndex) => (
-                                <div 
-                                  key={subIndex} 
-                                  className="flex items-center cursor-pointer"
-                                  onClick={() => {
-                                    if (subItem === 'STRAIGHT') {
-                                      navigate('/units/straight');
-                                    } else if (subItem === 'WAVY') {
-                                      navigate('/units/wavy');
-                                    } else if (subItem === 'CURLY') {
-                                      navigate('/units/curly');
-                                    }
-                                  }}
-                                >
-                                  <span style={{ 
-                                    fontFamily: '"Futura PT Book"',
-                                    fontSize: '14px',
-                                    color: '#EB1C24',
-                                    fontWeight: '500',
-                                    textTransform: 'uppercase'
-                                  }}>
-                                    {subItem}
-                                  </span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      ))
+                                            <ShopMobileMenuShopTab
+                                              navigate={navigate}
+                                              mobileMenuExpandedItems={mobileMenuExpandedItems}
+                                              handleMobileMenuItemToggle={handleMobileMenuItemToggle}
+                                              closeSubItemMenu={() => setShowMobileMenu(false)}
+                                              labelTranslateX="13px"
+                                            />
                     )}
                   </div>
                 </div>
@@ -1251,9 +1167,22 @@ function CheckoutConfirmPage() {
                     const itemPrice = item.price || 580;
                     const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
                     const isMemThumb = isMembershipTierCartItem(item);
-                    const cellW = isGiftCard ? '165px' : isMemThumb ? '173px' : '150px';
-                    const imgPx = isGiftCard ? '165px' : isMemThumb ? '138px' : '120px';
-                    const digitalOnlyLine = isGiftCard || isMemThumb;
+                    const isBookingThumb = isBookingCartBadgeItem(item);
+                    const cellW = isGiftCard
+                      ? '165px'
+                      : isBookingThumb
+                        ? `${BOOKING_BADGE_CART_CELL_WIDTH_PX}px`
+                        : isMemThumb
+                          ? '173px'
+                          : '150px';
+                    const imgPx = isGiftCard
+                      ? '165px'
+                      : isBookingThumb
+                        ? `${BOOKING_BADGE_DISPLAY_PX}px`
+                        : isMemThumb
+                          ? '138px'
+                          : '120px';
+                    const digitalOnlyLine = isGiftCard || isMemThumb || isBookingThumb;
                     
                     return (
                       <div
@@ -1409,7 +1338,7 @@ function CheckoutConfirmPage() {
               <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                 <button
                   onClick={() => {
-                    navigate('/shop/order-form', {
+                    navigate('/tools/order-form', {
                       state: {
                         orderNumber: orderData.orderNumber,
                         orderDate: orderData.orderDate,

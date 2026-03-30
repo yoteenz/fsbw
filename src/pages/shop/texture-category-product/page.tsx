@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useMarbleStripSnapStep } from '../../../hooks/useMarbleStripSnapStep';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -10,20 +10,44 @@ import { clearAppAuth } from '../../../utils/adminAuth';
 import type { CurrencyRatesRecord } from '../../../utils/currencyFormat';
 import { formatPriceUsd } from '../../../utils/currencyFormat';
 import {
-  shopTextureCategoryThumbDisplayScale,
+  shopTextureCategoryProductPageDisplayScale,
   shopTextureCategoryCurlyThumbTranslateYPx,
   shopTextureCategoryThumbFallbackSrc,
   shopTextureCategoryThumbSrc,
   isShopTextureCurlyFrontals
 } from '../../../utils/shopTextureCategoryThumb';
+import {
+  BCF_LENGTH_OPTIONS,
+  BCF_ORIGIN_OPTIONS,
+  BCF_TEXTURE_LABELS,
+  bcfColorOptionsForOrigin,
+  bcfDefaultColorIdForOrigin,
+  bcfDefaultOriginForRouteTexture,
+  bcfInitialOriginFromPathname,
+  bcfLaceOptionsForCategory,
+  bcfPriceAdjustments,
+  bcfTexturesForOrigin,
+  type BcfOriginId
+} from '../../../utils/bcfProductOptions';
+import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../../utils/premiumMemberAccess';
+import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
+import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import {
+  marbleStripCellOuter,
+  marbleStripNavArrowStyle,
+  marbleStripNavMiddleColStyle,
+  marbleStripNavRowStyle,
+  marbleStripScrollRowStyle,
+  marbleStripViewportStyle
+} from '../../../utils/marbleStripStyles';
 
 type Texture = 'straight' | 'wavy' | 'curly';
 type Category = 'bundles' | 'closures' | 'frontals';
 
 const TEXTURE_META: Record<Texture, { label: string; subline: string }> = {
-  straight: { label: 'STRAIGHT', subline: 'STRAIGHT TEXTURE · RAW HAIR' },
-  wavy: { label: 'WAVY', subline: 'WAVY TEXTURE · RAW HAIR' },
-  curly: { label: 'CURLY', subline: 'CURLY TEXTURE · RAW HAIR' }
+  straight: { label: 'STRAIGHT', subline: 'RAW HAIR' },
+  wavy: { label: 'WAVY', subline: 'RAW HAIR' },
+  curly: { label: 'CURLY', subline: 'RAW HAIR' }
 };
 
 const CATEGORY_TITLE: Record<Category, string> = {
@@ -38,21 +62,108 @@ const PRICE_BY_CATEGORY: Record<Category, number> = {
   frontals: 565
 };
 
-function parseTextureCategory(pathname: string): { texture: Texture; category: Category } | null {
-  const m = pathname.match(/^\/(straight|wavy|curly)\/(bundles|closures|frontals)$/);
+function parseShopBcfCategory(pathname: string): Category | null {
+  const m = pathname.match(/^\/shop\/(bundles|closures|frontals)$/);
   if (!m) return null;
-  return { texture: m[1] as Texture, category: m[2] as Category };
+  return m[1] as Category;
+}
+
+function parseTextureSearch(search: string): Texture | null {
+  const q = search.startsWith('?') ? search.slice(1) : search;
+  const t = new URLSearchParams(q).get('texture');
+  if (t === 'straight' || t === 'wavy' || t === 'curly') return t;
+  return null;
+}
+
+function shopBcfUrl(category: Category, texture: Texture): string {
+  return `/shop/${category}?texture=${texture}`;
 }
 
 const TEXTURE_ORDER: Texture[] = ['straight', 'wavy', 'curly'];
 
-/** Gift-card–style PDP for `/straight/bundles`, `/wavy/frontals`, etc. */
+type BcfProductTab = 'DETAILS' | 'SHIPPING' | 'POLICY' | 'CARE + STORAGE' | 'REVIEWS';
+
+const BCF_PRODUCT_TAB_ORDER: BcfProductTab[] = ['DETAILS', 'SHIPPING', 'POLICY', 'CARE + STORAGE', 'REVIEWS'];
+
+const bcfBohemySubLabelStyle: React.CSSProperties = {
+  fontFamily: '"Bohemy", cursive',
+  fontSize: '19px',
+  fontWeight: 400,
+  textAlign: 'center',
+  margin: '6px 0 8px',
+  color: '#000'
+};
+
+/** Match Noir unit PDP option chips (e.g. cap size): 11px Futura Medium + clamp padding. */
+const BCF_OPTION_RED = '#EB1C24';
+const bcfOptionBtnTypography: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+  fontSize: '11px',
+  fontWeight: 500,
+  paddingTop: 'clamp(4px, 0.5vw, 8px)',
+  paddingBottom: 'clamp(4px, 0.5vw, 8px)',
+  paddingLeft: 'clamp(10px, 1.5vw, 20px)',
+  paddingRight: 'clamp(10px, 1.5vw, 20px)',
+  minWidth: 'clamp(50px, 12vw, 75px)',
+  boxSizing: 'border-box',
+  backgroundColor: '#ffffff',
+  cursor: 'pointer'
+};
+
+function bcfOptionSelectedChrome(selected: boolean): Pick<React.CSSProperties, 'border' | 'color'> {
+  return {
+    border: selected ? `1.3px solid ${BCF_OPTION_RED}` : '1.3px solid #000000',
+    color: selected ? BCF_OPTION_RED : '#000000'
+  };
+}
+
+/** Same gray/white/color rings as build-a-wig `ThumbBox` color swatches. */
+function BcfColorSwatchDonut({ colorCode }: { colorCode: string }) {
+  return (
+    <div
+      style={{
+        width: '35px',
+        height: '35px',
+        backgroundColor: '#808080',
+        borderRadius: '50%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0
+      }}
+    >
+      <div
+        style={{
+          width: '81%',
+          height: '81%',
+          backgroundColor: '#FFFFFF',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <div
+          style={{
+            width: '76%',
+            height: '76%',
+            backgroundColor: colorCode,
+            borderRadius: '50%'
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+/** Gift-card–style PDP for `/shop/bundles` (+ optional `?texture=straight|wavy|curly`). */
 export default function ShopTextureCategoryProductPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const parsed = parseTextureCategory(location.pathname);
+  const category = parseShopBcfCategory(location.pathname);
+  const texture: Texture = parseTextureSearch(location.search) ?? 'straight';
 
-  const [activeTab, setActiveTab] = useState('DETAILS');
+  const [activeTab, setActiveTab] = useState<BcfProductTab>('DETAILS');
   const [similarProductsScroll, setSimilarProductsScroll] = useState(0);
   const [recentlyViewedScroll, setRecentlyViewedScroll] = useState(0);
   const [similarSnapPx, setSimilarStripViewportRef] = useMarbleStripSnapStep();
@@ -64,6 +175,26 @@ export default function ShopTextureCategoryProductPage() {
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useState(() => localStorage.getItem('isSignedIn') === 'true');
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [showBcfColorUpgradeModal, setShowBcfColorUpgradeModal] = useState(false);
+
+  const [bcfOrigin, setBcfOrigin] = useState<BcfOriginId>(() =>
+    typeof window !== 'undefined'
+      ? bcfInitialOriginFromPathname(window.location.pathname, window.location.search)
+      : 'CAMBODIAN'
+  );
+  const [bcfLength, setBcfLength] = useState('24"');
+  const [bcfColor, setBcfColor] = useState('OFF BLACK');
+  const [bcfLace, setBcfLace] = useState(() => {
+    if (typeof window === 'undefined') return '13X6';
+    const cat = parseShopBcfCategory(window.location.pathname);
+    if (!cat || cat === 'bundles') return '13X6';
+    const opts = bcfLaceOptionsForCategory(cat);
+    return opts[0]?.id ?? '5X5';
+  });
+
+  const skipBcfOriginDefaultOnNextPathRef = useRef(false);
+
+  const bcfColorsAvailable = React.useMemo(() => bcfColorOptionsForOrigin(bcfOrigin), [bcfOrigin]);
 
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
     try {
@@ -93,7 +224,7 @@ export default function ShopTextureCategoryProductPage() {
   useEffect(() => {
     setSimilarProductsScroll(0);
     setRecentlyViewedScroll(0);
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
 
   useEffect(() => {
     const handleCartCountUpdate = (event: CustomEvent) => setCartCount(event.detail);
@@ -141,6 +272,49 @@ export default function ShopTextureCategoryProductPage() {
   }, [selectedCurrency]);
 
   useEffect(() => {
+    if (!category) return;
+    if (skipBcfOriginDefaultOnNextPathRef.current) {
+      skipBcfOriginDefaultOnNextPathRef.current = false;
+      return;
+    }
+    const t = parseTextureSearch(location.search) ?? 'straight';
+    setBcfOrigin(bcfDefaultOriginForRouteTexture(t));
+  }, [location.pathname, location.search, category]);
+
+  useEffect(() => {
+    if (!category) return;
+    const t = parseTextureSearch(location.search) ?? 'straight';
+    const allowed = bcfTexturesForOrigin(bcfOrigin);
+    if (!allowed.includes(t)) {
+      skipBcfOriginDefaultOnNextPathRef.current = true;
+      navigate(shopBcfUrl(category, allowed[0] as Texture), { replace: true });
+    }
+  }, [bcfOrigin, navigate, category, location.search]);
+
+  useEffect(() => {
+    const allowedIds = new Set(bcfColorsAvailable.map((o) => o.id));
+    if (!allowedIds.has(bcfColor)) {
+      const fallback = bcfDefaultColorIdForOrigin(bcfOrigin);
+      const next = allowedIds.has(fallback) ? fallback : (bcfColorsAvailable[0]?.id ?? 'OFF BLACK');
+      setBcfColor(next);
+    }
+  }, [bcfOrigin, bcfColorsAvailable, bcfColor]);
+
+  const bcfLaceOptions = React.useMemo(() => {
+    if (!category || category === 'bundles') return [];
+    return bcfLaceOptionsForCategory(category);
+  }, [category]);
+
+  useEffect(() => {
+    if (!category || category === 'bundles') return;
+    const opts = bcfLaceOptionsForCategory(category);
+    const allowed = new Set(opts.map((l) => l.id));
+    if (!allowed.has(bcfLace)) {
+      setBcfLace(opts[0]?.id ?? '5X5');
+    }
+  }, [category, bcfLace]);
+
+  useEffect(() => {
     const p = location.pathname;
     if (p.includes('/tools') || p === '/tools/gift-card') setMobileMenuActiveTab('TOOLS');
     else if (p.includes('/brand')) setMobileMenuActiveTab('BRAND');
@@ -177,23 +351,53 @@ export default function ShopTextureCategoryProductPage() {
     setShowMobileMenu(false);
   };
 
+  const handleBcfColorSelect = React.useCallback((colorId: string) => {
+    const defaultId = bcfDefaultColorIdForOrigin(bcfOrigin);
+    if (colorId === defaultId) {
+      setBcfColor(colorId);
+      return;
+    }
+    if (!isPremiumMemberForGatedFeatures()) {
+      setShowBcfColorUpgradeModal(true);
+      return;
+    }
+    setBcfColor(colorId);
+  }, [bcfOrigin]);
+
+  const handleBcfColorUpgradeConfirm = () => {
+    setShowBcfColorUpgradeModal(false);
+    prepareMembershipUpgradeNavigation();
+    navigate('/account/rewards');
+  };
+
+  const handleBcfColorUpgradeClose = () => setShowBcfColorUpgradeModal(false);
+
   const handleSimilarProductsLeftArrow = () => setSimilarProductsScroll(0);
   const handleSimilarProductsRightArrow = () => setSimilarProductsScroll(-similarSnapPx);
   const handleRecentlyViewedLeftArrow = () => setRecentlyViewedScroll(0);
   const handleRecentlyViewedRightArrow = () => setRecentlyViewedScroll(-recentSnapPx);
 
-  if (!parsed) {
+  if (!category) {
     return <Navigate to="/home/shop" replace />;
   }
 
-  const { texture, category } = parsed;
   const meta = TEXTURE_META[texture];
   const categoryTitle = CATEGORY_TITLE[category];
-  const productTitle = `${meta.label} ${categoryTitle}`;
-  const navCrumb = productTitle;
-  const price = PRICE_BY_CATEGORY[category];
+  /** Nav + hero: SHOP > BUNDLES | CLOSURES | FRONTALS (no STRAIGHT/WAVY/CURLY prefix). */
+  const displayProductName = categoryTitle;
+  const navCrumb = displayProductName;
+  /** Cart / receipts: category first, texture after · for disambiguation. */
+  const cartLineName = `${categoryTitle} · ${meta.label}`;
+  const basePrice = PRICE_BY_CATEGORY[category];
+  const displayPrice = React.useMemo(
+    () =>
+      basePrice +
+      bcfPriceAdjustments(bcfLength, bcfColor, category === 'bundles' ? null : bcfLace),
+    [basePrice, bcfLength, bcfColor, bcfLace, category]
+  );
   const otherTextures = TEXTURE_ORDER.filter((t) => t !== texture);
   const heroThumbSrc = shopTextureCategoryThumbSrc(texture, category);
+  const allowedBcfTextures = bcfTexturesForOrigin(bcfOrigin);
 
   const handleAddToBag = () => {
     setAddToBagState('adding');
@@ -202,13 +406,17 @@ export default function ShopTextureCategoryProductPage() {
         const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
         const newItem = {
           id: `shop-${texture}-${category}-${Date.now()}`,
-          name: productTitle,
-          price,
+          name: cartLineName,
+          price: displayPrice,
           quantity: 1,
           image: heroThumbSrc,
           type: 'shop-texture-category',
           texture,
-          category
+          category,
+          hairOrigin: bcfOrigin,
+          length: bcfLength,
+          color: bcfColor,
+          ...(category === 'bundles' ? {} : { lace: bcfLace })
         };
         const updated = [newItem, ...cartItems];
         localStorage.setItem('cartItems', JSON.stringify(updated));
@@ -249,6 +457,20 @@ export default function ShopTextureCategoryProductPage() {
     'ALL SALES FOLLOW SITE TERMS; CONTACT SUPPORT FOR PRODUCT QUESTIONS.',
     'FINAL PROCESSING TIMES MAY VARY — YOU WILL RECEIVE ORDER UPDATES BY EMAIL.',
     'FOR SUPPORT, REACH OUT TO CONTACT@FRONTALSLAYER.COM.'
+  ];
+
+  /** Same as unit PDPs (e.g. Noir) — shipping & care for BCF bundles / closures / frontals. */
+  const shippingCopy = [
+    'STANDARD PROCESSING IS 6 TO 8 WEEKS AND UP TO 10 WEEKS FOR CUSTOMIZED ORDERS.',
+    'EXPRESS PROCESSING IS 4 TO 6 WEEKS WITH RUSH SHIPPING FOR AN ADDITIONAL $120 USD.',
+    'CUSTOM COLOR, STYLING & ADD-ONS ARE NOT APPLICABLE FOR RUSH PROCESSING.',
+    'PROCESSING TIME DOES NOT INCLUDE WEEKENDS AND MAJOR US HOLIDAYS.'
+  ];
+
+  const careStorageCopy = [
+    'WASH WITH MILD SHAMPOO, AVOID GETTING CONDITIONER DIRECTLY ON THE LACE.',
+    'ROUTINELY BRUSH HAIR WITH A PADDLE BRUSH TO AVOID MATTING & SHEDDING.',
+    'CAREFULLY STORE UNIT INSIDE SATIN LINED DUST BAG TO MINIMIZE DAMAGE, FRIZZ + DEBRIS.'
   ];
 
   return (
@@ -431,109 +653,20 @@ export default function ShopTextureCategoryProductPage() {
                 <div style={{ flex: '1', overflowY: 'auto', marginBottom: '20px', minHeight: '0' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
                     {mobileMenuActiveTab === 'TOOLS' ? (
-                      ['GIFT CARD'].map((item, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between cursor-pointer"
-                          onClick={() => navigate('/tools/gift-card')}
-                        >
-                          <span
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '14px',
-                              color: 'black',
-                              fontWeight: '500',
-                              textTransform: 'uppercase',
-                              transform: 'translateX(7px)'
-                            }}
-                          >
-                            {item}
-                          </span>
-                        </div>
-                      ))
+                      <ShopMobileMenuToolsTab
+                        navigate={navigate}
+                        closeMenu={() => setShowMobileMenu(false)}
+                        labelTranslateX="7px"
+                      />
                     ) : mobileMenuActiveTab === 'BRAND' ? (
                       <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />
                     ) : (
-                      [
-                        { label: 'UNITS', hasArrow: true, isExpandable: true, subItems: ['STRAIGHT', 'WAVY', 'CURLY'] },
-                        { label: 'BOOKING', hasArrow: true, isExpandable: true, subItems: ['APPOINTMENT', 'CONSULTATION'] },
-                        { label: 'BUILD-A-WIG', hasArrow: false },
-                        { label: 'ORDER AUTHORIZATION FORM', hasArrow: false }
-                      ].map((item, index) => (
-                        <div key={index}>
-                          <div className="flex items-center justify-between" style={{ alignItems: 'center' }}>
-                            <span
-                              style={{
-                                fontFamily: '"Futura PT Book"',
-                                fontSize: '14px',
-                                color: 'black',
-                                fontWeight: '500',
-                                textTransform: 'uppercase',
-                                cursor: 'pointer',
-                                transform: 'translateX(7px)'
-                              }}
-                              onClick={() => {
-                                if (item.isExpandable) {
-                                  if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                    navigate('/shop/units');
-                                  } else {
-                                    handleMobileMenuItemToggle(item.label);
-                                  }
-                                } else if (item.label === 'ORDER AUTHORIZATION FORM') {
-                                  navigate('/shop/order-form');
-                                }
-                              }}
-                            >
-                              {item.label}
-                            </span>
-                            {item.hasArrow && (
-                              <img
-                                src="/assets/NOIR/closed-arrow.svg"
-                                alt=""
-                                style={{
-                                  width: '16px',
-                                  height: '16px',
-                                  transform: mobileMenuExpandedItems.includes(item.label)
-                                    ? 'translateX(-11px) translateY(-4px) rotate(90deg)'
-                                    : 'translateX(-11px) translateY(-4px) rotate(0deg)',
-                                  cursor: 'pointer'
-                                }}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  if (item.isExpandable) handleMobileMenuItemToggle(item.label);
-                                }}
-                              />
-                            )}
-                          </div>
-                          {item.isExpandable && mobileMenuExpandedItems.includes(item.label) && item.subItems && (
-                            <div className="ml-4 mt-2 space-y-2">
-                              {item.subItems.map((subItem, subIndex) => (
-                                <div
-                                  key={subIndex}
-                                  className="flex items-center cursor-pointer"
-                                  onClick={() => {
-                                    if (subItem === 'STRAIGHT') navigate('/units/straight');
-                                    else if (subItem === 'WAVY') navigate('/units/wavy');
-                                    else if (subItem === 'CURLY') navigate('/units/curly');
-                                  }}
-                                >
-                                  <span
-                                    style={{
-                                      fontFamily: '"Futura PT Book"',
-                                      fontSize: '14px',
-                                      color: '#EB1C24',
-                                      fontWeight: '500',
-                                      textTransform: 'uppercase'
-                                    }}
-                                  >
-                                    {subItem}
-                                  </span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      ))
+                                            <ShopMobileMenuShopTab
+                                              navigate={navigate}
+                                              mobileMenuExpandedItems={mobileMenuExpandedItems}
+                                              handleMobileMenuItemToggle={handleMobileMenuItemToggle}
+                                              closeSubItemMenu={() => setShowMobileMenu(false)}
+                                            />
                     )}
                   </div>
                 </div>
@@ -597,7 +730,7 @@ export default function ShopTextureCategoryProductPage() {
                   >
                     <img
                       src={heroThumbSrc}
-                      alt={productTitle}
+                      alt={displayProductName}
                       onError={(e) => {
                         const img = e.currentTarget;
                         if (img.getAttribute('data-fallback-tried') === '1') return;
@@ -606,7 +739,7 @@ export default function ShopTextureCategoryProductPage() {
                       }}
                       style={{
                         width: '100%',
-                        maxWidth: `${400 * shopTextureCategoryThumbDisplayScale(texture)}px`,
+                        maxWidth: `${400 * shopTextureCategoryProductPageDisplayScale(texture)}px`,
                         height: 'auto',
                         margin: '0 auto',
                         ...((): { transform?: string } => {
@@ -638,7 +771,7 @@ export default function ShopTextureCategoryProductPage() {
                         zIndex: '999 !important'
                       }}
                     >
-                      {productTitle}
+                      {displayProductName}
                     </p>
 
                     <p
@@ -663,10 +796,22 @@ export default function ShopTextureCategoryProductPage() {
                         transform: 'translateY(-137px)',
                         width: '100%'
                       }}
-                      dangerouslySetInnerHTML={formatPrice(price)}
+                      dangerouslySetInnerHTML={formatPrice(displayPrice)}
                     />
 
-                    <div className="flex justify-center mb-4 gap-1" style={{ transform: 'translateY(-137px)' }}>
+                    <p
+                      className="text-center text-black mb-1"
+                      style={{
+                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                        fontSize: '10px',
+                        fontWeight: '500',
+                        transform: 'translateY(-137px)'
+                      }}
+                    >
+                      (EXCLUDING SALES TAX)
+                    </p>
+
+                    <div className="flex justify-center mb-2 gap-1" style={{ transform: 'translateY(-137px)' }}>
                       {[...Array(5)].map((_, index) => (
                         <img
                           key={index}
@@ -681,20 +826,219 @@ export default function ShopTextureCategoryProductPage() {
                         />
                       ))}
                     </div>
+
+                    <p
+                      className="text-center uppercase mb-1"
+                      style={{
+                        fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
+                        fontSize: '10px',
+                        fontWeight: '600',
+                        color: '#808080',
+                        transform: 'translateY(-137px)'
+                      }}
+                    >
+                      OR 4 PAYMENTS OF{' '}
+                      <span dangerouslySetInnerHTML={formatPrice(Math.ceil(displayPrice / 4))} /> WITH{' '}
+                      <span style={{ fontWeight: '600', color: '#EB1C24' }}>KLARNA</span>
+                    </p>
+
+                    {/* BCF: hair profile (Bohemy) + length/color (Bohemy sublabels); lace size on closures/frontals */}
+                    <div
+                      style={{
+                        transform: 'translateY(-102px)',
+                        width: '100%',
+                        padding: '0 8px 12px',
+                        boxSizing: 'border-box'
+                      }}
+                    >
+                      <p
+                        style={{
+                          fontFamily: '"Bohemy", cursive',
+                          fontSize: '19px',
+                          fontWeight: 400,
+                          textAlign: 'center',
+                          margin: '0 0 8px',
+                          color: '#000'
+                        }}
+                      >
+                        hair profile
+                      </p>
+                      <div className="flex flex-wrap justify-center gap-3 mb-3">
+                        {BCF_ORIGIN_OPTIONS.map((o) => {
+                          const sel = bcfOrigin === o.id;
+                          return (
+                            <button
+                              key={o.id}
+                              type="button"
+                              onClick={() => setBcfOrigin(o.id)}
+                              style={{
+                                ...bcfOptionBtnTypography,
+                                ...bcfOptionSelectedChrome(sel)
+                              }}
+                            >
+                              {o.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <p style={bcfBohemySubLabelStyle}>hair texture</p>
+                      <div className="flex flex-wrap justify-center gap-3 mb-3">
+                        {TEXTURE_ORDER.map((tid) => {
+                          const allowed = allowedBcfTextures.includes(tid);
+                          const active = texture === tid;
+                          return (
+                            <button
+                              key={tid}
+                              type="button"
+                              disabled={!allowed}
+                              onClick={() => {
+                                if (!allowed) return;
+                                if (tid !== texture) navigate(shopBcfUrl(category, tid));
+                              }}
+                              style={{
+                                ...bcfOptionBtnTypography,
+                                ...bcfOptionSelectedChrome(active),
+                                cursor: allowed ? 'pointer' : 'not-allowed',
+                                opacity: allowed ? 1 : 0.35
+                              }}
+                            >
+                              {BCF_TEXTURE_LABELS[tid]}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {(category === 'closures' || category === 'frontals') && (
+                        <>
+                          <p
+                            style={{
+                              fontFamily: '"Bohemy", cursive',
+                              fontSize: '19px',
+                              fontWeight: 400,
+                              textAlign: 'center',
+                              margin: '16px 0 8px',
+                              color: '#000'
+                            }}
+                          >
+                            lace size
+                          </p>
+                          <div
+                            className="flex flex-wrap justify-center gap-3 mb-3"
+                            style={{ maxHeight: '100px', overflowY: 'auto' }}
+                          >
+                            {bcfLaceOptions.map((l) => {
+                              const sel = bcfLace === l.id;
+                              return (
+                                <button
+                                  key={l.id}
+                                  type="button"
+                                  onClick={() => setBcfLace(l.id)}
+                                  style={{
+                                    ...bcfOptionBtnTypography,
+                                    ...bcfOptionSelectedChrome(sel),
+                                    minWidth: 'clamp(72px, 18vw, 130px)'
+                                  }}
+                                >
+                                  {l.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </>
+                      )}
+
+                      <p style={{ ...bcfBohemySubLabelStyle, margin: '22px 0 8px' }}>hair length</p>
+                      <div className="grid grid-cols-4 gap-3 mb-3 justify-items-center max-w-[320px] mx-auto">
+                        {BCF_LENGTH_OPTIONS.map((len) => {
+                          const sel = bcfLength === len.id;
+                          return (
+                            <button
+                              key={len.id}
+                              type="button"
+                              onClick={() => setBcfLength(len.id)}
+                              style={{
+                                ...bcfOptionBtnTypography,
+                                ...bcfOptionSelectedChrome(sel),
+                                width: '100%',
+                                maxWidth: 'clamp(52px, 14vw, 76px)',
+                                minWidth: 0,
+                                paddingLeft: 'clamp(4px, 1vw, 10px)',
+                                paddingRight: 'clamp(4px, 1vw, 10px)'
+                              }}
+                            >
+                              {len.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <p style={bcfBohemySubLabelStyle}>hair color</p>
+                      <div className="flex flex-wrap justify-center gap-x-3 gap-y-3">
+                        {bcfColorsAvailable.map((c) => {
+                          const sel = bcfColor === c.id;
+                          return (
+                            <button
+                              key={c.id}
+                              type="button"
+                              onClick={() => handleBcfColorSelect(c.id)}
+                              className="flex flex-col items-center bg-white"
+                              style={{
+                                borderWidth: '1.3px',
+                                borderStyle: 'solid',
+                                ...bcfOptionSelectedChrome(sel),
+                                padding: '4px 4px 6px',
+                                width: '60px',
+                                boxSizing: 'border-box',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              <div className="flex items-center justify-center" style={{ height: '38px' }}>
+                                <BcfColorSwatchDonut colorCode={c.swatch} />
+                              </div>
+                              <span
+                                style={{
+                                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                                  fontSize: '9px',
+                                  fontWeight: 500,
+                                  textAlign: 'center',
+                                  lineHeight: 1.05,
+                                  textTransform: 'uppercase',
+                                  marginTop: '2px',
+                                  color: sel ? BCF_OPTION_RED : '#000000'
+                                }}
+                              >
+                                {c.label}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="mt-6" style={{ transform: 'translateY(-155px)', marginBottom: '-65px' }}>
-                  <div className="flex justify-center">
-                    {(['DETAILS', 'POLICY', 'REVIEWS'] as const).map((tab) => (
+                <div
+                  className="mt-6"
+                  style={{
+                    transform: 'translateY(-155px)',
+                    marginBottom: '-65px',
+                    paddingTop: '30px'
+                  }}
+                >
+                  <div className="flex justify-center flex-wrap" style={{ gap: '16px' }}>
+                    {BCF_PRODUCT_TAB_ORDER.map((tab) => (
                       <button
                         key={tab}
                         type="button"
                         onClick={() => setActiveTab(tab)}
-                        className={`px-2 py-1 text-xs font-medium ${
-                          activeTab === tab ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'
+                        className={`py-1 text-xs font-medium ${
+                          activeTab === tab ? 'text-red-500' : 'text-black hover:text-red-500'
                         }`}
-                        style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
+                        style={{
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '10px',
+                          borderBottom: activeTab === tab ? '1px solid #EB1C24' : 'none',
+                          paddingLeft: 0,
+                          paddingRight: 0
+                        }}
                       >
                         {tab}
                       </button>
@@ -707,10 +1051,26 @@ export default function ShopTextureCategoryProductPage() {
                         <p
                           key={i}
                           style={{
-                            fontFamily: '"Futura PT Medium"',
+                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                             fontSize: '7.7px',
                             color: 'black',
                             marginBottom: i === detailsCopy.length - 1 ? '-8px' : '0px',
+                            padding: '0 4px',
+                            textAlign: 'center'
+                          }}
+                        >
+                          {line}
+                        </p>
+                      ))}
+                    {activeTab === 'SHIPPING' &&
+                      shippingCopy.map((line, i) => (
+                        <p
+                          key={i}
+                          style={{
+                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                            fontSize: '7.7px',
+                            color: 'black',
+                            marginBottom: i === shippingCopy.length - 1 ? '-8px' : '0px',
                             padding: '0 4px',
                             textAlign: 'center'
                           }}
@@ -723,10 +1083,26 @@ export default function ShopTextureCategoryProductPage() {
                         <p
                           key={i}
                           style={{
-                            fontFamily: '"Futura PT Medium"',
+                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                             fontSize: '7.7px',
                             color: 'black',
                             marginBottom: i === policyCopy.length - 1 ? '-8px' : '0px',
+                            padding: '0 4px',
+                            textAlign: 'center'
+                          }}
+                        >
+                          {line}
+                        </p>
+                      ))}
+                    {activeTab === 'CARE + STORAGE' &&
+                      careStorageCopy.map((line, i) => (
+                        <p
+                          key={i}
+                          style={{
+                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                            fontSize: '7.7px',
+                            color: 'black',
+                            marginBottom: i === careStorageCopy.length - 1 ? '-8px' : '0px',
                             padding: '0 4px',
                             textAlign: 'center'
                           }}
@@ -817,32 +1193,21 @@ export default function ShopTextureCategoryProductPage() {
                     </h3>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                  <div style={marbleStripNavRowStyle}>
                     <button
                       type="button"
                       onClick={handleSimilarProductsLeftArrow}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        padding: '5px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        height: '100%',
-                        minHeight: '50px',
-                        transform: 'translateX(10px) translateY(-10px)'
-                      }}
+                      style={marbleStripNavArrowStyle('left', false)}
                     >
                       <img src="/assets/NOIR/left-facing-arrow.svg" alt="" style={{ width: '14px', height: '14px' }} />
                     </button>
 
-                    <div style={{ flex: '1', position: 'relative' }}>
+                    <div style={marbleStripNavMiddleColStyle}>
                       <div
                         style={{
                           position: 'absolute',
                           left: '50%',
-                          top: '6px',
+                          top: '0',
                           bottom: '0',
                           width: '1px',
                           backgroundColor: 'black',
@@ -854,7 +1219,7 @@ export default function ShopTextureCategoryProductPage() {
                         style={{
                           position: 'absolute',
                           left: '50%',
-                          top: '6px',
+                          top: '0',
                           bottom: '0',
                           width: '10px',
                           backgroundColor: 'transparent',
@@ -863,128 +1228,129 @@ export default function ShopTextureCategoryProductPage() {
                           pointerEvents: 'none'
                         }}
                       />
-                      <div
-                        ref={setSimilarStripViewportRef}
-                        style={{ overflowX: 'hidden', width: '100%', position: 'relative', maxWidth: '100%' }}
-                      >
-                        <div
-                          style={{
-                            display: 'flex',
-                            gap: '0',
-                            transform: `translateX(${similarProductsScroll}px) translateY(-15px)`,
-                            transition: 'none',
-                            width: '200%'
-                          }}
-                        >
-                          {otherTextures.map((ot, idx) => {
+                      <div ref={setSimilarStripViewportRef} style={marbleStripViewportStyle}>
+                        <div style={marbleStripScrollRowStyle(similarProductsScroll)}>
+                          {otherTextures.map((ot) => {
                             const om = TEXTURE_META[ot];
                             const simTitle = `${om.label} ${categoryTitle}`;
                             const simThumbSrc = shopTextureCategoryThumbSrc(ot, category);
                             return (
                               <div
                                 key={ot}
-                                style={{
-                                  padding: '10px 10px 4px 10px',
-                                  textAlign: 'center',
-                                  transform: idx === 0 ? 'translateX(-2.5px)' : 'translateX(13px)',
-                                  flex: '0 0 50%',
-                                  boxSizing: 'border-box'
+                                role="button"
+                                tabIndex={0}
+                                onClick={() => navigate(shopBcfUrl(category, ot))}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    navigate(shopBcfUrl(category, ot));
+                                  }
                                 }}
+                                style={marbleStripCellOuter}
                               >
-                                <img
-                                  src={simThumbSrc}
-                                  alt={simTitle}
-                                  onClick={() => navigate(`/${ot}/${category}`)}
-                                  onError={(e) => {
-                                    const img = e.currentTarget;
-                                    if (img.getAttribute('data-fallback-tried') === '1') return;
-                                    img.setAttribute('data-fallback-tried', '1');
-                                    img.src = shopTextureCategoryThumbFallbackSrc[ot];
-                                  }}
-                                  style={{
-                                    width: '100%',
-                                    height: 'auto',
-                                    marginBottom: '10px',
-                                    marginLeft: '10px',
-                                    cursor: 'pointer',
-                                    ...(() => {
-                                      const scale = shopTextureCategoryThumbDisplayScale(ot);
-                                      const nudge = isShopTextureCurlyFrontals(ot, category);
-                                      const parts: string[] = [];
-                                      if (scale !== 1) parts.push(`scale(${scale})`);
-                                      if (nudge) parts.push('translateY(-2px)');
-                                      if (parts.length === 0) return {};
-                                      return {
-                                        transform: parts.join(' '),
-                                        ...(scale !== 1 ? { transformOrigin: 'center top' as const } : {})
-                                      };
-                                    })()
-                                  }}
-                                />
                                 <div
-                                  className={ot === 'curly' ? 'shop-bcf-curly-product-copy-lift' : undefined}
+                                  style={{
+                                    padding: '10px 10px 4px 10px',
+                                    textAlign: 'center',
+                                    width: '100%',
+                                    boxSizing: 'border-box'
+                                  }}
                                 >
-                                  <p
-                                    style={{
-                                      fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                                      fontSize: '18px',
-                                      color: 'black',
-                                      textTransform: 'uppercase',
-                                      margin: '-10px 0 -3px 0',
-                                      fontWeight: '500',
-                                      transform: 'translateX(10px)'
+                                  <img
+                                    src={simThumbSrc}
+                                    alt={simTitle}
+                                    onError={(e) => {
+                                      const img = e.currentTarget;
+                                      if (img.getAttribute('data-fallback-tried') === '1') return;
+                                      img.setAttribute('data-fallback-tried', '1');
+                                      img.src = shopTextureCategoryThumbFallbackSrc[ot];
                                     }}
-                                  >
-                                    {simTitle}
-                                  </p>
-                                  <p
                                     style={{
-                                      fontFamily: '"Futura PT Medium"',
-                                      fontSize: '10px',
-                                      color: '#EB1C24',
-                                      textTransform: 'uppercase',
-                                      margin: '0 0 5px 0',
-                                      fontWeight: '500',
-                                      lineHeight: '0.84',
-                                      transform: 'translateX(10px) translateY(1px)'
+                                      width: '100%',
+                                      height: 'auto',
+                                      marginBottom: '10px',
+                                      marginLeft: '10px',
+                                      cursor: 'pointer',
+                                      pointerEvents: 'none',
+                                      ...(() => {
+                                        const scale = shopTextureCategoryProductPageDisplayScale(ot);
+                                        const nudge = isShopTextureCurlyFrontals(ot, category);
+                                        const parts: string[] = [];
+                                        if (scale !== 1) parts.push(`scale(${scale})`);
+                                        if (nudge) parts.push('translateY(-2px)');
+                                        if (parts.length === 0) return {};
+                                        return {
+                                          transform: parts.join(' '),
+                                          ...(scale !== 1 ? { transformOrigin: 'center top' as const } : {})
+                                        };
+                                      })()
                                     }}
-                                  >
-                                    {categoryTitle} · RAW HAIR
-                                  </p>
-                                  <p
-                                    style={{
-                                      fontFamily: '"Futura PT Medium"',
-                                      fontSize: '12px',
-                                      color: 'black',
-                                      textTransform: 'uppercase',
-                                      margin: '0 0 5px 0',
-                                      fontWeight: '500',
-                                      lineHeight: '0.84',
-                                      transform: 'translateX(10px) translateY(-1px)'
-                                    }}
-                                    dangerouslySetInnerHTML={formatPrice(PRICE_BY_CATEGORY[category])}
                                   />
                                   <div
-                                    style={{
-                                      display: 'flex',
-                                      justifyContent: 'center',
-                                      gap: '2px',
-                                      marginTop: '2px',
-                                      transform: 'translateX(10px)'
-                                    }}
+                                    className={ot === 'curly' ? 'shop-bcf-curly-product-copy-lift' : undefined}
                                   >
-                                    {[...Array(5)].map((_, si) => (
-                                      <img
-                                        key={si}
-                                        src="/assets/NOIR/star-symbol.png"
-                                        alt=""
-                                        style={{
-                                          width: '10px',
-                                          height: '10px',
-                                          filter: 'drop-shadow(0 0 0 1px black)'
-                                        }}
-                                      />
-                                    ))}
+                                    <p
+                                      style={{
+                                        fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                        fontSize: '18px',
+                                        color: 'black',
+                                        textTransform: 'uppercase',
+                                        margin: '-10px 0 -3px 0',
+                                        fontWeight: '500',
+                                        transform: 'translateX(10px)'
+                                      }}
+                                    >
+                                      {simTitle}
+                                    </p>
+                                    <p
+                                      style={{
+                                        fontFamily: '"Futura PT Medium"',
+                                        fontSize: '10px',
+                                        color: '#EB1C24',
+                                        textTransform: 'uppercase',
+                                        margin: '0 0 5px 0',
+                                        fontWeight: '500',
+                                        lineHeight: '0.84',
+                                        transform: 'translateX(10px) translateY(1px)'
+                                      }}
+                                    >
+                                      {categoryTitle} · RAW HAIR
+                                    </p>
+                                    <p
+                                      style={{
+                                        fontFamily: '"Futura PT Medium"',
+                                        fontSize: '12px',
+                                        color: 'black',
+                                        textTransform: 'uppercase',
+                                        margin: '0 0 5px 0',
+                                        fontWeight: '500',
+                                        lineHeight: '0.84',
+                                        transform: 'translateX(10px) translateY(-1px)'
+                                      }}
+                                      dangerouslySetInnerHTML={formatPrice(PRICE_BY_CATEGORY[category])}
+                                    />
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        gap: '2px',
+                                        marginTop: '2px',
+                                        transform: 'translateX(10px)'
+                                      }}
+                                    >
+                                      {[...Array(5)].map((_, si) => (
+                                        <img
+                                          key={si}
+                                          src="/assets/NOIR/star-symbol.png"
+                                          alt=""
+                                          style={{
+                                            width: '10px',
+                                            height: '10px',
+                                            filter: 'drop-shadow(0 0 0 1px black)'
+                                          }}
+                                        />
+                                      ))}
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -997,18 +1363,7 @@ export default function ShopTextureCategoryProductPage() {
                     <button
                       type="button"
                       onClick={handleSimilarProductsRightArrow}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        padding: '5px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        height: '100%',
-                        minHeight: '50px',
-                        transform: 'translateX(-10px) translateY(-10px)'
-                      }}
+                      style={marbleStripNavArrowStyle('right', false)}
                     >
                       <img src="/assets/NOIR/right-facing-arrow.svg" alt="" style={{ width: '14px', height: '14px' }} />
                     </button>
@@ -1051,32 +1406,21 @@ export default function ShopTextureCategoryProductPage() {
                     </h3>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                  <div style={marbleStripNavRowStyle}>
                     <button
                       type="button"
                       onClick={handleRecentlyViewedLeftArrow}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        padding: '5px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        height: '100%',
-                        minHeight: '50px',
-                        transform: 'translateX(10px) translateY(-10px)'
-                      }}
+                      style={marbleStripNavArrowStyle('left', false)}
                     >
                       <img src="/assets/NOIR/left-facing-arrow.svg" alt="" style={{ width: '14px', height: '14px' }} />
                     </button>
 
-                    <div style={{ flex: '1', position: 'relative' }}>
+                    <div style={marbleStripNavMiddleColStyle}>
                       <div
                         style={{
                           position: 'absolute',
                           left: '50%',
-                          top: '6px',
+                          top: '0',
                           bottom: '0',
                           width: '1px',
                           backgroundColor: 'black',
@@ -1088,7 +1432,7 @@ export default function ShopTextureCategoryProductPage() {
                         style={{
                           position: 'absolute',
                           left: '50%',
-                          top: '6px',
+                          top: '0',
                           bottom: '0',
                           width: '10px',
                           backgroundColor: 'transparent',
@@ -1097,30 +1441,40 @@ export default function ShopTextureCategoryProductPage() {
                           pointerEvents: 'none'
                         }}
                       />
-                      <div
-                        ref={setRecentStripViewportRef}
-                        style={{ overflowX: 'hidden', width: '100%', position: 'relative', maxWidth: '100%' }}
-                      >
-                        <div
-                          style={{
-                            display: 'flex',
-                            gap: '0',
-                            transform: `translateX(${recentlyViewedScroll}px) translateY(-15px)`,
-                            transition: 'none',
-                            width: '200%'
-                          }}
-                        >
-                          <div style={{ padding: '10px 10px 4px 0px', textAlign: 'center', transform: 'translateX(-2.5px)' }}>
+                      <div ref={setRecentStripViewportRef} style={marbleStripViewportStyle}>
+                        <div style={marbleStripScrollRowStyle(recentlyViewedScroll)}>
+                          <div
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => navigate('/wavy/soft-wave')}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                navigate('/wavy/soft-wave');
+                              }
+                            }}
+                            style={marbleStripCellOuter}
+                          >
+                            <div
+                              style={{
+                                padding: '10px 10px 4px 10px',
+                                textAlign: 'center',
+                                width: '100%',
+                                boxSizing: 'border-box'
+                              }}
+                            >
                             <img
                               src="/assets/NOIR/wave-thumb.png"
                               alt="SOFT WAVE"
-                              onClick={() => navigate('/wavy/soft-wave')}
                               style={{
-                                width: '100%',
+                                width: '50%',
                                 height: 'auto',
                                 marginBottom: '10px',
-                                marginLeft: '10px',
-                                cursor: 'pointer'
+                                marginLeft: 'auto',
+                                marginRight: 'auto',
+                                display: 'block',
+                                cursor: 'pointer',
+                                pointerEvents: 'none'
                               }}
                             />
                             <p
@@ -1182,18 +1536,40 @@ export default function ShopTextureCategoryProductPage() {
                               ))}
                             </div>
                           </div>
+                          </div>
 
-                          <div style={{ padding: '10px 10px 4px 10px', textAlign: 'center', transform: 'translateX(13px)' }}>
+                          <div
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => navigate('/curly/soft-curl')}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                navigate('/curly/soft-curl');
+                              }
+                            }}
+                            style={marbleStripCellOuter}
+                          >
+                            <div
+                              style={{
+                                padding: '10px 10px 4px 10px',
+                                textAlign: 'center',
+                                width: '100%',
+                                boxSizing: 'border-box'
+                              }}
+                            >
                             <img
                               src="/assets/NOIR/curl-thumb.png"
                               alt="SOFT CURL"
-                              onClick={() => navigate('/curly/soft-curl')}
                               style={{
-                                width: '100%',
+                                width: '50%',
                                 height: 'auto',
                                 marginBottom: '10px',
-                                marginLeft: '10px',
-                                cursor: 'pointer'
+                                marginLeft: 'auto',
+                                marginRight: 'auto',
+                                display: 'block',
+                                cursor: 'pointer',
+                                pointerEvents: 'none'
                               }}
                             />
                             <p
@@ -1255,18 +1631,40 @@ export default function ShopTextureCategoryProductPage() {
                               ))}
                             </div>
                           </div>
+                          </div>
 
-                          <div style={{ padding: '10px 10px 4px 0px', textAlign: 'center', transform: 'translateX(-2.5px)' }}>
+                          <div
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => navigate('/straight/noir')}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                navigate('/straight/noir');
+                              }
+                            }}
+                            style={marbleStripCellOuter}
+                          >
+                            <div
+                              style={{
+                                padding: '10px 10px 4px 10px',
+                                textAlign: 'center',
+                                width: '100%',
+                                boxSizing: 'border-box'
+                              }}
+                            >
                             <img
                               src="/assets/NOIR/noir-thumb.png"
                               alt="NOIR"
-                              onClick={() => navigate('/straight/noir')}
                               style={{
-                                width: '100%',
+                                width: '50%',
                                 height: 'auto',
                                 marginBottom: '10px',
-                                marginLeft: '10px',
-                                cursor: 'pointer'
+                                marginLeft: 'auto',
+                                marginRight: 'auto',
+                                display: 'block',
+                                cursor: 'pointer',
+                                pointerEvents: 'none'
                               }}
                             />
                             <p
@@ -1328,18 +1726,40 @@ export default function ShopTextureCategoryProductPage() {
                               ))}
                             </div>
                           </div>
+                          </div>
 
-                          <div style={{ padding: '10px 10px 4px 10px', textAlign: 'center', transform: 'translateX(13px)' }}>
+                          <div
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => navigate('/straight/blanco')}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                navigate('/straight/blanco');
+                              }
+                            }}
+                            style={marbleStripCellOuter}
+                          >
+                            <div
+                              style={{
+                                padding: '10px 10px 4px 10px',
+                                textAlign: 'center',
+                                width: '100%',
+                                boxSizing: 'border-box'
+                              }}
+                            >
                             <img
                               src="/assets/NOIR/blanco-thumb.png"
                               alt="BLANCO"
-                              onClick={() => navigate('/straight/blanco')}
                               style={{
-                                width: '100%',
+                                width: '50%',
                                 height: 'auto',
                                 marginBottom: '10px',
-                                marginLeft: '10px',
-                                cursor: 'pointer'
+                                marginLeft: 'auto',
+                                marginRight: 'auto',
+                                display: 'block',
+                                cursor: 'pointer',
+                                pointerEvents: 'none'
                               }}
                             />
                             <p
@@ -1401,6 +1821,7 @@ export default function ShopTextureCategoryProductPage() {
                               ))}
                             </div>
                           </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1408,18 +1829,7 @@ export default function ShopTextureCategoryProductPage() {
                     <button
                       type="button"
                       onClick={handleRecentlyViewedRightArrow}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        padding: '5px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        height: '100%',
-                        minHeight: '50px',
-                        transform: 'translateX(-10px) translateY(-10px)'
-                      }}
+                      style={marbleStripNavArrowStyle('right', false)}
                     >
                       <img src="/assets/NOIR/right-facing-arrow.svg" alt="" style={{ width: '14px', height: '14px' }} />
                     </button>
@@ -1440,6 +1850,17 @@ export default function ShopTextureCategoryProductPage() {
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="sign-out-confirm"
+      />
+
+      <ConfirmationModal
+        isOpen={showBcfColorUpgradeModal}
+        onClose={handleBcfColorUpgradeClose}
+        onConfirm={handleBcfColorUpgradeConfirm}
+        title="UPGRADE YOUR SUBSCRIPTION?"
+        message="YOU MUST BE A PREMIUM MEMBER TO USE THIS FEATURE."
+        confirmText="UPGRADE"
+        cancelText="CANCEL"
+        dataAttribute="upgrade-subscription-modal-bcf-color"
       />
     </div>
   );

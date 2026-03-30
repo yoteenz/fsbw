@@ -4601,6 +4601,14 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-03-29 — BCF texture PDP: hair profile + length/color + 50% thumbs
+
+**Context (this chat):** User wanted **`/straight|wavy|curly` / `bundles|closures|frontals`** PDPs to add two Bohemy-style blocks (like custom/flexible cap): **hair profile** (**ORIGIN**, **TEXTURE**, **LACE** on closures/frontals) and **length & color** (**LENGTH** 16–40″ per build-a-wig length, **COLOR** noir palette + GOLDEN/PLATINUM/ASH, **LACE** per build-a-wig lace). **Origin → allowed textures:** Cambodian/Russian → straight only; Indian/Indonesian → wavy; Filipino/Vietnamese → curly; route auto-corrects when origin conflicts. **Cart** stores **`hairOrigin`**, **`length`**, **`color`**, **`lace`** (not bundles) and **price** includes option deltas. **Thumbnails:** hero + similar strip use **`shopTextureCategoryProductPageDisplayScale`** (**×0.5** vs prior display scale); **recently viewed** imgs **50%** width centered.
+
+**Changes:** New **`src/utils/bcfProductOptions.ts`**. **`src/utils/shopTextureCategoryThumb.ts`**: **`shopTextureCategoryProductPageDisplayScale`**. **`src/pages/shop/texture-category-product/page.tsx`**: state, **`skipBcfOriginDefaultOnNextPathRef`**, effects, UI, **`displayPrice`**, **`handleAddToBag`** payload.
+
+---
+
 ## 2026-03-29 — Vercel build: `shopTextureCategoryCurlyThumbTranslateYPx` missing
 
 **Context (this chat):** **`npm run build`** on Vercel failed with **`TS2304: Cannot find name 'shopTextureCategoryCurlyThumbTranslateYPx'`** in **`texture-category-product/page.tsx`**.
@@ -4616,4 +4624,286 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Root cause:** Noir uses **`marbleStripNavRowStyle`** (relative row + absolute arrows) and **`marbleStripNavArrowStyle(side, is3D)`** from **`marbleStripStyles.ts`**. Blanco’s **SIMILAR** left arrow used a plain inline **`transform`** (no **`position: absolute`**, wrong vertical math vs **`translateY(calc(-50% - Npx))`**). Soft wave’s **SIMILAR** right arrow had the same issue. Ocean curl used **`flex` + `space-between` + `gap: 10px`** for the nav row (arrows in document flow) and **RECENTLY** left used the bad inline transform.
 
 **Changes:** **`blanco/page.tsx`**: SIMILAR left **`button`** → **`marbleStripNavArrowStyle('left', is3DView)`**. **`soft-wave/page.tsx`**: SIMILAR right → **`marbleStripNavArrowStyle('right', is3DView)`**. **`ocean-curl/page.tsx`**: import **`marbleStripNavRowStyle`**; SIMILAR + RECENTLY outer rows use it; RECENTLY left → **`marbleStripNavArrowStyle('left', is3DView)`**.
+
+---
+
+## 2026-03-29 — BCF texture-category PDP: nav + hero title category-only
+
+**Context (this chat):** User asked for product nav **SHOP > BUNDLES** / **CLOSURES** / **FRONTALS** (not texture-prefixed), and hero product name **BUNDLES** / **CLOSURES** / **FRONTALS** only (no **STRAIGHT/WAVY/CURLY** before the category).
+
+**Changes:** **`texture-category-product/page.tsx`**: **`displayProductName`** = **`CATEGORY_TITLE[category]`** for nav crumb, hero, image **`alt`**; **`cartLineName`** = **`BUNDLES · STRAIGHT`**-style for cart disambiguation. **`TEXTURE_META`** **`subline`** → **`RAW HAIR`** only (removed **STRAIGHT TEXTURE ·** etc. under the title). Similar-strip cards unchanged (**WAVY BUNDLES** etc.) so other textures stay identifiable.
+
+---
+
+## 2026-03-29 — BCF PDP: similar/recently flexbox = home/shop + unit PDPs
+
+**Context (this chat):** User asked to apply the same **flexbox / nav** pattern used on **`/home/shop`**, **`/shop/units`**, and **unit PDPs** for **similar / recently** to **bundles / closures / frontals** PDPs (**`texture-category-product`**).
+
+**Changes:** **`texture-category-product/page.tsx`**: import **`marbleStripStyles`** helpers; **SIMILAR** and **RECENTLY** use **`marbleStripNavRowStyle`**, **`marbleStripNavMiddleColStyle`**, **`marbleStripNavArrowStyle(side, false)`**, **`marbleStripViewportStyle`**, **`marbleStripScrollRowStyle(scroll)`**, **`marbleStripCellOuter`** (replaces **`space-between` + gap** and in-flow arrow transforms). Center line / mask **`top: 0`**. Scroll rows no longer use **`translateY(-15px)`**. Similar cells: row click + **`pointerEvents: 'none'`** on thumb. Recently: each product wrapped in **`marbleStripCellOuter`** with keyboard handlers.
+
+---
+
+## 2026-03-29 — Booking: premium routes, brand card shell, calendar, cart priority
+
+**Context (this chat):** User wanted **`/booking/consultation`** & **`/booking/appointment`** with nav **BOOKING > CONSULTATION** / **APPOINTMENT**, brand-style main card (red section title + gray rule), lobby **neon booking** → **premium** flows **`/booking/premium/consultation`** & **`/booking/premium/appointment`**, SHOP menu **BOOKING** sublinks to standard routes, **premium** cart **`bookingTier: 'premium'`** sorted first in bag, and **appointment** page uses **`BrandExpiresDatePicker`** (same component as admin brand Create Code).
+
+**Changes:** **`BookingFlowLayout`**: **`/booking/premium/`** → header red crumb **`PREMIUM · …`**, inner frosted card matches brand (**Futura PT Medium** red title + **`#e5e7eb`** bottom border) before children. **`booking/consultation`** & **`appointment`**: same components serve premium URLs; cart sets **`bookingTier`**, premium names **`(PREMIUM)`**; appointment stores optional **`bookingPreferredDate`**. **`utils/bookingCart.ts`**: **`sortCartPremiumBookingFirst`**. **`shopping-bag`**: load sorts cart. **`App.tsx`**: **`/booking/premium/consultation`**, **`/booking/premium/appointment`**. **`lobby/page.tsx`**: booking image → **`/booking/premium/consultation`**. **`brand/page.tsx`**: deduped **`navigateShopMenuSubItem`** import (SHOP menu already wired). **`products/page.tsx`**: **`navigateShopMenuSubItem`** for BOOKING subs.
+
+**Update (same chat):** Lobby **products** neon → **`/home/shop`** (was **`/shop/units`**). Lobby **booking** neon → **`/booking/premium/appointment`**. Alias **`/booking/premium/consult`** → same page as **`consultation`**. Cart sort: premium before standard; among premium, **`booking-appointment`** before **`booking-consult`**. **`BookingFlowLayout`**: removed duplicate **`premiumBooking`** declaration.
+
+---
+
+## 2026-03-29 — Booking appointment: single canonical URL (premium)
+
+**Context (this chat):** User said they already had a **booking/appointment** flow with another agent and asked to **undo** changes from the earlier “create booking/appointment” work that **conflicted** or **duplicated** that setup.
+
+**Decisions / outcomes:** Treat **`/booking/premium/appointment`** as the **only** real appointment route. The shorter **`/booking/appointment`** path remains as a **redirect** so old links still work.
+
+**Changes:** **`App.tsx`**: removed the duplicate **`<Suspense>`** route for **`/booking/appointment`**; replaced with **`<Navigate to="/booking/premium/appointment" replace />`**. **`shopMobileMenuSubNav.ts`**: **APPOINTMENT** menu item → **`/booking/premium/appointment`**. **`shopping-bag/page.tsx`**: cart line navigate for **`booking-appointment`** → **`/booking/premium/appointment`**. **`pages/booking/appointment/page.tsx`**: removed **`useLocation`** and **`isPremiumBooking`** branching; cart lines always use premium naming and **`bookingTier: 'premium'`** (this page is only loaded from premium + redirect).
+
+---
+
+## 2026-03-29 — BCF PDP: Russian-only GOLDEN/PLATINUM/ASH + correct texture highlight from URL
+
+**Context (this chat):** User asked that **GOLDEN**, **PLATINUM**, and **ASH** colors only appear when **Russian** origin is selected on bundles/closures/frontals PDPs, and that clicking **straight/wavy/curly** thumbnails from **`/home/shop`** should land on the texture PDP with that **texture** correctly **highlighted** (STRAIGHT / WAVY / CURLY buttons).
+
+**Root cause (texture):** Initial **`bcfOrigin`** defaulted to **CAMBODIAN**, so **`bcfTexturesForOrigin`** only allowed **straight** on the first effect run; the redirect effect then replaced **`/wavy/...`** or **`/curly/...`** with **`/straight/...`** before origin synced to the route.
+
+**Changes:** **`utils/bcfProductOptions.ts`**: **`BCF_RUSSIAN_ONLY_COLOR_IDS`**, **`bcfColorOptionsForOrigin(origin)`**, **`bcfInitialOriginFromPathname(pathname)`**. **`texture-category-product/page.tsx`**: **`useState`** initializer for **`bcfOrigin`** uses **`bcfInitialOriginFromPathname(window.location.pathname)`**; color grid uses **`bcfColorsAvailable`** from **`bcfColorOptionsForOrigin(bcfOrigin)`**; **`useEffect`** resets **`bcfColor`** to **OFF BLACK** if current color is not allowed for the selected origin.
+
+---
+
+## 2026-03-29 — Booking: SHOP menu + bag use standard vs premium paths by membership
+
+**Context (this chat):** User clarified **standard** vs **premium** booking URLs must stay **separate**: premium members using SHOP → BOOKING should hit **`/booking/premium/consultation`** & **`/booking/premium/appointment`**; standard (and guests) should use **`/booking/consultation`** & **`/booking/appointment`**. The earlier “single canonical premium URL” change was **not** the intended product behavior.
+
+**Changes:** **`utils/bookingMemberRoutes.ts`**: **`bookingMenuUsesPremiumPaths()`** (signed-in + **`getEffectiveSubscriptionTier`** or **BLACK** tier, aligned with lobby), **`bookingAppointmentHref()`**, **`bookingConsultationHref()`**, **`bookingAppointmentHrefForCartItem`** / **`bookingConsultationHrefForCartItem`** (use **`item.bookingTier === 'premium'`**). **`shopMobileMenuSubNav.ts`**: BOOKING sub-items call those hrefs. **`App.tsx`**: restored **`<Suspense>`** route for **`/booking/appointment`** (same **`BookingAppointmentPage`** as premium). **`shopping-bag/page.tsx`**: thumb navigation uses cart-item helpers so premium vs standard bag lines reopen the matching PDP.
+
+---
+
+## 2026-03-29 — BCF PDP labels + tabs aligned with unit PDPs
+
+**Context (this chat):** User wanted bundles/closures/frontals PDP (**`texture-category-product`**) to drop Futura **ORIGIN** under **hair profile**; Bohemy **hair texture** / **hair length** / **hair color** (replacing Futura TEXTURE/LENGTH/COLOR); tab row spacing above **DETAILS** like unit PDPs (**`paddingTop: 10px`** on tab block + **`gap: 16px`**, Futura tab chrome like Noir); add **SHIPPING** and **CARE + STORAGE** tabs with copy aligned to unit PDPs.
+
+**Changes:** **`texture-category-product/page.tsx`**: **`bcfBohemySubLabelStyle`**; **`BcfProductTab`** + five-tab order; **`shippingCopy`** / **`careStorageCopy`**; tab buttons match Noir underline + font stack.
+
+---
+
+## 2026-03-29 — Premium booking: fix appointment crash + lobby booking asset
+
+**Context (this chat):** User reported **premium booking routes not working** and the **lobby booking neon asset** missing.
+
+**Root cause:** **`BookingAppointmentPage`** called **`useLocation()`** without importing it from **`react-router-dom`**, causing **runtime failure** (and **`tsc`** errors) on **`/booking/premium/appointment`**. **`/assets/neon-booking.png`** was not present in **`public/`** in-repo (broken image on lobby and cart fallbacks).
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`**: restored **`import { useLocation } from 'react-router-dom'`** and **`isPremiumBooking`**-based cart **`name`** / **`bookingTier`** (with **`/assets/neon-booking.svg`**). **`public/assets/neon-booking.svg`**: committed neon-style **BOOKING** wordmark (**#EB1C24**). **`lobby/page.tsx`**, **`booking/consultation/page.tsx`**, **`shopping-bag/page.tsx`**: image paths **`.png` → `.svg`**. **`shopMobileMenuSubNav.ts`**: **CONSULTATION** → **`/booking/premium/consultation`** (aligned with premium appointment).
+
+---
+
+## 2026-03-30 — Booking pages: brand-aligned layout + typography
+
+**Context (this chat):** User asked to align **booking consultation** and **booking appointment** pages with brand guidelines (header styling, page structure, fonts).
+
+**Changes:** New **`src/components/booking/BookingPageChrome.tsx`**: shared **Futura PT Book / Medium** stacks, **Covered By Your Grace** hero, crumb row (**12px** red uppercase + **`#e5e7eb`** rule like **`brand/page.tsx`** inner card), **BookingSectionHeading** (accent red or black + rule), **BookingBodyParagraph** / **BookingMutedNote**, **bookingPrimaryButtonStyle** for CTAs. **`booking/consultation/page.tsx`** & **`booking/appointment/page.tsx`**: **CONSULTATION** / **APPOINTMENT** crumb → script title → subline (premium callout when applicable), body copy in **Book 9px**, **`#e5e7eb`** section breaks, frosted **`bg-white/80 backdrop-blur-sm`** on controls, **1.3px** black borders, selected rows **red** outline, totals **20px** Medium, footnotes **8px** Book **#808080**.
+
+---
+
+## 2026-03-30 — Lobby: restore visible booking neon (above shelves, PNG → SVG)
+
+**Context (this chat):** User said the **booking** neon to the **right of tools** was still missing; it must route to **premium** booking.
+
+**Root cause:** The **product shelves** block comes **after** the neon row in the DOM with the same **`zIndex: 20`**, so it painted **on top of** the nav strip and hid the rightmost **BOOKING** control. The placeholder **SVG** was also easy to lose on the landing art without a stroke.
+
+**Changes:** **`lobby/page.tsx`**: neon row **`zIndex: 35`**; row uses **`pointerEvents: 'none'`** with **`pointerEvents: 'auto'`** on each neon cluster so taps pass through gaps; **products/tools** wrappers **`flexShrink: 0`**; **booking**: **`/assets/neon-booking.png`** first, **`onError`** → **`/assets/neon-booking.svg`**, **`translateX(-104px)`** on wrapper (legacy kern), **full-area** hit target over the image, navigates **`/booking/premium/appointment`**. **`public/assets/neon-booking.svg`**: tighter viewBox, white stroke + red fill + glow for contrast.
+
+---
+
+## 2026-03-30 — Booking nav: no “PREMIUM” in crumb; consultation shows CONSULT
+
+**Context (this chat):** User wanted header nav **`BOOKING > CONSULT`** (not **CONSULTATION**), and **no “PREMIUM”** in nav text — premium vs standard only via **URL**, not the visible crumb.
+
+**Changes:** **`BookingFlowLayout.tsx`**: removed **`PREMIUM ·`** prefix; red segment is always **`crumbHighlight`** only; type **`BookingCrumb`** is **`CONSULT` | `APPOINTMENT`**. **`booking/consultation/page.tsx`**: **`crumbHighlight="CONSULT"`** and **`BookingCrumbTitle`** **CONSULT**.
+
+---
+
+## 2026-03-30 — BCF texture PDP: copy trim, lace by category, Russian = Blanco colors only
+
+**Context (this chat):** User asked to remove **ORIGIN** and **length & color** labels on bundles/closures/frontals PDP; on closures/frontals rename lace to **lace size** in **Bohemy**; **frontals** only **13×4** & **13×6**; **closures** exclude those; **Russian** origin hides non-Blanco colors (only **GOLDEN** / **PLATINUM** / **ASH**).
+
+**Changes:** **`utils/bcfProductOptions.ts`**: **`bcfColorOptionsForOrigin`** — Russian → Blanco-only; non-Russian → noir-only. New **`bcfLaceOptionsForCategory('closures' | 'frontals')`**. **`texture-category-product/page.tsx`**: UI removals + Bohemy **lace size**; lace buttons from **`bcfLaceOptions`** (pathname memo); **`bcfLace`** init + effect keep selection valid per category; invalid color resets to first allowed option. Fixed corrupted duplicate **`import`** line ( **`ShopMobileMenuShopTab`** + **`marbleStripStyles`** ).
+
+---
+
+## 2026-03-30 — BCF PDP: 360/FULL frontal-only + tab/spacing tweaks
+
+**Context (this chat):** User asked to remove **360** & **FULL** from **closures** lace list and add them to **frontals**; **+10px** above details tabs (bundles/closures/frontals); **+6px** above **hair texture**, **lace size**, **hair length**, **hair color** labels.
+
+**Changes:** **`bcfLaceOptionsForCategory`**: frontals = **13X4**, **13X6**, **360**, **FULL**; closures = all other lace IDs. **`texture-category-product/page.tsx`**: details tabs wrapper **`paddingTop` 10px → 20px**; label margins (**hair texture** / **hair color** **`6px`** top; **lace size** & **hair length** top **10px → 16px**).
+
+---
+
+## 2026-03-30 — Booking: premium/standard PNG badges + checkout thumbnails
+
+**Context (this chat):** User asked for badges **below the booking header** on appointment/consultation pages (premium vs standard from **URL**), using **`appointment-premium.png`**, **`appointment-standard.png`**, **`consultation-premium.png`**, **`consultation-standard.png`** in **`public/assets`**, and the **same assets** for **checkout** + **checkout summary** cart thumbnails for booking line items.
+
+**Changes:** **`utils/bookingBadges.ts`**: **`bookingPageHeaderBadgeSrc(pathname)`**, **`bookingCartItemThumbnailSrc(item)`** (uses **`item.type`** **`booking-appointment` / `booking-consult`** and **`item.bookingTier === 'premium'`**). **`BookingFlowLayout.tsx`**: centered badge **img** under nav strip. **`checkout/page.tsx`** & **`checkout/confirm/page.tsx`**: **`getItemImage` / `getProductImage`** return booking badge URL when applicable (before unit/gift logic).
+
+---
+
+## 2026-03-30 — Brand menu: drop Care + Storage & Payment + Shipping; settings help
+
+**Context (this chat):** User asked to remove **CARE + STORAGE** and **PAYMENT + SHIPPING** from the **menu toggle** brand list and **remove those page routes**; remove **PAYMENT** from **Account → Settings** help center.
+
+**Changes:** **`constants/brandMenu.ts`**: removed both items; **`BRAND_SLUGS`** no **`care`** / **`payment`**. **`brand/page.tsx`**: **`VALID_SLUGS`** and nav title list updated. **`App.tsx`**: no **`BrandPage`** routes for **`/brand/care`** or **`/brand/payment`** — **`Navigate`** to **`/brand/about`** (replace) for old URLs. **`account/settings/page.tsx`**: removed **PAYMENT** help button; **CONTACT** **`lineHeight`** **`1.2`** (was **`3.2`** for spacing).
+
+---
+
+## 2026-03-29 — SHOP mobile menu: BUNDLES, CLOSURES, FRONTALS under UNITS
+
+**Context (this chat, continued):** User asked for **three** separate lines (**BUNDLES**, **CLOSURES**, **FRONTALS**) **below UNITS** in the **SHOP** tab of the mobile menu toggle, each routing to **`/shop/bundles`**, **`/shop/closures`**, **`/shop/frontals`**.
+
+**Decisions / outcomes:** Centralize the duplicated SHOP-tab list in one component so every screen with that menu stays aligned.
+
+**Changes:** **`src/components/ShopMobileMenuShopTab.tsx`**: shared rows (**UNITS** expandable, then **BUNDLES** / **CLOSURES** / **FRONTALS**, **BOOKING**, **BUILD-A-WIG**, **ORDER AUTHORIZATION FORM**); props for **`labelTranslateX`**, **`duplicateRowClickForStaticLinks`** (pages that used row+span clicks), **`closeSubItemMenu`**, optional **`closeAfterStaticNav`** + **`buildAWigPath`** + **`arrowImgAlt`** ( **`BookingFlowLayout`** uses **`/build-a-wig/noir`** and closes the drawer). Replaced inline **`.map`** blocks across **~43** call sites; **`BookingFlowLayout`** wired the same. Repaired a few **multi-line `import`** blocks where an auto-inserted **`ShopMobileMenuShopTab`** import landed inside **`{ … }`**. Dropped **`navigateShopMenuSubItem`** imports where unused; removed unused **`getBuildAWigShopMenuTargetPath`** from **build-a-wig** subpage imports (menu uses default **`/build-a-wig`**). One-off scripts under **`scripts/`**: **`replace-shop-mobile-menu-shop-tab.mjs`**, **`add-shop-mobile-menu-import.mjs`**, **`remove-unused-shop-nav-import.mjs`** (codemod + fixes).
+
+---
+
+## 2026-03-30 — SHOP menu: CLOSURES & FRONTALS under HD LACE subgroup
+
+**Context (this chat):** After the shared **`ShopMobileMenuShopTab`** work (BUNDLES + standalone CLOSURES/FRONTALS lines), user asked to **move closures and frontals** into an expandable subgroup labeled **HD LACE** on the SHOP tab mobile menu.
+
+**Changes:** **`ShopMobileMenuShopTab.tsx`**: replaced top-level **CLOSURES** / **FRONTALS** rows with one expandable **HD LACE** row (**arrow**, sub-items **CLOSURES**, **FRONTALS**); **BUNDLES** stays a single line above it. **`shopMobileMenuSubNav.ts`**: **`navigateShopMenuSubItem`** handles **`parentLabel === 'HD LACE'`** → **`/shop/closures`** / **`/shop/frontals`** (same routes as before).
+
+---
+
+## 2026-03-30 — SHOP menu: HD LACE above BUNDLES
+
+**Context (this chat so far):** SHOP mobile menu uses shared **`ShopMobileMenuShopTab`**; **CLOSURES** / **FRONTALS** sit under expandable **HD LACE**; user asked to put **HD LACE** **above** **BUNDLES** in the list.
+
+**Changes:** **`ShopMobileMenuShopTab.tsx`**: **`SHOP_TAB_ITEMS`** order is now **UNITS** → **HD LACE** → **BUNDLES** → **BOOKING** → **BUILD-A-WIG** → **ORDER AUTHORIZATION FORM**.
+
+---
+
+## 2026-03-30 — BCF routes: canonical `/shop/{category}` + `?texture=`; home/shop thumbnails keep texture
+
+**Context (this chat):** User wanted menu (**BUNDLES**, **HD LACE** sub-items, etc.) to open the **main** **`/shop/bundles`**, **`/shop/closures`**, **`/shop/frontals`** PDPs **without** URL-driven texture pre-selection; remove **`/straight/bundles`**, **`/wavy/closures`**, etc. as real PDP routes; **home/shop** texture thumbnails should still land with the matching texture selected (**`?texture=`**).
+
+**Changes:** **`App.tsx`**: **`/shop/bundles|closures|frontals`** render **`ShopTextureCategoryProductPage`** (dropped lazy **`ShopCategoryPage`** for those paths); **`/straight|wavy|curly`/`bundles|closures|frontals`** → **`Navigate`** to plain **`/shop/...`** (no query — old bookmarks lose texture). **`texture-category-product/page.tsx`**: parse **`/shop/(bundles|closures|frontals)`**; derive active texture from **`?texture=straight|wavy|curly`** or default **`straight`** + **CAMBODIAN** origin when param absent; texture pills / similar strip use **`shopBcfUrl`**. **`products/page.tsx`**: marble thumbs → **`/shop/${category}?texture=${slug}`**. **`bcfProductOptions.ts`**: **`bcfInitialOriginFromPathname(pathname, search)`** reads **`/shop`** + query. Comments in **`shopTextureCategoryThumb.ts`**. **`tsc --noEmit`** passes.
+
+---
+
+## 2026-03-29 — Booking badges: inside card + Rewards-sized; checkout thumbs unified
+
+**Context (this chat so far):** User reported appointment/consultation tier badges were **above** the frosted main card and **too small**; they should sit **inside** the card **below** the red crumb titles **APPOINTMENT** / **CONSULT**, and match the **loyalty / premium rewards** badge scale on Account → Rewards (**~182.16px**).
+
+**Decisions / outcomes:** Header badge uses **`bookingPageHeaderBadgeSrc`** + **`BookingTierBadgeImg`** in **`BookingPageChrome`**; placement via **`BookingCrumbTitle`** optional **`middle`** slot (after title, before gray rule). Single source of truth for pixel constants in **`bookingBadges.ts`**.
+
+**Changes:** **`BookingFlowLayout.tsx`**: no badge between nav and card (removed from above-card). **`BookingPageChrome.tsx`**: **`BookingCrumbTitle`** accepts **`middle`**; **`BookingTierBadgeImg`** at **`BOOKING_BADGE_DISPLAY_PX`** from **`utils/bookingBadges.ts`**. **`booking/appointment/page.tsx`** & **`booking/consultation/page.tsx`**: pass **`middle={<BookingTierBadgeImg />}`**. **`utils/bookingBadges.ts`**: **`BOOKING_BADGE_DISPLAY_PX`** (182.16), **`BOOKING_BADGE_CART_CELL_WIDTH_PX`**, **`isBookingCartBadgeItem`**. **`checkout/page.tsx`** & **`checkout/confirm/page.tsx`**: cart row thumb + cell width use Rewards scale for **`booking-appointment` / `booking-consult`** lines; confirm summary scroll width uses same cell width; **`digitalOnlyLine`** includes booking thumbs for layout parity with gift/membership rows.
+
+---
+
+## 2026-03-30 — Booking cart: premium/standard badge thumbs + consult add-to-bag
+
+**Context (this chat):** User reported booking line items in the bag showed **wrong thumbnails** (not premium/standard PNG badges), and **consult ADD TO BAG** did not work reliably.
+
+**Root causes:** Bag / cart dropdown used **`item.image`** (**`neon-booking.svg`**) or generic product logic instead of **`bookingCartItemThumbnailSrc`**. Consult flow **blocked** add unless a hair-inspo file was selected.
+
+**Changes:** **`bookingCartItemThumbnailSrc`** sets **`image`** when creating cart rows on **`booking/appointment/page.tsx`** and **`booking/consultation/page.tsx`**. **`shopping-bag/page.tsx`** (cart + saved lists): **`getItemImage`** prefers **`bookingCartItemThumbnailSrc(item)`**; booking rows use **`object-contain`**. **`CartDropdown.tsx`**: same thumb logic, booking **nav** targets, hide **EDIT IN BUILD-A-WIG**, red subtitle uses **`bookingBagSubtitle`** / **BOOKING DEPOSIT**. Consult: inspo upload **optional** (label + body copy); **`handleAddToBag`** no longer requires a file.
+
+---
+
+## 2026-03-30 — Booking consult/appointment: trim hero copy, NOIR-style CTA below card
+
+**Context (this chat):** User asked to drop redundant **Covered By Your Grace** script titles (**WIG CONSULT** / **WIG INSTALLATION**) and **PREMIUM MEMBER BOOKING** subline prefix; move **add to bag** below the frosted main card with the same styling as the **NOIR** product page; appointment button label **ADD TO BAG** (was **ADD SELECTION TO BAG**); consult **CHOOSE FILE** chip **rounded** (**8px** radius) inside a **square** outer file area.
+
+**Changes:** **`BookingFlowLayout.tsx`**: optional **`belowCard`** slot after the main card (hidden when mobile menu open). **`BookingPageChrome.tsx`**: **`NoirStyleAddToBagButton`** (mirrors NOIR **`className`** / **`style`**). **`booking/consultation/page.tsx`**: removed **`BookingScriptHero`**; **`BookingHeroSubline`** = deposit line only; CTA + deposit footnote in **`belowCard`**; **`borderRadius: 8px`** on **CHOOSE FILE** span only. **`booking/appointment/page.tsx`**: removed script hero; subline **LOCATED IN MEMPHIS, TN.** only; CTA + footnote in **`belowCard`**.
+
+---
+
+## 2026-03-30 — BCF PDP: premium gate on non-default hair color + Russian default PLATINUM
+
+**Context (this chat):** Standard (non–premium / non-BLACK) members selecting a **non-default** hair color on **`/shop/bundles`**, **`/shop/closures`**, **`/shop/frontals`** should see the same **upgrade subscription** modal as **`/lobby`** (title/message/UPGRADE/CANCEL). **Russian** origin default color should be **PLATINUM**, not **GOLDEN**.
+
+**Changes:** **`utils/premiumMemberAccess.ts`**: **`isPremiumMemberForGatedFeatures()`** (matches lobby logic), **`prepareMembershipUpgradeNavigation()`** (session + **`membershipShowPremiumView`** flags). **`lobby/page.tsx`**: uses shared helpers. **`bcfProductOptions.ts`**: **`bcfDefaultColorIdForOrigin`** — **RUSSIAN** → **PLATINUM**, else **OFF BLACK**; color reset effect on PDP uses it. **`shop/texture-category-product/page.tsx`**: **`ConfirmationModal`** with same copy as lobby; **`handleBcfColorSelect`** blocks non-default colors unless premium gate passes.
+
+---
+
+## 2026-03-30 — Fix: `booking_badge_display_px` import binding
+
+**Context:** Runtime / component error: imported binding **`booking_badge_display_px`** not found (actual export was **`BOOKING_BADGE_DISPLAY_PX`** only).
+
+**Changes:** **`utils/bookingBadges.ts`**: export aliases **`booking_badge_display_px`**, **`booking_badge_cart_cell_width_px`**. **`BookingPageChrome.tsx`**: re-export **`booking_badge_display_px`** from **`bookingBadges`** for mistaken imports from the chrome module.
+
+---
+
+## 2026-03-30 — BCF PDP: extra space above tabs + option labels
+
+**Context:** User asked for **+10px** above the **DETAILS / SHIPPING / …** tab row and **+6px** above **hair texture**, **hair length**, **lace size**, and **hair color** on **`/shop/bundles|closures|frontals`**.
+
+**Changes:** **`texture-category-product/page.tsx`**: tab block **`paddingTop`** **20px → 30px** (+10px). Bohemy option labels (**hair texture**, **lace size**, **hair length**, **hair color**) use shared **`bcfBohemySubLabelStyle`** with fixed **`margin: 6px 0 8px`** (6px top, 8px bottom) — not cumulative per-label bumps.
+
+---
+
+## 2026-03-30 — Cart dropdown: booking badge thumbs 25% smaller
+
+**Context:** User asked to shrink **consult** / **appointment** badge thumbnails in the **cart dropdown only** by **25%** (vs standard **88px** unit thumbs).
+
+**Changes:** **`CartDropdown.tsx`**: for **`booking-consult`** / **`booking-appointment`**, thumb container + **`img`** use **66px** (**88 × 0.75**); gift card **108px** and other items **88px** unchanged.
+
+---
+
+## 2026-03-30 — BCF premium color gate: modal body copy
+
+**Context:** Hair color non-default tap on bundles/closures/frontals should use message **YOU MUST BE A PREMIUM MEMBER TO USE THIS FEATURE.** (not “…ACCESS THIS AREA.”). Title **UPGRADE YOUR SUBSCRIPTION?** and **UPGRADE** / **CANCEL** unchanged.
+
+**Changes:** **`texture-category-product/page.tsx`** **`ConfirmationModal`** **`message`** updated. **`/lobby`** modal unchanged.
+
+---
+
+## 2026-03-30 — Mobile menu order: BOOKING after BUILD-A-WIG; FAQ after CAREERS
+
+**Context (this chat):** User asked to move **BOOKING** **below** **BUILD-A-WIG** on the SHOP tab menu toggle, and **FAQ** **below** **CAREERS** on the BRAND tab.
+
+**Changes:** **`ShopMobileMenuShopTab.tsx`**: **`SHOP_TAB_ITEMS`** order … **BUNDLES** → **BUILD-A-WIG** → **BOOKING** → **ORDER AUTHORIZATION FORM**. **`constants/brandMenu.ts`**: **`BRAND_MENU_ITEMS`** … **REVIEWS** → **CAREERS** → **FAQ** → **TERMS**; **`BRAND_SLUGS`** reordered to match (**`reviews`**, **`careers`**, **`faq`**, **`terms`**).
+
+---
+
+## 2026-03-30 — BCF PDP selections: Noir-sized chips, build-a-wig color rings, red selected chrome
+
+**Context (this chat):** User asked bundles/closures/frontals PDP option buttons to match **Noir** unit page **font sizes and widths**, color swatches to use the same **gray/white ring** treatment as **build-a-wig color** **`ThumbBox`**, and **selected** options to use **red text + red border** (not black).
+
+**Changes:** **`texture-category-product/page.tsx`**: **`bcfOptionBtnTypography`** (**11px** Futura Medium, clamp padding, **`minWidth: clamp(50px, 12vw, 75px)`** like Noir caps); **`bcfOptionSelectedChrome`** / **`BCF_OPTION_RED`**; origin / texture / lace / length buttons use that stack; lace uses wider **`minWidth: clamp(72px, 18vw, 130px)`** (Noir flexible-cap scale); length grid **`max-w-[320px]`** + per-cell **`maxWidth: clamp(52px, 14vw, 76px)`**. **`BcfColorSwatchDonut`** duplicates **`ThumbBox`** gray/white/color circles (**35px**); color cells **60px** wide, **9px** label; selected state **#EB1C24** border + label text.
+
+---
+
+## 2026-03-29 — Order authorization: TOOLS menu + `/tools/order-form` route
+
+**Context (this chat):** User asked to put **ORDER AUTHORIZATION FORM** **under GIFT CARD** on the **TOOLS** tab of the mobile menu toggle (not SHOP), and to change the **canonical URL** and **nav/breadcrumb copy** from **SHOP** to **TOOLS**.
+
+**Decisions / outcomes:** Public route is **`/tools/order-form`**; **`/shop/order-form`** **301-style** client redirect (**`<Navigate replace>`**) for old links. Mobile **TOOLS** tab lists **GIFT CARD** then **ORDER AUTHORIZATION FORM** via shared **`ShopMobileMenuToolsTab`**.
+
+**Changes:** **`ShopMobileMenuToolsTab.tsx`** (links to **`/tools/gift-card`** and **`/tools/order-form`**). **`ShopMobileMenuShopTab.tsx`**: removed order-form from SHOP tab (from prior work in thread). **`App.tsx`**: **`/tools/order-form`** → **`OrderFormPage`**; **`/shop/order-form`** → redirect. **`pages/shop/order-form/page.tsx`**: breadcrumb **TOOLS >** linking to **`/tools`**; default **`mobileMenuActiveTab`** **`TOOLS`**; TOOLS drawer uses **`ShopMobileMenuToolsTab`**. **Navigations** to the form updated to **`/tools/order-form`** in **`checkout/confirm/page.tsx`**, **`orders/page.tsx`**, **`account/concierge/page.tsx`**. Replaced gift-card-only TOOLS drawer blocks with **`ShopMobileMenuToolsTab`** across **~47** layout/page files (bulk replace + indent normalization). **`motherboard/CODEBASE.md`**: note **`tools/order-form`** and redirect.
+
+---
+
+## 2026-03-30 — BCF cart + PDP: no build-a-wig edit link, PDP thumb nav, tax + Klarna copy
+
+**Context (this chat):** User wanted **bundles / closures / frontals** cart lines (from booking/shop BCF PDP, **`type: 'shop-texture-category'`**) to **not** show **EDIT IN BUILD-A-WIG**; **thumbnail taps** should open the correct **`/shop/{category}?texture=…`** PDP; BCF product pages should show **(EXCLUDING SALES TAX)** under the main price and **OR 4 PAYMENTS … KLARNA** like Noir units; checkout summary should show the right thumb for those lines.
+
+**Changes:** **`utils/bcfProductOptions.ts`**: **`shopBcfPdpHref`**, **`shopBcfPdpHrefFromCartItem`**. **`CartDropdown.tsx`** & **`shopping-bag/page.tsx`** (cart + saved): exclude **`shop-texture-category`** from edit link; thumbnail **`onClick`** resolves **BCF** URL before unit name fallbacks. **`shop/texture-category-product/page.tsx`**: tax line, stars, Klarna line ( **`formatPrice(Math.ceil(displayPrice / 4))`** ); hair-profile block **`translateY`** **-118px → -102px** for spacing. **`checkout/page.tsx`**: **`getItemImage`** returns **`item.image`** when **`type === 'shop-texture-category'`**.
+
+---
+
+## 2026-03-30 — SHOP menu: BOOKING above UNITS
+
+**Context (this chat):** User asked to move **BOOKING** **above** **UNITS** on the mobile menu toggle (SHOP tab).
+
+**Changes:** **`ShopMobileMenuShopTab.tsx`**: **`SHOP_TAB_ITEMS`** order is now **BOOKING** → **UNITS** → **HD LACE** → **BUNDLES** → **BUILD-A-WIG**.
+
+---
+
+## 2026-03-30 — BCF PDP: revert vertical chip gaps; horizontal gap-3
+
+**Context (this chat):** User did **not** want the prior **vertical** margin changes between **hair profile / texture / length** ( **`mb-6`**, label margin tweaks); they wanted **horizontal** spacing between option chips instead.
+
+**Changes:** **`shop/texture-category-product/page.tsx`**: lace row **`mb-6` → `mb-3`**; length grid **`mb-6` → `mb-3`**; **hair length** Bohemy label **`margin` `12px` → `22px`** top (restored). **Horizontal:** origin / texture / lace flex rows **`gap-2` → `gap-3`**; length grid **`gap-2` → `gap-3`**; hair color swatch row **`gap-x-2` → `gap-x-3`**.
 

@@ -6,6 +6,8 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { clearAppAuth } from '../../../utils/adminAuth';
+import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
+import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 
 const TITLES: Record<string, string> = {
   '/shop/bundles': 'BUNDLES',
@@ -423,128 +425,22 @@ export default function ShopCategoryPage() {
                 <div style={{ flex: '1', overflowY: 'auto', marginBottom: '20px', minHeight: '0' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
                     {mobileMenuActiveTab === 'TOOLS' ? (
-                      ['GIFT CARD'].map((item, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between cursor-pointer"
-                          onClick={() => navigate('/tools/gift-card')}
-                        >
-                          <span
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '14px',
-                              color: 'black',
-                              fontWeight: '500',
-                              textTransform: 'uppercase',
-                              transform: 'translateX(13px)'
-                            }}
-                          >
-                            {item}
-                          </span>
-                        </div>
-                      ))
+                      <ShopMobileMenuToolsTab
+                        navigate={navigate}
+                        closeMenu={() => setShowMobileMenu(false)}
+                        labelTranslateX="13px"
+                      />
                     ) : mobileMenuActiveTab === 'BRAND' ? (
                       <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />
                     ) : (
-                      [
-                        { label: 'UNITS', hasArrow: true, isExpandable: true, subItems: ['STRAIGHT', 'WAVY', 'CURLY'] },
-                        { label: 'BOOKING', hasArrow: true, isExpandable: true, subItems: ['APPOINTMENT', 'CONSULTATION'] },
-                        { label: 'BUILD-A-WIG', hasArrow: false },
-                        { label: 'ORDER AUTHORIZATION FORM', hasArrow: false }
-                      ].map((item, index) => (
-                        <div key={index}>
-                          <div
-                            className="flex items-center justify-between"
-                            style={{
-                              alignItems: 'center',
-                              cursor: item.label === 'ORDER AUTHORIZATION FORM' ? 'pointer' : 'default'
-                            }}
-                            onClick={() => {
-                              if (!item.isExpandable && item.label === 'ORDER AUTHORIZATION FORM') {
-                                navigate('/shop/order-form');
-                              } else if (!item.isExpandable && item.label === 'BUILD-A-WIG') {
-                                navigate('/build-a-wig');
-                              }
-                            }}
-                          >
-                            <span
-                              style={{
-                                fontFamily: '"Futura PT Book"',
-                                fontSize: '14px',
-                                color: 'black',
-                                fontWeight: '500',
-                                textTransform: 'uppercase',
-                                cursor: 'pointer',
-                                transform: 'translateX(13px)'
-                              }}
-                              onClick={() => {
-                                if (item.isExpandable) {
-                                  if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                    navigate('/shop/units');
-                                  } else {
-                                    handleMobileMenuItemToggle(item.label);
-                                  }
-                                } else if (item.label === 'ORDER AUTHORIZATION FORM') {
-                                  navigate('/shop/order-form');
-                                } else if (item.label === 'BUILD-A-WIG') {
-                                  navigate('/build-a-wig');
-                                }
-                              }}
-                            >
-                              {item.label}
-                            </span>
-                            {item.hasArrow && (
-                              <img
-                                src="/assets/NOIR/closed-arrow.svg"
-                                alt=""
-                                style={{
-                                  width: '16px',
-                                  height: '16px',
-                                  transform: `${
-                                    mobileMenuExpandedItems.includes(item.label)
-                                      ? 'translateX(-11px) translateY(-4px) rotate(90deg)'
-                                      : 'translateX(-11px) translateY(-4px) rotate(0deg)'
-                                  }`,
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  cursor: 'pointer'
-                                }}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  if (item.isExpandable) handleMobileMenuItemToggle(item.label);
-                                }}
-                              />
-                            )}
-                          </div>
-                          {item.isExpandable && mobileMenuExpandedItems.includes(item.label) && item.subItems && (
-                            <div className="ml-4 mt-2 space-y-2">
-                              {item.subItems.map((subItem, subIndex) => (
-                                <div
-                                  key={subIndex}
-                                  className="flex items-center cursor-pointer"
-                                  onClick={() => {
-                                    if (subItem === 'STRAIGHT') navigate('/units/straight');
-                                    else if (subItem === 'WAVY') navigate('/units/wavy');
-                                    else if (subItem === 'CURLY') navigate('/units/curly');
-                                  }}
-                                >
-                                  <span
-                                    style={{
-                                      fontFamily: '"Futura PT Book"',
-                                      fontSize: '14px',
-                                      color: '#EB1C24',
-                                      fontWeight: '500',
-                                      textTransform: 'uppercase'
-                                    }}
-                                  >
-                                    {subItem}
-                                  </span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      ))
+                                            <ShopMobileMenuShopTab
+                                              navigate={navigate}
+                                              mobileMenuExpandedItems={mobileMenuExpandedItems}
+                                              handleMobileMenuItemToggle={handleMobileMenuItemToggle}
+                                              closeSubItemMenu={() => setShowMobileMenu(false)}
+                                              labelTranslateX="13px"
+                                              duplicateRowClickForStaticLinks
+                                            />
                     )}
                   </div>
                 </div>

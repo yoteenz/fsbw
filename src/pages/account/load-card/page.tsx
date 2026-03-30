@@ -13,6 +13,8 @@ import {
 } from '../../../utils/adminBrandCodes';
 /** Bundled asset so dev/prod always resolve (avoids broken `/load-card.png` when public isn’t deployed). */
 import loadCardImage from './load-card.png';
+import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
+import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 
 /** Uppercase A–Z / 0–9 only, max 12 chars, shown as XXXX-XXXX-XXXX */
 function formatGiftBarcodeInput(raw: string): string {
@@ -503,131 +505,22 @@ function LoadCardPage() {
                   <div style={{ flex: '1', overflowY: 'auto', marginBottom: '20px', minHeight: '0' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
                       {mobileMenuActiveTab === 'TOOLS' ? (
-                        ['GIFT CARD'].map((item, index) => (
-                          <div 
-                            key={index} 
-                            className="flex items-center justify-between cursor-pointer"
-                            onClick={() => navigate('/tools/gift-card')}
-                          >
-                            <span style={{ 
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '14px',
-                              color: 'black',
-                              fontWeight: '500',
-                              textTransform: 'uppercase',
-                              transform: 'translateX(13px)'
-                            }}>
-                              {item}
-                            </span>
-                          </div>
-                        ))
+                        <ShopMobileMenuToolsTab
+                          navigate={navigate}
+                          closeMenu={() => setShowMobileMenu(false)}
+                          labelTranslateX="13px"
+                        />
                       ) : mobileMenuActiveTab === 'BRAND' ? (
                         <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />
                       ) : (
                         // SHOP tab
-                        [
-                          { label: 'UNITS', hasArrow: true, isExpandable: true, subItems: ['STRAIGHT', 'WAVY', 'CURLY'] },
-                          { label: 'BOOKING', hasArrow: true, isExpandable: true, subItems: ['APPOINTMENT', 'CONSULTATION'] },
-                          { label: 'BUILD-A-WIG', hasArrow: false },
-                          { label: 'ORDER AUTHORIZATION FORM', hasArrow: false }
-                        ].map((item, index) => (
-                          <div key={index}>
-                            <div 
-                              className="flex items-center justify-between"
-                              style={{ alignItems: 'center' }}
-                            >
-                              <span 
-                                style={{
-                                  fontFamily: '"Futura PT Book"',
-                                  fontSize: '14px',
-                                  color: 'black',
-                                  fontWeight: '500',
-                                  textTransform: 'uppercase',
-                                  transform: 'translateX(13px)',
-                                  cursor: 'pointer'
-                                }}
-                                onClick={() => {
-                                  if (item.label === 'BUILD-A-WIG') {
-                                    navigate('/build-a-wig');
-                                  } else if (item.isExpandable) {
-                                    if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                      navigate('/shop/units');
-                                    } else {
-                                      // Otherwise, toggle expansion
-                                      handleMobileMenuItemToggle(item.label);
-                                    }
-                                  } else if (item.label === 'ORDER AUTHORIZATION FORM') {
-                                    navigate('/shop/order-form');
-                                  }
-                                }}
-                              >
-                                {item.label}
-                              </span>
-                              {item.hasArrow && (
-                                <img
-                                  src="/assets/NOIR/closed-arrow.svg"
-                                  alt="Arrow"
-                                  style={{ 
-                                    width: '16px', 
-                                    height: '16px',
-                                    transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-11px) translateY(-4px) rotate(90deg)' : 'translateX(-11px) translateY(-4px) rotate(0deg)'}`,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    cursor: 'pointer',
-                                    transition: 'transform 0.2s'
-                                  }}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (item.isExpandable) {
-                                      if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
-                                        navigate('/shop/units');
-                                      } else {
-                                        handleMobileMenuItemToggle(item.label);
-                                      }
-                                    }
-                                  }}
-                                />
-                              )}
-                            </div>
-                            {item.isExpandable && mobileMenuExpandedItems.includes(item.label) && item.subItems && (
-                              <div style={{ marginLeft: '20px', marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                {item.subItems.map((subItem, subIndex) => (
-                                  <span
-                                    key={subIndex}
-                                    style={{
-                                      fontFamily: '"Futura PT Book"',
-                                      fontSize: '14px',
-                                      color: '#EB1C24',
-                                      fontWeight: '500',
-                                      textTransform: 'uppercase',
-                                      cursor: 'pointer'
-                                    }}
-                                    onClick={() => {
-                                      if (item.label === 'UNITS') {
-                                        if (subItem === 'STRAIGHT') {
-                                          navigate('/units/straight');
-                                        } else if (subItem === 'WAVY') {
-                                          navigate('/units/wavy');
-                                        } else if (subItem === 'CURLY') {
-                                          navigate('/units/curly');
-                                        }
-                                      } else if (item.label === 'BOOKING') {
-                                        // Handle booking navigation if needed
-                                        if (subItem === 'APPOINTMENT') {
-                                          // navigate('/booking/appointment');
-                                        } else if (subItem === 'CONSULTATION') {
-                                          // navigate('/booking/consultation');
-                                        }
-                                      }
-                                    }}
-                                  >
-                                    {subItem}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        ))
+                                              <ShopMobileMenuShopTab
+                                                navigate={navigate}
+                                                mobileMenuExpandedItems={mobileMenuExpandedItems}
+                                                handleMobileMenuItemToggle={handleMobileMenuItemToggle}
+                                                closeSubItemMenu={() => setShowMobileMenu(false)}
+                                                labelTranslateX="13px"
+                                              />
                       )}
                     </div>
                   </div>

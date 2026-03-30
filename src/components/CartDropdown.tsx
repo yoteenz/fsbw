@@ -7,6 +7,9 @@ import { trackActivity } from '../utils/activity';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../utils/perUserStorage';
 import { getPointsMultiplier } from '../constants/tiers';
 import { getEffectiveTierName, getEffectiveSubscriptionTier } from '../utils/adminAuth';
+import { bookingCartItemThumbnailSrc } from '../utils/bookingBadges';
+import { bookingAppointmentHrefForCartItem, bookingConsultationHrefForCartItem } from '../utils/bookingMemberRoutes';
+import { shopBcfPdpHrefFromCartItem } from '../utils/bcfProductOptions';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -877,7 +880,17 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     return null;
                   }
                   
-                  return itemsToShow.map((item) => (
+                  return itemsToShow.map((item) => {
+                    const isBookingCartThumb =
+                      item.type === 'booking-consult' || item.type === 'booking-appointment';
+                    /** Cart dropdown: booking badge PNGs 25% smaller than standard 88px thumb (88 × 0.75 = 66). */
+                    const cartThumbBoxPx =
+                      item.name === 'GIFT CARD' || item.type === 'gift-card'
+                        ? 108
+                        : isBookingCartThumb
+                          ? 66
+                          : 88;
+                    return (
                     <div key={item.id} className="bg-transparent border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box', ...(viewingDetailsFor === item.id ? { paddingBottom: '16px' } : {}) }}>
                     <div className="flex items-center justify-start space-x-3" style={{ minHeight: '120px', height: viewingDetailsFor === item.id ? 'auto' : '120px', paddingTop: '0', paddingBottom: '0' }}>
                     {/* Thumbnail Container */}
@@ -887,31 +900,31 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         <div 
                           className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
                           style={{ 
-                            width: '88px', 
-                            height: '88px',
+                            width: `${cartThumbBoxPx}px`, 
+                            height: `${cartThumbBoxPx}px`,
                             margin: '0'
                           }}
                         onClick={() => {
-                          // Determine the correct product page route based on item name
-                          let productRoute = '/straight/noir'; // Default fallback
+                          let productRoute = '/straight/noir';
                           if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
                             productRoute = '/tools/gift-card';
-                          } else if (item.name === 'NOIR') {
-                            productRoute = '/straight/noir';
-                          } else if (item.name === 'BLANCO') {
-                            productRoute = '/straight/blanco';
-                          } else if (item.name === 'SOFT WAVE') {
-                            productRoute = '/wavy/soft-wave';
-                          } else if (item.name === 'SOFT CURL') {
-                            productRoute = '/curly/soft-curl';
-                          } else if (item.name === 'BEACH WAVE') {
-                            productRoute = '/wavy/beach-wave';
-                          } else if (item.name === 'OCEAN CURL') {
-                            productRoute = '/curly/ocean-curl';
+                          } else if (item.type === 'booking-consult') {
+                            productRoute = bookingConsultationHrefForCartItem(item as any);
+                          } else if (item.type === 'booking-appointment') {
+                            productRoute = bookingAppointmentHrefForCartItem(item as any);
+                          } else {
+                            const bcfHref = shopBcfPdpHrefFromCartItem(item as any);
+                            if (bcfHref) productRoute = bcfHref;
+                            else if (item.name === 'NOIR') productRoute = '/straight/noir';
+                            else if (item.name === 'BLANCO') productRoute = '/straight/blanco';
+                            else if (item.name === 'SOFT WAVE') productRoute = '/wavy/soft-wave';
+                            else if (item.name === 'SOFT CURL') productRoute = '/curly/soft-curl';
+                            else if (item.name === 'BEACH WAVE') productRoute = '/wavy/beach-wave';
+                            else if (item.name === 'OCEAN CURL') productRoute = '/curly/ocean-curl';
                           }
-                          
-                          onClose(); // Close the dropdown first
-                          navigate(productRoute); // Navigate to product-specific unit page
+
+                          onClose();
+                          navigate(productRoute);
                         }}
                       >
                         <img
@@ -920,7 +933,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
                               return '/assets/gift-card asset.png';
                             }
-                            
+                            const bookingThumb = bookingCartItemThumbnailSrc(item as any);
+                            if (bookingThumb) return bookingThumb;
+
                             // Determine thumbnail based on product name and hairline selection
                             const hairline = item.hairline || 'NATURAL';
                             const hairlineUpper = hairline.toUpperCase();
@@ -965,16 +980,26 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             return item.image || '/assets/NOIR/noir-thumb.png';
                           })()}
                           alt={item.name}
-                          className="object-cover rounded"
+                          className={
+                            item.type === 'booking-consult' || item.type === 'booking-appointment'
+                              ? 'object-contain rounded'
+                              : 'object-cover rounded'
+                          }
                           style={{ 
-                            width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '108px' : '88px',
-                            height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '108px' : '88px'
+                            width: `${cartThumbBoxPx}px`,
+                            height: `${cartThumbBoxPx}px`
                           }}
                         />
                       </div>
                       
                         {/* EDIT IN BUILD-A-WIG text - Only show for units, not gift cards */}
-                        {!(item.name === 'GIFT CARD' || item.type === 'gift-card') && (
+                        {!(
+                          item.name === 'GIFT CARD' ||
+                          item.type === 'gift-card' ||
+                          item.type === 'booking-consult' ||
+                          item.type === 'booking-appointment' ||
+                          item.type === 'shop-texture-category'
+                        ) && (
                           <p 
                             className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
                             style={{ 
@@ -1150,7 +1175,16 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
                             return 'DIGITAL ONLY';
                           }
-                          
+                          if (
+                            (item.type === 'booking-consult' || item.type === 'booking-appointment') &&
+                            (item as any).bookingBagSubtitle
+                          ) {
+                            return (item as any).bookingBagSubtitle;
+                          }
+                          if (item.type === 'booking-consult' || item.type === 'booking-appointment') {
+                            return 'BOOKING DEPOSIT';
+                          }
+
                           // Get the correct hair origin based on product name
                           const getHairOrigin = (productName: string) => {
                             switch (productName) {
@@ -1596,7 +1630,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     </div>
                 </div>
                 </div>
-                  ));
+                  );
+                  });
                 })()}
             </div>
           )}

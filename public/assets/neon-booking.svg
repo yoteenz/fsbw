@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 168 36" width="168" height="36" role="img" aria-label="Booking">
+  <defs>
+    <filter id="neonBookingGlow" x="-35%" y="-35%" width="170%" height="170%">
+      <feGaussianBlur stdDeviation="1.4" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Stroke pass so the word reads on light landing art (matches neon-products/tools vibe) -->
+  <text
+    x="84"
+    y="25"
+    text-anchor="middle"
+    font-family="system-ui, 'Futura PT Medium', Futura, sans-serif"
+    font-size="13"
+    font-weight="700"
+    letter-spacing="0.28em"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="2.2"
+    stroke-linejoin="round"
+    paint-order="stroke fill"
+    style="text-transform: uppercase"
+  >BOOKING</text>
+  <text
+    x="84"
+    y="25"
+    text-anchor="middle"
+    font-family="system-ui, 'Futura PT Medium', Futura, sans-serif"
+    font-size="13"
+    font-weight="700"
+    letter-spacing="0.28em"
+    fill="#EB1C24"
+    filter="url(#neonBookingGlow)"
+    style="text-transform: uppercase"
+  >BOOKING</text>
+</svg>

@@ -12,6 +12,8 @@ import { trackActivity } from '../../../utils/activity';
 import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
 import { clearAppAuth, isAyoteenzAdminAccount, isAdminEmail, isProtectedFromAccountDeletion } from '../../../utils/adminAuth';
 import { profileSocialStorageValue, stripSocialPlatformPrefixes, type SocialPlatform } from '../../../utils/socialLinks';
+import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
+import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 
 const inputBaseStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Demi"',
@@ -764,72 +766,26 @@ function SettingsPage() {
                 <div style={{ flex: '1', overflowY: 'auto', marginBottom: '20px', minHeight: '0' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
                     {mobileMenuActiveTab === 'TOOLS' ? (
-                      <div className="flex items-center justify-between cursor-pointer" onClick={() => navigate('/tools/gift-card')}>
-                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', color: 'black', fontWeight: '500', textTransform: 'uppercase', transform: 'translateX(13px)' }}>GIFT CARD</span>
-                      </div>
+
+                      <ShopMobileMenuToolsTab
+
+                        navigate={navigate}
+
+                        closeMenu={() => setShowMobileMenu(false)}
+
+                        labelTranslateX="13px"
+
+                      />
                     ) : mobileMenuActiveTab === 'BRAND' ? (
                       <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />
                     ) : (
-                      [
-                        { label: 'UNITS', hasArrow: true, isExpandable: true, subItems: ['STRAIGHT', 'WAVY', 'CURLY'] },
-                        { label: 'BOOKING', hasArrow: true, isExpandable: true, subItems: ['APPOINTMENT', 'CONSULTATION'] },
-                        { label: 'BUILD-A-WIG', hasArrow: false },
-                        { label: 'ORDER AUTHORIZATION FORM', hasArrow: false }
-                      ].map((item, index) => (
-                        <div key={index}>
-                          <div className="flex items-center justify-between" style={{ alignItems: 'center' }}>
-                            <span
-                              style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', color: 'black', fontWeight: '500', textTransform: 'uppercase', cursor: 'pointer', transform: 'translateX(13px)' }}
-                              onClick={() => {
-                                if (item.isExpandable) {
-                                  if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) navigate('/shop/units');
-                                  else handleMobileMenuItemToggle(item.label);
-                                } else if (item.label === 'BUILD-A-WIG') navigate('/build-a-wig');
-                                else if (item.label === 'ORDER AUTHORIZATION FORM') navigate('/shop/order-form');
-                              }}
-                            >
-                              {item.label}
-                            </span>
-                            {item.hasArrow && (
-                              <img
-                                src="/assets/NOIR/closed-arrow.svg"
-                                alt="Arrow"
-                                style={{
-                                  width: '16px',
-                                  height: '16px',
-                                  transform: `${mobileMenuExpandedItems.includes(item.label) ? 'translateX(-11px) translateY(-4px) rotate(90deg)' : 'translateX(-11px) translateY(-4px) rotate(0deg)'}`,
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  cursor: 'pointer'
-                                }}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  if (item.isExpandable) handleMobileMenuItemToggle(item.label);
-                                }}
-                              />
-                            )}
-                          </div>
-                          {item.isExpandable && mobileMenuExpandedItems.includes(item.label) && item.subItems && (
-                            <div style={{ marginLeft: '20px', marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                              {item.subItems.map((subItem, subIndex) => (
-                                <span
-                                  key={subIndex}
-                                  style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', cursor: 'pointer' }}
-                                  onClick={() => {
-                                    if (item.label === 'UNITS') {
-                                      if (subItem === 'STRAIGHT') navigate('/units/straight');
-                                      else if (subItem === 'WAVY') navigate('/units/wavy');
-                                      else if (subItem === 'CURLY') navigate('/units/curly');
-                                    }
-                                  }}
-                                >
-                                  {subItem}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      ))
+                                            <ShopMobileMenuShopTab
+                                              navigate={navigate}
+                                              mobileMenuExpandedItems={mobileMenuExpandedItems}
+                                              handleMobileMenuItemToggle={handleMobileMenuItemToggle}
+                                              closeSubItemMenu={() => setShowMobileMenu(false)}
+                                              labelTranslateX="13px"
+                                            />
                     )}
                   </div>
                 </div>
@@ -1198,26 +1154,6 @@ function SettingsPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => navigate('/brand/payment')}
-                    style={{
-                      fontFamily: '"Futura PT Book"',
-                      fontSize: '12px',
-                      color: 'black',
-                      textTransform: 'uppercase',
-                      fontWeight: '500',
-                      lineHeight: '3.2',
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: 0,
-                      textAlign: 'left',
-                      marginBottom: '-8px'
-                    }}
-                  >
-                    PAYMENT
-                  </button>
-                  <button
-                    type="button"
                     onClick={() => navigate('/brand/contact')}
                     style={{
                       fontFamily: '"Futura PT Book"',
@@ -1225,7 +1161,7 @@ function SettingsPage() {
                       color: 'black',
                       textTransform: 'uppercase',
                       fontWeight: '500',
-                      lineHeight: '3.2',
+                      lineHeight: '1.2',
                       background: 'none',
                       border: 'none',
                       cursor: 'pointer',
