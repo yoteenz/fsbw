@@ -11,6 +11,7 @@ import type { CurrencyRatesRecord } from '../../../utils/currencyFormat';
 import { formatPriceUsd } from '../../../utils/currencyFormat';
 import {
   shopTextureCategoryThumbDisplayScale,
+  shopTextureCategoryCurlyThumbTranslateYPx,
   shopTextureCategoryThumbFallbackSrc,
   shopTextureCategoryThumbSrc,
   isShopTextureCurlyFrontals

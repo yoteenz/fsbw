@@ -4599,3 +4599,21 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Changes:** **`src/pages/checkout/page.tsx`**: **`paddingTop`** for **`isSubscriptionUpgrade && isMembershipTierThumb`** cells **`0` → `5px`**. Wrapped **DIGITAL ONLY** (and following cap line + price) in a div with **`transform: translateY(1.5px)`** only when **`isSubscriptionUpgrade && isMembershipTierThumb`**; title **`<p>`** stays outside that wrapper.
 
+---
+
+## 2026-03-29 — Vercel build: `shopTextureCategoryCurlyThumbTranslateYPx` missing
+
+**Context (this chat):** **`npm run build`** on Vercel failed with **`TS2304: Cannot find name 'shopTextureCategoryCurlyThumbTranslateYPx'`** in **`texture-category-product/page.tsx`**.
+
+**Changes:** **`src/utils/shopTextureCategoryThumb.ts`**: exported **`shopTextureCategoryCurlyThumbTranslateYPx`** — returns **`-2`** for **curly + frontals** (same nudge as **`products/page.tsx`** marble thumbs), else **`null`**. **`src/pages/shop/texture-category-product/page.tsx`**: import the helper from the util.
+
+---
+
+## 2026-03-29 — Unit PDP marble strips: arrows match Noir (Blanco, Soft wave, Ocean curl)
+
+**Context (this chat):** User said **similar / recently** carousel **right** arrows on **Soft wave** + **Blanco** and **both** strips on **Ocean curl** were misaligned vs **Noir**.
+
+**Root cause:** Noir uses **`marbleStripNavRowStyle`** (relative row + absolute arrows) and **`marbleStripNavArrowStyle(side, is3D)`** from **`marbleStripStyles.ts`**. Blanco’s **SIMILAR** left arrow used a plain inline **`transform`** (no **`position: absolute`**, wrong vertical math vs **`translateY(calc(-50% - Npx))`**). Soft wave’s **SIMILAR** right arrow had the same issue. Ocean curl used **`flex` + `space-between` + `gap: 10px`** for the nav row (arrows in document flow) and **RECENTLY** left used the bad inline transform.
+
+**Changes:** **`blanco/page.tsx`**: SIMILAR left **`button`** → **`marbleStripNavArrowStyle('left', is3DView)`**. **`soft-wave/page.tsx`**: SIMILAR right → **`marbleStripNavArrowStyle('right', is3DView)`**. **`ocean-curl/page.tsx`**: import **`marbleStripNavRowStyle`**; SIMILAR + RECENTLY outer rows use it; RECENTLY left → **`marbleStripNavArrowStyle('left', is3DView)`**.
+

@@ -17,6 +17,7 @@ import {
   marbleStripCellOuter,
   marbleStripCellBand,
   marbleStripStarsRowStyle,
+  marbleStripNavRowStyle,
   marbleStripNavMiddleColStyle,
   marbleStripNavArrowStyle,
   marbleStripViewportStyle,
@@ -2212,7 +2213,7 @@ function OceanCurlSelection() {
             </div>
             
             {/* Content Area */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+            <div style={marbleStripNavRowStyle}>
               {/* Left Arrow */}
               <button 
                 onClick={handleSimilarProductsLeftArrow}
@@ -2580,22 +2581,11 @@ function OceanCurlSelection() {
             </div>
             
             {/* Content Area */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+            <div style={marbleStripNavRowStyle}>
               {/* Left Arrow */}
               <button 
                 onClick={handleRecentlyViewedLeftArrow}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  cursor: 'pointer',
-                  padding: '5px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                  minHeight: '50px',
-                  transform: `translateX(10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                }}>
+                style={marbleStripNavArrowStyle('left', is3DView)}>
                 <img
                   src="/assets/NOIR/left-facing-arrow.svg"
                   alt="Left Arrow"

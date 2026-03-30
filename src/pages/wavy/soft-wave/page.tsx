@@ -2454,18 +2454,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
               {/* Right Arrow */}
               <button 
                 onClick={handleSimilarProductsRightArrow}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  cursor: 'pointer',
-                  padding: '5px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                  minHeight: '50px',
-                  transform: `translateX(-10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                }}>
+                style={marbleStripNavArrowStyle('right', is3DView)}>
                 <img
                   src="/assets/NOIR/right-facing-arrow.svg"
                   alt="Right Arrow"

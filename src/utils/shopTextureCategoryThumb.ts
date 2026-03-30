@@ -56,3 +56,11 @@ export function isShopTextureCurlyFrontals(
 ): boolean {
   return texture === 'curly' && category === 'frontals';
 }
+
+/** Extra hero-thumb translateY (px); `null` = no img-level nudge. Matches shop marble grid (`products/page.tsx`). */
+export function shopTextureCategoryCurlyThumbTranslateYPx(
+  texture: ShopTextureCategoryThumbTexture,
+  category: ShopTextureCategoryThumbCategory
+): number | null {
+  return isShopTextureCurlyFrontals(texture, category) ? -2 : null;
+}

@@ -2127,18 +2127,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
               <div style={marbleStripNavRowStyle}>
                 <button 
                   onClick={handleSimilarProductsLeftArrow}
-                  style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    padding: '5px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '50px',
-                    transform: `translateX(10px) translateY(${is3DView ? '-26px' : '-10px'})`
-                  }}>
+                  style={marbleStripNavArrowStyle('left', is3DView)}>
                   <img
                     src="/assets/NOIR/left-facing-arrow.svg"
                     alt="Left Arrow"
