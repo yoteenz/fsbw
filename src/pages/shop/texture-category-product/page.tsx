@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useMarbleStripSnapStep } from '../../../hooks/useMarbleStripSnapStep';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
@@ -25,8 +26,10 @@ import {
   bcfDefaultOriginForRouteTexture,
   bcfInitialOriginFromPathname,
   bcfLaceOptionsForCategory,
+  bcfOptionSelectedChrome,
   bcfPriceAdjustments,
   bcfTexturesForOrigin,
+  BCF_OPTION_RED,
   type BcfOriginId
 } from '../../../utils/bcfProductOptions';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../../utils/premiumMemberAccess';
@@ -45,9 +48,9 @@ type Texture = 'straight' | 'wavy' | 'curly';
 type Category = 'bundles' | 'closures' | 'frontals';
 
 const TEXTURE_META: Record<Texture, { label: string; subline: string }> = {
-  straight: { label: 'STRAIGHT', subline: 'RAW HAIR' },
-  wavy: { label: 'WAVY', subline: 'RAW HAIR' },
-  curly: { label: 'CURLY', subline: 'RAW HAIR' }
+  straight: { label: 'STRAIGHT', subline: 'RAW HUMAN HAIR' },
+  wavy: { label: 'WAVY', subline: 'RAW HUMAN HAIR' },
+  curly: { label: 'CURLY', subline: 'RAW HUMAN HAIR' }
 };
 
 const CATEGORY_TITLE: Record<Category, string> = {
@@ -81,6 +84,100 @@ function shopBcfUrl(category: Category, texture: Texture): string {
 
 const TEXTURE_ORDER: Texture[] = ['straight', 'wavy', 'curly'];
 
+/** Bundles PDP only — `public/assets` (wavy video file is `wavy-bundle-product.MP4` in repo). */
+const BUNDLE_PHOTO_BY_TEXTURE: Record<Texture, string> = {
+  straight: '/assets/straight-bundle-product.JPG',
+  wavy: '/assets/wavy-bundle-product.JPG',
+  curly: '/assets/curly-bundle-product.JPG'
+};
+
+const BUNDLE_VIDEO_BY_TEXTURE: Record<Texture, string> = {
+  straight: '/assets/straight-bundle-video.MP4',
+  wavy: '/assets/wavy-bundle-product.MP4',
+  curly: '/assets/curly-bundle-video.MP4'
+};
+
+/** Wavy/curly closures & frontals — same PHOTO/VIDEO + FRONT/BACK assets as `public/assets`. */
+const BCF_CF_PHOTO: Record<
+  'closures' | 'frontals',
+  Record<'wavy' | 'curly', { front: string; back: string }>
+> = {
+  closures: {
+    wavy: {
+      front: '/assets/wavy-closure-product-front.JPG',
+      back: '/assets/wavy-closure-product-back.JPG'
+    },
+    curly: {
+      front: '/assets/curly-closure-product-front.JPG',
+      back: '/assets/curly-closure-product-back.JPG'
+    }
+  },
+  frontals: {
+    wavy: {
+      front: '/assets/wavy-frontal-product-front.JPG',
+      back: '/assets/wavy-frontal-product-back.JPG'
+    },
+    curly: {
+      front: '/assets/curly-frontal-product-front.JPG',
+      back: '/assets/curly-frontal-product-back.JPG'
+    }
+  }
+};
+
+const BCF_CF_VIDEO: Record<
+  'closures' | 'frontals',
+  Record<'wavy' | 'curly', { front: string; back: string }>
+> = {
+  closures: {
+    wavy: {
+      front: '/assets/wavy-closure-video-front.MP4',
+      back: '/assets/wavy-closure-video-back.mov'
+    },
+    curly: {
+      front: '/assets/curly-closure-video-front.MP4',
+      back: '/assets/curly-closure-video-back.mov'
+    }
+  },
+  frontals: {
+    wavy: {
+      front: '/assets/wavy-frontal-video-front.mov',
+      back: '/assets/wavy-frontal-video-back.MP4'
+    },
+    curly: {
+      front: '/assets/curly-frontal-video-front.MP4',
+      back: '/assets/curly-frontal-video-back.mov'
+    }
+  }
+};
+
+/** Portrait bundle hero + texture row: wider/taller so card side margins aren’t excessive (mobile PDP). */
+const BUNDLE_HERO_LAYOUT_SCALE = 1.35;
+const BUNDLE_HERO_BASE_MAX_WIDTH_PX = 400;
+/** Portrait bundle shots: outer frame + inner slot are slender (not square). */
+const BUNDLE_THUMB_INNER_W_PX = Math.round(36 * BUNDLE_HERO_LAYOUT_SCALE);
+const BUNDLE_THUMB_INNER_H_PX = Math.round(64 * BUNDLE_HERO_LAYOUT_SCALE);
+/** Outer frame: inner + padding (no title/label captions on bundle hero thumbs). */
+const BUNDLE_THUMB_OUTER_W_PX = BUNDLE_THUMB_INNER_W_PX + Math.round(10 * BUNDLE_HERO_LAYOUT_SCALE);
+const BUNDLE_THUMB_OUTER_H_PX = BUNDLE_THUMB_INNER_H_PX + Math.round(10 * BUNDLE_HERO_LAYOUT_SCALE);
+const BUNDLE_HERO_MEDIA_MIN_HEIGHT_PX = Math.round(120 * BUNDLE_HERO_LAYOUT_SCALE);
+const BUNDLE_COPY_MARGIN_TOP_PX = Math.round(100 * BUNDLE_HERO_LAYOUT_SCALE) - 60;
+
+function bundlePdpHeroMaxWidthPx(tex: Texture): number {
+  return BUNDLE_HERO_BASE_MAX_WIDTH_PX * BUNDLE_HERO_LAYOUT_SCALE * shopTextureCategoryProductPageDisplayScale(tex);
+}
+
+/** Bundles PDP only: same hero + column width for straight / wavy / curly (no curly-only upscale). */
+const BUNDLE_PDP_BUNDLES_HERO_MAX_WIDTH_PX = bundlePdpHeroMaxWidthPx('straight');
+
+/**
+ * Bundles PDP hero slot: tall enough for portrait product JPG/video at `BUNDLE_PDP_BUNDLES_HERO_MAX_WIDTH_PX`
+ * (no fixed aspect-ratio clip — min height only so flex parents don’t collapse).
+ */
+const BUNDLE_PDP_HERO_MEDIA_MIN_HEIGHT_PX = Math.round(BUNDLE_PDP_BUNDLES_HERO_MAX_WIDTH_PX * 1.5);
+
+/** Closures/frontals bundle-style column: wide enough for any texture’s scaled hero. */
+const BUNDLE_PDP_CF_COLUMN_MAX_WIDTH_PX = Math.max(...TEXTURE_ORDER.map((t) => bundlePdpHeroMaxWidthPx(t)));
+
 type BcfProductTab = 'DETAILS' | 'SHIPPING' | 'POLICY' | 'CARE + STORAGE' | 'REVIEWS';
 
 const BCF_PRODUCT_TAB_ORDER: BcfProductTab[] = ['DETAILS', 'SHIPPING', 'POLICY', 'CARE + STORAGE', 'REVIEWS'];
@@ -90,12 +187,11 @@ const bcfBohemySubLabelStyle: React.CSSProperties = {
   fontSize: '19px',
   fontWeight: 400,
   textAlign: 'center',
-  margin: '6px 0 8px',
+                              margin: '26px 0 8px',
   color: '#000'
 };
 
 /** Match Noir unit PDP option chips (e.g. cap size): 11px Futura Medium + clamp padding. */
-const BCF_OPTION_RED = '#EB1C24';
 const bcfOptionBtnTypography: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
   fontSize: '11px',
@@ -109,13 +205,6 @@ const bcfOptionBtnTypography: React.CSSProperties = {
   backgroundColor: '#ffffff',
   cursor: 'pointer'
 };
-
-function bcfOptionSelectedChrome(selected: boolean): Pick<React.CSSProperties, 'border' | 'color'> {
-  return {
-    border: selected ? `1.3px solid ${BCF_OPTION_RED}` : '1.3px solid #000000',
-    color: selected ? BCF_OPTION_RED : '#000000'
-  };
-}
 
 /** Same gray/white/color rings as build-a-wig `ThumbBox` color swatches. */
 function BcfColorSwatchDonut({ colorCode }: { colorCode: string }) {
@@ -176,6 +265,12 @@ export default function ShopTextureCategoryProductPage() {
   const [isSignedIn, setIsSignedIn] = useState(() => localStorage.getItem('isSignedIn') === 'true');
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [showBcfColorUpgradeModal, setShowBcfColorUpgradeModal] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+  const [bundleShowVideo, setBundleShowVideo] = useState(false);
+  const [bcfCfShowVideo, setBcfCfShowVideo] = useState(false);
+  const [bcfCfShowBack, setBcfCfShowBack] = useState(false);
+  const bundleVideoRef = useRef<HTMLVideoElement>(null);
+  const bcfCfVideoRef = useRef<HTMLVideoElement>(null);
 
   const [bcfOrigin, setBcfOrigin] = useState<BcfOriginId>(() =>
     typeof window !== 'undefined'
@@ -227,6 +322,35 @@ export default function ShopTextureCategoryProductPage() {
   }, [location.pathname, location.search]);
 
   useEffect(() => {
+    if (category !== 'bundles') return;
+    const v = bundleVideoRef.current;
+    if (!v) return;
+    if (bundleShowVideo) {
+      v.play().catch(() => {});
+    } else {
+      v.pause();
+    }
+  }, [category, bundleShowVideo, texture]);
+
+  useEffect(() => {
+    if (category !== 'closures' && category !== 'frontals') return;
+    if (texture !== 'wavy' && texture !== 'curly') return;
+    const v = bcfCfVideoRef.current;
+    if (!v) return;
+    if (bcfCfShowVideo) {
+      v.play().catch(() => {});
+    } else {
+      v.pause();
+    }
+  }, [category, texture, bcfCfShowVideo, bcfCfShowBack]);
+
+  useEffect(() => {
+    if (category !== 'closures' && category !== 'frontals') return;
+    setBcfCfShowVideo(false);
+    setBcfCfShowBack(false);
+  }, [texture, category]);
+
+  useEffect(() => {
     const handleCartCountUpdate = (event: CustomEvent) => setCartCount(event.detail);
     const handleStorageChange = () => {
       try {
@@ -270,6 +394,14 @@ export default function ShopTextureCategoryProductPage() {
     const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
     localStorage.setItem(key, selectedCurrency);
   }, [selectedCurrency]);
+
+  const handleQuantityIncrease = () => {
+    setQuantity((prev) => Math.min(prev + 1, 10));
+  };
+
+  const handleQuantityDecrease = () => {
+    setQuantity((prev) => Math.max(prev - 1, 1));
+  };
 
   useEffect(() => {
     if (!category) return;
@@ -377,38 +509,58 @@ export default function ShopTextureCategoryProductPage() {
   const handleRecentlyViewedLeftArrow = () => setRecentlyViewedScroll(0);
   const handleRecentlyViewedRightArrow = () => setRecentlyViewedScroll(-recentSnapPx);
 
-  if (!category) {
-    return <Navigate to="/home/shop" replace />;
-  }
-
   const meta = TEXTURE_META[texture];
-  const categoryTitle = CATEGORY_TITLE[category];
+  const categoryTitle = category ? CATEGORY_TITLE[category] : '';
   /** Nav + hero: SHOP > BUNDLES | CLOSURES | FRONTALS (no STRAIGHT/WAVY/CURLY prefix). */
   const displayProductName = categoryTitle;
   const navCrumb = displayProductName;
   /** Cart / receipts: category first, texture after · for disambiguation. */
-  const cartLineName = `${categoryTitle} · ${meta.label}`;
-  const basePrice = PRICE_BY_CATEGORY[category];
-  const displayPrice = React.useMemo(
-    () =>
+  const cartLineName = category ? `${categoryTitle} · ${meta.label}` : '';
+  const basePrice = category ? PRICE_BY_CATEGORY[category] : 0;
+  const displayPrice = React.useMemo(() => {
+    if (!category) return 0;
+    return (
       basePrice +
-      bcfPriceAdjustments(bcfLength, bcfColor, category === 'bundles' ? null : bcfLace),
-    [basePrice, bcfLength, bcfColor, bcfLace, category]
-  );
+      bcfPriceAdjustments(bcfLength, bcfColor, category === 'bundles' ? null : bcfLace)
+    );
+  }, [category, basePrice, bcfLength, bcfColor, bcfLace]);
   const otherTextures = TEXTURE_ORDER.filter((t) => t !== texture);
-  const heroThumbSrc = shopTextureCategoryThumbSrc(texture, category);
+  const bcfUsesBundleStyleHero =
+    category === 'bundles' || category === 'closures' || category === 'frontals';
+  const bcfCfMediaHero =
+    !!category && (category === 'closures' || category === 'frontals');
+  const heroThumbSrc = ((): string => {
+    if (!category) return shopTextureCategoryThumbSrc(texture, 'bundles');
+    if (category === 'bundles') return BUNDLE_PHOTO_BY_TEXTURE[texture];
+    if (category === 'closures' || category === 'frontals') {
+      return BCF_CF_PHOTO[category][texture];
+    }
+    return shopTextureCategoryThumbSrc(texture, category);
+  })();
+  const bcfHeroThumbSrcForTexture = (tid: Texture): string => {
+    if (!category) return shopTextureCategoryThumbSrc(tid, 'bundles');
+    if (category === 'bundles') return BUNDLE_PHOTO_BY_TEXTURE[tid];
+    if (category === 'closures' || category === 'frontals') {
+      return BCF_CF_PHOTO[category][tid];
+    }
+    return shopTextureCategoryThumbSrc(tid, category);
+  };
   const allowedBcfTextures = bcfTexturesForOrigin(bcfOrigin);
+  /** Bundles + closures + frontals: copy stack under hero (no −128px lift). */
+  const bcfPdpCopyTy = (px: number) => (bcfUsesBundleStyleHero ? 0 : px);
 
   const handleAddToBag = () => {
+    if (!category) return;
     setAddToBagState('adding');
     setTimeout(() => {
       try {
         const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+        const currentCount = parseInt(localStorage.getItem('cartCount') || '0', 10);
         const newItem = {
           id: `shop-${texture}-${category}-${Date.now()}`,
           name: cartLineName,
           price: displayPrice,
-          quantity: 1,
+          quantity,
           image: heroThumbSrc,
           type: 'shop-texture-category',
           texture,
@@ -420,7 +572,7 @@ export default function ShopTextureCategoryProductPage() {
         };
         const updated = [newItem, ...cartItems];
         localStorage.setItem('cartItems', JSON.stringify(updated));
-        const newCartCount = updated.length;
+        const newCartCount = currentCount + quantity;
         localStorage.setItem('cartCount', String(newCartCount));
         setCartCount(newCartCount);
         window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCartCount }));
@@ -434,10 +586,11 @@ export default function ShopTextureCategoryProductPage() {
     }, 500);
   };
 
-  const detailsCopy =
-    category === 'bundles'
+  const detailsCopy = !category
+    ? []
+    : category === 'bundles'
       ? [
-          'PREMIUM RAW HAIR BUNDLES MATCHING YOUR SELECTED TEXTURE.',
+          'PREMIUM RAW HUMAN HAIR BUNDLES MATCHING YOUR SELECTED TEXTURE.',
           'AVAILABLE LENGTHS AND ORIGINS VARY — SEE CHECKOUT OPTIONS.',
           'PROFESSIONAL INSTALLATION RECOMMENDED FOR BEST RESULTS.'
         ]
@@ -701,60 +854,399 @@ export default function ShopTextureCategoryProductPage() {
                   maxWidth: 'none',
                   overflow: 'visible',
                   backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                  paddingBottom: '0px'
+                  /* Match `/straight/noir` main build card — room for tab strip + DETAILS body above ADD TO BAG */
+                  paddingBottom: '34px'
                 }}
               >
-                <div
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexDirection: 'column',
-                    marginBottom: '24px',
-                    transform: 'translateY(20px)',
-                    overflow: 'visible',
-                    minWidth: '100%',
-                    maxWidth: 'none'
-                  }}
-                >
+                {bcfUsesBundleStyleHero ? (
                   <div
+                    className="product-wig-preview"
                     style={{
-                      position: 'relative',
                       width: '100%',
-                      marginBottom: '20px',
                       display: 'flex',
-                      justifyContent: 'center',
                       alignItems: 'center',
-                      transform: 'translateY(-74px)'
+                      flexDirection: 'column',
+                      marginBottom: `${Math.round(24 * BUNDLE_HERO_LAYOUT_SCALE)}px`,
+                      transform: 'translateY(20px)',
+                      overflow: 'visible',
+                      minWidth: '100%',
+                      maxWidth: 'none'
                     }}
                   >
-                    <img
-                      src={heroThumbSrc}
-                      alt={displayProductName}
-                      onError={(e) => {
-                        const img = e.currentTarget;
-                        if (img.getAttribute('data-fallback-tried') === '1') return;
-                        img.setAttribute('data-fallback-tried', '1');
-                        img.src = shopTextureCategoryThumbFallbackSrc[texture];
-                      }}
-                      style={{
-                        width: '100%',
-                        maxWidth: `${400 * shopTextureCategoryProductPageDisplayScale(texture)}px`,
-                        height: 'auto',
-                        margin: '0 auto',
-                        ...((): { transform?: string } => {
-                          const y = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
-                          return y != null ? { transform: `translateY(${y}px)` } : {};
-                        })()
-                      }}
-                    />
-                  </div>
+                    <div style={{ transform: 'translateY(-4px)', marginBottom: '8px', width: '100%', alignSelf: 'stretch' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'stretch',
+                          width: '100%',
+                          maxWidth: `${
+                            category === 'bundles'
+                              ? BUNDLE_PDP_BUNDLES_HERO_MAX_WIDTH_PX
+                              : BUNDLE_PDP_CF_COLUMN_MAX_WIDTH_PX
+                          }px`,
+                          marginLeft: 'auto',
+                          marginRight: 'auto',
+                          boxSizing: 'border-box'
+                        }}
+                      >
+                        <div
+                          style={{
+                            position: 'relative',
+                            width: '100%',
+                            marginBottom: '4px',
+                            transform: 'translateY(0)',
+                            minHeight: 'clamp(18px, 2.2vw, 26px)'
+                          }}
+                        >
+                          {(category === 'bundles' || bcfCfWavyCurlyHero) && (
+                            <div
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => {
+                                if (category === 'bundles') {
+                                  setBundleShowVideo((prev: boolean) => !prev);
+                                } else {
+                                  setBcfCfShowVideo((prev: boolean) => !prev);
+                                }
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  if (category === 'bundles') {
+                                    setBundleShowVideo((prev: boolean) => !prev);
+                                  } else {
+                                    setBcfCfShowVideo((prev: boolean) => !prev);
+                                  }
+                                }
+                              }}
+                              className="product-view-toggle-text"
+                              style={{
+                                position: 'absolute',
+                                right: 'clamp(4px, 1vw, 12px)',
+                                top: '0',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 'clamp(2px, 0.4vw, 6px)',
+                                cursor: 'pointer',
+                                whiteSpace: 'nowrap'
+                              }}
+                            >
+                              <span
+                                className="product-view-toggle-text"
+                                style={{
+                                  color:
+                                    (category === 'bundles' ? bundleShowVideo : bcfCfShowVideo)
+                                      ? '#000000'
+                                      : '#EB1C24',
+                                  fontFamily:
+                                    (category === 'bundles' ? bundleShowVideo : bcfCfShowVideo)
+                                      ? '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif'
+                                      : '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                                  fontSize: '11px',
+                                  fontWeight: (category === 'bundles' ? bundleShowVideo : bcfCfShowVideo)
+                                    ? '400'
+                                    : '500',
+                                  margin: '0'
+                                }}
+                              >
+                                PHOTO
+                              </span>
+                              <span
+                                className="product-view-toggle-text"
+                                style={{
+                                  color: '#000000',
+                                  fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                  fontSize: '11px',
+                                  fontWeight: '400',
+                                  margin: '0'
+                                }}
+                              >
+                                /
+                              </span>
+                              <span
+                                className="product-view-toggle-text"
+                                style={{
+                                  color:
+                                    (category === 'bundles' ? bundleShowVideo : bcfCfShowVideo)
+                                      ? '#EB1C24'
+                                      : '#000000',
+                                  fontFamily:
+                                    (category === 'bundles' ? bundleShowVideo : bcfCfShowVideo)
+                                      ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
+                                      : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                  fontSize: '11px',
+                                  fontWeight: (category === 'bundles' ? bundleShowVideo : bcfCfShowVideo)
+                                    ? '500'
+                                    : '400',
+                                  margin: '0'
+                                }}
+                              >
+                                VIDEO
+                              </span>
+                            </div>
+                          )}
+                        </div>
 
-                  <div
-                    className={texture === 'curly' ? 'shop-bcf-curly-product-copy-lift' : undefined}
-                  >
+                        {bcfCfWavyCurlyHero && (
+                          <div
+                            style={{
+                              position: 'relative',
+                              width: '100%',
+                              marginBottom: '4px',
+                              transform: 'translateY(0)',
+                              minHeight: 'clamp(18px, 2.2vw, 26px)'
+                            }}
+                          >
+                            <div
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => setBcfCfShowBack((prev: boolean) => !prev)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  setBcfCfShowBack((prev: boolean) => !prev);
+                                }
+                              }}
+                              className="product-view-toggle-text"
+                              style={{
+                                position: 'absolute',
+                                right: 'clamp(4px, 1vw, 12px)',
+                                top: '0',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 'clamp(2px, 0.4vw, 6px)',
+                                cursor: 'pointer',
+                                whiteSpace: 'nowrap'
+                              }}
+                            >
+                              <span
+                                className="product-view-toggle-text"
+                                style={{
+                                  color: bcfCfShowBack ? '#000000' : '#EB1C24',
+                                  fontFamily: bcfCfShowBack
+                                    ? '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif'
+                                    : '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                                  fontSize: '11px',
+                                  fontWeight: bcfCfShowBack ? '400' : '500',
+                                  margin: '0'
+                                }}
+                              >
+                                FRONT
+                              </span>
+                              <span
+                                className="product-view-toggle-text"
+                                style={{
+                                  color: '#000000',
+                                  fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                  fontSize: '11px',
+                                  fontWeight: '400',
+                                  margin: '0'
+                                }}
+                              >
+                                /
+                              </span>
+                              <span
+                                className="product-view-toggle-text"
+                                style={{
+                                  color: bcfCfShowBack ? '#EB1C24' : '#000000',
+                                  fontFamily: bcfCfShowBack
+                                    ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
+                                    : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                  fontSize: '11px',
+                                  fontWeight: bcfCfShowBack ? '500' : '400',
+                                  margin: '0'
+                                }}
+                              >
+                                BACK
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
+                        <div
+                          className="product-wig-preview-images"
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: '100%',
+                            marginBottom: `${Math.round(14 * BUNDLE_HERO_LAYOUT_SCALE)}px`,
+                            overflow: 'visible',
+                            transform: 'translateY(0)',
+                            boxSizing: 'border-box',
+                            minHeight:
+                              category === 'bundles'
+                                ? `${BUNDLE_PDP_HERO_MEDIA_MIN_HEIGHT_PX}px`
+                                : `${BUNDLE_HERO_MEDIA_MIN_HEIGHT_PX}px`
+                          }}
+                        >
+                          {category === 'bundles' ? (
+                            bundleShowVideo ? (
+                              <video
+                                key={`${texture}-video`}
+                                ref={bundleVideoRef}
+                                src={BUNDLE_VIDEO_BY_TEXTURE[texture]}
+                                playsInline
+                                muted
+                                loop
+                                autoPlay
+                                style={{
+                                  width: '100%',
+                                  maxWidth: `${BUNDLE_PDP_BUNDLES_HERO_MAX_WIDTH_PX}px`,
+                                  height: 'auto',
+                                  display: 'block',
+                                  objectFit: 'contain',
+                                  marginLeft: 'auto',
+                                  marginRight: 'auto'
+                                }}
+                              />
+                            ) : (
+                              <img
+                                src={BUNDLE_PHOTO_BY_TEXTURE[texture]}
+                                alt={displayProductName}
+                                onError={(e) => {
+                                  const img = e.currentTarget;
+                                  if (img.getAttribute('data-fallback-tried') === '1') return;
+                                  img.setAttribute('data-fallback-tried', '1');
+                                  img.src = shopTextureCategoryThumbFallbackSrc[texture];
+                                }}
+                                style={{
+                                  width: '100%',
+                                  maxWidth: `${BUNDLE_PDP_BUNDLES_HERO_MAX_WIDTH_PX}px`,
+                                  height: 'auto',
+                                  marginLeft: 'auto',
+                                  marginRight: 'auto',
+                                  display: 'block',
+                                  objectFit: 'contain'
+                                }}
+                              />
+                            )
+                          ) : bcfCfWavyCurlyHero ? (
+                            bcfCfShowVideo ? (
+                              <video
+                                key={`${category}-${texture}-v-${bcfCfShowBack ? 'b' : 'f'}`}
+                                ref={bcfCfVideoRef}
+                                src={
+                                  BCF_CF_VIDEO[category][texture][bcfCfShowBack ? 'back' : 'front']
+                                }
+                                playsInline
+                                muted
+                                loop
+                                autoPlay
+                                style={{
+                                  width: '100%',
+                                  maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
+                                  height: 'auto',
+                                  display: 'block',
+                                  objectFit: 'contain',
+                                  marginLeft: 'auto',
+                                  marginRight: 'auto'
+                                }}
+                              />
+                            ) : (
+                              <img
+                                src={BCF_CF_PHOTO[category][texture][bcfCfShowBack ? 'back' : 'front']}
+                                alt={displayProductName}
+                                onError={(e) => {
+                                  const img = e.currentTarget;
+                                  if (img.getAttribute('data-fallback-tried') === '1') return;
+                                  img.setAttribute('data-fallback-tried', '1');
+                                  img.src = shopTextureCategoryThumbFallbackSrc[texture];
+                                }}
+                                style={{
+                                  width: '100%',
+                                  maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
+                                  height: 'auto',
+                                  marginLeft: 'auto',
+                                  marginRight: 'auto',
+                                  display: 'block',
+                                  objectFit: 'contain'
+                                }}
+                              />
+                            )
+                          ) : (
+                            <img
+                              src={shopTextureCategoryThumbSrc(texture, category)}
+                              alt={displayProductName}
+                              onError={(e) => {
+                                const img = e.currentTarget;
+                                if (img.getAttribute('data-fallback-tried') === '1') return;
+                                img.setAttribute('data-fallback-tried', '1');
+                                img.src = shopTextureCategoryThumbFallbackSrc[texture];
+                              }}
+                              style={{
+                                width: '100%',
+                                maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
+                                height: 'auto',
+                                margin: '0 auto',
+                                display: 'block',
+                                objectFit: 'contain',
+                                ...((): { transform?: string } => {
+                                  const y = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
+                                  return y != null ? { transform: `translateY(${y}px)` } : {};
+                                })()
+                              }}
+                            />
+                          )}
+                        </div>
+
+                        <div
+                          className="flex flex-row flex-nowrap justify-center items-end"
+                          style={{
+                            position: 'relative',
+                            zIndex: 30,
+                            width: '100%',
+                            gap: `${Math.round(8 * BUNDLE_HERO_LAYOUT_SCALE)}px`,
+                            marginBottom: `${Math.round(15 * BUNDLE_HERO_LAYOUT_SCALE)}px`,
+                            paddingLeft: '2px',
+                            paddingRight: '2px',
+                            boxSizing: 'border-box'
+                          }}
+                        >
+                          {/* Always tappable like wig PDP thumbs: swap hero + highlight; URL texture syncs options/cart. */}
+                          {TEXTURE_ORDER.map((tid) => (
+                            <ThumbBox
+                              key={tid}
+                              className="shrink-0"
+                              image={bcfHeroThumbSrcForTexture(tid)}
+                              imageAlt={`${BCF_TEXTURE_LABELS[tid]} ${
+                                category === 'bundles'
+                                  ? 'hair bundle'
+                                  : category === 'closures'
+                                    ? 'lace closure'
+                                    : 'lace frontal'
+                              }`}
+                              isSelected={texture === tid}
+                              isDisabled={false}
+                              onClick={() => navigate(shopBcfUrl(category, tid), { replace: true })}
+                              containerSize={BUNDLE_THUMB_OUTER_W_PX}
+                              imgSize={BUNDLE_THUMB_INNER_H_PX}
+                              containerWidth={BUNDLE_THUMB_OUTER_W_PX}
+                              containerHeight={BUNDLE_THUMB_OUTER_H_PX}
+                              imageWidth={BUNDLE_THUMB_INNER_W_PX}
+                              imageHeight={BUNDLE_THUMB_INNER_H_PX}
+                              topPosition="50%"
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+
+                <div
+                  className={texture === 'curly' ? 'shop-bcf-curly-product-copy-lift' : undefined}
+                  style={
+                    bcfUsesBundleStyleHero ? { marginTop: `${BUNDLE_COPY_MARGIN_TOP_PX}px` } : undefined
+                  }
+                >
                     <p
-                      className="text-center text-black mb-2 gift-card-product-name"
+                      className={
+                        bcfUsesBundleStyleHero
+                          ? 'text-center text-black mb-2 bcf-bundles-pdp-product-name'
+                          : 'text-center text-black mb-2 gift-card-product-name'
+                      }
                       style={{
                         fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif !important',
                         fontSize: '32px !important',
@@ -766,22 +1258,24 @@ export default function ShopTextureCategoryProductPage() {
                         textAlign: 'center' as const,
                         whiteSpace: 'normal !important',
                         width: '100% !important',
-                        transform: 'translateY(-128px) !important',
+                        transform: `translateY(${bcfPdpCopyTy(-128)}px) !important`,
                         position: 'relative' as const,
-                        zIndex: '999 !important'
+                        zIndex: bcfUsesBundleStyleHero ? 1 : 999
                       }}
                     >
                       {displayProductName}
                     </p>
 
                     <p
-                      className="text-center text-red-500 uppercase mb-2"
+                      className="text-center text-red-500 uppercase"
                       style={{
                         fontFamily: '"Futura PT Medium"',
                         fontWeight: '500',
-                        transform: 'translateY(-128px)',
+                        transform: `translateY(${bcfPdpCopyTy(-128)}px)`,
                         fontSize: '12px',
-                        padding: '0 12px'
+                        padding: '0 12px',
+                        marginTop: '-2px',
+                        marginBottom: '6px'
                       }}
                     >
                       {meta.subline}
@@ -793,7 +1287,7 @@ export default function ShopTextureCategoryProductPage() {
                         fontFamily: '"Futura PT Medium"',
                         fontSize: '16px',
                         fontWeight: '500',
-                        transform: 'translateY(-137px)',
+                        transform: `translateY(${bcfPdpCopyTy(-137)}px)`,
                         width: '100%'
                       }}
                       dangerouslySetInnerHTML={formatPrice(displayPrice)}
@@ -805,13 +1299,16 @@ export default function ShopTextureCategoryProductPage() {
                         fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                         fontSize: '10px',
                         fontWeight: '500',
-                        transform: 'translateY(-137px)'
+                        transform: `translateY(${bcfPdpCopyTy(-137)}px)`
                       }}
                     >
                       (EXCLUDING SALES TAX)
                     </p>
 
-                    <div className="flex justify-center mb-2 gap-1" style={{ transform: 'translateY(-137px)' }}>
+                    <div
+                      className="flex justify-center mb-2 gap-1"
+                      style={{ transform: `translateY(${bcfPdpCopyTy(-137)}px)` }}
+                    >
                       {[...Array(5)].map((_, index) => (
                         <img
                           key={index}
@@ -834,7 +1331,7 @@ export default function ShopTextureCategoryProductPage() {
                         fontSize: '10px',
                         fontWeight: '600',
                         color: '#808080',
-                        transform: 'translateY(-137px)'
+                        transform: `translateY(${bcfPdpCopyTy(-137)}px)`
                       }}
                     >
                       OR 4 PAYMENTS OF{' '}
@@ -845,7 +1342,7 @@ export default function ShopTextureCategoryProductPage() {
                     {/* BCF: hair profile (Bohemy) + length/color (Bohemy sublabels); lace size on closures/frontals */}
                     <div
                       style={{
-                        transform: 'translateY(-102px)',
+                        transform: `translateY(${bcfPdpCopyTy(-106)}px)`,
                         width: '100%',
                         padding: '0 8px 12px',
                         boxSizing: 'border-box'
@@ -881,7 +1378,7 @@ export default function ShopTextureCategoryProductPage() {
                           );
                         })}
                       </div>
-                      <p style={bcfBohemySubLabelStyle}>hair texture</p>
+                      <p style={{ ...bcfBohemySubLabelStyle, margin: '26px 0 8px' }}>hair texture</p>
                       <div className="flex flex-wrap justify-center gap-3 mb-3">
                         {TEXTURE_ORDER.map((tid) => {
                           const allowed = allowedBcfTextures.includes(tid);
@@ -915,7 +1412,7 @@ export default function ShopTextureCategoryProductPage() {
                               fontSize: '19px',
                               fontWeight: 400,
                               textAlign: 'center',
-                              margin: '16px 0 8px',
+                              margin: '26px 0 8px',
                               color: '#000'
                             }}
                           >
@@ -946,8 +1443,8 @@ export default function ShopTextureCategoryProductPage() {
                         </>
                       )}
 
-                      <p style={{ ...bcfBohemySubLabelStyle, margin: '22px 0 8px' }}>hair length</p>
-                      <div className="grid grid-cols-4 gap-3 mb-3 justify-items-center max-w-[320px] mx-auto">
+                      <p style={{ ...bcfBohemySubLabelStyle, margin: '26px 0 8px' }}>hair length</p>
+                      <div className="grid w-full grid-cols-4 gap-3 mb-3 max-w-[min(100%,400px)] mx-auto">
                         {BCF_LENGTH_OPTIONS.map((len) => {
                           const sel = bcfLength === len.id;
                           return (
@@ -959,10 +1456,8 @@ export default function ShopTextureCategoryProductPage() {
                                 ...bcfOptionBtnTypography,
                                 ...bcfOptionSelectedChrome(sel),
                                 width: '100%',
-                                maxWidth: 'clamp(52px, 14vw, 76px)',
                                 minWidth: 0,
-                                paddingLeft: 'clamp(4px, 1vw, 10px)',
-                                paddingRight: 'clamp(4px, 1vw, 10px)'
+                                boxSizing: 'border-box'
                               }}
                             >
                               {len.label}
@@ -971,7 +1466,7 @@ export default function ShopTextureCategoryProductPage() {
                         })}
                       </div>
                       <p style={bcfBohemySubLabelStyle}>hair color</p>
-                      <div className="flex flex-wrap justify-center gap-x-3 gap-y-3">
+                      <div className="flex flex-wrap justify-center gap-x-3 gap-y-3 mb-6">
                         {bcfColorsAvailable.map((c) => {
                           const sel = bcfColor === c.id;
                           return (
@@ -1011,19 +1506,85 @@ export default function ShopTextureCategoryProductPage() {
                           );
                         })}
                       </div>
+
+                      {/* Quantity — BCF-only vertical nudge */}
+                      <div className="flex justify-center mb-6 w-full" style={{ transform: 'translateY(20px)' }}>
+                        <div
+                          className="inline-flex"
+                          style={{
+                            border: '1.3px solid #000',
+                            boxSizing: 'border-box',
+                            backgroundColor: '#fff'
+                          }}
+                        >
+                          <button
+                            type="button"
+                            onClick={handleQuantityDecrease}
+                            disabled={quantity <= 1}
+                            className={`px-3 py-1 text-red-500 bg-white hover:bg-gray-50 flex items-center justify-center ${
+                              quantity <= 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                            }`}
+                            style={{
+                              border: 'none',
+                              height: 'clamp(27px, 4vw, 36px)',
+                              minHeight: 'clamp(27px, 4vw, 36px)',
+                              boxSizing: 'border-box',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              paddingLeft: 'clamp(8px, 1vw, 14px)',
+                              paddingRight: 'clamp(8px, 1vw, 14px)'
+                            }}
+                          >
+                            <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '11px' }}>-</span>
+                          </button>
+                          <div
+                            className="px-4 py-1 text-black bg-white flex items-center justify-center relative"
+                            style={{
+                              border: 'none',
+                              borderLeft: '1.3px solid #000',
+                              borderRight: '1.3px solid #000',
+                              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                              fontWeight: 500,
+                              fontSize: '12px',
+                              height: 'clamp(27px, 4vw, 36px)',
+                              minHeight: 'clamp(27px, 4vw, 36px)',
+                              boxSizing: 'border-box',
+                              paddingLeft: 'clamp(12px, 1.5vw, 18px)',
+                              paddingRight: 'clamp(12px, 1.5vw, 18px)'
+                            }}
+                          >
+                            {quantity}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={handleQuantityIncrease}
+                            disabled={quantity >= 10}
+                            className={`px-3 py-1 text-red-500 bg-white hover:bg-gray-50 flex items-center justify-center ${
+                              quantity >= 10 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                            }`}
+                            style={{
+                              border: 'none',
+                              height: 'clamp(27px, 4vw, 36px)',
+                              minHeight: 'clamp(27px, 4vw, 36px)',
+                              boxSizing: 'border-box',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              paddingLeft: 'clamp(8px, 1vw, 14px)',
+                              paddingRight: 'clamp(8px, 1vw, 14px)'
+                            }}
+                          >
+                            <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '11px' }}>+</span>
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div
-                  className="mt-6"
-                  style={{
-                    transform: 'translateY(-155px)',
-                    marginBottom: '-65px',
-                    paddingTop: '30px'
-                  }}
-                >
-                  <div className="flex justify-center flex-wrap" style={{ gap: '16px' }}>
+                {/* Tabs — same vertical treatment as Noir (`noir/page.tsx` ~2844–2885) */}
+                <div className="mt-6 w-full" style={{ transform: 'translateY(-20px)', paddingTop: '10px' }}>
+                  <div className="flex justify-center w-full" style={{ gap: '16px' }}>
                     {BCF_PRODUCT_TAB_ORDER.map((tab) => (
                       <button
                         key={tab}
@@ -1045,7 +1606,7 @@ export default function ShopTextureCategoryProductPage() {
                     ))}
                   </div>
 
-                  <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-65px', paddingBottom: '0px' }}>
+                  <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px' }}>
                     {activeTab === 'DETAILS' &&
                       detailsCopy.map((line, i) => (
                         <p
@@ -1056,7 +1617,7 @@ export default function ShopTextureCategoryProductPage() {
                             color: 'black',
                             marginBottom: i === detailsCopy.length - 1 ? '-8px' : '0px',
                             padding: '0 4px',
-                            textAlign: 'center'
+                            textAlign: 'left'
                           }}
                         >
                           {line}
@@ -1072,7 +1633,7 @@ export default function ShopTextureCategoryProductPage() {
                             color: 'black',
                             marginBottom: i === shippingCopy.length - 1 ? '-8px' : '0px',
                             padding: '0 4px',
-                            textAlign: 'center'
+                            textAlign: 'left'
                           }}
                         >
                           {line}
@@ -1088,7 +1649,7 @@ export default function ShopTextureCategoryProductPage() {
                             color: 'black',
                             marginBottom: i === policyCopy.length - 1 ? '-8px' : '0px',
                             padding: '0 4px',
-                            textAlign: 'center'
+                            textAlign: 'left'
                           }}
                         >
                           {line}
@@ -1104,7 +1665,7 @@ export default function ShopTextureCategoryProductPage() {
                             color: 'black',
                             marginBottom: i === careStorageCopy.length - 1 ? '-8px' : '0px',
                             padding: '0 4px',
-                            textAlign: 'center'
+                            textAlign: 'left'
                           }}
                         >
                           {line}
@@ -1117,7 +1678,7 @@ export default function ShopTextureCategoryProductPage() {
                           fontSize: '11px',
                           color: '#808080',
                           marginBottom: '-8px',
-                          textAlign: 'center',
+                          textAlign: 'left',
                           textTransform: 'uppercase'
                         }}
                       >
@@ -1314,7 +1875,7 @@ export default function ShopTextureCategoryProductPage() {
                                         transform: 'translateX(10px) translateY(1px)'
                                       }}
                                     >
-                                      {categoryTitle} · RAW HAIR
+                                      {categoryTitle} · RAW HUMAN HAIR
                                     </p>
                                     <p
                                       style={{

@@ -27,6 +27,7 @@ import {
 } from '../../../utils/marbleStripStyles';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import { bcfOptionSelectedChrome } from '../../../utils/bcfProductOptions';
 
 function SoftCurlSelection() {
   const navigate = useNavigate();
@@ -1387,7 +1388,7 @@ function SoftCurlSelection() {
                   <button 
                     onClick={() => handleFlexibleCapSelect('XXS/XS/S')}
                     style={{ 
-                      border: '1.3px solid black',
+                      ...bcfOptionSelectedChrome(selectedFlexibleCap === 'XXS/XS/S'),
                       paddingTop: 'clamp(4px, 0.5vw, 8px)',
                       paddingBottom: 'clamp(4px, 0.5vw, 8px)',
                       paddingLeft: 'clamp(8px, 1vw, 12px)',
@@ -1399,7 +1400,6 @@ function SoftCurlSelection() {
                       fontSize: '11px',
                       boxSizing: 'border-box' as const,
                       backgroundColor: 'white',
-                      color: selectedFlexibleCap === 'XXS/XS/S' ? '#EB1C24' : 'black',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
@@ -1412,7 +1412,7 @@ function SoftCurlSelection() {
                   <button 
                     onClick={() => handleFlexibleCapSelect('S/M/L')}
                     style={{ 
-                      border: '1.3px solid black',
+                      ...bcfOptionSelectedChrome(selectedFlexibleCap === 'S/M/L'),
                       paddingTop: 'clamp(4px, 0.5vw, 8px)',
                       paddingBottom: 'clamp(4px, 0.5vw, 8px)',
                       paddingLeft: 'clamp(8px, 1vw, 12px)',
@@ -1424,7 +1424,6 @@ function SoftCurlSelection() {
                       fontSize: '11px',
                       boxSizing: 'border-box' as const,
                       backgroundColor: 'white',
-                      color: selectedFlexibleCap === 'S/M/L' ? '#EB1C24' : 'black',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',

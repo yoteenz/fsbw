@@ -30,6 +30,7 @@ import {
 } from '../../../utils/marbleStripStyles';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import { bcfOptionSelectedChrome } from '../../../utils/bcfProductOptions';
 
 interface DensityOption {
   id: string;
@@ -2536,9 +2537,9 @@ width: 'clamp(230px, 57.5vw, 368px)',
             <div className="flex justify-center gap-3" style={{ transform: 'translateY(-24px)' }}>
               <button 
                 onClick={() => handleCustomCapSelect('XS')}
-                className={`product-cap-btn border border-black px-6 py-1 ${selectedCustomCap === 'XS' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
+                className={`product-cap-btn px-6 py-1 bg-white ${selectedCustomCap === 'XS' ? '' : 'hover:bg-gray-50'}`}
                 style={{ 
-                  borderWidth: '1.3px',
+                  ...bcfOptionSelectedChrome(selectedCustomCap === 'XS'),
                   fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                   fontWeight: '500',
                   minWidth: 'clamp(50px, 12vw, 75px)',
@@ -2551,9 +2552,9 @@ width: 'clamp(230px, 57.5vw, 368px)',
               </button>
               <button 
                 onClick={() => handleCustomCapSelect('S')}
-                className={`product-cap-btn border border-black px-6 py-1 ${selectedCustomCap === 'S' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
+                className={`product-cap-btn px-6 py-1 bg-white ${selectedCustomCap === 'S' ? '' : 'hover:bg-gray-50'}`}
                 style={{ 
-                  borderWidth: '1.3px',
+                  ...bcfOptionSelectedChrome(selectedCustomCap === 'S'),
                   fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                   fontWeight: '500',
                   minWidth: 'clamp(50px, 12vw, 75px)',
@@ -2566,9 +2567,9 @@ width: 'clamp(230px, 57.5vw, 368px)',
               </button>
               <button 
                 onClick={() => handleCustomCapSelect('M')}
-                className={`product-cap-btn border border-black px-6 py-1 ${selectedCustomCap === 'M' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
+                className={`product-cap-btn px-6 py-1 bg-white ${selectedCustomCap === 'M' ? '' : 'hover:bg-gray-50'}`}
                 style={{ 
-                  borderWidth: '1.3px',
+                  ...bcfOptionSelectedChrome(selectedCustomCap === 'M'),
                   fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                   fontWeight: '500',
                   minWidth: 'clamp(50px, 12vw, 75px)',
@@ -2581,9 +2582,9 @@ width: 'clamp(230px, 57.5vw, 368px)',
               </button>
               <button 
                 onClick={() => handleCustomCapSelect('L')}
-                className={`product-cap-btn border border-black px-6 py-1 ${selectedCustomCap === 'L' ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
+                className={`product-cap-btn px-6 py-1 bg-white ${selectedCustomCap === 'L' ? '' : 'hover:bg-gray-50'}`}
                 style={{ 
-                  borderWidth: '1.3px',
+                  ...bcfOptionSelectedChrome(selectedCustomCap === 'L'),
                   fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                   fontWeight: '500',
                   minWidth: 'clamp(50px, 12vw, 75px)',
@@ -2614,7 +2615,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
               <button 
                 onClick={() => handleFlexibleCapSelect('XXS/XS/S')}
                 style={{ 
-                  border: '1.3px solid black',
+                  ...bcfOptionSelectedChrome(selectedFlexibleCap === 'XXS/XS/S'),
                   paddingTop: 'clamp(4px, 0.5vw, 8px)',
                   paddingBottom: 'clamp(4px, 0.5vw, 8px)',
                   paddingLeft: 'clamp(8px, 1vw, 12px)',
@@ -2625,8 +2626,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   minWidth: 'clamp(90px, 18vw, 130px)',
                   fontSize: '11px',
                   boxSizing: 'border-box' as const,
-                  backgroundColor: selectedFlexibleCap === 'XXS/XS/S' ? 'white' : 'white',
-                  color: selectedFlexibleCap === 'XXS/XS/S' ? '#EB1C24' : 'black',
+                  backgroundColor: 'white',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -2639,7 +2639,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
               <button 
                 onClick={() => handleFlexibleCapSelect('S/M/L')}
                 style={{ 
-                  border: '1.3px solid black',
+                  ...bcfOptionSelectedChrome(selectedFlexibleCap === 'S/M/L'),
                   paddingTop: 'clamp(4px, 0.5vw, 8px)',
                   paddingBottom: 'clamp(4px, 0.5vw, 8px)',
                   paddingLeft: 'clamp(8px, 1vw, 12px)',
@@ -2650,8 +2650,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   minWidth: 'clamp(90px, 18vw, 130px)',
                   fontSize: '11px',
                   boxSizing: 'border-box' as const,
-                  backgroundColor: selectedFlexibleCap === 'S/M/L' ? 'white' : 'white',
-                  color: selectedFlexibleCap === 'S/M/L' ? '#EB1C24' : 'black',
+                  backgroundColor: 'white',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',

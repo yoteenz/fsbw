@@ -1,12 +1,22 @@
 
 interface ThumbBoxProps {
   image: string;
-  title: string;
-  label: string;
+  /** Omit or pass "" to hide the top caption (e.g. portrait bundle thumbs). */
+  title?: string;
+  /** Omit or pass "" to hide the bottom caption. */
+  label?: string;
+  /** `alt` for the image when title/label are hidden. */
+  imageAlt?: string;
   isSelected?: boolean;
   onClick?: () => void;
   imgSize?: number;
   containerSize?: number;
+  /** When set with `containerHeight`, overrides width/height derived from `containerSize`. */
+  containerWidth?: number;
+  containerHeight?: number;
+  /** When both set, inner media box is portrait/landscape instead of square `imgSize`. */
+  imageWidth?: number;
+  imageHeight?: number;
   className?: string;
   topPosition?: string; // New prop for custom positioning
   colorCode?: string; // New prop for color swatches
@@ -17,12 +27,17 @@ interface ThumbBoxProps {
 
 export default function ThumbBox({
   image,
-  title,
-  label,
+  title = '',
+  label = '',
+  imageAlt,
   isSelected = false,
   onClick,
   imgSize = 85,
   containerSize = 60,
+  containerWidth,
+  containerHeight,
+  imageWidth,
+  imageHeight,
   className = '',
   topPosition = '55%', // Original repository positioning
   colorCode,
@@ -30,7 +45,13 @@ export default function ThumbBox({
   textDisplay,
   isDisabled = false
 }: ThumbBoxProps) {
-  console.log(`ThumbBox ${label}: isDisabled=${isDisabled}, isSelected=${isSelected}`);
+  const outerW = containerWidth ?? containerSize;
+  const outerH = containerHeight ?? containerSize + 20;
+  const innerW = imageWidth ?? imgSize;
+  const innerH = imageHeight ?? imgSize;
+  const innerOverflow =
+    Math.max(innerW, innerH) > outerW || Math.max(innerW, innerH) > outerH ? 'hidden' : 'visible';
+
   return (
     <div
       className={`border relative text-center ${
@@ -40,8 +61,8 @@ export default function ThumbBox({
       } ${className}`}
       style={{
         borderWidth: '1.3px',
-        width: `${containerSize}px`,
-        height: `${containerSize + 20}px`,
+        width: `${outerW}px`,
+        height: `${outerH}px`,
         boxSizing: 'border-box',
         padding: '0',
         overflow: 'visible',
@@ -58,9 +79,9 @@ export default function ThumbBox({
       <div
         className="absolute left-1/2 transform -translate-x-1/2 z-[99999] flex items-center justify-center"
         style={{
-          width: `${imgSize}px`,
-          height: `${imgSize}px`,
-          overflow: imgSize > containerSize ? 'hidden' : 'visible',
+          width: `${innerW}px`,
+          height: `${innerH}px`,
+          overflow: innerOverflow,
           top: topPosition,
           transform: customTransform || 'translateX(-50%) translateY(-50%)'
         }}
@@ -118,7 +139,7 @@ export default function ThumbBox({
           </div>
         ) : (
           <img
-            alt="Card image"
+            alt={imageAlt?.trim() || 'Card image'}
             src={image}
             style={{
               width: '100%',
@@ -130,6 +151,7 @@ export default function ThumbBox({
           />
         )}
       </div>
+      {label.trim() ? (
         <p
           className={`absolute bottom-[-6.9px] md:bottom-[-10px] left-1/2 transform -translate-x-1/2 text-[9px] w-full md:text-xs font-medium text-center ${
             isDisabled ? 'text-gray-400' : isSelected ? 'text-[#EB1C24]' : 'text-black'
@@ -138,6 +160,7 @@ export default function ThumbBox({
         >
           {label}
         </p>
+      ) : null}
     </div>
   );
 }

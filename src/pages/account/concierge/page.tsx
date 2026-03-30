@@ -4908,7 +4908,7 @@ function ConciergePage() {
                           alignItems: 'center',
                           justifyContent: 'center',
                           width: 'calc(100% - 20px)',
-                          height: '144px',
+                          height: '180px',
                           overflow: 'hidden',
                           boxSizing: 'border-box'
                         }}
@@ -4955,7 +4955,7 @@ function ConciergePage() {
                           alignItems: 'center',
                           justifyContent: 'center',
                           width: 'calc(100% - 20px)',
-                          height: '144px',
+                          height: '180px',
                           overflow: 'hidden',
                           boxSizing: 'border-box'
                         }}
@@ -4964,14 +4964,13 @@ function ConciergePage() {
                           src="/assets/points-loyalty.png"
                           alt="200 Loyalty Points"
                           style={{
-                            maxWidth: '119px',
-                            maxHeight: '173px',
+                            maxWidth: '148.38px',
+                            maxHeight: '215.71px',
                             width: 'auto',
                             height: 'auto',
                             objectFit: 'contain',
                             display: 'block',
-                            marginTop: '10px',
-                            transform: 'translateX(13px)'
+                            transform: 'translate(19px, -3px)'
                           }}
                         />
                   </div>

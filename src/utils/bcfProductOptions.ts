@@ -2,7 +2,18 @@
  * Bundles / closures / frontals PDP (`/shop/bundles?texture=…`, etc.) — shared option lists aligned with build-a-wig.
  */
 
+import type { CSSProperties } from 'react';
 import type { ShopTextureCategoryThumbTexture } from './shopTextureCategoryThumb';
+
+/** Brand red for selected PDP option chips (BCF + six unit PDPs). */
+export const BCF_OPTION_RED = '#EB1C24';
+
+export function bcfOptionSelectedChrome(selected: boolean): Pick<CSSProperties, 'border' | 'color'> {
+  return {
+    border: selected ? `1.3px solid ${BCF_OPTION_RED}` : '1.3px solid #000000',
+    color: selected ? BCF_OPTION_RED : '#000000'
+  };
+}
 
 export type BcfOriginId =
   | 'CAMBODIAN'

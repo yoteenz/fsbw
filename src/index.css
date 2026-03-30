@@ -3943,3 +3943,15 @@ select.careers-apply-checkout-field option {
   position: relative !important;
   top: -5.5px !important;
 }
+
+/* `/shop/bundles` PDP: product title must not use `.gift-card-product-name` (−128px + z-index) or it covers texture ThumbBoxes and blocks taps */
+.bcf-bundles-pdp-product-name,
+p.bcf-bundles-pdp-product-name {
+  font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
+  font-size: 32px !important;
+  font-weight: 400 !important;
+  line-height: 1.15 !important;
+  transform: translateY(0) !important;
+  z-index: 1 !important;
+  white-space: normal !important;
+}

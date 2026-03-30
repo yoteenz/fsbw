@@ -4907,3 +4907,336 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Changes:** **`shop/texture-category-product/page.tsx`**: lace row **`mb-6` → `mb-3`**; length grid **`mb-6` → `mb-3`**; **hair length** Bohemy label **`margin` `12px` → `22px`** top (restored). **Horizontal:** origin / texture / lace flex rows **`gap-2` → `gap-3`**; length grid **`gap-2` → `gap-3`**; hair color swatch row **`gap-x-2` → `gap-x-3`**.
 
+**Follow-up:** Hair length grid **`gap-3`** narrowed chips inside **`max-w-[320px]`**; restored **`gap-2`** on the length grid only so option width matches the prior layout.
+
+---
+
+## 2026-03-30 — BCF PDP: hair texture & hair color label margin match hair length
+
+**Context:** Spacing **above** **hair texture** and **hair color** (Bohemy labels) was smaller than **hair length** because **`bcfBohemySubLabelStyle`** used **`6px`** top margin while **hair length** used **`22px`**.
+
+**Changes:** **`texture-category-product/page.tsx`**: **`bcfBohemySubLabelStyle`** **`margin`** **`6px` → `22px`** top ( **`22px 0 8px`** ); **hair length** paragraph uses the shared style only (removed redundant override).
+
+---
+
+## 2026-03-30 — BCF PDP: hair length grid matches profile gap-3, wider chips
+
+**Context:** User wanted length option boxes **wider**, horizontal spacing **between** chips to match **hair profile** buttons (**`gap-3`**), not the old narrow caps from **`gap-2`** + **`max-w-[320px]`** + tight **`maxWidth`** on buttons.
+
+**Changes:** **`texture-category-product/page.tsx`**: length wrapper **`grid-cols-4 gap-3`** (same as profile/texture/lace); **`max-w-[min(100%,400px)]`** + **`w-full`**; removed per-button **`maxWidth`** / tight horizontal **`padding`** overrides so cells use full **`bcfOptionBtnTypography`** padding and fill each grid column.
+
+---
+
+## 2026-03-30 — BCF PDP: +10px above DETAILS / SHIPPING / … tabs
+
+**Changes:** **`texture-category-product/page.tsx`**: tab block wrapper **`paddingTop`** **`30px` → `40px`** (later **`50px`**).
+
+---
+
+## 2026-03-30 — BCF PDP: hair texture block matches Noir flexible cap spacing
+
+**Context:** **Hair texture** on BCF should match **`/straight/noir`** **flexible cap** section: spacing above label, Bohemy title, and chip row transforms.
+
+**Changes:** **`texture-category-product/page.tsx`**: origin row **`mb-3` → `mb-6`** (like custom cap before flexible cap); **hair texture** wrapped in **`mb-6`**; title **`fontSize: 20px`**, **`translateY(-24px)`**, **`mb-4`** (Noir flexible cap); texture buttons row **`translateY(-32px)`** (Noir flexible cap buttons). **`bcfBohemySubLabelStyle`** no longer used for hair texture line only.
+
+---
+
+## 2026-03-30 — BCF PDP: left-aligned tabs + Noir-style quantity + cart quantity
+
+**Context:** User wanted **DETAILS / SHIPPING / …** tab row **left-aligned** like Noir **tab body** (Noir tab **buttons** are still centered in code; BCF uses **`justify-start`**); tab copy **left-aligned**; **quantity** control **below** color swatches **above** tabs (same segmented control as Noir); **`add to bag`** stores **`quantity`** and updates **`cartCount`** as **`currentCount + quantity`** (Noir unit pattern).
+
+**Changes:** **`texture-category-product/page.tsx`**: **`quantity`** state, **`handleQuantityIncrease` / `handleQuantityDecrease`**; quantity block after color grid; tab row **`justify-center` → `justify-start`** + **`w-full`**; all tab panel paragraphs **`textAlign: 'left'`**; **`handleAddToBag`** uses **`quantity`** and **`currentCount + quantity`** for cart count.
+
+---
+
+## 2026-03-29 — Concierge: loyalty-points thumbnail +25%
+
+**Context:** User asked to increase the size of the **loyalty-points** thumbnail image on **Account → Concierge** (birthday gift: **$20 gift card** vs **200 loyalty points**).
+
+**Changes:** **`src/pages/account/concierge/page.tsx`**: selectable gift boxes **`height`** **`144px` → `180px`** (25% larger, keeps both columns aligned). **`points-loyalty.png`** **`maxWidth` / `maxHeight`** **`119`/`173` → `148.75`/`216.25`** (+25%).
+
+**Related (earlier in chat):** Discussion of broken booking/BCF texture thumbnails—paths point at **`public/assets/`** with fixed filenames; verify files exist, casing, and cache-busting if needed.
+
+---
+
+## 2026-03-29 — Concierge: loyalty image horizontal offset 30px
+
+**Context:** User adjusted the **points-loyalty** image position: **`translateX(30px)`** (was **`23px`**).
+
+**Changes:** **`src/pages/account/concierge/page.tsx`** — **`transform: 'translateX(30px)'`** on **`points-loyalty.png`**.
+
+---
+
+## 2026-03-29 — Concierge: loyalty image +5% size
+
+**Context:** User asked to increase the **loyalty-points** image size by **5%**.
+
+**Changes:** **`concierge/page.tsx`**: **`points-loyalty.png`** **`maxWidth` / `maxHeight`** **`148.75`/`216.25` → `156.19`/`227.06`** (×1.05). Both birthday gift boxes **`height`** **`180px` → `189px`** so columns stay aligned and the image is not clipped.
+
+---
+
+## 2026-03-29 — Concierge: loyalty image −5% size
+
+**Context:** User asked to decrease the **loyalty-points** image size by **5%**.
+
+**Changes:** **`concierge/page.tsx`**: **`points-loyalty.png`** **`maxWidth` / `maxHeight`** **`156.19`/`227.06` → `148.38`/`215.71`** (×0.95). Both birthday gift boxes **`height`** **`189px` → `180px`**.
+
+---
+
+## 2026-03-30 — BCF PDP: quantity full black border, tabs −10px padding top
+
+**Context:** BCF quantity control lost visible outer black border because **`border: none !important`** overrode per-side borders; user wanted **10px less** space above **DETAILS** tabs.
+
+**Changes:** **`texture-category-product/page.tsx`**: quantity wrapped in **`inline-flex`** with **`border: 1.3px solid #000`**; inner segments **`border: none`**; middle column **`borderLeft` / `borderRight`** for internal dividers. Tab block **`paddingTop`** **`50px` → `40px`**.
+
+---
+
+## 2026-03-30 — BCF PDP: quantity spacing above matches Noir
+
+**Context:** Spacing above the BCF quantity counter should match **`/straight/noir`**.
+
+**Changes:** **`texture-category-product/page.tsx`**: hair color **`flex`** row **`mb-6`** (Noir flexible-cap block uses **`mb-6`** before quantity); quantity row **`style={{ transform: 'translateY(-30px)' }}`** (same as Noir quantity wrapper).
+
+---
+
+## 2026-03-30 — BCF PDP: RAW HUMAN HAIR copy + quantity −15px
+
+**Changes:** **`texture-category-product/page.tsx`**: **`TEXTURE_META`** sublines, details bundles line, similar-products red line → **RAW HUMAN HAIR**; quantity wrapper **`translateY(20px)`** (BCF-only).
+
+---
+
+## 2026-03-30 — Bundles PDP: bundle photo/video assets + PHOTO/VIDEO toggle + ThumbBox row
+
+**Context:** User wanted **`/shop/bundles`** hero media only swapped to six assets (**straight / wavy / curly** product **JPG** + **MP4**), order straight → wavy → curly; **PHOTO / VIDEO** toggle above the hero (styling like Noir **2D / 3D**); main area shows photo or video per toggle; **ThumbBox** thumbnails below (build-a-wig pattern), always **three** photo thumbs; video mode shows the three videos when each texture is selected via URL/thumbs.
+
+**Changes:** **`texture-category-product/page.tsx`**: **`BUNDLE_PHOTO_BY_TEXTURE`** / **`BUNDLE_VIDEO_BY_TEXTURE`** (`public/assets`: **`straight-bundle-product.JPG`**, **`straight-bundle-video.MP4`**, **`wavy-bundle-product.JPG`**, **`wavy-bundle-product.MP4`** for wavy video per repo filename, **`curly-bundle-product.JPG`**, **`curly-bundle-video.MP4`**). State **`bundleShowVideo`** + **`bundleVideoRef`**; **`heroThumbSrc`** for cart uses bundle photo when **`category === 'bundles'`**. Bundles-only hero: toggle, **`img`** / **`<video>`** (muted, loop, playsInline, autoPlay), row of three **`ThumbBox`** (**TEXTURE** / **`BCF_TEXTURE_LABELS`**) wired to **`navigate(shopBcfUrl)`** and **`allowedBcfTextures`**. Closures/frontals unchanged.
+
+**Conventions:** If wavy video is renamed to **`wavy-bundle-video.MP4`**, update **`BUNDLE_VIDEO_BY_TEXTURE.wavy`** accordingly.
+
+---
+
+## 2026-03-30 — BCF PDP: centered tab row, left tab body, hair profile −4px gap
+
+**Changes:** **`texture-category-product/page.tsx`**: **DETAILS / SHIPPING / …** row **`justify-start` → `justify-center`** (panel copy stays **`textAlign: 'left'`**); options block **`translateY(-102px)` → `translateY(-106px)`** (4px less space above **hair profile**).
+
+---
+
+## 2026-03-30 — BCF PDP: +2px above hair texture, lace size, hair length
+
+**Changes:** **`texture-category-product/page.tsx`**: **hair texture** / **hair length** labels **`margin` top **`22px` → `24px`**; **lace size** **`16px` → `18px`** top. **Hair color** still uses shared **`bcfBohemySubLabelStyle`** (**22px** top).
+
+**Follow-up:** **lace size** top **`22px`**; **hair texture** / **hair length** top **`26px`**.
+
+---
+
+## 2026-03-30 — Bundles PDP: ~100px space between texture thumbs and product title
+
+**Context:** User reported overlap between **BUNDLES** product name and the three **ThumbBox** textures; asked for **~100px** spacing.
+
+**Changes:** **`texture-category-product/page.tsx`**: **`bcfBundlesBelowThumbSpacingPx`** (`100` when **`category === 'bundles'`**, else **`0`**). Added to existing negative **`translateY`** values for title, subline, price/tax/stars/Klarna, **hair profile** block, and **DETAILS** tabs so the whole stack shifts **100px** down on bundles only (closures/frontals unchanged).
+
+---
+
+## 2026-03-30 — Bundles PDP: hero + thumbs +1.35× scale, tandem spacing below
+
+**Context:** Portrait bundle hero felt too narrow with excess side margin; user asked **+35%** scale for **photo/video hero + thumbnails**, with card content below moving in step (no overlap).
+
+**Changes:** **`texture-category-product/page.tsx`**: **`BUNDLE_HERO_LAYOUT_SCALE` 1.35**; **`bundlePdpHeroMaxWidthPx(tex)`** = **`400 × scale × shopTextureCategoryProductPageDisplayScale(tex)`** for column + **`img`/`video`**; **`BUNDLE_THUMB_CONTAINER_PX` / `BUNDLE_THUMB_IMAGE_PX`** (54/72 rounded × 1.35); media **`minHeight`**, **`product-wig-preview` `marginBottom`**, media **`marginBottom`**, thumb row **`gap`/`marginBottom`** scaled ×1.35; bundles copy **`marginTop`** uses **`BUNDLE_COPY_MARGIN_TOP_PX`** (100×1.35 rounded).
+
+---
+
+## 2026-03-30 — Bundles PDP: texture ThumbBoxes tappable + title class fix + copy `marginTop` 100px
+
+**Context:** Texture **ThumbBoxes** did not change the hero (taps ineffective). User wanted **bundles** copy moved **100px** down only.
+
+**Cause:** Global **`.gift-card-product-name`** (**`translateY(-128px) !important`**, **`z-index: 999`**) still applied to the **BUNDLES** title; it sat over the thumbs and intercepted touches. React inline **`transform`** did not reliably override stylesheet **`!important`**.
+
+**Changes:** **`texture-category-product/page.tsx`**: Bundles title uses **`bcf-bundles-pdp-product-name`** (not **`gift-card-product-name`**); **`z-index: 1`** on bundles title. Thumb row **`z-index: 30`**; **`navigate(..., { replace: true })`** on every allowed tap (not only when texture changes). Copy wrapper **`marginTop: 100px`** when **`category === 'bundles'`**. **`index.css`**: **`.bcf-bundles-pdp-product-name`** (**`translateY(0)`**, typography).
+
+---
+
+## 2026-03-30 — Bundles PDP: PHOTO/VIDEO toggle width matches hero media (Noir 2D/3D alignment)
+
+**Context:** **PHOTO / VIDEO** sat on the **far right of the full card** because its **`position: absolute; right`** was relative to a **100%-wide** row; it should stay over the **hero image/video** like Noir **2D / 3D**.
+
+**Changes:** **`texture-category-product/page.tsx`**: Inner bundles column (toggle + **`product-wig-preview-images`** + thumbs) **`maxWidth`** = **`400 * shopTextureCategoryProductPageDisplayScale(texture)`**, **`marginLeft` / `marginRight: auto`**. Removed extra horizontal padding on the media wrapper so edges match the toggle row.
+
+---
+
+## 2026-03-30 — BCF PDP: DETAILS tabs match Noir bottom rhythm (card padding + tab strip)
+
+**Context:** User reported **DETAILS** copy/tabs overlapping **outside** the main white card; wanted **bottom spacing** aligned with **closures** PDP and **Noir**.
+
+**Changes:** **`texture-category-product/page.tsx`**: Main card **`paddingBottom: '34px'`** for **bundles / closures / frontals** (was **`0`** except bundles). Tab block unified with Noir: **`mt-6`**, **`transform: translateY(-20px)`**, **`paddingTop: '10px'`** (removed per-category **`translateY(-155)`** / bundles **`0`** / **`marginBottom: -65px`** on wrapper). Tab body **`marginBottom: '-93px'`** (was **`-65px`**, matches **`noir/page.tsx`**). Tab button row **`justify-center`** without **`flex-wrap`** (Noir).
+
+---
+
+## 2026-03-30 — Bundles PDP: center media, thumbs one row, title stack no overlap
+
+**Context:** User wanted bundle **photo/video** centered in the card, **three texture ThumbBoxes on one row** (no wrap), and **BUNDLES** title/copy no longer overlapping thumbnails.
+
+**Changes:** **`texture-category-product/page.tsx`**: Hero column **`width/maxWidth 100%`** + **`alignSelf: stretch`**; media wrapper full width **`justifyContent: center`** with horizontal padding; **`img`/`video`** **`maxWidth`** from **`shopTextureCategoryProductPageDisplayScale`** + **`margin auto`**. Thumb row **`flex-nowrap`**, **`shrink-0`** on **`ThumbBox`**, **`containerSize` 54 / `imgSize` 72**, **`gap` clamp**. **`bcfPdpCopyTy`**: bundles use **`translateY(0)`** for title through **hair profile** block (replaces **`bcfBundlesBelowThumbSpacingPx`**). Copy wrapper **`marginTop`** clamp when bundles. Tabs block: bundles **`translateY(0)`**, no **`-65px`** **marginBottom**, tighter **`paddingTop`**.
+
+---
+
+## 2026-03-30 — BCF PDP: fix JSX fragment / extra closing divs
+
+**Context:** Vite/Babel error: **Expected corresponding JSX closing tag for `<>`** near end of main white card (`texture-category-product/page.tsx`).
+
+**Cause:** After the bundles hero refactor, **two extra `</div>`** closings remained where the old **`translateY(20px)`** hero wrapper used to close.
+
+**Changes:** Removed those **two** stray **`</div>`** tags after the quantity row (before the **DETAILS** tabs block).
+
+---
+
+## 2026-03-30 — Bundles PDP: align PHOTO/VIDEO row with Noir 2D/3D (product-wig-preview stack)
+
+**Context:** User wanted **PHOTO / VIDEO** on the same vertical line as Noir’s **2D VIEW / 3D VIEW** and bundles hero aligned with where Noir’s main card content starts.
+
+**Changes:** **`texture-category-product/page.tsx`**: Bundles-only **`className="product-wig-preview"`** (uses **`index.css`** **`translateY(12px)`** / margin + **`:has(.product-wig-preview)`** card **`padding-top`** like Noir). Inner Noir mirror: **`translateY(-4px)`** + **`marginBottom: 8px`**, **`inline-flex`** column, toggle row **`position: relative`**, **`marginBottom: 4px`**, **`minHeight: clamp(18px,…,26px)`**, toggle **`position: absolute`**, **`right: clamp(4px,1vw,12px)`**, **`className="product-view-toggle-text"`**. Main media in **`product-wig-preview-images`** with Noir **`marginBottom: clamp(12px,…,16px)`**. Removed bundles **`translateY(-74px)`** lift. Card **`paddingBottom: 34px`** when bundles (Noir). Closures/frontals keep prior **`-74px`** hero wrapper.
+
+---
+
+## 2026-03-29 — Concierge: loyalty image translateX 13px
+
+**Context:** User asked for **`translateX(13px)`** instead of **`23px`** on **`points-loyalty.png`**.
+
+**Changes:** **`src/pages/account/concierge/page.tsx`** — **`transform: 'translateX(13px)'`**.
+
+---
+
+## 2026-03-29 — Concierge: loyalty image +6px right, +3px down
+
+**Context:** User asked to move **`points-loyalty.png`** **3px down** and **6px to the right** (from prior **`translateX(13px)`**).
+
+**Changes:** **`concierge/page.tsx`** — **`transform: 'translate(19px, 3px)'`** (**13+6**, **3** down).
+
+---
+
+## 2026-03-29 — Concierge: loyalty image 6px up
+
+**Context:** User asked to move **`points-loyalty.png`** **6px upward** (from **`translate(19px, 3px)`**).
+
+**Changes:** **`concierge/page.tsx`** — **`transform: 'translate(19px, -3px)'`**.
+
+---
+
+## 2026-03-30 — Six unit PDPs: selected cap chips match bundles (red border + #EB1C24)
+
+**Context:** User reported **custom / flexible cap** option boxes on the **six unit product pages** stayed **black-bordered** when selected; they should match **bundles (BCF) PDP** selection (**red border + brand red label**).
+
+**Topics covered:** Handoff from prior chat; implemented shared chrome helper and wired all six unit routes.
+
+**Decisions / outcomes:** Single source of truth for selected chip **border + color** next to BCF product options.
+
+**Changes:**
+- **`src/utils/bcfProductOptions.ts`** — Exported **`BCF_OPTION_RED`** (`#EB1C24`) and **`bcfOptionSelectedChrome(selected)`** (1.3px solid red/black border + matching text color); uses **`CSSProperties`** from React.
+- **`src/pages/shop/texture-category-product/page.tsx`** — Imports those exports; removed duplicate local definitions.
+- **Six unit PDPs** — **`noir`**, **`blanco`**, **`soft-wave`**, **`beach-wave`**, **`soft-curl`**, **`ocean-curl`**: import **`bcfOptionSelectedChrome`**; **custom cap** buttons drop **`border-black` / `text-red-500`** and spread chrome in **`style`**; **flexible cap** buttons use chrome for border+color (replacing always-black border).
+
+**Conventions:** Reuse **`bcfOptionSelectedChrome`** for any future PDP option chips that should match BCF/bundles.
+
+---
+
+## 2026-03-30 — BCF bundles hero: three texture thumbs always tappable (hero + highlight like wig PDP)
+
+**Context:** User wanted the **three thumbnails under the bundles main hero** to behave like **Build-a-Wig** hero thumbs: **tap = highlighted thumb + main hero shows that texture** (photo/video still follow **PHOTO/VIDEO** toggle).
+
+**Cause:** Hero **`ThumbBox`** row used **`isDisabled={!allowedBcfTextures.includes(tid)}`**. **`bcfTexturesForOrigin`** only allows one texture per origin (e.g. Cambodian → straight only), so **wavy/curly** thumbs were **disabled** (`pointer-events: none`) and could not be tapped.
+
+**Decisions / outcomes:** **Bundles PDP hero row** is for **cross-texture preview**; all three thumbs stay enabled. **`navigate(..., { replace: true })`** updates **`?texture=`** so **`texture`** drives hero + cart; existing effects still sync **`bcfOrigin`** and redirect if URL texture is incompatible with the selected origin.
+
+**Changes:** **`src/pages/shop/texture-category-product/page.tsx`** — bundles **`TEXTURE_ORDER.map`** **`ThumbBox`**: **`isDisabled={false}`**, **`onClick`** always navigates to **`shopBcfUrl(category, tid)`** (removed **`allowed`** gate for this row only). **Hair texture** option chips below still use **`allowedBcfTextures`** for purchase-valid combinations.
+
+---
+
+## 2026-03-30 — Bundles PDP: less space above title copy (−60px)
+
+**Context:** User asked to **reduce spacing above the bundles text by 60px** (bundles product PDP).
+
+**Changes:** **`texture-category-product/page.tsx`** — **`BUNDLE_COPY_MARGIN_TOP_PX`** is now **`Math.round(100 * BUNDLE_HERO_LAYOUT_SCALE) - 60`** (was scale-only; **~135px → ~75px** at scale **1.35**), applied to the copy wrapper **`marginTop`** when **`category === 'bundles'`**.
+
+---
+
+## 2026-03-30 — Bundles PDP: ThumbBox frame fits portrait bundle thumbs
+
+**Context:** User asked to adjust **width and height of the white + black/red border** around the **three bundle texture thumbnails** so it matches the **slender portrait** product frames (square inner box was wrong).
+
+**Changes:**
+- **`src/components/ThumbBox.tsx`** — Optional **`containerWidth` / `containerHeight`** (outer border box) and **`imageWidth` / `imageHeight`** (inner media rectangle); defaults preserve prior **`containerSize` + `imgSize`** behavior. Removed **`console.log`**. Inner **`overflow`** uses max inner dimension vs outer box.
+- **`src/pages/shop/texture-category-product/page.tsx`** — Replaced square **`BUNDLE_THUMB_CONTAINER_PX` / `BUNDLE_THUMB_IMAGE_PX`** with scaled portrait constants (**`BUNDLE_THUMB_INNER_W/H`**, **`BUNDLE_THUMB_OUTER_W/H`**) and pass the new props + **`topPosition="calc(50% + 5px)"`** on bundle hero **`ThumbBox`**es.
+
+---
+
+## 2026-03-30 — ThumbBox: fix ReferenceError (containerWidth undeclared)
+
+**Context:** Runtime error **can't find variable: containerWidth** (Safari-style message for **`ReferenceError`**) when rendering **`ThumbBox`**.
+
+**Cause:** **`containerWidth`**, **`containerHeight`**, **`imageWidth`**, and **`imageHeight`** were on the props interface and used in the component body but **not destructured** from the function arguments, so they were treated as global identifiers.
+
+**Changes:** **`src/components/ThumbBox.tsx`** — Added those four props to the **`ThumbBox({ ... })`** destructuring list.
+
+---
+
+## 2026-03-30 — Bundles PDP: texture thumbs without TEXTURE / Straight–Wavy–Curly captions
+
+**Context:** User asked to **remove the “TEXTURE” text and the Straight / Wavy / Curly labels** above and below the **three bundle hero thumbnails**.
+
+**Changes:**
+- **`ThumbBox.tsx`** — **`title`** and **`label`** optional (default **`''`**); top/bottom **`<p>`** blocks render only when trimmed string is non-empty. Optional **`imageAlt`** for **`img`** **`alt`** (fallback **`Card image`**).
+- **`texture-category-product/page.tsx`** — Bundle row **`ThumbBox`**: dropped **`title`** / **`label`**; set **`imageAlt`** from **`BCF_TEXTURE_LABELS`**. **`BUNDLE_THUMB_OUTER_*`** derived as inner + scaled padding (no extra height for captions); **`topPosition="50%"`**.
+
+---
+
+## 2026-03-30 — Closures & frontals PDP: bundles-style PHOTO/VIDEO hero + wavy/curly front/back assets
+
+**Context:** User asked to apply the **same PHOTO/VIDEO layout** as the **bundles** PDP to **`/shop/closures`** and **`/shop/frontals`**, using **`public/assets`** **`curly-*` / `wavy-*`** **closure** and **frontal** **product** (front/back **.JPG**) and **video** (front/back **.MP4** / **.mov** as on disk).
+
+**Changes:** **`src/pages/shop/texture-category-product/page.tsx`**
+- **`BCF_CF_PHOTO`** / **`BCF_CF_VIDEO`** maps for **closures** and **frontals**, **wavy** and **curly** only (paths match repo: e.g. **`wavy-frontal-video-front.mov`**, **`wavy-frontal-video-back.MP4`**).
+- **`bcfUsesBundleStyleHero`**: bundles + closures + frontals share **`product-wig-preview`** column (toggle row, media, **three texture ThumbBoxes**).
+- **Wavy/curly** closures/frontals: **PHOTO | VIDEO** ( **`bcfCfShowVideo`** ) + **FRONT | BACK** ( **`bcfCfShowBack`** ); hero uses mapped stills or videos; **`bcfCfVideoRef`** + **`useEffect`** play/pause; **`useEffect`** resets CF toggles on **`texture`/`category`** change.
+- **Straight** closures/frontals: **no** PHOTO/VIDEO or FRONT/BACK row; hero **`shopTextureCategoryThumbSrc`** PNG; thumbs unchanged for straight.
+- **`heroThumbSrc`** / cart thumbnail: **wavy/curly** CF uses **front JPG**; **`bcfHeroThumbSrcForTexture`** drives **ThumbBox** images + **`imageAlt`** (bundle vs closure vs frontal).
+- Copy stack: **`bcfPdpCopyTy`** and title class / **`BUNDLE_COPY_MARGIN_TOP_PX`** use **`bcfUsesBundleStyleHero`** (closures/frontals align with bundles, not **`gift-card`** −128px title).
+
+---
+
+## 2026-03-30 — BCF PDP: fix ReferenceError / hooks (`bcfUsesBundleStyleHero`)
+
+**Context:** Runtime **“can’t find variable bcfUsesBundleStyleHero”** (Safari-style **`ReferenceError`**) on shop texture category PDP.
+
+**Cause:** **`if (!category) return <Navigate … />`** ran **before** **`React.useMemo`** (**`displayPrice`**) and other derived values (**`bcfUsesBundleStyleHero`**, etc.). When **`category`** was **`null`**, that branch skipped a **`useMemo`** call; when **`category`** became set, an extra hook ran → **Rules of Hooks** violation and inconsistent execution.
+
+**Changes:** **`texture-category-product/page.tsx`** — moved **`Navigate`** guard to **after** all hooks and null-safe **`displayPrice`** / **`cartLineName`** / **`heroThumbSrc`** / **`bcfHeroThumbSrcForTexture`** / **`detailsCopy`**; **`handleAddToBag`** bails if **`!category`**.
+
+---
+
+## 2026-03-30 — Bundles PDP: stable thumb row (curly no longer widens/shifts layout)
+
+**Context:** User reported **curly bundle hero** scaling larger caused the **three thumbnails** to **move/shift**; all thumbs should keep the **same container size and position**.
+
+**Cause:** **`bundlePdpHeroMaxWidthPx(texture)`** is larger for **curly**; the **column** **`maxWidth`** followed **`texture`**, so the strip **widened** on curly; hero media also grew **taller** vs **`minHeight`-only** wrapper, pushing thumbs **down**.
+
+**Changes:** **`texture-category-product/page.tsx`** — **`BUNDLE_PDP_COLUMN_MAX_WIDTH_PX`** = max of **`bundlePdpHeroMaxWidthPx`** over **`TEXTURE_ORDER`** for the hero+thumbs column; bundle **`img`/`video`** still use per-texture **`maxWidth`**. **Bundles** **`product-wig-preview-images`**: **`aspectRatio: '3 / 4'`**, **`overflow: 'hidden'`**; bundle media **`maxHeight: '100%'`**, **`width: 'auto'`**, **`objectFit: 'contain'`**.
+
+---
+
+## 2026-03-30 — BCF PDP: tighter vertical rhythm around “RAW HUMAN HAIR” subline
+
+**Context:** User asked to **reduce spacing above and below** the **RAW HUMAN HAIR** line (**`meta.subline`**) on **BCF product pages** by **2px** each.
+
+**Changes:** **`texture-category-product/page.tsx`** — Subline **`<p>`**: removed **`mb-2`**; **`marginTop: '-2px'`**, **`marginBottom: '6px'`** (was **~8px** from **`mb-2`**, **−2px**).
+
+---
+
+## 2026-03-30 — Bundles PDP: drop clipped hero box; uniform hero width (curly = straight/wavy)
+
+**Context:** User reported the prior **aspect-ratio + `overflow: hidden`** approach **clipped** the hero; **curly** still rendered **wider** than straight/wavy.
+
+**Changes:** **`texture-category-product/page.tsx`**
+- **`BUNDLE_PDP_BUNDLES_HERO_MAX_WIDTH_PX`** = **`bundlePdpHeroMaxWidthPx('straight')`** — bundles **photo/video** and **bundles** column **`maxWidth`** use this **single** value (no per-texture upscale for curly).
+- **`BUNDLE_PDP_CF_COLUMN_MAX_WIDTH_PX`** = max over textures for **closures/frontals** bundle-style column only.
+- **`product-wig-preview-images`**: **`overflow: 'visible'`**, restore **`minHeight: BUNDLE_HERO_MEDIA_MIN_HEIGHT_PX`** for all; **removed** bundles-only **`aspectRatio`** / **`maxHeight: 100%`** clipping.
+- Bundle **`img`/`video`**: **`width: '100%'`**, **`maxWidth: BUNDLE_PDP_BUNDLES_HERO_MAX_WIDTH_PX`**, **`height: 'auto'`**.
+
